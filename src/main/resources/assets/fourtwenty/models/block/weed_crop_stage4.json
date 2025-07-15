@@ -1,7 +1,7 @@
 {
-  "parent": "minecraft:block/crop",
+  "parent": "minecraft:block/cross",
   "textures": {
-    "crop": "fourtwenty:block/weed_crop_stage4"
+    "cross": "fourtwenty:block/weed_crop_stage4"
   },
   "render_type": "cutout"
 }
