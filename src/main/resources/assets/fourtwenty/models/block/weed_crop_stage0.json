@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/crop",
+  "textures": {
+    "crop": "fourtwenty:block/weed_crop_stage0"
+  },
+  "render_type": "cutout"
+}
