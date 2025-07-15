@@ -1,45 +1,142 @@
-[![CLA assistant](https://cla-assistant.io/readme/badge/ldtteam/minecolonies)](https://cla-assistant.io/ldtteam/minecolonies)
-[![Build Status](https://buildsystem.ldtteam.com/app/rest/builds/buildType:LetSDevTogether_Minecolonies_Alpha_Release/statusIcon)](http://buildsystem.ldtteam.com/)
-[![Crowdin](https://badges.crowdin.net/minecolonies/localized.svg)](https://crowdin.com/project/minecolonies)
+# FourTwenty 🌿
 
-![mcol logo](minecolonies_logo.png)
+A comprehensive Minecraft mod that adds a cannabis cultivation system to your game. Grow, harvest, and craft cannabis into various consumable products with unique gameplay effects.
 
+## 🎮 Features
 
-# fourtwenty
+### Cannabis Cultivation System
+- **Weed Seeds**: Plant these to start your cannabis farm
+- **Growing Cycle**: Cannabis plants grow through 8 distinct stages (0-7), just like vanilla crops
+- **Weed Crop Block**: A fully functional crop that requires proper farming conditions
+- **Harvesting**: Mature plants (stage 7) drop both weed buds and seeds for sustainable farming
 
+### Items & Crafting
+- **Weed Bud**: The primary harvest from mature cannabis plants
+- **Weed Joint**: Craftable consumable made from weed buds and paper
+- **Crafting Recipe**: Create joints using a vertical pattern of Paper → Weed Bud → Paper
+
+### Gameplay Effects
+When consuming a Weed Joint, players experience:
+- **Regeneration II** (30 seconds) - Enhanced health recovery
+- **Night Vision** (2 minutes) - See clearly in the dark
+- **Hunger II** (10 seconds) - Increased appetite (munchies effect)
+- **Luck I** (1.5 minutes) - Better loot drops and fishing results
+- **Confusion** (20 seconds, 30% chance) - Occasional disorientation effect
+
+### Creative Mode Integration
+- Custom "Four Twenty" creative tab containing all mod items
+- Easy access to seeds, buds, and joints for creative building
 
 #### Website:
-https://www.minecolonies.com/
+TBD
+
+## 🏗️ Technical Architecture
+
+### Project Structure
+This mod is built for **Minecraft 1.21.1** using **NeoForge 21.1.92** and **Java 21**.
+
+#### Core Components
+
+**Registry Classes:**
+- `ModItems.java` - Registers all mod items (seeds, buds, joints)
+- `ModBlocks.java` - Registers the weed crop block
+- `ModCreativeTabs.java` - Creates the custom creative mode tab
+
+**Block Implementation:**
+- `WeedCropBlock.java` - Extends `CropBlock` for cannabis cultivation mechanics
+- Supports 8 growth stages with appropriate blockstate definitions
+- Integrates with Minecraft's crop growth system
+
+**Item Implementation:**
+- `WeedJointItem.java` - Custom consumable item with multiple potion effects
+- Uses `UseAnim.TOOT_HORN` for smoking animation
+- 32-tick consumption duration (same as food items)
+
+**Resource Structure:**
+- `assets/fourtwenty/` - Client-side resources (models, textures, lang files)
+- `data/drugcolonies/` - Data-driven content (recipes, loot tables)
+- Comprehensive blockstate definitions for all 8 crop growth stages
+- Custom item models for seeds, buds, and joints
+
+#### Dependencies
+- **Minecraft**: 1.21.1
+- **NeoForge**: 21.1.92+
+- **Java**: 21 (required)
+
+### Game Integration
+The mod seamlessly integrates with vanilla Minecraft mechanics:
+- Cannabis crops follow standard farming rules (require farmland, water, light)
+- Loot tables ensure balanced drop rates (buds only from mature crops)
+- Recipe system uses standard crafting mechanics
+- Effect system uses vanilla potion effects for compatibility
 
 ## For Users
 
+### Installation & Usage
+
+1. **Requirements**: Ensure you have Minecraft 1.21.1 with NeoForge 21.1.92+ installed
+2. **Download**: Get the latest release from CurseForge (link TBD)
+3. **Install**: Place the mod JAR file in your `mods/` folder
+4. **Play**: Start Minecraft and look for the "Four Twenty" creative tab
+
+### Getting Started
+1. **Obtain Seeds**: Find weed seeds in the Four Twenty creative tab or through other means
+2. **Plant**: Place seeds on tilled farmland (requires water source nearby)
+3. **Wait**: Cannabis takes time to grow through 8 stages - be patient!
+4. **Harvest**: Break mature crops (stage 7) to get weed buds and seeds
+5. **Craft**: Use the crafting recipe (Paper-Bud-Paper vertically) to make joints
+6. **Consume**: Right-click and hold to smoke a joint and experience the effects
+
 You can find all our versions on Curseforge:
+TBD
 
-https://www.curseforge.com/minecraft/mc-mods/minecolonies/files/all
 
-If you want to chat with the developers and join our amazing community:
 
-https://discord.minecolonies.com
+### Issues & Support
 
-### Creating an Issue
+**Creating an Issue:**
+If you encounter bugs or have feature requests:
+1. Check existing issues on our GitHub repository
+2. Provide detailed reproduction steps
+3. Include your Minecraft version, NeoForge version, and mod version
+4. Attach relevant crash logs or screenshots
 
-MineColonies crashes every time? Have a suggestion? Found a bug? Create an issue now!
-
-1. Make sure your issue hasn't already been answered or fixed. Also think about whether your issue is a valid one before submitting it.
-2. Go to the [issues page](https://github.com/ldtteam/minecolonies/issues).
-3. Click `New Issue`
-4. Choose which type of issue you want to create.
-4. Fill in the form. Don't leave anything out!
-5. Click `Submit New Issue` and wait for a response!
+**Known Limitations:**
+- Crop growth rates follow vanilla mechanics (affected by light, water, bone meal)
+- Effects are based on vanilla potion systems
+- Textures and models may be placeholder in early versions
 
 ## For Developers
 
-### Compiling MineColonies
+#### Setup Development Environment
+
+**Prerequisites:**
+- Java JDK 21 (required for Minecraft 1.21.1)
+- Git for version control
+- IDE (IntelliJ IDEA recommended)
+- Gradle (included via wrapper)
+
+**Clone and Setup:**
+```bash
+git clone https://github.com/MalevolentGods/minecraft-fourtwenty.git
+cd fourtwenty
+./gradlew build
+```
+
+**Development Tasks:**
+```bash
+./gradlew runClient    # Launch Minecraft client for testing
+./gradlew runServer    # Launch dedicated server
+./gradlew runData      # Generate data files
+./gradlew build        # Build the mod JAR
+```
+
+### Compiling FourTwenty
 
 IMPORTANT: Please report any issues you have, as there might be some problems with the documentation! Also make sure you know EXACTLY what you're doing! It's not our fault if your OS crashes, becomes corrupted, etc.
 
 #### Setup Java
-The Java JDK is used to compile MineColonies.
+The Java JDK is used to compile FourTwenty.
 
 1. Download and install the Java JDK 21.
     * [Windows](https://adoptopenjdk.net/): Choose OpenJDK 21 (LTS) version and HotSpot JVM, then click the `latest release` button. After the download is complete, open the file, accept the license agreement, and in a custom setup make sure that `Add to Path` and `Set JAVA_HOME` are set to `Entire feature will be installed on your local hard drive`. Then choose `Install` and wait for the installation to finish.
@@ -61,7 +158,7 @@ If the `javac` command does not work on Windows:
 * Append `;%JAVA_HOME%\bin` EXACTLY AS SHOWN and click `OK`. Make sure the location is correct; double-check to make sure.
 
 #### Setup Gradle (Optional)
-Gradle is used to execute the various build tasks when compiling MineColonies.
+Gradle is used to execute the various build tasks when compiling FourTwenty.
 
 1. Download and install Gradle.
 	* [Windows/Mac download link](http://www.gradle.org/downloads). You only need the binaries, but choose whatever flavor you want.
@@ -79,61 +176,11 @@ Gradle is used to execute the various build tasks when compiling MineColonies.
 3. Open up your command line and run `gradle`. If it says 'Welcome to Gradle [version].', then you're good to go. If not, try the steps again.
 
 #### Setup Git
-Git is used to clone MineColonies and update your local copy.
+Git is used to clone FourTwenty and update your local copy.
 
 1. Download and install Git [here](http://git-scm.com/download/).
 2. *Optional*: Download and install a Git GUI client, such as Gitkraken, SourceTree, GitHub for Windows/Mac, SmartGitHg, TortoiseGit, etc. A nice list is available [here](http://git-scm.com/downloads/guis).
 
-#### Setup MineColonies (Command Line)
-This section assumes that you're using the command line version of Git.
-
-1. Open up your command line.
-2. Navigate to a place where you want to download the MineColonies source (e.g., `C:\GitHub\MineColonies\`) by executing `cd [folder location]`. This location is known as `basefolder` from now on.
-3. Execute `git clone https://github.com/Minecolonies/minecolonies.git`. This will download MineColonies' source into `basefolder`.
-4. Right now, you should have a directory that looks something like this:
-
-***
-    basefolder
-	\-MineColonies
-		\-MineColonies' files (should have `build.gradle`)
-***
-
-#### Setup MineColonies (GitKraken)
-If you decide to go with a GUI client like GitKraken:
-
-1. Open GitKraken
-2. Click `File → Clone Repo`
-3. Select GitHub.com and choose a base folder to clone to.
-4. Write MineColonies in the "Repository to Clone" and select the one by ldtteam.
-
-![](https://i.imgur.com/jVTXyCJ.png)
-
-5. Click 'Clone the Repo'.
-
-#### Compile MineColonies (Command Line)
-1. Navigate to the MineColonies folder and run a `dir` to make sure the `build.gradle` file is where you expect it to be.
-2. Execute `gradlew build`. This first sets up Forge and downloads the necessary libraries to build MineColonies. Be patient, as this may take a while.
-    * If you did everything right, `BUILD SUCCESSFUL` will be displayed after it finishes.
-    * If you see `BUILD FAILED`, check the error output (it should be right around `BUILD FAILED`), fix everything (if possible), and try again.
-3. Go to `basefolder\MineColonies\build\libs`.
-    * You should see a `.jar` file named `MineColonies-universal-null.jar`.
-4. Copy the jar into your Minecraft `mods` folder, and you are done! (`~/.minecraft/mods` on Linux)
-5. Alternatively, you can also run `./gradlew runClient` to start Minecraft with this jar.
-
-#### Compile MineColonies (Intellij)
-1. Right-click the `build.gradle` file (or the background of the folder it's in) and select `Open Folder as Intellij Project`.
-2. Select `Auto Import` and make sure a valid Gradle and JVM are selected.
-
-![](https://i.imgur.com/ewccjDZ.png)
-
-3. This will prepare some of the libraries used by Forge.
-4. Click `View → Tool Windows → Gradle`.
-5. In the Gradle view, expand the options to `Tasks → fg_runs`.
-6. Click the small refresh symbol in the upper left of the Gradle view. This sets up Forge and downloads the necessary libraries to build MineColonies. 
-7. Execute `genIntellijRuns` and restart Intellij.
-8. You will see a runClient and runServer startup configuration in the dropdown at the top right next to the green "run" button. Select one and press "run".
-9. If it doesn't start and throws a lot of errors, try another refresh. This often does wonders.
-10. If you want to produce a running jar, execute the `build` task. This will result in a runnable jar file in `basefolder\MineColonies\build\libs`.
 
 ##### Troubleshooting
 If Gradle synchronization fails, make sure:
