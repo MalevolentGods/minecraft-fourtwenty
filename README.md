@@ -10,6 +10,13 @@ A comprehensive Minecraft mod that adds a cannabis cultivation system to your ga
 - **Weed Crop Block**: A fully functional crop that requires proper farming conditions
 - **Harvesting**: Mature plants (stage 7) drop both weed buds and seeds for sustainable farming
 
+### Natural Wild Cannabis
+- **Wild Weed Spawning**: Cannabis plants now spawn naturally in the wild across specific biomes
+- **Target Biomes**: Plains, Savanna, Grove, and Meadow biomes feature natural cannabis growth
+- **Random Growth Stages**: Wild plants spawn at various ages (3-7) for realistic diversity
+- **Harvestable Resources**: Wild cannabis can be harvested for seeds and buds, providing an alternative source
+- **Balanced Rarity**: Wild plants are uncommon enough to feel special but common enough to find with exploration
+
 ### Items & Crafting
 - **Weed Bud**: The primary harvest from mature cannabis plants
 - **Weed Joint**: Craftable consumable made from weed buds and paper
@@ -39,11 +46,13 @@ This mod is built for **Minecraft 1.21.1** using **NeoForge 21.1.92** and **Java
 
 **Registry Classes:**
 - `ModItems.java` - Registers all mod items (seeds, buds, joints)
-- `ModBlocks.java` - Registers the weed crop block
+- `ModBlocks.java` - Registers the weed crop block and wild weed block
 - `ModCreativeTabs.java` - Creates the custom creative mode tab
+- `ModFeatures.java` - Registers world generation features for natural spawning
 
 **Block Implementation:**
 - `WeedCropBlock.java` - Extends `CropBlock` for cannabis cultivation mechanics
+- `WildWeedBlock.java` - Extends `BushBlock` for naturally spawning wild cannabis
 - Supports 8 growth stages with appropriate blockstate definitions
 - Integrates with Minecraft's crop growth system
 
@@ -54,9 +63,17 @@ This mod is built for **Minecraft 1.21.1** using **NeoForge 21.1.92** and **Java
 
 **Resource Structure:**
 - `assets/fourtwenty/` - Client-side resources (models, textures, lang files)
-- `data/drugcolonies/` - Data-driven content (recipes, loot tables)
+- `data/fourtwenty/` - Data-driven content (recipes, loot tables, world generation)
+- `data/fourtwenty/worldgen/` - World generation features and biome modifiers
 - Comprehensive blockstate definitions for all 8 crop growth stages
 - Custom item models for seeds, buds, and joints
+
+**World Generation:**
+- `wild_weed_patch.json` - Configured feature defining natural cannabis spawning
+- `wild_weed_patch.json` - Placed feature controlling spawn frequency and conditions
+- `add_wild_weed.json` - Biome modifier adding wild cannabis to target biomes
+- Uses weighted state providers for random age distribution (ages 3-7)
+- Validates placement conditions to ensure plants spawn on suitable surfaces
 
 #### Dependencies
 - **Minecraft**: 1.21.1
@@ -80,12 +97,18 @@ The mod seamlessly integrates with vanilla Minecraft mechanics:
 4. **Play**: Start Minecraft and look for the "Four Twenty" creative tab
 
 ### Getting Started
-1. **Obtain Seeds**: Find weed seeds in the Four Twenty creative tab or through other means
-2. **Plant**: Place seeds on tilled farmland (requires water source nearby)
-3. **Wait**: Cannabis takes time to grow through 8 stages - be patient!
-4. **Harvest**: Break mature crops (stage 7) to get weed buds and seeds
-5. **Craft**: Use the crafting recipe (Paper-Bud-Paper vertically) to make joints
-6. **Consume**: Right-click and hold to smoke a joint and experience the effects
+1. **Obtain Seeds**: Find weed seeds in the Four Twenty creative tab, or harvest them from wild cannabis plants
+2. **Find Wild Cannabis**: Explore Plains, Savanna, Grove, and Meadow biomes to discover naturally spawning cannabis
+3. **Plant**: Place seeds on tilled farmland (requires water source nearby)
+4. **Wait**: Cannabis takes time to grow through 8 stages - be patient!
+5. **Harvest**: Break mature crops (stage 7) to get weed buds and seeds - wild plants drop seeds based on their age
+6. **Craft**: Use the crafting recipe (Paper-Bud-Paper vertically) to make joints
+7. **Consume**: Right-click and hold to smoke a joint and experience the effects
+
+**Pro Tips:**
+- Wild cannabis at higher ages (6-7) yield more seeds when harvested
+- Look for wild plants in open grassland areas within the target biomes
+- Wild cannabis can be a great early-game source of seeds before setting up a farm
 
 You can find all our versions on Curseforge:
 TBD

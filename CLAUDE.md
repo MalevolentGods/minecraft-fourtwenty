@@ -9,8 +9,9 @@ This document provides context and guidelines for AI assistants working on the F
 ### Core Concept
 - Cannabis as a farmable crop with 8 growth stages
 - Harvest system yielding both consumables (buds) and renewable resources (seeds)
-- Crafting system to create edibles, joints, and other smokeable items with gameplay effects
+- Crafting system to create joints with gameplay effects
 - Balanced effect system using vanilla potion mechanics
+- **Natural world generation** in specific biomes (plains, savanna, grove, meadow)
 
 ## 🏗️ Architecture Patterns
 
@@ -21,7 +22,8 @@ src/main/java/com/malevolentgods/fourtwenty/
 ├── registry/                          # Registration classes
 │   ├── ModItems.java                  # Item registration
 │   ├── ModBlocks.java                 # Block registration
-│   └── ModCreativeTabs.java          # Creative tab registration
+│   ├── ModCreativeTabs.java          # Creative tab registration
+│   └── ModFeatures.java              # World generation feature registration
 ├── block/                             # Block implementations
 │   └── WeedCropBlock.java            # Cannabis crop block
 ├── item/                              # Item implementations
@@ -39,9 +41,16 @@ src/main/resources/
 │   │   ├── item/                     # Item models
 │   │   └── block/                    # Block models (8 crop stages)
 │   └── lang/                         # Localization
-└── data/drugcolonies/                # Data-driven content
-    ├── recipes/                      # Crafting recipes
-    └── loot_tables/                  # Block drop tables
+└── data/
+    ├── fourtwenty/                   # Mod-specific data
+    │   ├── loot_tables/              # Block drop tables  
+    │   ├── worldgen/                 # World generation data
+    │   │   ├── configured_feature/   # Feature configurations
+    │   │   └── placed_feature/       # Feature placements
+    │   └── neoforge/                 # NeoForge-specific data
+    │       └── biome_modifier/       # Biome modification files
+    └── drugcolonies/                 # Legacy namespace (recipes only)
+        └── recipes/                  # Crafting recipes
 ```
 
 ## 🔧 Development Conventions
@@ -73,8 +82,22 @@ public static final DeferredHolder<Item, ItemType> ITEM_NAME =
 ### Balance Philosophy
 - **Realistic Growth**: Cannabis follows vanilla crop mechanics (farmland, water, light requirements)
 - **Sustainable Farming**: Mature crops drop both product and seeds
+- **Natural Discovery**: Wild cannabis spawns in specific biomes at medium growth stages
 - **Meaningful Effects**: Joint consumption provides beneficial effects with minor drawbacks
 - **Vanilla Integration**: Uses existing potion effects and crafting patterns
+
+### Natural World Generation
+Wild cannabis spawns naturally in four biomes:
+- **Plains**: Most common spawn location
+- **Savanna**: Scattered patches in grasslands  
+- **Grove**: Rare finds in snowy mountain meadows
+- **Meadow**: Hidden among wildflowers
+
+**Spawn Characteristics:**
+- Growth stages 2-5 (partially grown, not seeds or fully mature)
+- Rarity: 1 in 32 chunks on average
+- Requires grass block, dirt, or farmland to spawn on
+- Only generates during world generation, not as ongoing spawning
 
 ### Effect Design
 Joint consumption provides:
@@ -99,8 +122,9 @@ Joint consumption provides:
 1. **CropBlock Extension**: `WeedCropBlock` extends vanilla `CropBlock` for compatibility
 2. **Custom Consumable**: `WeedJointItem` implements custom consumption with `UseAnim.TOOT_HORN`
 3. **Deferred Registration**: All registrations use NeoForge's deferred system
-4. **Resource Separation**: Assets in `fourtwenty` namespace, data in `drugcolonies` namespace
+4. **Resource Separation**: Assets in `fourtwenty` namespace, legacy recipes in `drugcolonies` namespace
 5. **Effect System**: Uses vanilla `MobEffectInstance` for maximum compatibility
+6. **World Generation**: JSON-based data-driven approach for biome modification and feature placement
 
 ### Build and Development
 - **IDE**: Visual Studio Code is being used for this project
@@ -139,13 +163,15 @@ Joint consumption provides:
 - **New Blocks**: Add to `ModBlocks.java`, create blockstates and models
 - **New Recipes**: Add JSON files to `data/drugcolonies/recipes/`
 - **New Effects**: Modify existing items or create new consumables
+- **World Generation**: Add features to `data/fourtwenty/worldgen/`, modify biomes via `data/fourtwenty/neoforge/biome_modifier/`
 
 ### Testing Priorities
 1. **Crop Growth**: Ensure all 8 stages work correctly
-2. **Harvest Mechanics**: Verify loot table functionality
-3. **Crafting**: Test recipe availability and output
-4. **Effects**: Validate potion effect application and duration
-5. **Creative Tab**: Confirm all items appear correctly
+2. **Natural Spawning**: Test wild weed generation in target biomes
+3. **Harvest Mechanics**: Verify loot table functionality for both cultivated and wild crops
+4. **Crafting**: Test recipe availability and output
+5. **Effects**: Validate potion effect application and duration
+6. **Creative Tab**: Confirm all items appear correctly
 
 ## 🚨 Important Considerations
 
@@ -174,3 +200,300 @@ Joint consumption provides:
 ---
 
 *This document should be updated as the project evolves. When making significant architectural changes, update the relevant sections to maintain accuracy.*
+
+## 🌍 World Generation Implementation Guide
+
+### JSON-Based World Generation Architecture
+Modern Minecraft world generation uses a data-driven approach with JSON files for maximum flexibility and mod compatibility.
+
+#### File Structure for World Generation
+```
+data/fourtwenty/worldgen/
+├── configured_feature/
+│   └── wild_weed_patch.json          # Feature definition
+├── placed_feature/
+│   └── wild_weed_patch.json          # Placement rules
+└── biome_modifier/
+    └── add_wild_weed.json            # Biome integration
+```
+
+#### Key Components Explained
+
+**1. Configured Features** (`configured_feature/`)
+Defines WHAT spawns and HOW it's configured:
+```json
+{
+  "type": "minecraft:random_patch",     // Scatter multiple blocks
+  "config": {
+    "tries": 16,                       // Attempts per chunk section
+    "xz_spread": 4,                    // Horizontal spread radius
+    "y_spread": 2,                     // Vertical spread range
+    "feature": {
+      "feature": {
+        "type": "minecraft:simple_block",
+        "config": {
+          "to_place": {
+            "type": "minecraft:weighted_state_provider",  // Random age selection
+            "entries": [
+              {"weight": 3, "data": {"Name": "fourtwenty:wild_weed", "Properties": {"age": "3"}}},
+              {"weight": 4, "data": {"Name": "fourtwenty:wild_weed", "Properties": {"age": "4"}}},
+              // ... more age variants
+            ]
+          }
+        }
+      },
+      "placement": [
+        {"type": "minecraft:block_predicate_filter", "predicate": {"type": "minecraft:replaceable"}},
+        {"type": "minecraft:block_predicate_filter", "predicate": {"type": "minecraft:would_survive", "state": {...}}}
+      ]
+    }
+  }
+}
+```
+
+**2. Placed Features** (`placed_feature/`)
+Defines WHERE and HOW OFTEN features spawn:
+```json
+{
+  "feature": "fourtwenty:wild_weed_patch",
+  "placement": [
+    {"type": "minecraft:count", "count": 3},              // 3 attempts per chunk
+    {"type": "minecraft:in_square"},                      // Scatter within chunk
+    {"type": "minecraft:heightmap", "heightmap": "WORLD_SURFACE_WG"},  // Surface level
+    {"type": "minecraft:biome"},                          // Only in target biomes
+    {"type": "minecraft:rarity_filter", "chance": 128}   // 1 in 128 chance
+  ]
+}
+```
+
+**3. Biome Modifiers** (`neoforge/biome_modifier/`)
+Defines WHICH BIOMES get the features:
+```json
+{
+  "type": "neoforge:add_features",
+  "biomes": ["minecraft:plains", "minecraft:savanna", "minecraft:grove", "minecraft:meadow"],
+  "features": "fourtwenty:wild_weed_patch",
+  "step": "vegetal_decoration"
+}
+```
+
+### Critical World Generation Concepts
+
+#### Block State Providers
+- **`simple_state_provider`**: Always places the same block state
+- **`weighted_state_provider`**: Randomly selects from weighted options (perfect for age variation)
+- **`rotated_block_provider`**: Rotates blocks (useful for directional blocks)
+
+#### Placement Modifiers
+- **`minecraft:count`**: How many attempts per feature placement
+- **`minecraft:rarity_filter`**: Probability of attempting placement (higher = rarer)
+- **`minecraft:heightmap`**: Where vertically to place (surface, ocean floor, etc.)
+- **`minecraft:block_predicate_filter`**: Validation checks for placement
+
+#### Common Placement Predicates
+- **`minecraft:replaceable`**: Only place in air, water, or other replaceable blocks
+- **`minecraft:would_survive`**: Check if the block can survive at this location
+- **`minecraft:matching_blocks`**: Only place on/in specific blocks
+- **`minecraft:all_of`**: Combine multiple predicates (AND logic)
+- **`minecraft:any_of`**: Alternative predicates (OR logic)
+
+### Registration Requirements
+
+#### ModFeatures.java Registration
+World generation features must be registered in code:
+```java
+public class ModFeatures {
+    public static final DeferredRegister<ConfiguredFeature<?, ?>> CONFIGURED_FEATURES =
+        DeferredRegister.create(Registries.CONFIGURED_FEATURE, "fourtwenty");
+    
+    public static final DeferredRegister<PlacedFeature> PLACED_FEATURES =
+        DeferredRegister.create(Registries.PLACED_FEATURE, "fourtwenty");
+}
+```
+
+#### Main Mod Class Integration
+```java
+@Mod("fourtwenty")
+public class FourTwenty {
+    public FourTwenty(IEventBus bus) {
+        // Register world generation features
+        ModFeatures.CONFIGURED_FEATURES.register(bus);
+        ModFeatures.PLACED_FEATURES.register(bus);
+    }
+}
+```
+
+### Block Compatibility for World Generation
+
+#### CropBlock vs BushBlock
+- **CropBlock**: Requires farmland, breaks on grass/dirt → Use for cultivation
+- **BushBlock**: Can survive on grass/dirt → Use for natural spawning
+
+#### WildWeedBlock Implementation
+```java
+public class WildWeedBlock extends BushBlock {
+    @Override
+    protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
+        return state.is(net.minecraft.tags.BlockTags.DIRT) || 
+               state.getBlock() == Blocks.GRASS_BLOCK ||
+               state.getBlock() == Blocks.DIRT ||
+               state.getBlock() == Blocks.PODZOL ||
+               state.getBlock() == Blocks.COARSE_DIRT;
+    }
+}
+```
+
+### Testing and Debugging World Generation
+
+#### Debug Commands
+Create debug commands for testing:
+```java
+@EventBusSubscriber(modid = "fourtwenty")
+public class DebugWeedCommand {
+    @SubscribeEvent
+    public static void onRegisterCommands(RegisterCommandsEvent event) {
+        // /debugweed - Test configured feature placement
+        // /testweed - Test basic block placement
+    }
+}
+```
+
+#### Testing Workflow
+1. **Basic Block Placement**: Test if custom blocks can be placed and survive
+2. **Feature Registration**: Verify features are registered (check for missing registry errors)
+3. **Placement Logic**: Test configured feature with debug commands
+4. **Biome Integration**: Generate new chunks in target biomes
+5. **Balance Testing**: Adjust rarity and count values based on gameplay
+
+## 💻 Windows PowerShell Command Syntax
+
+### Important PowerShell Considerations
+Windows PowerShell has different syntax than Bash - key differences to remember:
+
+#### Command Chaining
+- **Bash**: `command1 && command2` (conditional execution)
+- **PowerShell**: `command1; command2` (sequential execution)
+- **PowerShell Conditional**: `if ($?) { command2 }` (if first succeeded)
+
+#### Directory Navigation
+```powershell
+# Navigate to project directory
+cd "d:\Media\Projects\Coding\Mods\Minecraft\fourtwenty"
+
+# Run Gradle tasks
+.\gradlew build
+.\gradlew runClient
+.\gradlew clean
+
+# Multiple commands in sequence
+.\gradlew clean; .\gradlew build
+```
+
+#### File Operations
+```powershell
+# Delete files
+Remove-Item -Path "filename.ext"
+Remove-Item -Recurse -Force "directory"
+
+# Create directories
+New-Item -ItemType Directory -Path "new\directory"
+
+# Copy files
+Copy-Item -Path "source" -Destination "target"
+```
+
+#### Common PowerShell Patterns for Development
+```powershell
+# Check if build was successful before running
+.\gradlew build; if ($?) { .\gradlew runClient }
+
+# Clean and rebuild
+.\gradlew clean; .\gradlew build
+
+# Run data generation
+.\gradlew runData
+
+# Build and copy to mods folder (example)
+.\gradlew build; Copy-Item "build\libs\*.jar" "C:\MinecraftServer\mods\"
+```
+
+### Gradle Task Reference
+```powershell
+# Development tasks
+.\gradlew runClient          # Launch Minecraft client for testing
+.\gradlew runServer          # Launch dedicated server
+.\gradlew runData            # Generate data files
+.\gradlew build              # Build the mod JAR
+.\gradlew clean              # Clean build cache
+.\gradlew publishToMavenLocal # Install to local Maven repository
+
+# Troubleshooting tasks
+.\gradlew --refresh-dependencies build    # Force dependency refresh
+.\gradlew clean build --info            # Verbose build output
+.\gradlew tasks                         # List all available tasks
+```
+
+## 🔧 Common Issues and Solutions
+
+### World Generation Problems
+
+#### Feature Not Spawning
+1. **Check Registration**: Ensure `ModFeatures` is registered in main mod class
+2. **Verify JSON Syntax**: Use JSON validator, check for trailing commas
+3. **Test Placement**: Use debug commands to test feature manually
+4. **Check Prerequisites**: Ensure custom blocks can survive at placement location
+5. **Generate New Chunks**: Existing chunks won't have new features
+
+#### Block Immediately Breaking
+- **Problem**: Block requires specific foundation (e.g., CropBlock needs farmland)
+- **Solution**: Use appropriate base class (BushBlock for natural spawning)
+- **Debug**: Test manual placement with debug commands
+
+#### JSON Parse Errors
+```
+Common error: "No key placement" or "No key feature"
+Cause: Incorrect nesting in random_patch configuration
+Solution: Ensure proper feature/placement structure in JSON
+```
+
+### Build and Runtime Issues
+
+#### Configuration Corruption
+```
+Error: "Cannot invoke java.lang.Boolean.booleanValue() because the return value is null"
+Cause: Corrupted FML configuration files
+Solution: Delete runs/client/config/ directory and regenerate
+```
+
+#### Gradle Build Failures
+```powershell
+# Clean and retry
+.\gradlew clean; .\gradlew build
+
+# Force dependency refresh
+.\gradlew --refresh-dependencies build
+
+# Check for specific errors
+.\gradlew build --stacktrace --info
+```
+
+#### Registry Errors
+- **Missing Codec**: Ensure custom blocks implement required codec() method
+- **Registration Order**: Register features before using them in JSON files
+- **Namespace Issues**: Check that resource locations match exactly
+
+### Development Environment Issues
+
+#### IDE Setup
+- **Java Version**: Must use Java 21 for Minecraft 1.21.1
+- **Gradle JVM**: Set IDE to use correct Java version for Gradle
+- **Project Structure**: Verify Project SDK settings in IDE
+
+#### Hot Reload
+- **Client Testing**: Use `.\gradlew runClient` for most testing
+- **Data Changes**: May require restart for JSON changes
+- **Code Changes**: Usually hot-reloaded during runClient
+
+---
+
+*World generation and PowerShell sections added based on implementation experience. Update as new patterns emerge.*
