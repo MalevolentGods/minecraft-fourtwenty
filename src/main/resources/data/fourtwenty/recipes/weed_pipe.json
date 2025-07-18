@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  W",
+    " S ",
+    "S  "
+  ],
+  "key": {
+    "W": {
+      "item": "fourtwenty:weed_bud"
+    },
+    "S": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "item": "fourtwenty:weed_pipe",
+    "count": 1
+  }
+}
