@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  W",
+    "  C",
+    "OBS"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:birch_planks"
+    },
+    "O": {
+      "item": "minecraft:oak_planks"
+    },
+    "W": {
+      "item": "fourtwenty:weed_bud"
+    },
+    "S": {
+      "item": "minecraft:spruce_planks"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:weed_pipe",
+    "count": 1
+  },
+  "show_notification": true
+}

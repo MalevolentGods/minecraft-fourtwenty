@@ -1,20 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "  W",
-    " S ",
-    "S  "
+    "   ",
+    "   ",
+    "PWP"
   ],
   "key": {
+    "P": {
+      "item": "minecraft:paper"
+    },
     "W": {
       "item": "fourtwenty:weed_bud"
-    },
-    "S": {
-      "tag": "minecraft:planks"
     }
   },
   "result": {
-    "item": "fourtwenty:weed_pipe",
+    "id": "fourtwenty:weed_joint",
     "count": 1
-  }
+  },
+  "show_notification": true
 }

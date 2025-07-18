@@ -44,13 +44,14 @@ src/main/resources/
 └── data/
     ├── fourtwenty/                   # Mod-specific data
     │   ├── loot_tables/              # Block drop tables  
+    │   ├── recipe/                   # Crafting recipes (SINGULAR!)
     │   ├── worldgen/                 # World generation data
     │   │   ├── configured_feature/   # Feature configurations
     │   │   └── placed_feature/       # Feature placements
     │   └── neoforge/                 # NeoForge-specific data
     │       └── biome_modifier/       # Biome modification files
-    └── drugcolonies/                 # Legacy namespace (recipes only)
-        └── recipes/                  # Crafting recipes
+    └── drugcolonies/                 # Legacy namespace (if needed)
+        └── recipe/                   # Legacy crafting recipes
 ```
 
 ## 🔧 Development Conventions
@@ -125,6 +126,32 @@ Joint consumption provides:
 4. **Resource Separation**: Assets in `fourtwenty` namespace, legacy recipes in `drugcolonies` namespace
 5. **Effect System**: Uses vanilla `MobEffectInstance` for maximum compatibility
 6. **World Generation**: JSON-based data-driven approach for biome modification and feature placement
+
+### Recipe System (NeoForge 1.21.1 Specific)
+**CRITICAL**: Recipe folder naming and format requirements discovered through testing:
+
+1. **Folder Structure**: Must use `data/modid/recipe/` (singular) NOT `recipes/` (plural)
+2. **Result Format**: Recipe results must use `"id"` key, NOT `"item"` key:
+   ```json
+   // ✅ CORRECT
+   "result": {
+     "id": "fourtwenty:weed_pipe",
+     "count": 1
+   }
+   
+   // ❌ WRONG  
+   "result": {
+     "item": "fourtwenty:weed_pipe", 
+     "count": 1
+   }
+   ```
+3. **Optional Properties**: `"show_notification": true` can be added for recipe unlock notifications
+4. **Testing**: If recipes don't appear in crafting table, check folder name and result format first
+
+### Development Lessons Learned
+- **Recipe Debugging**: Always verify folder naming (`recipe` vs `recipes`) and result format (`id` vs `item`)
+- **NeoForge Changes**: 1.21.1 introduced stricter recipe validation compared to older versions
+- **Build Process**: Clean builds (`./gradlew clean build`) are necessary when changing resource files
 
 ### Build and Development
 - **IDE**: Visual Studio Code is being used for this project
