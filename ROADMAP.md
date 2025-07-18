@@ -4,24 +4,24 @@ This document outlines planned features and improvements for future versions of 
 
 ## 📋 Version Planning
 
-### 🍪 Version 0.2.0 - Edibles & Food Integration
-- [ ] **Weed Cookies** - Consumable food item with longer-lasting effects
-  - [ ] Crafting recipe (cookies + weed bud)
-  - [ ] Extended effect duration compared to joints/pipes
-  - [ ] Food saturation benefits alongside weed effects
-  - [ ] Custom eating animation and particles
+### 🍪 Version 0.2.0 - Edibles & Food Integration ✅ COMPLETED
+- [x] **Weed Cookies** - Consumable food item with longer-lasting effects
+  - [x] Crafting recipe (cookies + weed bud)
+  - [x] Extended effect duration compared to joints/pipes
+  - [x] Food saturation benefits alongside weed effects
+  - [x] Custom eating animation and particles
 
-- [ ] **Weed Brownies** - Premium edible with stronger effects
-  - [ ] Multi-ingredient crafting recipe (cocoa, wheat, weed bud)
-  - [ ] Stronger effect potency than cookies
-  - [ ] Longer duration than other consumption methods
-  - [ ] Rare ingredient requirements for balance
+- [x] **Weed Brownies** - Premium edible with stronger effects
+  - [x] Multi-ingredient crafting recipe (cocoa, wheat, weed bud)
+  - [x] Stronger effect potency than cookies
+  - [x] Longer duration than other consumption methods
+  - [x] Rare ingredient requirements for balance
 
-- [ ] **Edible Effects System**
-  - [ ] Delayed onset (10-15 seconds after consumption)
-  - [ ] Longer duration (3-5 minutes vs 1-2 for smoking)
-  - [ ] Different effect profiles per edible type
-  - [ ] Prevent stacking/overdose mechanics
+- [x] **Edible Effects System**
+  - [x] Delayed onset (10-15 seconds after consumption)
+  - [x] Longer duration (3-5 minutes vs 1-2 for smoking)
+  - [x] Different effect profiles per edible type
+  - [x] Prevent stacking/overdose mechanics
 
 ### 🏺 Version 0.3.0 - Stationary Equipment
 - [ ] **Weed Bong Block** - Stationary smoking apparatus

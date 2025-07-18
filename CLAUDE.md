@@ -27,7 +27,13 @@ src/main/java/com/malevolentgods/fourtwenty/
 ├── block/                             # Block implementations
 │   └── WeedCropBlock.java            # Cannabis crop block
 ├── item/                              # Item implementations
-│   └── WeedJointItem.java            # Consumable joint item
+│   ├── WeedJointItem.java            # Consumable joint item
+│   ├── WeedPipeItem.java             # Reusable pipe item
+│   ├── WeedEdibleItem.java           # Base class for edibles with delayed effects
+│   ├── WeedCookieItem.java           # Cookie edible with moderate effects
+│   └── WeedBrownieItem.java          # Premium brownie edible
+├── util/                              # Utility classes
+│   └── DelayedEffectManager.java     # Tick-based delayed effect system
 └── events/                            # Event handlers (currently minimal)
     └── ModEvents.java                 # Future event handling
 ```
@@ -106,10 +112,20 @@ Joint consumption provides:
 - **Neutral/Negative**: Hunger (munchies), occasional Confusion (realistic trade-off)
 - **Duration**: Balanced timing (30 seconds to 2 minutes based on effect type)
 
+### Edible Effects System
+Edible consumption (cookies and brownies) provides:
+- **Delayed Onset**: 10-15 second delay before effects begin (realistic)
+- **Extended Duration**: 3-5 minutes vs 1-2 minutes for smoking
+- **Overdose Prevention**: Cannot consume multiple edibles while effects are pending
+- **Tier System**: Cookies (basic effects) vs Brownies (premium effects with Jump/Speed)
+- **Food Benefits**: Provides nutrition and saturation like normal food
+
 ### Crafting Philosophy
 - Simple, intuitive recipes using vanilla materials
-- Vertical crafting pattern: Paper → Weed Bud → Paper (makes thematic sense)
+- **Joints**: Vertical crafting pattern: Paper → Weed Bud → Paper (makes thematic sense)
+- **Edibles**: Shapeless (cookies) and shaped (brownies) recipes using vanilla ingredients
 - Single output per craft (balanced resource consumption)
+- Premium items require more/rarer ingredients (brownies need cocoa + wheat + weed)
 
 ## 🛠️ Technical Implementation Details
 
@@ -121,11 +137,15 @@ Joint consumption provides:
 
 ### Key Technical Decisions
 1. **CropBlock Extension**: `WeedCropBlock` extends vanilla `CropBlock` for compatibility
-2. **Custom Consumable**: `WeedJointItem` implements custom consumption with `UseAnim.TOOT_HORN`
-3. **Deferred Registration**: All registrations use NeoForge's deferred system
-4. **Resource Separation**: Assets in `fourtwenty` namespace, legacy recipes in `drugcolonies` namespace
-5. **Effect System**: Uses vanilla `MobEffectInstance` for maximum compatibility
-6. **World Generation**: JSON-based data-driven approach for biome modification and feature placement
+2. **Custom Consumables**: 
+   - `WeedJointItem` implements custom consumption with `UseAnim.TOOT_HORN`
+   - `WeedPipeItem` adds durability and cooldown mechanics
+   - `WeedEdibleItem` base class provides delayed effect system with overdose prevention
+3. **Delayed Effect System**: `DelayedEffectManager` uses server tick events for proper timing
+4. **Deferred Registration**: All registrations use NeoForge's deferred system
+5. **Resource Separation**: Assets in `fourtwenty` namespace, legacy recipes in `drugcolonies` namespace
+6. **Effect System**: Uses vanilla `MobEffectInstance` for maximum compatibility
+7. **World Generation**: JSON-based data-driven approach for biome modification and feature placement
 
 ### Recipe System (NeoForge 1.21.1 Specific)
 **CRITICAL**: Recipe folder naming and format requirements discovered through testing:
@@ -152,6 +172,9 @@ Joint consumption provides:
 - **Recipe Debugging**: Always verify folder naming (`recipe` vs `recipes`) and result format (`id` vs `item`)
 - **NeoForge Changes**: 1.21.1 introduced stricter recipe validation compared to older versions
 - **Build Process**: Clean builds (`./gradlew clean build`) are necessary when changing resource files
+- **Delayed Effects**: Use server tick events instead of Thread.sleep() for game-appropriate timing
+- **Food Properties**: NeoForge 1.21.1 removed `alwaysEat()` method from FoodProperties.Builder
+- **Effect Prevention**: Use centralized manager systems to prevent effect stacking/overdose scenarios
 
 ### Build and Development
 - **IDE**: Visual Studio Code is being used for this project
@@ -199,6 +222,11 @@ Joint consumption provides:
 4. **Crafting**: Test recipe availability and output
 5. **Effects**: Validate potion effect application and duration
 6. **Creative Tab**: Confirm all items appear correctly
+7. **Edible System**: 
+   - Test delayed effect onset (10-15 seconds)
+   - Verify overdose prevention (cannot consume multiple edibles)
+   - Check tier differences (cookies vs brownies)
+   - Validate food nutrition application
 
 ## 🚨 Important Considerations
 
