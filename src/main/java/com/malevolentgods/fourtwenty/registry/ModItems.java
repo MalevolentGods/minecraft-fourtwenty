@@ -6,6 +6,7 @@ import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import com.malevolentgods.fourtwenty.item.WeedJointItem;
+import com.malevolentgods.fourtwenty.item.WeedPipeItem;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
@@ -23,4 +24,8 @@ public class ModItems {
     public static final DeferredHolder<Item, WeedJointItem> WEED_JOINT =
         ITEMS.register("weed_joint", () ->
             new WeedJointItem(new Item.Properties().stacksTo(16))); // Limited stack size for balance
+
+    public static final DeferredHolder<Item, WeedPipeItem> WEED_PIPE =
+        ITEMS.register("weed_pipe", () ->
+            new WeedPipeItem(new Item.Properties().durability(4).stacksTo(1))); // 4 uses, doesn't stack
 }

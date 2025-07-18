@@ -15,15 +15,15 @@ import net.minecraft.server.level.ServerLevel;
 
 import javax.annotation.Nonnull;
 
-public class WeedJointItem extends Item {
-    public WeedJointItem(Properties properties) {
+public class WeedPipeItem extends Item {
+    public WeedPipeItem(Properties properties) {
         super(properties);
     }
 
     @Override
     public @Nonnull ItemStack finishUsingItem(@Nonnull ItemStack stack, @Nonnull Level level, @Nonnull LivingEntity entity) {
         if (!level.isClientSide() && entity instanceof Player player) {
-            // Apply multiple effects to simulate being "high"
+            // Apply the same effects as the joint
             player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 600, 1)); // 30 seconds regeneration II
             player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 2400, 0)); // 2 minutes night vision
             player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 200, 1)); // 10 seconds hunger II (makes player hungrier)
@@ -52,10 +52,14 @@ public class WeedJointItem extends Item {
                         1, 0, 0.1, 0, 0.03);
                 }
             }
+
+            // Add 5 second cooldown (100 ticks = 5 seconds at 20 ticks per second)
+            player.getCooldowns().addCooldown(this, 100);
+
+            // Instead of consuming the item, damage it like a tool
+            stack.hurtAndBreak(1, player, player.getEquipmentSlotForItem(stack));
         }
         
-        // Consume the item (like food)
-        stack.shrink(1);
         return stack;
     }
 
@@ -70,12 +74,12 @@ public class WeedJointItem extends Item {
             double z = player.getZ();
             
             // Spawn initial smoke particles
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 6; i++) {
                 double offsetX = (level.random.nextDouble() - 0.5) * 0.3;
                 double offsetY = level.random.nextDouble() * 0.2;
                 double offsetZ = (level.random.nextDouble() - 0.5) * 0.3;
                 
-                serverLevel.sendParticles(ParticleTypes.SMOKE, 
+                serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, 
                     x + offsetX, y + offsetY, z + offsetZ, 
                     1, 0, 0.05, 0, 0.01);
             }
@@ -87,11 +91,17 @@ public class WeedJointItem extends Item {
 
     @Override
     public @Nonnull UseAnim getUseAnimation(@Nonnull ItemStack stack) {
-        return UseAnim.TOOT_HORN; // More appropriate for smoking/inhaling
+        return UseAnim.TOOT_HORN; // Same smoking/inhaling animation as joint
     }
 
     @Override
     public int getUseDuration(@Nonnull ItemStack stack, @Nonnull LivingEntity entity) {
-        return 32; // Same as food items
+        return 32; // Same duration as joint
+    }
+
+    @Override
+    public boolean isValidRepairItem(@Nonnull ItemStack toRepair, @Nonnull ItemStack repair) {
+        // Allow repairing with weed buds - thematic and balanced
+        return repair.getItem() == com.malevolentgods.fourtwenty.registry.ModItems.WEED_BUD.get();
     }
 }
