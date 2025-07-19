@@ -136,16 +136,22 @@ Edible consumption (cookies and brownies) provides:
 - **Build System**: Gradle with NeoForge MDK
 
 ### Key Technical Decisions
-1. **CropBlock Extension**: `WeedCropBlock` extends vanilla `CropBlock` for compatibility
-2. **Custom Consumables**: 
+1. **CropBlock Extension**: `WeedCropBlock` extends vanilla `CropBlock` with `useWithoutItem()` override for harvest-and-replant behavior
+2. **Loot Table Integration**: Uses proper NeoForge loot table format with `random_sequence`, `explosion_decay`, and `dropResources()` call
+3. **Custom Consumables**: 
    - `WeedJointItem` implements custom consumption with `UseAnim.TOOT_HORN`
    - `WeedPipeItem` adds durability and cooldown mechanics
    - `WeedEdibleItem` base class provides delayed effect system with overdose prevention
-3. **Delayed Effect System**: `DelayedEffectManager` uses server tick events for proper timing
-4. **Deferred Registration**: All registrations use NeoForge's deferred system
-5. **Resource Separation**: Assets in `fourtwenty` namespace, legacy recipes in `drugcolonies` namespace
-6. **Effect System**: Uses vanilla `MobEffectInstance` for maximum compatibility
-7. **World Generation**: JSON-based data-driven approach for biome modification and feature placement
+4. **Delayed Effect System**: 
+   - `DelayedEffectManager` uses server tick events for proper timing
+   - Tracks pending effects per player with UUID-based identification
+   - Prevents overdose by checking active delayed effects before consumption
+   - Implements two-tier system: basic (cookies, 10s delay) and premium (brownies, 15s delay)
+   - Thread-safe operation using ConcurrentHashMap for multiplayer compatibility
+5. **Deferred Registration**: All registrations use NeoForge's deferred system
+6. **Resource Separation**: Assets in `fourtwenty` namespace, legacy recipes in `drugcolonies` namespace
+7. **Effect System**: Uses vanilla `MobEffectInstance` for maximum compatibility
+8. **World Generation**: JSON-based data-driven approach for biome modification and feature placement
 
 ### Recipe System (NeoForge 1.21.1 Specific)
 **CRITICAL**: Recipe folder naming and format requirements discovered through testing:
@@ -175,6 +181,47 @@ Edible consumption (cookies and brownies) provides:
 - **Delayed Effects**: Use server tick events instead of Thread.sleep() for game-appropriate timing
 - **Food Properties**: NeoForge 1.21.1 removed `alwaysEat()` method from FoodProperties.Builder
 - **Effect Prevention**: Use centralized manager systems to prevent effect stacking/overdose scenarios
+- **Loot Tables**: Follow established mod patterns (e.g., Croptopia) with proper structure including `random_sequence`, `explosion_decay`, and guaranteed `set_count` functions
+- **CropBlock Harvest**: Override `useWithoutItem()` method and call `dropResources()` to trigger loot table drops properly
+- **Crop Drop Mechanism**: Direct popResource() calls work reliably when loot tables fail to load properly in NeoForge 1.21.1
+
+### Crop Drop System: Loot Tables vs Direct Drops
+During edibles system development, we discovered inconsistent behavior with loot table loading for custom crop blocks:
+
+**Issue Encountered:**
+- Loot table files (`data/fourtwenty/loot_tables/blocks/weed_crop.json`) structured correctly
+- File format validated against working examples (Croptopia mod patterns)
+- `dropResources()` called properly in harvest method
+- Loot tables not loading/functioning despite correct setup
+
+**Solution Implemented:**
+Direct drop mechanism using `popResource()` calls in the crop block:
+```java
+// In WeedCropBlock.java useWithoutItem() method
+if (!level.isClientSide()) {
+    // Drop 1-3 weed buds (guaranteed)
+    int budCount = 1 + level.random.nextInt(3);
+    popResource(level, pos, new ItemStack(ModItems.WEED_BUD.get(), budCount));
+    
+    // Drop weed seeds with 5% chance (rare for sustainability)
+    if (level.random.nextFloat() < 0.05f) {
+        int seedCount = 1 + level.random.nextInt(4);
+        popResource(level, pos, new ItemStack(ModItems.WEED_SEEDS.get(), seedCount));
+    }
+}
+```
+
+**Advantages of Direct Drop Approach:**
+- Guaranteed functionality independent of loot table loading issues
+- More precise control over drop rates and quantities
+- Simpler debugging and maintenance
+- No need to manage separate JSON files for simple drop scenarios
+
+**When to Use Each Approach:**
+- **Direct Drops**: Simple, predictable drops with custom logic (percentage chances, complex conditions)
+- **Loot Tables**: Complex drop pools, enchantment interactions, vanilla compatibility requirements
+
+**Lesson Learned**: For custom mod mechanics, direct drops via `popResource()` provide more reliable control than loot tables, especially when implementing non-standard drop behaviors like harvest-and-replant or percentage-based seed drops.
 
 ### Build and Development
 - **IDE**: Visual Studio Code is being used for this project
@@ -227,6 +274,10 @@ Edible consumption (cookies and brownies) provides:
    - Verify overdose prevention (cannot consume multiple edibles)
    - Check tier differences (cookies vs brownies)
    - Validate food nutrition application
+8. **Drop System**: 
+   - Test crop harvesting with right-click (mature crops)
+   - Verify break behavior (immature crops drop seeds)
+   - Check drop rates (5% seed chance for sustainability)
 
 ## 🚨 Important Considerations
 

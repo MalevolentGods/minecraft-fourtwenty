@@ -9,6 +9,9 @@
     "B": {
       "item": "minecraft:birch_planks"
     },
+    "C": {
+      "item": "minecraft:charcoal"
+    },
     "O": {
       "item": "minecraft:oak_planks"
     },
