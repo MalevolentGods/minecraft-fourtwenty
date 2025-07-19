@@ -6,6 +6,7 @@ import com.malevolentgods.fourtwenty.registry.ModBlocks;
 import com.malevolentgods.fourtwenty.registry.ModItems;
 import com.malevolentgods.fourtwenty.registry.ModCreativeTabs;
 import com.malevolentgods.fourtwenty.registry.ModFeatures;
+import com.malevolentgods.fourtwenty.registry.ModBlockEntities;
 import com.malevolentgods.fourtwenty.util.DelayedEffectManager;
 
 @Mod("fourtwenty")
@@ -17,6 +18,9 @@ public class FourTwenty {
         // Register items and blocks first
         ModBlocks.BLOCKS.register(bus);
         ModItems.ITEMS.register(bus);
+        
+        // Register block entities
+        ModBlockEntities.BLOCK_ENTITIES.register(bus);
         
         // Register world generation features
         ModFeatures.CONFIGURED_FEATURES.register(bus);

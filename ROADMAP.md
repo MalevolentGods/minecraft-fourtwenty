@@ -23,20 +23,20 @@ This document outlines planned features and improvements for future versions of 
   - [x] Different effect profiles per edible type
   - [x] Prevent stacking/overdose mechanics
 
-### 🏺 Version 0.3.0 - Stationary Equipment
-- [ ] **Weed Bong Block** - Stationary smoking apparatus
-  - [ ] Multi-block structure or large single block
-  - [ ] Area-of-effect benefits for nearby players
-  - [ ] Shared cooldown system to prevent spam
-  - [ ] Decorative smoke particle effects
-  - [ ] Water requirement for operation
+### 🏺 Version 0.3.0 - Stationary Equipment ✅ COMPLETED
+- [x] **Weed Bong Block** - Stationary smoking apparatus
+  - [x] Multi-block structure or large single block
+  - [x] Area-of-effect benefits for nearby players
+  - [x] Shared cooldown system to prevent spam
+  - [x] Decorative smoke particle effects
+  - [x] Water requirement for operation
 
-- [ ] **Bong Mechanics**
-  - [ ] Loading system (place weed buds to fill)
-  - [ ] Multiple uses per loading
-  - [ ] Area effect radius (3-5 block radius)
-  - [ ] Enhanced effects for group sessions
-  - [ ] Visual indicator for loaded/empty state
+- [x] **Bong Mechanics**
+  - [x] Loading system (place weed buds to fill)
+  - [x] Multiple uses per loading
+  - [x] Area effect radius (3-5 block radius)
+  - [x] Enhanced effects for group sessions
+  - [x] Visual indicator for loaded/empty state
 
 ### 🔬 Version 0.4.0 - Advanced Crafting System
 - [ ] **Drug Crafting Bench** - Specialized workstation
