@@ -1,19 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "G G",
-    "GDG",
-    "III"
+    "DID",
+    "DGD",
+    "DGD"
   ],
   "key": {
     "G": {
       "item": "minecraft:glass"
     },
     "D": {
-      "item": "minecraft:diamond"
+      "item": "minecraft:dark_oak_planks"
     },
     "I": {
-      "item": "minecraft:iron_ingot"
+      "item": "minecraft:gold_ingot"
     }
   },
   "result": {
