@@ -2,15 +2,18 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "G G",
-    "GWG",
-    "GGG"
+    "GDG",
+    "III"
   ],
   "key": {
     "G": {
       "item": "minecraft:glass"
     },
-    "W": {
-      "item": "minecraft:water_bucket"
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
     }
   },
   "result": {

@@ -2,6 +2,24 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [0.3.1] - GUI System Overhaul
+
+### Changed
+- **Weed Bong Interface**: Complete redesign from block state to GUI-based system
+  - **Brewing Stand-like GUI**: Right-click bong opens inventory interface with 3 slots
+  - **Slot System**: Dedicated slots for weed buds, water bottles, and blaze powder
+  - **Automatic Processing**: Auto-lights when all required items are present
+  - **Simplified Interaction**: No more manual lighting - just add items and get effects
+  - **Blaze Powder Fuel**: Replaces flint & steel for more intuitive brewing stand parallel
+  - **Area Effects**: Maintained 4-block radius group session benefits
+  - **Visual Feedback**: Clean interface without manual interaction buttons
+
+### Technical
+- **Menu System**: Added WeedBongMenu with Container interface implementation
+- **Client GUI**: WeedBongScreen for rendering and interaction
+- **Registry Updates**: ModMenuTypes for custom menu registration
+- **Inventory Management**: Full item persistence and automatic consumption
+
 ## [0.3.0] - Stationary Equipment
 
 ### Added

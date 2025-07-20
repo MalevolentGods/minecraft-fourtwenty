@@ -40,14 +40,18 @@ A comprehensive Minecraft mod that adds a cannabis cultivation system to your ga
 - **Overdose Prevention**: Cannot consume multiple edibles while effects are pending
 
 #### Stationary Equipment (v0.3.0)
-- **Weed Bong**: Advanced stationary smoking apparatus
-  - Multi-state block with visual feedback (empty, water-filled, loaded, lit)
-  - Interactive system: water bucket → weed buds → flint & steel → use
-  - Area-of-effect benefits (4-block radius for group sessions)
-  - Enhanced effects stronger than individual consumption
-  - 15-second burn duration with automatic weed consumption
-  - Particle effects and ambient sounds
-  - Social gameplay encouraging group activities
+- **Weed Bong**: Advanced brewing stand-like cannabis apparatus
+  - **GUI Interface**: Right-click to open brewing stand-style inventory interface
+  - **Three Slot System**: 
+    - Weed Bud slot (accepts cannabis buds)
+    - Water slot (accepts water bottles)
+    - Blaze Powder slot (fuel for automatic lighting)
+  - **Automatic Processing**: Auto-lights when all required items are present
+  - **Area-of-effect Benefits**: 4-block radius for group session effects
+  - **Enhanced Effects**: Stronger than individual consumption methods
+  - **15-second Burn Duration**: Automatically consumes weed and extinguishes
+  - **Particle Effects & Sounds**: Visual and audio feedback during operation
+  - **Social Gameplay**: Encourages group activities and shared experiences
 
 ### Gameplay Effects
 
@@ -106,7 +110,7 @@ This mod is built for **Minecraft 1.21.1** using **NeoForge 21.1.92** and **Java
 **Block Implementation:**
 - `WeedCropBlock.java` - Extends `CropBlock` for cannabis cultivation mechanics with right-click harvesting
 - `WildWeedBlock.java` - Extends `BushBlock` for naturally spawning wild cannabis
-- `WeedBongBlock.java` - Advanced block entity with multi-state mechanics and area effects
+- `WeedBongBlock.java` - Advanced block entity with GUI interface and area effects
 - Supports 8 growth stages with appropriate blockstate definitions
 - Integrates with Minecraft's crop growth system and block entity ticking
 
@@ -118,9 +122,15 @@ This mod is built for **Minecraft 1.21.1** using **NeoForge 21.1.92** and **Java
 - `WeedBrownieItem.java` - Premium tier edible with enhanced delayed effects
 - Uses various `UseAnim` types for different consumption experiences
 
+**GUI System:**
+- `WeedBongMenu.java` - Custom container menu with 3-slot brewing stand-like interface
+- `WeedBongScreen.java` - Client-side GUI screen for bong interaction
+- `ModMenuTypes.java` - Menu type registry for custom GUIs
+- `ModClientEvents.java` - Client-side event handling for screen registration
+
 **Advanced Systems:**
 - `DelayedEffectManager.java` - Server tick-based system for edible effect timing
-- `WeedBongBlockEntity.java` - Block entity handling bong state, effects, and area mechanics
+- `WeedBongBlockEntity.java` - Block entity with inventory management and automatic processing
 - UUID-based player tracking for multiplayer compatibility
 - Thread-safe effect scheduling and overdose prevention
 
@@ -174,11 +184,11 @@ The mod seamlessly integrates with vanilla Minecraft mechanics:
 7. **Consume**: 
    - **Smoking**: Right-click and hold to smoke joints/pipes for instant effects
    - **Edibles**: Right-click to eat, then wait 10-15 seconds for delayed onset
-   - **Bong**: Place → Add water → Load weed → Light → Use for enhanced group effects
+   - **Bong**: Right-click to open GUI → Add weed, water bottle, and blaze powder → Auto-lights and provides area effects
 
 **Pro Tips:**
 - **Edibles**: Cannot consume multiple while effects are pending - plan your doses!
-- **Bong Setup**: Requires water, weed, and flint & steel - perfect for base builds
+- **Bong Setup**: Requires weed buds, water bottles, and blaze powder - perfect for base builds
 - **Seed Management**: Only 5% seed drop chance from harvests - save wild seeds!
 - **Group Play**: Bong provides strongest effects when multiple players are nearby
 - **Progression**: Start with joints → try edibles → build a bong for end-game social gameplay

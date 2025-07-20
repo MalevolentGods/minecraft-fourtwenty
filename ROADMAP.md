@@ -25,18 +25,27 @@ This document outlines planned features and improvements for future versions of 
 
 ### 🏺 Version 0.3.0 - Stationary Equipment ✅ COMPLETED
 - [x] **Weed Bong Block** - Stationary smoking apparatus
-  - [x] Multi-block structure or large single block
+  - [x] GUI-based brewing stand-like interface
+  - [x] 3-slot system (weed, water bottle, blaze powder)
+  - [x] Automatic processing and lighting
   - [x] Area-of-effect benefits for nearby players
-  - [x] Shared cooldown system to prevent spam
-  - [x] Decorative smoke particle effects
-  - [x] Water requirement for operation
+  - [x] Enhanced effects for group sessions
+  - [x] Visual and audio feedback
 
 - [x] **Bong Mechanics**
-  - [x] Loading system (place weed buds to fill)
-  - [x] Multiple uses per loading
-  - [x] Area effect radius (3-5 block radius)
-  - [x] Enhanced effects for group sessions
-  - [x] Visual indicator for loaded/empty state
+  - [x] Inventory-based item management
+  - [x] Auto-consumption of blaze powder for lighting
+  - [x] Area effect radius (4-block radius)
+  - [x] 15-second burn duration with auto-extinguish
+  - [x] Simplified interaction through GUI
+
+### ✨ Version 0.3.1 - GUI System Enhancement ✅ COMPLETED
+- [x] **Interface Overhaul**
+  - [x] Complete redesign from block states to GUI system
+  - [x] Brewing stand-inspired user interface
+  - [x] Automatic processing without manual interactions
+  - [x] Clean, intuitive slot-based system
+  - [x] Client-server synchronization for multiplayer
 
 ### 🔬 Version 0.4.0 - Advanced Crafting System
 - [ ] **Drug Crafting Bench** - Specialized workstation

@@ -2,38 +2,181 @@ package com.malevolentgods.fourtwenty.blockentity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.MenuProvider;
 import com.malevolentgods.fourtwenty.registry.ModBlockEntities;
 import com.malevolentgods.fourtwenty.block.WeedBongBlock;
+import com.malevolentgods.fourtwenty.menu.WeedBongMenu;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class WeedBongBlockEntity extends BlockEntity {
+public class WeedBongBlockEntity extends BlockEntity implements Container, MenuProvider {
     private static final int EFFECT_RADIUS = 4; // 4 block radius for area effects
     private static final int BURN_DURATION = 300; // 15 seconds (300 ticks)
     private static final int USE_COOLDOWN = 100; // 5 seconds between uses
     
+    private static final int WEED_SLOT = 0;
+    private static final int WATER_SLOT = 1;
+    private static final int BLAZE_POWDER_SLOT = 2;
+    
+    private NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
     private int burnTime = 0;
     private int lastUseTick = 0;
+    private boolean isLit = false;
+    
+    // Container data for syncing with client
+    private final ContainerData dataAccess = new ContainerData() {
+        @Override
+        public int get(int index) {
+            return switch (index) {
+                case 0 -> isLit ? 1 : 0;
+                case 1 -> burnTime;
+                case 2 -> WeedBongBlockEntity.this.hasWater() ? 1 : 0;
+                case 3 -> WeedBongBlockEntity.this.getWeedCount();
+                default -> 0;
+            };
+        }
+
+        @Override
+        public void set(int index, int value) {
+            switch (index) {
+                case 0 -> isLit = value != 0;
+                case 1 -> burnTime = value;
+                case 2 -> {} // Water status is read-only
+                case 3 -> {} // Weed count is read-only
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 4;
+        }
+    };
     
     public WeedBongBlockEntity(BlockPos pos, BlockState blockState) {
         super(ModBlockEntities.WEED_BONG.get(), pos, blockState);
+    }
+
+    // Container implementation methods
+    @Override
+    public int getContainerSize() {
+        return this.items.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        for (ItemStack itemstack : this.items) {
+            if (!itemstack.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack getItem(int index) {
+        return this.items.get(index);
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack removeItem(int index, int count) {
+        ItemStack result = ContainerHelper.removeItem(this.items, index, count);
+        if (!result.isEmpty()) {
+            this.setChanged();
+        }
+        return result;
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack removeItemNoUpdate(int index) {
+        return ContainerHelper.takeItem(this.items, index);
+    }
+
+    @Override
+    public void setItem(int index, @Nonnull ItemStack stack) {
+        this.items.set(index, stack);
+        if (stack.getCount() > this.getMaxStackSize()) {
+            stack.setCount(this.getMaxStackSize());
+        }
+        this.setChanged();
+    }
+
+    @Override
+    public boolean stillValid(@Nonnull Player player) {
+        return this.level != null && this.level.getBlockEntity(this.worldPosition) == this &&
+               player.distanceToSqr(this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 0.5, this.worldPosition.getZ() + 0.5) <= 64.0;
+    }
+
+    @Override
+    public void clearContent() {
+        this.items.clear();
+    }
+
+    // MenuProvider implementation methods
+    @Override
+    @Nonnull
+    public Component getDisplayName() {
+        return Component.translatable("container.fourtwenty.weed_bong");
+    }
+
+    @Override
+    @Nullable
+    public AbstractContainerMenu createMenu(int containerId, @Nonnull Inventory inventory, @Nonnull Player player) {
+        return new WeedBongMenu(containerId, inventory, this, this.dataAccess);
+    }
+
+    // Helper methods for container data
+    private boolean hasWater() {
+        return this.getItem(WATER_SLOT).is(Items.WATER_BUCKET);
+    }
+
+    private int getWeedCount() {
+        return this.getItem(WEED_SLOT).getCount();
+    }
+
+    private boolean hasBlazePowder() {
+        return !this.getItem(BLAZE_POWDER_SLOT).isEmpty();
+    }
+
+    // Check if bong can be lit
+    public boolean canLight() {
+        return hasWater() && getWeedCount() > 0 && hasBlazePowder() && !isLit;
+    }
+
+    // Check if bong can be used
+    public boolean canUse() {
+        return hasWater() && getWeedCount() > 0 && isLit;
+    }
+    
+    public boolean isLit() {
+        return isLit;
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, WeedBongBlockEntity entity) {
@@ -58,7 +201,12 @@ public class WeedBongBlockEntity extends BlockEntity {
     }
 
     private void serverTick(Level level, BlockPos pos, BlockState state) {
-        if (state.getValue(WeedBongBlock.LIT)) {
+        // Check if we can auto-light the bong
+        if (!isLit && canLight()) {
+            autoLight(level, pos, state);
+        }
+        
+        if (isLit) {
             burnTime++;
             
             // Apply area effects every 20 ticks (1 second)
@@ -70,6 +218,29 @@ public class WeedBongBlockEntity extends BlockEntity {
             if (burnTime >= BURN_DURATION) {
                 consumeWeed(level, pos, state);
                 burnTime = 0;
+                isLit = false;
+                setChanged();
+                if (level != null) {
+                    level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+                }
+            }
+        }
+    }
+    
+    private void autoLight(Level level, BlockPos pos, BlockState state) {
+        // Consume blaze powder to light the bong
+        ItemStack blazePowder = getItem(BLAZE_POWDER_SLOT);
+        if (!blazePowder.isEmpty()) {
+            blazePowder.shrink(1);
+            setItem(BLAZE_POWDER_SLOT, blazePowder);
+            
+            isLit = true;
+            burnTime = 0;
+            setChanged();
+            
+            if (level != null) {
+                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+                level.playSound(null, worldPosition, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0f, 1.0f);
             }
         }
     }
@@ -101,17 +272,25 @@ public class WeedBongBlockEntity extends BlockEntity {
     }
 
     public void lightBong(ServerPlayer player) {
+        if (!canLight()) return;
+        
+        // Consume one blaze powder
+        ItemStack blazePowder = this.getItem(BLAZE_POWDER_SLOT);
+        blazePowder.shrink(1);
+        this.setItem(BLAZE_POWDER_SLOT, blazePowder);
+        
+        isLit = true;
         burnTime = 0;
         setChanged();
+        
         if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-            // Play lighting sound
             level.playSound(null, worldPosition, SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 0.5f, 1.2f);
         }
     }
 
     public void useBong(ServerPlayer player) {
-        if (level == null) return;
+        if (level == null || !canUse()) return;
         
         long currentTick = level.getGameTime();
         
@@ -137,11 +316,19 @@ public class WeedBongBlockEntity extends BlockEntity {
     }
 
     private void consumeWeed(Level level, BlockPos pos, BlockState state) {
-        int currentLevel = state.getValue(WeedBongBlock.WEED_LEVEL);
-        if (currentLevel > 0) {
-            level.setBlock(pos, state
-                .setValue(WeedBongBlock.WEED_LEVEL, currentLevel - 1)
-                .setValue(WeedBongBlock.LIT, false), 3);
+        ItemStack weedStack = this.getItem(WEED_SLOT);
+        if (!weedStack.isEmpty()) {
+            weedStack.shrink(1);
+            this.setItem(WEED_SLOT, weedStack);
+            
+            if (weedStack.isEmpty()) {
+                isLit = false;
+            }
+            
+            setChanged();
+            if (level != null) {
+                level.sendBlockUpdated(pos, state, state, 3);
+            }
         }
     }
 
@@ -150,6 +337,8 @@ public class WeedBongBlockEntity extends BlockEntity {
         super.saveAdditional(tag, registries);
         tag.putInt("BurnTime", burnTime);
         tag.putInt("LastUseTick", lastUseTick);
+        tag.putBoolean("IsLit", isLit);
+        ContainerHelper.saveAllItems(tag, this.items, registries);
     }
 
     @Override
@@ -157,6 +346,9 @@ public class WeedBongBlockEntity extends BlockEntity {
         super.loadAdditional(tag, registries);
         burnTime = tag.getInt("BurnTime");
         lastUseTick = tag.getInt("LastUseTick");
+        isLit = tag.getBoolean("IsLit");
+        this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(tag, this.items, registries);
     }
 
     @Override
