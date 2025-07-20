@@ -109,6 +109,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
         ItemStack result = ContainerHelper.removeItem(this.items, index, count);
         if (!result.isEmpty()) {
             this.setChanged();
+            this.updateBlockState();
         }
         return result;
     }
@@ -126,6 +127,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
             stack.setCount(this.getMaxStackSize());
         }
         this.setChanged();
+        this.updateBlockState();
     }
 
     @Override
@@ -137,6 +139,26 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     @Override
     public void clearContent() {
         this.items.clear();
+        this.updateBlockState();
+    }
+    
+    // Update block state to match inventory contents
+    private void updateBlockState() {
+        if (this.level != null && !this.level.isClientSide) {
+            BlockState state = this.getBlockState();
+            boolean hasWater = hasWater();
+            int weedLevel = Math.min(getWeedCount(), 4); // Cap at 4 for block states
+            boolean lit = isLit;
+            
+            BlockState newState = state
+                .setValue(WeedBongBlock.HAS_WATER, hasWater)
+                .setValue(WeedBongBlock.WEED_LEVEL, weedLevel)
+                .setValue(WeedBongBlock.LIT, lit);
+            
+            if (!state.equals(newState)) {
+                this.level.setBlock(this.worldPosition, newState, 3);
+            }
+        }
     }
 
     // MenuProvider implementation methods
@@ -220,6 +242,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
                 burnTime = 0;
                 isLit = false;
                 setChanged();
+                updateBlockState();
                 if (level != null) {
                     level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
                 }
@@ -237,6 +260,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
             isLit = true;
             burnTime = 0;
             setChanged();
+            updateBlockState();
             
             if (level != null) {
                 level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -326,6 +350,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
             }
             
             setChanged();
+            updateBlockState();
             if (level != null) {
                 level.sendBlockUpdated(pos, state, state, 3);
             }
