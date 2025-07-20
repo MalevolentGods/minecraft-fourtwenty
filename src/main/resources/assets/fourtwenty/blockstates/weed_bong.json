@@ -1,0 +1,46 @@
+{
+  "variants": {
+    "has_water=false,lit=false,weed_level=0": {
+      "model": "fourtwenty:block/weed_bong_empty"
+    },
+    "has_water=false,lit=false,weed_level=1": {
+      "model": "fourtwenty:block/weed_bong_weed_1"
+    },
+    "has_water=false,lit=false,weed_level=2": {
+      "model": "fourtwenty:block/weed_bong_weed_2"
+    },
+    "has_water=false,lit=false,weed_level=3": {
+      "model": "fourtwenty:block/weed_bong_weed_3"
+    },
+    "has_water=false,lit=false,weed_level=4": {
+      "model": "fourtwenty:block/weed_bong_weed_4"
+    },
+    "has_water=true,lit=false,weed_level=0": {
+      "model": "fourtwenty:block/weed_bong_water"
+    },
+    "has_water=true,lit=false,weed_level=1": {
+      "model": "fourtwenty:block/weed_bong_water_weed_1"
+    },
+    "has_water=true,lit=false,weed_level=2": {
+      "model": "fourtwenty:block/weed_bong_water_weed_2"
+    },
+    "has_water=true,lit=false,weed_level=3": {
+      "model": "fourtwenty:block/weed_bong_water_weed_3"
+    },
+    "has_water=true,lit=false,weed_level=4": {
+      "model": "fourtwenty:block/weed_bong_water_weed_4"
+    },
+    "has_water=true,lit=true,weed_level=1": {
+      "model": "fourtwenty:block/weed_bong_lit_1"
+    },
+    "has_water=true,lit=true,weed_level=2": {
+      "model": "fourtwenty:block/weed_bong_lit_2"
+    },
+    "has_water=true,lit=true,weed_level=3": {
+      "model": "fourtwenty:block/weed_bong_lit_3"
+    },
+    "has_water=true,lit=true,weed_level=4": {
+      "model": "fourtwenty:block/weed_bong_lit_4"
+    }
+  }
+}

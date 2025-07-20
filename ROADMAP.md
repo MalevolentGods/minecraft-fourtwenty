@@ -23,20 +23,29 @@ This document outlines planned features and improvements for future versions of 
   - [x] Different effect profiles per edible type
   - [x] Prevent stacking/overdose mechanics
 
-### 🏺 Version 0.3.0 - Stationary Equipment
-- [ ] **Weed Bong Block** - Stationary smoking apparatus
-  - [ ] Multi-block structure or large single block
-  - [ ] Area-of-effect benefits for nearby players
-  - [ ] Shared cooldown system to prevent spam
-  - [ ] Decorative smoke particle effects
-  - [ ] Water requirement for operation
+### 🏺 Version 0.3.0 - Stationary Equipment ✅ COMPLETED
+- [x] **Weed Bong Block** - Stationary smoking apparatus
+  - [x] GUI-based brewing stand-like interface
+  - [x] 3-slot system (weed, water bottle, blaze powder)
+  - [x] Automatic processing and lighting
+  - [x] Area-of-effect benefits for nearby players
+  - [x] Enhanced effects for group sessions
+  - [x] Visual and audio feedback
 
-- [ ] **Bong Mechanics**
-  - [ ] Loading system (place weed buds to fill)
-  - [ ] Multiple uses per loading
-  - [ ] Area effect radius (3-5 block radius)
-  - [ ] Enhanced effects for group sessions
-  - [ ] Visual indicator for loaded/empty state
+- [x] **Bong Mechanics**
+  - [x] Inventory-based item management
+  - [x] Auto-consumption of blaze powder for lighting
+  - [x] Area effect radius (4-block radius)
+  - [x] 15-second burn duration with auto-extinguish
+  - [x] Simplified interaction through GUI
+
+### ✨ Version 0.3.1 - GUI System Enhancement ✅ COMPLETED
+- [x] **Interface Overhaul**
+  - [x] Complete redesign from block states to GUI system
+  - [x] Brewing stand-inspired user interface
+  - [x] Automatic processing without manual interactions
+  - [x] Clean, intuitive slot-based system
+  - [x] Client-server synchronization for multiplayer
 
 ### 🔬 Version 0.4.0 - Advanced Crafting System
 - [ ] **Drug Crafting Bench** - Specialized workstation
@@ -56,9 +65,9 @@ This document outlines planned features and improvements for future versions of 
 - [ ] **Crafting Bench Features**
   - [ ] Rolling animation for joint creation
   - [ ] Grinding mechanics for enhanced potency
-  - [ ] Quality system (poor/good/excellent results)
   - [ ] Experience/skill progression
   - [ ] Custom sounds and particle effects
+  - [ ] Quality system (poor/good/excellent results) - this is a stretch goal
 
 ### 🌈 Version 0.5.0 - Strain Diversity System
 - [ ] **Base Strain System**

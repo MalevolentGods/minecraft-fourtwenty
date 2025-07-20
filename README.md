@@ -8,7 +8,8 @@ A comprehensive Minecraft mod that adds a cannabis cultivation system to your ga
 - **Weed Seeds**: Plant these to start your cannabis farm
 - **Growing Cycle**: Cannabis plants grow through 8 distinct stages (0-7), just like vanilla crops
 - **Weed Crop Block**: A fully functional crop that requires proper farming conditions
-- **Harvesting**: Mature plants (stage 7) drop both weed buds and seeds for sustainable farming
+- **Harvesting**: Mature plants (stage 7) can be right-clicked to harvest buds while replanting automatically
+- **Sustainable Farming**: 5% chance for seed drops from mature harvests, breaking immature crops drops 1 seed for replanting
 
 ### Natural Wild Cannabis
 - **Wild Weed Spawning**: Cannabis plants now spawn naturally in the wild across specific biomes
@@ -17,18 +18,73 @@ A comprehensive Minecraft mod that adds a cannabis cultivation system to your ga
 - **Harvestable Resources**: Wild cannabis can be harvested for seeds and buds, providing an alternative source
 - **Balanced Rarity**: Wild plants are uncommon enough to feel special but common enough to find with exploration
 
-### Items & Crafting
-- **Weed Bud**: The primary harvest from mature cannabis plants
-- **Weed Joint**: Craftable consumable made from weed buds and paper
-- **Crafting Recipe**: Create joints using a vertical pattern of Paper → Weed Bud → Paper
+### Consumption Methods
+
+#### Smoking Items
+- **Weed Joint**: Single-use consumable made from weed buds and paper
+- **Weed Pipe**: Reusable smoking device with 4 uses and durability system
+- **Instant Effects**: Immediate onset with 1-2 minute duration
+- **Crafting Recipes**: Joints use vertical pattern (Paper → Weed Bud → Paper), pipes require premium materials
+
+#### Edible Items (v0.2.0)
+- **Weed Cookies**: Basic tier edible with delayed onset
+  - Shapeless recipe (cookie + weed bud)
+  - 10-second delay, 3-minute duration
+  - Provides nutrition (2 hunger + 2.4 saturation)
+  - Moderate effects with food benefits
+- **Weed Brownies**: Premium tier edible with enhanced effects
+  - Complex shaped recipe (cocoa, wheat, egg, sugar, weed bud)
+  - 15-second delay, 5-minute duration
+  - Enhanced nutrition (4 hunger + 4.8 saturation)
+  - Premium effects including Jump Boost II and Speed I
+- **Overdose Prevention**: Cannot consume multiple edibles while effects are pending
+
+#### Stationary Equipment (v0.3.0)
+- **Weed Bong**: Advanced brewing stand-like cannabis apparatus
+  - **GUI Interface**: Right-click to open brewing stand-style inventory interface
+  - **Three Slot System**: 
+    - Weed Bud slot (accepts cannabis buds)
+    - Water slot (accepts water bottles)
+    - Blaze Powder slot (fuel for automatic lighting)
+  - **Automatic Processing**: Auto-lights when all required items are present
+  - **Area-of-effect Benefits**: 4-block radius for group session effects
+  - **Enhanced Effects**: Stronger than individual consumption methods
+  - **15-second Burn Duration**: Automatically consumes weed and extinguishes
+  - **Particle Effects & Sounds**: Visual and audio feedback during operation
+  - **Social Gameplay**: Encourages group activities and shared experiences
 
 ### Gameplay Effects
-When consuming a Weed Joint, players experience:
+
+#### Smoking Effects (Joints & Pipes)
+When consuming joints or using pipes, players experience immediate effects:
 - **Regeneration II** (30 seconds) - Enhanced health recovery
 - **Night Vision** (2 minutes) - See clearly in the dark
 - **Hunger II** (10 seconds) - Increased appetite (munchies effect)
 - **Luck I** (1.5 minutes) - Better loot drops and fishing results
 - **Confusion** (20 seconds, 30% chance) - Occasional disorientation effect
+
+#### Edible Effects (Cookies & Brownies)
+Edibles provide delayed but longer-lasting effects:
+
+**Weed Cookies (Basic Tier):**
+- **Delayed Onset**: 10-second delay before effects begin
+- **Duration**: 3 minutes (longer than smoking)
+- **Effects**: Standard weed effects plus food nutrition
+- **Special**: Moderate potency, good for beginners
+
+**Weed Brownies (Premium Tier):**
+- **Delayed Onset**: 15-second delay before effects begin
+- **Duration**: 5 minutes (extended experience)
+- **Effects**: Enhanced standard effects plus Jump Boost II and Speed I
+- **Special**: Premium potency with bonus mobility effects
+
+#### Bong Effects (Group Sessions)
+The bong provides the strongest effects with social benefits:
+- **Area Effect**: All players within 4 blocks receive benefits
+- **Enhanced Potency**: Stronger and longer effects than individual consumption
+- **Group Bonuses**: Additional Damage Boost and Speed effects
+- **Continuous Benefits**: Effects apply every second while the bong is lit
+- **Social Gameplay**: Encourages communal use and shared experiences
 
 ### Creative Mode Integration
 - Custom "Four Twenty" creative tab containing all mod items
@@ -45,21 +101,38 @@ This mod is built for **Minecraft 1.21.1** using **NeoForge 21.1.92** and **Java
 #### Core Components
 
 **Registry Classes:**
-- `ModItems.java` - Registers all mod items (seeds, buds, joints)
-- `ModBlocks.java` - Registers the weed crop block and wild weed block
+- `ModItems.java` - Registers all mod items (seeds, buds, joints, pipes, edibles, bong)
+- `ModBlocks.java` - Registers the weed crop block, wild weed block, and bong block
 - `ModCreativeTabs.java` - Creates the custom creative mode tab
 - `ModFeatures.java` - Registers world generation features for natural spawning
+- `ModBlockEntities.java` - Registers block entities for advanced blocks (bong)
 
 **Block Implementation:**
-- `WeedCropBlock.java` - Extends `CropBlock` for cannabis cultivation mechanics
+- `WeedCropBlock.java` - Extends `CropBlock` for cannabis cultivation mechanics with right-click harvesting
 - `WildWeedBlock.java` - Extends `BushBlock` for naturally spawning wild cannabis
+- `WeedBongBlock.java` - Advanced block entity with GUI interface and area effects
 - Supports 8 growth stages with appropriate blockstate definitions
-- Integrates with Minecraft's crop growth system
+- Integrates with Minecraft's crop growth system and block entity ticking
 
 **Item Implementation:**
-- `WeedJointItem.java` - Custom consumable item with multiple potion effects
-- Uses `UseAnim.TOOT_HORN` for smoking animation
-- 32-tick consumption duration (same as food items)
+- `WeedJointItem.java` - Single-use consumable with immediate effects
+- `WeedPipeItem.java` - Reusable smoking device with durability and cooldown
+- `WeedEdibleItem.java` - Base class for edibles with delayed effect system
+- `WeedCookieItem.java` - Basic tier edible with moderate delayed effects
+- `WeedBrownieItem.java` - Premium tier edible with enhanced delayed effects
+- Uses various `UseAnim` types for different consumption experiences
+
+**GUI System:**
+- `WeedBongMenu.java` - Custom container menu with 3-slot brewing stand-like interface
+- `WeedBongScreen.java` - Client-side GUI screen for bong interaction
+- `ModMenuTypes.java` - Menu type registry for custom GUIs
+- `ModClientEvents.java` - Client-side event handling for screen registration
+
+**Advanced Systems:**
+- `DelayedEffectManager.java` - Server tick-based system for edible effect timing
+- `WeedBongBlockEntity.java` - Block entity with inventory management and automatic processing
+- UUID-based player tracking for multiplayer compatibility
+- Thread-safe effect scheduling and overdose prevention
 
 **Resource Structure:**
 - `assets/fourtwenty/` - Client-side resources (models, textures, lang files)
@@ -101,14 +174,24 @@ The mod seamlessly integrates with vanilla Minecraft mechanics:
 2. **Find Wild Cannabis**: Explore Plains, Savanna, Grove, and Meadow biomes to discover naturally spawning cannabis
 3. **Plant**: Place seeds on tilled farmland (requires water source nearby)
 4. **Wait**: Cannabis takes time to grow through 8 stages - be patient!
-5. **Harvest**: Break mature crops (stage 7) to get weed buds and seeds - wild plants drop seeds based on their age
-6. **Craft**: Use the crafting recipe (Paper-Bud-Paper vertically) to make joints
-7. **Consume**: Right-click and hold to smoke a joint and experience the effects
+5. **Harvest**: Right-click mature crops (stage 7) to harvest buds and replant automatically
+6. **Craft Your Preferred Method**:
+   - **Joints**: Paper → Weed Bud → Paper (vertical pattern) for immediate effects
+   - **Pipes**: Complex recipe with wood types and charcoal for reusable option
+   - **Cookies**: Cookie + Weed Bud (shapeless) for basic delayed effects
+   - **Brownies**: Cocoa + Wheat + Egg + Sugar + Weed Bud (shaped) for premium delayed effects
+   - **Bong**: Glass blocks + Water Bucket (shaped) for group sessions
+7. **Consume**: 
+   - **Smoking**: Right-click and hold to smoke joints/pipes for instant effects
+   - **Edibles**: Right-click to eat, then wait 10-15 seconds for delayed onset
+   - **Bong**: Right-click to open GUI → Add weed, water bottle, and blaze powder → Auto-lights and provides area effects
 
 **Pro Tips:**
-- Wild cannabis at higher ages (6-7) yield more seeds when harvested
-- Look for wild plants in open grassland areas within the target biomes
-- Wild cannabis can be a great early-game source of seeds before setting up a farm
+- **Edibles**: Cannot consume multiple while effects are pending - plan your doses!
+- **Bong Setup**: Requires weed buds, water bottles, and blaze powder - perfect for base builds
+- **Seed Management**: Only 5% seed drop chance from harvests - save wild seeds!
+- **Group Play**: Bong provides strongest effects when multiple players are nearby
+- **Progression**: Start with joints → try edibles → build a bong for end-game social gameplay
 
 You can find all our versions on Curseforge:
 TBD

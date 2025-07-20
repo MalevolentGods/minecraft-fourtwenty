@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "fourtwenty:block/weed_bong_bottom",
+    "top": "fourtwenty:block/weed_bong_top",
+    "side": "fourtwenty:block/weed_bong_lit_1"
+  }
+}

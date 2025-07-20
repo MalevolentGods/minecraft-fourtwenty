@@ -8,6 +8,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import com.malevolentgods.fourtwenty.block.WeedCropBlock;
 import com.malevolentgods.fourtwenty.block.WildWeedBlock;
+import com.malevolentgods.fourtwenty.block.WeedBongBlock;
 
 public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
@@ -30,5 +31,13 @@ public class ModBlocks {
           .noOcclusion()
           .instabreak()
           .sound(SoundType.GRASS)
+      ));
+
+    public static final DeferredHolder<Block, WeedBongBlock> WEED_BONG = BLOCKS.register("weed_bong",
+      () -> new WeedBongBlock(
+        BlockBehaviour.Properties.of()
+          .strength(2.0f, 6.0f)
+          .sound(SoundType.GLASS)
+          .noOcclusion()
       ));
 }

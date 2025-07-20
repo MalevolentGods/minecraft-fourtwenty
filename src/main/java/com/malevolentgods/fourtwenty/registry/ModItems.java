@@ -2,6 +2,7 @@ package com.malevolentgods.fourtwenty.registry;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -38,4 +39,8 @@ public class ModItems {
     public static final DeferredHolder<Item, WeedBrownieItem> WEED_BROWNIE =
         ITEMS.register("weed_brownie", () ->
             new WeedBrownieItem(new Item.Properties().stacksTo(16))); // Standard stack size for food
+
+    public static final DeferredHolder<Item, BlockItem> WEED_BONG =
+        ITEMS.register("weed_bong", () ->
+            new BlockItem(ModBlocks.WEED_BONG.get(), new Item.Properties().stacksTo(1))); // Single block item
 }

@@ -23,9 +23,20 @@ src/main/java/com/malevolentgods/fourtwenty/
 │   ├── ModItems.java                  # Item registration
 │   ├── ModBlocks.java                 # Block registration
 │   ├── ModCreativeTabs.java          # Creative tab registration
+│   ├── ModBlockEntities.java         # Block entity registration
+│   ├── ModMenuTypes.java             # Menu type registration
 │   └── ModFeatures.java              # World generation feature registration
 ├── block/                             # Block implementations
-│   └── WeedCropBlock.java            # Cannabis crop block
+│   ├── WeedCropBlock.java            # Cannabis crop block
+│   └── WeedBongBlock.java            # Interactive bong block with GUI
+├── blockentity/                       # Block entity implementations
+│   └── WeedBongBlockEntity.java      # Bong inventory and processing logic
+├── client/                            # Client-side components
+│   ├── ModClientEvents.java          # Client event registration
+│   └── screen/                       # GUI screens
+│       └── WeedBongScreen.java       # Bong GUI rendering
+├── menu/                              # Container menus
+│   └── WeedBongMenu.java             # Bong 3-slot brewing-like interface
 ├── item/                              # Item implementations
 │   ├── WeedJointItem.java            # Consumable joint item
 │   ├── WeedPipeItem.java             # Reusable pipe item
@@ -43,9 +54,19 @@ src/main/java/com/malevolentgods/fourtwenty/
 src/main/resources/
 ├── assets/fourtwenty/                 # Client-side resources
 │   ├── blockstates/                  # Block state definitions
+│   │   ├── weed_crop.json           # 8-stage crop states
+│   │   └── weed_bong.json           # 13-state bong variants
 │   ├── models/                       # Item and block models
 │   │   ├── item/                     # Item models
-│   │   └── block/                    # Block models (8 crop stages)
+│   │   └── block/                    # Block models
+│   │       ├── weed_crop_stage*.json # 8 crop stages
+│   │       └── weed_bong_*.json     # 13 bong state models
+│   ├── textures/                     # Custom textures
+│   │   └── block/                    # Block textures
+│   │       ├── weed_bong_*.png      # Bong state textures
+│   │       └── gui/                 # GUI textures
+│   │           └── container/       # Container backgrounds
+│   │               └── weed_bong.png # Bong GUI texture
 │   └── lang/                         # Localization
 └── data/
     ├── fourtwenty/                   # Mod-specific data
@@ -120,6 +141,81 @@ Edible consumption (cookies and brownies) provides:
 - **Tier System**: Cookies (basic effects) vs Brownies (premium effects with Jump/Speed)
 - **Food Benefits**: Provides nutrition and saturation like normal food
 
+### Bong System (v3.0 - GUI Implementation)
+The bong system provides an interactive brewing-like experience for cannabis consumption:
+
+#### Core Features
+- **GUI Interface**: Custom 3-slot interface similar to brewing stands
+  - Slot 1: Weed Buds (input material)
+  - Slot 2: Water Bucket (required for operation)
+  - Slot 3: Blaze Powder (fuel for automatic lighting)
+- **Automatic Processing**: When all three ingredients are present, the bong auto-lights and processes
+- **Visual Feedback**: Block appearance updates in real-time based on inventory contents
+- **Area Effects**: Players within range receive effects when bong is active
+
+#### Technical Architecture
+**WeedBongBlockEntity.java**
+- Implements `BaseContainerBlockEntity` for inventory management
+- 3-slot inventory with specialized restrictions per slot
+- Auto-lighting system checks for all required items and triggers processing
+- `updateBlockState()` method synchronizes visual appearance with inventory
+- Effect application system for nearby players during active sessions
+
+**WeedBongMenu.java**
+- Custom `AbstractContainerMenu` providing brewing stand-like interface
+- Slot restrictions: only weed buds in slot 0, water buckets in slot 1, blaze powder in slot 2
+- `ContainerData` integration for real-time client-server synchronization
+- Quick-move (shift-click) logic respecting slot restrictions
+
+**WeedBongScreen.java**
+- Client-side rendering using custom GUI texture
+- Clean interface without manual interaction buttons (automatic processing)
+- Standard container screen pattern for familiar user experience
+
+**Block State Properties**
+- `HAS_WATER`: Boolean indicating water bucket presence
+- `WEED_LEVEL`: Integer (0-3) representing weed bud quantity
+- `LIT`: Boolean indicating active processing state
+- States synchronized automatically with inventory changes
+
+#### Visual Design
+**Custom Textures**
+- 13 different visual states using `cube_bottom_top` model parent
+- Custom side textures for each combination of water/weed/lit states
+- Bottom texture: `weed_bong_bottom.png` (consistent base)
+- Top texture: `weed_bong_top.png` (consistent opening)
+- Side textures: State-specific (e.g., `weed_bong_water_weed_lit_side.png`)
+
+**Model Structure**
+All bong models follow the pattern:
+```json
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "fourtwenty:block/weed_bong_bottom",
+    "top": "fourtwenty:block/weed_bong_top", 
+    "side": "fourtwenty:block/weed_bong_[state]_side"
+  }
+}
+```
+
+#### Implementation Lessons
+**Real-time Visual Updates**
+- Original v3.0 required explicit `updateBlockState()` calls on all inventory changes
+- GUI systems bypass direct block interaction, requiring manual synchronization
+- Solution: Call `updateBlockState()` in `setItem()`, `removeItem()`, `clearContent()`, and effect processing methods
+
+**Menu System Integration**
+- Uses `ModMenuTypes.WEED_BONG.get()` registration pattern
+- Client-side registration via `ModClientEvents.registerScreens()`
+- `MenuProvider` implementation in block entity for right-click GUI opening
+
+**Processing Logic**
+- Automatic detection when all three slots contain valid items
+- Consumption mechanics: weed buds consumed, water bucket and blaze powder remain
+- Effect duration and area radius balanced for multiplayer gameplay
+- Prevents infinite loops through proper item consumption sequencing
+
 ### Crafting Philosophy
 - Simple, intuitive recipes using vanilla materials
 - **Joints**: Vertical crafting pattern: Paper → Weed Bud → Paper (makes thematic sense)
@@ -142,16 +238,26 @@ Edible consumption (cookies and brownies) provides:
    - `WeedJointItem` implements custom consumption with `UseAnim.TOOT_HORN`
    - `WeedPipeItem` adds durability and cooldown mechanics
    - `WeedEdibleItem` base class provides delayed effect system with overdose prevention
-4. **Delayed Effect System**: 
+4. **GUI-Based Bong System**: 
+   - `WeedBongBlockEntity` implements `BaseContainerBlockEntity` for 3-slot inventory management
+   - `WeedBongMenu` provides brewing stand-like interface with slot restrictions
+   - `WeedBongScreen` handles client-side GUI rendering with custom textures
+   - Real-time visual feedback through `updateBlockState()` synchronization
+   - Automatic processing when all required items (weed, water, blaze powder) are present
+5. **Delayed Effect System**: 
    - `DelayedEffectManager` uses server tick events for proper timing
    - Tracks pending effects per player with UUID-based identification
    - Prevents overdose by checking active delayed effects before consumption
    - Implements two-tier system: basic (cookies, 10s delay) and premium (brownies, 15s delay)
    - Thread-safe operation using ConcurrentHashMap for multiplayer compatibility
-5. **Deferred Registration**: All registrations use NeoForge's deferred system
-6. **Resource Separation**: Assets in `fourtwenty` namespace, legacy recipes in `drugcolonies` namespace
-7. **Effect System**: Uses vanilla `MobEffectInstance` for maximum compatibility
-8. **World Generation**: JSON-based data-driven approach for biome modification and feature placement
+6. **Block State Management**: 
+   - `WeedBongBlock` uses 3 properties: `HAS_WATER`, `WEED_LEVEL` (0-3), and `LIT`
+   - 13 distinct visual states with custom textures for each combination
+   - Block entity inventory changes trigger immediate visual updates
+7. **Deferred Registration**: All registrations use NeoForge's deferred system
+8. **Resource Separation**: Assets in `fourtwenty` namespace, legacy recipes in `drugcolonies` namespace
+9. **Effect System**: Uses vanilla `MobEffectInstance` for maximum compatibility
+10. **World Generation**: JSON-based data-driven approach for biome modification and feature placement
 
 ### Recipe System (NeoForge 1.21.1 Specific)
 **CRITICAL**: Recipe folder naming and format requirements discovered through testing:
@@ -184,6 +290,33 @@ Edible consumption (cookies and brownies) provides:
 - **Loot Tables**: Follow established mod patterns (e.g., Croptopia) with proper structure including `random_sequence`, `explosion_decay`, and guaranteed `set_count` functions
 - **CropBlock Harvest**: Override `useWithoutItem()` method and call `dropResources()` to trigger loot table drops properly
 - **Crop Drop Mechanism**: Direct popResource() calls work reliably when loot tables fail to load properly in NeoForge 1.21.1
+- **GUI Visual Feedback**: Block entity inventory changes require explicit `updateBlockState()` calls for real-time visual updates
+- **Menu Registration**: GUI systems need both server-side menu registration and client-side screen registration
+- **Block State Synchronization**: Complex block states (13 variants) need careful property management and model organization
+
+### Bong System Testing Guidelines
+
+#### Functional Testing
+1. **GUI Opening**: Right-click bong block should open 3-slot interface
+2. **Slot Restrictions**: 
+   - Slot 0: Only accepts weed buds
+   - Slot 1: Only accepts water buckets  
+   - Slot 2: Only accepts blaze powder
+3. **Auto-Processing**: When all three slots filled, bong should auto-light and process
+4. **Item Consumption**: Weed buds consumed, water bucket and blaze powder remain
+5. **Effect Application**: Players within range receive effects during processing
+
+#### Visual Testing  
+1. **Block Appearance**: Visual state should update immediately when items added/removed
+2. **State Combinations**: Test all 13 visual states (empty, water only, weed levels 1-3, lit variants)
+3. **Texture Loading**: Verify custom textures load correctly for each state
+4. **GUI Rendering**: Custom GUI texture should display properly with brewing stand layout
+
+#### Common Issues
+- **Visual Not Updating**: Check `updateBlockState()` calls in inventory modification methods
+- **GUI Not Opening**: Verify `MenuProvider` implementation and menu type registration
+- **Processing Not Working**: Ensure all three required items present and auto-light logic triggered
+- **Client Crashes**: Check client-side screen registration in `ModClientEvents`
 
 ### Crop Drop System: Loot Tables vs Direct Drops
 During edibles system development, we discovered inconsistent behavior with loot table loading for custom crop blocks:
