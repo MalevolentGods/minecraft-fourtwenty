@@ -56,9 +56,9 @@ This document outlines planned features and improvements for future versions of 
 - [ ] **Crafting Bench Features**
   - [ ] Rolling animation for joint creation
   - [ ] Grinding mechanics for enhanced potency
-  - [ ] Quality system (poor/good/excellent results)
   - [ ] Experience/skill progression
   - [ ] Custom sounds and particle effects
+  - [ ] Quality system (poor/good/excellent results) - this is a stretch goal
 
 ### 🌈 Version 0.5.0 - Strain Diversity System
 - [ ] **Base Strain System**
