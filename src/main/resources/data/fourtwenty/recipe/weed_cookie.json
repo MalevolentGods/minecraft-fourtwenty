@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:cookie"
+    },
+    {
+      "item": "fourtwenty:weed_bud"
+    }
+  ],
+  "result": {
+    "id": "fourtwenty:weed_cookie",
+    "count": 1
+  },
+  "show_notification": true
+}

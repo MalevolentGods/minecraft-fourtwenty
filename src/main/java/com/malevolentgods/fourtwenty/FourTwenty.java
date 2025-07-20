@@ -6,10 +6,14 @@ import com.malevolentgods.fourtwenty.registry.ModBlocks;
 import com.malevolentgods.fourtwenty.registry.ModItems;
 import com.malevolentgods.fourtwenty.registry.ModCreativeTabs;
 import com.malevolentgods.fourtwenty.registry.ModFeatures;
+import com.malevolentgods.fourtwenty.util.DelayedEffectManager;
 
 @Mod("fourtwenty")
 public class FourTwenty {
     public FourTwenty(IEventBus bus) {
+        // Initialize delayed effect system
+        DelayedEffectManager.init();
+        
         // Register items and blocks first
         ModBlocks.BLOCKS.register(bus);
         ModItems.ITEMS.register(bus);
