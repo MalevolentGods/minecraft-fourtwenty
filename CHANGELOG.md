@@ -2,6 +2,26 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [0.3.2] - Interface Polish & Bug Fixes
+
+### Added
+- **Custom Bong Menu Art**: Beautiful cannabis-themed GUI texture
+  - Custom background with cannabis leaf decorations
+  - Integrated title design eliminating need for overlay text
+  - Professional visual presentation matching mod theme
+
+### Fixed
+- **Weed Slot Input Limitation**: Resolved bug allowing unlimited weed bud input
+  - Properly enforced 4-bud maximum limit in weed input slot
+  - Prevented excess items from being consumed while maintaining count
+  - Enhanced container validation for reliable slot restrictions
+- **GUI Title Overlap**: Removed redundant title text since it's now part of the artwork
+
+### Technical
+- **Slot Validation**: Improved `canPlaceItem` method for stricter input control
+- **Container Management**: Enhanced stack size validation per slot type
+- **Screen Rendering**: Cleaned up label rendering to prevent text overlap
+
 ## [0.3.1] - GUI System Overhaul
 
 ### Changed
