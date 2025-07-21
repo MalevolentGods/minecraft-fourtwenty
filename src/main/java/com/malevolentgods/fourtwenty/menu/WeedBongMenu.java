@@ -35,9 +35,9 @@ public class WeedBongMenu extends AbstractContainerMenu {
         checkContainerDataCount(data, DATA_COUNT);
         
         // Add bong slots
-        this.addSlot(new WeedSlot(container, WEED_SLOT, 79, 17)); // Weed buds slot
-        this.addSlot(new WaterSlot(container, WATER_SLOT, 79, 53)); // Water bucket slot
-        this.addSlot(new BlazePowderSlot(container, BLAZE_POWDER_SLOT, 17, 17)); // Blaze powder slot
+        this.addSlot(new WeedSlot(container, WEED_SLOT, 79, 23)); // Weed buds slot
+        this.addSlot(new WaterSlot(container, WATER_SLOT, 79, 40)); // Water bucket slot
+        this.addSlot(new BlazePowderSlot(container, BLAZE_POWDER_SLOT, 79, 57)); // Blaze powder slot
         
         // Add player inventory slots
         for (int i = 0; i < 3; ++i) {
@@ -161,7 +161,7 @@ public class WeedBongMenu extends AbstractContainerMenu {
 
         @Override
         public int getMaxStackSize() {
-            return 64; // Allow full stacks of weed
+            return 4; // Allow full stacks of weed
         }
     }
 

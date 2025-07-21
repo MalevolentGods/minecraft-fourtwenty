@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Inventory;
 import javax.annotation.Nonnull;
 
 public class WeedBongScreen extends AbstractContainerScreen<WeedBongMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/weed_bong.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/bong_menu.png");
 
     public WeedBongScreen(WeedBongMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -19,7 +19,13 @@ public class WeedBongScreen extends AbstractContainerScreen<WeedBongMenu> {
     @Override
     protected void init() {
         super.init();
-        this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
+        // Remove title positioning since we're not rendering it
+    }
+
+    @Override
+    protected void renderLabels(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        // Don't render the title or inventory label since they're included in the texture
+        // This overrides the default behavior that would draw the title and "Inventory" text
     }
 
     @Override

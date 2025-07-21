@@ -36,7 +36,7 @@ import java.util.List;
 
 public class WeedBongBlockEntity extends BlockEntity implements Container, MenuProvider {
     private static final int EFFECT_RADIUS = 4; // 4 block radius for area effects
-    private static final int BURN_DURATION = 300; // 15 seconds (300 ticks)
+    private static final int BURN_DURATION = 1200; // 1 minute (1200 ticks) per bud
     private static final int USE_COOLDOWN = 100; // 5 seconds between uses
     
     private static final int WEED_SLOT = 0;
@@ -123,8 +123,8 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     @Override
     public void setItem(int index, @Nonnull ItemStack stack) {
         this.items.set(index, stack);
-        if (stack.getCount() > this.getMaxStackSize()) {
-            stack.setCount(this.getMaxStackSize());
+        if (stack.getCount() > this.getMaxStackSize(index)) {
+            stack.setCount(this.getMaxStackSize(index));
         }
         this.setChanged();
         this.updateBlockState();
@@ -140,6 +140,34 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     public void clearContent() {
         this.items.clear();
         this.updateBlockState();
+    }
+    
+    @Override
+    public boolean canPlaceItem(int slot, @Nonnull ItemStack stack) {
+        // Limit weed slot to maximum of 4 items
+        if (slot == WEED_SLOT) {
+            ItemStack currentStack = this.getItem(WEED_SLOT);
+            // Don't allow any items if we already have 4
+            if (currentStack.getCount() >= 4) {
+                return false;
+            }
+            // Don't allow if adding this stack would exceed 4
+            return currentStack.getCount() + stack.getCount() <= 4;
+        }
+        return true;
+    }
+    
+    @Override
+    public int getMaxStackSize() {
+        return 64; // Default for most slots
+    }
+    
+    // Custom method to get max stack size for specific slot
+    public int getMaxStackSize(int slot) {
+        if (slot == WEED_SLOT) {
+            return 4; // Limit weed slot to 4 items
+        }
+        return getMaxStackSize();
     }
     
     // Update block state to match inventory contents
@@ -313,31 +341,31 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
         }
     }
 
-    public void useBong(ServerPlayer player) {
-        if (level == null || !canUse()) return;
+    // public void useBong(ServerPlayer player) {
+    //     if (level == null || !canUse()) return;
         
-        long currentTick = level.getGameTime();
+    //     long currentTick = level.getGameTime();
         
-        // Check cooldown
-        if (currentTick - lastUseTick < USE_COOLDOWN) {
-            return;
-        }
+    //     // Check cooldown
+    //     if (currentTick - lastUseTick < USE_COOLDOWN) {
+    //         return;
+    //     }
         
-        lastUseTick = (int) currentTick;
+    //     lastUseTick = (int) currentTick;
         
-        // Apply immediate strong effects to the user
-        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 600, 2)); // 30s, level 3
-        player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 1800, 0)); // 1.5 minutes
-        player.addEffect(new MobEffectInstance(MobEffects.LUCK, 900, 1)); // 45s, level 2
-        player.addEffect(new MobEffectInstance(MobEffects.SATURATION, 100, 2)); // 5s food restoration
+    //     // Apply immediate strong effects to the user
+    //     player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 600, 2)); // 30s, level 3
+    //     player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 1800, 0)); // 1.5 minutes
+    //     player.addEffect(new MobEffectInstance(MobEffects.LUCK, 900, 1)); // 45s, level 2
+    //     player.addEffect(new MobEffectInstance(MobEffects.SATURATION, 100, 2)); // 5s food restoration
         
-        // Play use sound
-        if (level != null) {
-            level.playSound(null, worldPosition, SoundEvents.BUBBLE_COLUMN_BUBBLE_POP, SoundSource.BLOCKS, 0.8f, 0.8f);
-        }
+    //     // Play use sound
+    //     if (level != null) {
+    //         level.playSound(null, worldPosition, SoundEvents.BUBBLE_COLUMN_BUBBLE_POP, SoundSource.BLOCKS, 0.8f, 0.8f);
+    //     }
         
-        setChanged();
-    }
+    //     setChanged();
+    // }
 
     private void consumeWeed(Level level, BlockPos pos, BlockState state) {
         ItemStack weedStack = this.getItem(WEED_SLOT);
