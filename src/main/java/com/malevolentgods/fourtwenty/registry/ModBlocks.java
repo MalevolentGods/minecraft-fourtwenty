@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import com.malevolentgods.fourtwenty.block.WeedCropBlock;
 import com.malevolentgods.fourtwenty.block.WildWeedBlock;
 import com.malevolentgods.fourtwenty.block.WeedBongBlock;
+import com.malevolentgods.fourtwenty.block.DrugCraftingBenchBlock;
 
 public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
@@ -39,5 +40,12 @@ public class ModBlocks {
           .strength(2.0f, 6.0f)
           .sound(SoundType.GLASS)
           .noOcclusion()
+      ));
+
+    public static final DeferredHolder<Block, DrugCraftingBenchBlock> DRUG_CRAFTING_BENCH = BLOCKS.register("drug_crafting_bench",
+      () -> new DrugCraftingBenchBlock(
+        BlockBehaviour.Properties.of()
+          .strength(2.5f, 6.0f)
+          .sound(SoundType.WOOD)
       ));
 }

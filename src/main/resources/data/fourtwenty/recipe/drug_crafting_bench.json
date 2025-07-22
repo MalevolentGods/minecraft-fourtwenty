@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WPW",
+    "CTC",
+    "WWW"
+  ],
+  "key": {
+    "W": {
+      "tag": "minecraft:planks"
+    },
+    "P": {
+      "id": "minecraft:paper"
+    },
+    "C": {
+      "id": "minecraft:crafting_table"
+    },
+    "T": {
+      "id": "fourtwenty:weed_bud"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:drug_crafting_bench",
+    "count": 1
+  },
+  "show_notification": true
+}

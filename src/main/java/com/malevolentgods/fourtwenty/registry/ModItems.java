@@ -43,4 +43,8 @@ public class ModItems {
     public static final DeferredHolder<Item, BlockItem> WEED_BONG =
         ITEMS.register("weed_bong", () ->
             new BlockItem(ModBlocks.WEED_BONG.get(), new Item.Properties().stacksTo(1))); // Single block item
+
+    public static final DeferredHolder<Item, BlockItem> DRUG_CRAFTING_BENCH =
+        ITEMS.register("drug_crafting_bench", () ->
+            new BlockItem(ModBlocks.DRUG_CRAFTING_BENCH.get(), new Item.Properties().stacksTo(1))); // Single block item
 }

@@ -6,7 +6,10 @@
   "item.fourtwenty.weed_cookie": "Weed Cookie",
   "item.fourtwenty.weed_brownie": "Weed Brownie",
   "item.fourtwenty.weed_bong": "Weed Bong",
+  "item.fourtwenty.drug_crafting_bench": "Drug Crafting Bench",
   "block.fourtwenty.weed_crop": "Weed Crop",
   "block.fourtwenty.weed_bong": "Weed Bong",
+  "block.fourtwenty.drug_crafting_bench": "Drug Crafting Bench",
+  "container.fourtwenty.drug_crafting_bench": "Drug Crafting Bench",
   "itemGroup.fourtwenty.four_twenty_tab": "Four Twenty"
 }
