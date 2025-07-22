@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " I ",
+    "IBI",
+    " I "
+  ],
+  "key": {
+    "I": {
+      "id": "minecraft:iron_ingot"
+    },
+    "B": {
+      "id": "minecraft:bowl"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:weed_grinder",
+    "count": 1
+  },
+  "show_notification": true
+}

@@ -21,6 +21,7 @@ public class ModCreativeTabs {
                 output.accept(ModItems.WEED_BUD.get());
                 output.accept(ModItems.WEED_JOINT.get());
                 output.accept(ModItems.WEED_PIPE.get());
+                output.accept(ModItems.WEED_GRINDER.get());
                 output.accept(ModItems.WEED_COOKIE.get());
                 output.accept(ModItems.WEED_BROWNIE.get());
                 output.accept(ModItems.WEED_BONG.get());

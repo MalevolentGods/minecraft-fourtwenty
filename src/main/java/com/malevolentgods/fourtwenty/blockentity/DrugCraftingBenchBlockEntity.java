@@ -3,6 +3,7 @@ package com.malevolentgods.fourtwenty.blockentity;
 import com.malevolentgods.fourtwenty.menu.DrugCraftingBenchMenu;
 import com.malevolentgods.fourtwenty.registry.ModBlockEntities;
 import com.malevolentgods.fourtwenty.registry.ModItems;
+import com.malevolentgods.fourtwenty.item.WeedGrinderItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -114,32 +115,51 @@ public class DrugCraftingBenchBlockEntity extends BaseContainerBlockEntity imple
 
     private boolean canCraft() {
         // Check if we have the basic ingredients for joint crafting
+        ItemStack grinder = this.items.get(GRINDER_SLOT);
         ItemStack paper = this.items.get(PAPER_SLOT);
         ItemStack weed = this.items.get(WEED_INPUT_SLOT);
         ItemStack output = this.items.get(OUTPUT_SLOT);
         
-        // For now, basic joint recipe: paper + weed bud = joint
+        // For advanced crafting: grinder + paper + weed bud = joint (with efficiency bonus)
+        boolean hasGrinder = WeedGrinderItem.canUse(grinder);
         boolean hasPaper = paper.is(net.minecraft.world.item.Items.PAPER) && paper.getCount() >= 1;
         boolean hasWeed = weed.is(ModItems.WEED_BUD.get()) && weed.getCount() >= 1;
         boolean outputEmpty = output.isEmpty() || (output.is(ModItems.WEED_JOINT.get()) && output.getCount() < output.getMaxStackSize());
         
-        return hasPaper && hasWeed && outputEmpty;
+        // All three components required for advanced crafting
+        return hasGrinder && hasPaper && hasWeed && outputEmpty;
     }
 
     private void performCrafting() {
         if (canCraft()) {
+            ItemStack grinder = this.items.get(GRINDER_SLOT);
+            
             // Consume ingredients
             this.items.get(PAPER_SLOT).shrink(1);
             this.items.get(WEED_INPUT_SLOT).shrink(1);
             
+            // Use the grinder (damages it)
+            WeedGrinderItem.useGrinder(grinder);
+            
+            // Calculate output quantity based on grinder efficiency
+            float efficiency = WeedGrinderItem.getEfficiencyBonus(grinder);
+            int baseOutput = 1;
+            int bonusChance = (int)(efficiency * 100); // Convert to percentage
+            
+            // 20-50% chance for bonus joint based on grinder condition
+            int outputCount = baseOutput;
+            if (this.level != null && this.level.random.nextInt(100) < bonusChance) {
+                outputCount = 2; // Bonus joint from efficient grinding
+            }
+            
             // Create output
-            ItemStack result = new ItemStack(ModItems.WEED_JOINT.get(), 1);
+            ItemStack result = new ItemStack(ModItems.WEED_JOINT.get(), outputCount);
             ItemStack currentOutput = this.items.get(OUTPUT_SLOT);
             
             if (currentOutput.isEmpty()) {
                 this.items.set(OUTPUT_SLOT, result);
             } else {
-                currentOutput.grow(1);
+                currentOutput.grow(outputCount);
             }
             
             setChanged();
@@ -176,9 +196,9 @@ public class DrugCraftingBenchBlockEntity extends BaseContainerBlockEntity imple
     @Override
     public boolean canPlaceItemThroughFace(int index, @Nonnull ItemStack itemStack, @Nullable Direction direction) {
         return switch (index) {
+            case GRINDER_SLOT -> itemStack.is(ModItems.WEED_GRINDER.get());
             case PAPER_SLOT -> itemStack.is(net.minecraft.world.item.Items.PAPER);
             case WEED_INPUT_SLOT -> itemStack.is(ModItems.WEED_BUD.get());
-            case GRINDER_SLOT -> false; // Tools not automatable for now
             case OUTPUT_SLOT -> false; // Output slot
             default -> false;
         };

@@ -40,8 +40,7 @@ public class DrugCraftingBenchMenu extends AbstractContainerMenu {
         this.addSlot(new Slot(container, GRINDER_SLOT, 30, 35) {
             @Override
             public boolean mayPlace(@Nonnull ItemStack stack) {
-                // For now, no specific grinder item - could be added later
-                return false; // Disabled for initial implementation
+                return stack.is(ModItems.WEED_GRINDER.get());
             }
         });
 
@@ -107,7 +106,11 @@ public class DrugCraftingBenchMenu extends AbstractContainerMenu {
                 slot.onQuickCraft(stackInSlot, resultStack);
             } else if (index >= 4 && index < 40) {
                 // Moving from player inventory to crafting slots
-                if (stackInSlot.is(Items.PAPER)) {
+                if (stackInSlot.is(ModItems.WEED_GRINDER.get())) {
+                    if (!this.moveItemStackTo(stackInSlot, GRINDER_SLOT, GRINDER_SLOT + 1, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (stackInSlot.is(Items.PAPER)) {
                     if (!this.moveItemStackTo(stackInSlot, PAPER_SLOT, PAPER_SLOT + 1, false)) {
                         return ItemStack.EMPTY;
                     }

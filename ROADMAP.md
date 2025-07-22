@@ -48,11 +48,11 @@ This document outlines planned features and improvements for future versions of 
   - [x] Client-server synchronization for multiplayer
 
 ### 🔬 Version 0.4.0 - Advanced Crafting System
-- [ ] **Drug Crafting Bench** - Specialized workstation
-  - [ ] Custom GUI with dedicated slots
-  - [ ] Exclusive crafting location for all weed items
+- [x] **Drug Crafting Bench** - Specialized workstation
+  - [x] Custom GUI with dedicated slots
+  - [x] Exclusive crafting location for all weed items
   - [ ] Multi-step crafting processes
-  - [ ] Tool requirements (grinder, papers, etc.)
+  - [x] Tool requirements (grinder, papers, etc.)
   - [ ] Recipe unlocking system
 
 - [ ] **Pipe Loading System**

@@ -10,6 +10,7 @@ import com.malevolentgods.fourtwenty.item.WeedJointItem;
 import com.malevolentgods.fourtwenty.item.WeedPipeItem;
 import com.malevolentgods.fourtwenty.item.WeedCookieItem;
 import com.malevolentgods.fourtwenty.item.WeedBrownieItem;
+import com.malevolentgods.fourtwenty.item.WeedGrinderItem;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
@@ -31,6 +32,10 @@ public class ModItems {
     public static final DeferredHolder<Item, WeedPipeItem> WEED_PIPE =
         ITEMS.register("weed_pipe", () ->
             new WeedPipeItem(new Item.Properties().durability(4).stacksTo(1))); // 4 uses, doesn't stack
+
+    public static final DeferredHolder<Item, WeedGrinderItem> WEED_GRINDER =
+        ITEMS.register("weed_grinder", () ->
+            new WeedGrinderItem(new Item.Properties().durability(32).stacksTo(1))); // 32 uses, doesn't stack
 
     public static final DeferredHolder<Item, WeedCookieItem> WEED_COOKIE =
         ITEMS.register("weed_cookie", () ->
