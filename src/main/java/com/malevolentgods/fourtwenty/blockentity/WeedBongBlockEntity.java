@@ -173,18 +173,21 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     // Update block state to match inventory contents
     private void updateBlockState() {
         if (this.level != null && !this.level.isClientSide) {
+            // Check if this block entity is still valid and the block still exists
             BlockState state = this.getBlockState();
-            boolean hasWater = hasWater();
-            int weedLevel = Math.min(getWeedCount(), 4); // Cap at 4 for block states
-            boolean lit = isLit;
-            
-            BlockState newState = state
-                .setValue(WeedBongBlock.HAS_WATER, hasWater)
-                .setValue(WeedBongBlock.WEED_LEVEL, weedLevel)
-                .setValue(WeedBongBlock.LIT, lit);
-            
-            if (!state.equals(newState)) {
-                this.level.setBlock(this.worldPosition, newState, 3);
+            if (state.getBlock() instanceof WeedBongBlock) {
+                boolean hasWater = hasWater();
+                int weedLevel = Math.min(getWeedCount(), 4); // Cap at 4 for block states
+                boolean lit = isLit;
+                
+                BlockState newState = state
+                    .setValue(WeedBongBlock.HAS_WATER, hasWater)
+                    .setValue(WeedBongBlock.WEED_LEVEL, weedLevel)
+                    .setValue(WeedBongBlock.LIT, lit);
+                
+                if (!state.equals(newState)) {
+                    this.level.setBlock(this.worldPosition, newState, 3);
+                }
             }
         }
     }

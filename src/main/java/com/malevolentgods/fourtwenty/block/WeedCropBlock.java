@@ -3,17 +3,13 @@ package com.malevolentgods.fourtwenty.block;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.stats.Stats;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.RandomSource;
 import com.malevolentgods.fourtwenty.registry.ModItems;
+import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class WeedCropBlock extends CropBlock {
     public WeedCropBlock(Properties properties) {
@@ -24,45 +20,40 @@ public class WeedCropBlock extends CropBlock {
     protected @Nonnull ItemLike getBaseSeedId() {
         return ModItems.WEED_SEEDS.get();
     }
-
+    
     @Override
-    protected @Nonnull InteractionResult useWithoutItem(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull BlockHitResult hit) {
-        if (getAge(state) == getMaxAge()) {
-            player.awardStat(Stats.BLOCK_MINED.get(this));
-            player.causeFoodExhaustion(0.005f);
-            level.setBlock(pos, this.getStateForAge(0), 2);
-            
-            // Drop weed items directly
-            if (!level.isClientSide()) {
-                // Drop 1-3 weed buds
-                int budCount = 1 + level.random.nextInt(3);
-                popResource(level, pos, new net.minecraft.world.item.ItemStack(ModItems.WEED_BUD.get(), budCount));
-                
-                // Drop weed seeds with 5% chance
-                if (level.random.nextFloat() < 0.05f) {
-                    int seedCount = 1 + level.random.nextInt(4);
-                    popResource(level, pos, new net.minecraft.world.item.ItemStack(ModItems.WEED_SEEDS.get(), seedCount));
-                }
-            }
-            
-            return InteractionResult.SUCCESS;
-        }
-        return InteractionResult.PASS;
+    public int getMaxAge() {
+        // Override to use 6 as max age (like Minecolonies) instead of vanilla 7
+        // This means 7 growth stages: age 0, 1, 2, 3, 4, 5, 6
+        return 7;
     }
 
     @Override
-    public void playerDestroy(@Nonnull Level level, @Nonnull Player player, @Nonnull BlockPos pos, @Nonnull BlockState state, 
-                             @Nullable net.minecraft.world.level.block.entity.BlockEntity blockEntity, @Nonnull ItemStack tool) {
-        if (!level.isClientSide()) {
-            int age = this.getAge(state);
+    public List<ItemStack> getDrops(@Nonnull BlockState state, @Nonnull LootParams.Builder builder) {
+        List<ItemStack> drops = new java.util.ArrayList<>();
+        
+        int age = getAge(state);
+        RandomSource random = RandomSource.create();
+        
+        // Always drop seeds (like breaking any crop)
+        drops.add(new ItemStack(ModItems.WEED_SEEDS.get(), 1));
+        
+        // Only fully mature crops (age 7) drop buds
+        if (age == getMaxAge()) {
+            // Drop 1-3 weed buds
+            int budCount = 1 + random.nextInt(3);
+            drops.add(new ItemStack(ModItems.WEED_BUD.get(), budCount));
             
-            // If not fully grown, drop 1 seed for replanting
-            if (age < this.getMaxAge()) {
-                popResource(level, pos, new ItemStack(ModItems.WEED_SEEDS.get(), 1));
+            // 20% chance for bonus seeds
+            if (random.nextFloat() < 0.2f) {
+                int seedCount = 1 + random.nextInt(3);
+                drops.add(new ItemStack(ModItems.WEED_SEEDS.get(), seedCount));
             }
         }
         
-        // Call super for vanilla behavior (without drops since we handle them)
-        super.playerDestroy(level, player, pos, state, blockEntity, tool);
+        return drops;
     }
+
+    // No custom harvest logic - just work like vanilla wheat
+    // Players break the block to harvest, drops handled by getDrops() override
 }

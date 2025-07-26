@@ -8,8 +8,8 @@ A comprehensive Minecraft mod that adds a cannabis cultivation system to your ga
 - **Weed Seeds**: Plant these to start your cannabis farm
 - **Growing Cycle**: Cannabis plants grow through 8 distinct stages (0-7), just like vanilla crops
 - **Weed Crop Block**: A fully functional crop that requires proper farming conditions
-- **Harvesting**: Mature plants (stage 7) can be right-clicked to harvest buds while replanting automatically
-- **Sustainable Farming**: 5% chance for seed drops from mature harvests, breaking immature crops drops 1 seed for replanting
+- **Harvesting**: Break mature plants (stage 7) to harvest buds - works like vanilla wheat for consistency
+- **Reliable Drops**: Direct drop system ensures consistent harvesting across all environments (IDE and production)
 
 ### Natural Wild Cannabis
 - **Wild Weed Spawning**: Cannabis plants now spawn naturally in the wild across specific biomes
@@ -108,7 +108,7 @@ This mod is built for **Minecraft 1.21.1** using **NeoForge 21.1.92** and **Java
 - `ModBlockEntities.java` - Registers block entities for advanced blocks (bong)
 
 **Block Implementation:**
-- `WeedCropBlock.java` - Extends `CropBlock` for cannabis cultivation mechanics with right-click harvesting
+- `WeedCropBlock.java` - Extends `CropBlock` for cannabis cultivation mechanics with break-to-harvest system (like vanilla wheat)
 - `WildWeedBlock.java` - Extends `BushBlock` for naturally spawning wild cannabis
 - `WeedBongBlock.java` - Advanced block entity with GUI interface and area effects
 - Supports 8 growth stages with appropriate blockstate definitions
@@ -174,7 +174,7 @@ The mod seamlessly integrates with vanilla Minecraft mechanics:
 2. **Find Wild Cannabis**: Explore Plains, Savanna, Grove, and Meadow biomes to discover naturally spawning cannabis
 3. **Plant**: Place seeds on tilled farmland (requires water source nearby)
 4. **Wait**: Cannabis takes time to grow through 8 stages - be patient!
-5. **Harvest**: Right-click mature crops (stage 7) to harvest buds and replant automatically
+5. **Harvest**: Break mature crops (stage 7) to harvest buds - replant manually like vanilla wheat
 6. **Craft Your Preferred Method**:
    - **Joints**: Paper → Weed Bud → Paper (vertical pattern) for immediate effects
    - **Pipes**: Complex recipe with wood types and charcoal for reusable option

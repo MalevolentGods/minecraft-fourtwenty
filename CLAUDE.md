@@ -141,6 +141,55 @@ Edible consumption (cookies and brownies) provides:
 - **Tier System**: Cookies (basic effects) vs Brownies (premium effects with Jump/Speed)
 - **Food Benefits**: Provides nutrition and saturation like normal food
 
+### Cannabis Cultivation System
+The cultivation system provides reliable farming mechanics using proven patterns:
+
+#### Core Implementation Pattern
+- **WeedCropBlock extends CropBlock**: Leverages vanilla crop behavior for consistency
+- **Break-to-Harvest**: Players break mature crops (age 7) like vanilla wheat for familiarity
+- **Direct Drop Override**: Uses `getDrops()` method override instead of loot tables for production reliability
+- **Age-Based Drops**: Only mature crops (getMaxAge() = 7) drop buds, all ages drop seeds
+
+#### Technical Architecture
+**WeedCropBlock.java**
+```java
+@Override
+public List<ItemStack> getDrops(@Nonnull BlockState state, @Nonnull LootParams.Builder builder) {
+    List<ItemStack> drops = new ArrayList<>();
+    int age = getAge(state);
+    RandomSource random = RandomSource.create();
+    
+    // Always drop seeds (like breaking any crop)
+    drops.add(new ItemStack(ModItems.WEED_SEEDS.get(), 1));
+    
+    // Only fully mature crops (age 7) drop buds
+    if (age == getMaxAge()) {
+        int budCount = 1 + random.nextInt(3);
+        drops.add(new ItemStack(ModItems.WEED_BUD.get(), budCount));
+        
+        // 20% chance for bonus seeds
+        if (random.nextFloat() < 0.2f) {
+            int seedCount = 1 + random.nextInt(3);
+            drops.add(new ItemStack(ModItems.WEED_SEEDS.get(), seedCount));
+        }
+    }
+    return drops;
+}
+```
+
+#### Why This Pattern Works
+- **Production Reliability**: Direct method override works consistently across IDE and production environments
+- **No Loot Table Issues**: Bypasses potential loot table loading/parsing problems
+- **Familiar Behavior**: Players break crops like wheat - no confusing mechanics
+- **Proven Pattern**: Same approach used successfully in WildWeedBlock
+- **Simple Maintenance**: All drop logic in one method, easy to modify
+
+#### Key Lessons Learned
+- **Avoid Complex Harvest Systems**: Right-click harvest with replanting caused loot table conflicts
+- **Use Direct Drops**: Override `getDrops()` instead of relying on data-driven loot tables for crops
+- **Follow Vanilla Patterns**: Players expect to break crops to harvest them
+- **Test in Production**: IDE behavior may differ from production/CurseForge distribution
+
 ### Bong System (v3.0 - GUI Implementation)
 The bong system provides an interactive brewing-like experience for cannabis consumption:
 

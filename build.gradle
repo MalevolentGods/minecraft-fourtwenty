@@ -13,11 +13,11 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
-version = "0.3.2"
-group = "com.malevolentgods"
+version = project.mod_version
+group = project.mod_group
 
 base {
-    archivesName = "fourtwenty"
+    archivesName = project.archives_name
 }
 
 // Mojang ships Java 21 to end users in 1.21.1, so mods should target Java 21.

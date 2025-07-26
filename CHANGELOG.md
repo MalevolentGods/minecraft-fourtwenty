@@ -2,6 +2,44 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [0.4.0] - Advanced Crafting & Experience System
+
+### Added
+- **Experience & Skill Progression System**: Complete 10-level crafting skill system
+  - **Skill Levels**: Novice → Apprentice → Journeyman → Expert → Artisan → Master → Grandmaster → Legendary → Mythic → Transcendent
+  - **Experience Gain**: Earn XP from drug crafting bench operations (10 XP per craft)
+  - **Efficiency Bonuses**: Higher levels provide faster crafting speeds (up to 50% speed boost at Transcendent)
+  - **Visual Feedback**: Real-time skill level display in drug crafting bench GUI
+  - **Persistent Progress**: Player skill data saved with UUID-based tracking across sessions
+  - **Balanced Progression**: Exponential XP requirements (100 → 10,000 XP) for meaningful advancement
+
+- **Enhanced Drug Crafting Bench**: Advanced brewing-like crafting station
+  - **Experience Integration**: Tracks and displays player crafting skill levels
+  - **Speed Bonuses**: Crafting time decreases based on player experience level
+  - **Player-Specific Data**: Individual progress tracking for multiplayer servers
+  - **Professional Interface**: Clean GUI showing current level and progress
+
+### Fixed
+- **Crop Harvesting Production Issues**: Resolved critical bug where crop harvesting failed in production environments
+  - **Changed from Loot Tables to Direct Drops**: Replaced unreliable loot table system with direct `getDrops()` override
+  - **Break-to-Harvest**: Simplified harvesting - players now break mature crops like vanilla wheat
+  - **Production Consistency**: Eliminated IDE vs production environment discrepancies
+  - **Reliable Drop System**: Same proven pattern used in WildWeedBlock now applied to cultivated crops
+
+### Changed
+- **Cultivation Mechanics**: Updated from right-click harvest to break-block harvest for consistency
+  - Mature crops (age 7) drop 1-3 weed buds + 1 seed when broken
+  - 20% chance for bonus seeds (1-3 additional) from mature crops
+  - Immature crops drop only 1 seed for replanting
+  - Standard vanilla crop behavior - familiar to all players
+
+### Technical
+- **CraftingExperienceManager**: New system for player skill progression and persistence
+- **Experience Integration**: Drug crafting bench now calculates and applies efficiency bonuses
+- **WeedCropBlock Simplification**: Removed complex right-click interaction logic
+- **Direct Drop Implementation**: Override `getDrops()` method for reliable item generation
+- **Production Reliability**: Eliminated loot table dependency that caused environment-specific failures
+
 ## [0.3.2] - Interface Polish & Bug Fixes
 
 ### Added

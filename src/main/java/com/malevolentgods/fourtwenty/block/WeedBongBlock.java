@@ -107,9 +107,22 @@ public class WeedBongBlock extends BaseEntityBlock {
                         popResource(level, pos, stack);
                     }
                 }
-                bongEntity.clearContent();
+                // Don't call clearContent() here as it triggers updateBlockState() 
+                // while the block is being destroyed
+            }
+            
+            // Drop the bong block itself (like crafting table, furnace, etc.)
+            if (!level.isClientSide()) {
+                popResource(level, pos, new ItemStack(this.asItem()));
             }
         }
         super.onRemove(state, level, pos, newState, isMoving);
+    }
+    
+    @Override
+    @Nonnull
+    public java.util.List<ItemStack> getDrops(@Nonnull BlockState state, @Nonnull net.minecraft.world.level.storage.loot.LootParams.Builder builder) {
+        // Return empty list to prevent default drops - we handle all drops in onRemove
+        return java.util.Collections.emptyList();
     }
 }

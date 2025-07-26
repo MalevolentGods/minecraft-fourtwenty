@@ -4,12 +4,14 @@ import com.malevolentgods.fourtwenty.menu.DrugCraftingBenchMenu;
 import com.malevolentgods.fourtwenty.registry.ModBlockEntities;
 import com.malevolentgods.fourtwenty.registry.ModItems;
 import com.malevolentgods.fourtwenty.item.WeedGrinderItem;
+import com.malevolentgods.fourtwenty.util.CraftingExperienceManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 public class DrugCraftingBenchBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
     
@@ -35,6 +38,7 @@ public class DrugCraftingBenchBlockEntity extends BaseContainerBlockEntity imple
     private NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
     private int craftingProgress = 0;
     private int maxCraftingTime = 100; // 5 seconds at 20 ticks/second
+    private UUID lastUsedByPlayer = null; // Track who last used this bench
     
     // Container data for client-server sync
     protected final ContainerData dataAccess = new ContainerData() {
@@ -84,6 +88,11 @@ public class DrugCraftingBenchBlockEntity extends BaseContainerBlockEntity imple
     @Override
     @Nonnull
     protected AbstractContainerMenu createMenu(int containerId, @Nonnull Inventory inventory) {
+        // Track the player who opened this container
+        if (inventory.player instanceof Player player) {
+            this.lastUsedByPlayer = player.getUUID();
+            setChanged();
+        }
         return new DrugCraftingBenchMenu(containerId, inventory, this, this.dataAccess);
     }
 
@@ -97,7 +106,19 @@ public class DrugCraftingBenchBlockEntity extends BaseContainerBlockEntity imple
             boolean hasValidRecipe = canCraft();
             
             if (hasValidRecipe) {
-                craftingProgress++;
+                // Apply skill-based speed bonus
+                int progressIncrement = 1;
+                if (lastUsedByPlayer != null && level != null) {
+                    // Get the player who last used this bench
+                    Player player = level.getPlayerByUUID(lastUsedByPlayer);
+                    if (player instanceof ServerPlayer serverPlayer) {
+                        float speedBonus = CraftingExperienceManager.getLevelSpeedBonus(serverPlayer);
+                        // Speed bonus increases crafting rate (higher bonus = faster crafting)
+                        progressIncrement = Math.max(1, Math.round(1.0f + speedBonus));
+                    }
+                }
+                
+                craftingProgress += progressIncrement;
                 
                 if (craftingProgress >= maxCraftingTime) {
                     performCrafting();
@@ -141,15 +162,28 @@ public class DrugCraftingBenchBlockEntity extends BaseContainerBlockEntity imple
             // Use the grinder (damages it)
             WeedGrinderItem.useGrinder(grinder);
             
-            // Calculate output quantity based on grinder efficiency
-            float efficiency = WeedGrinderItem.getEfficiencyBonus(grinder);
-            int baseOutput = 1;
-            int bonusChance = (int)(efficiency * 100); // Convert to percentage
+            // Calculate output quantity based on grinder efficiency and player skill
+            float grinderEfficiency = WeedGrinderItem.getEfficiencyBonus(grinder);
+            float playerEfficiency = 0.0f;
             
-            // 20-50% chance for bonus joint based on grinder condition
+            // Apply player skill bonuses if we know who crafted this
+            Player craftingPlayer = null;
+            if (lastUsedByPlayer != null && level != null) {
+                craftingPlayer = level.getPlayerByUUID(lastUsedByPlayer);
+                if (craftingPlayer != null) {
+                    playerEfficiency = CraftingExperienceManager.getLevelEfficiencyBonus(craftingPlayer);
+                }
+            }
+            
+            // Combine bonuses (grinder: 20-50%, player skill: up to 50%)
+            float totalEfficiency = grinderEfficiency + playerEfficiency;
+            int baseOutput = 1;
+            int bonusChance = (int)(totalEfficiency * 100); // Convert to percentage
+            
+            // Chance for bonus joint based on combined efficiency
             int outputCount = baseOutput;
             if (this.level != null && this.level.random.nextInt(100) < bonusChance) {
-                outputCount = 2; // Bonus joint from efficient grinding
+                outputCount = 2; // Bonus joint from efficient grinding + skill
             }
             
             // Create output
@@ -162,6 +196,13 @@ public class DrugCraftingBenchBlockEntity extends BaseContainerBlockEntity imple
                 currentOutput.grow(outputCount);
             }
             
+            // Award experience to the player who crafted this
+            if (craftingPlayer instanceof ServerPlayer serverPlayer) {
+                int baseExperience = 10; // Base XP for crafting a joint
+                int bonusExperience = (outputCount > 1) ? 5 : 0; // Bonus XP for efficient crafting
+                CraftingExperienceManager.awardExperience(serverPlayer, baseExperience + bonusExperience);
+            }
+            
             setChanged();
         }
     }
@@ -172,6 +213,11 @@ public class DrugCraftingBenchBlockEntity extends BaseContainerBlockEntity imple
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, this.items, registries);
         this.craftingProgress = tag.getInt("CraftingProgress");
+        
+        // Load last used player UUID
+        if (tag.hasUUID("LastUsedByPlayer")) {
+            this.lastUsedByPlayer = tag.getUUID("LastUsedByPlayer");
+        }
     }
 
     @Override
@@ -179,6 +225,11 @@ public class DrugCraftingBenchBlockEntity extends BaseContainerBlockEntity imple
         super.saveAdditional(tag, registries);
         ContainerHelper.saveAllItems(tag, this.items, registries);
         tag.putInt("CraftingProgress", this.craftingProgress);
+        
+        // Save last used player UUID
+        if (this.lastUsedByPlayer != null) {
+            tag.putUUID("LastUsedByPlayer", this.lastUsedByPlayer);
+        }
     }
 
     // WorldlyContainer implementation for hopper automation
