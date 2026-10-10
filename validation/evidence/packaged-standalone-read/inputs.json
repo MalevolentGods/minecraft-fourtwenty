@@ -1,0 +1,52 @@
+{
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.218",
+  "java": 21,
+  "profile": "standalone",
+  "packaged": true,
+  "sources": {
+    "fourtwenty": "67b83ede3cdf0ec152e41922b08dc4a42213b9a2",
+    "minecolonies_cult": "e2f7c3884a3b40fb0aee48fe2d2ec0dd024faf34"
+  },
+  "mods": [
+    {
+      "file": "fourtwenty-0.3.2.jar",
+      "sha256": "db2b419a4ed68020fdaeaf40ca7b7eb6b2ee62930a5a4bd5a59cc0d886753840",
+      "mods": [
+        {
+          "id": "fourtwenty",
+          "version": "0.3.2"
+        }
+      ],
+      "loader": "javafml",
+      "loaderVersion": "[4,)",
+      "dependencies": {
+        "fourtwenty": [
+          {
+            "modId": "neoforge",
+            "type": "required",
+            "versionRange": "[21.1.218,21.2)",
+            "ordering": "NONE",
+            "side": "BOTH"
+          },
+          {
+            "modId": "minecraft",
+            "type": "required",
+            "versionRange": "[1.21.1]",
+            "ordering": "NONE",
+            "side": "BOTH"
+          }
+        ]
+      },
+      "nested": []
+    }
+  ],
+  "configuration": {},
+  "headlessOverrides": {},
+  "resourcePackSelection": [
+    "resourcePacks:[]",
+    "incompatibleResourcePacks:[]"
+  ],
+  "serverExclusions": {},
+  "qualification": "candidate"
+}

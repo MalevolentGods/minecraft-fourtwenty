@@ -1,0 +1,10 @@
+{
+  "fourtwenty": {
+    "file": "build/libs/fourtwenty-0.3.2.jar",
+    "sha256": "a2bfe25794812e3cf6efae1bc51cec08f3714f72a989be9a02b6530d67f0cae0"
+  },
+  "cult": {
+    "file": ".compat/cult-source/build/libs/minecolonies-cult-0.2.0.jar",
+    "sha256": "9726fb9ac9decd98aff1cc109c3a86f8f4a26f1125bfbc5beb3ccac287df2d25"
+  }
+}

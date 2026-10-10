@@ -13,6 +13,10 @@ import com.malevolentgods.fourtwenty.util.DelayedEffectManager;
 @Mod("fourtwenty")
 public class FourTwenty {
     public FourTwenty(IEventBus bus) {
+        bus.addListener((net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) ->
+            event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                ModBlockEntities.WEED_BONG.get(), (entity, side) -> entity.itemHandler()));
+
         // Initialize delayed effect system
         DelayedEffectManager.init();
         

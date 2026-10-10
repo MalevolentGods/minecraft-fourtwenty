@@ -13,7 +13,7 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
-version = "0.3.2"
+version = providers.gradleProperty('mod_version').get()
 group = "com.malevolentgods"
 
 base {
@@ -25,6 +25,32 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 //minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 //minecraft.accessTransformers.entry public net.minecraft.client.Minecraft textureManager # textureManager
+
+// Compatibility runs always use an explicitly prepared, isolated directory.
+def compatProfile = providers.gradleProperty('compatProfile').getOrElse('standalone')
+def compatRunDir = providers.gradleProperty('compatRunDir').getOrElse('.compat/runs/standalone')
+def packaged = providers.gradleProperty('packaged').getOrElse('false').toBoolean()
+def playerTests = providers.gradleProperty('compatTestSelection').getOrElse('all') != 'nonplayer'
+sourceSets {
+    launcher {}
+    baselineprobe {}
+    gametest {
+        compileClasspath += sourceSets.main.output
+    }
+    colonytest {
+        compileClasspath += sourceSets.main.output + sourceSets.gametest.output
+    }
+    packtest {
+        compileClasspath += sourceSets.main.output + sourceSets.gametest.output
+    }
+}
+configurations {
+    launcherImplementation.extendsFrom implementation
+    baselineprobeImplementation.extendsFrom implementation
+    gametestImplementation.extendsFrom implementation
+    colonytestImplementation.extendsFrom gametestImplementation
+    packtestImplementation.extendsFrom gametestImplementation
+}
 
 // Default run configurations.
 // These can be tweaked, removed, or duplicated as needed.
@@ -41,9 +67,11 @@ runs {
         // Recommended logging level for the console
         // You can set various levels here.
         // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
-        systemProperty 'forge.logging.console.level', 'debug'
+        systemProperty 'forge.logging.console.level', 'info'
 
-        modSource project.sourceSets.main
+        workingDirectory = project.file(name == 'junit' ? '.compat/junit' : compatRunDir)
+        if (!packaged && compatProfile != 'baseline') modSource project.sourceSets.main
+        else modSources.add('fourtwenty_launcher', project.sourceSets.launcher)
     }
 
     client {
@@ -60,7 +88,13 @@ runs {
     // By default, the server will crash when no gametests are provided.
     // The gametest system is also enabled by default for other run configs under the /test command.
     gameTestServer {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        if (project.hasProperty('persistenceStage')) systemProperty 'fourtwenty.persistenceStage', project.property('persistenceStage')
+        if (compatProfile != 'baseline') modSources.add('fourtwenty_tests', project.sourceSets.gametest)
+        if (compatProfile in ['colony', 'full']) modSources.add('fourtwenty_colonytests', project.sourceSets.colonytest)
+        if (compatProfile == 'full') modSources.add('fourtwenty_packtests', project.sourceSets.packtest)
+        if (compatProfile == 'baseline' && project.hasProperty('probePlayers')) modSources.add('fourtwenty_baselineprobe', project.sourceSets.baselineprobe)
+        systemProperty 'neoforge.enabledGameTestNamespaces', 'fourtwenty_tests,fourtwenty_colonytests,fourtwenty_baselineprobe,minecolonies_cult' +
+            (playerTests ? ',fourtwenty_playertests,fourtwenty_permissiontests,fourtwenty_packtests' : '')
     }
 
     data {
@@ -91,6 +125,11 @@ dependencies {
     // And its provides the option to then use net.minecraft as the group, and one of; client, server or joined as the module name, plus the game version as version.
     // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
     implementation "net.neoforged:neoforge:${neo_version}"
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    colonytestCompileOnly fileTree('.compat/dependencies') { include '*.jar' }
+    packtestCompileOnly fileTree('.compat/dependencies') { include '*.jar' }
 
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
@@ -124,6 +163,7 @@ tasks.withType(ProcessResources).configureEach {
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
             neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
             loader_version_range   : loader_version_range,
             mod_id                 : mod_id,
             mod_name               : mod_name,
@@ -162,5 +202,65 @@ idea {
     module {
         downloadSources = true
         downloadJavadoc = true
+    }
+}
+
+
+repositories { mavenCentral() }
+tasks.named('test') { useJUnitPlatform() }
+tasks.named('jar') {
+    manifest.attributes('Implementation-Version': project.version)
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+    includeEmptyDirs = false
+}
+dependencyLocking {
+    lockAllConfigurations()
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('linux')) {
+        lockFile = file('gradle/linux.lockfile')
+    }
+}
+tasks.register('resolveCompatibilityDependencies') {
+    doLast {
+        sourceSets.each { source ->
+            configurations.getByName(source.compileClasspathConfigurationName).resolve()
+            configurations.getByName(source.runtimeClasspathConfigurationName).resolve()
+        }
+    }
+}
+tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.configureEach {
+    doFirst {
+        exec {
+            commandLine 'python3', 'tools/compatibility.py', 'verify-run', '--destination', file(compatRunDir),
+                '--profile', compatProfile, '--packaged', packaged.toString()
+        }
+        exec { commandLine 'python3', 'tools/compatibility.py', 'record-launch', '--destination', file(compatRunDir) }
+    }
+}
+
+sourceSets {
+    verification {
+        compileClasspath += sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.runtimeClasspath
+    }
+}
+tasks.register('verifyCompatibility', JavaExec) {
+    dependsOn tasks.named('verificationClasses')
+    classpath = sourceSets.verification.runtimeClasspath
+    mainClass = 'VerifyCompatibility'
+    args file(providers.gradleProperty('compatInventory').getOrElse('validation/compatibility-lock.json')).absolutePath
+}
+
+// Minecraft startup failures can exit zero; require positive evidence from this launch.
+tasks.matching { it.name == 'runGameTestServer' }.configureEach {
+    doFirst { ext.startedAt = System.currentTimeMillis() }
+    doLast {
+        def log = file("${compatRunDir}/logs/latest.log")
+        if (!log.exists() || log.lastModified() < startedAt || !(log.text =~ /All [1-9][0-9]* required tests passed/)) {
+            throw new GradleException('GameTest completion missing; inspect the native log even if Minecraft exited zero.')
+        }
+        if (compatProfile == 'baseline' && log.text.contains('Four Twenty 0.3.2 (fourtwenty)')) {
+            throw new GradleException('Invalid baseline: FourTwenty was loaded.')
+        }
     }
 }

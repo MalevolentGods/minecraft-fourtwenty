@@ -100,14 +100,8 @@ public class WeedBongBlock extends BaseEntityBlock {
         if (!state.is(newState.getBlock())) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof WeedBongBlockEntity bongEntity) {
-                // Drop all items from the inventory
-                for (int i = 0; i < bongEntity.getContainerSize(); i++) {
-                    ItemStack stack = bongEntity.getItem(i);
-                    if (!stack.isEmpty()) {
-                        popResource(level, pos, stack);
-                    }
-                }
-                bongEntity.clearContent();
+                bongEntity.beginRemoval();
+                net.minecraft.world.Containers.dropContents(level, pos, bongEntity);
             }
         }
         super.onRemove(state, level, pos, newState, isMoving);

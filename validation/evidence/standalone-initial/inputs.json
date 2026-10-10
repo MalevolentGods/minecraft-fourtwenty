@@ -1,0 +1,16 @@
+{
+  "profile": "standalone",
+  "packaged": false,
+  "sources": {
+    "fourtwenty": "67b83ede3cdf0ec152e41922b08dc4a42213b9a2",
+    "minecolonies_cult": "e2f7c3884a3b40fb0aee48fe2d2ec0dd024faf34"
+  },
+  "mods": [],
+  "configuration": {},
+  "headlessOverrides": {},
+  "resourcePackSelection": [
+    "resourcePacks:[]",
+    "incompatibleResourcePacks:[]"
+  ],
+  "serverExclusions": []
+}

@@ -30,14 +30,13 @@ public class WeedEdibleItem extends Item {
     @Override
     public @Nonnull ItemStack finishUsingItem(@Nonnull ItemStack stack, @Nonnull Level level, @Nonnull LivingEntity entity) {
         if (!level.isClientSide() && entity instanceof Player player) {
-            // Check if player already has pending edible effects to prevent stacking/overdose
-            if (DelayedEffectManager.hasPendingEffect(player)) {
-                // Player already has pending edible effects, don't allow another
+            if (!DelayedEffectManager.scheduleEffect(player, delayTicks, effectDuration, effectAmplifier, isPremium)) {
+                player.stopUsingItem();
+                if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+                    serverPlayer.containerMenu.sendAllDataToRemote();
+                }
                 return stack;
             }
-
-            // Schedule delayed effect application
-            DelayedEffectManager.scheduleEffect(player, delayTicks, effectDuration, effectAmplifier, isPremium);
 
             // Spawn consumption particles
             if (level instanceof ServerLevel serverLevel) {
@@ -60,6 +59,15 @@ public class WeedEdibleItem extends Item {
         
         // Call parent to handle food consumption
         return super.finishUsingItem(stack, level, entity);
+    }
+
+    /** Reject a second dose before starting use; finishUsingItem also guards races. */
+    @Override
+    public net.minecraft.world.InteractionResultHolder<ItemStack> use(Level level, Player player, net.minecraft.world.InteractionHand hand) {
+        if (!level.isClientSide() && DelayedEffectManager.hasPendingEffect(player)) {
+            return net.minecraft.world.InteractionResultHolder.fail(player.getItemInHand(hand));
+        }
+        return super.use(level, player, hand);
     }
 
     @Override

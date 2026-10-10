@@ -11,11 +11,6 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.RandomSource;
-import com.malevolentgods.fourtwenty.registry.ModItems;
-import java.util.List;
 
 public class WildWeedBlock extends BushBlock {
     public static final IntegerProperty AGE = BlockStateProperties.AGE_7;
@@ -75,40 +70,4 @@ public class WildWeedBlock extends BushBlock {
                state.getBlock() == net.minecraft.world.level.block.Blocks.COARSE_DIRT;
     }
 
-    @Override
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        List<ItemStack> drops = new java.util.ArrayList<>();
-        
-        int age = getAge(state);
-        RandomSource random = RandomSource.create();
-        
-        // Always drop at least 1 seed
-        drops.add(new ItemStack(ModItems.WEED_SEEDS.get(), 1));
-        
-        // Higher chance for more seeds based on age
-        if (age >= 4) {
-            if (random.nextFloat() < 0.5f) {
-                drops.add(new ItemStack(ModItems.WEED_SEEDS.get(), 1));
-            }
-        }
-        
-        if (age >= 6) {
-            if (random.nextFloat() < 0.3f) {
-                drops.add(new ItemStack(ModItems.WEED_SEEDS.get(), 1));
-            }
-        }
-        
-        // At max age, also drop buds if they exist in your mod
-        if (age == getMaxAge()) {
-            if (random.nextFloat() < 0.8f) {
-                // Add your weed buds item here if you have one
-                // drops.add(new ItemStack(ModItems.WEED_BUDS.get(), 1));
-                
-                // For now, just give extra seeds
-                drops.add(new ItemStack(ModItems.WEED_SEEDS.get(), 1));
-            }
-        }
-        
-        return drops;
-    }
 }

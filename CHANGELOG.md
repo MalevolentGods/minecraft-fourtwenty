@@ -2,7 +2,17 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [0.3.2] - Interface Polish & Bug Fixes
+## [0.3.2] - Compatibility candidate
+
+- Target Minecraft 1.21.1 and NeoForge 21.1.218 with consistent packaged version metadata.
+- Repair crop and wild-weed loot, remove duplicate seed paths, and provide sustainable farmer replanting.
+- Add validated bong automation, paid-charge persistence, legacy recovery, Multi-Piston movement, and complete blockstate models.
+- Scope delayed edible effects to the running server and player lifecycle; exclude edibles from citizen food selection.
+- Protect FourTwenty crops from Actually Harvest bypassing MineColonies permissions, including area harvests.
+- Reject stale post-event crop interactions and preserve seeds when Actually Harvest disables replanting.
+- Add isolated pack tooling, dependency inventory, JUnit and native integration fixtures. Full qualification remains subject to the compatibility report's open gates.
+
+### Earlier interface work in 0.3.2
 
 ### Added
 - **Custom Bong Menu Art**: Beautiful cannabis-themed GUI texture

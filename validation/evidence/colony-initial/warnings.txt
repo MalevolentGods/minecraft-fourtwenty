@@ -1,0 +1,23 @@
+[10Oct2026 17:01:49.324] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:mixinextras.neoforge. Using Mod File: /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle-home/caches/modules-2/files-2.1/io.github.llamalad7/mixinextras-neoforge/0.5.0/d734b83ce6542bb70ea31755c1595b88992dbe65/mixinextras-neoforge-0.5.0.jar
+[10Oct2026 17:01:53.632] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[10Oct2026 17:01:53.633] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[10Oct2026 17:01:53.634] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[10Oct2026 17:01:53.635] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[10Oct2026 17:01:53.636] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[10Oct2026 17:01:54.305] [Structurize IO Worker #0/WARN] [structurize/]: Failed loading packs from main folder path: .
+[10Oct2026 17:01:54.305] [Structurize IO Worker #0/WARN] [structurize/]: Failed loading client packs from main folder path: .
+[10Oct2026 17:01:54.305] [Structurize IO Worker #0/WARN] [structurize/]: Finished discovering Server Structure packs
+[10Oct2026 17:01:54.319] [modloading-worker-0/WARN] [minecolonies/]: Register mappings
+[10Oct2026 17:01:54.366] [main/ERROR] [net.minecraft.server.dedicated.Settings/]: Failed to load properties from file: server.properties
+[10Oct2026 17:01:54.407] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar%23197!/assets/.mcassetsroot' uses unexpected schema
+[10Oct2026 17:01:54.407] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar%23197!/data/.mcassetsroot' uses unexpected schema
+[10Oct2026 17:01:55.151] [main/WARN] [minecolonies/]: Read 1634 items with their nbt keys for compatibility.
+[10Oct2026 17:01:55.923] [Server thread/WARN] [minecolonies/]: Starting Compat Discovery
+[10Oct2026 17:01:56.490] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[10Oct2026 17:01:56.491] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[10Oct2026 17:01:57.786] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[10Oct2026 17:01:57.787] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[10Oct2026 17:01:58.521] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[10Oct2026 17:01:58.522] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[10Oct2026 17:01:58.908] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[10Oct2026 17:01:58.908] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen

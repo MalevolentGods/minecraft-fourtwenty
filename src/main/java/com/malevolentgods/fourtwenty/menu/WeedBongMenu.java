@@ -76,6 +76,7 @@ public class WeedBongMenu extends AbstractContainerMenu {
     @Override
     @Nonnull
     public ItemStack quickMoveStack(@Nonnull Player player, int index) {
+        if (!stillValid(player) || index < 0 || index >= slots.size()) return ItemStack.EMPTY;
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         
@@ -156,12 +157,12 @@ public class WeedBongMenu extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(@Nonnull ItemStack stack) {
-            return stack.is(ModItems.WEED_BUD.get());
+            return com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.accepts(WEED_SLOT, stack);
         }
 
         @Override
         public int getMaxStackSize() {
-            return 4; // Allow full stacks of weed
+            return com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.slotLimit(WEED_SLOT);
         }
     }
 
@@ -172,12 +173,12 @@ public class WeedBongMenu extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(@Nonnull ItemStack stack) {
-            return stack.is(Items.WATER_BUCKET);
+            return com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.accepts(WATER_SLOT, stack);
         }
 
         @Override
         public int getMaxStackSize() {
-            return 1; // Only one water bucket at a time
+            return com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.slotLimit(WATER_SLOT);
         }
     }
 
@@ -188,12 +189,12 @@ public class WeedBongMenu extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(@Nonnull ItemStack stack) {
-            return stack.is(Items.BLAZE_POWDER);
+            return com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.accepts(BLAZE_POWDER_SLOT, stack);
         }
 
         @Override
         public int getMaxStackSize() {
-            return 64; // Allow full stacks of blaze powder
+            return com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.slotLimit(BLAZE_POWDER_SLOT);
         }
     }
 }
