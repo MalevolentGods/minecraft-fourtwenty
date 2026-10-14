@@ -1,0 +1,1 @@
+baseline-headless.txt is an INVALID early baseline: NeoGradle implicitly included FourTwenty main sources. Never use it to attribute upstream failures. Corrected explicit-source baseline evidence is in ../baseline-clean. These earlier runs predate launch-time source fingerprints; sourceFilesAtCapture is not a record of their historical compiled sources.

@@ -1,0 +1,74 @@
+Starting a Gradle Daemon (subsequent builds will be faster)
+> Task :cacheVersionManifest1.21.1
+> Task :cacheVersionExecutableClient1.21.1
+> Task :cacheVersionExecutableServer1.21.1
+> Task :cacheVersionMappingsClient1.21.1
+> Task :cacheVersionMappingsServer1.21.1
+> Task :neoFormListLibraries
+> Task :neoFormStripClient
+> Task :neoFormExtractServer
+> Task :neoFormStripServer
+> Task :neoFormMerge
+> Task :neoFormMergeMappings
+> Task :neoFormRename
+> Task :neoFormDecompile
+> Task :neoFormApplyForgesAccessTransformer
+> Task :neoFormInject
+> Task :neoFormPatch
+> Task :neoFormPatchUserDev
+> Task :neoFormApplyOfficialMappings
+> Task :neoFormUnzipAdditionalSources
+> Task :neoFormUnzipSources
+> Task :create1.21.1ClientExtraJar
+> Task :selectRawArtifactNg_dummy_ng.net.minecraft_client_1.21.1_client-extra
+
+> Task :neoFormRecompile
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use or override a deprecated API that is marked for removal.
+Note: Recompile with -Xlint:removal for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :neoFormPackRecomp
+> Task :supplyRawJarForneoFormJoined1.21.1-20240808.144430
+> Task :selectRawArtifactNg_dummy_ng.net.neoforged_neoforge_21.1.218
+
+> Task :compileJava
+/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/src/main/java/com/malevolentgods/fourtwenty/client/ModClientEvents.java:10: warning: [removal] bus() in EventBusSubscriber has been deprecated and marked for removal
+@EventBusSubscriber(modid = "fourtwenty", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+                                          ^
+/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/src/main/java/com/malevolentgods/fourtwenty/client/ModClientEvents.java:10: warning: [removal] Bus in EventBusSubscriber has been deprecated and marked for removal
+@EventBusSubscriber(modid = "fourtwenty", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+                                                                  ^
+2 warnings
+
+> Task :processResources
+> Task :classes
+> Task :jar
+> Task :jarJar SKIPPED
+> Task :assemble
+> Task :compileTestJava NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+> Task :neoFormJoined1.21.1-20240808.144430DownloadAssets
+> Task :neoFormJoined1.21.1-20240808.144430ExtractNatives
+> Task :writeMinecraftClasspathJunit
+> Task :testJunit NO-SOURCE
+> Task :check UP-TO-DATE
+> Task :build
+Persisted dependency lock state for settings file 'settings.gradle'
+Persisted dependency lock state for buildscript of root project 'fourtwenty'
+Persisted dependency lock state for root project 'fourtwenty'
+
+[Incubating] Problems report is available at: file:///Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.13/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 2m 52s
+32 actionable tasks: 32 executed

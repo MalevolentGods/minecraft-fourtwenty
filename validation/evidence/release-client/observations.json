@@ -1,0 +1,9 @@
+{
+  "scope": "client startup and resource loading only",
+  "profile": "full original settings, 136 JARs",
+  "startupMarker": "Game took 26.564 seconds to start",
+  "fourtwentyMissingModelOrVariantWarnings": 0,
+  "visualAcceptance": "unverified; UI provider cannot attach to this Java process",
+  "termination": "SIGTERM of the identified disposable Java process after startup; Gradle reports the expected nonzero termination, not a normal application exit",
+  "interactiveOrPerformancePass": false
+}

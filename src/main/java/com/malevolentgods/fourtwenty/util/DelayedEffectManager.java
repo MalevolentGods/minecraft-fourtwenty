@@ -10,54 +10,66 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
-import java.util.Iterator;
 
 public class DelayedEffectManager {
-    private static final Map<UUID, PendingEffect> pendingEffects = new HashMap<>();
+    private static final Map<net.minecraft.server.MinecraftServer, com.malevolentgods.fourtwenty.domain.PendingEffects> sessions = new java.util.WeakHashMap<>();
+    private static boolean registered;
 
     public static void init() {
-        NeoForge.EVENT_BUS.register(DelayedEffectManager.class);
+        if (!registered) {
+            NeoForge.EVENT_BUS.register(DelayedEffectManager.class);
+            registered = true;
+        }
     }
 
-    public static void scheduleEffect(Player player, int delayTicks, int duration, int amplifier, boolean isPremium) {
-        pendingEffects.put(player.getUUID(), new PendingEffect(delayTicks, duration, amplifier, isPremium));
+    /** Each server owns a distinct queue even when multiple worlds use the same player UUID. */
+    public static boolean scheduleEffect(Player player, int delayTicks, int duration, int amplifier, boolean isPremium) {
+        var server = player.getServer();
+        if (server == null || player.level().isClientSide() || !player.isAlive()) return false;
+        return sessions.computeIfAbsent(server, ignored -> new com.malevolentgods.fourtwenty.domain.PendingEffects())
+            .schedule(player.getUUID(), delayTicks, duration, amplifier, isPremium);
     }
 
     public static boolean hasPendingEffect(Player player) {
-        return pendingEffects.containsKey(player.getUUID());
+        var queue = sessions.get(player.getServer());
+        return queue != null && queue.contains(player.getUUID());
+    }
+
+    private static void cancel(Player player) {
+        var queue = sessions.get(player.getServer());
+        if (queue != null) queue.cancel(player.getUUID());
+    }
+
+    @SubscribeEvent
+    public static void onLogout(net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent event) {
+        cancel(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void onClone(net.neoforged.neoforge.event.entity.player.PlayerEvent.Clone event) {
+        if (event.isWasDeath()) cancel(event.getOriginal());
+    }
+
+    @SubscribeEvent
+    public static void onStopping(net.neoforged.neoforge.event.server.ServerStoppingEvent event) {
+        sessions.remove(event.getServer());
     }
 
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event) {
-        Iterator<Map.Entry<UUID, PendingEffect>> iterator = pendingEffects.entrySet().iterator();
-        
-        while (iterator.hasNext()) {
-            Map.Entry<UUID, PendingEffect> entry = iterator.next();
-            UUID playerId = entry.getKey();
-            PendingEffect effect = entry.getValue();
-            
-            // Find the player
-            Player player = null;
-            for (Level level : event.getServer().getAllLevels()) {
-                player = level.getPlayerByUUID(playerId);
-                if (player != null) break;
-            }
-            
-            if (player == null) {
-                // Player not found, remove effect
-                iterator.remove();
-                continue;
-            }
-            
-            effect.ticksRemaining--;
-            
-            if (effect.ticksRemaining <= 0) {
-                // Apply the effects
-                applyWeedEffects(player, effect.duration, effect.amplifier, effect.isPremium);
-                iterator.remove();
+        var server = event.getServer();
+        var queue = sessions.get(server);
+        if (queue == null) return;
+        // Observe finalized life state, not a cancelable death event used by revival mods.
+        var due = queue.tick(id -> {
+            var player = server.getPlayerList().getPlayer(id);
+            return player != null && player.isAlive();
+        });
+        for (var effect : due) {
+            var player = server.getPlayerList().getPlayer(effect.player());
+            if (player != null && player.isAlive()) {
+                applyWeedEffects(player, effect.duration(), effect.amplifier(), effect.premium());
             }
         }
     }
@@ -103,17 +115,4 @@ public class DelayedEffectManager {
         }
     }
 
-    private static class PendingEffect {
-        int ticksRemaining;
-        final int duration;
-        final int amplifier;
-        final boolean isPremium;
-
-        PendingEffect(int delay, int duration, int amplifier, boolean isPremium) {
-            this.ticksRemaining = delay;
-            this.duration = duration;
-            this.amplifier = amplifier;
-            this.isPremium = isPremium;
-        }
-    }
 }

@@ -1,320 +1,53 @@
 # FourTwenty 🌿
 
-A comprehensive Minecraft mod that adds a cannabis cultivation system to your game. Grow, harvest, and craft cannabis into various consumable products with unique gameplay effects.
+Grow wild cannabis into a farm, craft joints and edibles, and build a bong for shared effects around your base. FourTwenty uses vanilla farming, crafting, inventory, and potion mechanics, and works without MineColonies or any other optional mod.
 
-## 🎮 Features
+This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
-### Cannabis Cultivation System
-- **Weed Seeds**: Plant these to start your cannabis farm
-- **Growing Cycle**: Cannabis plants grow through 8 distinct stages (0-7), just like vanilla crops
-- **Weed Crop Block**: A fully functional crop that requires proper farming conditions
-- **Harvesting**: Mature plants (stage 7) can be right-clicked to harvest buds while replanting automatically
-- **Sustainable Farming**: 5% chance for seed drops from mature harvests, breaking immature crops drops 1 seed for replanting
+## Grow and harvest
 
-### Natural Wild Cannabis
-- **Wild Weed Spawning**: Cannabis plants now spawn naturally in the wild across specific biomes
-- **Target Biomes**: Plains, Savanna, Grove, and Meadow biomes feature natural cannabis growth
-- **Random Growth Stages**: Wild plants spawn at various ages (3-7) for realistic diversity
-- **Harvestable Resources**: Wild cannabis can be harvested for seeds and buds, providing an alternative source
-- **Balanced Rarity**: Wild plants are uncommon enough to feel special but common enough to find with exploration
+Find wild weed in Plains, Savanna, Grove, and Meadow biomes, collect its seeds, and plant them on farmland. Cannabis grows through eight stages and responds to normal crop conditions and bone meal.
 
-### Consumption Methods
+Breaking an immature crop returns one seed. A mature crop drops one seed and 1–3 buds, with a 5% chance of 1–4 extra seeds. Right-clicking a mature crop resets it to age zero and retains one seed for replanting; the remaining harvest drops normally. Right-clicking an immature crop does nothing.
 
-#### Smoking Items
-- **Weed Joint**: Single-use consumable made from weed buds and paper
-- **Weed Pipe**: Reusable smoking device with 4 uses and durability system
-- **Instant Effects**: Immediate onset with 1-2 minute duration
-- **Crafting Recipes**: Joints use vertical pattern (Paper → Weed Bud → Paper), pipes require premium materials
+MineColonies farmers recognize the crop and its seeds through their native farming support. Actually Harvest uses its configured harvesting, replanting, tool-area, and XP behavior. With both installed, FourTwenty checks colony permissions for every cannabis crop in an area harvest. Datapacks can override the loot and additive tags.
 
-#### Edible Items (v0.2.0)
-- **Weed Cookies**: Basic tier edible with delayed onset
-  - Shapeless recipe (cookie + weed bud)
-  - 10-second delay, 3-minute duration
-  - Provides nutrition (2 hunger + 2.4 saturation)
-  - Moderate effects with food benefits
-- **Weed Brownies**: Premium tier edible with enhanced effects
-  - Complex shaped recipe (cocoa, wheat, egg, sugar, weed bud)
-  - 15-second delay, 5-minute duration
-  - Enhanced nutrition (4 hunger + 4.8 saturation)
-  - Premium effects including Jump Boost II and Speed I
-- **Overdose Prevention**: Cannot consume multiple edibles while effects are pending
+## Craft and consume
 
-#### Stationary Equipment (v0.3.0)
-- **Weed Bong**: Advanced brewing stand-like cannabis apparatus
-  - **GUI Interface**: Right-click to open brewing stand-style inventory interface
-  - **Three Slot System**: 
-    - Weed Bud slot (accepts cannabis buds)
-    - Water slot (accepts water bottles)
-    - Blaze Powder slot (fuel for automatic lighting)
-  - **Automatic Processing**: Auto-lights when all required items are present
-  - **Area-of-effect Benefits**: 4-block radius for group session effects
-  - **Enhanced Effects**: Stronger than individual consumption methods
-  - **15-second Burn Duration**: Automatically consumes weed and extinguishes
-  - **Particle Effects & Sounds**: Visual and audio feedback during operation
-  - **Social Gameplay**: Encourages group activities and shared experiences
+Craft joints, pipes, cookies, brownies, and bongs with the existing recipes. Cookies take 200 server ticks to start their effects; brownies take 300. At 20 ticks per second, that is 10 and 15 seconds. Another edible cannot be consumed while a dose is pending.
 
-### Gameplay Effects
+Pending effects survive dimension travel, but cancel on logout, actual death, or server shutdown. Sleep and changes to the daylight clock do not advance the delay. Effects already applied follow vanilla effect merging and milk removal. MineColonies citizens exclude the cookies and brownies from food selection; normal inventory storage and transport remain available.
 
-#### Smoking Effects (Joints & Pipes)
-When consuming joints or using pipes, players experience immediate effects:
-- **Regeneration II** (30 seconds) - Enhanced health recovery
-- **Night Vision** (2 minutes) - See clearly in the dark
-- **Hunger II** (10 seconds) - Increased appetite (munchies effect)
-- **Luck I** (1.5 minutes) - Better loot drops and fishing results
-- **Confusion** (20 seconds, 30% chance) - Occasional disorientation effect
+## Use a bong
 
-#### Edible Effects (Cookies & Brownies)
-Edibles provide delayed but longer-lasting effects:
+Right-click the bong to open its inventory:
 
-**Weed Cookies (Basic Tier):**
-- **Delayed Onset**: 10-second delay before effects begin
-- **Duration**: 3 minutes (longer than smoking)
-- **Effects**: Standard weed effects plus food nutrition
-- **Special**: Moderate potency, good for beginners
+| Slot | Ingredient | Capacity |
+| --- | --- | ---: |
+| Buds | Weed Bud | 4 |
+| Water | Water Bucket | 1 |
+| Fuel | Blaze Powder | 64 |
 
-**Weed Brownies (Premium Tier):**
-- **Delayed Onset**: 15-second delay before effects begin
-- **Duration**: 5 minutes (extended experience)
-- **Effects**: Enhanced standard effects plus Jump Boost II and Speed I
-- **Special**: Premium potency with bonus mobility effects
+A bong automatically consumes **one bud and one blaze powder when a burn starts**. The water bucket remains in its slot. Each charge burns for **1,200 server ticks** (60 seconds at 20 TPS) and applies the existing player effects every 20 ticks within four blocks. Queued ingredients remain extractable. Removing the water extinguishes the paid charge without a refund.
 
-#### Bong Effects (Group Sessions)
-The bong provides the strongest effects with social benefits:
-- **Area Effect**: All players within 4 blocks receive benefits
-- **Enhanced Potency**: Stronger and longer effects than individual consumption
-- **Group Bonuses**: Additional Damage Boost and Speed effects
-- **Continuous Benefits**: Effects apply every second while the bong is lit
-- **Social Gameplay**: Encourages communal use and shared experiences
+Hoppers and standard NeoForge item-handler automation can access all three slots from every face. Multi-Piston can move stocked and burning bongs while preserving their inventory and paid charge. Vanilla piston behavior is unchanged. Breaking the bong drops the block and its unconsumed inventory once; the active charge has already been spent.
 
-### Creative Mode Integration
-- Custom "Four Twenty" creative tab containing all mod items
-- Easy access to seeds, buds, and joints for creative building
+## Install and upgrade
 
-#### Website:
-TBD
+Install the same FourTwenty build on the server and every client. This work retains the version **0.3.2**, so compare the JAR's SHA-256 as well as its filename when replacing an older build with that version. MineColonies and the other pack mods are optional, with exact tested versions recorded in the [frozen inventory](validation/compatibility-lock.json).
 
-## 🏗️ Technical Architecture
+Back up a world before upgrading. Registry IDs and inventory slot numbers are preserved. Existing lit bongs receive an additive `ChargePaid` marker: their remaining bud is consumed once on the first server tick, their already-paid blaze powder is not charged again, and elapsed burn time is retained. Invalid legacy contents remain recoverable through extraction. An invalid active legacy burn stops. Unloaded bongs pause instead of catching up offline.
 
-### Project Structure
-This mod is built for **Minecraft 1.21.1** using **NeoForge 21.1.92** and **Java 21**.
+For downgrade recovery, restore the backup together with its matching mod builds. Older versions do not understand the paid-charge state and should not open an upgraded save. This implementation does not modify an installed modpack or migrate any player world automatically.
 
-#### Core Components
+## Build and test
 
-**Registry Classes:**
-- `ModItems.java` - Registers all mod items (seeds, buds, joints, pipes, edibles, bong)
-- `ModBlocks.java` - Registers the weed crop block, wild weed block, and bong block
-- `ModCreativeTabs.java` - Creates the custom creative mode tab
-- `ModFeatures.java` - Registers world generation features for natural spawning
-- `ModBlockEntities.java` - Registers block entities for advanced blocks (bong)
+With Java 21 and Python 3.11 or newer:
 
-**Block Implementation:**
-- `WeedCropBlock.java` - Extends `CropBlock` for cannabis cultivation mechanics with right-click harvesting
-- `WildWeedBlock.java` - Extends `BushBlock` for naturally spawning wild cannabis
-- `WeedBongBlock.java` - Advanced block entity with GUI interface and area effects
-- Supports 8 growth stages with appropriate blockstate definitions
-- Integrates with Minecraft's crop growth system and block entity ticking
-
-**Item Implementation:**
-- `WeedJointItem.java` - Single-use consumable with immediate effects
-- `WeedPipeItem.java` - Reusable smoking device with durability and cooldown
-- `WeedEdibleItem.java` - Base class for edibles with delayed effect system
-- `WeedCookieItem.java` - Basic tier edible with moderate delayed effects
-- `WeedBrownieItem.java` - Premium tier edible with enhanced delayed effects
-- Uses various `UseAnim` types for different consumption experiences
-
-**GUI System:**
-- `WeedBongMenu.java` - Custom container menu with 3-slot brewing stand-like interface
-- `WeedBongScreen.java` - Client-side GUI screen for bong interaction
-- `ModMenuTypes.java` - Menu type registry for custom GUIs
-- `ModClientEvents.java` - Client-side event handling for screen registration
-
-**Advanced Systems:**
-- `DelayedEffectManager.java` - Server tick-based system for edible effect timing
-- `WeedBongBlockEntity.java` - Block entity with inventory management and automatic processing
-- UUID-based player tracking for multiplayer compatibility
-- Thread-safe effect scheduling and overdose prevention
-
-**Resource Structure:**
-- `assets/fourtwenty/` - Client-side resources (models, textures, lang files)
-- `data/fourtwenty/` - Data-driven content (recipes, loot tables, world generation)
-- `data/fourtwenty/worldgen/` - World generation features and biome modifiers
-- Comprehensive blockstate definitions for all 8 crop growth stages
-- Custom item models for seeds, buds, and joints
-
-**World Generation:**
-- `wild_weed_patch.json` - Configured feature defining natural cannabis spawning
-- `wild_weed_patch.json` - Placed feature controlling spawn frequency and conditions
-- `add_wild_weed.json` - Biome modifier adding wild cannabis to target biomes
-- Uses weighted state providers for random age distribution (ages 3-7)
-- Validates placement conditions to ensure plants spawn on suitable surfaces
-
-#### Dependencies
-- **Minecraft**: 1.21.1
-- **NeoForge**: 21.1.92+
-- **Java**: 21 (required)
-
-### Game Integration
-The mod seamlessly integrates with vanilla Minecraft mechanics:
-- Cannabis crops follow standard farming rules (require farmland, water, light)
-- Loot tables ensure balanced drop rates (buds only from mature crops)
-- Recipe system uses standard crafting mechanics
-- Effect system uses vanilla potion effects for compatibility
-
-## For Users
-
-### Installation & Usage
-
-1. **Requirements**: Ensure you have Minecraft 1.21.1 with NeoForge 21.1.92+ installed
-2. **Download**: Get the latest release from CurseForge (link TBD)
-3. **Install**: Place the mod JAR file in your `mods/` folder
-4. **Play**: Start Minecraft and look for the "Four Twenty" creative tab
-
-### Getting Started
-1. **Obtain Seeds**: Find weed seeds in the Four Twenty creative tab, or harvest them from wild cannabis plants
-2. **Find Wild Cannabis**: Explore Plains, Savanna, Grove, and Meadow biomes to discover naturally spawning cannabis
-3. **Plant**: Place seeds on tilled farmland (requires water source nearby)
-4. **Wait**: Cannabis takes time to grow through 8 stages - be patient!
-5. **Harvest**: Right-click mature crops (stage 7) to harvest buds and replant automatically
-6. **Craft Your Preferred Method**:
-   - **Joints**: Paper → Weed Bud → Paper (vertical pattern) for immediate effects
-   - **Pipes**: Complex recipe with wood types and charcoal for reusable option
-   - **Cookies**: Cookie + Weed Bud (shapeless) for basic delayed effects
-   - **Brownies**: Cocoa + Wheat + Egg + Sugar + Weed Bud (shaped) for premium delayed effects
-   - **Bong**: Glass blocks + Water Bucket (shaped) for group sessions
-7. **Consume**: 
-   - **Smoking**: Right-click and hold to smoke joints/pipes for instant effects
-   - **Edibles**: Right-click to eat, then wait 10-15 seconds for delayed onset
-   - **Bong**: Right-click to open GUI → Add weed, water bottle, and blaze powder → Auto-lights and provides area effects
-
-**Pro Tips:**
-- **Edibles**: Cannot consume multiple while effects are pending - plan your doses!
-- **Bong Setup**: Requires weed buds, water bottles, and blaze powder - perfect for base builds
-- **Seed Management**: Only 5% seed drop chance from harvests - save wild seeds!
-- **Group Play**: Bong provides strongest effects when multiple players are nearby
-- **Progression**: Start with joints → try edibles → build a bong for end-game social gameplay
-
-You can find all our versions on Curseforge:
-TBD
-
-
-
-### Issues & Support
-
-**Creating an Issue:**
-If you encounter bugs or have feature requests:
-1. Check existing issues on our GitHub repository
-2. Provide detailed reproduction steps
-3. Include your Minecraft version, NeoForge version, and mod version
-4. Attach relevant crash logs or screenshots
-
-**Known Limitations:**
-- Crop growth rates follow vanilla mechanics (affected by light, water, bone meal)
-- Effects are based on vanilla potion systems
-- Textures and models may be placeholder in early versions
-
-## For Developers
-
-#### Setup Development Environment
-
-**Prerequisites:**
-- Java JDK 21 (required for Minecraft 1.21.1)
-- Git for version control
-- IDE (IntelliJ IDEA recommended)
-- Gradle (included via wrapper)
-
-**Clone and Setup:**
-```bash
-git clone https://github.com/MalevolentGods/minecraft-fourtwenty.git
-cd fourtwenty
-./gradlew build
+```sh
+make build
+make test-python
+make help
 ```
 
-**Development Tasks:**
-```bash
-./gradlew runClient    # Launch Minecraft client for testing
-./gradlew runServer    # Launch dedicated server
-./gradlew runData      # Generate data files
-./gradlew build        # Build the mod JAR
-```
-
-### Compiling FourTwenty
-
-IMPORTANT: Please report any issues you have, as there might be some problems with the documentation! Also make sure you know EXACTLY what you're doing! It's not our fault if your OS crashes, becomes corrupted, etc.
-
-#### Setup Java
-The Java JDK is used to compile FourTwenty.
-
-1. Download and install the Java JDK 21.
-    * [Windows](https://adoptopenjdk.net/): Choose OpenJDK 21 (LTS) version and HotSpot JVM, then click the `latest release` button. After the download is complete, open the file, accept the license agreement, and in a custom setup make sure that `Add to Path` and `Set JAVA_HOME` are set to `Entire feature will be installed on your local hard drive`. Then choose `Install` and wait for the installation to finish.
-    * Linux: Installation methods for certain popular flavors of Linux are listed below. If your distribution is not listed, follow the instructions specific to your package manager or install it manually [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
-		* Gentoo: `emerge dev-java/openjdk-bin:21`
-		* Archlinux: `pacman -S jdk21-openjdk`
-		* Ubuntu/Debian: `apt-get install openjdk-21-jdk`
-		* Fedora: `yum install java-1.21.0-openjdk`
-2. Open up your command line and run `javac`. If it spews out a bunch of possible options and the usage, you're good to go. If not, try the steps again.
-
-**Troubleshooting**
-If the `javac` command does not work on Windows:
-* Go to `Control Panel\System and Security\System` and click on `Advanced System Settings` on the left-hand side.
-* Click on `Environment Variables`.
-* Under `System Variables`, click `New`.
-* For `Variable Name`, input `JAVA_HOME`.
-* For `Variable Value`, input something similar to `C:\Program Files\Java\jdk1.8.0_45` exactly as shown (or wherever your Java JDK installation is) and click `OK`.
-* Scroll down to a variable named `Path` and double-click on it.
-* Append `;%JAVA_HOME%\bin` EXACTLY AS SHOWN and click `OK`. Make sure the location is correct; double-check to make sure.
-
-#### Setup Gradle (Optional)
-Gradle is used to execute the various build tasks when compiling FourTwenty.
-
-1. Download and install Gradle.
-	* [Windows/Mac download link](http://www.gradle.org/downloads). You only need the binaries, but choose whatever flavor you want.
-		* Unzip the package and put it wherever you want, for example, `C:\Gradle`.
-	* Linux: Installation methods for certain popular flavors of Linux are listed below. If your distribution is not listed, follow the instructions specific to your package manager or install it manually [here](http://www.gradle.org/downloads).
-		* Gentoo: `emerge dev-java/gradle-bin`
-		* Archlinux: You'll have to install it from the [AUR](https://aur.archlinux.org/packages/gradle).
-		* Ubuntu/Debian: `apt-get install gradle`
-		* Fedora: Install Gradle manually from its website (see above), as Fedora ships a "broken" version of Gradle. Use `yum install gradle` only if you know what you're doing.
-2. Windows: Set environment variables for Gradle.
-	* Go back to `Environment Variables` and then create a new system variable.
-	* For `Variable Name`, input `GRADLE_HOME`.
-	* For `Variable Value`, input something similar to `C:\Gradle-3.0` exactly as shown (or wherever your Gradle installation is), and click `Ok`.
-	* Scroll down to `Path` again, and append `;%GRADLE_HOME%\bin` EXACTLY AS SHOWN and click `Ok`. Once again, double-check the location.
-3. Open up your command line and run `gradle`. If it says 'Welcome to Gradle [version].', then you're good to go. If not, try the steps again.
-
-#### Setup Git
-Git is used to clone FourTwenty and update your local copy.
-
-1. Download and install Git [here](http://git-scm.com/download/).
-2. *Optional*: Download and install a Git GUI client, such as Gitkraken, SourceTree, GitHub for Windows/Mac, SmartGitHg, TortoiseGit, etc. A nice list is available [here](http://git-scm.com/downloads/guis).
-
-
-##### Troubleshooting
-If Gradle synchronization fails, make sure:
-1. `File → Project structure → Project → Project SDK` is set to your installed JDK version.
-2. `File → Settings → Build, Execution, Deployment → Build Tools → Gradle → Gradle JVM` is set to your installed JDK version.
-
-#### Updating Your Repository
-To get the most up-to-date builds, you'll have to update your local repository periodically.
-
-1. Open up your command line.
-2. Navigate to `basefolder` in the console.
-3. Ensure you have not made any changes to the local repository (if you did, there might be issues with Git).
-	* If you have, try reverting them to their status when you last updated your repository.
-4. Execute `git pull version/1.16.3`. This pulls all commits from the official repository that do not yet exist on your local repository and updates it (with GitKraken, click the small pull arrow at the top).
-
-#### Troubleshooting
-- Sometimes Gradle tasks fail because of missing memory. For that, you can find system-wide settings in the `.gradle` folder of your `HOME` directory (`~/.gradle/gradle.properties` or on Windows in `C:\Users\username\.gradle\gradle.properties`).
-- Sometimes after a branch change, libraries can not be resolved. Running another refresh in IntelliJ or the command line usually solves this issue.
-
-### Contributing
-
-#### Submitting a PR
-Found a bug in our code? Think you can make it more efficient? Want to help in general? Great!
-
-1. If you haven't already, create a GitHub account.
-2. Click the `Fork` icon located at the top right.
-3. Make your changes and commit them.
-	* If you're making changes locally, you'll have to do `git commit -a` and `git push` in your command line (or with GitKraken stage the changes, commit them, and push them first).
-4. Click `Pull Request` in the middle.
-5. Click 'New pull request' to create a pull request for this comparison, enter your PR's title, and create a detailed description telling us what you changed.
-6. Click `Create pull request` and wait for feedback!
+The JAR is `build/libs/fourtwenty-0.3.2.jar`. See [development and isolated runs](docs/DEVELOPMENT.md) for the pinned sibling build, GameTests, preparation, dependency verification, launch commands, and evidence capture. Report issues with exact mod versions, JAR hashes, reproduction steps, and relevant logs.

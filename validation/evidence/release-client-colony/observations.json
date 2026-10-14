@@ -1,0 +1,15 @@
+{
+  "scope": "minimal colony client resource loading only",
+  "profile": "colony, 8 JARs, optional Actually Harvest absent",
+  "resourceLoadingMarkers": [
+    "Sound engine started",
+    "blockui:textures/atlas/blockui_gui.png-atlas",
+    "minecolonies:textures/atlas/minecolonies_gui.png-atlas",
+    "Loaded 0 entity animations"
+  ],
+  "observations": [
+    "Optional pseudo mixin reports absent Actually Harvest class and is skipped"
+  ],
+  "termination": "SIGTERM of identified disposable Java process after resource loading; expected nonzero Gradle termination",
+  "visualOrGameplayAcceptance": false
+}

@@ -1,0 +1,51 @@
+{
+  "fourtwenty": {
+    "sourceBaseline": "67b83ede3cdf0ec152e41922b08dc4a42213b9a2",
+    "workingTreeChanges": true,
+    "file": "build/libs/fourtwenty-0.3.2.jar",
+    "sha256": "bec76b1af3137f77224f363acb12f32766d6370930ed54931ea8bf5115b0e024",
+    "payloadEquivalentTo": "42ca90918eefcd76506ad4e3b8b3ea3352f667d984ca7783d11a48ef80b376eb"
+  },
+  "minecolonies_cult": {
+    "revision": "e2f7c3884a3b40fb0aee48fe2d2ec0dd024faf34",
+    "artifact": {
+      "file": "minecolonies-cult-0.2.0.jar",
+      "sha256": "9726fb9ac9decd98aff1cc109c3a86f8f4a26f1125bfbc5beb3ccac287df2d25",
+      "mods": [
+        {
+          "id": "minecolonies_cult",
+          "version": "0.2.0"
+        }
+      ],
+      "loader": "javafml",
+      "loaderVersion": "[4,)",
+      "dependencies": {
+        "minecolonies_cult": [
+          {
+            "modId": "minecraft",
+            "type": "required",
+            "versionRange": "[1.21.1]",
+            "side": "BOTH"
+          },
+          {
+            "modId": "neoforge",
+            "type": "required",
+            "versionRange": "[21.1.218]",
+            "side": "BOTH"
+          },
+          {
+            "modId": "minecolonies",
+            "type": "required",
+            "versionRange": "[1.1.1343-1.21.1-snapshot]",
+            "ordering": "AFTER",
+            "side": "BOTH"
+          }
+        ]
+      },
+      "nested": []
+    }
+  },
+  "java": "Eclipse Adoptium 21.0.12.1+1 aarch64 macOS",
+  "neoforge": "21.1.218",
+  "minecraft": "1.21.1"
+}

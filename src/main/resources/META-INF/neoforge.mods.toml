@@ -11,10 +11,13 @@ ${mod_description}
 '''
 authors="${mod_authors}"
 
+[[mixins]]
+config="fourtwenty.mixins.json"
+
 [[dependencies.${mod_id}]]
 modId="neoforge"
 type="required"
-versionRange="[21.1.92,)"
+versionRange="${neo_version_range}"
 ordering="NONE"
 side="BOTH"
 

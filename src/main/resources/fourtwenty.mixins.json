@@ -1,0 +1,8 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.malevolentgods.fourtwenty.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": ["ActuallyHarvestPermissionMixin"],
+  "injectors": {"defaultRequire": 1}
+}
