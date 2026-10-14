@@ -1,6 +1,6 @@
 # Development and compatibility runs
 
-Use Java 21, Python 3.11+, the committed Gradle 8.13 wrapper, and NeoGradle 7.0.189. Set `JAVA_HOME` to a Java 21 JDK and `GRADLE_USER_HOME` to a disposable local cache when needed. Production code requires only Minecraft and NeoForge. Optional colony permission/configuration classes resolve lazily; the Actually Harvest mixin is a pseudo mixin and is absent when that mod is absent.
+Use Java 21, Python 3.11+, the committed Gradle 8.13 wrapper, and NeoGradle 7.0.189. Set `JAVA_HOME` to a Java 21 JDK and `GRADLE_USER_HOME` to a disposable local cache when needed. Runtime requires only Minecraft and NeoForge. Compilation also requires the six checksum-pinned colony API JARs in `.compat/dependencies`; they are compile-only and never bundled. The dispensary integration is gated by MineColonies presence and its inspected exact version. See the [Phase 1 contract and evidence](DISPENSARY_PHASE1.md). Optional colony permission/configuration classes resolve lazily; the Actually Harvest mixin is a pseudo mixin and is absent when that mod is absent.
 
 ## Make commands
 
@@ -68,7 +68,7 @@ python3 tools/compatibility.py verify
 ./gradlew verifyCompatibility
 ```
 
-`build` includes six JUnit scheduling tests. Native GameTests are separate. The release JAR excludes `gametest`, `colonytest`, `packtest`, `baselineprobe`, `launcher`, and `verification` source sets. The empty launcher helper gives NeoGradle a source anchor in packaged/baseline runs without substituting FourTwenty's main output.
+`build` includes six JUnit scheduling tests and ten dispensary rule tests. Native GameTests are separate. The release JAR excludes `gametest`, `colonytest`, `packtest`, `baselineprobe`, `launcher`, and `verification` source sets. The empty launcher helper gives NeoGradle a source anchor in packaged/baseline runs without substituting FourTwenty's main output.
 
 `validation/compatibility-lock.json` records all 135 installed JARs, recursively inspected JarJar artifacts, resolved manifest versions, source revisions, and the six frozen core artifacts. Never regenerate it to make a mismatch disappear. Preparation rejects changed hashes, duplicate IDs, existing destinations, incorrect cult provenance, and stale destination JARs. Installed copies of FourTwenty and Kingdom's Gate are excluded by mod ID.
 

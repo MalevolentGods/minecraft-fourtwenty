@@ -1,0 +1,17 @@
+build.gradle
+docs/DEVELOPMENT.md
+docs/DISPENSARY_PHASE1.md
+docs/DISPENSARY_PLAN.md
+src/colonytest/java/com/malevolentgods/fourtwenty/colonytest/DispensaryFoundationGameTests.java
+src/gametest/java/com/malevolentgods/fourtwenty/gametest/DemandPersistenceGameTests.java
+src/main/java/com/malevolentgods/fourtwenty/FourTwenty.java
+src/main/java/com/malevolentgods/fourtwenty/compat/ColonyMixinPlugin.java
+src/main/java/com/malevolentgods/fourtwenty/compat/minecolonies/ColonyIntegration.java
+src/main/java/com/malevolentgods/fourtwenty/compat/minecolonies/DispensaryConfig.java
+src/main/java/com/malevolentgods/fourtwenty/compat/minecolonies/DispensaryIds.java
+src/main/java/com/malevolentgods/fourtwenty/compat/minecolonies/DispensarySavedData.java
+src/main/java/com/malevolentgods/fourtwenty/compat/minecolonies/domain/CitizenDemand.java
+src/main/java/com/malevolentgods/fourtwenty/compat/minecolonies/domain/DemandRules.java
+src/main/resources/META-INF/neoforge.mods.toml
+src/main/resources/fourtwenty.minecolonies.mixins.json
+src/test/java/com/malevolentgods/fourtwenty/compat/minecolonies/domain/CitizenDemandTest.java

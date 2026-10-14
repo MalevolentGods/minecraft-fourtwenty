@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.malevolentgods.fourtwenty.compat.minecolonies.mixin",
+  "plugin": "com.malevolentgods.fourtwenty.compat.ColonyMixinPlugin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "injectors": {"defaultRequire": 1}
+}

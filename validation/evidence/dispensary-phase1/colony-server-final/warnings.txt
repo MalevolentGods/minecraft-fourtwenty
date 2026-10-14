@@ -1,0 +1,37 @@
+[14Oct2026 19:28:04.922] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:mixinextras.neoforge. Using Mod File: /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle-home/caches/modules-2/files-2.1/io.github.llamalad7/mixinextras-neoforge/0.5.0/d734b83ce6542bb70ea31755c1595b88992dbe65/mixinextras-neoforge-0.5.0.jar
+[14Oct2026 19:28:05.303] [main/WARN] [mixin/]: Error loading class: actuallyharvest/event/HarvestEventHandler (java.lang.ClassNotFoundException: actuallyharvest.event.HarvestEventHandler)
+[14Oct2026 19:28:08.767] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14Oct2026 19:28:08.767] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14Oct2026 19:28:08.769] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[14Oct2026 19:28:08.769] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[14Oct2026 19:28:08.770] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14Oct2026 19:28:09.414] [Structurize IO Worker #0/WARN] [structurize/]: Failed loading packs from main folder path: .
+[14Oct2026 19:28:09.414] [Structurize IO Worker #0/WARN] [structurize/]: Failed loading client packs from main folder path: .
+[14Oct2026 19:28:09.414] [Structurize IO Worker #0/WARN] [structurize/]: Finished discovering Server Structure packs
+[14Oct2026 19:28:09.428] [modloading-worker-0/WARN] [minecolonies/]: Register mappings
+[14Oct2026 19:28:09.477] [main/ERROR] [net.minecraft.server.dedicated.Settings/]: Failed to load properties from file: server.properties
+[14Oct2026 19:28:09.514] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar%23198!/assets/.mcassetsroot' uses unexpected schema
+[14Oct2026 19:28:09.514] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar%23198!/data/.mcassetsroot' uses unexpected schema
+[14Oct2026 19:28:10.124] [main/WARN] [minecolonies/]: Read 1634 items with their nbt keys for compatibility.
+[14Oct2026 19:28:10.849] [Server thread/WARN] [minecolonies/]: Starting Compat Discovery
+[14Oct2026 19:28:11.347] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 19:28:11.348] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 19:28:11.978] [Server thread/WARN] [minecolonies/]: Statemachine for state WALKING_HOME threw an exception:
+[14Oct2026 19:28:12.541] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 19:28:12.541] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 19:28:13.142] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 19:28:13.143] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 19:28:13.145] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 19:28:13.146] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 19:28:13.148] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 19:28:13.149] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 19:28:13.174] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 19:28:13.174] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 19:28:13.175] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 19:28:13.176] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 19:28:14.508] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 19:28:14.509] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 19:28:15.136] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 19:28:15.136] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 19:28:15.482] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 19:28:15.483] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen

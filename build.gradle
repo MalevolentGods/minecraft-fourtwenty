@@ -125,6 +125,10 @@ dependencies {
     // And its provides the option to then use net.minecraft as the group, and one of; client, server or joined as the module name, plus the game version as version.
     // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
     implementation "net.neoforged:neoforge:${neo_version}"
+    // Optional APIs are compiled against the checksum-pinned installed artifacts only.
+    compileOnly files(new groovy.json.JsonSlurper().parse(file('validation/compatibility-lock.json')).core.collect {
+        file(".compat/dependencies/${it.file}")
+    })
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -153,6 +157,18 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 }
+
+tasks.register('verifyColonyCompileDependencies') {
+    doLast {
+        new groovy.json.JsonSlurper().parse(file('validation/compatibility-lock.json')).core.each { pin ->
+            def artifact = file(".compat/dependencies/${pin.file}")
+            if (!artifact.exists() || java.security.MessageDigest.getInstance('SHA-256').digest(artifact.bytes).encodeHex().toString() != pin.sha256) {
+                throw new GradleException("Missing or changed pinned compile API: ${artifact}. Copy the matching artifact from the compatibility lock; do not regenerate pins.")
+            }
+        }
+    }
+}
+tasks.named('compileJava') { dependsOn 'verifyColonyCompileDependencies' }
 
 // This block of code expands all declared replace properties in the specified resource targets.
 // A missing property will result in an error. Properties are expanded using ${} Groovy notation.
