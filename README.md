@@ -18,9 +18,49 @@ Craft joints, pipes, cookies, brownies, and bongs with the existing recipes. Coo
 
 Pending effects survive dimension travel, but cancel on logout, actual death, or server shutdown. Sleep and changes to the daylight clock do not advance the delay. Effects already applied follow vanilla effect merging and milk removal. MineColonies citizens exclude the cookies and brownies from food selection; normal inventory storage and transport remain available.
 
+### Crafting recipes
+
+Each recipe below makes **one item**. Follow the shown arrangement for shaped recipes; the cookie ingredients can go anywhere in the crafting grid.
+
+<!-- Regenerate cards with Pillow 12.3.0: python3 tools/generate_recipe_cards.py --minecraft-jar /path/to/1.21.1.jar -->
+
+#### Weed Joint
+
+**Ingredients:** 2 paper + 1 weed bud → **1 Weed Joint**.
+
+![Weed Joint shaped recipe: top and middle rows empty; bottom row paper, weed bud, paper. Makes one joint.](docs/images/recipes/weed_joint.png)
+
+#### Weed Pipe
+
+**Ingredients:** 1 weed bud + 1 charcoal + 1 oak plank + 1 birch plank + 1 spruce plank → **1 Weed Pipe**. Use the specific wood types shown.
+
+![Weed Pipe shaped recipe: weed bud in the top-right slot, charcoal in the middle-right slot; bottom row oak planks, birch planks, spruce planks. Other slots empty. Makes one pipe.](docs/images/recipes/weed_pipe.png)
+
+#### Weed Cookie
+
+**Ingredients:** 1 cookie + 1 weed bud → **1 Weed Cookie**. **Shapeless — ingredients can go anywhere.**
+
+![Weed Cookie shapeless recipe: one cookie and one weed bud in any crafting slots. Makes one weed cookie.](docs/images/recipes/weed_cookie.png)
+
+#### Weed Brownie
+
+**Ingredients:** 4 cocoa beans + 4 wheat + 1 weed bud → **1 Weed Brownie**.
+
+![Weed Brownie shaped recipe: top row cocoa beans, wheat, cocoa beans; middle row wheat, weed bud, wheat; bottom row cocoa beans, wheat, cocoa beans. Makes one brownie.](docs/images/recipes/weed_brownie.png)
+
+#### Weed Bong
+
+**Ingredients:** 6 dark oak planks + 2 glass blocks + 1 gold ingot → **1 Weed Bong**.
+
+![Weed Bong shaped recipe: dark oak planks fill the left and right columns; center column is gold ingot, glass, glass from top to bottom. Makes one bong.](docs/images/recipes/weed_bong.png)
+
 ## Dispensary (optional MineColonies integration)
 
-With the pinned MineColonies build installed, craft the hut using six planks, two paper, and one weed bud: planks across the top and bottom, with paper–bud–paper in the middle. Use **Build Tool → Switch Pack → FourTwenty → Dispensary → dispensary1** to place the shop. The level selector previews levels 1–5; request construction, upgrades, and repairs through the standard hut controls.
+**Requires MineColonies.** With the pinned MineColonies build installed, craft the hut using **6 of any planks + 2 paper + 1 weed bud → 1 Dispensary**. Oak is shown as an example; any combination of planks works.
+
+![Dispensary shaped recipe, requiring MineColonies: any planks across the top and bottom rows; middle row paper, weed bud, paper. Makes one Dispensary. Oak planks are shown as an example.](docs/images/recipes/dispensary.png)
+
+Use **Build Tool → Switch Pack → FourTwenty → Dispensary → dispensary1** to place the shop. The level selector previews levels 1–5; request construction, upgrades, and repairs through the standard hut controls.
 
 Reserve **17×23 blocks** for the finished shop and lounge. Facing the north-facing entrance, the hut stays in the same place at every level: reserve eight blocks to either side, three toward the entrance, and nineteen behind it, including the hut column. Keep fourteen blocks of vertical space from the foundation. Rotate or mirror this area with your preview.
 
