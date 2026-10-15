@@ -2,6 +2,7 @@ package com.malevolentgods.fourtwenty.compat.minecolonies.service;
 
 import com.malevolentgods.fourtwenty.compat.minecolonies.*;
 import com.malevolentgods.fourtwenty.compat.minecolonies.building.DispensaryBuilding;
+import com.malevolentgods.fourtwenty.util.JointSmoke;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
@@ -13,7 +14,6 @@ import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -135,10 +135,12 @@ public final class CitizenSmokingTask {
                 showingJoint = true;
                 if (time % 20 == 0) {
                     citizen.swing(InteractionHand.MAIN_HAND);
-                    ((ServerLevel) citizen.level()).sendParticles(ParticleTypes.SMOKE, citizen.getX(), citizen.getEyeY() - .1,
-                            citizen.getZ(), 2, .12, .08, .12, .01);
                 }
-                if (time - smokeStarted >= SMOKE_TICKS) { JointService.consume(citizen, revision); return finish(false); }
+                if (time - smokeStarted >= SMOKE_TICKS) {
+                    if (JointService.consume(citizen, revision)) JointSmoke.puff(citizen, 5);
+                    return finish(false);
+                }
+                JointSmoke.tick(citizen, time - smokeStarted);
             }
             default -> { return finish(true); }
         }
@@ -146,6 +148,7 @@ public final class CitizenSmokingTask {
     }
     private void beginSmoke() {
         citizen.getNavigation().stop(); step = Step.SMOKE; smokeStarted = now();
+        JointSmoke.puff(citizen, 2);
     }
     private boolean safeStanding(BlockPos pos) {
         var world = citizen.level();

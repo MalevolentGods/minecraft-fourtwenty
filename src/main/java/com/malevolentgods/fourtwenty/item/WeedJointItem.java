@@ -1,5 +1,6 @@
 package com.malevolentgods.fourtwenty.item;
 
+import com.malevolentgods.fourtwenty.util.JointSmoke;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -10,8 +11,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
 
 import javax.annotation.Nonnull;
 
@@ -33,26 +32,8 @@ public class WeedJointItem extends Item {
             if (level.random.nextFloat() < 0.3f) { // 30% chance
                 player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 400, 0)); // 20 seconds confusion
             }
-
-            // Add final smoke particles when finishing
-            if (level instanceof ServerLevel serverLevel) {
-                // Spawn final exhale smoke particles
-                double x = player.getX();
-                double y = player.getY() + player.getEyeHeight() + 0.5; // Above the head
-                double z = player.getZ();
-                
-                // Create final exhale effect with more particles
-                for (int i = 0; i < 5; i++) {
-                    double offsetX = (level.random.nextDouble() - 0.5) * 0.6;
-                    double offsetY = level.random.nextDouble() * 0.4;
-                    double offsetZ = (level.random.nextDouble() - 0.5) * 0.6;
-                    
-                    serverLevel.sendParticles(ParticleTypes.SMOKE, 
-                        x + offsetX, y + offsetY, z + offsetZ, 
-                        1, 0, 0.1, 0, 0.03);
-                }
-            }
         }
+        JointSmoke.puff(entity, 5);
         
         // Consume the item (like food)
         stack.shrink(1);
@@ -63,26 +44,14 @@ public class WeedJointItem extends Item {
     public @Nonnull InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         
-        // Start spawning smoke particles when beginning to use
-        if (level instanceof ServerLevel serverLevel) {
-            double x = player.getX();
-            double y = player.getY() + player.getEyeHeight() + 0.3;
-            double z = player.getZ();
-            
-            // Spawn initial smoke particles
-            for (int i = 0; i < 3; i++) {
-                double offsetX = (level.random.nextDouble() - 0.5) * 0.3;
-                double offsetY = level.random.nextDouble() * 0.2;
-                double offsetZ = (level.random.nextDouble() - 0.5) * 0.3;
-                
-                serverLevel.sendParticles(ParticleTypes.SMOKE, 
-                    x + offsetX, y + offsetY, z + offsetZ, 
-                    1, 0, 0.05, 0, 0.01);
-            }
-        }
-        
         player.startUsingItem(hand);
+        JointSmoke.puff(player, 2);
         return InteractionResultHolder.consume(itemstack);
+    }
+
+    @Override
+    public void onUseTick(@Nonnull Level level, @Nonnull LivingEntity entity, @Nonnull ItemStack stack, int remainingUseDuration) {
+        JointSmoke.tick(entity, getUseDuration(stack, entity) - remainingUseDuration);
     }
 
     @Override
