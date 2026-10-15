@@ -13,8 +13,7 @@ permissions:
 jobs:
   build:
     name: Test and build
-    # Match the committed macOS dependency lock and native artifact checksums.
-    runs-on: macos-15
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     outputs:
       version: ${{ steps.version.outputs.version }}

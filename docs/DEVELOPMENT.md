@@ -79,7 +79,7 @@ python3 tools/compatibility.py verify
 ./gradlew verifyCompatibility -PcompatInventory=.compat/runs/example/compatibility-run.json
 ```
 
-The committed macOS dependency lock and SHA-256 verification metadata cover the resolved build/test configurations. Hashes were bootstrapped from the downloaded repository artifacts; they are integrity pins, not independent signature attestations. Linux uses `gradle/linux.lockfile`; a Linux runtime was unavailable in this session, so that lock and Linux qualification remain pending. On a real Linux worker, generate and review them with:
+The committed dependency locks and SHA-256 verification metadata cover the resolved build/test configurations. Linux builds, including GitHub Actions, use `gradle/linux.lockfile`; macOS development uses `gradle.lockfile`. Hashes are integrity pins bootstrapped from downloaded repository artifacts, not independent signature attestations. When intentionally updating dependencies, regenerate and review the lock on each platform with:
 
 ```sh
 ./gradlew resolveCompatibilityDependencies build --write-locks --write-verification-metadata sha256
@@ -87,13 +87,20 @@ The committed macOS dependency lock and SHA-256 verification metadata cover the 
 
 Ordinary verification runs omit both write flags. Preserve platform lock differences instead of copying macOS resolution into Linux. No CI execution or release publication is implied by local results.
 
+NeoGradle's locally generated `ng_dummy_ng.net.neoforged:neoforge:21.1.218`
+intermediate JAR and Ivy descriptor have narrowly scoped verification exceptions:
+the descriptor varies by platform, and macOS/Linux produced different JAR archive
+hashes despite byte-identical contents for every entry. These are local build
+outputs. Downloaded NeoForge inputs, tools, native libraries, and compile APIs
+remain checksum-verified; dependency versions remain locked.
+
 ## GitHub Actions and tagged releases
 
 `.github/workflows/ci.yml` runs `make test` for pull requests. Version-tag pushes
 also run `make build`, then publish the production JAR to GitHub Releases with
-generated release notes. Builds use Java 21, Python 3.13, and the `macos-15`
-runner to match the committed macOS dependency lock and native checksums; the
-Linux lock described above is still pending. No installed modpack is needed:
+generated release notes. Both jobs use Ubuntu 24.04 Linux runners. Builds use
+Java 21, Python 3.13, the committed Linux dependency lock, and verified native
+artifact checksums; CI never regenerates these pins. No installed modpack is needed:
 `tools/download_compile_dependencies.py` downloads the six compile APIs from
 `tools/compile-dependency-downloads.json` and verifies every SHA-256 against the
 unchanged compatibility lock before copying any JARs into `.compat/dependencies`.
@@ -121,6 +128,14 @@ Tests and builds use read-only repository permissions. Publication waits for
 all tests and the build to pass. Existing releases are not overwritten; use a
 new version tag for a new release. Unit checks do not establish native gameplay
 or full-modpack acceptance.
+
+Linux migration validation (2026-10-15): a disposable Ubuntu 24.04 ARM64 VM
+with Java 21 passed `make test` (18 Java and 12 Python tests) and a versioned
+`make build` with verification enabled and no pin-generation flags. The JAR's
+filename, manifest, and NeoForge version agreed. All 11 added external-artifact
+checksums independently matched Maven Central. Workflow linting passed. This
+is local Linux evidence; the hosted Ubuntu x64 Actions run and release
+publication still require a push containing the workflow changes.
 
 ## Build the pinned sibling without changing it
 
