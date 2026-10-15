@@ -1,0 +1,10 @@
+{
+  "kind": "client",
+  "exitCode": 0,
+  "timedOut": false,
+  "passed": true,
+  "durationSeconds": 53.15,
+  "run": "/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-combined-client-final",
+  "scope": "automated fixture/probe",
+  "ownerAcceptedEula": null
+}

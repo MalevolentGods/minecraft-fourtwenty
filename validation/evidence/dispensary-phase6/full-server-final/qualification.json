@@ -1,0 +1,10 @@
+{
+  "kind": "server",
+  "exitCode": 0,
+  "timedOut": false,
+  "passed": true,
+  "durationSeconds": 53.4,
+  "run": "/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-full-server-final",
+  "scope": "startup, ten-second idle and orderly shutdown; no connected gameplay",
+  "ownerAcceptedEula": true
+}

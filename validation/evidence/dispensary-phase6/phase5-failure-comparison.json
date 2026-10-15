@@ -1,0 +1,15 @@
+{
+  "olderArtifact": "3859e66fffb3656b45a91be6497e3377f663bd4ea89dfe0cab8843d0dc1313ea",
+  "olderArtifactOrigin": ".compat/runs/dispensary-phase5-final-client/mods/fourtwenty-0.3.2.jar",
+  "scope": "Same current test helpers and full diagnostic profile; earlier Phase 5 client artifact, not a claim to rerun the historical Phase 5 test set.",
+  "sharedFailures": [
+    "actuallyharvestownsclicksandareareplanting",
+    "booksusenativerequestsandlimitconversions",
+    "fakeplayerharvestrespectsdisabledreplanting",
+    "recruitmentandritualcleanup"
+  ],
+  "onlyFinal": [],
+  "onlyOlderArtifact": [
+    "levelticksrefreshmovementandqueuewithoutinventorychanges"
+  ]
+}

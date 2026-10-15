@@ -1,0 +1,10 @@
+{
+  "kind": "gametest",
+  "exitCode": 0,
+  "timedOut": false,
+  "passed": true,
+  "durationSeconds": 9.53,
+  "run": ".compat/runs/dispensary-phase6-restart-release-write",
+  "scope": "automated fixture/probe",
+  "ownerAcceptedEula": null
+}

@@ -1,0 +1,912 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.13/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :cacheVersionManifest1.21.1 UP-TO-DATE
+> Task :cacheVersionExecutableClient1.21.1 UP-TO-DATE
+> Task :cacheVersionExecutableServer1.21.1 UP-TO-DATE
+> Task :cacheVersionMappingsClient1.21.1 UP-TO-DATE
+> Task :cacheVersionMappingsServer1.21.1 UP-TO-DATE
+> Task :neoFormListLibraries UP-TO-DATE
+> Task :neoFormStripClient UP-TO-DATE
+> Task :neoFormExtractServer UP-TO-DATE
+> Task :neoFormStripServer UP-TO-DATE
+> Task :neoFormMerge UP-TO-DATE
+> Task :neoFormMergeMappings UP-TO-DATE
+> Task :neoFormRename UP-TO-DATE
+> Task :neoFormDecompile UP-TO-DATE
+> Task :neoFormApplyForgesAccessTransformer UP-TO-DATE
+> Task :neoFormInject UP-TO-DATE
+> Task :neoFormPatch UP-TO-DATE
+> Task :neoFormPatchUserDev UP-TO-DATE
+> Task :neoFormApplyOfficialMappings UP-TO-DATE
+> Task :neoFormUnzipAdditionalSources UP-TO-DATE
+> Task :neoFormUnzipSources UP-TO-DATE
+> Task :create1.21.1ClientExtraJar UP-TO-DATE
+> Task :selectRawArtifactNg_dummy_ng.net.minecraft_client_1.21.1_client-extra UP-TO-DATE
+> Task :neoFormRecompile UP-TO-DATE
+> Task :neoFormPackRecomp UP-TO-DATE
+> Task :supplyRawJarForneoFormJoined1.21.1-20240808.144430 UP-TO-DATE
+> Task :selectRawArtifactNg_dummy_ng.net.neoforged_neoforge_21.1.218 UP-TO-DATE
+> Task :verifyColonyCompileDependencies
+
+> Task :compileJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :processResources UP-TO-DATE
+> Task :classes
+> Task :jar
+> Task :jarJar SKIPPED
+> Task :assemble
+> Task :compileTestJava UP-TO-DATE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test
+> Task :neoFormJoined1.21.1-20240808.144430DownloadAssets UP-TO-DATE
+> Task :neoFormJoined1.21.1-20240808.144430ExtractNatives UP-TO-DATE
+> Task :writeMinecraftClasspathJunit UP-TO-DATE
+> Task :testJunit NO-SOURCE
+> Task :check
+> Task :build
+> Task :compileGametestJava UP-TO-DATE
+> Task :processGametestResources UP-TO-DATE
+> Task :gametestClasses UP-TO-DATE
+
+> Task :compileColonytestJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :processColonytestResources UP-TO-DATE
+> Task :colonytestClasses
+> Task :writeMinecraftClasspathGameTestServer UP-TO-DATE
+
+> Task :runGameTestServer
+Run inventory verified: colony, 7 JARs
+Run inventory verified: colony, 7 JARs
+[32m[09:08:47.663] [main/INFO] [Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserverdev, --gameDir, ., --fml.fmlVersion, 4.0.42, --fml.mcVersion, 1.21.1, --fml.neoForgeVersion, 21.1.218, --fml.neoFormVersion, 20240808.144430] 
+[m[32m[09:08:47.665] [main/INFO] [Launcher/MODLAUNCHER]: JVM identified as Eclipse Adoptium OpenJDK 64-Bit Server VM 21.0.12.1+1-LTS 
+[m[32m[09:08:47.665] [main/INFO] [Launcher/MODLAUNCHER]: ModLauncher 11.0.5+main.901c6ea8 starting: java version 21.0.12.1 by Eclipse Adoptium; OS Mac OS X arch aarch64 version 26.6.2 
+[m[32m[09:08:47.724] [main/INFO] [loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserverdev 
+[m[32m[09:08:47.746] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle-home/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.15.2+mixin.0.8.7/2af2f021d8e02a0220dc27a7a72b4666d66d44ca/sponge-mixin-0.15.2+mixin.0.8.7.jar%23134!/ Service=ModLauncher Env=SERVER 
+[m[32m[09:08:47.796] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "neoforge-21.1.218.jar" [locator: neoforge devenv provider ([/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar])] 
+[m[32m[09:08:47.808] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "neoforge-21.1.218.jar" [locator: neoforge devenv provider ([/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar])] 
+[m[32m[09:08:47.812] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "blockui-1.0.211-1.21.1-snapshot.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-status-refresh-green/mods}, reader: mod manifest] 
+[m[32m[09:08:47.815] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "domum-ornamentum-1.0.234-snapshot-main.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-status-refresh-green/mods}, reader: mod manifest] 
+[m[32m[09:08:47.825] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "minecolonies-1.1.1343-1.21.1-snapshot.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-status-refresh-green/mods}, reader: mod manifest] 
+[m[32m[09:08:47.826] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "minecolonies-cult-0.2.0.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-status-refresh-green/mods}, reader: mod manifest] 
+[m[32m[09:08:47.828] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "multipiston-1.2.58-1.21.1.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-status-refresh-green/mods}, reader: mod manifest] 
+[m[32m[09:08:47.829] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "structurize-1.0.831-1.21.1-snapshot.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-status-refresh-green/mods}, reader: mod manifest] 
+[m[32m[09:08:47.832] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "towntalk-1.2.0.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-status-refresh-green/mods}, reader: mod manifest] 
+[m[32m[09:08:47.835] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "gametest" [locator: userdev mods and services, reader: mod manifest] 
+[m[32m[09:08:47.835] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "main" [locator: userdev mods and services, reader: mod manifest] 
+[m[32m[09:08:47.836] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "colonytest" [locator: userdev mods and services, reader: mod manifest] 
+[m[32m[09:08:47.842] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "neoforge-21.1.218.jar" [locator: userdev mods and services, reader: mod manifest] 
+[m[32m[09:08:47.848] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found gamelibrary file "mixinextras-neoforge-0.5.0.jar" [locator: userdev mods and services, reader: mod manifest] 
+[m[33m[09:08:47.900] [main/WARN] [selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:mixinextras.neoforge. Using Mod File: /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle-home/caches/modules-2/files-2.1/io.github.llamalad7/mixinextras-neoforge/0.5.0/d734b83ce6542bb70ea31755c1595b88992dbe65/mixinextras-neoforge-0.5.0.jar 
+[m[32m[09:08:47.900] [main/INFO] [loading.moddiscovery.locators.JarInJarDependencyLocator/]: Found 1 dependencies adding them to mods collection 
+[m[32m[09:08:47.900] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found library file "net.neoforged.neoforge-coremods-21.1.218.jar" [parent: neoforge-21.1.218.jar, locator: jarinjar, reader: mod manifest] 
+[m[32m[09:08:47.901] [main/INFO] [loading.moddiscovery.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Domum Ornamentum 1.0.234-snapshot (domum_ornamentum)
+		Four Twenty 0.3.2 (fourtwenty)
+		FourTwenty integration fixtures 1.0 (fourtwenty_colonytests)
+		FourTwenty integration fixtures 1.0 (fourtwenty_tests)
+		MineColonies 1.1.1343-1.21.1-snapshot (minecolonies)
+		MineColonies: Kingdom's Gate 0.2.0 (minecolonies_cult)
+		Minecraft 1.21.1 (minecraft)
+		Multi-Piston 1.2.58-1.21.1 (multipiston)
+		NeoForge 21.1.218 (neoforge)
+		Structurize 1.0.831-1.21.1 (structurize)
+		Towntalk 1.2.0 (towntalk)
+		UI Library Mod 1.0.211-1.21.1-snapshot (blockui) 
+[m[32m[09:08:48.175] [main/INFO] [mixin/]: Compatibility level set to JAVA_21 
+[m[32m[09:08:48.182] [main/INFO] [LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserverdev' with arguments [--gameDir, .] 
+[m[33m[09:08:48.260] [main/WARN] [mixin/]: Error loading class: actuallyharvest/event/HarvestEventHandler (java.lang.ClassNotFoundException: actuallyharvest.event.HarvestEventHandler) 
+[mWARN StatusConsoleListener Advanced terminal features are not available in this environment
+[09:08:49] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.0).
+[09:08:52] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[09:08:52] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[09:08:52] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[09:08:52] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[09:08:52] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[09:08:52] [modloading-worker-0/INFO] [ne.ne.ne.co.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.218, for MC 1.21.1
+[09:08:52] [modloading-worker-0/INFO] [co.ma.fo.co.mi.ColonyIntegration/]: FourTwenty dispensary foundation enabled (MineColonies 1.1.1343)
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Warped Netherlands
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Urban Savanna
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Desert Oasis
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Dark Oak Treehouse
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Lost Mesa City
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Nordic Spruce
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Stalactite Caves
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Pagoda
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Minecolonies Original
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Cavern
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Caledonia
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Medieval Oak
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Medieval Dark Oak
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Medieval Birch
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Shire
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Incan
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Space Wars
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Ancient Athens
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Jungle Treehouse
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Medieval Spruce
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Fortress
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Urban Birch
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Colonial
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: FourTwenty
+[09:08:52] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Kingdom's Gate
+[09:08:52] [Structurize IO Worker #0/WARN] [structurize/]: Failed loading packs from main folder path: .
+[09:08:52] [Structurize IO Worker #0/WARN] [structurize/]: Failed loading client packs from main folder path: .
+[09:08:52] [Structurize IO Worker #0/WARN] [structurize/]: Finished discovering Server Structure packs
+[09:08:52] [modloading-worker-0/WARN] [minecolonies/]: Register mappings
+[09:08:52] [main/ERROR] [minecraft/Settings]: Failed to load properties from file: server.properties
+java.nio.file.NoSuchFileException: server.properties
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92) ~[?:?] {}
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106) ~[?:?] {}
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111) ~[?:?] {}
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:261) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?] {}
+	at java.base/java.nio.file.spi.FileSystemProvider.newInputStream(FileSystemProvider.java:420) ~[?:?] {}
+	at java.base/java.nio.file.Files.newInputStream(Files.java:160) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.dedicated.Settings.loadFromFile(Settings.java:38) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.dedicated.DedicatedServerProperties.fromFile(DedicatedServerProperties.java:132) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.dedicated.DedicatedServerSettings.<init>(DedicatedServerSettings.java:12) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.Main.main(Main.java:125) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:136) ~[loader-4.0.42.jar%23142!/:4.0] {}
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.CommonLaunchHandler.serverService(CommonLaunchHandler.java:128) ~[loader-4.0.42.jar%23142!/:4.0] {}
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.NeoForgeServerDevLaunchHandler.runService(NeoForgeServerDevLaunchHandler.java:23) ~[loader-4.0.42.jar%23142!/:4.0] {}
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.CommonLaunchHandler.lambda$launchService$4(CommonLaunchHandler.java:118) ~[loader-4.0.42.jar%23142!/:4.0] {}
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandlerDecorator.launch(LaunchServiceHandlerDecorator.java:30) [modlauncher-11.0.5.jar%23124!/:?] {}
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:53) [modlauncher-11.0.5.jar%23124!/:?] {}
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:71) [modlauncher-11.0.5.jar%23124!/:?] {}
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.Launcher.run(Launcher.java:103) [modlauncher-11.0.5.jar%23124!/:?] {}
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.Launcher.main(Launcher.java:74) [modlauncher-11.0.5.jar%23124!/:?] {}
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:26) [modlauncher-11.0.5.jar%23124!/:?] {}
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:23) [modlauncher-11.0.5.jar%23124!/:?] {}
+	at cpw.mods.bootstraplauncher@2.0.2/cpw.mods.bootstraplauncher.BootstrapLauncher.run(BootstrapLauncher.java:210) [bootstraplauncher-2.0.2.jar:?] {}
+	at cpw.mods.bootstraplauncher@2.0.2/cpw.mods.bootstraplauncher.BootstrapLauncher.main(BootstrapLauncher.java:69) [bootstraplauncher-2.0.2.jar:?] {}
+[09:08:52] [main/INFO] [mojang/YggdrasilAuthenticationService]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[09:08:52] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar%23197!/assets/.mcassetsroot' uses unexpected schema
+[09:08:52] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar%23197!/data/.mcassetsroot' uses unexpected schema
+[09:08:52] [main/INFO] [ne.ne.ne.ga.GameTestHooks/]: Enabled Gametest Namespaces: [fourtwenty_colonytests]
+[09:08:53] [main/INFO] [minecraft/RecipeManager]: Loaded 1600 recipes
+[09:08:53] [main/INFO] [minecraft/AdvancementTree]: Loaded 1672 advancements
+[09:08:53] [main/INFO] [minecolonies/]: Beginning load of custom recipes for colony workers
+[09:08:53] [main/INFO] [minecolonies/]: Loaded 161 recipes for 16 crafters
+[09:08:53] [main/INFO] [minecolonies/]: Research loading...
+[09:08:53] [main/INFO] [minecolonies/]: Research loaded. Located 4 branches, 208 researches and 103 effects.
+[09:08:53] [main/INFO] [minecolonies/]: Loading quests from data
+[09:08:53] [main/INFO] [minecolonies/]: Finished loading quests from data
+[09:08:53] [main/WARN] [minecolonies/]: Read 1634 items with their nbt keys for compatibility.
+[09:08:53] [main/INFO] [minecolonies/]: [Study items Loader]: Starting reload...
+[09:08:53] [main/INFO] [minecolonies/]: [Study items Loader]: Finished reloading. 2 entries created.
+[09:08:54] [Server thread/INFO] [minecraft/MinecraftServer]: Preparing start region for dimension minecraft:overworld
+[09:08:54] [worldgen/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 2%
+[09:08:54] [Server thread/INFO] [minecraft/LoggerChunkProgressListener]: Time elapsed: 162 ms
+[09:08:54] [Server thread/INFO] [minecraft/GameTestServer]: Started game test server
+[09:08:54] [Server thread/INFO] [ne.ne.ne.se.pe.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[09:08:54] [Server thread/WARN] [minecolonies/]: Starting Compat Discovery
+[09:08:54] [Server thread/INFO] [minecolonies/]: Finished discovering Ores 19 22
+[09:08:54] [Server thread/INFO] [minecolonies/]: Finished discovering saplings 14
+[09:08:54] [Server thread/INFO] [minecolonies/]: Finished discovering plantables 19
+[09:08:54] [Server thread/INFO] [minecolonies/]: Finished discovering food 107 121
+[09:08:54] [Server thread/INFO] [minecolonies/]: Finished discovering fuel 249
+[09:08:54] [Server thread/INFO] [minecolonies/]: Finished discovering flowers 26
+[09:08:54] [Server thread/INFO] [minecolonies/]: Finished discovering items 2002
+[09:08:54] [Server thread/INFO] [minecolonies/]: Finished discovering compostables 236
+[09:08:54] [Server thread/INFO] [minecraft/GameTestServer]: 13 tests are now running at position -5601, -59, 14648649!
+[09:08:54] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'dispensary_clock:0' (1 tests)...
+[09:08:54] [Server thread/INFO] [minecraft/GameTestServer]: [             ]
+[09:08:54] [Server thread/INFO] [minecraft/GameTestServer]: [             ]
+[09:08:54] [Server thread/INFO] [minecraft/GameTestServer]: [             ]
+[09:08:54] [Server thread/INFO] [minecraft/GameTestServer]: [             ]
+[09:08:54] [Server thread/INFO] [minecraft/GameTestServer]: [             ]
+[09:08:54] [Server thread/INFO] [minecraft/GameTestServer]: [             ]
+[09:08:54] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'dispensary_recipe:0' (1 tests)...
+[09:08:54] [Server thread/INFO] [minecraft/GameTestServer]: [+            ]
+[09:08:55] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addImportantColonyPlayer(ColonyPackageManager.java:295) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:128) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.colony(DispensaryProductionGameTests.java:30) ~[%23208!/:?] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.recipeUsesExactMaterialsWithoutImprovement(DispensaryProductionGameTests.java:117) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:55] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addCloseSubscriber(ColonyPackageManager.java:268) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:129) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.colony(DispensaryProductionGameTests.java:30) ~[%23208!/:?] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.recipeUsesExactMaterialsWithoutImprovement(DispensaryProductionGameTests.java:117) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:55] [Server thread/INFO] [minecolonies/]: New Colony Id: 1 by [Minecraft]
+[09:08:55] [Server thread/INFO] [minecolonies/]: Removing citizens for 1
+[09:08:55] [Server thread/INFO] [minecolonies/]: Kill Citizen Giselle K. Johnston
+[09:08:55] [Server thread/INFO] [minecolonies/]: Removing buildings for 1
+[09:08:55] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-5590, y=-59, z=14648650}
+[09:08:55] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-5590, y=-59, z=14648650} of type dispensary
+[09:08:55] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{fourtwenty:dispensary}
+[09:08:55] [Server thread/INFO] [minecolonies/]: Deleting colony: 1
+[09:08:55] [Server thread/INFO] [minecolonies/]: Successfully deleted colony: 1
+[09:08:55] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'dispensary_status:0' (1 tests)...
+[09:08:55] [Server thread/INFO] [minecraft/GameTestServer]: [++           ]
+[09:08:55] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addImportantColonyPlayer(ColonyPackageManager.java:295) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:128) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryPresentationGameTests.inventoryStatusAndNativePacket(DispensaryPresentationGameTests.java:161) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:55] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addCloseSubscriber(ColonyPackageManager.java:268) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:129) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryPresentationGameTests.inventoryStatusAndNativePacket(DispensaryPresentationGameTests.java:161) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:55] [Server thread/INFO] [minecolonies/]: New Colony Id: 1 by [Minecraft]
+[09:08:55] [Server thread/INFO] [minecolonies/]: Removing citizens for 1
+[09:08:55] [Server thread/INFO] [minecolonies/]: Kill Citizen Princess X. Cuddon
+[09:08:55] [Server thread/INFO] [minecolonies/]: Removing buildings for 1
+[09:08:55] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-5580, y=-59, z=14648650}
+[09:08:55] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-5580, y=-59, z=14648650} of type dispensary
+[09:08:55] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{fourtwenty:dispensary}
+[09:08:55] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-5577, y=-59, z=14648650}
+[09:08:55] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-5577, y=-59, z=14648650} of type dispensary
+[09:08:55] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{fourtwenty:dispensary}
+[09:08:55] [Server thread/INFO] [minecolonies/]: Deleting colony: 1
+[09:08:55] [Server thread/INFO] [minecolonies/]: Successfully deleted colony: 1
+[09:08:55] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'dispensary_foundation:0' (1 tests)...
+[09:08:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++          ]
+[09:08:56] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addImportantColonyPlayer(ColonyPackageManager.java:295) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:128) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryFoundationGameTests.nativeHomeAndGuardHousing(DispensaryFoundationGameTests.java:22) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addCloseSubscriber(ColonyPackageManager.java:268) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:129) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryFoundationGameTests.nativeHomeAndGuardHousing(DispensaryFoundationGameTests.java:22) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/INFO] [minecolonies/]: New Colony Id: 1 by [Minecraft]
+[09:08:56] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+java.nio.file.NoSuchFileException: /blueprints/minecolonies/colonial
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipFileSystem.newByteChannel(ZipFileSystem.java:974) ~[jdk.zipfs:?] {}
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipPath.newByteChannel(ZipPath.java:870) ~[jdk.zipfs:?] {}
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipFileSystemProvider.newByteChannel(ZipFileSystemProvider.java:247) ~[jdk.zipfs:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?] {}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystem.byteChannel(UnionFileSystem.java:393) ~[securejarhandler-3.0.8.jar:?] {}
+	at java.base/java.util.Optional.map(Optional.java:260) ~[?:?] {re:mixin}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystem.newReadByteChannel(UnionFileSystem.java:380) ~[securejarhandler-3.0.8.jar:?] {}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystemProvider.newByteChannel(UnionFileSystemProvider.java:169) ~[securejarhandler-3.0.8.jar:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?] {}
+	at java.base/java.nio.file.Files.readAllBytes(Files.java:3281) ~[?:?] {}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:427) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:413) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:252) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractBuilding.calculateCorners(AbstractBuilding.java:1018) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractSchematicProvider.getCorners(AbstractSchematicProvider.java:266) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractBuilding.onPlacement(AbstractBuilding.java:319) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.RegisteredStructureManager.addNewBuilding(RegisteredStructureManager.java:592) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryFoundationGameTests.nativeHomeAndGuardHousing(DispensaryFoundationGameTests.java:27) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+java.nio.file.NoSuchFileException: /blueprints/minecolonies/colonial
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipFileSystem.newByteChannel(ZipFileSystem.java:974) ~[jdk.zipfs:?] {}
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipPath.newByteChannel(ZipPath.java:870) ~[jdk.zipfs:?] {}
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipFileSystemProvider.newByteChannel(ZipFileSystemProvider.java:247) ~[jdk.zipfs:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?] {}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystem.byteChannel(UnionFileSystem.java:393) ~[securejarhandler-3.0.8.jar:?] {}
+	at java.base/java.util.Optional.map(Optional.java:260) ~[?:?] {re:mixin}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystem.newReadByteChannel(UnionFileSystem.java:380) ~[securejarhandler-3.0.8.jar:?] {}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystemProvider.newByteChannel(UnionFileSystemProvider.java:169) ~[securejarhandler-3.0.8.jar:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?] {}
+	at java.base/java.nio.file.Files.readAllBytes(Files.java:3281) ~[?:?] {}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:427) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:413) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:252) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractBuilding.calculateCorners(AbstractBuilding.java:1018) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractSchematicProvider.getCorners(AbstractSchematicProvider.java:266) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractBuilding.onPlacement(AbstractBuilding.java:319) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.RegisteredStructureManager.addNewBuilding(RegisteredStructureManager.java:592) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryFoundationGameTests.nativeHomeAndGuardHousing(DispensaryFoundationGameTests.java:31) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+java.nio.file.NoSuchFileException: /blueprints/minecolonies/colonial
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipFileSystem.newByteChannel(ZipFileSystem.java:974) ~[jdk.zipfs:?] {}
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipPath.newByteChannel(ZipPath.java:870) ~[jdk.zipfs:?] {}
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipFileSystemProvider.newByteChannel(ZipFileSystemProvider.java:247) ~[jdk.zipfs:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?] {}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystem.byteChannel(UnionFileSystem.java:393) ~[securejarhandler-3.0.8.jar:?] {}
+	at java.base/java.util.Optional.map(Optional.java:260) ~[?:?] {re:mixin}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystem.newReadByteChannel(UnionFileSystem.java:380) ~[securejarhandler-3.0.8.jar:?] {}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystemProvider.newByteChannel(UnionFileSystemProvider.java:169) ~[securejarhandler-3.0.8.jar:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?] {}
+	at java.base/java.nio.file.Files.readAllBytes(Files.java:3281) ~[?:?] {}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:427) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:413) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:252) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractBuilding.calculateCorners(AbstractBuilding.java:1018) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractSchematicProvider.getCorners(AbstractSchematicProvider.java:266) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractBuilding.onPlacement(AbstractBuilding.java:319) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.RegisteredStructureManager.addNewBuilding(RegisteredStructureManager.java:592) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryFoundationGameTests.nativeHomeAndGuardHousing(DispensaryFoundationGameTests.java:54) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+java.nio.file.NoSuchFileException: /blueprints/minecolonies/colonial
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipFileSystem.newByteChannel(ZipFileSystem.java:974) ~[jdk.zipfs:?] {}
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipPath.newByteChannel(ZipPath.java:870) ~[jdk.zipfs:?] {}
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipFileSystemProvider.newByteChannel(ZipFileSystemProvider.java:247) ~[jdk.zipfs:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?] {}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystem.byteChannel(UnionFileSystem.java:393) ~[securejarhandler-3.0.8.jar:?] {}
+	at java.base/java.util.Optional.map(Optional.java:260) ~[?:?] {re:mixin}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystem.newReadByteChannel(UnionFileSystem.java:380) ~[securejarhandler-3.0.8.jar:?] {}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystemProvider.newByteChannel(UnionFileSystemProvider.java:169) ~[securejarhandler-3.0.8.jar:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?] {}
+	at java.base/java.nio.file.Files.readAllBytes(Files.java:3281) ~[?:?] {}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:427) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:413) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:252) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractBuilding.calculateCorners(AbstractBuilding.java:1018) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractBuilding.onUpgradeComplete(AbstractBuilding.java:962) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractBuildingGuards.onUpgradeComplete(AbstractBuildingGuards.java:213) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.workerbuildings.BuildingGuardTower.onUpgradeComplete(BuildingGuardTower.java:80) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryFoundationGameTests.nativeHomeAndGuardHousing(DispensaryFoundationGameTests.java:57) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Removing citizens for 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Kill Citizen Isabelle I. Complin
+[09:08:56] [Server thread/INFO] [minecolonies/]: Removing buildings for 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-5570, y=-59, z=14648650}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-5570, y=-59, z=14648650} of type residence
+[09:08:56] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{minecolonies:blockhutcitizen}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-5568, y=-59, z=14648650}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-5568, y=-59, z=14648650} of type farmer
+[09:08:56] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{minecolonies:blockhutfarmer}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-5566, y=-59, z=14648650}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-5566, y=-59, z=14648650} of type guardtower
+[09:08:56] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{minecolonies:blockhutguardtower}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Deleting colony: 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Successfully deleted colony: 1
+[09:08:56] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'dispensary_blueprint:0' (2 tests)...
+[09:08:56] [Server thread/INFO] [minecraft/GameTestServer]: [++++         ]
+[09:08:56] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'farmer_contract:0' (1 tests)...
+[09:08:56] [Server thread/INFO] [minecraft/GameTestServer]: [++++++       ]
+[09:08:56] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addImportantColonyPlayer(ColonyPackageManager.java:295) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:128) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.FarmerGameTests.nativeFarmerPlantsThreeCyclesFromRecoveredSeeds(FarmerGameTests.java:30) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addCloseSubscriber(ColonyPackageManager.java:268) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:129) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.FarmerGameTests.nativeFarmerPlantsThreeCyclesFromRecoveredSeeds(FarmerGameTests.java:30) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/INFO] [minecolonies/]: New Colony Id: 1 by [Minecraft]
+[09:08:56] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+java.nio.file.NoSuchFileException: /blueprints/minecolonies/colonial
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipFileSystem.newByteChannel(ZipFileSystem.java:974) ~[jdk.zipfs:?] {}
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipPath.newByteChannel(ZipPath.java:870) ~[jdk.zipfs:?] {}
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipFileSystemProvider.newByteChannel(ZipFileSystemProvider.java:247) ~[jdk.zipfs:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?] {}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystem.byteChannel(UnionFileSystem.java:393) ~[securejarhandler-3.0.8.jar:?] {}
+	at java.base/java.util.Optional.map(Optional.java:260) ~[?:?] {re:mixin}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystem.newReadByteChannel(UnionFileSystem.java:380) ~[securejarhandler-3.0.8.jar:?] {}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystemProvider.newByteChannel(UnionFileSystemProvider.java:169) ~[securejarhandler-3.0.8.jar:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?] {}
+	at java.base/java.nio.file.Files.readAllBytes(Files.java:3281) ~[?:?] {}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:427) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:413) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:252) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractBuilding.calculateCorners(AbstractBuilding.java:1018) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractSchematicProvider.getCorners(AbstractSchematicProvider.java:266) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractBuilding.onPlacement(AbstractBuilding.java:319) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.RegisteredStructureManager.addNewBuilding(RegisteredStructureManager.java:592) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.FarmerGameTests.nativeFarmerPlantsThreeCyclesFromRecoveredSeeds(FarmerGameTests.java:34) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+java.nio.file.NoSuchFileException: /blueprints/minecolonies/colonial
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipFileSystem.newByteChannel(ZipFileSystem.java:974) ~[jdk.zipfs:?] {}
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipPath.newByteChannel(ZipPath.java:870) ~[jdk.zipfs:?] {}
+	at jdk.zipfs@21.0.12.1/jdk.nio.zipfs.ZipFileSystemProvider.newByteChannel(ZipFileSystemProvider.java:247) ~[jdk.zipfs:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?] {}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystem.byteChannel(UnionFileSystem.java:393) ~[securejarhandler-3.0.8.jar:?] {}
+	at java.base/java.util.Optional.map(Optional.java:260) ~[?:?] {re:mixin}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystem.newReadByteChannel(UnionFileSystem.java:380) ~[securejarhandler-3.0.8.jar:?] {}
+	at cpw.mods.securejarhandler/cpw.mods.niofs.union.UnionFileSystemProvider.newByteChannel(UnionFileSystemProvider.java:169) ~[securejarhandler-3.0.8.jar:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?] {}
+	at java.base/java.nio.file.Files.readAllBytes(Files.java:3281) ~[?:?] {}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:427) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:413) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/structurize@1.0.831-1.21.1/com.ldtteam.structurize.storage.StructurePacks.getBlueprint(StructurePacks.java:252) ~[structurize-1.0.831-1.21.1-snapshot.jar%23204!/:1.0.831-1.21.1] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractBuilding.calculateCorners(AbstractBuilding.java:1018) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.buildings.AbstractBuilding.onUpgradeComplete(AbstractBuilding.java:962) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.FarmerGameTests.nativeFarmerPlantsThreeCyclesFromRecoveredSeeds(FarmerGameTests.java:36) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Removing citizens for 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Kill Citizen Aayan G. Kravitz
+[09:08:56] [Server thread/INFO] [minecolonies/]: Removing buildings for 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-5540, y=-58, z=14648650}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-5540, y=-58, z=14648650} of type farmer
+[09:08:56] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{minecolonies:blockhutfarmer}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Deleting colony: 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Successfully deleted colony: 1
+[09:08:56] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'defaultBatch:0' (2 tests)...
+[09:08:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++      ]
+[09:08:56] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'dispensary_requests:0' (1 tests)...
+[09:08:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++++    ]
+[09:08:56] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addImportantColonyPlayer(ColonyPackageManager.java:295) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:128) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.colony(DispensaryProductionGameTests.java:30) ~[%23208!/:?] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.nativeRequestsAreDeduplicatedAndIndependent(DispensaryProductionGameTests.java:86) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addCloseSubscriber(ColonyPackageManager.java:268) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:129) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.colony(DispensaryProductionGameTests.java:30) ~[%23208!/:?] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.nativeRequestsAreDeduplicatedAndIndependent(DispensaryProductionGameTests.java:86) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/INFO] [minecolonies/]: New Colony Id: 1 by [Minecraft]
+[09:08:56] [Server thread/INFO] [minecolonies/]: Removing citizens for 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Kill Citizen Mara Z. Balam
+[09:08:56] [Server thread/INFO] [minecolonies/]: Kill Citizen Dante T. Fuentes
+[09:08:56] [Server thread/INFO] [minecolonies/]: Removing buildings for 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-5590, y=-59, z=14648661}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-5590, y=-59, z=14648661} of type dispensary
+[09:08:56] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{fourtwenty:dispensary}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-5587, y=-59, z=14648661}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-5587, y=-59, z=14648661} of type dispensary
+[09:08:56] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{fourtwenty:dispensary}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Deleting colony: 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Successfully deleted colony: 1
+[09:08:56] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'dispensary_capacity:0' (1 tests)...
+[09:08:56] [Server thread/INFO] [minecraft/GameTestServer]: [++++++++++   ]
+[09:08:56] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addImportantColonyPlayer(ColonyPackageManager.java:295) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:128) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.colony(DispensaryProductionGameTests.java:30) ~[%23208!/:?] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.fullStorageCannotLoseOutputOrConsumeIngredients(DispensaryProductionGameTests.java:156) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addCloseSubscriber(ColonyPackageManager.java:268) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:129) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.colony(DispensaryProductionGameTests.java:30) ~[%23208!/:?] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.fullStorageCannotLoseOutputOrConsumeIngredients(DispensaryProductionGameTests.java:156) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/INFO] [minecolonies/]: New Colony Id: 1 by [Minecraft]
+[09:08:56] [Server thread/INFO] [minecolonies/]: Removing citizens for 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Kill Citizen Baker G. Bell
+[09:08:56] [Server thread/INFO] [minecolonies/]: Removing buildings for 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-5580, y=-59, z=14648661}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-5580, y=-59, z=14648661} of type dispensary
+[09:08:56] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{fourtwenty:dispensary}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Deleting colony: 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Successfully deleted colony: 1
+[09:08:56] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'dispensary_registration:0' (1 tests)...
+[09:08:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++++++  ]
+[09:08:56] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addImportantColonyPlayer(ColonyPackageManager.java:295) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:128) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.colony(DispensaryProductionGameTests.java:30) ~[%23208!/:?] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.registrationStaffingCapabilityAndPersistence(DispensaryProductionGameTests.java:57) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addCloseSubscriber(ColonyPackageManager.java:268) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:129) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.colony(DispensaryProductionGameTests.java:30) ~[%23208!/:?] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryProductionGameTests.registrationStaffingCapabilityAndPersistence(DispensaryProductionGameTests.java:57) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/INFO] [minecolonies/]: New Colony Id: 1 by [Minecraft]
+[09:08:56] [Server thread/INFO] [minecolonies/]: Removing citizens for 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Kill Citizen Milani H. Janeli
+[09:08:56] [Server thread/INFO] [minecolonies/]: Kill Citizen Hudson P. Chowne
+[09:08:56] [Server thread/INFO] [minecolonies/]: Removing buildings for 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-5570, y=-59, z=14648661}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-5570, y=-59, z=14648661} of type dispensary
+[09:08:56] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{fourtwenty:dispensary}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Deleting colony: 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Successfully deleted colony: 1
+[09:08:56] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'dispensary_status_refresh:0' (1 tests)...
+[09:08:56] [Server thread/INFO] [minecraft/GameTestServer]: [++++++++++++ ]
+[09:08:56] [Server thread/INFO] [minecraft/GameTestServer]: [++++++++++++ ]
+[09:08:56] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addImportantColonyPlayer(ColonyPackageManager.java:295) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:128) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryPresentationGameTests.levelTicksRefreshMovementAndQueueWithoutInventoryChanges(DispensaryPresentationGameTests.java:106) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addCloseSubscriber(ColonyPackageManager.java:268) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:129) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23201!/:1.1.1343-1.21.1-snapshot] {re:classloading}
+	at TRANSFORMER/fourtwenty_colonytests@1.0/com.malevolentgods.fourtwenty.colonytest.DispensaryPresentationGameTests.levelTicksRefreshMovementAndQueueWithoutInventoryChanges(DispensaryPresentationGameTests.java:106) ~[%23208!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23197!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+[09:08:56] [Server thread/INFO] [minecolonies/]: New Colony Id: 1 by [Minecraft]
+[09:08:56] [Server thread/INFO] [minecolonies/]: Removing citizens for 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Kill Citizen Marine E. Barre
+[09:08:56] [Server thread/INFO] [minecolonies/]: Removing buildings for 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-5560, y=-59, z=14648661}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-5560, y=-59, z=14648661} of type dispensary
+[09:08:56] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{fourtwenty:dispensary}
+[09:08:56] [Server thread/INFO] [minecolonies/]: Deleting colony: 1
+[09:08:56] [Server thread/INFO] [minecolonies/]: Successfully deleted colony: 1
+[09:08:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++++++++]
+[09:08:56] [Server thread/INFO] [minecraft/GameTestServer]: ========= 13 GAME TESTS COMPLETE IN 2.141 s ======================
+[09:08:56] [Server thread/INFO] [minecraft/GameTestServer]: All 13 required tests passed :)
+[09:08:56] [Server thread/INFO] [minecraft/GameTestServer]: ====================================================
+[09:08:56] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[09:08:56] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+[09:08:56] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[09:08:57] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:overworld
+[09:08:57] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:the_nether
+[09:08:57] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:the_end
+[09:08:57] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[09:08:57] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[09:08:57] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[09:08:57] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
+[09:08:57] [Server thread/INFO] [minecraft/GameTestServer]: Game test server shutting down
+
+[Incubating] Problems report is available at: file:///Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.13/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 20s
+41 actionable tasks: 6 executed, 35 up-to-date

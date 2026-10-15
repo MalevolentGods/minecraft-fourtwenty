@@ -130,7 +130,7 @@ def build_cult(mods, destination, gradle_home):
     print(jars[0])
 
 
-def prepare(mods, destination, profile, cult_jar, fourtwenty_jar, headless, exclusions=None):
+def prepare(mods, destination, profile, cult_jar, fourtwenty_jar, headless, exclusions=None, without_cult=False):
     lock = verify(mods)
     if destination.exists():
         raise ValueError('Run destination already exists; create a fresh run, never merge stale mods.')
@@ -147,6 +147,8 @@ def prepare(mods, destination, profile, cult_jar, fourtwenty_jar, headless, excl
         if not any(mod_id == m['id'] for a in lock['artifacts'] for m in a['mods']):
             raise ValueError(f'Unknown excluded mod: {mod_id}')
         excluded[mod_id] = reason
+    if without_cult and profile != 'colony':
+        raise ValueError('--without-cult is only valid for a minimal colony profile.')
     selected = []
     if profile != 'standalone':
         core_files = {a['file'] for a in lock['core']}
@@ -157,13 +159,14 @@ def prepare(mods, destination, profile, cult_jar, fourtwenty_jar, headless, excl
                 continue
             if profile in ('full', 'baseline') or artifact['file'] in core_files:
                 selected.append(mods / artifact['file'])
-        if cult_jar is None:
-            raise ValueError('A freshly built --cult-jar is required.')
-        build_record = cult_jar.parent.parent.parent / 'build-record.json'
-        record = json.loads(build_record.read_text())
-        if record['revision'] != lock['sources']['minecolonies_cult'] or record['artifact']['sha256'] != digest(cult_jar.read_bytes()):
-            raise ValueError('Cult build provenance does not match the frozen revision/artifact.')
-        selected.append(cult_jar)
+        if not without_cult:
+            if cult_jar is None:
+                raise ValueError('A freshly built --cult-jar is required.')
+            build_record = cult_jar.parent.parent.parent / 'build-record.json'
+            record = json.loads(build_record.read_text())
+            if record['revision'] != lock['sources']['minecolonies_cult'] or record['artifact']['sha256'] != digest(cult_jar.read_bytes()):
+                raise ValueError('Cult build provenance does not match the frozen revision/artifact.')
+            selected.append(cult_jar)
     if fourtwenty_jar and profile != 'baseline':
         artifact = inspect_jar(fourtwenty_jar.read_bytes(), fourtwenty_jar.name)
         if artifact['mods'] != [{'id': 'fourtwenty', 'version': '0.3.2'}]:
@@ -204,7 +207,7 @@ def prepare(mods, destination, profile, cult_jar, fourtwenty_jar, headless, excl
         # These are the only copied client options; no account/server/history data.
         (destination / 'options.txt').write_text('\n'.join(resource_selection) + '\n')
     record = {'minecraft': lock['minecraft'], 'neoforge': lock['neoforge'], 'java': lock['java'],
-              'profile': profile, 'packaged': bool(fourtwenty_jar) or profile == 'baseline',
+              'profile': profile, 'withoutCult': without_cult, 'packaged': bool(fourtwenty_jar) or profile == 'baseline',
               'sources': lock['sources'], 'mods': inventory(destination / 'mods') if selected else [],
               'configuration': {name: files_below(destination / name) for name in copied},
               'headlessOverrides': overrides, 'resourcePackSelection': resource_selection,
@@ -279,6 +282,7 @@ def main():
     parser.add_argument('--destination', type=Path)
     parser.add_argument('--profile', choices=('standalone', 'colony', 'full', 'baseline'), default='standalone')
     parser.add_argument('--cult-jar', type=Path)
+    parser.add_argument('--without-cult', action='store_true', help='Minimal colony profile without Kingdoms Gate')
     parser.add_argument('--fourtwenty-jar', type=Path)
     parser.add_argument('--headless-adjustments', action='store_true')
     parser.add_argument('--exclude-diagnostic-mod', action='append', default=[], metavar='ID=REASON')
@@ -297,7 +301,7 @@ def main():
         elif args.action == 'capture':
             if args.output is None or not args.command: parser.error('capture requires --output and --command')
             capture(args.destination, args.output, args.command)
-        elif args.action == 'prepare': prepare(args.mods, args.destination, args.profile, args.cult_jar, args.fourtwenty_jar, args.headless_adjustments, args.exclude_diagnostic_mod)
+        elif args.action == 'prepare': prepare(args.mods, args.destination, args.profile, args.cult_jar, args.fourtwenty_jar, args.headless_adjustments, args.exclude_diagnostic_mod, args.without_cult)
         else: verify_run(args.destination, args.profile, args.packaged == 'true')
     except (ValueError, OSError) as error:
         parser.exit(1, f'{error}\n')

@@ -18,11 +18,27 @@ Craft joints, pipes, cookies, brownies, and bongs with the existing recipes. Coo
 
 Pending effects survive dimension travel, but cancel on logout, actual death, or server shutdown. Sleep and changes to the daylight clock do not advance the delay. Effects already applied follow vanilla effect merging and milk removal. MineColonies citizens exclude the cookies and brownies from food selection; normal inventory storage and transport remain available.
 
-## Dispensary prototype (optional MineColonies integration)
+## Dispensary (optional MineColonies integration)
 
-With the pinned MineColonies build installed, use **Build Tool → Switch Pack → FourTwenty → Dispensary → dispensary1** for the level-one shop. Hire one Budtender and stock your warehouse with weed buds and paper. Native couriers supply the worker, who crafts one joint from one bud and two paper and replenishes a target of 16 joints. Standard hut controls manage workers, storage and minimum stock. Clear storage space if production backs up.
+With the pinned MineColonies build installed, craft the hut using six planks, two paper, and one weed bud: planks across the top and bottom, with paper–bud–paper in the middle. Use **Build Tool → Switch Pack → FourTwenty → Dispensary → dispensary1** to place the shop. The level selector previews levels 1–5; request construction, upgrades, and repairs through the standard hut controls.
 
-This prototype currently produces joints only. Citizen collection, smoking, happiness/health benefits, and finished higher-level designs are still planned. See the [Phase 2 handoff](docs/DISPENSARY_PHASE2.md) for verification and remaining limitations.
+Reserve **17×23 blocks** for the finished shop and lounge. Facing the north-facing entrance, the hut stays in the same place at every level: reserve eight blocks to either side, three toward the entrance, and nineteen behind it, including the hut column. Keep fourteen blocks of vertical space from the foundation. Rotate or mirror this area with your preview.
+
+| Completed level | Footprint | Indoor seats | Joint stock target |
+| --- | --- | ---: | ---: |
+| 1 | 9×11 | 2 | 16 |
+| 2 | 11×14 | 4 | 32 |
+| 3 | 13×17 | 6 | 64 |
+| 4 | 15×20 | 8 | 96 |
+| 5 | 17×23 | 10 | 128 |
+
+Hire one Budtender and stock your warehouse with weed buds and paper. Native couriers supply production: **one bud and two paper make one joint**. Use the hut and linked racks for service stock; the decorative barrel is separate storage. The **Dispensary service** tab shows staff, ingredients, total joints, stock target, joints available at the counter, waiting customers, and supply problems. Total stock includes the Budtender's inventory; stock carried away from the counter is not immediately available. Standard management and crafting tabs remain available. Clear storage space if production backs up.
+
+Adult citizens assigned to a **completed level-3 or higher residence** develop demand, including eligible guards and unemployed adults. Children do not participate. A level-1 dispensary can serve them. Citizens use a carried joint first or visit to collect one, prefer indoor seating, smoke, and resume normal activity. Hunger, illness, sleep, combat, raids, and Kingdom's Gate rituals take priority. Missing stock causes a delayed retry.
+
+By default, completed consumption satisfies demand and grants **one extra maximum-health heart for 24,000 simulation ticks** (20 minutes at 20 TPS). It does not immediately heal; another dose refreshes the benefit without stacking. Satisfaction gives a small happiness benefit. After satisfaction expires, a further 24,000 ticks of unmet demand produces a small penalty; newly eligible adults also receive a 24,000-tick grace period. Server configuration can change timings. Sleep and clock changes do not grant extra doses, and server downtime does not advance these timers. Collection alone grants no benefit.
+
+The [Phase 5 handoff](docs/DISPENSARY_PHASE5.md) records automated and client evidence separately from outstanding native builder, upgrade, repair, and gameplay observations.
 
 ## Use a bong
 

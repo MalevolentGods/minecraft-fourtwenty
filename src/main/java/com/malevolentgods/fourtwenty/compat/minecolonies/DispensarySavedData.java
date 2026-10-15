@@ -47,6 +47,10 @@ public final class DispensarySavedData extends SavedData {
     public void removeColony(int colony) {
         if (citizens.keySet().removeIf(key -> key.colony() == colony)) setDirty();
     }
+    /** Permanent native citizen removal, never entity/chunk unloading. */
+    public void removeCitizen(int colony, UUID citizen) {
+        if (citizens.remove(new Key(colony, citizen)) != null) setDirty();
+    }
     /** JointService couples this checkpoint to live eligibility and actual inventory extraction. */
     public boolean recordConsumption(int colony, UUID citizen, long expectedRevision, DemandRules rules) {
         var next = citizen(colony, citizen).consume(expectedRevision, time, rules);

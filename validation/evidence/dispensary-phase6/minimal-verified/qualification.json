@@ -1,0 +1,10 @@
+{
+  "kind": "gametest",
+  "exitCode": 0,
+  "timedOut": false,
+  "passed": true,
+  "durationSeconds": 17.57,
+  "run": "/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-minimal-verified",
+  "scope": "automated fixture/probe",
+  "ownerAcceptedEula": null
+}

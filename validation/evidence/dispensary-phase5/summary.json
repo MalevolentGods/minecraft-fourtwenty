@@ -1,0 +1,32 @@
+{
+  "artifact": "build/libs/fourtwenty-0.3.2.jar",
+  "sha256": "3859e66fffb3656b45a91be6497e3377f663bd4ea89dfe0cab8843d0dc1313ea",
+  "junitTests": 18,
+  "pythonTests": 8,
+  "colonyGameTests": 53,
+  "standaloneGameTests": 17,
+  "blueprintTransforms": 40,
+  "fullPhase5Acceptance": false,
+  "remaining": [
+    "Native builder construction of all five levels",
+    "Native upgrades and repairs",
+    "All-level autonomous access with occupied seats and rain",
+    "Interactive Build Tool selection and smoke inspection"
+  ],
+  "release": false,
+  "verifiedRuns": [
+    "final-colony-isolated",
+    "final-standalone",
+    "final-client",
+    "final-standalone-client"
+  ],
+  "clientChecks": [
+    "Native crafter views",
+    "Native building modules",
+    "Live stock synchronization",
+    "Resource reload",
+    "Five native pack lookups",
+    "Rendered gallery",
+    "Standalone optional loading"
+  ]
+}

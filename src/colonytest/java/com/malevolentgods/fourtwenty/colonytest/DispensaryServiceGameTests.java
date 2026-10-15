@@ -36,7 +36,7 @@ public final class DispensaryServiceGameTests {
         return DispensarySavedData.get((net.minecraft.server.level.ServerLevel)entity.level())
                 .citizen(entity.getCitizenData().getColony().getID(),entity.getUUID()).lastConsumedAt();
     }
-    private static final class Fixture implements AutoCloseable {
+    static final class Fixture implements AutoCloseable {
         final GameTestHelper h;
         final IColony colony;
         final BlockPos origin;

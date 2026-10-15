@@ -1,6 +1,7 @@
 package com.malevolentgods.fourtwenty.compat.minecolonies;
 
 import com.malevolentgods.fourtwenty.compat.minecolonies.domain.DemandRules;
+import com.malevolentgods.fourtwenty.compat.minecolonies.building.DispensaryBuilding;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyManager;
 import net.minecraft.server.level.ServerLevel;
@@ -22,6 +23,11 @@ public final class ColonyIntegration {
                                 DispensarySavedData.get(level).removeColony(deleted.getColony().getID());
                             }
                         })));
+        bus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) -> event.enqueueWork(() -> {
+            // Native voice lookup is keyed by job path and has no fallback for addon professions.
+            var voices = com.minecolonies.api.sounds.ModSoundEvents.CITIZEN_SOUND_EVENTS;
+            voices.putIfAbsent("budtender", java.util.Map.copyOf(java.util.Objects.requireNonNull(voices.get("unemployed"))));
+        }));
         com.mojang.logging.LogUtils.getLogger().info("FourTwenty dispensary foundation enabled (MineColonies 1.1.1343)");
     }
     /** Guard housing is the native home assignment, including work-at-home guard quarters. Never use workplace fallback. */
@@ -38,6 +44,12 @@ public final class ColonyIntegration {
             for (var citizen : colony.getCitizenManager().getCitizens()) {
                 var state = data.observe(colony.getID(), citizen.getUUID(), eligible(citizen), rules);
                 com.malevolentgods.fourtwenty.compat.minecolonies.benefits.CitizenBenefits.refresh(citizen, state, data.time());
+            }
+            // This listener runs on each simulation tick; native building callbacks do not.
+            if (data.time() % 100 == 0) {
+                for (var building : colony.getServerBuildingManager().getBuildings().values()) {
+                    if (building instanceof DispensaryBuilding hut) hut.getModule(DispensaryRegistry.STATUS).refresh();
+                }
             }
         }
     }

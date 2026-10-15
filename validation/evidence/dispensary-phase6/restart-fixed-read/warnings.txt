@@ -1,0 +1,16 @@
+[15Oct2026 09:25:04.296] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:mixinextras.neoforge. Using Mod File: /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle-home/caches/modules-2/files-2.1/io.github.llamalad7/mixinextras-neoforge/0.5.0/d734b83ce6542bb70ea31755c1595b88992dbe65/mixinextras-neoforge-0.5.0.jar
+[15Oct2026 09:25:04.662] [main/WARN] [mixin/]: Error loading class: actuallyharvest/event/HarvestEventHandler (java.lang.ClassNotFoundException: actuallyharvest.event.HarvestEventHandler)
+[15Oct2026 09:25:08.459] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[15Oct2026 09:25:08.460] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[15Oct2026 09:25:08.461] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[15Oct2026 09:25:08.462] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[15Oct2026 09:25:08.462] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[15Oct2026 09:25:09.180] [Structurize IO Worker #0/WARN] [structurize/]: Failed loading packs from main folder path: .
+[15Oct2026 09:25:09.180] [Structurize IO Worker #0/WARN] [structurize/]: Failed loading client packs from main folder path: .
+[15Oct2026 09:25:09.180] [Structurize IO Worker #0/WARN] [structurize/]: Finished discovering Server Structure packs
+[15Oct2026 09:25:09.193] [modloading-worker-0/WARN] [minecolonies/]: Register mappings
+[15Oct2026 09:25:09.298] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar%23198!/assets/.mcassetsroot' uses unexpected schema
+[15Oct2026 09:25:09.298] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar%23198!/data/.mcassetsroot' uses unexpected schema
+[15Oct2026 09:25:10.003] [main/WARN] [minecolonies/]: Read 1634 items with their nbt keys for compatibility.
+[15Oct2026 09:25:10.686] [Server thread/WARN] [minecolonies/]: Starting Compat Discovery
+[15Oct2026 09:25:11.127] [Server thread/ERROR] [net.minecraft.gametest.framework.LogTestReporter/]: colony_restart_read failed at 5518323, -60, -3063049! No replay on startup

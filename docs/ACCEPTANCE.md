@@ -45,3 +45,21 @@ These checks are open gates, not completed results. Use the frozen versions, fin
 Use Spark with matched baseline/FourTwenty worlds, seed, JVM arguments, settings, player count, loaded chunks, and duration. Measure idle, representative stocked/active bongs, and a practical stress case. Record median and p95 tick time, loaded chunks, heap/retained memory, GC behavior, and observations after unloading/reloading. Keep profiling data local unless its upload is separately authorized. Investigate sustained differences rather than treating a short native fixture runtime as a benchmark. FourTwenty production code adds no forced chunk tickets.
 
 Repeat the final core smoke matrix from packaged JARs after any code or resource change. Verify the frozen reference hashes again, retain logs and reports, update each row of the inventory, and replace every open gate with evidence or a specific scoped limitation. The target remains 134 reference JARs plus the fresh sibling build and FourTwenty, excluding fixture infrastructure. Do not publish a release, replace installed mods, or migrate a player world as part of this work.
+
+## Dispensary Phase 6 acceptance ledger
+
+Use [the Phase 6 handoff](DISPENSARY_PHASE6.md) and its artifact hash. This ledger supplements rather than closes the original pack gates above.
+
+- [x] Version-1 codec checks and rejection of unsupported/malformed data; no implicit reset migration.
+- [x] Fresh-process native colony checkpoint: completed level, stock, Budtender assignment, outstanding request, housing, personal joints, demand revisions and paid benefits. Read verifies rather than reconstructs the checkpoint.
+- [x] Final packaged client probes and ordinary-server startup/idle/orderly shutdown across standalone, minimal, combined and full profiles; original mod settings retained.
+- [ ] Combined-suite failures: two in the colony matrix and four in the full diagnostic; retained Phase 5 artifact reproduces the same four, while isolated suites pass. Root cause remains unresolved.
+- [ ] Network reconnect and live client happiness/status reconciliation after ordinary-server restart, including each naturally reached travel/wait/transfer/smoke cutpoint.
+- [ ] Actual chunk eviction/reload under original Better Chunk Loading and Limited Chunks settings, with connected players; unloaded citizens retain paid entitlement while leases/navigation are rebuilt.
+- [ ] Native builder construction, upgrades and repairs at all five levels, occupied seats, rain, smoke visuals and worker/customer access.
+- [ ] Continuous farmer-grown cannabis → native courier → Budtender production → customer consumption → ordinary activity, with item counts across the complete chain.
+- [ ] Interactive Kingdom's Gate recruitment, book supply, ritual priority, cancellation, happiness and return to work with the dispensary operating.
+- [ ] Matched practical-population profiling: record citizens/jobs/housing, dispensary count/stock, request counts, pathfinding, median/p95 tick times, heap/GC, duration and post-unload cleanup. No practical-population benchmark is established by short fixture runs or an idle server.
+- [ ] Linux, hosted CI and release acceptance; publication remains a separate action.
+
+Ordinary dedicated-server EULA acceptance was explicitly authorized by the server owner on 2026-10-15 for disposable test servers. That authorization does not make startup/idle/shutdown evidence equivalent to gameplay acceptance. Exact startup outcomes and all diagnostics are in the Phase 6 matrix.

@@ -54,6 +54,16 @@ public final class DispensaryProductionGameTests {
     }
     @GameTest(template="empty", batch="dispensary_registration")
     public static void registrationStaffingCapabilityAndPersistence(GameTestHelper h) {
+        var ids = new java.util.HashSet<Integer>();
+        var producers = com.minecolonies.api.colony.buildings.registry.BuildingEntry.getALlModuleProducers();
+        producers.forEach((key, producer) -> {
+            h.assertTrue(com.minecolonies.api.colony.buildings.registry.BuildingEntry.getProducer(key) == producer,
+                    "Native producer lookup remains intact: " + key);
+            h.assertTrue(ids.add(producer.getRuntimeID()), "Native producer runtime IDs remain unique: " + key);
+        });
+        for (var producer : List.of(DispensaryRegistry.WORK, DispensaryRegistry.CRAFT, DispensaryRegistry.STATUS)) {
+            h.assertTrue(producers.get(producer.key) == producer, "Dispensary producer registered exactly once");
+        }
         var colony=colony(h);
         try {
             var building=hut(h,colony,h.absolutePos(new BlockPos(1,1,1)));

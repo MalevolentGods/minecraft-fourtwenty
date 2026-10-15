@@ -70,6 +70,16 @@ public final class DemandPersistenceGameTests {
         rejects(h, missing);
         var duplicate = good.copy(); duplicate.getList("citizens", 10).add(duplicate.getList("citizens", 10).getCompound(0).copy());
         rejects(h, duplicate);
+        var unversioned = good.copy(); unversioned.remove("version"); rejects(h, unversioned);
+        var old = good.copy(); old.putInt("version", 0); rejects(h, old);
+        var negativeClock = good.copy(); negativeClock.putLong("time", -1); rejects(h, negativeClock);
+        var wrongType = good.copy(); wrongType.putString("time", "0"); rejects(h, wrongType);
+        var futureConsumption = good.copy();
+        var record = futureConsumption.getList("citizens", 10).getCompound(0);
+        record.putLong("lastConsumedAt", 1); record.putLong("satisfiedUntil", 2); record.putLong("healthUntil", 2);
+        rejects(h, futureConsumption);
+        h.assertTrue(DispensarySavedData.load(good, h.getLevel().registryAccess()).save(new CompoundTag(), h.getLevel().registryAccess()).equals(good),
+                "Supported v1 data retains every field without migration or reinitialization");
         h.succeed();
     }
     private static void rejects(GameTestHelper h, CompoundTag tag) {

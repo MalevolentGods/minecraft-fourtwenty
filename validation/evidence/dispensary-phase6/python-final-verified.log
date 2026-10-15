@@ -1,0 +1,19 @@
+test_changed_checksum_rejected_before_copy (test_compatibility.PreparationTests.test_changed_checksum_rejected_before_copy) ... ok
+test_duplicate_mod_id_rejected (test_compatibility.PreparationTests.test_duplicate_mod_id_rejected) ... ok
+test_existing_destination_never_merged (test_compatibility.PreparationTests.test_existing_destination_never_merged) ... ok
+test_launch_mode_must_match (test_compatibility.PreparationTests.test_launch_mode_must_match) ... ok
+test_launch_rejects_stale_jar (test_compatibility.PreparationTests.test_launch_rejects_stale_jar) ... ok
+test_manifest_version_is_unfolded (test_compatibility.PreparationTests.test_manifest_version_is_unfolded) ... ok
+test_minimal_colony_excludes_cult_without_relaxing_full_profile (test_compatibility.PreparationTests.test_minimal_colony_excludes_cult_without_relaxing_full_profile) ... ok
+test_blocked_route_and_missing_roof_are_rejected (test_dispensary_blueprints.BlueprintTests.test_blocked_route_and_missing_roof_are_rejected) ... ok
+test_progression_and_committed_bytes (test_dispensary_blueprints.BlueprintTests.test_progression_and_committed_bytes) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.156s
+
+OK
+Prepared standalone: 0 JARs at /var/folders/f5/rhvgpl9j7gn7znm94p8jdz080000gn/T/tmp0gxbemok/run
+Prepared standalone: 0 JARs at /var/folders/f5/rhvgpl9j7gn7znm94p8jdz080000gn/T/tmpf3xq649r/run
+Run inventory verified: standalone, 0 JARs
+Prepared colony: 1 JARs at /var/folders/f5/rhvgpl9j7gn7znm94p8jdz080000gn/T/tmp07076rfv/minimal
+Run inventory verified: colony, 1 JARs

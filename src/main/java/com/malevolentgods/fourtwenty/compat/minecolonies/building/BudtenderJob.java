@@ -1,7 +1,6 @@
 package com.malevolentgods.fourtwenty.compat.minecolonies.building;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import net.minecraft.resources.ResourceLocation;
 
@@ -9,5 +8,5 @@ import net.minecraft.resources.ResourceLocation;
 public final class BudtenderJob extends AbstractJobCrafter<BudtenderAI, BudtenderJob> {
     public BudtenderJob(ICitizenData citizen) { super(citizen); }
     @Override public BudtenderAI generateAI() { return new BudtenderAI(this); }
-    @Override public ResourceLocation getModel() { return ModModelTypes.CITIZEN_ID; }
+    @Override public ResourceLocation getModel() { return ResourceLocation.parse("fourtwenty:budtender"); }
 }

@@ -75,10 +75,15 @@ runs {
     }
 
     client {
-        if (project.hasProperty('benefitClientProbe')) {
+        if (project.hasProperty('standaloneClientProbe')) {
+            modSources.add('fourtwenty_tests', project.sourceSets.gametest)
+            systemProperty 'fourtwenty.standaloneClientProbe', 'true'
+        }
+        if (project.hasProperty('benefitClientProbe') || project.hasProperty('presentationClientProbe')) {
             modSources.add('fourtwenty_tests', project.sourceSets.gametest)
             modSources.add('fourtwenty_colonytests', project.sourceSets.colonytest)
-            systemProperty 'fourtwenty.benefitClientProbe', 'true'
+            systemProperty 'fourtwenty.benefitClientProbe', project.hasProperty('benefitClientProbe').toString()
+            systemProperty 'fourtwenty.presentationClientProbe', project.hasProperty('presentationClientProbe').toString()
             // Prepare saves/benefits from an isolated native test world before launching this probe.
             arguments.addAll '--quickPlaySingleplayer', 'benefits'
         }
@@ -95,6 +100,7 @@ runs {
     // By default, the server will crash when no gametests are provided.
     // The gametest system is also enabled by default for other run configs under the /test command.
     gameTestServer {
+        if (project.hasProperty('dispensaryLifecycleStage')) systemProperty 'fourtwenty.dispensaryLifecycleStage', project.property('dispensaryLifecycleStage')
         if (project.hasProperty('persistenceStage')) systemProperty 'fourtwenty.persistenceStage', project.property('persistenceStage')
         if (compatProfile != 'baseline') modSources.add('fourtwenty_tests', project.sourceSets.gametest)
         if (compatProfile in ['colony', 'full']) modSources.add('fourtwenty_colonytests', project.sourceSets.colonytest)
@@ -252,6 +258,9 @@ tasks.register('resolveCompatibilityDependencies') {
         }
     }
 }
+// Forward explicit console commands so isolated ordinary servers can stop and save cleanly.
+tasks.matching { it.name == 'runServer' }.configureEach { standardInput = System.in }
+
 tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.configureEach {
     doFirst {
         exec {

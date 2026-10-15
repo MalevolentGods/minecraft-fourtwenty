@@ -28,6 +28,13 @@ public final class DispensaryBuilding extends AbstractBuilding {
     @Override public int getMaxBuildingLevel() { return 5; }
     public int stockTarget() { return ProductionRules.stockTarget(getBuildingLevel()); }
 
+    /** Loading native stock/staff must never restore a queue or seat from the previous live instance. */
+    @Override public void deserializeNBT(net.minecraft.core.HolderLookup.Provider provider, net.minecraft.nbt.CompoundTag tag) {
+        super.deserializeNBT(provider, tag);
+        customers.clear();
+        seats.clear();
+    }
+
     public boolean hasServiceStock() {
         // Native getHandlers() is empty without staff and includes remote worker inventories with staff.
         var storage = getItemHandlerCap();
@@ -51,6 +58,8 @@ public final class DispensaryBuilding extends AbstractBuilding {
         customers.values().removeIf(expiry -> now >= expiry);
         seats.values().removeIf(lease -> now >= lease.expires());
     }
+    /** Active queue length; stale reservations are never shown as waiting customers. */
+    public int waitingCustomers(long now) { prune(now); return customers.size(); }
     public boolean ownsSeat(UUID citizen, BlockPos pos, long now) {
         prune(now);
         var lease = seats.get(pos);

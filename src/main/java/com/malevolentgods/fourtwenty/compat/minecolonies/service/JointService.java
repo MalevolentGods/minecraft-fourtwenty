@@ -17,6 +17,7 @@ public final class JointService {
     public static boolean due(EntityCitizen citizen) {
         if (!(citizen.level() instanceof ServerLevel level) || citizen.getCitizenData() == null || !citizen.isAlive()) return false;
         var data = citizen.getCitizenData();
+        if (data.getColony().getWorld() != level || data.getColony().getCitizenManager().getCivilian(data.getId()) != data) return false;
         var saved = DispensarySavedData.get(level);
         return saved.observe(data.getColony().getID(), data.getUUID(), ColonyIntegration.eligible(data), DispensaryConfig.rules()).due(saved.time());
     }

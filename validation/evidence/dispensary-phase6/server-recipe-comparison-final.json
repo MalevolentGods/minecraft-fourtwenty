@@ -1,0 +1,26 @@
+{
+  "scope": "Recipe parsing errors only; not a blanket classification of every warning",
+  "candidate": "full-server-final",
+  "baseline": "baseline-server",
+  "withFourTwentyCount": 15,
+  "baselineCount": 15,
+  "shared": [
+    "farmersdelight:cutting/echo_door: com.google.gson.JsonParseException: Failed to parse either. First: Not a json array: {\"type\":\"farmersdelight:tool_action\",\"action\":\"axe_dig\"}; Second: Unknown registry key in ResourceKey[minecraft:root / neoforge:ingredient_serializer]: farmersdelight:tool_action",
+    "farmersdelight:cutting/echo_hanging_sign: com.google.gson.JsonParseException: Failed to parse either. First: Not a json array: {\"type\":\"farmersdelight:tool_action\",\"action\":\"axe_dig\"}; Second: Unknown registry key in ResourceKey[minecraft:root / neoforge:ingredient_serializer]: farmersdelight:tool_action",
+    "farmersdelight:cutting/echo_log: com.google.gson.JsonParseException: Not a JSON object: \"minecraft:item.axe.strip\"; Failed to parse either. First: Not a json array: {\"type\":\"farmersdelight:tool_action\",\"action\":\"axe_strip\"}; Second: Unknown registry key in ResourceKey[minecraft:root / neoforge:ingredient_serializer]: farmersdelight:tool_action",
+    "farmersdelight:cutting/echo_sign: com.google.gson.JsonParseException: Failed to parse either. First: Not a json array: {\"type\":\"farmersdelight:tool_action\",\"action\":\"axe_dig\"}; Second: Unknown registry key in ResourceKey[minecraft:root / neoforge:ingredient_serializer]: farmersdelight:tool_action",
+    "farmersdelight:cutting/echo_trapdoor: com.google.gson.JsonParseException: Failed to parse either. First: Not a json array: {\"type\":\"farmersdelight:tool_action\",\"action\":\"axe_dig\"}; Second: Unknown registry key in ResourceKey[minecraft:root / neoforge:ingredient_serializer]: farmersdelight:tool_action",
+    "farmersdelight:cutting/echo_wood: com.google.gson.JsonParseException: Not a JSON object: \"minecraft:item.axe.strip\"; Failed to parse either. First: Not a json array: {\"type\":\"farmersdelight:tool_action\",\"action\":\"axe_strip\"}; Second: Unknown registry key in ResourceKey[minecraft:root / neoforge:ingredient_serializer]: farmersdelight:tool_action",
+    "oritech:crafting/basicjetpack: com.google.gson.JsonParseException: Input does not contain a key [type]: MapLike[{}]",
+    "oritech:crafting/basicjetpackalt: com.google.gson.JsonParseException: Input does not contain a key [type]: MapLike[{}]",
+    "oritech:crafting/exoboots: com.google.gson.JsonParseException: Input does not contain a key [type]: MapLike[{}]",
+    "oritech:crafting/exochest: com.google.gson.JsonParseException: Input does not contain a key [type]: MapLike[{}]",
+    "oritech:crafting/exohelm: com.google.gson.JsonParseException: Input does not contain a key [type]: MapLike[{}]",
+    "oritech:crafting/exojetpack: com.google.gson.JsonParseException: Input does not contain a key [type]: MapLike[{}]",
+    "oritech:crafting/exolegs: com.google.gson.JsonParseException: Input does not contain a key [type]: MapLike[{}]",
+    "oritech:crafting/promaxe: com.google.gson.JsonParseException: Input does not contain a key [type]: MapLike[{}]",
+    "oritech:crafting/solar: com.google.gson.JsonParseException: Input does not contain a key [type]: MapLike[{}]"
+  ],
+  "onlyWithFourTwenty": [],
+  "onlyBaseline": []
+}

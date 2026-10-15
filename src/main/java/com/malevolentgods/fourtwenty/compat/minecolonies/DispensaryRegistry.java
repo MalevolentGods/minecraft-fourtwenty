@@ -11,7 +11,7 @@ import com.minecolonies.core.colony.buildings.modules.CraftingWorkerBuildingModu
 import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.core.colony.buildings.views.EmptyView;
-import com.minecolonies.core.colony.jobs.views.DefaultJobView;
+import com.minecolonies.core.colony.jobs.views.CrafterJobView;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -39,17 +39,27 @@ public final class DispensaryRegistry {
             () -> BlockEntityType.Builder.of((pos, state) -> new TileEntityColonyBuilding(DispensaryRegistry.ENTITY.get(), pos, state), HUT.get()).build(null));
     public static final DeferredHolder<JobEntry, JobEntry> JOB = JOBS.register("budtender", () -> new JobEntry.Builder()
             .setRegistryName(ResourceLocation.parse(DispensaryIds.BUDTENDER)).setJobProducer(BudtenderJob::new)
-            .setJobViewProducer(() -> DefaultJobView::new).createJobEntry());
-    public static final BuildingEntry.ModuleProducer<CraftingWorkerBuildingModule, WorkerBuildingModuleView> WORK = new BuildingEntry.ModuleProducer<>(
-            "fourtwenty:budtender_work", () -> new CraftingWorkerBuildingModule(JOB.get(), Skill.Dexterity, Skill.Knowledge, false,
-                    building -> building.getBuildingLevel() > 0 ? 1 : 0), () -> WorkerBuildingModuleView::new);
-    public static final BuildingEntry.ModuleProducer<JointCraftingModule, CraftingModuleView> CRAFT = new BuildingEntry.ModuleProducer<>(
-            "fourtwenty:joint_crafting", JointCraftingModule::new, () -> CraftingModuleView::new);
-    public static final DeferredHolder<BuildingEntry, BuildingEntry> BUILDING = BUILDINGS.register("dispensary", () -> new BuildingEntry.Builder()
-            .setRegistryName(ResourceLocation.parse(DispensaryIds.DISPENSARY)).setBuildingBlock(HUT.get())
-            .setBuildingProducer(DispensaryBuilding::new).setBuildingViewProducer(() -> EmptyView::new)
-            .addBuildingModuleProducer(WORK).addBuildingModuleProducer(CRAFT)
-            .addBuildingModuleProducer(BuildingModules.STATS_MODULE).addBuildingModuleProducer(BuildingModules.MIN_STOCK).createBuildingEntry());
+            .setJobViewProducer(() -> CrafterJobView::new).createJobEntry());
+    // Assigned by the serial building registry callback, before any building or view can be created.
+    public static BuildingEntry.ModuleProducer<CraftingWorkerBuildingModule, WorkerBuildingModuleView> WORK;
+    public static BuildingEntry.ModuleProducer<JointCraftingModule, CraftingModuleView> CRAFT;
+    public static BuildingEntry.ModuleProducer<DispensaryStatusModule, com.malevolentgods.fourtwenty.compat.minecolonies.client.DispensaryStatusView> STATUS;
+    public static final DeferredHolder<BuildingEntry, BuildingEntry> BUILDING = BUILDINGS.register("dispensary", DispensaryRegistry::createBuildingEntry);
+
+    /** Native ModuleProducer mutates a shared HashMap and ID counter; mod constructors run in parallel. */
+    private static BuildingEntry createBuildingEntry() {
+        WORK = new BuildingEntry.ModuleProducer<>("fourtwenty:budtender_work",
+                () -> new CraftingWorkerBuildingModule(JOB.get(), Skill.Dexterity, Skill.Knowledge, false,
+                        building -> building.getBuildingLevel() > 0 ? 1 : 0), () -> WorkerBuildingModuleView::new);
+        CRAFT = new BuildingEntry.ModuleProducer<>("fourtwenty:joint_crafting", JointCraftingModule::new, () -> CraftingModuleView::new);
+        STATUS = new BuildingEntry.ModuleProducer<>("fourtwenty:dispensary_status", DispensaryStatusModule::new,
+                () -> com.malevolentgods.fourtwenty.compat.minecolonies.client.DispensaryStatusView::new);
+        return new BuildingEntry.Builder()
+                .setRegistryName(ResourceLocation.parse(DispensaryIds.DISPENSARY)).setBuildingBlock(HUT.get())
+                .setBuildingProducer(DispensaryBuilding::new).setBuildingViewProducer(() -> EmptyView::new)
+                .addBuildingModuleProducer(WORK).addBuildingModuleProducer(CRAFT).addBuildingModuleProducer(STATUS)
+                .addBuildingModuleProducer(BuildingModules.STATS_MODULE).addBuildingModuleProducer(BuildingModules.MIN_STOCK).createBuildingEntry();
+    }
 
     public static void register(IEventBus bus) {
         BLOCKS.register(bus); ITEMS.register(bus); ENTITIES.register(bus); JOBS.register(bus); BUILDINGS.register(bus); HAPPINESS.register(bus);

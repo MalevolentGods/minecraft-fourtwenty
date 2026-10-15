@@ -1,0 +1,456 @@
+{
+  "date": "2026-10-15",
+  "status": "Implementation candidate; full qualification remains open",
+  "sourceBaseline": "a65d2ee8c8a9d8235097ec4342d2b2016f53f2f7",
+  "workingTreeChanges": true,
+  "artifact": "build/libs/fourtwenty-0.3.2.jar",
+  "sha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+  "java": "Eclipse Adoptium 21.0.12.1+1 macOS ARM64",
+  "build": "passed; build-final.log",
+  "junit": {
+    "tests": 18,
+    "failures": 0,
+    "evidence": "junit/"
+  },
+  "python": {
+    "tests": 9,
+    "failures": 0,
+    "evidence": "python-delivery.log"
+  },
+  "dependencies": {
+    "reference": {
+      "resolvedIds": 149,
+      "checks": 331,
+      "nestedGroups": 44
+    },
+    "finalPackagedFullProfile": {
+      "resolvedIds": 150,
+      "checks": 334,
+      "nestedGroups": 44
+    },
+    "evidence": "dependencies-final.log"
+  },
+  "installedInventory": "inventory.json",
+  "runs": {
+    "standalone-final": {
+      "passed": true,
+      "kind": "gametest",
+      "scope": "automated fixture/probe",
+      "totalGameTests": 17,
+      "requiredGameTestsPassed": 17,
+      "failedScenarios": [],
+      "command": "./gradlew runGameTestServer -Ppackaged=true -PcompatProfile=standalone -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-standalone-final",
+      "jarCount": 1,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/standalone-final"
+    },
+    "minimal-final": {
+      "passed": true,
+      "kind": "gametest",
+      "scope": "automated fixture/probe",
+      "totalGameTests": 45,
+      "requiredGameTestsPassed": 45,
+      "failedScenarios": [],
+      "command": "./gradlew runGameTestServer -Ppackaged=true -PcompatProfile=colony -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-minimal-final",
+      "jarCount": 7,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/minimal-final"
+    },
+    "combined-final": {
+      "passed": false,
+      "kind": "gametest",
+      "scope": "automated fixture/probe",
+      "totalGameTests": 54,
+      "requiredGameTestsPassed": null,
+      "failedScenarios": [
+        "[15Oct2026 09:45:13.377] [Server thread/ERROR] [net.minecraft.gametest.framework.LogTestReporter/]: recruitmentandritualcleanup failed at -770260, -60, 6500181! Exactly one full speech credited on distinct day 1; actual=0; leader state=WORKING; distance=2.2820823; sick=false; hurt=false; listener sick=false; listener hurt=false; rain=false; raid=false; loaded=true; time=30280; LOS=true; saturation=100.0; capacity=4; saved=Snapshot[time=30280, inactiveSince=-1, level=1, nextRitualDay=8, leader=9da62ddc-d933-3ed1-b828-6b824d488155, citizens={}]",
+        "[15Oct2026 09:45:13.461] [Server thread/ERROR] [net.minecraft.gametest.framework.LogTestReporter/]: booksusenativerequestsandlimitconversions failed at -770250, -60, 6500181! Native request marked fulfilled"
+      ],
+      "command": "./gradlew runGameTestServer -Ppackaged=true -PcompatProfile=colony -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-combined-final",
+      "jarCount": 8,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/combined-final"
+    },
+    "full-nonplayer-final": {
+      "passed": true,
+      "kind": "gametest",
+      "scope": "automated fixture/probe",
+      "totalGameTests": 50,
+      "requiredGameTestsPassed": 50,
+      "failedScenarios": [],
+      "command": "./gradlew runGameTestServer -Ppackaged=true -PcompatProfile=full -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-full-nonplayer-final -PcompatTestSelection=nonplayer",
+      "jarCount": 136,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {
+        "betterchunkloading.json": {
+          "enablePrediction": false,
+          "enableSmartChunkLoading": false,
+          "enableSmartPostProcessing": false,
+          "optimizeWaiting": false
+        },
+        "limitedchunks.json": {
+          "excludedtickets": [
+            "forced",
+            "gametest",
+            "start",
+            "unknown"
+          ]
+        }
+      },
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/full-nonplayer-final"
+    },
+    "full-diagnostic-final": {
+      "passed": false,
+      "kind": "gametest",
+      "scope": "automated fixture/probe",
+      "totalGameTests": 57,
+      "requiredGameTestsPassed": null,
+      "failedScenarios": [
+        "[15Oct2026 09:47:52.551] [Server thread/ERROR] [net.minecraft.gametest.framework.LogTestReporter/]: recruitmentandritualcleanup failed at -1870222, -60, 10181790! Exactly one full speech credited on distinct day 1; actual=0; leader state=WORKING; distance=2.0; sick=false; hurt=false; listener sick=false; listener hurt=false; rain=false; raid=false; loaded=true; time=30280; LOS=true; saturation=100.0; capacity=4; saved=Snapshot[time=30279, inactiveSince=-1, level=1, nextRitualDay=8, leader=9da62ddc-d933-3ed1-b828-6b824d488155, citizens={}]",
+        "[15Oct2026 09:47:52.688] [Server thread/ERROR] [net.minecraft.gametest.framework.LogTestReporter/]: booksusenativerequestsandlimitconversions failed at -1870212, -60, 10181790! Native request marked fulfilled",
+        "[15Oct2026 09:47:52.847] [Server thread/ERROR] [net.minecraft.gametest.framework.LogTestReporter/]: fakeplayerharvestrespectsdisabledreplanting failed at -1870172, -60, 10181790! Disabled replanting leaves no crop after fake-player harvest: state=Block{fourtwenty:weed_crop}[age=7]; replant=false; fake=true; empty=true",
+        "[15Oct2026 09:47:53.555] [Server thread/ERROR] [net.minecraft.gametest.framework.LogTestReporter/]: actuallyharvestownsclicksandareareplanting failed at -1870205, -60, 10181801! Hoe harvests the entire configured 3x3 area"
+      ],
+      "command": "./gradlew runGameTestServer -Ppackaged=true -PcompatProfile=full -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-full-diagnostic-final",
+      "jarCount": 135,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {
+        "betterchunkloading.json": {
+          "enablePrediction": false,
+          "enableSmartChunkLoading": false,
+          "enableSmartPostProcessing": false,
+          "optimizeWaiting": false
+        },
+        "limitedchunks.json": {
+          "excludedtickets": [
+            "forced",
+            "gametest",
+            "start",
+            "unknown"
+          ]
+        }
+      },
+      "serverExclusions": {
+        "journeymap": "Previously reproduced baseline GameTest player-join failure"
+      },
+      "evidence": "validation/evidence/dispensary-phase6/full-diagnostic-final"
+    },
+    "cult-isolated-final": {
+      "passed": true,
+      "kind": "gametest",
+      "scope": "automated fixture/probe",
+      "totalGameTests": 9,
+      "requiredGameTestsPassed": 9,
+      "failedScenarios": [],
+      "command": "./gradlew runGameTestServer -Ppackaged=true -PcompatProfile=colony -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-cult-isolated-final -PcompatTestNamespaces=minecolonies_cult",
+      "jarCount": 8,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/cult-isolated-final"
+    },
+    "pack-isolated-final": {
+      "passed": true,
+      "kind": "gametest",
+      "scope": "automated fixture/probe",
+      "totalGameTests": 3,
+      "requiredGameTestsPassed": 3,
+      "failedScenarios": [],
+      "command": "./gradlew runGameTestServer -Ppackaged=true -PcompatProfile=full -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-pack-isolated-final -PcompatTestNamespaces=fourtwenty_packtests",
+      "jarCount": 135,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {
+        "betterchunkloading.json": {
+          "enablePrediction": false,
+          "enableSmartChunkLoading": false,
+          "enableSmartPostProcessing": false,
+          "optimizeWaiting": false
+        },
+        "limitedchunks.json": {
+          "excludedtickets": [
+            "forced",
+            "gametest",
+            "start",
+            "unknown"
+          ]
+        }
+      },
+      "serverExclusions": {
+        "journeymap": "Previously reproduced baseline GameTest player-join failure"
+      },
+      "evidence": "validation/evidence/dispensary-phase6/pack-isolated-final"
+    },
+    "lifecycle-release": {
+      "passed": true,
+      "kind": "gametest",
+      "scope": "automated fixture/probe",
+      "totalGameTests": 2,
+      "requiredGameTestsPassed": 2,
+      "failedScenarios": [],
+      "command": "./gradlew runGameTestServer -Ppackaged=true -PcompatProfile=colony -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-lifecycle-release -PcompatTestNamespaces=fourtwenty_lifecycletests",
+      "jarCount": 8,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/lifecycle-release"
+    },
+    "restart-release-write": {
+      "passed": true,
+      "kind": "gametest",
+      "scope": "automated fixture/probe",
+      "totalGameTests": 1,
+      "requiredGameTestsPassed": 1,
+      "failedScenarios": [],
+      "command": "./gradlew runGameTestServer -Ppackaged=true -PcompatProfile=colony -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-restart-release-write -PcompatTestNamespaces=fourtwenty_restarttests -PdispensaryLifecycleStage=write",
+      "jarCount": 8,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/restart-release-write"
+    },
+    "restart-release-read": {
+      "passed": true,
+      "kind": "gametest",
+      "scope": "automated fixture/probe",
+      "totalGameTests": 1,
+      "requiredGameTestsPassed": 1,
+      "failedScenarios": [],
+      "command": "./gradlew runGameTestServer -Ppackaged=true -PcompatProfile=colony -PcompatRunDir=.compat/runs/dispensary-phase6-restart-release-write -PcompatTestNamespaces=fourtwenty_restarttests -PdispensaryLifecycleStage=read",
+      "jarCount": 8,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/restart-release-read"
+    },
+    "standalone-server-final": {
+      "passed": true,
+      "kind": "server",
+      "scope": "startup, ten-second idle and orderly shutdown; no connected gameplay",
+      "totalGameTests": null,
+      "requiredGameTestsPassed": null,
+      "failedScenarios": [],
+      "command": "./gradlew runServer -Ppackaged=true -PcompatProfile=standalone -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-standalone-server-final",
+      "jarCount": 1,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/standalone-server-final"
+    },
+    "minimal-server-final": {
+      "passed": true,
+      "kind": "server",
+      "scope": "startup, ten-second idle and orderly shutdown; no connected gameplay",
+      "totalGameTests": null,
+      "requiredGameTestsPassed": null,
+      "failedScenarios": [],
+      "command": "./gradlew runServer -Ppackaged=true -PcompatProfile=colony -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-minimal-server-final",
+      "jarCount": 7,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/minimal-server-final"
+    },
+    "combined-server-final": {
+      "passed": true,
+      "kind": "server",
+      "scope": "startup, ten-second idle and orderly shutdown; no connected gameplay",
+      "totalGameTests": null,
+      "requiredGameTestsPassed": null,
+      "failedScenarios": [],
+      "command": "./gradlew runServer -Ppackaged=true -PcompatProfile=colony -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-combined-server-final",
+      "jarCount": 8,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/combined-server-final"
+    },
+    "full-server-final": {
+      "passed": true,
+      "kind": "server",
+      "scope": "startup, ten-second idle and orderly shutdown; no connected gameplay",
+      "totalGameTests": null,
+      "requiredGameTestsPassed": null,
+      "failedScenarios": [],
+      "command": "./gradlew runServer -Ppackaged=true -PcompatProfile=full -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-full-server-final",
+      "jarCount": 136,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/full-server-final"
+    },
+    "standalone-client-final": {
+      "passed": true,
+      "kind": "client",
+      "scope": "automated fixture/probe",
+      "totalGameTests": null,
+      "requiredGameTestsPassed": null,
+      "failedScenarios": [],
+      "command": "./gradlew runClient -Ppackaged=true -PcompatProfile=standalone -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-standalone-client-final -PstandaloneClientProbe=true",
+      "jarCount": 1,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/standalone-client-final"
+    },
+    "minimal-client-final": {
+      "passed": true,
+      "kind": "client",
+      "scope": "automated fixture/probe",
+      "totalGameTests": null,
+      "requiredGameTestsPassed": null,
+      "failedScenarios": [],
+      "command": "./gradlew runClient -Ppackaged=true -PcompatProfile=colony -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-minimal-client-final -PpresentationClientProbe=true",
+      "jarCount": 7,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/minimal-client-final"
+    },
+    "combined-client-final": {
+      "passed": true,
+      "kind": "client",
+      "scope": "automated fixture/probe",
+      "totalGameTests": null,
+      "requiredGameTestsPassed": null,
+      "failedScenarios": [],
+      "command": "./gradlew runClient -Ppackaged=true -PcompatProfile=colony -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-combined-client-final -PpresentationClientProbe=true",
+      "jarCount": 8,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/combined-client-final"
+    },
+    "full-client-final": {
+      "passed": true,
+      "kind": "client",
+      "scope": "automated fixture/probe",
+      "totalGameTests": null,
+      "requiredGameTestsPassed": null,
+      "failedScenarios": [],
+      "command": "./gradlew runClient -Ppackaged=true -PcompatProfile=full -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-full-client-final -PpresentationClientProbe=true",
+      "jarCount": 136,
+      "fourtwentySha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/full-client-final"
+    },
+    "baseline-tests": {
+      "passed": true,
+      "kind": "gametest",
+      "scope": "automated fixture/probe",
+      "totalGameTests": 9,
+      "requiredGameTestsPassed": 9,
+      "failedScenarios": [],
+      "command": "./gradlew runGameTestServer -Ppackaged=true -PcompatProfile=baseline -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-baseline-tests",
+      "jarCount": 135,
+      "fourtwentySha256": null,
+      "headlessOverrides": {
+        "betterchunkloading.json": {
+          "enablePrediction": false,
+          "enableSmartChunkLoading": false,
+          "enableSmartPostProcessing": false,
+          "optimizeWaiting": false
+        },
+        "limitedchunks.json": {
+          "excludedtickets": [
+            "forced",
+            "gametest",
+            "start",
+            "unknown"
+          ]
+        }
+      },
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/baseline-tests"
+    },
+    "baseline-server": {
+      "passed": true,
+      "kind": "server",
+      "scope": "startup, ten-second idle and orderly shutdown; no connected gameplay",
+      "totalGameTests": null,
+      "requiredGameTestsPassed": null,
+      "failedScenarios": [],
+      "command": "./gradlew runServer -Ppackaged=true -PcompatProfile=baseline -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-baseline-server",
+      "jarCount": 135,
+      "fourtwentySha256": null,
+      "headlessOverrides": {},
+      "serverExclusions": {},
+      "evidence": "validation/evidence/dispensary-phase6/baseline-server"
+    },
+    "phase5-comparison": {
+      "passed": false,
+      "kind": "gametest",
+      "scope": "automated fixture/probe",
+      "totalGameTests": 57,
+      "requiredGameTestsPassed": null,
+      "failedScenarios": [
+        "[15Oct2026 09:57:37.143] [Server thread/ERROR] [net.minecraft.gametest.framework.LogTestReporter/]: levelticksrefreshmovementandqueuewithoutinventorychanges failed at 14423148, -60, 10843872! Level tick schedules the initial status packet",
+        "[15Oct2026 09:57:37.296] [Server thread/ERROR] [net.minecraft.gametest.framework.LogTestReporter/]: recruitmentandritualcleanup failed at 14423168, -60, 10843872! Exactly one full speech credited on distinct day 1; actual=0; leader state=WORKING; distance=2.0; sick=false; hurt=false; listener sick=false; listener hurt=false; rain=false; raid=false; loaded=true; time=30280; LOS=true; saturation=100.0; capacity=4; saved=Snapshot[time=30279, inactiveSince=-1, level=1, nextRitualDay=8, leader=9da62ddc-d933-3ed1-b828-6b824d488155, citizens={}]",
+        "[15Oct2026 09:57:37.418] [Server thread/ERROR] [net.minecraft.gametest.framework.LogTestReporter/]: booksusenativerequestsandlimitconversions failed at 14423178, -60, 10843872! Native request marked fulfilled",
+        "[15Oct2026 09:57:37.570] [Server thread/ERROR] [net.minecraft.gametest.framework.LogTestReporter/]: fakeplayerharvestrespectsdisabledreplanting failed at 14423218, -60, 10843872! Disabled replanting leaves no crop after fake-player harvest: state=Block{fourtwenty:weed_crop}[age=7]; replant=false; fake=true; empty=true",
+        "[15Oct2026 09:57:38.258] [Server thread/ERROR] [net.minecraft.gametest.framework.LogTestReporter/]: actuallyharvestownsclicksandareareplanting failed at 14423185, -60, 10843883! Hoe harvests the entire configured 3x3 area"
+      ],
+      "command": "./gradlew runGameTestServer -Ppackaged=true -PcompatProfile=full -PcompatRunDir=/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-phase5-comparison",
+      "jarCount": 135,
+      "fourtwentySha256": "3859e66fffb3656b45a91be6497e3377f663bd4ea89dfe0cab8843d0dc1313ea",
+      "headlessOverrides": {
+        "betterchunkloading.json": {
+          "enablePrediction": false,
+          "enableSmartChunkLoading": false,
+          "enableSmartPostProcessing": false,
+          "optimizeWaiting": false
+        },
+        "limitedchunks.json": {
+          "excludedtickets": [
+            "forced",
+            "gametest",
+            "start",
+            "unknown"
+          ]
+        }
+      },
+      "serverExclusions": {
+        "journeymap": "Previously reproduced baseline GameTest player-join failure"
+      },
+      "evidence": "validation/evidence/dispensary-phase6/phase5-comparison"
+    }
+  },
+  "comparison": {
+    "olderArtifact": "3859e66fffb3656b45a91be6497e3377f663bd4ea89dfe0cab8843d0dc1313ea",
+    "olderArtifactOrigin": ".compat/runs/dispensary-phase5-final-client/mods/fourtwenty-0.3.2.jar",
+    "scope": "Same current test helpers and full diagnostic profile; earlier Phase 5 client artifact, not a claim to rerun the historical Phase 5 test set.",
+    "sharedFailures": [
+      "actuallyharvestownsclicksandareareplanting",
+      "booksusenativerequestsandlimitconversions",
+      "fakeplayerharvestrespectsdisabledreplanting",
+      "recruitmentandritualcleanup"
+    ],
+    "onlyFinal": [],
+    "onlyOlderArtifact": [
+      "levelticksrefreshmovementandqueuewithoutinventorychanges"
+    ]
+  },
+  "packageInspection": "package-inspection.json",
+  "visualObservations": "visual-observations.json",
+  "ordinaryServerRecipeComparison": "server-recipe-comparison-final.json",
+  "openGates": [
+    "Combined colony suite: two failures; full all-fixture diagnostic: four failures. All four also reproduce with the retained Phase 5 client artifact. Isolated suites pass but combined root cause remains unresolved.",
+    "Connected-client reconnect and original-settings real chunk eviction at naturally reached travel, wait, transfer and smoke cutpoints.",
+    "Native builder construction, upgrades, repairs, occupied access and smoke visual acceptance.",
+    "Continuous autonomous farmer-to-courier-to-Budtender-to-customer supply chain.",
+    "Interactive Kingdoms Gate recruitment, book delivery, ritual priority and return to work.",
+    "Matched practical-population profiling is unmeasured; idle-server and fixture durations are not benchmarks.",
+    "Linux, hosted CI and release qualification not performed."
+  ],
+  "publication": false,
+  "installedModsChanged": false,
+  "playerWorldsChanged": false,
+  "diagnosticHistory": "Earlier records retained; initial artifact identity in initial-artifact.json. Removed redundant disposable mod copies listed in disposable-mod-cleanup.json."
+}

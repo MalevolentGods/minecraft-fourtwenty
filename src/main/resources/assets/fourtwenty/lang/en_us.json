@@ -26,5 +26,21 @@
   "fourtwenty.dispensary.happiness.unmet": "Cannabis: unmet demand",
   "fourtwenty.dispensary.happiness.unmet.description": "I have waited beyond the grace period for a joint. This slightly reduces my happiness; I will keep working and try again later.",
   "fourtwenty.dispensary.happiness.ineligible": "Cannabis: no demand",
-  "fourtwenty.dispensary.happiness.ineligible.description": "Only adults assigned to a completed level 3 or higher residence have cannabis demand."
+  "fourtwenty.dispensary.happiness.ineligible.description": "Only adults assigned to a completed level 3 or higher residence have cannabis demand.",
+  "fourtwenty.dispensary.status.title": "Dispensary service",
+  "fourtwenty.dispensary.status.level": "Completed level: %s / 5",
+  "fourtwenty.dispensary.status.worker": "Budtender: %s",
+  "fourtwenty.dispensary.status.no_worker": "Budtender: unassigned",
+  "fourtwenty.dispensary.status.ingredients": "Buds: %s   Paper: %s",
+  "fourtwenty.dispensary.status.joints": "Joints: %s / %s target",
+  "fourtwenty.dispensary.status.available": "Available at counter: %s",
+  "fourtwenty.dispensary.status.customers": "Waiting customers: %s",
+  "fourtwenty.dispensary.status.condition.unfinished": "Complete construction to begin service.",
+  "fourtwenty.dispensary.status.condition.unstaffed": "Hire a Budtender in the worker tab.",
+  "fourtwenty.dispensary.status.condition.away": "Budtender is away from the counter.",
+  "fourtwenty.dispensary.status.condition.buds": "Production needs weed buds.",
+  "fourtwenty.dispensary.status.condition.paper": "Production needs two paper per joint.",
+  "fourtwenty.dispensary.status.condition.empty": "No joints available at the counter.",
+  "fourtwenty.dispensary.status.condition.request": "Joint production request pending.",
+  "fourtwenty.dispensary.status.condition.ready": "Stock and staff are at the counter."
 }

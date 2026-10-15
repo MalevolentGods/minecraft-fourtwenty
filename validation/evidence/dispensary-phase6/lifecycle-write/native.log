@@ -1,0 +1,281 @@
+[15Oct2026 09:18:35.989] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserverdev, --gameDir, ., --fml.fmlVersion, 4.0.42, --fml.mcVersion, 1.21.1, --fml.neoForgeVersion, 21.1.218, --fml.neoFormVersion, 20240808.144430]
+[15Oct2026 09:18:35.990] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Eclipse Adoptium OpenJDK 64-Bit Server VM 21.0.12.1+1-LTS
+[15Oct2026 09:18:35.991] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 11.0.5+main.901c6ea8 starting: java version 21.0.12.1 by Eclipse Adoptium; OS Mac OS X arch aarch64 version 26.6.2
+[15Oct2026 09:18:36.050] [main/INFO] [net.neoforged.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserverdev
+[15Oct2026 09:18:36.072] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle-home/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.15.2+mixin.0.8.7/2af2f021d8e02a0220dc27a7a72b4666d66d44ca/sponge-mixin-0.15.2+mixin.0.8.7.jar%23134!/ Service=ModLauncher Env=SERVER
+[15Oct2026 09:18:36.121] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "neoforge-21.1.218.jar" [locator: neoforge devenv provider ([/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar])]
+[15Oct2026 09:18:36.133] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "neoforge-21.1.218.jar" [locator: neoforge devenv provider ([/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar])]
+[15Oct2026 09:18:36.136] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "blockui-1.0.211-1.21.1-snapshot.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-lifecycle-write/mods}, reader: mod manifest]
+[15Oct2026 09:18:36.140] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "domum-ornamentum-1.0.234-snapshot-main.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-lifecycle-write/mods}, reader: mod manifest]
+[15Oct2026 09:18:36.142] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "fourtwenty-0.3.2.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-lifecycle-write/mods}, reader: mod manifest]
+[15Oct2026 09:18:36.151] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "minecolonies-1.1.1343-1.21.1-snapshot.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-lifecycle-write/mods}, reader: mod manifest]
+[15Oct2026 09:18:36.152] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "minecolonies-cult-0.2.0.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-lifecycle-write/mods}, reader: mod manifest]
+[15Oct2026 09:18:36.154] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "multipiston-1.2.58-1.21.1.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-lifecycle-write/mods}, reader: mod manifest]
+[15Oct2026 09:18:36.155] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "structurize-1.0.831-1.21.1-snapshot.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-lifecycle-write/mods}, reader: mod manifest]
+[15Oct2026 09:18:36.158] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "towntalk-1.2.0.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-lifecycle-write/mods}, reader: mod manifest]
+[15Oct2026 09:18:36.160] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "gametest" [locator: userdev mods and services, reader: mod manifest]
+[15Oct2026 09:18:36.161] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "launcher" [locator: userdev mods and services, reader: mod manifest]
+[15Oct2026 09:18:36.161] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "colonytest" [locator: userdev mods and services, reader: mod manifest]
+[15Oct2026 09:18:36.166] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "neoforge-21.1.218.jar" [locator: userdev mods and services, reader: mod manifest]
+[15Oct2026 09:18:36.173] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found gamelibrary file "mixinextras-neoforge-0.5.0.jar" [locator: userdev mods and services, reader: mod manifest]
+[15Oct2026 09:18:36.224] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:mixinextras.neoforge. Using Mod File: /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle-home/caches/modules-2/files-2.1/io.github.llamalad7/mixinextras-neoforge/0.5.0/d734b83ce6542bb70ea31755c1595b88992dbe65/mixinextras-neoforge-0.5.0.jar
+[15Oct2026 09:18:36.225] [main/INFO] [net.neoforged.fml.loading.moddiscovery.locators.JarInJarDependencyLocator/]: Found 1 dependencies adding them to mods collection
+[15Oct2026 09:18:36.225] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found library file "net.neoforged.neoforge-coremods-21.1.218.jar" [parent: neoforge-21.1.218.jar, locator: jarinjar, reader: mod manifest]
+[15Oct2026 09:18:36.225] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Domum Ornamentum 1.0.234-snapshot (domum_ornamentum)
+		Four Twenty 0.3.2 (fourtwenty)
+		FourTwenty integration fixtures 1.0 (fourtwenty_colonytests)
+		FourTwenty integration fixtures 1.0 (fourtwenty_tests)
+		Isolated compatibility launcher 1.0 (fourtwenty_launcher)
+		MineColonies 1.1.1343-1.21.1-snapshot (minecolonies)
+		MineColonies: Kingdom's Gate 0.2.0 (minecolonies_cult)
+		Minecraft 1.21.1 (minecraft)
+		Multi-Piston 1.2.58-1.21.1 (multipiston)
+		NeoForge 21.1.218 (neoforge)
+		Structurize 1.0.831-1.21.1 (structurize)
+		Towntalk 1.2.0 (towntalk)
+		UI Library Mod 1.0.211-1.21.1-snapshot (blockui)
+[15Oct2026 09:18:36.519] [main/INFO] [mixin/]: Compatibility level set to JAVA_21
+[15Oct2026 09:18:36.525] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserverdev' with arguments [--gameDir, .]
+[15Oct2026 09:18:36.615] [main/WARN] [mixin/]: Error loading class: actuallyharvest/event/HarvestEventHandler (java.lang.ClassNotFoundException: actuallyharvest.event.HarvestEventHandler)
+[15Oct2026 09:18:37.945] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.0).
+[15Oct2026 09:18:40.524] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[15Oct2026 09:18:40.526] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[15Oct2026 09:18:40.527] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[15Oct2026 09:18:40.528] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[15Oct2026 09:18:40.529] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[15Oct2026 09:18:40.563] [modloading-worker-0/INFO] [net.neoforged.neoforge.common.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.218, for MC 1.21.1
+[15Oct2026 09:18:40.761] [modloading-worker-0/INFO] [com.malevolentgods.fourtwenty.compat.minecolonies.ColonyIntegration/]: FourTwenty dispensary foundation enabled (MineColonies 1.1.1343)
+[15Oct2026 09:18:41.276] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Warped Netherlands
+[15Oct2026 09:18:41.276] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Urban Savanna
+[15Oct2026 09:18:41.276] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Desert Oasis
+[15Oct2026 09:18:41.276] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Dark Oak Treehouse
+[15Oct2026 09:18:41.276] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Lost Mesa City
+[15Oct2026 09:18:41.276] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Nordic Spruce
+[15Oct2026 09:18:41.276] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Stalactite Caves
+[15Oct2026 09:18:41.276] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Pagoda
+[15Oct2026 09:18:41.276] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Minecolonies Original
+[15Oct2026 09:18:41.277] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Cavern
+[15Oct2026 09:18:41.277] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Caledonia
+[15Oct2026 09:18:41.277] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Medieval Oak
+[15Oct2026 09:18:41.277] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Medieval Dark Oak
+[15Oct2026 09:18:41.277] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Medieval Birch
+[15Oct2026 09:18:41.277] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Shire
+[15Oct2026 09:18:41.277] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Incan
+[15Oct2026 09:18:41.277] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Space Wars
+[15Oct2026 09:18:41.277] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Ancient Athens
+[15Oct2026 09:18:41.277] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Jungle Treehouse
+[15Oct2026 09:18:41.277] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Medieval Spruce
+[15Oct2026 09:18:41.277] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Fortress
+[15Oct2026 09:18:41.277] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Urban Birch
+[15Oct2026 09:18:41.278] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Colonial
+[15Oct2026 09:18:41.278] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Kingdom's Gate
+[15Oct2026 09:18:41.278] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: FourTwenty
+[15Oct2026 09:18:41.278] [Structurize IO Worker #0/WARN] [structurize/]: Failed loading packs from main folder path: .
+[15Oct2026 09:18:41.278] [Structurize IO Worker #0/WARN] [structurize/]: Failed loading client packs from main folder path: .
+[15Oct2026 09:18:41.278] [Structurize IO Worker #0/WARN] [structurize/]: Finished discovering Server Structure packs
+[15Oct2026 09:18:41.291] [modloading-worker-0/WARN] [minecolonies/]: Register mappings
+[15Oct2026 09:18:41.342] [main/ERROR] [net.minecraft.server.dedicated.Settings/]: Failed to load properties from file: server.properties
+java.nio.file.NoSuchFileException: server.properties
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92) ~[?:?]
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106) ~[?:?]
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111) ~[?:?]
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:261) ~[?:?]
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?]
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?]
+	at java.base/java.nio.file.spi.FileSystemProvider.newInputStream(FileSystemProvider.java:420) ~[?:?]
+	at java.base/java.nio.file.Files.newInputStream(Files.java:160) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.dedicated.Settings.loadFromFile(Settings.java:38) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.dedicated.DedicatedServerProperties.fromFile(DedicatedServerProperties.java:132) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.dedicated.DedicatedServerSettings.<init>(DedicatedServerSettings.java:12) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.Main.main(Main.java:125) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:136) ~[loader-4.0.42.jar%23142!/:4.0]
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.CommonLaunchHandler.serverService(CommonLaunchHandler.java:128) ~[loader-4.0.42.jar%23142!/:4.0]
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.NeoForgeServerDevLaunchHandler.runService(NeoForgeServerDevLaunchHandler.java:23) ~[loader-4.0.42.jar%23142!/:4.0]
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.CommonLaunchHandler.lambda$launchService$4(CommonLaunchHandler.java:118) ~[loader-4.0.42.jar%23142!/:4.0]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandlerDecorator.launch(LaunchServiceHandlerDecorator.java:30) [modlauncher-11.0.5.jar%23124!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:53) [modlauncher-11.0.5.jar%23124!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:71) [modlauncher-11.0.5.jar%23124!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.Launcher.run(Launcher.java:103) [modlauncher-11.0.5.jar%23124!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.Launcher.main(Launcher.java:74) [modlauncher-11.0.5.jar%23124!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:26) [modlauncher-11.0.5.jar%23124!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:23) [modlauncher-11.0.5.jar%23124!/:?]
+	at cpw.mods.bootstraplauncher@2.0.2/cpw.mods.bootstraplauncher.BootstrapLauncher.run(BootstrapLauncher.java:210) [bootstraplauncher-2.0.2.jar:?]
+	at cpw.mods.bootstraplauncher@2.0.2/cpw.mods.bootstraplauncher.BootstrapLauncher.main(BootstrapLauncher.java:69) [bootstraplauncher-2.0.2.jar:?]
+[15Oct2026 09:18:41.355] [main/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[15Oct2026 09:18:41.384] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar%23198!/assets/.mcassetsroot' uses unexpected schema
+[15Oct2026 09:18:41.384] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar%23198!/data/.mcassetsroot' uses unexpected schema
+[15Oct2026 09:18:41.387] [main/INFO] [net.neoforged.neoforge.gametest.GameTestHooks/]: Enabled Gametest Namespaces: [fourtwenty_lifecycletests]
+[15Oct2026 09:18:41.986] [main/INFO] [net.minecraft.world.item.crafting.RecipeManager/]: Loaded 1600 recipes
+[15Oct2026 09:18:42.099] [main/INFO] [net.minecraft.advancements.AdvancementTree/]: Loaded 1672 advancements
+[15Oct2026 09:18:42.101] [main/INFO] [minecolonies/]: Beginning load of custom recipes for colony workers
+[15Oct2026 09:18:42.108] [main/INFO] [minecolonies/]: Loaded 161 recipes for 16 crafters
+[15Oct2026 09:18:42.108] [main/INFO] [minecolonies/]: Research loading...
+[15Oct2026 09:18:42.114] [main/INFO] [minecolonies/]: Research loaded. Located 4 branches, 208 researches and 103 effects.
+[15Oct2026 09:18:42.116] [main/INFO] [minecolonies/]: Loading quests from data
+[15Oct2026 09:18:42.119] [main/INFO] [minecolonies/]: Finished loading quests from data
+[15Oct2026 09:18:42.120] [main/WARN] [minecolonies/]: Read 1634 items with their nbt keys for compatibility.
+[15Oct2026 09:18:42.120] [main/INFO] [minecolonies/]: [Study items Loader]: Starting reload...
+[15Oct2026 09:18:42.121] [main/INFO] [minecolonies/]: [Study items Loader]: Finished reloading. 2 entries created.
+[15Oct2026 09:18:42.719] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
+[15Oct2026 09:18:42.734] [worldgen/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 2%
+[15Oct2026 09:18:42.852] [Server thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 133 ms
+[15Oct2026 09:18:42.858] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: Started game test server
+[15Oct2026 09:18:42.874] [Server thread/INFO] [net.neoforged.neoforge.server.permission.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[15Oct2026 09:18:42.883] [Server thread/WARN] [minecolonies/]: Starting Compat Discovery
+[15Oct2026 09:18:42.948] [Server thread/INFO] [minecolonies/]: Finished discovering Ores 19 22
+[15Oct2026 09:18:42.949] [Server thread/INFO] [minecolonies/]: Finished discovering saplings 14
+[15Oct2026 09:18:42.949] [Server thread/INFO] [minecolonies/]: Finished discovering plantables 19
+[15Oct2026 09:18:42.949] [Server thread/INFO] [minecolonies/]: Finished discovering food 107 121
+[15Oct2026 09:18:42.949] [Server thread/INFO] [minecolonies/]: Finished discovering fuel 249
+[15Oct2026 09:18:42.949] [Server thread/INFO] [minecolonies/]: Finished discovering flowers 26
+[15Oct2026 09:18:42.949] [Server thread/INFO] [minecolonies/]: Finished discovering items 2002
+[15Oct2026 09:18:42.951] [Server thread/INFO] [minecolonies/]: Finished discovering compostables 236
+[15Oct2026 09:18:43.078] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: 1 tests are now running at position -12657602, -59, 4575264!
+[15Oct2026 09:18:43.081] [Server thread/ERROR] [net.minecraft.server.MinecraftServer/]: Encountered an unexpected exception
+net.minecraft.ResourceLocationException: Non [a-z0-9/._-] character in path of location: fourtwenty_lifecycletests:fourtwenty_servicetests:production
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.resources.ResourceLocation.assertValidPath(ResourceLocation.java:284) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.resources.ResourceLocation.createUntrusted(ResourceLocation.java:48) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.resources.ResourceLocation.bySeparator(ResourceLocation.java:79) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.resources.ResourceLocation.parse(ResourceLocation.java:56) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.StructureUtils.prepareTestStructure(StructureUtils.java:107) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.prepareTestStructure(GameTestInfo.java:265) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.StructureGridSpawner.spawnStructure(StructureGridSpawner.java:48) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRunner.spawn(GameTestRunner.java:163) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197) ~[?:?]
+	at java.base/java.util.AbstractList$RandomAccessSpliterator.forEachRemaining(AbstractList.java:722) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:575) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.evaluateToArrayNode(AbstractPipeline.java:260) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:616) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:622) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toList(ReferencePipeline.java:627) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRunner.createStructuresForBatch(GameTestRunner.java:158) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRunner.runBatch(GameTestRunner.java:90) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRunner.start(GameTestRunner.java:63) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.startTests(GameTestServer.java:246) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:171) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[15Oct2026 09:18:43.838] [Server thread/FATAL] [net.neoforged.neoforge.common.NeoForgeMod/]: Preparing crash report with UUID ad0ffa36-2b63-41d3-92c4-226911f2f7f3
+[15Oct2026 09:18:43.838] [Server thread/ERROR] [net.minecraft.server.MinecraftServer/]: This crash report has been saved to: /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase6-lifecycle-write/crash-reports/crash-2026-10-15_09.18.43-server.txt
+[15Oct2026 09:18:43.839] [Server thread/FATAL] [net.neoforged.neoforge.common.NeoForgeMod/]: Preparing crash report with UUID 2cc2b7d0-4cd1-444d-82bb-85ee178cf87a
+[15Oct2026 09:18:43.839] [Server thread/ERROR] [net.minecraft.gametest.framework.GameTestServer/]: Game test server crashed
+---- Minecraft Crash Report ----
+// Would you like a cupcake?
+
+Time: 2026-10-15 09:18:43
+Description: Exception in server tick loop
+
+net.minecraft.ResourceLocationException: Non [a-z0-9/._-] character in path of location: fourtwenty_lifecycletests:fourtwenty_servicetests:production
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.resources.ResourceLocation.assertValidPath(ResourceLocation.java:284) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.resources.ResourceLocation.createUntrusted(ResourceLocation.java:48) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.resources.ResourceLocation.bySeparator(ResourceLocation.java:79) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.resources.ResourceLocation.parse(ResourceLocation.java:56) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.StructureUtils.prepareTestStructure(StructureUtils.java:107) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.prepareTestStructure(GameTestInfo.java:265) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.StructureGridSpawner.spawnStructure(StructureGridSpawner.java:48) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRunner.spawn(GameTestRunner.java:163) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading}
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197) ~[?:?] {}
+	at java.base/java.util.AbstractList$RandomAccessSpliterator.forEachRemaining(AbstractList.java:722) ~[?:?] {}
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[?:?] {}
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[?:?] {}
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:575) ~[?:?] {}
+	at java.base/java.util.stream.AbstractPipeline.evaluateToArrayNode(AbstractPipeline.java:260) ~[?:?] {}
+	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:616) ~[?:?] {}
+	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:622) ~[?:?] {}
+	at java.base/java.util.stream.ReferencePipeline.toList(ReferencePipeline.java:627) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRunner.createStructuresForBatch(GameTestRunner.java:158) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRunner.runBatch(GameTestRunner.java:90) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRunner.start(GameTestRunner.java:63) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.startTests(GameTestServer.java:246) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:171) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23198!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.1
+	Minecraft Version ID: 1.21.1
+	Operating System: Mac OS X (aarch64) version 26.6.2
+	Java Version: 21.0.12.1, Eclipse Adoptium
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Eclipse Adoptium
+	Memory: 58087152 bytes (55 MiB) / 499122176 bytes (476 MiB) up to 4294967296 bytes (4096 MiB)
+	CPUs: 12
+	Processor Vendor: Apple Inc.
+	Processor Name: Apple M2 Pro
+	Identifier: Apple Inc. Family 0xda33d83d Model 0 Stepping 0
+	Microarchitecture: ARM64 SoC: Avalanche + Blizzard
+	Frequency (GHz): 3.50
+	Number of physical packages: 1
+	Number of physical CPUs: 12
+	Number of logical CPUs: 12
+	Graphics card #0 name: Apple M2 Pro
+	Graphics card #0 vendor: Apple (0x106b)
+	Graphics card #0 VRAM (MiB): 0.00
+	Graphics card #0 deviceId: unknown
+	Graphics card #0 versionInfo: unknown
+	Memory slot #0 capacity (MiB): 0.00
+	Memory slot #0 clockSpeed (GHz): 0.00
+	Memory slot #0 type: unknown
+	Virtual memory max (MiB): 24576.00
+	Virtual memory used (MiB): 20817.67
+	Swap memory total (MiB): 8192.00
+	Swap memory used (MiB): 7067.81
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 14437.17, total: 948584.19
+	Space in storage for workdir (MiB): available: 14437.17, total: 948584.19
+	JVM Flags: 0 total; 
+	Server Running: true
+	Player Count: 0 / 1; []
+	Active Data Packs: bundle, trade_rebalance, vanilla, mod_data, mod/fourtwenty_launcher, mod/fourtwenty_colonytests, mod/towntalk, mod/domum_ornamentum, mod/fourtwenty_tests, mod/blockui, mod/structurize, mod/minecolonies, mod/multipiston, mod/minecolonies_cult (incompatible), mod/fourtwenty (incompatible), mod/neoforge
+	Available Data Packs: bundle, trade_rebalance, vanilla, mod/blockui, mod/domum_ornamentum, mod/fourtwenty (incompatible), mod/fourtwenty_colonytests, mod/fourtwenty_launcher, mod/fourtwenty_tests, mod/minecolonies, mod/minecolonies_cult (incompatible), mod/multipiston, mod/neoforge, mod/structurize, mod/towntalk, mod_data
+	Enabled Feature Flags: minecraft:bundle, minecraft:vanilla, minecraft:trade_rebalance
+	World Generation: Stable
+	World Seed: 0
+	Type: Game test server
+	ModLauncher: 11.0.5+main.901c6ea8
+	ModLauncher launch target: forgeserverdev
+	ModLauncher services: 
+		sponge-mixin-0.15.2+mixin.0.8.7.jar mixin PLUGINSERVICE 
+		loader-4.0.42.jar slf4jfixer PLUGINSERVICE 
+		loader-4.0.42.jar runtime_enum_extender PLUGINSERVICE 
+		at-modlauncher-10.0.1.jar accesstransformer PLUGINSERVICE 
+		loader-4.0.42.jar runtimedistcleaner PLUGINSERVICE 
+		modlauncher-11.0.5.jar mixin TRANSFORMATIONSERVICE 
+		modlauncher-11.0.5.jar fml TRANSFORMATIONSERVICE 
+	FML Language Providers: 
+		javafml@4.0
+		lowcodefml@4.0
+		minecraft@4.0
+	Mod List: 
+		domum-ornamentum-1.0.234-snapshot-main.jar        |Domum Ornamentum              |domum_ornamentum              |1.0.234-snapshot    |Manifest: NOSIGNATURE
+		fourtwenty-0.3.2.jar                              |Four Twenty                   |fourtwenty                    |0.3.2               |Manifest: NOSIGNATURE
+		colonytest                                        |FourTwenty integration fixture|fourtwenty_colonytests        |1.0                 |Manifest: NOSIGNATURE
+		gametest                                          |FourTwenty integration fixture|fourtwenty_tests              |1.0                 |Manifest: NOSIGNATURE
+		launcher                                          |Isolated compatibility launche|fourtwenty_launcher           |1.0                 |Manifest: NOSIGNATURE
+		minecolonies-1.1.1343-1.21.1-snapshot.jar         |MineColonies                  |minecolonies                  |1.1.1343-1.21.1-snap|Manifest: NOSIGNATURE
+		minecolonies-cult-0.2.0.jar                       |MineColonies: Kingdom's Gate  |minecolonies_cult             |0.2.0               |Manifest: NOSIGNATURE
+		neoforge-21.1.218.jar                             |Minecraft                     |minecraft                     |1.21.1              |Manifest: NOSIGNATURE
+		multipiston-1.2.58-1.21.1.jar                     |Multi-Piston                  |multipiston                   |1.2.58-1.21.1       |Manifest: NOSIGNATURE
+		neoforge-21.1.218.jar                             |NeoForge                      |neoforge                      |21.1.218            |Manifest: NOSIGNATURE
+		structurize-1.0.831-1.21.1-snapshot.jar           |Structurize                   |structurize                   |1.0.831-1.21.1      |Manifest: NOSIGNATURE
+		towntalk-1.2.0.jar                                |Towntalk                      |towntalk                      |1.2.0               |Manifest: NOSIGNATURE
+		blockui-1.0.211-1.21.1-snapshot.jar               |UI Library Mod                |blockui                       |1.0.211-1.21.1-snaps|Manifest: NOSIGNATURE
+	Crash Report UUID: 2cc2b7d0-4cd1-444d-82bb-85ee178cf87a
+	FML: 4.0.42
+	NeoForge: 21.1.218

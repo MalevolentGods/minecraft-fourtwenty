@@ -1,0 +1,18 @@
+{
+  "observer": "Codex image inspection",
+  "date": "2026-10-15",
+  "inspected": [
+    "minimal-client-final/screenshots/status-live-stocked.png",
+    "full-client-final/screenshots/status-live-stocked.png",
+    "full-client-final/screenshots/dispensary-level-5.png"
+  ],
+  "observations": [
+    "Minimal native screen visibly reports completed level 5, nine joints and nine available at counter.",
+    "Full-pack native screen also shows nine joints and nine available at counter; native tutorial and JourneyMap overlays are visible.",
+    "Screenshots show directly placed blueprint geometry; native construction and autonomous smoking are not established."
+  ],
+  "limitations": [
+    "Screenshots and probe assertions are not interactive gameplay acceptance.",
+    "Native onboarding overlay partially obscures the full-pack screen title."
+  ]
+}
