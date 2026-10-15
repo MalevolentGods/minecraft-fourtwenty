@@ -138,3 +138,46 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - Weed joints as consumable items with multiple effects
 - Wild weed generation in world
 - Custom "Four Twenty" creative tab
+## v0.4.0 (2026-10-15)
+
+### Feat
+
+- add dispensary building and budtender profession phases 5 and 6
+- add dispensary building and budtender profession phase 4
+- add dispensary building and budtender profession phase 3
+- add dispensary building and budtender profession phase 2
+- add dispensary building and budtender profession phase 1
+
+### Refactor
+
+- update crop loot and bong automation
+
+## v0.3.2 (2025-07-21)
+
+### Fix
+
+- add missing weed bong gui files
+
+## v0.3.1 (2025-07-20)
+
+### Feat
+
+- add proper bong art
+- add stationary bong block with area effect
+- add weed edibles with unique effect system
+- add reusable weed pipe
+- add the ability for weed to spawn naturally in certain biomes
+
+### Fix
+
+- update the bong recipe to match new model
+- add missing weed brownie art
+- use direct drop mechanism for weed crop loot as workaround
+- add language file for weed pipe
+- fix crafting recipes and make pipe more difficult
+- adjust display values for weed joint to look more natural in first and third person views
+- update crop model to use a cross pattern instead of a block
+
+### Refactor
+
+- modify bong to use a custom GUI for interaction
