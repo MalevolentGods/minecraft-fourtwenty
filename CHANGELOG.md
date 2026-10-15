@@ -138,6 +138,12 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - Weed joints as consumable items with multiple effects
 - Wild weed generation in world
 - Custom "Four Twenty" creative tab
+## v0.4.1 (2026-10-15)
+
+### Fix
+
+- update missing translation for dispensary name and desc
+
 ## v0.4.0 (2026-10-15)
 
 ### Feat
