@@ -1,0 +1,108 @@
+[14Oct2026 21:42:33.641] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:mixinextras.neoforge. Using Mod File: /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle-home/caches/modules-2/files-2.1/io.github.llamalad7/mixinextras-neoforge/0.5.0/d734b83ce6542bb70ea31755c1595b88992dbe65/mixinextras-neoforge-0.5.0.jar
+[14Oct2026 21:42:34.008] [main/WARN] [mixin/]: Error loading class: actuallyharvest/event/HarvestEventHandler (java.lang.ClassNotFoundException: actuallyharvest.event.HarvestEventHandler)
+[14Oct2026 21:42:37.859] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14Oct2026 21:42:37.860] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14Oct2026 21:42:37.861] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[14Oct2026 21:42:37.861] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[14Oct2026 21:42:37.862] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14Oct2026 21:42:38.569] [Structurize IO Worker #0/WARN] [structurize/]: Failed loading packs from main folder path: .
+[14Oct2026 21:42:38.569] [Structurize IO Worker #0/WARN] [structurize/]: Failed loading client packs from main folder path: .
+[14Oct2026 21:42:38.569] [Structurize IO Worker #0/WARN] [structurize/]: Finished discovering Server Structure packs
+[14Oct2026 21:42:38.582] [modloading-worker-0/WARN] [minecolonies/]: Register mappings
+[14Oct2026 21:42:38.631] [main/ERROR] [net.minecraft.server.dedicated.Settings/]: Failed to load properties from file: server.properties
+[14Oct2026 21:42:38.673] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar%23198!/assets/.mcassetsroot' uses unexpected schema
+[14Oct2026 21:42:38.673] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar%23198!/data/.mcassetsroot' uses unexpected schema
+[14Oct2026 21:42:39.428] [main/WARN] [minecolonies/]: Read 1634 items with their nbt keys for compatibility.
+[14Oct2026 21:42:40.175] [Server thread/WARN] [minecolonies/]: Starting Compat Discovery
+[14Oct2026 21:42:40.730] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:40.731] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:40.754] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 21:42:40.759] [Server thread/WARN] [minecolonies/]: Missing entity upon adding data to that entity!com.minecolonies.core.colony.CitizenData@1
+[14Oct2026 21:42:40.760] [Server thread/WARN] [minecolonies/]: Missing entity upon adding data to that entity!com.minecolonies.core.colony.CitizenData@1
+[14Oct2026 21:42:40.760] [Server thread/WARN] [minecolonies/]: Missing entity upon adding data to that entity!com.minecolonies.core.colony.CitizenData@1
+[14Oct2026 21:42:40.761] [Server thread/WARN] [minecolonies/]: Missing entity upon adding data to that entity!com.minecolonies.core.colony.CitizenData@1
+[14Oct2026 21:42:41.314] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:41.314] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:41.330] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:41.331] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:41.668] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:41.669] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:41.670] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 21:42:41.672] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 21:42:41.674] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 21:42:41.675] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 21:42:41.902] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:41.903] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:41.904] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:41.904] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:42.176] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:42.177] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:42.497] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:42.498] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:42.697] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:42.697] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:42.743] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:42.743] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:42.752] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:42.752] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:42.753] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:42.753] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:42.753] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:42.754] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:42.763] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:42.763] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:43.143] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:43.144] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:43.145] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 21:42:43.415] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:43.415] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:43.751] [Server thread/WARN] [minecolonies/]: Statemachine for state WALKING_HOME threw an exception:
+[14Oct2026 21:42:43.916] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:43.916] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:44.453] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:44.454] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:44.455] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 21:42:44.455] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 21:42:44.570] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:44.570] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:44.571] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:44.572] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:44.964] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:44.964] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:44.965] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 21:42:45.070] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:45.070] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:45.108] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:45.109] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:45.110] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 21:42:45.318] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:45.318] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:45.319] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:45.319] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:45.482] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:45.482] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:45.484] [Server thread/ERROR] [structurize/]: Error loading blueprint: Colonial:blueprints/minecolonies/colonial
+[14Oct2026 21:42:45.600] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:45.600] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:45.601] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:45.602] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:46.717] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:46.718] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:47.372] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:47.373] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:47.868] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:47.868] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:47.870] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:47.870] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:47.998] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:47.999] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:48.002] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:48.003] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:48.004] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:48.004] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:48.289] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:48.290] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+[14Oct2026 21:42:48.290] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:48.291] [Server thread/ERROR] [structurize/]: Error loading blueprint: FourTwenty:blueprints/fourtwenty/dispensary
+[14Oct2026 21:42:48.624] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+[14Oct2026 21:42:48.625] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen

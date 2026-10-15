@@ -75,6 +75,13 @@ runs {
     }
 
     client {
+        if (project.hasProperty('benefitClientProbe')) {
+            modSources.add('fourtwenty_tests', project.sourceSets.gametest)
+            modSources.add('fourtwenty_colonytests', project.sourceSets.colonytest)
+            systemProperty 'fourtwenty.benefitClientProbe', 'true'
+            // Prepare saves/benefits from an isolated native test world before launching this probe.
+            arguments.addAll '--quickPlaySingleplayer', 'benefits'
+        }
         // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
     }
@@ -94,7 +101,7 @@ runs {
         if (compatProfile == 'full') modSources.add('fourtwenty_packtests', project.sourceSets.packtest)
         if (compatProfile == 'baseline' && project.hasProperty('probePlayers')) modSources.add('fourtwenty_baselineprobe', project.sourceSets.baselineprobe)
         systemProperty 'neoforge.enabledGameTestNamespaces', providers.gradleProperty('compatTestNamespaces').getOrElse(
-            'fourtwenty_tests,fourtwenty_colonytests,fourtwenty_logisticstests,fourtwenty_servicetests,fourtwenty_baselineprobe,minecolonies_cult' +
+            'fourtwenty_tests,fourtwenty_colonytests,fourtwenty_logisticstests,fourtwenty_servicetests,fourtwenty_benefitstests,fourtwenty_baselineprobe,minecolonies_cult' +
             (playerTests ? ',fourtwenty_playertests,fourtwenty_permissiontests,fourtwenty_packtests' : ''))
     }
 

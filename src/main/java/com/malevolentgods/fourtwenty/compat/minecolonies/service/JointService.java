@@ -51,7 +51,10 @@ public final class JointService {
         if (slot < 0) return false;
         ItemStack removed = citizen.getInventoryCitizen().extractItem(slot, 1, false);
         if (removed.isEmpty()) return false;
-        if (saved.recordConsumption(data.getColony().getID(), data.getUUID(), expectedRevision, DispensaryConfig.rules())) return true;
+        if (saved.recordConsumption(data.getColony().getID(), data.getUUID(), expectedRevision, DispensaryConfig.rules())) {
+            com.malevolentgods.fourtwenty.compat.minecolonies.benefits.CitizenBenefits.refresh(data);
+            return true;
+        }
         // Defensive rollback; no intervening callback can normally invalidate the server-thread revision.
         var remainder = citizen.getInventoryCitizen().insertItem(slot, removed, false);
         if (!remainder.isEmpty()) citizen.spawnAtLocation(remainder);

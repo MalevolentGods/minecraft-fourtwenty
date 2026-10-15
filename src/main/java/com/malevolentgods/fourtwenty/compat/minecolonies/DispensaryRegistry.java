@@ -29,6 +29,10 @@ public final class DispensaryRegistry {
     private static final DeferredRegister<BlockEntityType<?>> ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, "fourtwenty");
     private static final DeferredRegister<JobEntry> JOBS = DeferredRegister.create(CommonMinecoloniesAPIImpl.JOBS, "fourtwenty");
     private static final DeferredRegister<BuildingEntry> BUILDINGS = DeferredRegister.create(CommonMinecoloniesAPIImpl.BUILDINGS, "fourtwenty");
+    private static final DeferredRegister<com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.HappinessFactorTypeEntry> HAPPINESS =
+            DeferredRegister.create(CommonMinecoloniesAPIImpl.HAPPINESS_FACTOR_TYPES, "fourtwenty");
+    static { HAPPINESS.register("cannabis_satisfaction", () -> new com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.HappinessFactorTypeEntry(
+            com.malevolentgods.fourtwenty.compat.minecolonies.benefits.CannabisHappinessModifier::new)); }
     public static final DeferredHolder<Block, DispensaryBlock> HUT = BLOCKS.register("dispensary", DispensaryBlock::new);
     public static final DeferredHolder<Item, ItemBlockHut> ITEM = ITEMS.register("dispensary", () -> new ItemBlockHut(HUT.get(), new Item.Properties()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityColonyBuilding>> ENTITY = ENTITIES.register("dispensary",
@@ -48,7 +52,7 @@ public final class DispensaryRegistry {
             .addBuildingModuleProducer(BuildingModules.STATS_MODULE).addBuildingModuleProducer(BuildingModules.MIN_STOCK).createBuildingEntry());
 
     public static void register(IEventBus bus) {
-        BLOCKS.register(bus); ITEMS.register(bus); ENTITIES.register(bus); JOBS.register(bus); BUILDINGS.register(bus);
+        BLOCKS.register(bus); ITEMS.register(bus); ENTITIES.register(bus); JOBS.register(bus); BUILDINGS.register(bus); HAPPINESS.register(bus);
         bus.addListener((net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) ->
                 event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
                         ENTITY.get(), (tile, side) -> tile.getItemHandlerCap(side)));

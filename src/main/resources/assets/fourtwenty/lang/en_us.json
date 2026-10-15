@@ -16,5 +16,15 @@
   "com.minecolonies.job.budtender": "Budtender",
   "job.fourtwenty.budtender": "Budtender",
   "com.fourtwenty.job.budtender": "Budtender",
-  "fourtwenty.dispensary.unavailable": "I could not get a joint at the dispensary. I will try again later."
+  "fourtwenty.dispensary.unavailable": "I could not get a joint at the dispensary. I will try again later.",
+  "com.minecolonies.coremod.gui.townhall.happiness.fourtwenty:cannabis_satisfaction": "Cannabis satisfaction",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.fourtwenty:cannabis_satisfaction": "Smoking a joint brings a small happiness benefit. Pending demand has a grace period; prolonged unmet demand slightly reduces happiness.",
+  "fourtwenty.dispensary.happiness.satisfied": "Cannabis: satisfied",
+  "fourtwenty.dispensary.happiness.satisfied.description": "I have smoked a joint and feel content. This gives a small happiness benefit until my next joint is due.",
+  "fourtwenty.dispensary.happiness.grace": "Cannabis: pending",
+  "fourtwenty.dispensary.happiness.grace.description": "I would like a joint. I am still within the grace period, so this does not affect my happiness yet.",
+  "fourtwenty.dispensary.happiness.unmet": "Cannabis: unmet demand",
+  "fourtwenty.dispensary.happiness.unmet.description": "I have waited beyond the grace period for a joint. This slightly reduces my happiness; I will keep working and try again later.",
+  "fourtwenty.dispensary.happiness.ineligible": "Cannabis: no demand",
+  "fourtwenty.dispensary.happiness.ineligible.description": "Only adults assigned to a completed level 3 or higher residence have cannabis demand."
 }

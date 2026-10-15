@@ -1,7 +1,7 @@
 # Dispensary and Budtender implementation plan
 
 Date: 2026-10-14  
-Status: Phase 1 implemented and validated; see [the Phase 1 handoff](DISPENSARY_PHASE1.md) for exact evidence and limits. Phase 2 production is implemented; see [the Phase 2 handoff](DISPENSARY_PHASE2.md) for native logistics evidence and remaining qualification checks. Phase 3 collection and smoking are implemented and packaged native tests pass; see [the Phase 3 handoff](DISPENSARY_PHASE3.md) for behavior, evidence and remaining observations. Phases 4–6 remain planned.
+Status: Phase 1 implemented and validated; see [the Phase 1 handoff](DISPENSARY_PHASE1.md) for exact evidence and limits. Phase 2 production is implemented; see [the Phase 2 handoff](DISPENSARY_PHASE2.md) for native logistics evidence and remaining qualification checks. Phase 3 collection and smoking are implemented and packaged native tests pass; see [the Phase 3 handoff](DISPENSARY_PHASE3.md) for behavior, evidence and remaining observations. Phase 4 happiness and health are implemented; see [the Phase 4 handoff](DISPENSARY_PHASE4.md) for tuning, synchronization and lifecycle evidence and remaining qualification. Phases 5–6 remain planned.
 
 ## Objective
 
@@ -232,7 +232,7 @@ At each handoff, record changed files, behavior delivered, commands run, evidenc
 - [ ] Phase 1: Integration foundation and gameplay rules
 - [ ] Phase 2: Dispensary building and Budtender production — implemented; qualification limits in [handoff](DISPENSARY_PHASE2.md)
 - [ ] Phase 3: Citizen collection and smoking behavior
-- [ ] Phase 4: Happiness and health integration
+- [x] Phase 4: Happiness and health integration — implemented; evidence and qualification limits in [handoff](DISPENSARY_PHASE4.md)
 - [ ] Phase 5: Five finished blueprints and player-facing UI
 - [ ] Phase 6: Persistence and compatibility qualification
 

@@ -36,7 +36,8 @@ public final class ColonyIntegration {
         var rules = DispensaryConfig.rules();
         for (var colony : IColonyManager.getInstance().getColonies(level)) {
             for (var citizen : colony.getCitizenManager().getCitizens()) {
-                data.observe(colony.getID(), citizen.getUUID(), eligible(citizen), rules);
+                var state = data.observe(colony.getID(), citizen.getUUID(), eligible(citizen), rules);
+                com.malevolentgods.fourtwenty.compat.minecolonies.benefits.CitizenBenefits.refresh(citizen, state, data.time());
             }
         }
     }
