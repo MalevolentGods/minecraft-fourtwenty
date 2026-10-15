@@ -6,7 +6,7 @@ Date: 2026-10-14. Scope: optional integration, eligibility and timing rules, con
 
 The installed MC-TechColonies directory contains 136 JARs. All 135 artifacts in `validation/compatibility-lock.json` still match, including metadata and SHA-256. The only addition is the previously built `fourtwenty-0.3.2.jar` (`bec76b1af3137f77224f363acb12f32766d6370930ed54931ea8bf5115b0e024`). The strict inventory verifier therefore reports a mismatch. The lock was not changed. Testing copied only the 135 matching entries to `.compat/dispensary-phase1-reference`, then used normal isolated-profile preparation against that copy.
 
-The sibling Kingdom's Gate checkout is clean at `e2f7c3884a3b40fb0aee48fe2d2ec0dd024faf34`. Its previously archived build has matching provenance and SHA-256 `9726fb9ac9decd98aff1cc109c3a86f8f4a26f1125bfbc5beb3ccac287df2d25`. No sibling source or installed mod was edited. Exact core versions and checksums are recorded in [baseline.json](../validation/evidence/dispensary-phase1/baseline.json).
+The sibling Kingdom's Gate checkout is clean at `e2f7c3884a3b40fb0aee48fe2d2ec0dd024faf34`. Its previously archived build has matching provenance and SHA-256 `9726fb9ac9decd98aff1cc109c3a86f8f4a26f1125bfbc5beb3ccac287df2d25`. No sibling source or installed mod was edited. Exact core versions and checksums are recorded in [baseline.json](https://github.com/MalevolentGods/minecraft-fourtwenty/blob/d6a5609ee2b8ba5dc978dd6fa4a83fe2b0b623ce/validation/evidence/dispensary-phase1/baseline.json).
 
 Pinned API inspection used `javap -c` on the installed MineColonies `1.1.1343-1.21.1-snapshot` JAR and the current sibling source:
 
@@ -77,7 +77,7 @@ Verify `"$JAVA_HOME/bin/java" -version` rather than trusting a symlink name. Thi
 
 Final artifact: `build/libs/fourtwenty-0.3.2.jar`, SHA-256 `782acc6e9b1dbe47041ebca0e811b3e2d28a770616059454f3f5cfe1ac5045d7`. This is a development artifact with the existing version, not a published release.
 
-Evidence is under [validation/evidence/dispensary-phase1](../validation/evidence/dispensary-phase1). Direct launch commands are retained in each capture's `result.json`, with prepared inventories, launch fingerprints, and native logs. Final captures have the `-final` suffix; earlier captures are retained as diagnostic history.
+Evidence is under [validation/evidence/dispensary-phase1](https://github.com/MalevolentGods/minecraft-fourtwenty/tree/d6a5609ee2b8ba5dc978dd6fa4a83fe2b0b623ce/validation/evidence/dispensary-phase1). Direct launch commands are retained in each capture's `result.json`, with prepared inventories, launch fingerprints, and native logs. Final captures have the `-final` suffix; earlier captures are retained as diagnostic history.
 
 | Evidence type | Result / scope |
 | --- | --- |

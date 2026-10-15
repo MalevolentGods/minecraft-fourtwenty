@@ -162,6 +162,18 @@ Add the matching `-PcompatProfile` and test selection for colony/full profiles. 
 
 ## Preserve evidence
 
+Raw qualification output in `validation/evidence/` and the generated
+`validation/warning-ledger.json` are ignored by Git. Keep new captures locally
+or attach an archive to the relevant PR/release; commit concise results, artifact
+hashes, and remaining acceptance limits in the phase handoff instead. The frozen
+`validation/compatibility-lock.json` and compact `validation/artifacts.json`
+remain versioned inputs/provenance.
+
+Historical reports and screenshots remain available in
+[the archived evidence](https://github.com/MalevolentGods/minecraft-fourtwenty/tree/d6a5609ee2b8ba5dc978dd6fa4a83fe2b0b623ce/validation/evidence).
+Phase documents link to that revision so a fresh checkout does not need the raw
+captures. Paths in old commands and records describe their original local layout.
+
 ```sh
 python3 tools/compatibility.py capture \
   --destination .compat/runs/example \
@@ -175,6 +187,21 @@ Do not overwrite the reference installation, edit the sibling source, auto-commi
 
 Dispensary native fixture selection can be set explicitly with `-PcompatTestNamespaces=fourtwenty_colonytests,fourtwenty_logisticstests`. The default still includes the existing suites and now also runs autonomous logistics. Report subset runs as subsets. Regenerate all five blueprints with `python3 tools/generate_dispensary.py` and their pixel assets with `python3 tools/generate_dispensary_assets.py`; its native blueprint, inventory, request and courier fixtures are described in the Phase 2 handoff.
 
+
+## Local disk cleanup
+
+After stopping test clients/servers and the repository's Gradle daemon,
+`build/`, `.gradle/`, `.gradle-home/`, `.compat/cult-gradle-home/`, and completed
+disposable runs under `.compat/runs/` can be removed. Run directories contain
+test worlds and restart checkpoints: archive any still needed before removal.
+Removing caches makes the next build download and regenerate dependencies.
+`make clean` remains limited to build outputs; it does not delete test worlds.
+
+Retain `.compat/dependencies/` for checksum-pinned compile APIs, verified reference
+JARs/settings, and any sibling JAR with its `build-record.json` still needed for
+qualification. These inputs are ignored locally but are not disposable build
+output. Generated data resources and authored blueprints under `src/` remain
+tracked because the mod packages them.
 
 ## Dispensary Phase 5 authoring and presentation
 

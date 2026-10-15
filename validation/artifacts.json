@@ -4,7 +4,7 @@
     "workingTreeChanges": true,
     "file": "build/libs/fourtwenty-0.3.2.jar",
     "sha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
-    "evidence": "validation/evidence/dispensary-phase6/summary.json",
+    "evidence": "https://github.com/MalevolentGods/minecraft-fourtwenty/blob/d6a5609ee2b8ba5dc978dd6fa4a83fe2b0b623ce/validation/evidence/dispensary-phase6/summary.json",
     "qualification": "Phase 6 implementation candidate; see per-scenario results and open gates"
   },
   "minecolonies_cult": {

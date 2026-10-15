@@ -21,11 +21,14 @@
 # gradle
 /build
 /.gradle
+/.gradle-home/
+/repo/
 
 # other
 /.vscode
 /run
 /runData
+/run-data/
 /runClient
 /runServer
 /runs/*
@@ -45,7 +48,6 @@ README.txt
 *changelog.txt
 tools/export_lang/.api_key
 tools/fix_model_angle/*.class
-tools/fix_model_angle/*.class
 src/main/generated/resources/.cache/cache
 
 logs/
@@ -55,6 +57,15 @@ gradle/local.configuration.gradle
 /src/main/resources/assets/minecolonies/lang/**
 !src/main/assets/minecolonies/lang/manual_en_us.json
 
-/.gradle-home/
+# Disposable compatibility installations, worlds, and generated evidence.
+# Keep validation/compatibility-lock.json and validation/artifacts.json tracked.
 /.compat/
+/validation/evidence/
+/validation/warning-ledger.json
+
+# Python tooling caches
 **/__pycache__/
+*.py[cod]
+/.pytest_cache/
+/.coverage
+/htmlcov/

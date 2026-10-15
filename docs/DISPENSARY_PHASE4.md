@@ -45,7 +45,7 @@ The native calibration fixture tests 80 combinations: other weights 4/20.5, base
 
 ## Verification and limits
 
-Evidence is recorded in [the Phase 4 evidence directory](../validation/evidence/dispensary-phase4). The live installed directory contains the same 135 locked artifacts plus FourTwenty, for 136 JARs. All locked metadata and hashes match. Kingdom's Gate remains clean at `e2f7c3884a3b40fb0aee48fe2d2ec0dd024faf34`. No pins, installed mods, player worlds or sibling source were changed.
+Evidence is recorded in [the Phase 4 evidence directory](https://github.com/MalevolentGods/minecraft-fourtwenty/tree/d6a5609ee2b8ba5dc978dd6fa4a83fe2b0b623ce/validation/evidence/dispensary-phase4). The live installed directory contains the same 135 locked artifacts plus FourTwenty, for 136 JARs. All locked metadata and hashes match. Kingdom's Gate remains clean at `e2f7c3884a3b40fb0aee48fe2d2ec0dd024faf34`. No pins, installed mods, player worlds or sibling source were changed.
 
 Packaged artifact: `build/libs/fourtwenty-0.3.2.jar`  
 SHA-256: `08ba5849fcea1c26f97cecac025a61bc76bc72533d278529f51abec422ff9daf`

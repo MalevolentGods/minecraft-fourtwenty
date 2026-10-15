@@ -1,5 +1,0 @@
-{
-  "file": "build/libs/fourtwenty-0.3.2.jar",
-  "sha256": "a516d4c7254ce48034660351b0717c75daf4d79b37ce8c873fb6257e411ce3ba",
-  "scope": "Lifecycle fixes before serial module registration repair; all unsuffixed and verified-suffix runs used this artifact."
-}

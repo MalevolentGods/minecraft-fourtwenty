@@ -25,13 +25,13 @@ Construction uses native building controls and work orders. Tests place the prot
 
 ## Baseline and persistence
 
-All 135 locked installed artifacts still match their metadata and SHA-256. The installation has 136 JARs because it also contains the older FourTwenty build. The lock was preserved; isolated preparation uses the verified 135-artifact reference copy. Kingdom's Gate remains clean at `e2f7c3884a3b40fb0aee48fe2d2ec0dd024faf34`, with the matching archived `0.2.0` artifact. See [baseline.json](../validation/evidence/dispensary-phase2/baseline.json).
+All 135 locked installed artifacts still match their metadata and SHA-256. The installation has 136 JARs because it also contains the older FourTwenty build. The lock was preserved; isolated preparation uses the verified 135-artifact reference copy. Kingdom's Gate remains clean at `e2f7c3884a3b40fb0aee48fe2d2ec0dd024faf34`, with the matching archived `0.2.0` artifact. See [baseline.json](https://github.com/MalevolentGods/minecraft-fourtwenty/blob/d6a5609ee2b8ba5dc978dd6fa4a83fe2b0b623ce/validation/evidence/dispensary-phase2/baseline.json).
 
 Building level, staffing, inventories, crafting recipes, task queues and request identities use MineColonies' existing serializers. No new parallel request cache or production counter is stored. Phase 1 citizen state and simulation timing are unchanged. Native fixtures round-trip building/tile NBT and recheck assignment, stock and outstanding-request deduplication. Comprehensive fresh-process colony/request recovery remains Phase 6; this is not a claim of crash-atomic saves.
 
 ## Evidence and limits
 
-Evidence is in [validation/evidence/dispensary-phase2](../validation/evidence/dispensary-phase2). The development artifact retains version `0.3.2`; no commit, installation, publication or release was performed.
+Evidence is in [validation/evidence/dispensary-phase2](https://github.com/MalevolentGods/minecraft-fourtwenty/tree/d6a5609ee2b8ba5dc978dd6fa4a83fe2b0b623ce/validation/evidence/dispensary-phase2). The development artifact retains version `0.3.2`; no commit, installation, publication or release was performed.
 
 Final JAR: `build/libs/fourtwenty-0.3.2.jar`  
 SHA-256: `aac7b7d9eac1ae6f4e605a27dff39d3736815fc037b8a603c40b8357482274f1`

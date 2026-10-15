@@ -35,7 +35,7 @@ Native colony IDs and their derived citizen UUIDs can be reused after colony del
 
 ## Evidence
 
-The [evidence directory](../validation/evidence/dispensary-phase3) records the baseline, artifact hash, build and native logs, JUnit results and launch manifests. All 135 locked installed artifacts still match; the installed directory also contains the older FourTwenty JAR, for 136 total. Kingdom's Gate remains clean at `e2f7c3884a3b40fb0aee48fe2d2ec0dd024faf34`. Pins were preserved and only disposable isolated profiles were used.
+The [evidence directory](https://github.com/MalevolentGods/minecraft-fourtwenty/tree/d6a5609ee2b8ba5dc978dd6fa4a83fe2b0b623ce/validation/evidence/dispensary-phase3) records the baseline, artifact hash, build and native logs, JUnit results and launch manifests. All 135 locked installed artifacts still match; the installed directory also contains the older FourTwenty JAR, for 136 total. Kingdom's Gate remains clean at `e2f7c3884a3b40fb0aee48fe2d2ec0dd024faf34`. Pins were preserved and only disposable isolated profiles were used.
 
 Packaged artifact: `build/libs/fourtwenty-0.3.2.jar`  
 SHA-256: `659716f2976676ef61d9bc78fa6efc5921485a3801e668487cfe7c3f9dabd527`

@@ -58,7 +58,7 @@ For client probes, replace `gametest` with `client` and use `--gradle-arg=-Pstan
 
 ## Evidence
 
-The append-only record is [validation/evidence/dispensary-phase6](../validation/evidence/dispensary-phase6). Final results and artifact identity are recorded in `summary.json`. Earlier phase records are retained.
+The append-only record is [validation/evidence/dispensary-phase6](https://github.com/MalevolentGods/minecraft-fourtwenty/tree/d6a5609ee2b8ba5dc978dd6fa4a83fe2b0b623ce/validation/evidence/dispensary-phase6). Final results and artifact identity are recorded in `summary.json`. Earlier phase records are retained.
 
 Final artifact: `build/libs/fourtwenty-0.3.2.jar`, SHA-256 **`9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e`**. Source baseline: `a65d2ee8c8a9d8235097ec4342d2b2016f53f2f7` plus this working tree. All 18 final scenarios below used that exact JAR; helpers remained outside it. The pinned sibling artifact is `9726fb9ac9decd98aff1cc109c3a86f8f4a26f1125bfbc5beb3ccac287df2d25`.
 
