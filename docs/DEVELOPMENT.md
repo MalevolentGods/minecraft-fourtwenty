@@ -61,6 +61,7 @@ replacement remain explicit direct commands requiring review as described below.
 ## Build and dependency verification
 
 ```sh
+python3 tools/download_compile_dependencies.py
 export GRADLE_USER_HOME="$PWD/.gradle-home"
 ./gradlew build
 python3 -m unittest discover -s tools/tests -v
@@ -85,6 +86,41 @@ The committed macOS dependency lock and SHA-256 verification metadata cover the 
 ```
 
 Ordinary verification runs omit both write flags. Preserve platform lock differences instead of copying macOS resolution into Linux. No CI execution or release publication is implied by local results.
+
+## GitHub Actions and tagged releases
+
+`.github/workflows/ci.yml` runs `make test` for pull requests. Version-tag pushes
+also run `make build`, then publish the production JAR to GitHub Releases with
+generated release notes. Builds use Java 21, Python 3.13, and the `macos-15`
+runner to match the committed macOS dependency lock and native checksums; the
+Linux lock described above is still pending. No installed modpack is needed:
+`tools/download_compile_dependencies.py` downloads the six compile APIs from
+`tools/compile-dependency-downloads.json` and verifies every SHA-256 against the
+unchanged compatibility lock before copying any JARs into `.compat/dependencies`.
+
+Commit and push the workflow before pushing a new version tag on a commit that
+contains it. For example, once the intended release commit is checked out:
+
+```sh
+git tag -a v0.3.3 -m 'FourTwenty 0.3.3'
+git push origin v0.3.3
+```
+
+Both `v0.3.3` and `0.3.3` are supported. Tags such as `v0.3.3-rc.1` produce
+GitHub prereleases. The tag supplies Gradle's `releaseVersion` property, which
+sets the filename, manifest, and NeoForge mod metadata consistently. Local
+builds keep using `mod_version` unless overridden, for example:
+
+```sh
+make build GRADLE_ARGS='--no-daemon -PreleaseVersion=0.3.3-rc.1'
+```
+
+The publish job receives only the built `fourtwenty-<version>.jar` and uses the
+automatic `GITHUB_TOKEN` with `contents: write`; no personal token is required.
+Tests and builds use read-only repository permissions. Publication waits for
+all tests and the build to pass. Existing releases are not overwritten; use a
+new version tag for a new release. Unit checks do not establish native gameplay
+or full-modpack acceptance.
 
 ## Build the pinned sibling without changing it
 

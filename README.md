@@ -107,9 +107,10 @@ For downgrade recovery, restore the backup together with its matching mod builds
 With Java 21 and Python 3.11 or newer:
 
 ```sh
+python3 tools/download_compile_dependencies.py
 make build
 make test-python
 make help
 ```
 
-The JAR is `build/libs/fourtwenty-0.3.2.jar`. See [development and isolated runs](docs/DEVELOPMENT.md) for the pinned sibling build, GameTests, preparation, dependency verification, launch commands, and evidence capture. Report issues with exact mod versions, JAR hashes, reproduction steps, and relevant logs.
+The default local JAR is `build/libs/fourtwenty-0.3.2.jar`. Version tags publish a matching JAR to [GitHub Releases](https://github.com/MalevolentGods/minecraft-fourtwenty/releases). See [development and isolated runs](docs/DEVELOPMENT.md) for release instructions, the pinned sibling build, GameTests, preparation, dependency verification, launch commands, and evidence capture. Report issues with exact mod versions, JAR hashes, reproduction steps, and relevant logs.
