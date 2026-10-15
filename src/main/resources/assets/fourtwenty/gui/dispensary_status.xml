@@ -1,0 +1,13 @@
+<window size="190 244">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <text size="160 14" pos="15 12" textalign="MIDDLE" color="black" label="$(fourtwenty.dispensary.status.title)"/>
+    <text id="level" size="160 12" pos="15 32" color="black"/>
+    <text id="worker" size="160 26" pos="15 47" color="black" wrap="true"/>
+    <text id="ingredients" size="160 12" pos="15 77" color="black"/>
+    <text id="joints" size="160 12" pos="15 93" color="black"/>
+    <text id="available" size="160 12" pos="15 109" color="black"/>
+    <text id="customers" size="160 12" pos="15 125" color="black"/>
+    <list id="conditions" size="160 88" pos="15 143">
+        <view size="150 27"><text id="condition" size="146 26" color="#49352b" wrap="true"/></view>
+    </list>
+</window>

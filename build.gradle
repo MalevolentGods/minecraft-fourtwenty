@@ -75,6 +75,18 @@ runs {
     }
 
     client {
+        if (project.hasProperty('standaloneClientProbe')) {
+            modSources.add('fourtwenty_tests', project.sourceSets.gametest)
+            systemProperty 'fourtwenty.standaloneClientProbe', 'true'
+        }
+        if (project.hasProperty('benefitClientProbe') || project.hasProperty('presentationClientProbe')) {
+            modSources.add('fourtwenty_tests', project.sourceSets.gametest)
+            modSources.add('fourtwenty_colonytests', project.sourceSets.colonytest)
+            systemProperty 'fourtwenty.benefitClientProbe', project.hasProperty('benefitClientProbe').toString()
+            systemProperty 'fourtwenty.presentationClientProbe', project.hasProperty('presentationClientProbe').toString()
+            // Prepare saves/benefits from an isolated native test world before launching this probe.
+            arguments.addAll '--quickPlaySingleplayer', 'benefits'
+        }
         // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
     }
@@ -88,13 +100,15 @@ runs {
     // By default, the server will crash when no gametests are provided.
     // The gametest system is also enabled by default for other run configs under the /test command.
     gameTestServer {
+        if (project.hasProperty('dispensaryLifecycleStage')) systemProperty 'fourtwenty.dispensaryLifecycleStage', project.property('dispensaryLifecycleStage')
         if (project.hasProperty('persistenceStage')) systemProperty 'fourtwenty.persistenceStage', project.property('persistenceStage')
         if (compatProfile != 'baseline') modSources.add('fourtwenty_tests', project.sourceSets.gametest)
         if (compatProfile in ['colony', 'full']) modSources.add('fourtwenty_colonytests', project.sourceSets.colonytest)
         if (compatProfile == 'full') modSources.add('fourtwenty_packtests', project.sourceSets.packtest)
         if (compatProfile == 'baseline' && project.hasProperty('probePlayers')) modSources.add('fourtwenty_baselineprobe', project.sourceSets.baselineprobe)
-        systemProperty 'neoforge.enabledGameTestNamespaces', 'fourtwenty_tests,fourtwenty_colonytests,fourtwenty_baselineprobe,minecolonies_cult' +
-            (playerTests ? ',fourtwenty_playertests,fourtwenty_permissiontests,fourtwenty_packtests' : '')
+        systemProperty 'neoforge.enabledGameTestNamespaces', providers.gradleProperty('compatTestNamespaces').getOrElse(
+            'fourtwenty_tests,fourtwenty_colonytests,fourtwenty_logisticstests,fourtwenty_servicetests,fourtwenty_benefitstests,fourtwenty_baselineprobe,minecolonies_cult' +
+            (playerTests ? ',fourtwenty_playertests,fourtwenty_permissiontests,fourtwenty_packtests' : ''))
     }
 
     data {
@@ -125,6 +139,10 @@ dependencies {
     // And its provides the option to then use net.minecraft as the group, and one of; client, server or joined as the module name, plus the game version as version.
     // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
     implementation "net.neoforged:neoforge:${neo_version}"
+    // Optional APIs are compiled against the checksum-pinned installed artifacts only.
+    compileOnly files(new groovy.json.JsonSlurper().parse(file('validation/compatibility-lock.json')).core.collect {
+        file(".compat/dependencies/${it.file}")
+    })
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -153,6 +171,18 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 }
+
+tasks.register('verifyColonyCompileDependencies') {
+    doLast {
+        new groovy.json.JsonSlurper().parse(file('validation/compatibility-lock.json')).core.each { pin ->
+            def artifact = file(".compat/dependencies/${pin.file}")
+            if (!artifact.exists() || java.security.MessageDigest.getInstance('SHA-256').digest(artifact.bytes).encodeHex().toString() != pin.sha256) {
+                throw new GradleException("Missing or changed pinned compile API: ${artifact}. Copy the matching artifact from the compatibility lock; do not regenerate pins.")
+            }
+        }
+    }
+}
+tasks.named('compileJava') { dependsOn 'verifyColonyCompileDependencies' }
 
 // This block of code expands all declared replace properties in the specified resource targets.
 // A missing property will result in an error. Properties are expanded using ${} Groovy notation.
@@ -228,6 +258,9 @@ tasks.register('resolveCompatibilityDependencies') {
         }
     }
 }
+// Forward explicit console commands so isolated ordinary servers can stop and save cleanly.
+tasks.matching { it.name == 'runServer' }.configureEach { standardInput = System.in }
+
 tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.configureEach {
     doFirst {
         exec {

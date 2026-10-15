@@ -1,6 +1,6 @@
 # Development and compatibility runs
 
-Use Java 21, Python 3.11+, the committed Gradle 8.13 wrapper, and NeoGradle 7.0.189. Set `JAVA_HOME` to a Java 21 JDK and `GRADLE_USER_HOME` to a disposable local cache when needed. Production code requires only Minecraft and NeoForge. Optional colony permission/configuration classes resolve lazily; the Actually Harvest mixin is a pseudo mixin and is absent when that mod is absent.
+Use Java 21, Python 3.11+, the committed Gradle 8.13 wrapper, and NeoGradle 7.0.189. Set `JAVA_HOME` to a Java 21 JDK and `GRADLE_USER_HOME` to a disposable local cache when needed. Runtime requires only Minecraft and NeoForge. Compilation also requires the six checksum-pinned colony API JARs in `.compat/dependencies`; they are compile-only and never bundled. The dispensary integration is gated by MineColonies presence and its inspected exact version. See the [Phase 1 contract and evidence](DISPENSARY_PHASE1.md), [Phase 2 production handoff](DISPENSARY_PHASE2.md), [Phase 3 service handoff](DISPENSARY_PHASE3.md), and [Phase 4 benefits handoff](DISPENSARY_PHASE4.md). Optional colony permission/configuration classes resolve lazily; the Actually Harvest mixin is a pseudo mixin and is absent when that mod is absent.
 
 ## Make commands
 
@@ -68,7 +68,7 @@ python3 tools/compatibility.py verify
 ./gradlew verifyCompatibility
 ```
 
-`build` includes six JUnit scheduling tests. Native GameTests are separate. The release JAR excludes `gametest`, `colonytest`, `packtest`, `baselineprobe`, `launcher`, and `verification` source sets. The empty launcher helper gives NeoGradle a source anchor in packaged/baseline runs without substituting FourTwenty's main output.
+`build` includes six JUnit scheduling tests, ten dispensary demand-rule tests, and two production-rule tests. Native GameTests are separate. The release JAR excludes `gametest`, `colonytest`, `packtest`, `baselineprobe`, `launcher`, and `verification` source sets. The empty launcher helper gives NeoGradle a source anchor in packaged/baseline runs without substituting FourTwenty's main output.
 
 `validation/compatibility-lock.json` records all 135 installed JARs, recursively inspected JarJar artifacts, resolved manifest versions, source revisions, and the six frozen core artifacts. Never regenerate it to make a mismatch disappear. Preparation rejects changed hashes, duplicate IDs, existing destinations, incorrect cult provenance, and stale destination JARs. Installed copies of FourTwenty and Kingdom's Gate are excluded by mod ID.
 
@@ -162,6 +162,18 @@ Add the matching `-PcompatProfile` and test selection for colony/full profiles. 
 
 ## Preserve evidence
 
+Raw qualification output in `validation/evidence/` and the generated
+`validation/warning-ledger.json` are ignored by Git. Keep new captures locally
+or attach an archive to the relevant PR/release; commit concise results, artifact
+hashes, and remaining acceptance limits in the phase handoff instead. The frozen
+`validation/compatibility-lock.json` and compact `validation/artifacts.json`
+remain versioned inputs/provenance.
+
+Historical reports and screenshots remain available in
+[the archived evidence](https://github.com/MalevolentGods/minecraft-fourtwenty/tree/d6a5609ee2b8ba5dc978dd6fa4a83fe2b0b623ce/validation/evidence).
+Phase documents link to that revision so a fresh checkout does not need the raw
+captures. Paths in old commands and records describe their original local layout.
+
 ```sh
 python3 tools/compatibility.py capture \
   --destination .compat/runs/example \
@@ -172,3 +184,37 @@ python3 tools/compatibility.py capture \
 Evidence destinations are exclusive. Capture the exact command and retain build output, test reports, JAR hashes, and observations alongside the native logs. Earlier evidence predates launch fingerprints; its capture-time source hashes must not be described as historical compiled-source hashes. `validation/evidence/phase1/INVALID-BASELINE.txt` identifies the discarded early baseline that accidentally included main sources.
 
 Do not overwrite the reference installation, edit the sibling source, auto-commit, publish, or migrate a player save as part of compatibility testing. See the [qualification report](COMPATIBILITY.md) and [remaining acceptance scenarios](ACCEPTANCE.md) before declaring compatibility.
+
+Dispensary native fixture selection can be set explicitly with `-PcompatTestNamespaces=fourtwenty_colonytests,fourtwenty_logisticstests`. The default still includes the existing suites and now also runs autonomous logistics. Report subset runs as subsets. Regenerate all five blueprints with `python3 tools/generate_dispensary.py` and their pixel assets with `python3 tools/generate_dispensary_assets.py`; its native blueprint, inventory, request and courier fixtures are described in the Phase 2 handoff.
+
+
+## Local disk cleanup
+
+After stopping test clients/servers and the repository's Gradle daemon,
+`build/`, `.gradle/`, `.gradle-home/`, `.compat/cult-gradle-home/`, and completed
+disposable runs under `.compat/runs/` can be removed. Run directories contain
+test worlds and restart checkpoints: archive any still needed before removal.
+Removing caches makes the next build download and regenerate dependencies.
+`make clean` remains limited to build outputs; it does not delete test worlds.
+
+Retain `.compat/dependencies/` for checksum-pinned compile APIs, verified reference
+JARs/settings, and any sibling JAR with its `build-record.json` still needed for
+qualification. These inputs are ignored locally but are not disposable build
+output. Generated data resources and authored blueprints under `src/` remain
+tracked because the mod packages them.
+
+## Dispensary Phase 5 authoring and presentation
+
+See [the Phase 5 handoff](DISPENSARY_PHASE5.md). Blueprint paths stay at `blueprints/fourtwenty/dispensary/dispensary/dispensary{1..5}.blueprint`; pack identity is `FourTwenty`. The local hut anchor is `(width/2, 1, 3)` (integer division), so expansion moves the local offset but preserves the placed hut and entrance in world space. Local X/Z dimensions are 9×11, 11×14, 13×17, 15×20, 17×23. Heights are 10, 11, 12, 13, 14. The maximum anchor-relative bounds are `(-8,-1,-3)` through `(8,12,19)`, inclusive, before rotation/mirroring. Indoor `sit_in` tags number 2/4/6/8/10. `work` and `stand_in` tags remain accessible. Racks are native colony stock; barrels are decorative/general-purpose storage.
+
+The transient `fourtwenty:dispensary_status` module uses native building view serialization. The server-level tick listener checks loaded huts for changed snapshots every 100 ticks of the saved simulation clock; initial view requests serialize fresh state. Do not schedule this through `ITickingModule.onColonyTick`: MineColonies invokes that hook on a staggered 500-tick transition, which is not aligned with world-time boundaries. The snapshot combines the hut/rack capability exactly once with each assigned citizen inventory. Counter availability follows existing collection sources. Customer leases are pruned using the saved simulation clock. This introduces no saved-state schema or custom client commands. Client views and model registration stay behind the existing optional-mod/client boundaries.
+
+The explicit `-PpresentationClientProbe=true` flag enables test sources and quick-loads `saves/benefits` in a disposable colony profile. It renders synthetic status packets, reloads resources, checks model registration and native pack lookup, directly places the five blueprints, checks live crafter/building views and a server-side stock change, and captures screenshots. `-PstandaloneClientProbe=true` instead checks standalone title-screen startup without loading colony test sources. Require `FOURTWENTY_PRESENTATION_CLIENT_PROBE_PASSED`; process success alone is insufficient. Direct placement is not native construction, upgrade, repair, or observed autonomous customer acceptance. This probe must never target a player world.
+
+## Dispensary Phase 6 qualification
+
+See [the Phase 6 handoff](DISPENSARY_PHASE6.md) for exact commands, migration rules and evidence scope. `tools/qualify_dispensary.py` runs a single packaged scenario and captures it under an exclusive evidence name. `prepare --profile colony --without-cult` provides the minimal MineColonies profile; ordinary colony profiles still require a verified sibling JAR. Full and baseline profiles cannot use this omission.
+
+The opt-in `-PdispensaryLifecycleStage=write|read` checkpoint uses namespace `fourtwenty_restarttests`; select it explicitly to keep unrelated colony cleanup out of restart tests. Run the supplemental native lifecycle suite explicitly with `-PcompatTestNamespaces=fourtwenty_lifecycletests` in a separate fresh profile. Keeping its death/unload scenarios separate avoids changing the world timing of the existing ritual/logistics fixtures. The checkpoint's local profile-cache shim is test-only because vanilla GameTestServer has no profile services. Never enable the checkpoint against player worlds.
+
+Ordinary-server commands now receive standard input so `stop` triggers native saving. The qualification runner requires explicit `--accept-eula`, binds its server to loopback port 25576, and records startup/idle/shutdown separately from connected gameplay.

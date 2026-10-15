@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "pack-format": 1,
+  "name": "FourTwenty",
+  "desc": "Five timber-and-stone dispensaries: a village shop growing into a sheltered lounge.",
+  "authors": [
+    "FourTwenty contributors"
+  ],
+  "mods": [
+    "fourtwenty",
+    "minecolonies",
+    "structurize"
+  ],
+  "icon": "dispensary.png"
+}

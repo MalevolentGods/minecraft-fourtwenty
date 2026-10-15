@@ -1,7 +1,0 @@
-{
-  "scope": "baseline client startup and resource loading only",
-  "profile": "baseline original settings, 135 JARs, no FourTwenty",
-  "startupMarker": "Game took 25.051 seconds to start",
-  "termination": "SIGTERM of identified disposable Java process after startup; expected nonzero Gradle termination",
-  "visualOrGameplayAcceptance": false
-}

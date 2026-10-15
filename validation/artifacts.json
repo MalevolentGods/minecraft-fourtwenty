@@ -1,10 +1,11 @@
 {
   "fourtwenty": {
-    "sourceBaseline": "67b83ede3cdf0ec152e41922b08dc4a42213b9a2",
+    "sourceBaseline": "a65d2ee8c8a9d8235097ec4342d2b2016f53f2f7",
     "workingTreeChanges": true,
     "file": "build/libs/fourtwenty-0.3.2.jar",
-    "sha256": "bec76b1af3137f77224f363acb12f32766d6370930ed54931ea8bf5115b0e024",
-    "payloadEquivalentTo": "42ca90918eefcd76506ad4e3b8b3ea3352f667d984ca7783d11a48ef80b376eb"
+    "sha256": "9d658fbf11f0d5a84aa27f088520de37ada01a2f70e6b6288c5deda1a7b01d6e",
+    "evidence": "https://github.com/MalevolentGods/minecraft-fourtwenty/blob/d6a5609ee2b8ba5dc978dd6fa4a83fe2b0b623ce/validation/evidence/dispensary-phase6/summary.json",
+    "qualification": "Phase 6 implementation candidate; see per-scenario results and open gates"
   },
   "minecolonies_cult": {
     "revision": "e2f7c3884a3b40fb0aee48fe2d2ec0dd024faf34",
@@ -47,5 +48,14 @@
   },
   "java": "Eclipse Adoptium 21.0.12.1+1 aarch64 macOS",
   "neoforge": "21.1.218",
-  "minecraft": "1.21.1"
+  "minecraft": "1.21.1",
+  "fourtwentyHistory": [
+    {
+      "sourceBaseline": "67b83ede3cdf0ec152e41922b08dc4a42213b9a2",
+      "workingTreeChanges": true,
+      "file": "build/libs/fourtwenty-0.3.2.jar",
+      "sha256": "bec76b1af3137f77224f363acb12f32766d6370930ed54931ea8bf5115b0e024",
+      "payloadEquivalentTo": "42ca90918eefcd76506ad4e3b8b3ea3352f667d984ca7783d11a48ef80b376eb"
+    }
+  ]
 }

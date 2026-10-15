@@ -11,6 +11,13 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 public class ModClientEvents {
     
     @SubscribeEvent
+    public static void setup(net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) {
+        if (net.neoforged.fml.ModList.get().isLoaded("minecolonies")) {
+            event.enqueueWork(com.malevolentgods.fourtwenty.compat.minecolonies.client.DispensaryClient::registerModel);
+        }
+    }
+
+    @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenuTypes.WEED_BONG.get(), WeedBongScreen::new);
     }

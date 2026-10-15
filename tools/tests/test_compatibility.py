@@ -70,5 +70,19 @@ class PreparationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'mode differs'):
             compat.verify_run(destination, 'standalone', True)
 
+    def test_minimal_colony_excludes_cult_without_relaxing_full_profile(self):
+        lock = json.loads(compat.LOCK.read_text())
+        lock['core'] = lock['artifacts']
+        compat.LOCK.write_text(json.dumps(lock))
+        destination = self.root / 'minimal'
+        compat.prepare(self.mods, destination, 'colony', None, None, False, without_cult=True)
+        record = json.loads((destination / 'compatibility-run.json').read_text())
+        self.assertTrue(record['withoutCult'])
+        self.assertEqual([a['file'] for a in record['mods']], ['library.jar'])
+        compat.verify_run(destination, 'colony', False)
+        with self.assertRaisesRegex(ValueError, 'only valid'):
+            compat.prepare(self.mods, self.root / 'full', 'full', None, None, False, without_cult=True)
+        self.assertFalse((self.root / 'full').exists())
+
 
 if __name__ == '__main__': unittest.main()

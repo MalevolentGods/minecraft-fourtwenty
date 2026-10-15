@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "fourtwenty:block/dispensary",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "fourtwenty:block/dispensary",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "fourtwenty:block/dispensary",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "fourtwenty:block/dispensary",
+      "y": 270
+    }
+  }
+}
