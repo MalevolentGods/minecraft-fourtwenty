@@ -1,0 +1,665 @@
+[14Oct2026 19:46:35.524] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserverdev, --gameDir, ., --fml.fmlVersion, 4.0.42, --fml.mcVersion, 1.21.1, --fml.neoForgeVersion, 21.1.218, --fml.neoFormVersion, 20240808.144430]
+[14Oct2026 19:46:35.525] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Eclipse Adoptium OpenJDK 64-Bit Server VM 21.0.12.1+1-LTS
+[14Oct2026 19:46:35.526] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 11.0.5+main.901c6ea8 starting: java version 21.0.12.1 by Eclipse Adoptium; OS Mac OS X arch aarch64 version 26.6.2
+[14Oct2026 19:46:35.585] [main/INFO] [net.neoforged.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserverdev
+[14Oct2026 19:46:35.608] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle-home/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.15.2+mixin.0.8.7/2af2f021d8e02a0220dc27a7a72b4666d66d44ca/sponge-mixin-0.15.2+mixin.0.8.7.jar%23134!/ Service=ModLauncher Env=SERVER
+[14Oct2026 19:46:35.658] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "neoforge-21.1.218.jar" [locator: neoforge devenv provider ([/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar])]
+[14Oct2026 19:46:35.672] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "neoforge-21.1.218.jar" [locator: neoforge devenv provider ([/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar])]
+[14Oct2026 19:46:35.675] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "blockui-1.0.211-1.21.1-snapshot.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase2-final-cult/mods}, reader: mod manifest]
+[14Oct2026 19:46:35.679] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "domum-ornamentum-1.0.234-snapshot-main.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase2-final-cult/mods}, reader: mod manifest]
+[14Oct2026 19:46:35.680] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "fourtwenty-0.3.2.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase2-final-cult/mods}, reader: mod manifest]
+[14Oct2026 19:46:35.689] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "minecolonies-1.1.1343-1.21.1-snapshot.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase2-final-cult/mods}, reader: mod manifest]
+[14Oct2026 19:46:35.691] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "minecolonies-cult-0.2.0.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase2-final-cult/mods}, reader: mod manifest]
+[14Oct2026 19:46:35.692] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "multipiston-1.2.58-1.21.1.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase2-final-cult/mods}, reader: mod manifest]
+[14Oct2026 19:46:35.694] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "structurize-1.0.831-1.21.1-snapshot.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase2-final-cult/mods}, reader: mod manifest]
+[14Oct2026 19:46:35.697] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "towntalk-1.2.0.jar" [locator: {mods folder locator at /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.compat/runs/dispensary-phase2-final-cult/mods}, reader: mod manifest]
+[14Oct2026 19:46:35.700] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "gametest" [locator: userdev mods and services, reader: mod manifest]
+[14Oct2026 19:46:35.700] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "launcher" [locator: userdev mods and services, reader: mod manifest]
+[14Oct2026 19:46:35.701] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "colonytest" [locator: userdev mods and services, reader: mod manifest]
+[14Oct2026 19:46:35.706] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "neoforge-21.1.218.jar" [locator: userdev mods and services, reader: mod manifest]
+[14Oct2026 19:46:35.713] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found gamelibrary file "mixinextras-neoforge-0.5.0.jar" [locator: userdev mods and services, reader: mod manifest]
+[14Oct2026 19:46:35.767] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:mixinextras.neoforge. Using Mod File: /Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle-home/caches/modules-2/files-2.1/io.github.llamalad7/mixinextras-neoforge/0.5.0/d734b83ce6542bb70ea31755c1595b88992dbe65/mixinextras-neoforge-0.5.0.jar
+[14Oct2026 19:46:35.767] [main/INFO] [net.neoforged.fml.loading.moddiscovery.locators.JarInJarDependencyLocator/]: Found 1 dependencies adding them to mods collection
+[14Oct2026 19:46:35.767] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/SCAN]: Found library file "net.neoforged.neoforge-coremods-21.1.218.jar" [parent: neoforge-21.1.218.jar, locator: jarinjar, reader: mod manifest]
+[14Oct2026 19:46:35.768] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Domum Ornamentum 1.0.234-snapshot (domum_ornamentum)
+		Four Twenty 0.3.2 (fourtwenty)
+		FourTwenty integration fixtures 1.0 (fourtwenty_colonytests)
+		FourTwenty integration fixtures 1.0 (fourtwenty_tests)
+		Isolated compatibility launcher 1.0 (fourtwenty_launcher)
+		MineColonies 1.1.1343-1.21.1-snapshot (minecolonies)
+		MineColonies: Kingdom's Gate 0.2.0 (minecolonies_cult)
+		Minecraft 1.21.1 (minecraft)
+		Multi-Piston 1.2.58-1.21.1 (multipiston)
+		NeoForge 21.1.218 (neoforge)
+		Structurize 1.0.831-1.21.1 (structurize)
+		Towntalk 1.2.0 (towntalk)
+		UI Library Mod 1.0.211-1.21.1-snapshot (blockui)
+[14Oct2026 19:46:36.045] [main/INFO] [mixin/]: Compatibility level set to JAVA_21
+[14Oct2026 19:46:36.052] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserverdev' with arguments [--gameDir, .]
+[14Oct2026 19:46:36.135] [main/WARN] [mixin/]: Error loading class: actuallyharvest/event/HarvestEventHandler (java.lang.ClassNotFoundException: actuallyharvest.event.HarvestEventHandler)
+[14Oct2026 19:46:37.541] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.0).
+[14Oct2026 19:46:40.255] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14Oct2026 19:46:40.256] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14Oct2026 19:46:40.257] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[14Oct2026 19:46:40.258] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[14Oct2026 19:46:40.259] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14Oct2026 19:46:40.290] [modloading-worker-0/INFO] [net.neoforged.neoforge.common.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.218, for MC 1.21.1
+[14Oct2026 19:46:40.434] [modloading-worker-0/INFO] [com.malevolentgods.fourtwenty.compat.minecolonies.ColonyIntegration/]: FourTwenty dispensary foundation enabled (MineColonies 1.1.1343)
+[14Oct2026 19:46:40.916] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Warped Netherlands
+[14Oct2026 19:46:40.916] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Urban Savanna
+[14Oct2026 19:46:40.916] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Desert Oasis
+[14Oct2026 19:46:40.916] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Dark Oak Treehouse
+[14Oct2026 19:46:40.916] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Lost Mesa City
+[14Oct2026 19:46:40.916] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Nordic Spruce
+[14Oct2026 19:46:40.916] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Stalactite Caves
+[14Oct2026 19:46:40.916] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Pagoda
+[14Oct2026 19:46:40.916] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Minecolonies Original
+[14Oct2026 19:46:40.917] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Cavern
+[14Oct2026 19:46:40.917] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Caledonia
+[14Oct2026 19:46:40.917] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Medieval Oak
+[14Oct2026 19:46:40.917] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Medieval Dark Oak
+[14Oct2026 19:46:40.917] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Medieval Birch
+[14Oct2026 19:46:40.917] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Shire
+[14Oct2026 19:46:40.917] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Incan
+[14Oct2026 19:46:40.917] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Space Wars
+[14Oct2026 19:46:40.917] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Ancient Athens
+[14Oct2026 19:46:40.917] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Jungle Treehouse
+[14Oct2026 19:46:40.918] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Medieval Spruce
+[14Oct2026 19:46:40.918] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Fortress
+[14Oct2026 19:46:40.918] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Urban Birch
+[14Oct2026 19:46:40.918] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Colonial
+[14Oct2026 19:46:40.918] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: Kingdom's Gate
+[14Oct2026 19:46:40.918] [Structurize IO Worker #0/INFO] [structurize/]: Registered structure pack: FourTwenty
+[14Oct2026 19:46:40.918] [Structurize IO Worker #0/WARN] [structurize/]: Failed loading packs from main folder path: .
+[14Oct2026 19:46:40.918] [Structurize IO Worker #0/WARN] [structurize/]: Failed loading client packs from main folder path: .
+[14Oct2026 19:46:40.918] [Structurize IO Worker #0/WARN] [structurize/]: Finished discovering Server Structure packs
+[14Oct2026 19:46:40.931] [modloading-worker-0/WARN] [minecolonies/]: Register mappings
+[14Oct2026 19:46:40.981] [main/ERROR] [net.minecraft.server.dedicated.Settings/]: Failed to load properties from file: server.properties
+java.nio.file.NoSuchFileException: server.properties
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92) ~[?:?]
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106) ~[?:?]
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111) ~[?:?]
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:261) ~[?:?]
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?]
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?]
+	at java.base/java.nio.file.spi.FileSystemProvider.newInputStream(FileSystemProvider.java:420) ~[?:?]
+	at java.base/java.nio.file.Files.newInputStream(Files.java:160) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.dedicated.Settings.loadFromFile(Settings.java:38) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.dedicated.DedicatedServerProperties.fromFile(DedicatedServerProperties.java:132) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.dedicated.DedicatedServerSettings.<init>(DedicatedServerSettings.java:12) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.Main.main(Main.java:125) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:136) ~[loader-4.0.42.jar%23142!/:4.0]
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.CommonLaunchHandler.serverService(CommonLaunchHandler.java:128) ~[loader-4.0.42.jar%23142!/:4.0]
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.NeoForgeServerDevLaunchHandler.runService(NeoForgeServerDevLaunchHandler.java:23) ~[loader-4.0.42.jar%23142!/:4.0]
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.CommonLaunchHandler.lambda$launchService$4(CommonLaunchHandler.java:118) ~[loader-4.0.42.jar%23142!/:4.0]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandlerDecorator.launch(LaunchServiceHandlerDecorator.java:30) [modlauncher-11.0.5.jar%23124!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:53) [modlauncher-11.0.5.jar%23124!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:71) [modlauncher-11.0.5.jar%23124!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.Launcher.run(Launcher.java:103) [modlauncher-11.0.5.jar%23124!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.Launcher.main(Launcher.java:74) [modlauncher-11.0.5.jar%23124!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:26) [modlauncher-11.0.5.jar%23124!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:23) [modlauncher-11.0.5.jar%23124!/:?]
+	at cpw.mods.bootstraplauncher@2.0.2/cpw.mods.bootstraplauncher.BootstrapLauncher.run(BootstrapLauncher.java:210) [bootstraplauncher-2.0.2.jar:?]
+	at cpw.mods.bootstraplauncher@2.0.2/cpw.mods.bootstraplauncher.BootstrapLauncher.main(BootstrapLauncher.java:69) [bootstraplauncher-2.0.2.jar:?]
+[14Oct2026 19:46:40.992] [main/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[14Oct2026 19:46:41.018] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar%23198!/assets/.mcassetsroot' uses unexpected schema
+[14Oct2026 19:46:41.019] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/Users/oberon/Projects/coding/mods/minecraft/minecraft-fourtwenty/.gradle/repositories/ng_dummy_ng/net/neoforged/neoforge/21.1.218/neoforge-21.1.218.jar%23198!/data/.mcassetsroot' uses unexpected schema
+[14Oct2026 19:46:41.021] [main/INFO] [net.neoforged.neoforge.gametest.GameTestHooks/]: Enabled Gametest Namespaces: [minecolonies_cult]
+[14Oct2026 19:46:41.604] [main/INFO] [net.minecraft.world.item.crafting.RecipeManager/]: Loaded 1600 recipes
+[14Oct2026 19:46:41.734] [main/INFO] [net.minecraft.advancements.AdvancementTree/]: Loaded 1672 advancements
+[14Oct2026 19:46:41.736] [main/INFO] [minecolonies/]: Beginning load of custom recipes for colony workers
+[14Oct2026 19:46:41.743] [main/INFO] [minecolonies/]: Loaded 161 recipes for 16 crafters
+[14Oct2026 19:46:41.743] [main/INFO] [minecolonies/]: Research loading...
+[14Oct2026 19:46:41.749] [main/INFO] [minecolonies/]: Research loaded. Located 4 branches, 208 researches and 103 effects.
+[14Oct2026 19:46:41.751] [main/INFO] [minecolonies/]: Loading quests from data
+[14Oct2026 19:46:41.755] [main/INFO] [minecolonies/]: Finished loading quests from data
+[14Oct2026 19:46:41.756] [main/WARN] [minecolonies/]: Read 1634 items with their nbt keys for compatibility.
+[14Oct2026 19:46:41.756] [main/INFO] [minecolonies/]: [Study items Loader]: Starting reload...
+[14Oct2026 19:46:41.757] [main/INFO] [minecolonies/]: [Study items Loader]: Finished reloading. 2 entries created.
+[14Oct2026 19:46:42.409] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
+[14Oct2026 19:46:42.422] [worldgen/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 2%
+[14Oct2026 19:46:42.544] [Server thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 135 ms
+[14Oct2026 19:46:42.550] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: Started game test server
+[14Oct2026 19:46:42.568] [Server thread/INFO] [net.neoforged.neoforge.server.permission.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[14Oct2026 19:46:42.576] [Server thread/WARN] [minecolonies/]: Starting Compat Discovery
+[14Oct2026 19:46:42.641] [Server thread/INFO] [minecolonies/]: Finished discovering Ores 19 22
+[14Oct2026 19:46:42.641] [Server thread/INFO] [minecolonies/]: Finished discovering saplings 14
+[14Oct2026 19:46:42.641] [Server thread/INFO] [minecolonies/]: Finished discovering plantables 19
+[14Oct2026 19:46:42.641] [Server thread/INFO] [minecolonies/]: Finished discovering food 107 121
+[14Oct2026 19:46:42.641] [Server thread/INFO] [minecolonies/]: Finished discovering fuel 249
+[14Oct2026 19:46:42.641] [Server thread/INFO] [minecolonies/]: Finished discovering flowers 26
+[14Oct2026 19:46:42.641] [Server thread/INFO] [minecolonies/]: Finished discovering items 2002
+[14Oct2026 19:46:42.644] [Server thread/INFO] [minecolonies/]: Finished discovering compostables 236
+[14Oct2026 19:46:42.777] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: 9 tests are now running at position -13537410, -59, 11287747!
+[14Oct2026 19:46:42.875] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'cult_lifecycle:0' (1 tests)...
+[14Oct2026 19:46:42.923] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [         ]
+[14Oct2026 19:46:42.942] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [         ]
+[14Oct2026 19:46:43.108] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addImportantColonyPlayer(ColonyPackageManager.java:295) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:128) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies_cult@0.2.0/com.kingdomsgate.cult.gametest.CultLifecycleGameTests.recruitmentAndRitualCleanup(CultLifecycleGameTests.java:31) ~[minecolonies-cult-0.2.0.jar%23204!/:0.2.0]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[14Oct2026 19:46:43.109] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addCloseSubscriber(ColonyPackageManager.java:268) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:129) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies_cult@0.2.0/com.kingdomsgate.cult.gametest.CultLifecycleGameTests.recruitmentAndRitualCleanup(CultLifecycleGameTests.java:31) ~[minecolonies-cult-0.2.0.jar%23204!/:0.2.0]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[14Oct2026 19:46:43.110] [Server thread/INFO] [minecolonies/]: New Colony Id: 1 by [Minecraft]
+[14Oct2026 19:46:43.328] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.355] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.367] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.378] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.389] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.399] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.408] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.416] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.422] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.430] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.437] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.444] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.450] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.456] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.468] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.474] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.479] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.485] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.490] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.494] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.498] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.501] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.504] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.507] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.510] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.513] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.517] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.520] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.524] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.526] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.529] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.533] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.536] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.538] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.542] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.545] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.548] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.551] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.558] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.564] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.568] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.572] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.577] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.581] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.586] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.590] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.595] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.599] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.603] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.607] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.612] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.615] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.619] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.623] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.626] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.629] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.634] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.638] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.641] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.645] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.649] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.654] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.657] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.660] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.666] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.669] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.672] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.674] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.677] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.680] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.682] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.685] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.687] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.689] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.692] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.694] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.697] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.700] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.703] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.705] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.715] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.719] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.721] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.723] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.725] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.728] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.731] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.733] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.735] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.737] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.748] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.752] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.755] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.761] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.768] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.769] [Server thread/WARN] [minecolonies/]: Statemachine for state WALKING_HOME threw an exception:
+java.lang.NullPointerException: Cannot invoke "java.util.Map.get(Object)" because the return value of "java.util.Map.get(Object)" is null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.api.util.SoundUtils.playSoundAtCitizenWith(SoundUtils.java:291) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.api.util.SoundUtils.playSoundAtCitizenWith(SoundUtils.java:324) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.api.util.SoundUtils.playSoundAtCitizenWith(SoundUtils.java:249) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.entity.ai.minimal.EntityAISleep.goHome(EntityAISleep.java:262) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.entity.ai.minimal.EntityAISleep.walkHome(EntityAISleep.java:130) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.api.entity.ai.statemachine.basestatemachine.BasicTransition.getNextState(BasicTransition.java:104) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.api.entity.ai.statemachine.basestatemachine.BasicStateMachine.transitionToNext(BasicStateMachine.java:204) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.api.entity.ai.statemachine.basestatemachine.BasicStateMachine.checkTransition(BasicStateMachine.java:195) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine.checkTransition(TickRateStateMachine.java:125) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine.tick(TickRateStateMachine.java:101) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.entity.citizen.EntityCitizen.lambda$new$a8d948bd$3(EntityCitizen.java:276) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.api.entity.ai.statemachine.basestatemachine.BasicTransition.checkCondition(BasicTransition.java:113) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.api.entity.ai.statemachine.basestatemachine.BasicStateMachine.checkTransition(BasicStateMachine.java:184) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine.checkTransition(TickRateStateMachine.java:125) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine.tick(TickRateStateMachine.java:101) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.api.entity.citizen.AbstractEntityCitizen.aiStep(AbstractEntityCitizen.java:423) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.entity.citizen.EntityCitizen.aiStep(EntityCitizen.java:711) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.world.entity.LivingEntity.tick(LivingEntity.java:2432) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.world.entity.Mob.tick(Mob.java:351) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.level.ServerLevel.tickNonPassenger(ServerLevel.java:774) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.world.level.Level.guardEntityTick(Level.java:576) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.level.ServerLevel.lambda$tick$2(ServerLevel.java:420) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.world.level.entity.EntityTickList.forEach(EntityTickList.java:53) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.level.ServerLevel.tick(ServerLevel.java:400) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1037) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[14Oct2026 19:46:43.777] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.783] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.787] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.793] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.799] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.804] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.806] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.809] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.812] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.814] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.816] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:43.820] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_        ]
+[14Oct2026 19:46:44.132] [Server thread/INFO] [minecolonies/]: Removing citizens for 1
+[14Oct2026 19:46:44.132] [Server thread/INFO] [minecolonies/]: Kill Citizen Susanna O. Churmond
+[14Oct2026 19:46:44.138] [Server thread/INFO] [minecolonies/]: Kill Citizen Carolyn T. Grey
+[14Oct2026 19:46:44.139] [Server thread/INFO] [minecolonies/]: Kill Citizen Ronan R. Church
+[14Oct2026 19:46:44.139] [Server thread/INFO] [minecolonies/]: Removing buildings for 1
+[14Oct2026 19:46:44.139] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-13537408, y=-59, z=11287749}
+[14Oct2026 19:46:44.139] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-13537408, y=-59, z=11287749} of type kingdoms_gate
+[14Oct2026 19:46:44.140] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{minecolonies_cult:kingdoms_gate}
+[14Oct2026 19:46:44.141] [Server thread/INFO] [minecolonies/]: Deleting colony: 1
+[14Oct2026 19:46:44.141] [Server thread/INFO] [minecolonies/]: Successfully deleted colony: 1
+[14Oct2026 19:46:44.153] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'cult_books:0' (1 tests)...
+[14Oct2026 19:46:44.154] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+        ]
+[14Oct2026 19:46:44.448] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+        ]
+[14Oct2026 19:46:44.452] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addImportantColonyPlayer(ColonyPackageManager.java:295) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:128) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies_cult@0.2.0/com.kingdomsgate.cult.gametest.CultBookGameTests.booksUseNativeRequestsAndLimitConversions(CultBookGameTests.java:34) ~[minecolonies-cult-0.2.0.jar%23204!/:0.2.0]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[14Oct2026 19:46:44.452] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addCloseSubscriber(ColonyPackageManager.java:268) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:129) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies_cult@0.2.0/com.kingdomsgate.cult.gametest.CultBookGameTests.booksUseNativeRequestsAndLimitConversions(CultBookGameTests.java:34) ~[minecolonies-cult-0.2.0.jar%23204!/:0.2.0]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[14Oct2026 19:46:44.453] [Server thread/INFO] [minecolonies/]: New Colony Id: 1 by [Minecraft]
+[14Oct2026 19:46:44.474] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.480] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.485] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.490] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.495] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.499] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.503] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.508] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.512] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.516] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.520] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.523] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.530] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.535] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.539] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.543] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.547] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.551] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.556] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.559] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.563] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.566] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.570] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.574] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.577] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.581] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.585] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.588] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.592] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.596] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.599] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.603] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.606] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.610] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.614] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.617] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.620] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.624] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.627] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.631] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.634] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.639] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.643] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.646] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.649] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.653] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.656] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.660] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.663] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.666] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.669] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.673] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.676] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.679] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.682] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.689] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.693] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.696] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.700] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.704] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.708] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.712] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.715] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.719] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.722] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.725] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.728] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.732] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.735] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.738] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.741] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.744] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.748] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.751] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.754] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.757] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.760] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.763] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.766] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.769] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.773] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.776] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.779] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.782] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.785] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.788] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.791] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.795] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.798] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.801] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.804] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.807] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.810] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.813] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.816] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.819] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.822] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.825] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.828] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.831] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.834] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.837] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.840] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.842] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.845] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+_       ]
+[14Oct2026 19:46:44.855] [Server thread/INFO] [minecolonies/]: Removing citizens for 1
+[14Oct2026 19:46:44.855] [Server thread/INFO] [minecolonies/]: Kill Citizen Lauren W. Cristemas
+[14Oct2026 19:46:44.857] [Server thread/INFO] [minecolonies/]: Kill Citizen Savannah E. Greene
+[14Oct2026 19:46:44.857] [Server thread/INFO] [minecolonies/]: Kill Citizen Zaniyah Y. Babham
+[14Oct2026 19:46:44.858] [Server thread/INFO] [minecolonies/]: Kill Citizen Colt P. Gare
+[14Oct2026 19:46:44.858] [Server thread/INFO] [minecolonies/]: Kill Citizen Alondra S. Hammer
+[14Oct2026 19:46:44.858] [Server thread/INFO] [minecolonies/]: Kill Citizen Ellis N. Goddam
+[14Oct2026 19:46:44.858] [Server thread/INFO] [minecolonies/]: Removing buildings for 1
+[14Oct2026 19:46:44.858] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-13537398, y=-59, z=11287749}
+[14Oct2026 19:46:44.858] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-13537398, y=-59, z=11287749} of type kingdoms_gate
+[14Oct2026 19:46:44.858] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{minecolonies_cult:kingdoms_gate}
+[14Oct2026 19:46:44.859] [Server thread/INFO] [minecolonies/]: Deleting colony: 1
+[14Oct2026 19:46:44.859] [Server thread/INFO] [minecolonies/]: Successfully deleted colony: 1
+[14Oct2026 19:46:44.873] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'defaultBatch:0' (6 tests)...
+[14Oct2026 19:46:44.890] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++       ]
+[14Oct2026 19:46:44.892] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addImportantColonyPlayer(ColonyPackageManager.java:295) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:128) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies_cult@0.2.0/com.kingdomsgate.cult.gametest.CultGameTests.buildingHiringAndNativeHappiness(CultGameTests.java:37) ~[minecolonies-cult-0.2.0.jar%23204!/:0.2.0]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[14Oct2026 19:46:44.893] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addCloseSubscriber(ColonyPackageManager.java:268) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:129) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies_cult@0.2.0/com.kingdomsgate.cult.gametest.CultGameTests.buildingHiringAndNativeHappiness(CultGameTests.java:37) ~[minecolonies-cult-0.2.0.jar%23204!/:0.2.0]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[14Oct2026 19:46:44.893] [Server thread/INFO] [minecolonies/]: New Colony Id: 1 by [Minecraft]
+[14Oct2026 19:46:44.992] [Server thread/INFO] [minecolonies/]: Removing citizens for 1
+[14Oct2026 19:46:44.992] [Server thread/INFO] [minecolonies/]: Kill Citizen Bellamy Q. Barrett
+[14Oct2026 19:46:44.992] [Server thread/INFO] [minecolonies/]: Removing buildings for 1
+[14Oct2026 19:46:44.992] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-13537388, y=-59, z=11287749}
+[14Oct2026 19:46:44.993] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-13537388, y=-59, z=11287749} of type kingdoms_gate
+[14Oct2026 19:46:44.993] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{minecolonies_cult:kingdoms_gate}
+[14Oct2026 19:46:44.993] [Server thread/INFO] [minecolonies/]: Deleting colony: 1
+[14Oct2026 19:46:44.994] [Server thread/INFO] [minecolonies/]: Successfully deleted colony: 1
+[14Oct2026 19:46:45.145] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'cult_capacity:0' (1 tests)...
+[14Oct2026 19:46:45.258] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++ ]
+[14Oct2026 19:46:45.261] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as important subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addImportantColonyPlayer(ColonyPackageManager.java:295) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:128) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies_cult@0.2.0/com.kingdomsgate.cult.gametest.CultCapacityGameTests.fullGateUpgradeAndUniqueCeremonyPlaces(CultCapacityGameTests.java:40) ~[minecolonies-cult-0.2.0.jar%23204!/:0.2.0]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[14Oct2026 19:46:45.262] [Server thread/WARN] [minecolonies/]: Adding fakeplayer as subscriber: this should not happen
+java.lang.Exception: null
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.managers.ColonyPackageManager.addCloseSubscriber(ColonyPackageManager.java:268) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies@1.1.1343-1.21.1-snapshot/com.minecolonies.core.colony.ColonyManager.createColony(ColonyManager.java:129) ~[minecolonies-1.1.1343-1.21.1-snapshot.jar%23203!/:1.1.1343-1.21.1-snapshot]
+	at TRANSFORMER/minecolonies_cult@0.2.0/com.kingdomsgate.cult.gametest.CultCapacityGameTests.fullGateUpgradeAndUniqueCeremonyPlaces(CultCapacityGameTests.java:40) ~[minecolonies-cult-0.2.0.jar%23204!/:0.2.0]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestRegistry.lambda$turnMethodIntoConsumer$5(GameTestRegistry.java:157) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.TestFunction.run(TestFunction.java:40) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.startTest(GameTestInfo.java:162) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tickInternal(GameTestInfo.java:124) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestInfo.tick(GameTestInfo.java:107) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.lambda$tick$0(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:891) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestTicker.tick(GameTestTicker.java:39) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:1055) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:917) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:168) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:707) ~[neoforge-21.1.218.jar%23198!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.218.jar%23198!/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[14Oct2026 19:46:45.262] [Server thread/INFO] [minecolonies/]: New Colony Id: 1 by [Minecraft]
+[14Oct2026 19:46:45.277] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.282] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.286] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.290] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.294] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.298] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.301] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.304] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.308] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.311] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.314] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.317] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.328] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.332] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.335] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.338] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.341] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.344] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.348] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.351] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.359] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.362] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.366] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.369] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.373] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.377] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.380] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.385] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.389] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.394] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.398] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.403] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.408] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.412] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.419] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.422] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.430] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.436] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.441] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.445] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.449] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++_]
+[14Oct2026 19:46:45.535] [Server thread/INFO] [minecolonies/]: Removing citizens for 1
+[14Oct2026 19:46:45.537] [Server thread/INFO] [minecolonies/]: Kill Citizen Diogo R. Clement
+[14Oct2026 19:46:45.537] [Server thread/INFO] [minecolonies/]: Kill Citizen Levi L. Cowill
+[14Oct2026 19:46:45.537] [Server thread/INFO] [minecolonies/]: Kill Citizen Lillie P. Goodenouth
+[14Oct2026 19:46:45.537] [Server thread/INFO] [minecolonies/]: Kill Citizen Idris D. Chudderley
+[14Oct2026 19:46:45.537] [Server thread/INFO] [minecolonies/]: Kill Citizen Maddison A. Hampden
+[14Oct2026 19:46:45.538] [Server thread/INFO] [minecolonies/]: Kill Citizen Michelle Q. Allard
+[14Oct2026 19:46:45.538] [Server thread/INFO] [minecolonies/]: Removing buildings for 1
+[14Oct2026 19:46:45.538] [Server thread/INFO] [minecolonies/]: Delete Building at BlockPos{x=-13537408, y=-59, z=11287760}
+[14Oct2026 19:46:45.538] [Server thread/INFO] [minecolonies/]: Colony 1 - removed AbstractBuilding BlockPos{x=-13537408, y=-59, z=11287760} of type kingdoms_gate
+[14Oct2026 19:46:45.538] [Server thread/INFO] [minecolonies/]: Found Block, deleting Block{minecolonies_cult:kingdoms_gate}
+[14Oct2026 19:46:45.539] [Server thread/INFO] [minecolonies/]: Deleting colony: 1
+[14Oct2026 19:46:45.539] [Server thread/INFO] [minecolonies/]: Successfully deleted colony: 1
+[14Oct2026 19:46:45.539] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++]
+[14Oct2026 19:46:45.539] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 9 GAME TESTS COMPLETE IN 2.762 s ======================
+[14Oct2026 19:46:45.539] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 9 required tests passed :)
+[14Oct2026 19:46:45.539] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ====================================================
+[14Oct2026 19:46:45.541] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Stopping server
+[14Oct2026 19:46:45.541] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving players
+[14Oct2026 19:46:45.541] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving worlds
+[14Oct2026 19:46:45.935] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:overworld
+[14Oct2026 19:46:46.011] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:the_nether
+[14Oct2026 19:46:46.030] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:the_end
+[14Oct2026 19:46:46.056] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[14Oct2026 19:46:46.056] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[14Oct2026 19:46:46.056] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[14Oct2026 19:46:46.056] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved
+[14Oct2026 19:46:46.103] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: Game test server shutting down

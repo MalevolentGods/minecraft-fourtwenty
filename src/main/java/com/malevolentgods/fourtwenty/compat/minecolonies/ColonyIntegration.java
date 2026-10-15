@@ -11,7 +11,8 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 /** Loaded only after the core entrypoint checks MineColonies presence. No client-only references. */
 public final class ColonyIntegration {
-    public static void register(ModContainer container) {
+    public static void register(net.neoforged.bus.api.IEventBus bus, ModContainer container) {
+        DispensaryRegistry.register(bus);
         container.registerConfig(ModConfig.Type.SERVER, DispensaryConfig.SPEC, "fourtwenty-dispensary-server.toml");
         NeoForge.EVENT_BUS.addListener(ColonyIntegration::tick);
         com.mojang.logging.LogUtils.getLogger().info("FourTwenty dispensary foundation enabled (MineColonies 1.1.1343)");

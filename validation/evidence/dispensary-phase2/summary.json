@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-14",
+  "artifact": "build/libs/fourtwenty-0.3.2.jar",
+  "sha256": "aac7b7d9eac1ae6f4e605a27dff39d3736815fc037b8a603c40b8357482274f1",
+  "junit": {
+    "passed": 18
+  },
+  "python": {
+    "passed": 6
+  },
+  "nativeStandalone": {
+    "passed": 17
+  },
+  "nativeColonyFourTwenty": {
+    "passed": 29,
+    "scope": "Selected FourTwenty namespaces; current Kingdoms Gate artifact loaded"
+  },
+  "nativeKingdomsGate": {
+    "passed": 9,
+    "scope": "Sibling namespace in a separate fresh process"
+  },
+  "nativeCombined": {
+    "passed": 36,
+    "failed": [
+      "recruitmentAndRitualCleanup",
+      "booksUseNativeRequestsAndLimitConversions"
+    ]
+  },
+  "clientStandalone": "resource-loading confirmed; deliberately terminated",
+  "clientColony": "resource-loading confirmed; deliberately terminated",
+  "observedClientGameplay": "not verified; development Java window absent from UI app inventory",
+  "ordinaryDedicatedServer": "not run",
+  "fullInstalledPack": "not rerun",
+  "performance": "not measured",
+  "hostedCI": "not run",
+  "release": "not published",
+  "nativeMixedControl": {
+    "passed": 26,
+    "scope": "Existing FourTwenty core/player tests plus all sibling tests; excludes colony and dispensary fixture namespaces"
+  }
+}

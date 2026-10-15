@@ -1,6 +1,6 @@
 package com.malevolentgods.fourtwenty.compat.minecolonies;
 
-/** Reserved save/registry identities; no building, job or benefit is registered in Phase 1. */
+/** Stable save/registry identities shared by all dispensary phases. */
 public final class DispensaryIds {
     public static final String DISPENSARY = "fourtwenty:dispensary";
     public static final String BUDTENDER = "fourtwenty:budtender";

@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "pack-format": 1,
+  "name": "FourTwenty",
+  "desc": "A rustic dispensary and preparation room. Phase 2 level-one prototype.",
+  "authors": [
+    "FourTwenty contributors"
+  ],
+  "mods": [
+    "fourtwenty",
+    "minecolonies",
+    "structurize"
+  ],
+  "icon": "dispensary.png"
+}

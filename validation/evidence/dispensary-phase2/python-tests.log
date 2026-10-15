@@ -1,0 +1,14 @@
+test_changed_checksum_rejected_before_copy (test_compatibility.PreparationTests.test_changed_checksum_rejected_before_copy) ... ok
+test_duplicate_mod_id_rejected (test_compatibility.PreparationTests.test_duplicate_mod_id_rejected) ... ok
+test_existing_destination_never_merged (test_compatibility.PreparationTests.test_existing_destination_never_merged) ... ok
+test_launch_mode_must_match (test_compatibility.PreparationTests.test_launch_mode_must_match) ... ok
+test_launch_rejects_stale_jar (test_compatibility.PreparationTests.test_launch_rejects_stale_jar) ... ok
+test_manifest_version_is_unfolded (test_compatibility.PreparationTests.test_manifest_version_is_unfolded) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.009s
+
+OK
+Prepared standalone: 0 JARs at /var/folders/f5/rhvgpl9j7gn7znm94p8jdz080000gn/T/tmpvooieh69/run
+Prepared standalone: 0 JARs at /var/folders/f5/rhvgpl9j7gn7znm94p8jdz080000gn/T/tmp_mlsvbv4/run
+Run inventory verified: standalone, 0 JARs

@@ -18,6 +18,12 @@ Craft joints, pipes, cookies, brownies, and bongs with the existing recipes. Coo
 
 Pending effects survive dimension travel, but cancel on logout, actual death, or server shutdown. Sleep and changes to the daylight clock do not advance the delay. Effects already applied follow vanilla effect merging and milk removal. MineColonies citizens exclude the cookies and brownies from food selection; normal inventory storage and transport remain available.
 
+## Dispensary prototype (optional MineColonies integration)
+
+With the pinned MineColonies build installed, use **Build Tool → Switch Pack → FourTwenty → Dispensary → dispensary1** for the level-one shop. Hire one Budtender and stock your warehouse with weed buds and paper. Native couriers supply the worker, who crafts one joint from one bud and two paper and replenishes a target of 16 joints. Standard hut controls manage workers, storage and minimum stock. Clear storage space if production backs up.
+
+This prototype currently produces joints only. Citizen collection, smoking, happiness/health benefits, and finished higher-level designs are still planned. See the [Phase 2 handoff](docs/DISPENSARY_PHASE2.md) for verification and remaining limitations.
+
 ## Use a bong
 
 Right-click the bong to open its inventory:

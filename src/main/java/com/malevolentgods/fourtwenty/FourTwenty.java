@@ -14,7 +14,7 @@ import com.malevolentgods.fourtwenty.util.DelayedEffectManager;
 public class FourTwenty {
     public FourTwenty(IEventBus bus, net.neoforged.fml.ModContainer container) {
         if (net.neoforged.fml.ModList.get().isLoaded("minecolonies")) {
-            com.malevolentgods.fourtwenty.compat.minecolonies.ColonyIntegration.register(container);
+            com.malevolentgods.fourtwenty.compat.minecolonies.ColonyIntegration.register(bus, container);
         }
         bus.addListener((net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) ->
             event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
