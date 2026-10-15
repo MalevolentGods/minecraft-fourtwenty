@@ -15,6 +15,13 @@ public final class ColonyIntegration {
         DispensaryRegistry.register(bus);
         container.registerConfig(ModConfig.Type.SERVER, DispensaryConfig.SPEC, "fourtwenty-dispensary-server.toml");
         NeoForge.EVENT_BUS.addListener(ColonyIntegration::tick);
+        bus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) -> event.enqueueWork(() ->
+                com.minecolonies.api.IMinecoloniesAPI.getInstance().getEventBus().subscribe(
+                        com.minecolonies.api.eventbus.events.colony.ColonyDeletedModEvent.class, deleted -> {
+                            if (deleted.getColony().getWorld() instanceof ServerLevel level) {
+                                DispensarySavedData.get(level).removeColony(deleted.getColony().getID());
+                            }
+                        })));
         com.mojang.logging.LogUtils.getLogger().info("FourTwenty dispensary foundation enabled (MineColonies 1.1.1343)");
     }
     /** Guard housing is the native home assignment, including work-at-home guard quarters. Never use workplace fallback. */

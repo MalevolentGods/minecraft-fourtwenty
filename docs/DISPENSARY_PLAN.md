@@ -1,7 +1,7 @@
 # Dispensary and Budtender implementation plan
 
 Date: 2026-10-14  
-Status: Phase 1 implemented and validated; see [the Phase 1 handoff](DISPENSARY_PHASE1.md) for exact evidence and limits. Phase 2 production is implemented; see [the Phase 2 handoff](DISPENSARY_PHASE2.md) for native logistics evidence and remaining qualification checks. Phases 3–6 remain planned.
+Status: Phase 1 implemented and validated; see [the Phase 1 handoff](DISPENSARY_PHASE1.md) for exact evidence and limits. Phase 2 production is implemented; see [the Phase 2 handoff](DISPENSARY_PHASE2.md) for native logistics evidence and remaining qualification checks. Phase 3 collection and smoking are implemented and packaged native tests pass; see [the Phase 3 handoff](DISPENSARY_PHASE3.md) for behavior, evidence and remaining observations. Phases 4–6 remain planned.
 
 ## Objective
 

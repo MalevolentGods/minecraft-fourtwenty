@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-14",
+  "junit": {
+    "tests": 18,
+    "failures": 0,
+    "errors": 0
+  },
+  "toolingTestsPassed": 6,
+  "nativePackaged": {
+    "fourtwenty": 37,
+    "standalone": 17,
+    "combined": 46
+  },
+  "newServiceTests": 8,
+  "combinedIncludesUnchangedCultTests": 9,
+  "interactiveClientGameplay": "not verified; development Java window absent from CUA inventory; getApp(java) rejected",
+  "ordinaryDedicatedServer": "not qualified",
+  "fullInstalledPack": "not qualified",
+  "performance": "not qualified",
+  "hostedCI": "not run",
+  "release": "not performed",
+  "clientStartup": {
+    "colony": "mod/resource/texture/sound/animation loading completed",
+    "standalone": "mod/resource/texture/sound/animation loading completed",
+    "termination": "both deliberately terminated after verification; not clean-exit evidence"
+  }
+}

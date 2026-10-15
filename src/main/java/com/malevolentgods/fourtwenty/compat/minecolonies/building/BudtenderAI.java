@@ -4,8 +4,20 @@ import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting
 
 /** Native request queue, ingredient pickup, work-position navigation, crafting and inventory dumping. */
 public final class BudtenderAI extends AbstractEntityAICrafting<BudtenderJob, DispensaryBuilding> {
+    private long nextServiceTick;
     public BudtenderAI(BudtenderJob job) { super(job); }
     @Override public Class<DispensaryBuilding> getExpectedBuildingClass() { return DispensaryBuilding.class; }
+
+    /** Called only while native citizen AI allows work; essential tasks still preempt service and production. */
+    @Override public void tick() {
+        long now = com.malevolentgods.fourtwenty.compat.minecolonies.DispensarySavedData.get(world).time();
+        if (currentRecipeStorage == null && now >= nextServiceTick
+                && worker instanceof com.minecolonies.core.entity.citizen.EntityCitizen citizen) {
+            nextServiceTick = now + 20;
+            building.serveCustomer(citizen, now);
+        }
+        super.tick();
+    }
 
     /** Native completion/pickup may leave a finished batch carried after its request is closed. */
     @Override protected boolean wantInventoryDumped() {

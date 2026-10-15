@@ -94,7 +94,7 @@ runs {
         if (compatProfile == 'full') modSources.add('fourtwenty_packtests', project.sourceSets.packtest)
         if (compatProfile == 'baseline' && project.hasProperty('probePlayers')) modSources.add('fourtwenty_baselineprobe', project.sourceSets.baselineprobe)
         systemProperty 'neoforge.enabledGameTestNamespaces', providers.gradleProperty('compatTestNamespaces').getOrElse(
-            'fourtwenty_tests,fourtwenty_colonytests,fourtwenty_logisticstests,fourtwenty_baselineprobe,minecolonies_cult' +
+            'fourtwenty_tests,fourtwenty_colonytests,fourtwenty_logisticstests,fourtwenty_servicetests,fourtwenty_baselineprobe,minecolonies_cult' +
             (playerTests ? ',fourtwenty_playertests,fourtwenty_permissiontests,fourtwenty_packtests' : ''))
     }
 

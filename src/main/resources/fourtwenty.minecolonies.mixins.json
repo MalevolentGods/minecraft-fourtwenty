@@ -4,6 +4,6 @@
   "package": "com.malevolentgods.fourtwenty.compat.minecolonies.mixin",
   "plugin": "com.malevolentgods.fourtwenty.compat.ColonyMixinPlugin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": ["CitizenAIMixin", "CitizenServiceMixin"],
   "injectors": {"defaultRequire": 1}
 }

@@ -43,7 +43,11 @@ public final class DispensarySavedData extends SavedData {
         if (!next.equals(previous)) { citizens.put(key, next); setDirty(); }
         return next;
     }
-    /** Foundation completion contract; Phase 3 must couple this to actual item consumption and live eligibility. */
+    /** Native colony IDs (and their derived citizen UUIDs) can be reused after explicit colony deletion. */
+    public void removeColony(int colony) {
+        if (citizens.keySet().removeIf(key -> key.colony() == colony)) setDirty();
+    }
+    /** JointService couples this checkpoint to live eligibility and actual inventory extraction. */
     public boolean recordConsumption(int colony, UUID citizen, long expectedRevision, DemandRules rules) {
         var next = citizen(colony, citizen).consume(expectedRevision, time, rules);
         if (next.isEmpty()) return false;

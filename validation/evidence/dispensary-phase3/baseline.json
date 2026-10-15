@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-14",
+  "source": "0d9f326c9256571e979d72d42dde0313855e7eb9",
+  "siblingRevision": "e2f7c3884a3b40fb0aee48fe2d2ec0dd024faf34",
+  "siblingStatus": "",
+  "lockedArtifacts": 135,
+  "installedArtifacts": 136,
+  "allLockedArtifactsUnchanged": true,
+  "installedAdditions": [
+    "fourtwenty-0.3.2.jar"
+  ],
+  "core": [
+    {
+      "modId": "minecolonies",
+      "version": "1.1.1343-1.21.1-snapshot",
+      "file": "minecolonies-1.1.1343-1.21.1-snapshot.jar",
+      "sha256": "5237cb14b86e2774070d4b825c1e52a29cf058216e9625f6dfb2258e5553ab1d"
+    },
+    {
+      "modId": "structurize",
+      "version": "1.0.831-1.21.1",
+      "file": "structurize-1.0.831-1.21.1-snapshot.jar",
+      "sha256": "e536123f32bef6982d95bb19ff954c5a354d68a6cddf26ec23fe7b647fc891a9"
+    },
+    {
+      "modId": "blockui",
+      "version": "1.0.211-1.21.1-snapshot",
+      "file": "blockui-1.0.211-1.21.1-snapshot.jar",
+      "sha256": "5dfffc80c057b4d36123bd5f5cad9f32f86896a9dd993ea4a3ecad315cabd77e"
+    },
+    {
+      "modId": "domum_ornamentum",
+      "version": "1.0.234-snapshot",
+      "file": "domum-ornamentum-1.0.234-snapshot-main.jar",
+      "sha256": "538f8364299d06a9e75252b4e6f63d8b3b520c38debd72d0ff97ba14e6cc372c"
+    },
+    {
+      "modId": "multipiston",
+      "version": "1.2.58-1.21.1",
+      "file": "multipiston-1.2.58-1.21.1.jar",
+      "sha256": "7ca26db4648589b7f76694c249d5096c0c0afb7615fe6adf9f638c6c825c15e7"
+    },
+    {
+      "modId": "towntalk",
+      "version": "1.2.0",
+      "file": "towntalk-1.2.0.jar",
+      "sha256": "98139f54cc0f6f4be6d7fa8927cd170df8b14545ae04643436dbd48517589eb4"
+    }
+  ]
+}
