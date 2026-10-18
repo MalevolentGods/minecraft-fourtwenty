@@ -216,5 +216,5 @@ Each phase is a separate branch-sized package with its own tests and handoff not
 1. Player prices are set per item (table above): the pipe is cheaper per use, and the brownie is premium.
 2. "Both" citizens take whatever is in stock, preferring the higher-level item: pipe over joint, brownie over cookie.
 3. A tolerance break returns the citizen exactly to their original step.
-5. Affinity changes go up 75% of the time and down 25%.
 4. Cravings start only after a citizen's first exposure to weed of any kind, including the bong area.
+5. Affinity changes go up 75% of the time and down 25%.
