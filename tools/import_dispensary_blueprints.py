@@ -180,8 +180,12 @@ def replace_lighting(root):
     compact = {old: new for new, old in enumerate(used)}
     root['palette'] = (LIST, (COMPOUND, [new_palette[i] for i in used]))
     root['blocks'] = (INTS, pack([compact[i] for i in converted]))
-    # Drop tile data of substituted blocks (CB Multipart's saved parts).
+    # Drop tile data of substituted blocks (CB Multipart's saved parts); lamps keep theirs under
+    # FourTwenty's id, or Structurize would load a ProjectRed tile entity into a FourTwenty lamp.
     kept = [te for te in root['tile_entities'][1][1] if not te.get('id', (0, ''))[1].startswith('cb_multipart:')]
+    for te in kept:
+        if lamp_for(te.get('id', (0, ''))[1]):
+            te['id'] = (STRING, 'fourtwenty:lamp')
     root['tile_entities'] = (LIST, (COMPOUND, kept))
     mods = sorted({n.split(':')[0] for n in names(root)} - {'minecraft'})
     root['required_mods'] = (LIST, (STRING, mods))

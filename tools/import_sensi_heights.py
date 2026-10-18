@@ -42,6 +42,10 @@ def validate(root=BUNDLED):
         foreign = sorted(m for m in mods if m.startswith(FOREIGN))
         if foreign:
             problems.append(f'{rel}: uses {foreign}')
+        foreign_tiles = sorted({te['id'][1] for te in data['tile_entities'][1][1]
+                                if te.get('id', (0, ''))[1].startswith(FOREIGN)})
+        if foreign_tiles:
+            problems.append(f'{rel}: tile entities from {foreign_tiles}')
         for m in sorted(mods & OPTIONAL):
             optional.setdefault(m, []).append(rel)
         # A hut or decoration controller must link to the file it's saved as, or upgrades break.
