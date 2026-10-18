@@ -11,6 +11,8 @@ class LampGlowTest {
         // Lime keeps a green hue; black is dim.
         int lime = LampGlow.rgba(5);
         assertTrue(((lime >> 16) & 0xFF) > ((lime >>> 24) & 0xFF), "lime is greener than red");
+        assertEquals(0xC8, LampGlow.itemRgba(5) & 0xFF, "item halos are a bit stronger");
+        assertEquals(LampGlow.rgba(5) & 0xFFFFFF00, LampGlow.itemRgba(5) & 0xFFFFFF00, "same colour for lime");
         int black = LampGlow.rgba(15);
         assertTrue(((black >>> 24) & 0xFF) < 0x70 && ((black >> 16) & 0xFF) < 0x70, "black glow is dim");
     }
