@@ -264,12 +264,12 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     public int burnDuration() { return burnDuration; }
 
     private void applyBongEffects(ServerPlayer player) {
-        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 400, 1));
-        player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 1200, 0));
-        player.addEffect(new MobEffectInstance(MobEffects.LUCK, 600, 0));
-        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 300, 0));
-        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300, 0));
-        player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 200, 0));
+        player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.REGENERATION, 400, 1));
+        player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.NIGHT_VISION, 1200, 0));
+        player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.LUCK, 600, 0));
+        player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.DAMAGE_BOOST, 300, 0));
+        player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.MOVEMENT_SPEED, 300, 0));
+        player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.HUNGER, 200, 0));
     }
 
     @Override protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {

@@ -53,7 +53,7 @@ public final class BongBuffs {
         player.getAbilities().mayfly = false;
         player.getAbilities().flying = false;
         player.onUpdateAbilities();
-        if (wasFlying || !player.onGround()) player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 200, 0));
+        if (wasFlying || !player.onGround()) player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.SLOW_FALLING, 200, 0));
         player.displayClientMessage(Component.translatableWithFallback("fourtwenty.bong.flight.end", "The weightless feeling fades."), true);
     }
 
