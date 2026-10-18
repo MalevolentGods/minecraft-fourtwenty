@@ -88,9 +88,19 @@ Right-click the bong to open its inventory:
 | --- | --- | ---: |
 | Buds | Weed Bud | 4 |
 | Water | Water Bucket | 1 |
-| Fuel | Blaze Powder | 64 |
+| Fuel | Flint and Steel, Lava Bucket or Blaze Powder | 64 (stackable fuel) |
 
-A bong automatically consumes **one bud and one blaze powder when a burn starts**. The water bucket remains in its slot. Each charge burns for **1,200 server ticks** (60 seconds at 20 TPS) and applies the existing player effects every 20 ticks within four blocks. Queued ingredients remain extractable. Removing the water extinguishes the paid charge without a refund.
+A bong automatically consumes **one bud and one fuel when a burn starts**. The water bucket remains in its slot. How long a charge burns depends on the fuel, weakest to strongest:
+
+| Fuel | Burn per charge | Cost |
+| --- | --- | --- |
+| Flint and Steel | 600 server ticks (30 s) | 1 durability |
+| Lava Bucket | 900 server ticks (45 s) | the lava; an empty bucket stays in the fuel slot until removed |
+| Blaze Powder | 1,200 server ticks (60 s) | 1 powder |
+
+A burning bong applies the existing player effects every 20 ticks within four blocks. Queued ingredients remain extractable. Removing the water extinguishes the paid charge without a refund.
+
+With MineColonies, a burning bong inside a colony also gives citizens within **6 blocks** a **Bong session** happiness bonus that lasts **6,000 ticks** (5 minutes) after they were last nearby (`bongSessionWeight`, `bongSessionRadius` and `bongSessionTicks` in `fourtwenty-dispensary-server.toml`). A Budtender keeps the Dispensary's own bongs going while customers are around: once the counter queue is clear, it tops up any bong in the hut that would not relight by itself (buds up to 4, a water bucket, and the best fuel in the hut's storage) and returns spent lava buckets to storage.
 
 Hoppers and standard NeoForge item-handler automation can access all three slots from every face. Multi-Piston can move stocked and burning bongs while preserving their inventory and paid charge. Vanilla piston behavior is unchanged. Breaking the bong drops the block and its unconsumed inventory once; the active charge has already been spent.
 
@@ -98,7 +108,7 @@ Hoppers and standard NeoForge item-handler automation can access all three slots
 
 Install the same FourTwenty build on the server and every client. This work retains the version **0.3.2**, so compare the JAR's SHA-256 as well as its filename when replacing an older build with that version. MineColonies and the other pack mods are optional, with exact tested versions recorded in the [frozen inventory](validation/compatibility-lock.json).
 
-Back up a world before upgrading. Registry IDs and inventory slot numbers are preserved. Existing lit bongs receive an additive `ChargePaid` marker: their remaining bud is consumed once on the first server tick, their already-paid blaze powder is not charged again, and elapsed burn time is retained. Invalid legacy contents remain recoverable through extraction. An invalid active legacy burn stops. Unloaded bongs pause instead of catching up offline.
+Back up a world before upgrading. Registry IDs and inventory slot numbers are preserved. Existing lit bongs receive an additive `ChargePaid` marker: their remaining bud is consumed once on the first server tick, their already-paid fuel is not charged again; saves without a per-charge burn length resume as blaze powder charges, and elapsed burn time is retained. Invalid legacy contents remain recoverable through extraction. An invalid active legacy burn stops. Unloaded bongs pause instead of catching up offline.
 
 For downgrade recovery, restore the backup together with its matching mod builds. Older versions do not understand the paid-charge state and should not open an upgraded save. This implementation does not modify an installed modpack or migrate any player world automatically.
 
