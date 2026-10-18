@@ -60,6 +60,8 @@ public final class DispensaryBuilding extends AbstractBuilding {
     }
     /** Active queue length; stale reservations are never shown as waiting customers. */
     public int waitingCustomers(long now) { prune(now); return customers.size(); }
+    /** Anyone queuing at the counter or holding a seat (smoking) right now. */
+    public boolean hasCustomers(long now) { prune(now); return !customers.isEmpty() || !seats.isEmpty(); }
     public boolean ownsSeat(UUID citizen, BlockPos pos, long now) {
         prune(now);
         var lease = seats.get(pos);
