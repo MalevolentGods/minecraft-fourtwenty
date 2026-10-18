@@ -22,10 +22,13 @@ public final class BongTendingRules {
         public boolean any() { return buds || water || fuel || clearBucket; }
     }
 
-    /** A bong needs a visit when it would not (re)light by itself: no buds, no water, or no usable fuel. */
-    public static Need need(int buds, boolean hasWater, String fuelId) {
+    /**
+     * What a visit would add. Water and fuel are kept ready at all times (set-up); buds only while
+     * {@code serving} customers, since a bong with all three lights at once.
+     */
+    public static Need need(int buds, boolean hasWater, String fuelId, boolean serving) {
         boolean usableFuel = BongFuel.isFuel(fuelId);
-        return new Need(buds <= 0, !hasWater, !usableFuel, EMPTY_BUCKET.equals(fuelId));
+        return new Need(serving && buds <= 0, !hasWater, !usableFuel, EMPTY_BUCKET.equals(fuelId));
     }
 
     /** The best fuel the budtender can get, given counts available by item id. */
@@ -39,12 +42,12 @@ public final class BongTendingRules {
     }
 
     /**
-     * Worth the walk only if, after this visit, the bong could light: every missing input must be
-     * available (a full bong that is merely lit never needs tending).
+     * Worth the walk when the budtender can supply something the bong is missing. Water is free;
+     * missing buds or fuel must be in stock (otherwise they are requested instead).
      */
-    public static boolean canFix(Need need, int budsAvailable, boolean waterAvailable, Optional<String> fuelAvailable) {
-        if (!need.any()) return false;
-        return (!need.buds() || budsAvailable > 0) && (!need.water() || waterAvailable) && (!need.fuel() || fuelAvailable.isPresent());
+    public static boolean canFix(Need need, int budsAvailable, Optional<String> fuelAvailable) {
+        return (need.buds() && budsAvailable > 0) || need.water() || need.clearBucket()
+                || (need.fuel() && fuelAvailable.isPresent());
     }
 
     private BongTendingRules() {}

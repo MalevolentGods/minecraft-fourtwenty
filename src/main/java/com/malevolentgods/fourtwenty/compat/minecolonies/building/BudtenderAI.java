@@ -5,18 +5,28 @@ import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting
 /** Native request queue, ingredient pickup, work-position navigation, crafting and inventory dumping. */
 public final class BudtenderAI extends AbstractEntityAICrafting<BudtenderJob, DispensaryBuilding> {
     private long nextServiceTick;
+    private static final net.minecraft.tags.TagKey<net.minecraft.world.item.Item> BONG_FUEL = net.minecraft.tags.TagKey.create(
+            net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.ResourceLocation.parse("fourtwenty:bong_fuel"));
     private final com.malevolentgods.fourtwenty.compat.minecolonies.service.BongTending bongs =
             new com.malevolentgods.fourtwenty.compat.minecolonies.service.BongTending();
+    /** Native requests: checks worker and hut stock and open requests before creating one. */
+    private final com.malevolentgods.fourtwenty.compat.minecolonies.service.BongTending.Supplies supplies =
+            new com.malevolentgods.fourtwenty.compat.minecolonies.service.BongTending.Supplies() {
+                @Override public void request(net.minecraft.world.item.ItemStack stack, int count) {
+                    checkIfRequestForItemExistOrCreateAsync(stack, count, 1);
+                }
+                @Override public void requestFuel(int count) { checkIfRequestForTagExistOrCreateAsync(BONG_FUEL, count); }
+            };
     public BudtenderAI(BudtenderJob job) { super(job); }
     @Override public Class<DispensaryBuilding> getExpectedBuildingClass() { return DispensaryBuilding.class; }
 
     /** Called only while native citizen AI allows work; essential tasks still preempt service and production. */
     @Override public void tick() {
         long now = com.malevolentgods.fourtwenty.compat.minecolonies.DispensarySavedData.get(world).time();
-        // Keep the hut's bongs going while customers are around; queued customers are served first.
+        // Keep the hut's bongs set up (and lit while customers are around); queued customers are served first.
         // While walking to or refilling a bong, skip the native AI so the two don't both steer the worker.
         if (currentRecipeStorage == null && worker instanceof com.minecolonies.core.entity.citizen.EntityCitizen tender
-                && bongs.tick(tender, building, now)) return;
+                && bongs.tick(tender, building, now, supplies)) return;
         if (currentRecipeStorage == null && now >= nextServiceTick
                 && worker instanceof com.minecolonies.core.entity.citizen.EntityCitizen citizen) {
             nextServiceTick = now + 20;

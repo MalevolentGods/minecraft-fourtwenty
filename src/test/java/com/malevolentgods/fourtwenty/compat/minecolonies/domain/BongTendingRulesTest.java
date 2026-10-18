@@ -8,15 +8,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BongTendingRulesTest {
     @Test void fullBongNeedsNothing() {
-        assertFalse(BongTendingRules.need(2, true, BongFuel.BLAZE_POWDER).any());
-        assertFalse(BongTendingRules.need(1, true, BongFuel.FLINT_AND_STEEL).any());
+        assertFalse(BongTendingRules.need(2, true, BongFuel.BLAZE_POWDER, true).any());
+        assertFalse(BongTendingRules.need(1, true, BongFuel.FLINT_AND_STEEL, false).any());
     }
-    @Test void missingInputsAreReported() {
-        var need = BongTendingRules.need(0, false, "minecraft:air");
-        assertTrue(need.buds() && need.water() && need.fuel() && !need.clearBucket());
+    @Test void budsAreOnlyAddedWhileServing() {
+        // Set-up (no customers): water and fuel only, so the bong does not burn to an empty room.
+        var setup = BongTendingRules.need(0, false, "minecraft:air", false);
+        assertTrue(setup.water() && setup.fuel() && !setup.buds());
+        var serving = BongTendingRules.need(0, true, BongFuel.BLAZE_POWDER, true);
+        assertTrue(serving.buds() && !serving.water() && !serving.fuel());
     }
     @Test void emptyLavaBucketMustBeClearedAndReplaced() {
-        var need = BongTendingRules.need(3, true, BongTendingRules.EMPTY_BUCKET);
+        var need = BongTendingRules.need(3, true, BongTendingRules.EMPTY_BUCKET, true);
         assertTrue(need.fuel() && need.clearBucket() && !need.buds() && !need.water());
     }
     @Test void bestAvailableFuelWins() {
@@ -28,13 +31,16 @@ class BongTendingRulesTest {
         assertEquals(4, BongTendingRules.fuelAmount(BongFuel.BLAZE_POWDER));
         assertEquals(1, BongTendingRules.fuelAmount(BongFuel.LAVA_BUCKET));
     }
-    @Test void onlyWalkOverWhenTheBongCouldLightAfterwards() {
-        var noFuel = BongTendingRules.need(2, true, "minecraft:air");
-        assertFalse(BongTendingRules.canFix(noFuel, 10, true, Optional.empty()));
-        assertTrue(BongTendingRules.canFix(noFuel, 0, false, Optional.of(BongFuel.FLINT_AND_STEEL)));
-        var empty = BongTendingRules.need(0, false, BongFuel.BLAZE_POWDER);
-        assertFalse(BongTendingRules.canFix(empty, 4, false, Optional.empty()));
-        assertTrue(BongTendingRules.canFix(empty, 4, true, Optional.empty()));
-        assertFalse(BongTendingRules.canFix(BongTendingRules.need(1, true, BongFuel.BLAZE_POWDER), 4, true, Optional.empty()));
+    @Test void waterIsFreeSoAMissingWaterAlwaysJustifiesAVisit() {
+        assertTrue(BongTendingRules.canFix(BongTendingRules.need(0, false, "minecraft:air", false), 0, Optional.empty()));
+    }
+    @Test void missingFuelOrBudsNeedStockOtherwiseTheyAreRequested() {
+        var noFuel = BongTendingRules.need(2, true, "minecraft:air", true);
+        assertFalse(BongTendingRules.canFix(noFuel, 10, Optional.empty()));
+        assertTrue(BongTendingRules.canFix(noFuel, 0, Optional.of(BongFuel.FLINT_AND_STEEL)));
+        var noBuds = BongTendingRules.need(0, true, BongFuel.BLAZE_POWDER, true);
+        assertFalse(BongTendingRules.canFix(noBuds, 0, Optional.empty()));
+        assertTrue(BongTendingRules.canFix(noBuds, 4, Optional.empty()));
+        assertFalse(BongTendingRules.canFix(BongTendingRules.need(1, true, BongFuel.BLAZE_POWDER, true), 4, Optional.empty()));
     }
 }
