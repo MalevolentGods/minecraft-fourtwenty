@@ -66,27 +66,41 @@ public final class JointCraftingModule extends AbstractCraftingBuildingModule.Cr
         }
     }
 
-    /** One persisted native request tree per menu item supplies ingredients, crafts, and retains the output locally. */
+    /**
+     * Balanced production (see {@link ProductionRules#next}): one small batch at a time for the menu
+     * item least stocked against its target, crafted only from buds above the raw bud reserve, and
+     * buds requested from the colony to keep the reserve plus the next batch on hand.
+     */
     @Override public void onColonyTick(IColony colony) {
         if (!WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition())) return;
         super.onColonyTick(colony);
         if (building.getBuildingLevel() < 1 || building.getAllAssignedCitizen().isEmpty() || recipes.isEmpty()) return;
         var open = building.getOpenRequestsByRequestableType().values().stream().flatMap(java.util.Collection::stream)
                 .distinct().map(colony.getRequestManager()::getRequestForToken).toList();
+        var held = new java.util.EnumMap<MenuItem, Integer>(MenuItem.class);
+        boolean productionOpen = false;
         for (var entry : MenuItem.menu(building.getBuildingLevel())) {
             Item output = item(entry);
             if (getFirstRecipe(stack -> stack.is(output)) == null) continue;
             var sample = new ItemStack(output);
-            boolean outstanding = open.stream().anyMatch(request -> request != null && request.getRequest() instanceof Stack stack && stack.matches(sample));
-            int held = building.getHandlers().stream().mapToInt(handler ->
-                    InventoryUtils.getItemCountInItemHandler(handler, stack -> stack.is(output))).sum();
-            int count = ProductionRules.batch(entry, building.getBuildingLevel(), held, outstanding);
-            if (count > 0) {
-                var request = new Stack(new ItemStack(output), count, count);
-                // Existing local stock must not satisfy a request for additional stock.
-                request.setCanBeResolvedByBuilding(false);
-                building.createRequest(request, true);
-            }
+            productionOpen |= open.stream().anyMatch(request -> request != null && request.getRequest() instanceof Stack stack && stack.matches(sample));
+            held.put(entry, count(output));
         }
+        var bud = new ItemStack(ModItems.WEED_BUD.get());
+        boolean budRequestOpen = open.stream().anyMatch(request -> request != null && request.getRequest() instanceof Stack stack && stack.matches(bud));
+        var step = ProductionRules.next(building.getBuildingLevel(), held, count(ModItems.WEED_BUD.get()), productionOpen, budRequestOpen);
+        if (step.budsToRequest() > 0) {
+            building.createRequest(new Stack(bud.copy(), step.budsToRequest(), 1), true);
+        }
+        if (step.item() != null && held.containsKey(step.item())) {
+            var request = new Stack(new ItemStack(item(step.item())), step.count(), step.count());
+            // Existing local stock must not satisfy a request for additional stock.
+            request.setCanBeResolvedByBuilding(false);
+            building.createRequest(request, true);
+        }
+    }
+
+    private int count(Item item) {
+        return building.getHandlers().stream().mapToInt(handler -> InventoryUtils.getItemCountInItemHandler(handler, stack -> stack.is(item))).sum();
     }
 }
