@@ -24,22 +24,34 @@ public abstract class CitizenHappinessWindowMixin {
     private static MutableComponent fourtwenty$description(String key, Object[] args, ICitizenDataView citizen, AbstractWindowSkeleton window) {
         if (key.endsWith(DispensaryIds.SATISFACTION)
                 && citizen.getHappinessHandler().getModifier(DispensaryIds.SATISFACTION) instanceof CannabisHappinessModifier modifier) {
+            boolean description = key.contains(".desc.");
             key = "fourtwenty.dispensary.happiness." + modifier.status().name().toLowerCase(java.util.Locale.ROOT)
-                    + (key.contains(".desc.") ? ".description" : "");
+                    + (description ? ".description" : "");
+            if (description) return fourtwenty$withProfile(Component.translatableEscape(key, args), modifier);
         }
         return Component.translatableEscape(key, args);
     }
     @Inject(method = "updateHappiness", at = @At("RETURN"))
     private static void fourtwenty$pending(ICitizenDataView citizen, AbstractWindowSkeleton window, CallbackInfo ci) {
+        // Native rows hide neutral modifiers; always show the cannabis row so type and frequency are visible.
         if (!(citizen.getHappinessHandler().getModifier(DispensaryIds.SATISFACTION) instanceof CannabisHappinessModifier modifier)
-                || modifier.status() != Status.GRACE) return;
+                || modifier.getFactor(null) != 1) return;
+        String status = "fourtwenty.dispensary.happiness." + modifier.status().name().toLowerCase(java.util.Locale.ROOT);
         int rows = (int)citizen.getHappinessHandler().getModifiers().stream()
                 .filter(id -> citizen.getHappinessHandler().getModifier(id).getFactor(null) != 1).count();
         Text label = new Text();
         label.setSize(136, 11); label.setPosition(70, 62 + 12 * rows); label.setColors(0x000000);
-        label.setText(Component.translatable("fourtwenty.dispensary.happiness.grace"));
+        label.setText(Component.translatable(status));
         window.addChild(label);
         PaneBuilders.tooltipBuilder().hoverPane(label)
-                .append(Component.translatable("fourtwenty.dispensary.happiness.grace.description")).build();
+                .append(fourtwenty$withProfile(Component.translatable(status + ".description"), modifier)).build();
+    }
+
+    /** Appends "Smoker · daily" (preference and current frequency) once the citizen has been exposed. */
+    private static MutableComponent fourtwenty$withProfile(MutableComponent description, CannabisHappinessModifier modifier) {
+        if (modifier.status() == Status.UNEXPOSED) return description;
+        return description.append(" ").append(Component.translatable("fourtwenty.dispensary.affinity.profile",
+                Component.translatable("fourtwenty.dispensary.affinity.preference." + modifier.preference().name().toLowerCase(java.util.Locale.ROOT)),
+                Component.translatable("fourtwenty.dispensary.affinity.step." + modifier.step())));
     }
 }

@@ -1,7 +1,7 @@
 # Dispensary service, menu and affinity plan
 
 Date: 2026-10-18
-Status: Phase 7 (service) and Phase 8 (menu and take-away) implemented; awaiting in-game testing. Phase 9 (affinity) planned. Until Phase 9, every customer is served as "both" and demand still needs a level 3+ home. Builds on the implemented Phases 1–6 ([DISPENSARY_PLAN](DISPENSARY_PLAN.md)) and the bong tending work on `feat/bong-fuels-and-colony`.
+Status: Phases 7–9 implemented (service, menu and take-away, affinity with first exposure); unit tests pass; awaiting in-game testing. The native colony GameTests that assume demand without exposure need an exposure step before they can pass again.
 
 ## Objective
 

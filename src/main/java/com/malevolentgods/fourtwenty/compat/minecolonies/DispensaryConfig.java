@@ -23,6 +23,21 @@ public final class DispensaryConfig {
     private static final ModConfigSpec.IntValue BONG_TICKS = BUILDER
             .comment("Bong session: elapsed simulation ticks the bonus lasts after a colonist was last near a burning bong.")
             .defineInRange("bongSessionTicks", 6_000, 20, DemandRules.MAX_TICKS);
+    private static final ModConfigSpec.DoubleValue CHANGE_CHANCE = BUILDER
+            .comment("Affinity: chance that a dose (or the day's first bong session) shifts a colonist's frequency one step.")
+            .defineInRange("affinityChangeChance", 0.10, 0, 1);
+    private static final ModConfigSpec.DoubleValue UP_CHANCE = BUILDER
+            .comment("Affinity: when frequency shifts, the chance it goes up rather than down.")
+            .defineInRange("affinityUpChance", 0.75, 0, 1);
+    private static final ModConfigSpec.IntValue BREAK_TICKS = BUILDER
+            .comment("Affinity: simulation ticks of the tolerance break taken on reaching the top step (default two days).")
+            .defineInRange("toleranceBreakTicks", 48_000, 20, DemandRules.MAX_TICKS);
+    private static final ModConfigSpec.DoubleValue BREAK_WEIGHT = BUILDER
+            .comment("Affinity: native weighted happiness contribution at factor 0.5 during a tolerance break. Zero disables the debuff.")
+            .defineInRange("toleranceBreakWeight", 0.1, 0, 1);
+    private static final ModConfigSpec.IntValue SECONDHAND_RADIUS = BUILDER
+            .comment("Blocks from someone smoking a joint or pipe within which colonists count as exposed for the first time.")
+            .defineInRange("secondhandSmokeRadius", 4, 0, 32);
     private static final java.util.Map<com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem, ModConfigSpec.IntValue> PRICES = prices();
     public static final ModConfigSpec SPEC = BUILDER.build();
     private static java.util.Map<com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem, ModConfigSpec.IntValue> prices() {
@@ -35,6 +50,11 @@ public final class DispensaryConfig {
         }
         return prices;
     }
+    public static com.malevolentgods.fourtwenty.compat.minecolonies.domain.AffinityRules.Tuning tuning() {
+        return new com.malevolentgods.fourtwenty.compat.minecolonies.domain.AffinityRules.Tuning(CHANGE_CHANCE.get(), UP_CHANCE.get(), BREAK_TICKS.get());
+    }
+    public static double toleranceBreakWeight() { return BREAK_WEIGHT.get(); }
+    public static int secondhandSmokeRadius() { return SECONDHAND_RADIUS.get(); }
     public static int price(com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem item) { return PRICES.get(item).get(); }
     private static ModConfigSpec.IntValue duration(String name) {
         return BUILDER.comment("Elapsed simulation ticks. Changes affect future deadlines; existing deadlines are preserved.")

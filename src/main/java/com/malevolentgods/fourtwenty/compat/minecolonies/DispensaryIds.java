@@ -8,6 +8,6 @@ public final class DispensaryIds {
     public static final String HEALTH = "fourtwenty:cannabis_health";
     public static final String BONG_SESSION = "fourtwenty:bong_session";
     public static final String STATE = "fourtwenty_dispensary";
-    public static final int STATE_VERSION = 1;
+    public static final int STATE_VERSION = 2;
     private DispensaryIds() {}
 }

@@ -53,8 +53,12 @@ public final class JointService {
         return home == null ? 0 : home.getBuildingLevel();
     }
 
-    /** Until affinity is rolled for a citizen, everyone takes whatever is in stock, best first. */
-    public static Preference preference(EntityCitizen citizen) { return Preference.BOTH; }
+    /** The citizen's rolled preference; anyone without one takes whatever is in stock, best first. */
+    public static Preference preference(EntityCitizen citizen) {
+        if (!(citizen.level() instanceof ServerLevel level) || citizen.getCitizenData() == null) return Preference.BOTH;
+        var affinity = DispensarySavedData.get(level).affinity(citizen.getCitizenData().getColony().getID(), citizen.getCitizenData().getUUID());
+        return affinity.exposed() ? affinity.preference() : Preference.BOTH;
+    }
 
     /**
      * Serve one visit by the customer's home level (see {@link ServiceRules}): something to consume
@@ -108,7 +112,8 @@ public final class JointService {
         var data = citizen.getCitizenData();
         if (data.getColony().getWorld() != level || data.getColony().getCitizenManager().getCivilian(data.getId()) != data) return false;
         var saved = DispensarySavedData.get(level);
-        return saved.observe(data.getColony().getID(), data.getUUID(), ColonyIntegration.eligible(data), DispensaryConfig.rules()).due(saved.time());
+        return saved.observe(data.getColony().getID(), data.getUUID(), ColonyIntegration.qualifies(data, saved),
+                ColonyIntegration.rules(data, saved)).due(saved.time());
     }
     public static boolean live(DispensaryBuilding building) {
         var level = building.getColony().getWorld();
@@ -146,7 +151,7 @@ public final class JointService {
         if (slot < 0) return false;
         ItemStack removed = citizen.getInventoryCitizen().extractItem(slot, 1, false);
         if (removed.isEmpty()) return false;
-        if (saved.recordConsumption(data.getColony().getID(), data.getUUID(), expectedRevision, DispensaryConfig.rules())) {
+        if (saved.recordConsumption(data.getColony().getID(), data.getUUID(), expectedRevision, ColonyIntegration.rules(data, saved))) {
             if (removed.isDamageableItem()) {
                 removed.setDamageValue(removed.getDamageValue() + 1);
                 if (removed.getDamageValue() < removed.getMaxDamage()) {
@@ -156,6 +161,8 @@ public final class JointService {
                     citizen.playSound(SoundEvents.ITEM_BREAK, 0.8f, 1f);
                 }
             }
+            Exposure.dose((ServerLevel) citizen.level(), data);
+            if (menuItem(removed) != MenuItem.COOKIE && menuItem(removed) != MenuItem.BROWNIE) Exposure.secondhand((ServerLevel) citizen.level(), citizen);
             com.malevolentgods.fourtwenty.compat.minecolonies.benefits.CitizenBenefits.refresh(data);
             return true;
         }

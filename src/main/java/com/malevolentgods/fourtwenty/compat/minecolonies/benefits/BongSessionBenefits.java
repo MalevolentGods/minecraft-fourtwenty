@@ -14,7 +14,6 @@ public final class BongSessionBenefits {
     /** A burning bong at {@code pos}: colonists of the colony it stands in, within range, get the bonus. */
     public static void burning(ServerLevel level, BlockPos pos) {
         double weight = DispensaryConfig.bongSessionWeight();
-        if (weight <= 0) return;
         int radius = DispensaryConfig.bongSessionRadius();
         int duration = DispensaryConfig.bongSessionTicks();
         long now = DispensarySavedData.get(level).time();
@@ -23,6 +22,8 @@ public final class BongSessionBenefits {
             for (var citizen : colony.getCitizenManager().getCitizens()) {
                 var entity = citizen.getEntity().orElse(null);
                 if (entity == null || entity.distanceToSqr(pos.getCenter()) > (double) radius * radius) continue;
+                com.malevolentgods.fourtwenty.compat.minecolonies.service.Exposure.bongSession(level, citizen);
+                if (weight <= 0) continue;
                 long expires = current(citizen) instanceof BongSessionHappinessModifier old && old.active() ? old.expires() : 0;
                 if (BongSessionRules.shouldRefresh(expires, now, duration)) set(citizen, new BongSessionHappinessModifier(true, now + duration, weight));
             }

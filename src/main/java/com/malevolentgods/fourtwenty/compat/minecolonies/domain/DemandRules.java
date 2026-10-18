@@ -10,7 +10,8 @@ public record DemandRules(int intervalTicks, int graceTicks, int healthTicks) {
         }
     }
     public static DemandRules defaults() { return new DemandRules(24_000, 24_000, 24_000); }
+    /** The housing gate: an adult with a completed home of any level. Cravings also need a first exposure. */
     public static boolean eligible(boolean adult, boolean assignedHome, int completedLevel) {
-        return adult && assignedHome && completedLevel >= 3;
+        return adult && assignedHome && completedLevel >= 1;
     }
 }

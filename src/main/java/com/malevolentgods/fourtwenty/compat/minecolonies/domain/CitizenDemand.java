@@ -5,7 +5,8 @@ import java.util.Optional;
 /** Immutable durable state. Revision tokens invalidate repeated and interrupted completion callbacks. */
 public record CitizenDemand(boolean eligible, long dueAt, long graceUntil, long satisfiedUntil,
                             long healthUntil, long lastConsumedAt, long revision) {
-    public enum Status { INELIGIBLE, GRACE, SATISFIED, UNMET }
+    /** UNEXPOSED and TOLERANCE_BREAK come from affinity, never from {@link #status}. */
+    public enum Status { INELIGIBLE, GRACE, SATISFIED, UNMET, UNEXPOSED, TOLERANCE_BREAK }
     public CitizenDemand {
         if (revision < 0 || dueAt < -1 || graceUntil < -1 || satisfiedUntil < -1 || healthUntil < -1
                 || lastConsumedAt < -1 || (eligible && (dueAt < 0 || graceUntil < dueAt))

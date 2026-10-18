@@ -5,14 +5,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CitizenDemandTest {
     private final DemandRules rules = DemandRules.defaults();
-    @Test void onlyAdultAssignedCompletedLevelThreeOrHigherQualifies() {
+    @Test void onlyAdultsWithACompletedHomeQualify() {
+        // Housing is only the first gate; cravings also need a first exposure (see AffinityRules).
         for (int level = 0; level <= 5; level++) {
-            assertEquals(level >= 3, DemandRules.eligible(true, true, level));
+            assertEquals(level >= 1, DemandRules.eligible(true, true, level));
             assertFalse(DemandRules.eligible(false, true, level));
             assertFalse(DemandRules.eligible(true, false, level));
         }
-        // A planned level 3 upgrade still has completed level 2 as its only rule input.
-        assertFalse(DemandRules.eligible(true, true, 2));
+        // A planned first-level home still has completed level 0 as its only rule input.
+        assertFalse(DemandRules.eligible(true, true, 0));
     }
     @Test void existingEligibleCitizenStartsDueWithFullGrace() {
         var state = CitizenDemand.empty().observe(true, 123, rules);
