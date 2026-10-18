@@ -20,6 +20,23 @@ public class ModItems {
             new ItemNameBlockItem(com.malevolentgods.fourtwenty.registry.ModBlocks.WEED_CROP.get(),
                 new Item.Properties()));
 
+    /** Lamps, inverted lamps and lamp trims in all 16 dye colours (block ids as in {@link ModBlocks}). */
+    public static final java.util.List<DeferredHolder<Item, BlockItem>> LAMPS = lampItems();
+
+    private static java.util.List<DeferredHolder<Item, BlockItem>> lampItems() {
+        var items = new java.util.ArrayList<DeferredHolder<Item, BlockItem>>();
+        for (var color : net.minecraft.world.item.DyeColor.values()) {
+            items.add(blockItem(color.getName() + "_lamp", ModBlocks.LAMPS.get(color)));
+            items.add(blockItem(color.getName() + "_inverted_lamp", ModBlocks.INVERTED_LAMPS.get(color)));
+            items.add(blockItem(color.getName() + "_lamp_trim", ModBlocks.LAMP_TRIMS.get(color)));
+        }
+        return java.util.List.copyOf(items);
+    }
+
+    private static DeferredHolder<Item, BlockItem> blockItem(String name, DeferredHolder<? extends net.minecraft.world.level.block.Block, ? extends net.minecraft.world.level.block.Block> block) {
+        return ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+    }
+
     public static final DeferredHolder<Item, Item> WEED_BUD =
         ITEMS.register("weed_bud", () ->
             new Item(new Item.Properties()));
@@ -39,6 +56,19 @@ public class ModItems {
     public static final DeferredHolder<Item, WeedBrownieItem> WEED_BROWNIE =
         ITEMS.register("weed_brownie", () ->
             new WeedBrownieItem(new Item.Properties().stacksTo(16))); // Standard stack size for food
+
+    public static final java.util.Map<com.malevolentgods.fourtwenty.domain.BongVariety, DeferredHolder<Item, BlockItem>> BONGS = registerBongs();
+    public static final DeferredHolder<Item, BlockItem> GLASS_BONG = BONGS.get(com.malevolentgods.fourtwenty.domain.BongVariety.GLASS);
+
+    private static java.util.Map<com.malevolentgods.fourtwenty.domain.BongVariety, DeferredHolder<Item, BlockItem>> registerBongs() {
+        var bongs = new java.util.EnumMap<com.malevolentgods.fourtwenty.domain.BongVariety, DeferredHolder<Item, BlockItem>>(
+                com.malevolentgods.fourtwenty.domain.BongVariety.class);
+        for (var variety : com.malevolentgods.fourtwenty.domain.BongVariety.values()) {
+            bongs.put(variety, ITEMS.register(variety.path, () ->
+                    new com.malevolentgods.fourtwenty.item.BongItem(variety, ModBlocks.BONGS.get(variety).get(), new Item.Properties().stacksTo(1))));
+        }
+        return java.util.Collections.unmodifiableMap(bongs);
+    }
 
     public static final DeferredHolder<Item, BlockItem> WEED_BONG =
         ITEMS.register("weed_bong", () ->

@@ -33,6 +33,9 @@ public class WeedBongBlock extends BaseEntityBlock {
     public static final BooleanProperty HAS_WATER = BooleanProperty.create("has_water");
     public static final IntegerProperty WEED_LEVEL = IntegerProperty.create("weed_level", 0, 4); // 0 = empty, 4 = full
     public static final BooleanProperty LIT = BooleanProperty.create("lit");
+    /** The way the placer was looking, so the top texture reads upright from where they stood. */
+    public static final net.minecraft.world.level.block.state.properties.DirectionProperty FACING =
+        net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
     
     // Bong shape - roughly 3x3x5 blocks in size but as a single block
     private static final VoxelShape SHAPE = Block.box(4.0, 0.0, 4.0, 12.0, 16.0, 12.0);
@@ -42,7 +45,8 @@ public class WeedBongBlock extends BaseEntityBlock {
         this.registerDefaultState(this.stateDefinition.any()
             .setValue(HAS_WATER, false)
             .setValue(WEED_LEVEL, 0)
-            .setValue(LIT, false));
+            .setValue(LIT, false)
+            .setValue(FACING, net.minecraft.core.Direction.NORTH));
     }
 
     @Override
@@ -53,7 +57,23 @@ public class WeedBongBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(HAS_WATER, WEED_LEVEL, LIT);
+        builder.add(HAS_WATER, WEED_LEVEL, LIT, FACING);
+    }
+
+    @Override
+    public BlockState getStateForPlacement(@Nonnull net.minecraft.world.item.context.BlockPlaceContext context) {
+        return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
+    }
+
+    /** Structure/blueprint rotation (e.g. a rotated colony building) turns the bong with it. */
+    @Override
+    protected @Nonnull BlockState rotate(@Nonnull BlockState state, @Nonnull net.minecraft.world.level.block.Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    protected @Nonnull BlockState mirror(@Nonnull BlockState state, @Nonnull net.minecraft.world.level.block.Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
     @Override

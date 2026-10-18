@@ -43,7 +43,7 @@ public final class DispensaryBenefitsGameTests {
             citizen = (CitizenData)actor.getCitizenData();
             h.getLevel().setBlockAndUpdate(pos, com.minecolonies.api.blocks.ModBlocks.blockHutHome.defaultBlockState());
             var home = colony.getServerBuildingManager().addNewBuilding((TileEntityColonyBuilding)h.getLevel().getBlockEntity(pos), h.getLevel());
-            home.setBuildingLevel(3); citizen.setHomeBuilding(home);
+            home.setBuildingLevel(3); citizen.setHomeBuilding(home); Exposures.dailySmoker(citizen);
             CitizenBenefits.refresh(citizen);
         }
         @Override public void close() {

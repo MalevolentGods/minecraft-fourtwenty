@@ -63,7 +63,7 @@ public final class DispensaryServiceGameTests {
         }
         EntityCitizen actor(int x,int z,IBuilding home) {
             var e=DispensaryProductionGameTests.actor(h,colony,origin.offset(x,0,z));
-            e.getCitizenData().setHomeBuilding(home); actors.add(e);return e;
+            e.getCitizenData().setHomeBuilding(home); Exposures.dailySmoker(e.getCitizenData()); actors.add(e);return e;
         }
         DispensaryBuilding hut(int x,int z) {
             var b=DispensaryProductionGameTests.hut(h,colony,origin.offset(x,0,z));
@@ -113,7 +113,7 @@ public final class DispensaryServiceGameTests {
             h.assertTrue(first.getCitizenData().getSaturation()==saturation,"Cannabis does not change nutrition");
             f.stock(hut,1);second.getCitizenData().setIsChild(true);
             h.assertTrue(!JointService.collect(second,hut,hut.getItemHandlerCap()),"Child rejected at handoff");
-            second.getCitizenData().setIsChild(false);home.setBuildingLevel(2);
+            second.getCitizenData().setIsChild(false);home.setBuildingLevel(0);
             h.assertTrue(!JointService.collect(second,hut,hut.getItemHandlerCap()),"Downgraded home rejected at handoff");
             home.setBuildingLevel(3);second.setPos(f.origin.getX()+25,f.origin.getY(),f.origin.getZ()+15);
             h.assertTrue(!JointService.collect(second,hut,hut.getItemHandlerCap()),"Remote collection rejected");
@@ -132,7 +132,7 @@ public final class DispensaryServiceGameTests {
         var employed=f.actor(4,13,home);farmer.getFirstModuleOccurance(WorkerBuildingModule.class).assignCitizen(employed.getCitizenData());
         var idle=f.actor(4,6,home);var guard=f.actor(24,6,null);tower.getFirstModuleOccurance(GuardBuildingModule.class).assignCitizen(guard.getCitizenData());
         var child=f.actor(3,3,home);child.getCitizenData().setIsChild(true);
-        var lowHome=f.building(com.minecolonies.api.blocks.ModBlocks.blockHutHome,27,18,2);var low=f.actor(3,4,lowHome);
+        var low=f.actor(3,4,null);
         var customers=List.of(employed,idle,guard);
         Map<UUID,net.minecraft.world.phys.Vec3> start=new HashMap<>();customers.forEach(e->start.put(e.getUUID(),e.position()));
         Set<UUID> moved=new HashSet<>(),returned=new HashSet<>(),smoked=new HashSet<>(),served=new HashSet<>();boolean[] seated={false};
@@ -157,7 +157,7 @@ public final class DispensaryServiceGameTests {
                 h.assertTrue(!served.isEmpty(),"Budtender served a customer before the self-service deadline");
                 h.assertTrue(customers.stream().allMatch(e->joints(e.getInventoryCitizen())==0),"Exactly one joint per completed action");
                 h.assertTrue(joints(hut.getItemHandlerCap())+joints(worker.getInventoryCitizen())==0,"Three supplied joints conserved");
-                h.assertTrue(consumed(child)==-1 && consumed(low)==-1,"Child and level-two resident do not participate");
+                h.assertTrue(consumed(child)==-1 && consumed(low)==-1,"Child and homeless resident do not participate");
                 com.mojang.logging.LogUtils.getLogger().info("DISPENSARY_SERVICE PASS employed/unemployed/guard, seating, conservation and return at tick {}",h.getTick());
                 f.close();h.succeed();
             }

@@ -25,6 +25,7 @@ public class FourTwenty {
         
         // Register items and blocks first
         ModBlocks.BLOCKS.register(bus);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.util.BongBuffs::tick);
         ModItems.ITEMS.register(bus);
         
         // Register block entities

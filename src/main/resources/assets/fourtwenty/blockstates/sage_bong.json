@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "fourtwenty:block/sage_bong"
+    },
+    "facing=east": {
+      "model": "fourtwenty:block/sage_bong",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "fourtwenty:block/sage_bong",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "fourtwenty:block/sage_bong",
+      "y": 270
+    }
+  }
+}

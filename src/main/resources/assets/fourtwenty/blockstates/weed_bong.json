@@ -1,46 +1,214 @@
 {
   "variants": {
-    "has_water=true,lit=false,weed_level=1": {
+    "facing=north,has_water=true,lit=false,weed_level=1": {
       "model": "fourtwenty:block/weed_bong_water_weed_1"
     },
-    "has_water=true,lit=false,weed_level=2": {
+    "facing=east,has_water=true,lit=false,weed_level=1": {
+      "model": "fourtwenty:block/weed_bong_water_weed_1",
+      "y": 90
+    },
+    "facing=south,has_water=true,lit=false,weed_level=1": {
+      "model": "fourtwenty:block/weed_bong_water_weed_1",
+      "y": 180
+    },
+    "facing=west,has_water=true,lit=false,weed_level=1": {
+      "model": "fourtwenty:block/weed_bong_water_weed_1",
+      "y": 270
+    },
+    "facing=north,has_water=true,lit=false,weed_level=2": {
       "model": "fourtwenty:block/weed_bong_water_weed_2"
     },
-    "has_water=true,lit=false,weed_level=3": {
+    "facing=east,has_water=true,lit=false,weed_level=2": {
+      "model": "fourtwenty:block/weed_bong_water_weed_2",
+      "y": 90
+    },
+    "facing=south,has_water=true,lit=false,weed_level=2": {
+      "model": "fourtwenty:block/weed_bong_water_weed_2",
+      "y": 180
+    },
+    "facing=west,has_water=true,lit=false,weed_level=2": {
+      "model": "fourtwenty:block/weed_bong_water_weed_2",
+      "y": 270
+    },
+    "facing=north,has_water=true,lit=false,weed_level=3": {
       "model": "fourtwenty:block/weed_bong_water_weed_3"
     },
-    "has_water=true,lit=false,weed_level=4": {
+    "facing=east,has_water=true,lit=false,weed_level=3": {
+      "model": "fourtwenty:block/weed_bong_water_weed_3",
+      "y": 90
+    },
+    "facing=south,has_water=true,lit=false,weed_level=3": {
+      "model": "fourtwenty:block/weed_bong_water_weed_3",
+      "y": 180
+    },
+    "facing=west,has_water=true,lit=false,weed_level=3": {
+      "model": "fourtwenty:block/weed_bong_water_weed_3",
+      "y": 270
+    },
+    "facing=north,has_water=true,lit=false,weed_level=4": {
       "model": "fourtwenty:block/weed_bong_water_weed_4"
     },
-    "has_water=true,lit=true,weed_level=1": {
+    "facing=east,has_water=true,lit=false,weed_level=4": {
+      "model": "fourtwenty:block/weed_bong_water_weed_4",
+      "y": 90
+    },
+    "facing=south,has_water=true,lit=false,weed_level=4": {
+      "model": "fourtwenty:block/weed_bong_water_weed_4",
+      "y": 180
+    },
+    "facing=west,has_water=true,lit=false,weed_level=4": {
+      "model": "fourtwenty:block/weed_bong_water_weed_4",
+      "y": 270
+    },
+    "facing=north,has_water=true,lit=true,weed_level=1": {
       "model": "fourtwenty:block/weed_bong_lit_1"
     },
-    "has_water=true,lit=true,weed_level=2": {
+    "facing=east,has_water=true,lit=true,weed_level=1": {
+      "model": "fourtwenty:block/weed_bong_lit_1",
+      "y": 90
+    },
+    "facing=south,has_water=true,lit=true,weed_level=1": {
+      "model": "fourtwenty:block/weed_bong_lit_1",
+      "y": 180
+    },
+    "facing=west,has_water=true,lit=true,weed_level=1": {
+      "model": "fourtwenty:block/weed_bong_lit_1",
+      "y": 270
+    },
+    "facing=north,has_water=true,lit=true,weed_level=2": {
       "model": "fourtwenty:block/weed_bong_lit_2"
     },
-    "has_water=true,lit=true,weed_level=3": {
+    "facing=east,has_water=true,lit=true,weed_level=2": {
+      "model": "fourtwenty:block/weed_bong_lit_2",
+      "y": 90
+    },
+    "facing=south,has_water=true,lit=true,weed_level=2": {
+      "model": "fourtwenty:block/weed_bong_lit_2",
+      "y": 180
+    },
+    "facing=west,has_water=true,lit=true,weed_level=2": {
+      "model": "fourtwenty:block/weed_bong_lit_2",
+      "y": 270
+    },
+    "facing=north,has_water=true,lit=true,weed_level=3": {
       "model": "fourtwenty:block/weed_bong_lit_3"
     },
-    "has_water=true,lit=true,weed_level=4": {
+    "facing=east,has_water=true,lit=true,weed_level=3": {
+      "model": "fourtwenty:block/weed_bong_lit_3",
+      "y": 90
+    },
+    "facing=south,has_water=true,lit=true,weed_level=3": {
+      "model": "fourtwenty:block/weed_bong_lit_3",
+      "y": 180
+    },
+    "facing=west,has_water=true,lit=true,weed_level=3": {
+      "model": "fourtwenty:block/weed_bong_lit_3",
+      "y": 270
+    },
+    "facing=north,has_water=true,lit=true,weed_level=4": {
       "model": "fourtwenty:block/weed_bong_lit_4"
     },
-    "has_water=false,weed_level=0": {
+    "facing=east,has_water=true,lit=true,weed_level=4": {
+      "model": "fourtwenty:block/weed_bong_lit_4",
+      "y": 90
+    },
+    "facing=south,has_water=true,lit=true,weed_level=4": {
+      "model": "fourtwenty:block/weed_bong_lit_4",
+      "y": 180
+    },
+    "facing=west,has_water=true,lit=true,weed_level=4": {
+      "model": "fourtwenty:block/weed_bong_lit_4",
+      "y": 270
+    },
+    "facing=north,has_water=false,weed_level=0": {
       "model": "fourtwenty:block/weed_bong_empty"
     },
-    "has_water=false,weed_level=1": {
+    "facing=east,has_water=false,weed_level=0": {
+      "model": "fourtwenty:block/weed_bong_empty",
+      "y": 90
+    },
+    "facing=south,has_water=false,weed_level=0": {
+      "model": "fourtwenty:block/weed_bong_empty",
+      "y": 180
+    },
+    "facing=west,has_water=false,weed_level=0": {
+      "model": "fourtwenty:block/weed_bong_empty",
+      "y": 270
+    },
+    "facing=north,has_water=false,weed_level=1": {
       "model": "fourtwenty:block/weed_bong_weed_1"
     },
-    "has_water=false,weed_level=2": {
+    "facing=east,has_water=false,weed_level=1": {
+      "model": "fourtwenty:block/weed_bong_weed_1",
+      "y": 90
+    },
+    "facing=south,has_water=false,weed_level=1": {
+      "model": "fourtwenty:block/weed_bong_weed_1",
+      "y": 180
+    },
+    "facing=west,has_water=false,weed_level=1": {
+      "model": "fourtwenty:block/weed_bong_weed_1",
+      "y": 270
+    },
+    "facing=north,has_water=false,weed_level=2": {
       "model": "fourtwenty:block/weed_bong_weed_2"
     },
-    "has_water=false,weed_level=3": {
+    "facing=east,has_water=false,weed_level=2": {
+      "model": "fourtwenty:block/weed_bong_weed_2",
+      "y": 90
+    },
+    "facing=south,has_water=false,weed_level=2": {
+      "model": "fourtwenty:block/weed_bong_weed_2",
+      "y": 180
+    },
+    "facing=west,has_water=false,weed_level=2": {
+      "model": "fourtwenty:block/weed_bong_weed_2",
+      "y": 270
+    },
+    "facing=north,has_water=false,weed_level=3": {
       "model": "fourtwenty:block/weed_bong_weed_3"
     },
-    "has_water=false,weed_level=4": {
+    "facing=east,has_water=false,weed_level=3": {
+      "model": "fourtwenty:block/weed_bong_weed_3",
+      "y": 90
+    },
+    "facing=south,has_water=false,weed_level=3": {
+      "model": "fourtwenty:block/weed_bong_weed_3",
+      "y": 180
+    },
+    "facing=west,has_water=false,weed_level=3": {
+      "model": "fourtwenty:block/weed_bong_weed_3",
+      "y": 270
+    },
+    "facing=north,has_water=false,weed_level=4": {
       "model": "fourtwenty:block/weed_bong_weed_4"
     },
-    "has_water=true,weed_level=0": {
+    "facing=east,has_water=false,weed_level=4": {
+      "model": "fourtwenty:block/weed_bong_weed_4",
+      "y": 90
+    },
+    "facing=south,has_water=false,weed_level=4": {
+      "model": "fourtwenty:block/weed_bong_weed_4",
+      "y": 180
+    },
+    "facing=west,has_water=false,weed_level=4": {
+      "model": "fourtwenty:block/weed_bong_weed_4",
+      "y": 270
+    },
+    "facing=north,has_water=true,weed_level=0": {
       "model": "fourtwenty:block/weed_bong_water"
+    },
+    "facing=east,has_water=true,weed_level=0": {
+      "model": "fourtwenty:block/weed_bong_water",
+      "y": 90
+    },
+    "facing=south,has_water=true,weed_level=0": {
+      "model": "fourtwenty:block/weed_bong_water",
+      "y": 180
+    },
+    "facing=west,has_water=true,weed_level=0": {
+      "model": "fourtwenty:block/weed_bong_water",
+      "y": 270
     }
   }
 }

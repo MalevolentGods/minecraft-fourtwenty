@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "fourtwenty:block/pink_lamp_on"
+  }
+}

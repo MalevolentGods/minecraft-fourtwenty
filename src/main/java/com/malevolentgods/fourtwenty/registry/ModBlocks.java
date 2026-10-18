@@ -9,6 +9,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import com.malevolentgods.fourtwenty.block.WeedCropBlock;
 import com.malevolentgods.fourtwenty.block.WildWeedBlock;
 import com.malevolentgods.fourtwenty.block.WeedBongBlock;
+import com.malevolentgods.fourtwenty.block.GlassBongBlock;
+import com.malevolentgods.fourtwenty.domain.BongVariety;
 
 public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
@@ -32,6 +34,57 @@ public class ModBlocks {
           .instabreak()
           .sound(SoundType.GRASS)
       ));
+
+    /** Placed glass bongs, used on right-click with a bud; specialties add a one-day buff. (weed_bong is the hookah.) */
+    public static final java.util.Map<BongVariety, DeferredHolder<Block, GlassBongBlock>> BONGS = registerBongs();
+    public static final DeferredHolder<Block, GlassBongBlock> GLASS_BONG = BONGS.get(BongVariety.GLASS);
+
+    private static java.util.Map<BongVariety, DeferredHolder<Block, GlassBongBlock>> registerBongs() {
+      var bongs = new java.util.EnumMap<BongVariety, DeferredHolder<Block, GlassBongBlock>>(BongVariety.class);
+      for (var variety : BongVariety.values()) {
+        bongs.put(variety, BLOCKS.register(variety.path, () -> new GlassBongBlock(variety,
+          BlockBehaviour.Properties.of()
+            .strength(0.3f)
+            .sound(SoundType.GLASS)
+            .noOcclusion())));
+      }
+      return java.util.Collections.unmodifiableMap(bongs);
+    }
+
+    /**
+     * Coloured lamps in all 16 dye colours (FourTwenty's own, so builds need no lighting mod): a
+     * Lamp lights while powered, an Inverted Lamp is lit unless powered, and Lamp Trim is a thin
+     * always-lit plate on any face (one inverted lamp crafts eight).
+     */
+    public static final java.util.Map<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampBlock>> LAMPS = lamps(false);
+    public static final java.util.Map<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampBlock>> INVERTED_LAMPS = lamps(true);
+    public static final java.util.Map<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampTrimBlock>> LAMP_TRIMS = lampTrims();
+
+    private static BlockBehaviour.Properties lampProperties() {
+      return BlockBehaviour.Properties.of().strength(0.3f).sound(SoundType.GLASS)
+        .lightLevel(state -> !state.hasProperty(com.malevolentgods.fourtwenty.block.LampBlock.LIT)
+            || state.getValue(com.malevolentgods.fourtwenty.block.LampBlock.LIT) ? 15 : 0)
+        .emissiveRendering((state, level, pos) -> !state.hasProperty(com.malevolentgods.fourtwenty.block.LampBlock.LIT)
+            || state.getValue(com.malevolentgods.fourtwenty.block.LampBlock.LIT));
+    }
+
+    private static java.util.Map<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampBlock>> lamps(boolean inverted) {
+      var lamps = new java.util.EnumMap<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampBlock>>(net.minecraft.world.item.DyeColor.class);
+      for (var color : net.minecraft.world.item.DyeColor.values()) {
+        lamps.put(color, BLOCKS.register(color.getName() + (inverted ? "_inverted_lamp" : "_lamp"),
+            () -> new com.malevolentgods.fourtwenty.block.LampBlock(color, inverted, lampProperties())));
+      }
+      return java.util.Collections.unmodifiableMap(lamps);
+    }
+
+    private static java.util.Map<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampTrimBlock>> lampTrims() {
+      var trims = new java.util.EnumMap<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampTrimBlock>>(net.minecraft.world.item.DyeColor.class);
+      for (var color : net.minecraft.world.item.DyeColor.values()) {
+        trims.put(color, BLOCKS.register(color.getName() + "_lamp_trim",
+            () -> new com.malevolentgods.fourtwenty.block.LampTrimBlock(color, lampProperties().noOcclusion())));
+      }
+      return java.util.Collections.unmodifiableMap(trims);
+    }
 
     public static final DeferredHolder<Block, WeedBongBlock> WEED_BONG = BLOCKS.register("weed_bong",
       () -> new WeedBongBlock(

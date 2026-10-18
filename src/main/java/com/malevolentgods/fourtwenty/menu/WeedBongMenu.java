@@ -37,7 +37,7 @@ public class WeedBongMenu extends AbstractContainerMenu {
         // Add bong slots
         this.addSlot(new WeedSlot(container, WEED_SLOT, 79, 23)); // Weed buds slot
         this.addSlot(new WaterSlot(container, WATER_SLOT, 79, 40)); // Water bucket slot
-        this.addSlot(new BlazePowderSlot(container, BLAZE_POWDER_SLOT, 79, 57)); // Blaze powder slot
+        this.addSlot(new BlazePowderSlot(container, BLAZE_POWDER_SLOT, 79, 57)); // Fuel slot: flint and steel, lava bucket or blaze powder
         
         // Add player inventory slots
         for (int i = 0; i < 3; ++i) {
@@ -99,7 +99,7 @@ public class WeedBongMenu extends AbstractContainerMenu {
                     if (!this.moveItemStackTo(slotStack, WATER_SLOT, WATER_SLOT + 1, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (slotStack.is(Items.BLAZE_POWDER)) {
+                } else if (com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.accepts(BLAZE_POWDER_SLOT, slotStack)) {   // any bong fuel
                     if (!this.moveItemStackTo(slotStack, BLAZE_POWDER_SLOT, BLAZE_POWDER_SLOT + 1, false)) {
                         return ItemStack.EMPTY;
                     }

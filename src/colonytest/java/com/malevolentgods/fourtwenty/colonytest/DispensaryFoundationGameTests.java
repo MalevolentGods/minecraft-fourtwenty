@@ -38,10 +38,10 @@ public final class DispensaryFoundationGameTests {
             citizen.setHomeBuilding(home);
             for (int completed = 0; completed <= 5; completed++) {
                 home.setBuildingLevel(completed);
-                h.assertTrue(ColonyIntegration.eligible(citizen) == (completed >= 3), "Native completed home level " + completed);
+                h.assertTrue(ColonyIntegration.eligible(citizen) == (completed >= 1), "Native completed home level " + completed);
             }
-            home.setBuildingLevel(2);
-            home.setBlueprintPath("wooden/residence3.blueprint");
+            home.setBuildingLevel(0);
+            home.setBlueprintPath("wooden/residence1.blueprint");
             h.assertTrue(!ColonyIntegration.eligible(citizen), "Planned upgrade path does not change completed level");
             home.setBuildingLevel(3);
             citizen.setIsChild(true);
@@ -61,7 +61,7 @@ public final class DispensaryFoundationGameTests {
             h.assertTrue(citizen.getHomeBuilding() == tower, "Guard work-at-home module assigns actual home");
             h.assertTrue(ColonyIntegration.eligible(citizen), "Completed level 3 guard home qualifies");
             tower.setBuildingLevel(2);
-            h.assertTrue(!ColonyIntegration.eligible(citizen), "Level 2 guard home does not qualify");
+            h.assertTrue(ColonyIntegration.eligible(citizen), "Level 2 guard home qualifies for housing");
             h.succeed();
         } finally {
             IColonyManager.getInstance().deleteColonyByWorld(colony.getID(), false, level);

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "fourtwenty:green_lamp"
+    },
+    {
+      "item": "fourtwenty:weed_joint"
+    }
+  ],
+  "result": {
+    "id": "fourtwenty:green_inverted_lamp",
+    "count": 1
+  }
+}
