@@ -34,7 +34,7 @@ The pinned restaurant (`EntityAIWorkCook` in MineColonies 1.1.1343) has a menu m
 6. **Affinity system.** Each citizen has a preference and a frequency:
    - Preference: edibles only, smoke only, both, or none.
    - Frequency: anywhere from several times a day to every few days.
-   - Each consumption has a **10%** chance to shift frequency one step, 50/50 up or down.
+   - Each consumption has a **10%** chance to shift frequency one step, 75% up / 25% down.
    - The bong area effect gives the same roll, at most **once per day** per citizen. Shop smokers can therefore roll twice a day.
    - Reaching the top step starts a **2-day tolerance break**: a happiness debuff, no demand, then a return to the citizen's original frequency.
 
@@ -108,7 +108,7 @@ The stock target for each item scales with level, like today's joint target. Exa
 - **Why this works:** a colony only picks up the habit once you build a bong, smoke near colonists, or hire a Budtender who serves.
 
 **Drift**
-- **Roll triggers:** each consumption, and the first bong session of each 24,000-tick window, roll 10% for a change, then 50/50 up or down.
+- **Roll triggers:** each consumption, and the first bong session of each 24,000-tick window, roll 10% for a change, then 75% up / 25% down. On average that's +0.05 steps per roll, so habits creep upward and end in a tolerance break.
 - **Range:** steps are clamped at 0 and 7.
 - **No interest is reachable but rare:** step 0 can only be reached by drifting down, and only the bong roll can bring a citizen back up from it.
 - **Fixed preference:** only the frequency drifts.
@@ -216,4 +216,5 @@ Each phase is a separate branch-sized package with its own tests and handoff not
 1. Player prices are set per item (table above): the pipe is cheaper per use, and the brownie is premium.
 2. "Both" citizens take whatever is in stock, preferring the higher-level item: pipe over joint, brownie over cookie.
 3. A tolerance break returns the citizen exactly to their original step.
+5. Affinity changes go up 75% of the time and down 25%.
 4. Cravings start only after a citizen's first exposure to weed of any kind, including the bong area.
