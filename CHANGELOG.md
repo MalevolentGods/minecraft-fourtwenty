@@ -2,6 +2,55 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [0.6.0] - Dispensary service, affinity, bongs and lamps
+
+### Added
+- **Restaurant-style Dispensary service:**
+  - The Budtender walks to customers anywhere in the shop.
+  - Player sales: right-click the Budtender with an emerald for a server-driven menu. It is free with hut permission; otherwise joint 1, cookie 1, brownie 2 and pipe 3 emeralds.
+- **Dispensary menu by level:** joints (1), weed cookies (2), pipes (3) and weed brownies (4).
+  - Production is balanced: one small batch at a time for the least-stocked item.
+  - A raw bud reserve is kept for bong sessions and the hookah.
+  - The status tab lists each menu item and any missing ingredient, and its icon is the bud art.
+- **Take-away by home level:**
+  - Levels 1–2 consume at the shop, 3–4 take a pipe or 4 edibles home, and 5 do both.
+  - Carried joints, edibles and pipes are used anywhere when due. A pipe holds 4 doses.
+  - Missing take-aways fall back with a complaint.
+- **Colonist affinity:**
+  - The first exposure (hookah area, secondhand smoke, a dose) rolls a preference and a frequency step.
+  - Drift: 10% per dose and per daily hookah session, 75% of it upward.
+  - A two-day tolerance break follows reaching the top step.
+  - The happiness tab shows the profile.
+- **Glass bong:** a placeable block; right-click with a bud for the pipe's effects.
+- **Six specialty bongs** (glass bong upgrades) with one-day buffs; the Phantom bong grants flight.
+  - Level 5 smokers take their shop session at the job-matching specialty bong: +5 to its two skills for a day, +10 on a primary-skill match.
+- **Hookah fuels:** flint and steel (30 s), lava bucket (45 s) and blaze powder (60 s).
+  - The "Hookah session" happiness bonus applies within 6 blocks.
+  - The Budtender tends the front hookah: free water, fuel, buds while customers are around, and requests for fuel and buds.
+- **Lamps:** Lamp, Inverted Lamp and Lamp Trim in 16 colours, with ProjectRed's illumar textures and halo.
+  - Halos merge between touching lamps.
+  - Lit lamp items glow in inventories.
+- **Bundled Sensi Heights Dispensary** (levels 1–5) and a 3D two-block counter hut block.
+  - `tools/import_dispensary_blueprints.py` re-imports and validates the levels, and converts ProjectRed lamps and CB covers to FourTwenty lamps.
+- **Builder costs:** froglights cost a sea lantern, and CB Multipart microblocks cost their source block at 1 per 8 covers.
+- **Op-only `/fourtwenty` testing commands:** status, expose, forget, due, clear, break, drift, clock and stock. Also the in-game test playbook.
+
+### Changed
+- The Weed Bong is displayed as the **Hookah**. Ids and saves are unchanged.
+- **Dispensary demand:** any completed home level qualifies after a first exposure. The save format is now v3; v1 and v2 load, with every colonist unexposed.
+- The Budtender no longer requests a courier pickup after every dump.
+- FourTwenty potion effects hide their swirl particles.
+
+### Fixed
+- Weed crops maintain farmland.
+- The hookah block faces its placer.
+- The Budtender's bong tending no longer depends on the AI tick landing on a multiple of 20.
+- Workers keep carried doses when emptying their inventory.
+- Budtenders get no take-away from their own shop.
+
+### Credits
+- Lamp textures and halo rendering are adapted from [ProjectRed](https://github.com/MrTJP/ProjectRed) (MIT License, see `licenses/ProjectRed-LICENSE.txt`).
+
 ## [0.3.2] - Compatibility candidate
 
 - Target Minecraft 1.21.1 and NeoForge 21.1.218 with consistent packaged version metadata.

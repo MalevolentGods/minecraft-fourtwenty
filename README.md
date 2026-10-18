@@ -4,6 +4,58 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.6.0
+
+- **The Dispensary works like a restaurant.**
+  - The Budtender walks over to customers anywhere in the shop.
+  - The menu grows with the Dispensary's level: joints, then weed cookies, pipes and brownies. He crafts small balanced batches and keeps a reserve of raw buds.
+  - Players can buy too: right-click him holding an emerald. Colony members get it free.
+- **Take-away by home level.**
+  - Colonists in level 1–2 homes have one at the shop.
+  - Levels 3–4 take a supply home: a 4-use pipe or 4 edibles.
+  - Level 5 do both.
+  - Carried doses are used anywhere, and workers never dump them.
+- **Colonist affinity.**
+  - Colonists only crave weed after their first exposure: a hookah session, secondhand smoke, or a dose.
+  - That exposure rolls a type (smoker, edibles, both or not interested) and a frequency, from every 4 days to four times a day.
+  - The frequency drifts up over time, until a two-day tolerance break resets it.
+  - The happiness tab shows each colonist's profile.
+- **Bongs.**
+  - A placeable glass bong: right-click it with a bud to take a hit.
+  - Six specialty bongs (Jackrabbit, Deep Sea, Forge, Owl, Sage, Phantom) give one-day buffs, Phantom includes **flight**.
+  - Level 5 colonists take their shop session at the bong that matches their job, for a one-day skill boost.
+- **The hookah** (the old bong) burns flint and steel, lava or blaze powder for different lengths of time.
+  - Colonists near a burning hookah get a "Hookah session" happiness bonus.
+  - The Budtender keeps the front hookah going and requests its fuel.
+- **Lamps.** Lamps, inverted (always-lit) lamps and thin lamp trim in all 16 colours.
+  - They use ProjectRed's illumar textures and soft glow halo.
+  - Touching lamps share one glow.
+- **A new Dispensary.**
+  - The bundled hut is now the Sensi Heights Dispensary: a wooden shop that grows into a rooftop lounge.
+  - Its hut block is a 3D two-block shop counter.
+- **Builder costs.** MineColonies builders pay a sea lantern for each froglight, and source blocks for CB Multipart microblocks (1 per 8 covers).
+- **Testing tools.** Op-only `/fourtwenty` commands set up and inspect Dispensary scenarios. See [the in-game test playbook](docs/DISPENSARY_TESTING.md).
+
+## Changes from 0.5.0
+
+- **The old Weed Bong is now called the Hookah.** Its id (`fourtwenty:weed_bong`) and placed hookahs are unchanged.
+- **Dispensary demand:**
+  - Any completed home level now qualifies, not just level 3+, but only after a first exposure.
+  - Existing colonists start as "never tried it". The dispensary save upgrades itself (format v3).
+- **Bundled Dispensary blueprints:**
+  - They are replaced by the Sensi Heights design.
+  - Dispensaries already built keep their blueprint.
+  - The hut needs the block above it clear.
+- **The Budtender:**
+  - He no longer calls the courier after every craft.
+  - He keeps a raw bud reserve: 4 at level 1, rising to 16 at level 5.
+- **Effects:** FourTwenty's potion effects no longer show swirl particles. Their HUD icons remain.
+- **Fixes:**
+  - Weed crops keep their farmland.
+  - The hookah faces whoever placed it.
+  - Budtenders no longer give themselves take-aways.
+- **Credits:** see [CHANGELOG](CHANGELOG.md) for details. The lamp textures and halo come from ProjectRed (MIT License).
+
 ## Grow and harvest
 
 Find wild weed in Plains, Savanna, Grove, and Meadow biomes, collect its seeds, and plant them on farmland. Cannabis grows through eight stages and responds to normal crop conditions and bone meal.
