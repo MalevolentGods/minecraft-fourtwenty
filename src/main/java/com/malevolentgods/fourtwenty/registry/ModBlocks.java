@@ -63,7 +63,7 @@ public class ModBlocks {
       var lamps = new java.util.EnumMap<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampBlock>>(net.minecraft.world.item.DyeColor.class);
       for (var color : net.minecraft.world.item.DyeColor.values()) {
         lamps.put(color, BLOCKS.register(color.getName() + (inverted ? "_inverted_lamp" : "_lamp"),
-            () -> new com.malevolentgods.fourtwenty.block.LampBlock(inverted, lampProperties())));
+            () -> new com.malevolentgods.fourtwenty.block.LampBlock(color, inverted, lampProperties())));
       }
       return java.util.Collections.unmodifiableMap(lamps);
     }
@@ -72,7 +72,7 @@ public class ModBlocks {
       var trims = new java.util.EnumMap<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampTrimBlock>>(net.minecraft.world.item.DyeColor.class);
       for (var color : net.minecraft.world.item.DyeColor.values()) {
         trims.put(color, BLOCKS.register(color.getName() + "_lamp_trim",
-            () -> new com.malevolentgods.fourtwenty.block.LampTrimBlock(lampProperties().noOcclusion())));
+            () -> new com.malevolentgods.fourtwenty.block.LampTrimBlock(color, lampProperties().noOcclusion())));
       }
       return java.util.Collections.unmodifiableMap(trims);
     }
