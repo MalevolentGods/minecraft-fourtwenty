@@ -117,7 +117,17 @@ public final class DispensaryCommands {
         var inventory = citizen.getInventoryCitizen();
         for (var item : MenuItem.values()) {
             int count = JointService.count(List.of(inventory), JointService.item(item));
-            if (count > 0) doses.add(count + " " + item.name().toLowerCase(Locale.ROOT));
+            if (count == 0) continue;
+            String entry = count + " " + item.name().toLowerCase(Locale.ROOT);
+            if (item == MenuItem.PIPE) {
+                int uses = 0;
+                for (int slot = 0; slot < inventory.getSlots(); slot++) {
+                    var stack = inventory.getStackInSlot(slot);
+                    if (stack.is(JointService.item(item))) uses += stack.getMaxDamage() - stack.getDamageValue();
+                }
+                entry += " (" + uses + " uses left)";
+            }
+            doses.add(entry);
         }
         line.append(" | carrying ").append(doses.isEmpty() ? "nothing" : String.join(", ", doses));
         return line.toString();
