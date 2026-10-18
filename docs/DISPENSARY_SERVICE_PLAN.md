@@ -94,6 +94,18 @@ The stock target for each item scales with level, like today's joint target. Exa
 - The starting step is 1–5, weighted toward 3.
 - Both are drawn from a seed stable to the citizen's UUID, so a reload never re-rolls.
 
+**First exposure (cravings start here)**
+- **Unexposed by default:** every citizen starts unexposed, with no demand, no unmet penalty, no affinity rolls and no Dispensary visits.
+- **Exposure counts weed of any kind:**
+  - being inside a burning bong's area (the existing bong-session check)
+  - secondhand smoke within 4 blocks of a citizen or player smoking a joint or pipe
+  - consuming any weed item
+- **Assignment is still stable:** affinity is drawn (UUID-seeded) at first exposure, and preference "none" stays uninterested.
+- **First craving:** demand starts one interval after exposure, at the drawn step, with the normal grace after it. First exposure does not also roll for drift.
+- **Visibility:** the citizen window shows "never tried it" until then.
+- **Existing worlds:** citizens who have already consumed (`lastConsumedAt` ≥ 0) migrate as exposed. Everyone else starts unexposed.
+- **Why this works:** a colony only picks up the habit once you build a bong, smoke near colonists, or hire a Budtender who serves.
+
 **Drift**
 - **Roll triggers:** each consumption, and the first bong session of each 24,000-tick window, roll 10% for a change, then 50/50 up or down.
 - **Range:** steps are clamped at 0 and 7.
@@ -166,7 +178,10 @@ Each phase is a separate branch-sized package with its own tests and handoff not
 
 ### Phase 9: Affinity and tolerance
 
-- **Save format v2:** add `preference`, `baseStep`, `step`, `breakUntil` and `lastBongRoll` to each record.
+- **Save format v2:** add `exposedAt`, `preference`, `baseStep`, `step`, `breakUntil` and `lastBongRoll` to each record.
+- **First-exposure gate:**
+  - **Hooks:** the bong-session listener, a secondhand-smoke check around `JointSmoke` and player smoking, and every consumption.
+  - **Eligibility:** adults with an assigned home of any level. Home levels 1–2 join only here; until Phase 9, Phase 8 keeps today's level-3 requirement, so nobody starts craving early.
 - **Migration from v1** (live worlds hold v1 saves):
   - existing records keep their deadlines
   - each existing citizen draws their affinity on first load
@@ -185,6 +200,7 @@ Each phase is a separate branch-sized package with its own tests and handoff not
   - clamping, the tolerance break and its reset
   - v1→v2 migration round-trip
   - the bong roll once-per-window limit
+  - unexposed citizens never becoming due, and each exposure source activating demand exactly once
 
 ## Risks and checks
 
@@ -199,3 +215,4 @@ Each phase is a separate branch-sized package with its own tests and handoff not
 1. Player prices are set per item (table above): the pipe is cheaper per use, and the brownie is premium.
 2. "Both" citizens take whatever is in stock, preferring the higher-level item: pipe over joint, brownie over cookie.
 3. A tolerance break returns the citizen exactly to their original step.
+4. Cravings start only after a citizen's first exposure to weed of any kind, including the bong area.
