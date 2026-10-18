@@ -29,11 +29,13 @@ import java.util.function.Predicate;
 public final class BongTending {
     private static final int SCAN_EVERY = 200;
     private static final int GIVE_UP_AFTER = 600;
+    private static final int CHECK_EVERY = 20;
     private List<BlockPos> bongs = List.of();
     private long scanAt;
     private BlockPos target;
     private boolean targetServing;
     private long giveUpAt;
+    private long checkAt;
 
     /** How the budtender asks the colony for supplies (backed by the native request system). */
     public interface Supplies {
@@ -53,7 +55,9 @@ public final class BongTending {
      */
     public boolean tick(EntityCitizen worker, DispensaryBuilding building, long now, Supplies supplies) {
         if (target == null) {
-            if (now % 20 != 0 || building.waitingCustomers(now) > 0) return false;
+            // The worker AI only ticks every few ticks, so pace by timestamp, never by now % N.
+            if (now < checkAt || building.waitingCustomers(now) > 0) return false;
+            checkAt = now + CHECK_EVERY;
             boolean serving = building.hasCustomers(now) || visitorsInside(worker, building);
             if (now >= scanAt) {
                 bongs = scan(worker, building);
