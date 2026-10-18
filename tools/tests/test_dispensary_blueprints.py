@@ -1,4 +1,5 @@
 import copy
+import gzip
 import importlib.util
 import unittest
 from pathlib import Path
@@ -21,8 +22,9 @@ class BlueprintTests(unittest.TestCase):
     def test_bundled_files_round_trip_exactly(self):
         for level in range(1, 6):
             with self.subTest(level=level):
-                raw = (g.BUNDLED / f'dispensary{level}.blueprint').read_bytes()
-                self.assertEqual(g.dump(g.load(g.BUNDLED / f'dispensary{level}.blueprint')), raw)
+                # Compare the NBT payload: gzip output differs between zlib builds (e.g. Windows vs Linux CI).
+                raw = gzip.decompress((g.BUNDLED / f'dispensary{level}.blueprint').read_bytes())
+                self.assertEqual(gzip.decompress(g.dump(g.load(g.BUNDLED / f'dispensary{level}.blueprint'))), raw)
 
     def test_conversion_replaces_optional_mod_blocks_and_repoints_the_hut(self):
         root = g.bundled(5)
