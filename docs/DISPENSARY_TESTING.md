@@ -11,7 +11,7 @@ Unit tests (`./gradlew test`) cover the pure rules. The native colony GameTests 
 | Command | Effect |
 | --- | --- |
 | `/fourtwenty status <citizens>` | Prints the dispensary clock, then one line per colonist: first exposure (or N/A), type, step (and base step), any tolerance break, home level, demand status and when due, carried doses |
-| `/fourtwenty expose <citizens>` | First exposure with a random roll (as a bong session would) |
+| `/fourtwenty expose <citizens>` | First exposure with a random roll (as a hookah session would) |
 | `/fourtwenty expose <citizens> <type> <step>` | First exposure with a fixed type (`smoke`, `edible`, `both`, `none`) and step (0–6) |
 | `/fourtwenty forget <citizens>` | Back to "never tried it" (first exposure N/A) |
 | `/fourtwenty due <citizens>` | A craving colonist is due now (their grace deadline is kept) |
@@ -26,10 +26,10 @@ Customers only visit during the day, when not hungry, sick or asleep. Day/night 
 
 ## Exposure and affinity
 
-**First exposure from a bong**
+**First exposure from a hookah**
 
 1. `/fourtwenty forget @e[type=minecolonies:citizen]`, then `/fourtwenty status @e[type=minecolonies:citizen]`. Everyone shows "first exposure N/A" and "no craving".
-2. Light a bong (water, fuel, bud) and bring a colonist within 6 blocks.
+2. Light a hookah (water, fuel, bud) and bring a colonist within 6 blocks.
 3. `status` that colonist: they now have a type and step, "exposed N ticks ago", and are not yet due.
 4. Their happiness tab shows the cannabis row with "(type · frequency)" in the tooltip; before exposure it reads "never tried it".
 
@@ -99,16 +99,21 @@ Also check that:
 - items show "Sold out" with no stock;
 - a normal right-click (no emerald) still opens the citizen window.
 
-## Bongs and the Budtender
+## Hookahs, bongs and the Budtender
 
 - **Fuels:** flint and steel burns 30 s per lighting and loses 1 durability; a lava bucket burns 45 s and leaves an empty bucket; blaze powder burns 60 s.
-- **Front bong only:** the Budtender tends the bong nearest the hut block and leaves the others alone.
+- **Front hookah only:** the Budtender tends the hookah nearest the hut block and leaves the others alone.
 - **Water and fuel:**
   - he fills water (free) and fuel even with no customers;
-  - he adds buds only while colonists are in the shop, so the bong lights then.
-- **Requests:** with no fuel or buds in stock, he requests "bong fuel" (any item in the `fourtwenty:bong_fuel` tag) and Weed Buds within about 10 seconds.
-- **Bong session:** colonists within 6 blocks of a burning bong get the "Bong session" happiness row for 5 minutes, and the day's first session rolls drift.
-- **Facing:** a placed bong's top texture reads upright from where you stood.
+  - he adds buds only while colonists are in the shop, so the hookah lights then.
+- **Requests:** with no fuel or buds in stock, he requests "hookah fuel" (any item in the `fourtwenty:bong_fuel` tag) and Weed Buds within about 10 seconds.
+- **Hookah session:** colonists within 6 blocks of a burning hookah get the "Hookah session" happiness row for 5 minutes, and the day's first session rolls drift.
+- **Facing:** a placed hookah's top texture reads upright from where you stood.
+- **Glass bong:**
+  - Place one; the bowl faces you.
+  - Right-click with a Weed Bud in your inventory: one bud is used, you get the pipe's effects with bubbles and smoke, and a 5-second cooldown follows.
+  - Without a bud you get "You need a Weed Bud to pack the bong."
+  - A hit near an unexposed colonist exposes them.
 
 ## Other branches
 

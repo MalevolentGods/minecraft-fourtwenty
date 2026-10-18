@@ -40,6 +40,10 @@ public class ModItems {
         ITEMS.register("weed_brownie", () ->
             new WeedBrownieItem(new Item.Properties().stacksTo(16))); // Standard stack size for food
 
+    public static final DeferredHolder<Item, BlockItem> GLASS_BONG =
+        ITEMS.register("glass_bong", () ->
+            new BlockItem(ModBlocks.GLASS_BONG.get(), new Item.Properties().stacksTo(1)));
+
     public static final DeferredHolder<Item, BlockItem> WEED_BONG =
         ITEMS.register("weed_bong", () ->
             new BlockItem(ModBlocks.WEED_BONG.get(), new Item.Properties().stacksTo(1))); // Single block item

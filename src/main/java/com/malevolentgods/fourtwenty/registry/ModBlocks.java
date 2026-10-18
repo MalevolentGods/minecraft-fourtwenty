@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import com.malevolentgods.fourtwenty.block.WeedCropBlock;
 import com.malevolentgods.fourtwenty.block.WildWeedBlock;
 import com.malevolentgods.fourtwenty.block.WeedBongBlock;
+import com.malevolentgods.fourtwenty.block.GlassBongBlock;
 
 public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
@@ -31,6 +32,15 @@ public class ModBlocks {
           .noOcclusion()
           .instabreak()
           .sound(SoundType.GRASS)
+      ));
+
+    /** A placed glass bong, used on right-click with a bud. (weed_bong is the hookah.) */
+    public static final DeferredHolder<Block, GlassBongBlock> GLASS_BONG = BLOCKS.register("glass_bong",
+      () -> new GlassBongBlock(
+        BlockBehaviour.Properties.of()
+          .strength(0.3f)
+          .sound(SoundType.GLASS)
+          .noOcclusion()
       ));
 
     public static final DeferredHolder<Block, WeedBongBlock> WEED_BONG = BLOCKS.register("weed_bong",
