@@ -2,13 +2,15 @@
 """Assets and recipes for FourTwenty's coloured lamps (all 16 dye colours).
 
 Per colour: a Lamp (lit while powered), an Inverted Lamp (lit unless powered) and a Lamp Trim (a
-thin always-lit plate on any face). Writes lit/unlit textures, blockstates, models, item models,
-loot tables, recipes and English names. Run again after edits.
+thin always-lit plate on any face). Writes blockstates, models, item models, loot tables, recipes
+and English names. Run again after edits.
+
+The lamp textures (textures/block/<colour>_lamp_on.png / _off.png) are ProjectRed's illumar lamp
+textures (MIT License, Copyright (c) MrTJP; see licenses/ProjectRed-LICENSE.txt), copied as-is;
+this script doesn't draw them.
 """
 import collections
 import json
-import struct
-import zlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,34 +25,6 @@ COLORS = {
     'light_gray': (0x9D, 0x9D, 0x97), 'cyan': (0x16, 0x9C, 0x9C), 'purple': (0x89, 0x32, 0xB8), 'blue': (0x3C, 0x44, 0xAA),
     'brown': (0x83, 0x54, 0x32), 'green': (0x5E, 0x9C, 0x16), 'red': (0xB0, 0x2E, 0x26), 'black': (0x3A, 0x3A, 0x40),
 }
-
-
-def png(path, pixels):
-    height, width = len(pixels), len(pixels[0])
-
-    def chunk(name, data):
-        return struct.pack('>I', len(data)) + name + data + struct.pack('>I', zlib.crc32(name + data))
-    raw = b''.join(b'\0' + bytes(c for p in row for c in p) for row in pixels)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', width, height, 8, 6, 0, 0, 0))
-                     + chunk(b'IDAT', zlib.compress(raw, 9)) + chunk(b'IEND', b''))
-
-
-def lamp_texture(r, g, b, lit):
-    """A lamp face: dark frame, the colour body and a brighter core when lit; dim when off."""
-    rows = []
-    for y in range(16):
-        row = []
-        for x in range(16):
-            edge = min(x, y, 15 - x, 15 - y)
-            if edge == 0: k = 0.45
-            elif edge == 1: k = 0.7
-            elif 5 <= x <= 10 and 5 <= y <= 10: k = 1.3 if lit else 0.55
-            else: k = (1.05 if lit else 0.45) - 0.04 * ((x * 7 + y * 3) % 3)
-            boost = 40 if lit else 0
-            row.append(tuple(min(255, max(0, int(c * k) + (boost if edge > 1 else 0))) for c in (r, g, b)) + (255,))
-        rows.append(row)
-    return rows
 
 
 def write(path, obj):
@@ -82,7 +56,7 @@ def generate():
     for color, rgb in COLORS.items():
         for lit in (True, False):
             state = 'on' if lit else 'off'
-            png(ASSETS / f'textures/block/{color}_lamp_{state}.png', lamp_texture(*rgb, lit))
+            assert (ASSETS / f'textures/block/{color}_lamp_{state}.png').exists(), f'missing {color} lamp texture'
             write(ASSETS / f'models/block/{color}_lamp_{state}.json',
                   {'parent': 'minecraft:block/cube_all', 'textures': {'all': f'fourtwenty:block/{color}_lamp_{state}'}})
         for lamp, item_state in ((f'{color}_lamp', 'off'), (f'{color}_inverted_lamp', 'on')):
