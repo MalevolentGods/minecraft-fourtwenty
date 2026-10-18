@@ -85,14 +85,14 @@ The stock target for each item scales with level, like today's joint target. Exa
 | 6 | Four times a day | 6,000 |
 | 7 | Over the limit: tolerance break | — |
 
-**New citizens**
-- Preference is assigned once:
+**Affinity roll (at first exposure)**
+- Preference is rolled once:
   - none 20%
   - smoke 35%
   - edibles 20%
   - both 25%
 - The starting step is 1–5, weighted toward 3.
-- Both are drawn from a seed stable to the citizen's UUID, so a reload never re-rolls.
+- Both are rolled once, at the citizen's first exposure, and saved; a reload never re-rolls. It makes no difference whether the citizen existed before this feature.
 
 **First exposure (cravings start here)**
 - **Unexposed by default:** every citizen starts unexposed, with no demand, no unmet penalty, no affinity rolls and no Dispensary visits.
@@ -100,10 +100,11 @@ The stock target for each item scales with level, like today's joint target. Exa
   - being inside a burning bong's area (the existing bong-session check)
   - secondhand smoke within 4 blocks of a citizen or player smoking a joint or pipe
   - consuming any weed item
-- **Assignment is still stable:** affinity is drawn (UUID-seeded) at first exposure, and preference "none" stays uninterested.
+- **First exposure is the affinity roll:** a citizen who rolls preference "none" stays uninterested.
 - **First craving:** demand starts one interval after exposure, at the drawn step, with the normal grace after it. First exposure does not also roll for drift.
 - **Visibility:** the citizen window shows "never tried it" until then.
-- **Existing worlds:** citizens who have already consumed (`lastConsumedAt` ≥ 0) migrate as exposed. Everyone else starts unexposed.
+- **Exposure log:** each citizen's record logs `exposedAt`, which is N/A (-1) until first exposure, along with the rolled preference and step.
+- **Existing worlds:** every existing citizen starts as N/A, including those who already smoked under the old system. Nothing is migrated or inferred; they roll at their next exposure like anyone else.
 - **Why this works:** a colony only picks up the habit once you build a bong, smoke near colonists, or hire a Budtender who serves.
 
 **Drift**
@@ -183,8 +184,8 @@ Each phase is a separate branch-sized package with its own tests and handoff not
   - **Hooks:** the bong-session listener, a secondhand-smoke check around `JointSmoke` and player smoking, and every consumption.
   - **Eligibility:** adults with an assigned home of any level. Home levels 1–2 join only here; until Phase 9, Phase 8 keeps today's level-3 requirement, so nobody starts craving early.
 - **Migration from v1** (live worlds hold v1 saves):
-  - existing records keep their deadlines
-  - each existing citizen draws their affinity on first load
+  - every existing citizen loads as unexposed (`exposedAt` N/A, no affinity), so there is no affinity to work out
+  - old v1 demand deadlines are dropped with it: until exposure they mean nothing, and existing health entitlements just run out
   - the old "reject unknown version" check stays for anything newer than v2
 - **Intervals:** affinity steps drive `dueAt` and the grace interval. Step 0 and the tolerance break suppress demand and penalty.
 - **Rolls:**
@@ -195,7 +196,7 @@ Each phase is a separate branch-sized package with its own tests and handoff not
 - **Visibility:** add tooltips showing preference, frequency and break status in the citizen window and the Dispensary status tab.
 - **Config:** add server settings for all of these defaults.
 - **Tests:**
-  - assignment distribution and UUID stability
+  - roll distribution, and the roll persisting across save and reload
   - drift odds over many rolls
   - clamping, the tolerance break and its reset
   - v1→v2 migration round-trip
