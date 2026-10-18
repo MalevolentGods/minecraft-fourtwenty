@@ -1,0 +1,15 @@
+{
+  "name": "Sensi Heights",
+  "desc": "A hillside town that grows around the grow. Terraced farms, smoky lounges, and a dispensary within reach of every home. Built for Four Twenty.",
+  "authors": [
+    "Malevolent Gods"
+  ],
+  "mods": [
+    "structurize",
+    "minecolonies",
+    "fourtwenty"
+  ],
+  "icon": "sensiheights.png",
+  "version": 22,
+  "pack-format": 1
+}
