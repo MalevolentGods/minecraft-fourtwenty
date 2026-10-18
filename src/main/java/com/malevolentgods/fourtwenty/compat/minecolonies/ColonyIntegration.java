@@ -32,7 +32,9 @@ public final class ColonyIntegration {
         bus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) -> event.enqueueWork(() -> {
             com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.add(
                     new com.malevolentgods.fourtwenty.compat.minecolonies.placement.SubstituteCostPlacementHandler());
-            com.mojang.logging.LogUtils.getLogger().info("FourTwenty builder cost substitutions enabled (froglights cost a sea lantern)");
+            com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.add(
+                    new com.malevolentgods.fourtwenty.compat.minecolonies.placement.MicroblockPlacementHandler());
+            com.mojang.logging.LogUtils.getLogger().info("FourTwenty builder cost substitutions enabled (froglights cost a sea lantern; CB microblocks cost their source blocks)");
         }));
         com.mojang.logging.LogUtils.getLogger().info("FourTwenty dispensary foundation enabled (MineColonies 1.1.1343)");
     }
