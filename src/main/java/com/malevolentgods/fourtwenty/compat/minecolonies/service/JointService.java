@@ -21,6 +21,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 /** Server-thread item transactions for every menu item. No food handler, player item-use effects, or benefit on collection. */
 public final class JointService {
@@ -68,9 +69,7 @@ public final class JointService {
     public static boolean serve(EntityCitizen citizen, DispensaryBuilding building, List<IItemHandler> sources) {
         if (!live(building) || !inShop(citizen, building) || !due(citizen) || !CitizenSmokingTask.available(citizen)
                 || doseSlot(citizen.getInventoryCitizen()) >= 0) return false;
-        var stock = new EnumMap<MenuItem, Integer>(MenuItem.class);
-        for (var item : MenuItem.menu(building.getBuildingLevel())) stock.put(item, count(sources, item(item)));
-        var plan = ServiceRules.plan(homeLevel(citizen), preference(citizen), stock);
+        var plan = ServiceRules.plan(homeLevel(citizen), preference(citizen), stock(building, sources));
         if (!plan.any()) return false;
         int moved = 0;
         if (plan.onSpot() != null) moved += move(sources, item(plan.onSpot()), 1, citizen.getInventoryCitizen());
@@ -80,6 +79,26 @@ public final class JointService {
                     "fourtwenty.dispensary.poor", "The dispensary had nothing for me to take home, so I only had one at the shop."), ChatPriority.CHITCHAT));
         }
         return moved > 0;
+    }
+
+    private static Map<MenuItem, Integer> stock(DispensaryBuilding building, List<IItemHandler> sources) {
+        var stock = new EnumMap<MenuItem, Integer>(MenuItem.class);
+        for (var item : MenuItem.menu(building.getBuildingLevel())) stock.put(item, count(sources, item(item)));
+        return stock;
+    }
+
+    /**
+     * Whether a visit would get this customer anything: the shop's menu and stock (its storage and
+     * any staff in the shop) against the customer's preference and home. Customers skip shops that
+     * can't serve them, e.g. an edibles-only colonist and a joints-only Dispensary.
+     */
+    public static boolean canServe(EntityCitizen citizen, DispensaryBuilding building) {
+        var sources = new java.util.ArrayList<IItemHandler>();
+        if (building.getItemHandlerCap() != null) sources.add(building.getItemHandlerCap());
+        for (var data : building.getAllAssignedCitizen()) {
+            if (data.getEntity().orElse(null) instanceof EntityCitizen worker && inShop(worker, building)) sources.add(data.getInventory());
+        }
+        return ServiceRules.plan(homeLevel(citizen), preference(citizen), stock(building, sources)).any();
     }
 
     public static int count(List<IItemHandler> sources, Item item) {

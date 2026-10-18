@@ -84,7 +84,8 @@ public final class CitizenSmokingTask {
     }
 
     private boolean suitable(DispensaryBuilding candidate) {
-        return !failedBuildings.containsKey(candidate.getPosition()) && JointService.live(candidate) && candidate.hasServiceStock();
+        return !failedBuildings.containsKey(candidate.getPosition()) && JointService.live(candidate) && candidate.hasServiceStock()
+                && JointService.canServe(citizen, candidate);
     }
 
     private IState tick() {
