@@ -10,6 +10,7 @@ import com.malevolentgods.fourtwenty.block.WeedCropBlock;
 import com.malevolentgods.fourtwenty.block.WildWeedBlock;
 import com.malevolentgods.fourtwenty.block.WeedBongBlock;
 import com.malevolentgods.fourtwenty.block.GlassBongBlock;
+import com.malevolentgods.fourtwenty.domain.BongVariety;
 
 public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
@@ -34,14 +35,21 @@ public class ModBlocks {
           .sound(SoundType.GRASS)
       ));
 
-    /** A placed glass bong, used on right-click with a bud. (weed_bong is the hookah.) */
-    public static final DeferredHolder<Block, GlassBongBlock> GLASS_BONG = BLOCKS.register("glass_bong",
-      () -> new GlassBongBlock(
-        BlockBehaviour.Properties.of()
-          .strength(0.3f)
-          .sound(SoundType.GLASS)
-          .noOcclusion()
-      ));
+    /** Placed glass bongs, used on right-click with a bud; specialties add a one-day buff. (weed_bong is the hookah.) */
+    public static final java.util.Map<BongVariety, DeferredHolder<Block, GlassBongBlock>> BONGS = registerBongs();
+    public static final DeferredHolder<Block, GlassBongBlock> GLASS_BONG = BONGS.get(BongVariety.GLASS);
+
+    private static java.util.Map<BongVariety, DeferredHolder<Block, GlassBongBlock>> registerBongs() {
+      var bongs = new java.util.EnumMap<BongVariety, DeferredHolder<Block, GlassBongBlock>>(BongVariety.class);
+      for (var variety : BongVariety.values()) {
+        bongs.put(variety, BLOCKS.register(variety.path, () -> new GlassBongBlock(variety,
+          BlockBehaviour.Properties.of()
+            .strength(0.3f)
+            .sound(SoundType.GLASS)
+            .noOcclusion())));
+      }
+      return java.util.Collections.unmodifiableMap(bongs);
+    }
 
     public static final DeferredHolder<Block, WeedBongBlock> WEED_BONG = BLOCKS.register("weed_bong",
       () -> new WeedBongBlock(

@@ -1,6 +1,8 @@
 package com.malevolentgods.fourtwenty.block;
 
+import com.malevolentgods.fourtwenty.domain.BongVariety;
 import com.malevolentgods.fourtwenty.registry.ModItems;
+import com.malevolentgods.fourtwenty.util.BongBuffs;
 import com.malevolentgods.fourtwenty.util.SmokeEffects;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -30,18 +32,24 @@ import javax.annotation.Nonnull;
 /**
  * A glass bong: a placed, functional decoration. Right-click with a Weed Bud anywhere in your
  * inventory to take a hit: it uses one bud and gives the pipe's effects, with bubbling and smoke.
- * (The larger burning "hookah" is {@link WeedBongBlock}.)
+ * Specialty varieties (see {@link BongVariety}) add a one-day buff. (The larger burning "hookah"
+ * is {@link WeedBongBlock}.)
  */
 public class GlassBongBlock extends HorizontalDirectionalBlock {
-    public static final MapCodec<GlassBongBlock> CODEC = simpleCodec(GlassBongBlock::new);
+    public static final MapCodec<GlassBongBlock> CODEC = simpleCodec(properties -> new GlassBongBlock(BongVariety.GLASS, properties));
     /** Between hits, per player. */
     public static final int COOLDOWN_TICKS = 100;
     private static final VoxelShape SHAPE = Block.box(4.5, 0, 4.5, 11.5, 15.5, 11.5);
 
-    public GlassBongBlock(Properties properties) {
+    private final BongVariety variety;
+
+    public GlassBongBlock(BongVariety variety, Properties properties) {
         super(properties);
+        this.variety = variety;
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
+
+    public BongVariety variety() { return variety; }
 
     @Override protected MapCodec<? extends HorizontalDirectionalBlock> codec() { return CODEC; }
 
@@ -69,7 +77,8 @@ public class GlassBongBlock extends HorizontalDirectionalBlock {
     @Override protected InteractionResult useWithoutItem(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos,
                                                          @Nonnull Player player, @Nonnull BlockHitResult hit) {
         if (!(level instanceof ServerLevel server)) return InteractionResult.SUCCESS;
-        if (player.getCooldowns().isOnCooldown(ModItems.GLASS_BONG.get())) return InteractionResult.CONSUME;
+        var item = ModItems.BONGS.get(variety).get();
+        if (player.getCooldowns().isOnCooldown(item)) return InteractionResult.CONSUME;
         if (!player.getAbilities().instabuild && !takeBud(player)) {
             player.displayClientMessage(Component.translatableWithFallback("block.fourtwenty.glass_bong.needs_bud",
                     "You need a Weed Bud to pack the bong."), true);
@@ -81,7 +90,11 @@ public class GlassBongBlock extends HorizontalDirectionalBlock {
         server.sendParticles(ParticleTypes.BUBBLE, pos.getX() + 0.5, pos.getY() + 0.12, pos.getZ() + 0.5, 8, 0.12, 0.05, 0.12, 0.02);
         server.sendParticles(ParticleTypes.SMOKE, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 6, 0.05, 0.1, 0.05, 0.01);
         SmokeEffects.apply(server, player);
-        player.getCooldowns().addCooldown(ModItems.GLASS_BONG.get(), COOLDOWN_TICKS);
+        if (variety.specialty()) {
+            BongBuffs.apply(server, player, variety);
+            server.sendParticles(ParticleTypes.HAPPY_VILLAGER, player.getX(), player.getY() + 1, player.getZ(), 10, 0.4, 0.5, 0.4, 0);
+        }
+        player.getCooldowns().addCooldown(item, COOLDOWN_TICKS);
         return InteractionResult.CONSUME;
     }
 

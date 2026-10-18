@@ -109,6 +109,25 @@ The [Phase 5 handoff](docs/DISPENSARY_PHASE5.md) records automated and client ev
 
 Place the bong anywhere; it faces you, bowl toward you. Right-click it with a **Weed Bud** anywhere in your inventory to take a hit: it uses one bud (none in creative) and gives the same effects as a pipe, with bubbling and smoke. Hits have a 5-second cooldown. Without a bud you are told to pack it first. With MineColonies, a hit is also secondhand smoke for colonists within 4 blocks.
 
+### Specialty bongs
+
+Upgrade a glass bong at the crafting table (shapeless) with two ingredients. Each specialty bong works like the glass bong, but a hit also gives a **one-day buff** (24,000 ticks):
+
+| Bong | Upgrade with | Your buff | Colonist skills |
+| --- | --- | --- | --- |
+| Jackrabbit | rabbit's foot, sugar | Speed II, Jump Boost II | Athletics, Agility |
+| Deep Sea | prismarine crystals, nautilus shell | Water Breathing, Dolphin's Grace, Conduit Power | Stamina, Adaptability |
+| Forge | blaze rod, magma cream | Fire Resistance, Strength | Strength, Stamina |
+| Owl | golden carrot, spyglass | Night Vision, Haste II | Focus, Dexterity |
+| Sage | amethyst shard, book | Luck II, Hero of the Village | Knowledge, Intelligence |
+| Phantom | phantom membrane, feather | **Flight** and Slow Falling | Agility, Mana |
+
+- **Flight:** the Phantom bong's flight lasts the full day, even across relogs and death. When it ends you get a few seconds of Slow Falling.
+- **Colonists:** with MineColonies, place specialty bongs inside the Dispensary. Level 5 residents who smoke then take their at-the-shop session at the bong that matches their job: primary skill first, then secondary, else any.
+  - Each session costs one bud from the shop.
+  - The colonist gets **+5 levels to the bong's two skills for a day, or +10 if one is their job's primary skill.**
+  - Their take-away (a pipe) is handed out as usual.
+
 ## Use a hookah
 
 Right-click the hookah to open its inventory:

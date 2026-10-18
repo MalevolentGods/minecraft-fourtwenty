@@ -22,7 +22,7 @@ import net.minecraft.world.item.ItemStack;
 /** Dining Hall-style task with independent demand, bounded visits, and no changes to nutrition. */
 public final class CitizenSmokingTask {
     public enum State implements IState { VISIT }
-    public enum Step { INACTIVE, TRAVEL, WAIT, SEAT, SMOKE }
+    public enum Step { INACTIVE, TRAVEL, WAIT, SEAT, BONG, SMOKE }
     public static final int TRAVEL_TICKS = 600, WAIT_TICKS = 400, SEAT_TICKS = 100, SMOKE_TICKS = 100, RETRY_TICKS = 1200;
     private final EntityCitizen citizen;
     private Step step = Step.INACTIVE;
@@ -31,6 +31,8 @@ public final class CitizenSmokingTask {
     private net.minecraft.world.entity.Entity sittingVehicle;
     private long deadline, retryAt, revision, smokeStarted, lastTick;
     private boolean showingJoint;
+    /** A specialty bong session at the shop (level 5 smokers), set when served. */
+    private BongSessions.Session bongSession;
     private int visitColony;
     private final java.util.Map<BlockPos, Long> failedBuildings = new java.util.HashMap<>();
 
@@ -39,6 +41,7 @@ public final class CitizenSmokingTask {
         citizen.getCitizenAI().addTransition(new TickingTransition<>(State.VISIT, () -> true, this::tick, 1));
     }
     public Step step() { return step; }
+    public void bongSession(BongSessions.Session session) { bongSession = session; }
     public boolean waitingAt(DispensaryBuilding candidate) { return step == Step.WAIT && building == candidate; }
     private long now() { return DispensarySavedData.get((ServerLevel) citizen.level()).time(); }
 
@@ -111,7 +114,10 @@ public final class CitizenSmokingTask {
                 if (JointService.doseSlot(citizen.getInventoryCitizen()) < 0 && self && building.getItemHandlerCap() != null) {
                     JointService.serve(citizen, building, java.util.List.of(building.getItemHandlerCap()));
                 }
-                if (JointService.doseSlot(citizen.getInventoryCitizen()) >= 0) {
+                if (bongSession != null) {
+                    building.releaseCustomer(citizen.getUUID());
+                    step = Step.BONG; deadline = time + SEAT_TICKS * 2;
+                } else if (JointService.doseSlot(citizen.getInventoryCitizen()) >= 0) {
                     building.releaseCustomer(citizen.getUUID());
                     seat = building.reserveSeat(citizen, time);
                     step = Step.SEAT; deadline = time + SEAT_TICKS;
@@ -130,7 +136,30 @@ public final class CitizenSmokingTask {
                     beginSmoke();
                 }
             }
+            case BONG -> {
+                // Walk to the specialty bong (it may have been picked up meanwhile).
+                if (time >= deadline || !(citizen.level().getBlockState(bongSession.pos()).getBlock()
+                        instanceof com.malevolentgods.fourtwenty.block.GlassBongBlock)) return finish(true);
+                if (EntityNavigationUtils.walkToPos(citizen, bongSession.pos(), 2, true)) {
+                    citizen.getLookControl().setLookAt(bongSession.pos().getCenter());
+                    beginSmoke();
+                }
+            }
             case SMOKE -> {
+                if (bongSession != null) {
+                    citizen.getLookControl().setLookAt(bongSession.pos().getCenter());
+                    if (time % 20 == 0) {
+                        citizen.swing(InteractionHand.MAIN_HAND);
+                        ((ServerLevel) citizen.level()).sendParticles(net.minecraft.core.particles.ParticleTypes.BUBBLE,
+                                bongSession.pos().getX() + 0.5, bongSession.pos().getY() + 0.12, bongSession.pos().getZ() + 0.5, 4, 0.1, 0.04, 0.1, 0.02);
+                    }
+                    if (time - smokeStarted >= SMOKE_TICKS) {
+                        if (JointService.consumeSession(citizen, revision, bongSession.variety())) JointSmoke.puff(citizen, 6);
+                        return finish(false);
+                    }
+                    JointSmoke.tick(citizen, time - smokeStarted);
+                    return State.VISIT;
+                }
                 if (sittingVehicle != null ? citizen.getVehicle() != sittingVehicle : !safeStanding(citizen.blockPosition())) return finish(true);
                 int slot = JointService.doseSlot(citizen.getInventoryCitizen());
                 if (slot < 0) return finish(true);
@@ -158,7 +187,7 @@ public final class CitizenSmokingTask {
     private void beginSmoke() {
         citizen.getNavigation().stop(); step = Step.SMOKE; smokeStarted = now();
         int slot = JointService.doseSlot(citizen.getInventoryCitizen());
-        if (slot < 0 || !isEdible(citizen.getInventoryCitizen().getStackInSlot(slot))) JointSmoke.puff(citizen, 2);
+        if (bongSession != null || slot < 0 || !isEdible(citizen.getInventoryCitizen().getStackInSlot(slot))) JointSmoke.puff(citizen, 2);
     }
     private static boolean isEdible(ItemStack stack) {
         var item = JointService.menuItem(stack);
@@ -193,7 +222,7 @@ public final class CitizenSmokingTask {
         if (showingJoint && JointService.menuItem(citizen.getMainHandItem()) != null) {
             citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         }
-        building = null; seat = null; sittingVehicle = null; showingJoint = false; step = Step.INACTIVE;
+        building = null; seat = null; sittingVehicle = null; showingJoint = false; bongSession = null; step = Step.INACTIVE;
         retryAt = now() + RETRY_TICKS;
     }
 }

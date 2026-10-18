@@ -115,6 +115,28 @@ Also check that:
   - Without a bud you get "You need a Weed Bud to pack the bong."
   - A hit near an unexposed colonist exposes them.
 
+## Specialty bongs
+
+**Player buffs:**
+- Hit each variety with a bud. You get its effects for a day (24,000 ticks).
+- **Phantom:**
+  - You can fly; double-tap jump.
+  - Flight survives a relog and death.
+  - When it ends (`/fourtwenty clock` doesn't affect it; wait or use `/time add` on a test world), you get Slow Falling.
+- Item tooltips list each buff and the colonist skills.
+
+**Colonist sessions:**
+1. Set up the shop:
+   - Place a Forge bong (Strength/Stamina) and an Owl bong (Focus/Dexterity) inside a Dispensary.
+   - Run `/fourtwenty stock joint 4` and `/fourtwenty stock pipe 2`, and put buds in its storage.
+2. Pick a level 5 resident whose job's primary skill is Strength (e.g. a miner). Run `expose <c> smoke 3`, then `due <c>`.
+3. They walk into the shop, are handed a pipe to take away, then walk to the **Forge** bong, take the session (bubbles, smoke) and leave.
+4. `status <c>` shows `forge_bong buff +10 Strength/Stamina, … ticks left`. Their job's primary skill matched, so they got +10.
+5. A level 5 resident whose job uses neither bong's skills gets the first bong in menu order with +5.
+6. Edible-only residents, and residents below level 5, never use the bongs.
+7. With no specialty bong in the shop, a level 5 smoker smokes a joint as before.
+8. `/fourtwenty clock 24000`: the buff expires and their skills return to normal.
+
 ## Other branches
 
 - **Builder costs** (`feat/froglight-placement-handler`): a blueprint with froglights lists sea lanterns in the builder's resources. CB microblock covers cost their source block at 1 per 8 covers, so the Dispensary level 5 roof trim needs 6 lime lamps.

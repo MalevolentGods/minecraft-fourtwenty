@@ -35,7 +35,7 @@ class DispensarySavedDataTest {
         var rolled = new Affinity(400, Preference.EDIBLE, 2, 5, -1, 450);
         data.updateAffinity(1, CITIZEN, previous -> rolled);
         var saved = data.save(new CompoundTag(), null);
-        assertEquals(2, saved.getInt("version"));
+        assertEquals(3, saved.getInt("version"));
         var reloaded = DispensarySavedData.load(saved, null);
         assertEquals(rolled, reloaded.affinity(1, CITIZEN));
         assertEquals(Affinity.UNEXPOSED, reloaded.affinity(1, UUID.randomUUID()));
@@ -53,8 +53,22 @@ class DispensarySavedDataTest {
         assertFalse(data.forceDue(1, UUID.randomUUID()), "no craving, nothing to force");
     }
 
+    @Test void specialtyBuffsRoundTripAndOlderSavesHaveNone() {
+        var data = DispensarySavedData.load(v1(), null);
+        assertNull(data.buff(1, CITIZEN));
+        var buff = new com.malevolentgods.fourtwenty.compat.minecolonies.domain.ColonistBuff(
+                com.malevolentgods.fourtwenty.domain.BongVariety.FORGE, 24_500, 10);
+        data.setBuff(1, CITIZEN, buff);
+        var reloaded = DispensarySavedData.load(data.save(new CompoundTag(), null), null);
+        assertEquals(buff, reloaded.buff(1, CITIZEN));
+        reloaded.setBuff(1, CITIZEN, null);
+        assertNull(reloaded.buff(1, CITIZEN));
+        assertThrows(IllegalArgumentException.class, () -> new com.malevolentgods.fourtwenty.compat.minecolonies.domain.ColonistBuff(
+                com.malevolentgods.fourtwenty.domain.BongVariety.GLASS, 1, 5), "the plain glass bong gives no buff");
+    }
+
     @Test void futureVersionsAndBrokenLogsAreRejected() {
-        var future = v1(); future.putInt("version", 3);
+        var future = v1(); future.putInt("version", 4);
         assertThrows(IllegalArgumentException.class, () -> DispensarySavedData.load(future, null));
         var missingLog = v1(); missingLog.putInt("version", 2);
         assertThrows(IllegalArgumentException.class, () -> DispensarySavedData.load(missingLog, null));

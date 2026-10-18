@@ -24,7 +24,7 @@ public class ModCreativeTabs {
                 output.accept(ModItems.WEED_COOKIE.get());
                 output.accept(ModItems.WEED_BROWNIE.get());
                 output.accept(ModItems.WEED_BONG.get());
-                output.accept(ModItems.GLASS_BONG.get());
+                ModItems.BONGS.values().forEach(bong -> output.accept(bong.get()));
                 // Note: Crop block is not added as it's placed by seeds
             })
             .build());
