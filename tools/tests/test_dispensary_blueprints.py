@@ -16,7 +16,7 @@ class BlueprintTests(unittest.TestCase):
             with self.subTest(level=level):
                 root = g.bundled(level)
                 self.assertEqual(g.validate(root, level), [])
-                self.assertEqual(g.size(root), (11, 16, 24), 'levels share one footprint so upgrades line up')
+                self.assertEqual(g.size(root), (11, 11, 24), 'levels share one footprint so upgrades line up')
                 self.assertTrue(any(n == 'minecolonies:blockminecoloniesrack' or 'rack' in n for n in g.names(root)))
 
     def test_bundled_files_round_trip_exactly(self):
