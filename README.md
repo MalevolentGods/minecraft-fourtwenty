@@ -60,7 +60,13 @@ Each recipe below makes **one item**. Follow the shown arrangement for shaped re
 
 ![Dispensary shaped recipe, requiring MineColonies: any planks across the top and bottom rows; middle row paper, weed bud, paper. Makes one Dispensary. Oak planks are shown as an example.](docs/images/recipes/dispensary.png)
 
-Use **Build Tool → Switch Pack → FourTwenty → Dispensary → dispensary1** to place the shop. The level selector previews levels 1–5; request construction, upgrades, and repairs through the standard hut controls.
+Use **Build Tool → Switch Pack → FourTwenty → Dispensary → dispensary1** to place the shop. The level selector previews levels 1–5; request construction, upgrades, and repairs through the standard hut controls. The bundled design is the Sensi Heights Dispensary, all on one 11 × 24 footprint:
+
+- a wooden shop, then a stone shop, then a modern storefront with the green cross;
+- level 4 adds a deeper store with lit display cases and a back lounge;
+- level 5 adds a rooftop lounge.
+
+Keep the block above the hut clear: the hut block is a two-block counter.
 
 Reserve **17×23 blocks** for the finished shop and lounge. Facing the north-facing entrance, the hut stays in the same place at every level: reserve eight blocks to either side, three toward the entrance, and nineteen behind it, including the hut column. Keep fourteen blocks of vertical space from the foundation. Rotate or mirror this area with your preview.
 

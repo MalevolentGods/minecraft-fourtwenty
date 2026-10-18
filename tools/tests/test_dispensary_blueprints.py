@@ -1,32 +1,60 @@
-import gzip
+import copy
 import importlib.util
 import unittest
 from pathlib import Path
-spec = importlib.util.spec_from_file_location('dispensary', Path(__file__).parents[1] / 'generate_dispensary.py')
+spec = importlib.util.spec_from_file_location('dispensary', Path(__file__).parents[1] / 'import_dispensary_blueprints.py')
 g = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(g)
 
 
 class BlueprintTests(unittest.TestCase):
-    def test_progression_and_committed_payloads(self):
-        for level, footprint in enumerate(g.FOOTPRINTS,1):
-            with self.subTest(level=level):
-                root,blocks,markers,approaches=g.design(level)
-                self.assertEqual((root['size_x'][1],root['size_z'][1]),footprint)
-                self.assertEqual(sum(tag=='sit_in' for _,tag in markers),level*2)
-                # Gzip headers/compression can vary by runtime; compare the exact NBT payload.
-                committed = (g.PACK/f'dispensary/dispensary{level}.blueprint').read_bytes()
-                self.assertEqual(gzip.decompress(g.encoded(level)),gzip.decompress(committed))
-                self.assertEqual(g.encoded(level),g.encoded(level))
-                self.assertTrue(any(s['Name'][1]=='minecolonies:blockminecoloniesrack' for s in blocks.values()))
-                self.assertEqual(blocks[footprint[0]//2,1,3]['Name'][1],'fourtwenty:dispensary')
-                self.assertNotIn((footprint[0]//2,1,1),blocks)
+    """The bundled Dispensary (imported from the Sensi Heights style pack) is a valid, upgradable hut."""
 
-    def test_blocked_route_and_missing_roof_are_rejected(self):
-        root,blocks,markers,approaches=g.design(1)
-        size=tuple(root['size_'+axis][1] for axis in 'xyz')
-        blocked=dict(blocks);blocked[4,1,1]={'Name':g.s('minecraft:stone')}
-        with self.assertRaisesRegex(AssertionError,'Blocked'):g.validate(size,(4,1,3),blocked,markers,approaches)
-        exposed=dict(blocks)
-        for y in range(3,size[1]):exposed.pop((6,y,5),None)
-        with self.assertRaisesRegex(AssertionError,'rain'):g.validate(size,(4,1,3),exposed,markers,approaches)
+    def test_every_bundled_level_is_valid(self):
+        for level in range(1, 6):
+            with self.subTest(level=level):
+                root = g.bundled(level)
+                self.assertEqual(g.validate(root, level), [])
+                self.assertEqual(g.size(root), (11, 16, 24), 'levels share one footprint so upgrades line up')
+                self.assertTrue(any(n == 'minecolonies:blockminecoloniesrack' or 'rack' in n for n in g.names(root)))
+
+    def test_bundled_files_round_trip_exactly(self):
+        for level in range(1, 6):
+            with self.subTest(level=level):
+                raw = (g.BUNDLED / f'dispensary{level}.blueprint').read_bytes()
+                self.assertEqual(g.dump(g.load(g.BUNDLED / f'dispensary{level}.blueprint')), raw)
+
+    def test_conversion_replaces_optional_mod_blocks_and_repoints_the_hut(self):
+        root = g.bundled(5)
+        root['palette'][1][1].append({'Name': (g.STRING, 'projectred_illumination:white_inverted_illumar_lamp')})
+        hut = g.hut_tile(root)['blueprintDataProvider'][1]
+        hut['pack'] = (g.STRING, 'Sensi Heights')
+        converted = g.convert(root, 5)
+        self.assertNotIn('projectred_illumination:white_inverted_illumar_lamp', g.names(converted))
+        self.assertEqual(g.hut_tile(converted)['blueprintDataProvider'][1]['pack'][1], 'FourTwenty')
+        self.assertNotIn('projectred_illumination', converted['required_mods'][1][1])
+
+    def test_validation_catches_broken_designs(self):
+        root = g.bundled(1)
+        sx, sy, sz = g.size(root)
+        offset = root['optional_data'][1]['structurize'][1]['primary_offset'][1]
+        ax, ay, az = offset['x'][1], offset['y'][1], offset['z'][1]
+        names = g.names(root)
+
+        def with_block(x, y, z, name):
+            broken = copy.deepcopy(root)
+            palette = broken['palette'][1][1]
+            palette.append({'Name': (g.STRING, name)})
+            blocks = g.unpack(broken)
+            blocks[(y * sz + z) * sx + x] = len(palette) - 1
+            broken['blocks'] = (g.INTS, g.pack(blocks))
+            return broken
+
+        self.assertTrue(any('above the hut' in p for p in g.validate(with_block(ax, ay + 1, az, 'minecraft:stone'), 1)))
+        self.assertTrue(any('optional mods' in p for p in g.validate(with_block(0, 0, 0, 'cb_multipart:multipart'), 1)))
+        self.assertTrue(any('counter' in p for p in g.validate(with_block(ax, ay, az - 1, 'minecraft:stone'), 1)))
+        self.assertIn('fourtwenty:dispensary', names)
+
+
+if __name__ == '__main__':
+    unittest.main()

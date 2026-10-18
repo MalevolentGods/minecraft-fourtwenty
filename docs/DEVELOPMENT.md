@@ -236,7 +236,7 @@ Evidence destinations are exclusive. Capture the exact command and retain build 
 
 Do not overwrite the reference installation, edit the sibling source, auto-commit, publish, or migrate a player save as part of compatibility testing. See the [qualification report](COMPATIBILITY.md) and [remaining acceptance scenarios](ACCEPTANCE.md) before declaring compatibility.
 
-Dispensary native fixture selection can be set explicitly with `-PcompatTestNamespaces=fourtwenty_colonytests,fourtwenty_logisticstests`. The default still includes the existing suites and now also runs autonomous logistics. Report subset runs as subsets. Regenerate all five blueprints with `python3 tools/generate_dispensary.py` and their pixel assets with `python3 tools/generate_dispensary_assets.py`; its native blueprint, inventory, request and courier fixtures are described in the Phase 2 handoff.
+Dispensary native fixture selection can be set explicitly with `-PcompatTestNamespaces=fourtwenty_colonytests,fourtwenty_logisticstests`. The default still includes the existing suites and now also runs autonomous logistics. Report subset runs as subsets. The five bundled blueprints come from the Sensi Heights style pack: re-import them with `python3 tools/import_dispensary_blueprints.py <Sensi Heights pack>/craftsmanship/luxury` (it swaps ProjectRed/CB blocks for vanilla stand-ins, repoints the hut to the FourTwenty pack and validates each level; `python3 -m unittest discover -s tools/tests` re-checks them). Regenerate their pixel assets with `python3 tools/generate_dispensary_assets.py`; its native blueprint, inventory, request and courier fixtures are described in the Phase 2 handoff.
 
 
 ## Local disk cleanup
