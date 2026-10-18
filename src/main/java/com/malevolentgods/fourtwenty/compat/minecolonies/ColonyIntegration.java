@@ -72,6 +72,7 @@ public final class ColonyIntegration {
                 var state = data.observe(colony.getID(), citizen.getUUID(), qualifies(citizen, data), rules(citizen, data));
                 com.malevolentgods.fourtwenty.compat.minecolonies.benefits.CitizenBenefits.refresh(citizen, state, data.time());
                 com.malevolentgods.fourtwenty.compat.minecolonies.benefits.BongSessionBenefits.refresh(citizen, data.time());
+                com.malevolentgods.fourtwenty.compat.minecolonies.service.BongSessions.refresh(citizen, data);
             }
             // This listener runs on each simulation tick; native building callbacks do not.
             if (data.time() % 100 == 0) {

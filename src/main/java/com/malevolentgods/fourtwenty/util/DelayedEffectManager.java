@@ -79,20 +79,20 @@ public class DelayedEffectManager {
         
         if (!level.isClientSide()) {
             // Base effects similar to joint but longer duration
-            player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, duration / 4, amplifier)); // Regeneration
-            player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, duration, 0)); // Night vision
-            player.addEffect(new MobEffectInstance(MobEffects.HUNGER, duration / 8, amplifier + 1)); // Munchies
-            player.addEffect(new MobEffectInstance(MobEffects.LUCK, duration * 3 / 4, 0)); // Luck
+            player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.REGENERATION, duration / 4, amplifier)); // Regeneration
+            player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.NIGHT_VISION, duration, 0)); // Night vision
+            player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.HUNGER, duration / 8, amplifier + 1)); // Munchies
+            player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.LUCK, duration * 3 / 4, 0)); // Luck
 
             if (isPremium) {
                 // Premium edibles get additional effects
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, duration / 2, amplifier)); // Jump boost
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, duration / 3, amplifier)); // Speed
+                player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.JUMP, duration / 2, amplifier)); // Jump boost
+                player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.MOVEMENT_SPEED, duration / 3, amplifier)); // Speed
             }
             
             // Reduced chance for confusion on edibles (they're more mellow)
             if (level.random.nextFloat() < 0.15f) { // 15% chance vs 30% for joints
-                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration / 6, 0)); // Shorter confusion
+                player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.CONFUSION, duration / 6, 0)); // Shorter confusion
             }
 
             // Spawn effect onset particles

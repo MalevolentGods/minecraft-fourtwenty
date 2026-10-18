@@ -78,16 +78,30 @@ public final class JointService {
     public static boolean serve(EntityCitizen citizen, DispensaryBuilding building, List<IItemHandler> sources) {
         if (!live(building) || !inShop(citizen, building) || !due(citizen) || !CitizenSmokingTask.available(citizen)
                 || doseSlot(citizen.getInventoryCitizen()) >= 0) return false;
-        var plan = ServiceRules.plan(serviceLevel(citizen, building), preference(citizen), stock(building, sources));
+        int level = serviceLevel(citizen, building);
+        var preference = preference(citizen);
+        // Level 5 smokers have their at-the-shop session at a specialty bong in the lounge, if there is one.
+        var session = BongSessions.offer(citizen, building, level, preference, sources);
+        if (session != null) {
+            if (((DispensaryCustomer) citizen).fourtwenty$smokingTask() instanceof CitizenSmokingTask task) task.bongSession(session);
+            var takeAway = ServiceRules.plan(3, preference, stock(building, sources));
+            if (takeAway.takeAway() != null) {
+                move(sources, item(takeAway.takeAway()), takeAway.takeAwayCount(), citizen.getInventoryCitizen());
+            } else complainNothingToTakeHome(citizen);
+            return true;
+        }
+        var plan = ServiceRules.plan(level, preference, stock(building, sources));
         if (!plan.any()) return false;
         int moved = 0;
         if (plan.onSpot() != null) moved += move(sources, item(plan.onSpot()), 1, citizen.getInventoryCitizen());
         if (plan.takeAway() != null) moved += move(sources, item(plan.takeAway()), plan.takeAwayCount(), citizen.getInventoryCitizen());
-        if (moved > 0 && plan.complain()) {
-            citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableWithFallback(
-                    "fourtwenty.dispensary.poor", "The dispensary had nothing for me to take home, so I only had one at the shop."), ChatPriority.CHITCHAT));
-        }
+        if (moved > 0 && plan.complain()) complainNothingToTakeHome(citizen);
         return moved > 0;
+    }
+
+    private static void complainNothingToTakeHome(EntityCitizen citizen) {
+        citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableWithFallback(
+                "fourtwenty.dispensary.poor", "The dispensary had nothing for me to take home, so I only had one at the shop."), ChatPriority.CHITCHAT));
     }
 
     private static Map<MenuItem, Integer> stock(DispensaryBuilding building, List<IItemHandler> sources) {
@@ -107,7 +121,12 @@ public final class JointService {
         for (var data : building.getAllAssignedCitizen()) {
             if (data.getEntity().orElse(null) instanceof EntityCitizen worker && inShop(worker, building)) sources.add(data.getInventory());
         }
-        return ServiceRules.plan(serviceLevel(citizen, building), preference(citizen), stock(building, sources)).any();
+        int level = serviceLevel(citizen, building);
+        var preference = preference(citizen);
+        if (ServiceRules.plan(level, preference, stock(building, sources)).any()) return true;
+        // A level 5 smoker can still have a specialty bong session with only buds in stock.
+        return level >= 5 && (preference == Preference.SMOKE || preference == Preference.BOTH)
+                && count(sources, ModItems.WEED_BUD.get()) > 0 && !BongSessions.bongsIn(building).isEmpty();
     }
 
     public static int count(List<IItemHandler> sources, Item item) {
@@ -164,6 +183,21 @@ public final class JointService {
         // The native helper simulates capacity before extraction, then transfers exactly the requested quantity.
         return InventoryUtils.transferXOfItemStackIntoNextFreeSlotInItemHandler(source, slot, 1, citizen.getInventoryCitizen());
     }
+    /** A finished specialty bong session: the dose credit (no item, the bud was paid at service) and the day's buff. */
+    public static boolean consumeSession(EntityCitizen citizen, long expectedRevision, com.malevolentgods.fourtwenty.domain.BongVariety variety) {
+        if (!due(citizen) || !CitizenSmokingTask.available(citizen)) return false;
+        var level = (ServerLevel) citizen.level();
+        var saved = DispensarySavedData.get(level);
+        var data = citizen.getCitizenData();
+        if (saved.citizen(data.getColony().getID(), data.getUUID()).revision() != expectedRevision) return false;
+        if (!saved.recordConsumption(data.getColony().getID(), data.getUUID(), expectedRevision, ColonyIntegration.rules(data, saved))) return false;
+        Exposure.dose(level, data);
+        Exposure.secondhand(level, citizen);
+        BongSessions.grant(level, data, variety);
+        com.malevolentgods.fourtwenty.compat.minecolonies.benefits.CitizenBenefits.refresh(data);
+        return true;
+    }
+
     /**
      * Credit and use are one synchronous action. Revision prevents a repeated completion from charging
      * twice. A joint or edible is used up; a pipe loses one use and breaks after its last. Edibles

@@ -2,6 +2,7 @@ package com.malevolentgods.fourtwenty.compat.minecolonies;
 
 import com.malevolentgods.fourtwenty.compat.minecolonies.domain.Affinity;
 import com.malevolentgods.fourtwenty.compat.minecolonies.domain.CitizenDemand;
+import com.malevolentgods.fourtwenty.compat.minecolonies.domain.ColonistBuff;
 import com.malevolentgods.fourtwenty.compat.minecolonies.domain.Preference;
 import com.malevolentgods.fourtwenty.compat.minecolonies.domain.DemandRules;
 import java.util.HashMap;
@@ -24,6 +25,8 @@ public final class DispensarySavedData extends SavedData {
     private final Map<Key, CitizenDemand> citizens = new HashMap<>();
     /** The exposure log: a citizen with no entry has never been exposed (N/A). */
     private final Map<Key, Affinity> affinities = new HashMap<>();
+    /** Specialty bong buffs (version 3); expired ones are dropped by the colony tick. */
+    private final Map<Key, ColonistBuff> buffs = new HashMap<>();
     private long time;
     public static DispensarySavedData get(ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(new Factory<>(() -> {
@@ -74,16 +77,25 @@ public final class DispensarySavedData extends SavedData {
         setDirty();
         return true;
     }
+    public ColonistBuff buff(int colony, UUID citizen) { return buffs.get(new Key(colony, citizen)); }
+    /** Set (or with null, clear) a colonist's specialty bong buff. */
+    public void setBuff(int colony, UUID citizen, ColonistBuff buff) {
+        var key = new Key(colony, citizen);
+        var previous = buff == null ? buffs.remove(key) : buffs.put(key, buff);
+        if (!java.util.Objects.equals(previous, buff)) setDirty();
+    }
     /** Native colony IDs (and their derived citizen UUIDs) can be reused after explicit colony deletion. */
     public void removeColony(int colony) {
         boolean changed = citizens.keySet().removeIf(key -> key.colony() == colony);
         changed |= affinities.keySet().removeIf(key -> key.colony() == colony);
+        changed |= buffs.keySet().removeIf(key -> key.colony() == colony);
         if (changed) setDirty();
     }
     /** Permanent native citizen removal, never entity/chunk unloading. */
     public void removeCitizen(int colony, UUID citizen) {
         boolean changed = citizens.remove(new Key(colony, citizen)) != null;
         changed |= affinities.remove(new Key(colony, citizen)) != null;
+        changed |= buffs.remove(new Key(colony, citizen)) != null;
         if (changed) setDirty();
     }
     /** JointService couples this checkpoint to live eligibility and actual inventory extraction. */
@@ -97,6 +109,7 @@ public final class DispensarySavedData extends SavedData {
     /**
      * Reject unknown or malformed data rather than resetting demand and replaying benefits.
      * Version 1 (before affinity) loads with an empty exposure log: every citizen is unexposed.
+     * Versions before 3 have no specialty bong buffs.
      */
     public static DispensarySavedData load(CompoundTag root, HolderLookup.Provider registries) {
         require(root, "version", Tag.TAG_INT);
@@ -142,6 +155,25 @@ public final class DispensarySavedData extends SavedData {
                 }
             }
         }
+        if (version >= 3) {
+            require(root, "buffs", Tag.TAG_LIST);
+            var list3 = (ListTag) root.get("buffs");
+            if (!list3.isEmpty() && list3.getElementType() != Tag.TAG_COMPOUND) throw new IllegalArgumentException("Invalid buff list");
+            for (var value : list3) {
+                var tag = (CompoundTag) value;
+                require(tag, "colony", Tag.TAG_INT);
+                require(tag, "variety", Tag.TAG_STRING);
+                require(tag, "until", Tag.TAG_LONG);
+                require(tag, "bonus", Tag.TAG_INT);
+                if (!tag.hasUUID("citizen")) throw new IllegalArgumentException("Missing citizen UUID");
+                var variety = com.malevolentgods.fourtwenty.domain.BongVariety.byPath(tag.getString("variety"))
+                        .orElseThrow(() -> new IllegalArgumentException("Unknown bong variety"));
+                var buff = new ColonistBuff(variety, tag.getLong("until"), tag.getInt("bonus"));
+                if (data.buffs.putIfAbsent(new Key(tag.getInt("colony"), tag.getUUID("citizen")), buff) != null) {
+                    throw new IllegalArgumentException("Duplicate buff record");
+                }
+            }
+        }
         return data;
     }
     private static void require(CompoundTag tag, String key, int type) {
@@ -170,6 +202,14 @@ public final class DispensarySavedData extends SavedData {
             log.add(tag);
         });
         root.put("affinity", log);
+        ListTag buffList = new ListTag();
+        buffs.forEach((key, buff) -> {
+            CompoundTag tag = new CompoundTag();
+            tag.putInt("colony", key.colony()); tag.putUUID("citizen", key.citizen());
+            tag.putString("variety", buff.variety().path); tag.putLong("until", buff.until()); tag.putInt("bonus", buff.bonus());
+            buffList.add(tag);
+        });
+        root.put("buffs", buffList);
         return root;
     }
 }

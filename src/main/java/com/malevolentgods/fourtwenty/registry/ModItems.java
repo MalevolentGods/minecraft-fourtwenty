@@ -57,6 +57,19 @@ public class ModItems {
         ITEMS.register("weed_brownie", () ->
             new WeedBrownieItem(new Item.Properties().stacksTo(16))); // Standard stack size for food
 
+    public static final java.util.Map<com.malevolentgods.fourtwenty.domain.BongVariety, DeferredHolder<Item, BlockItem>> BONGS = registerBongs();
+    public static final DeferredHolder<Item, BlockItem> GLASS_BONG = BONGS.get(com.malevolentgods.fourtwenty.domain.BongVariety.GLASS);
+
+    private static java.util.Map<com.malevolentgods.fourtwenty.domain.BongVariety, DeferredHolder<Item, BlockItem>> registerBongs() {
+        var bongs = new java.util.EnumMap<com.malevolentgods.fourtwenty.domain.BongVariety, DeferredHolder<Item, BlockItem>>(
+                com.malevolentgods.fourtwenty.domain.BongVariety.class);
+        for (var variety : com.malevolentgods.fourtwenty.domain.BongVariety.values()) {
+            bongs.put(variety, ITEMS.register(variety.path, () ->
+                    new com.malevolentgods.fourtwenty.item.BongItem(variety, ModBlocks.BONGS.get(variety).get(), new Item.Properties().stacksTo(1))));
+        }
+        return java.util.Collections.unmodifiableMap(bongs);
+    }
+
     public static final DeferredHolder<Item, BlockItem> WEED_BONG =
         ITEMS.register("weed_bong", () ->
             new BlockItem(ModBlocks.WEED_BONG.get(), new Item.Properties().stacksTo(1))); // Single block item

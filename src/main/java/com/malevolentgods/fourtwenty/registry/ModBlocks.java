@@ -9,6 +9,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import com.malevolentgods.fourtwenty.block.WeedCropBlock;
 import com.malevolentgods.fourtwenty.block.WildWeedBlock;
 import com.malevolentgods.fourtwenty.block.WeedBongBlock;
+import com.malevolentgods.fourtwenty.block.GlassBongBlock;
+import com.malevolentgods.fourtwenty.domain.BongVariety;
 
 public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
@@ -32,6 +34,22 @@ public class ModBlocks {
           .instabreak()
           .sound(SoundType.GRASS)
       ));
+
+    /** Placed glass bongs, used on right-click with a bud; specialties add a one-day buff. (weed_bong is the hookah.) */
+    public static final java.util.Map<BongVariety, DeferredHolder<Block, GlassBongBlock>> BONGS = registerBongs();
+    public static final DeferredHolder<Block, GlassBongBlock> GLASS_BONG = BONGS.get(BongVariety.GLASS);
+
+    private static java.util.Map<BongVariety, DeferredHolder<Block, GlassBongBlock>> registerBongs() {
+      var bongs = new java.util.EnumMap<BongVariety, DeferredHolder<Block, GlassBongBlock>>(BongVariety.class);
+      for (var variety : BongVariety.values()) {
+        bongs.put(variety, BLOCKS.register(variety.path, () -> new GlassBongBlock(variety,
+          BlockBehaviour.Properties.of()
+            .strength(0.3f)
+            .sound(SoundType.GLASS)
+            .noOcclusion())));
+      }
+      return java.util.Collections.unmodifiableMap(bongs);
+    }
 
     /**
      * Coloured lamps in all 16 dye colours (FourTwenty's own, so builds need no lighting mod): a

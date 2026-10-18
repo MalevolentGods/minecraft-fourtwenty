@@ -110,6 +110,11 @@ public final class DispensaryCommands {
                     .append(" (base ").append(affinity.baseStep()).append("), exposed ").append(now - affinity.exposedAt()).append(" ticks ago");
             if (affinity.onBreak(now)) line.append(", tolerance break ").append(affinity.breakUntil() - now).append(" ticks left");
         }
+        var buff = saved.buff(data.getColony().getID(), data.getUUID());
+        if (buff != null && buff.active(now)) {
+            line.append(" | ").append(buff.variety().path).append(" buff +").append(buff.bonus()).append(' ')
+                    .append(String.join("/", buff.variety().skills)).append(", ").append(buff.until() - now).append(" ticks left");
+        }
         line.append(" | home ").append(JointService.homeLevel(citizen));
         if (!demand.eligible()) line.append(" | no craving");
         else {
