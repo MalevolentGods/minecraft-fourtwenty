@@ -10,10 +10,24 @@ public final class DispensaryStatusWindow extends AbstractModuleWindow<Dispensar
     public DispensaryStatusWindow(DispensaryStatusView view) { super(view, ResourceLocation.parse("fourtwenty:gui/dispensary_status.xml")); }
     @Override public void onOpened() {
         super.onOpened();
-        findPaneOfTypeByID("conditions", ScrollingList.class).setDataProvider(() -> Math.max(1, moduleView.status.conditions().size()), (index, row) -> {
+        // Menu stock lines first (cookies, pipes, brownies), then the service conditions.
+        findPaneOfTypeByID("conditions", ScrollingList.class).setDataProvider(
+                () -> moduleView.status.menu().size() + Math.max(1, moduleView.status.conditions().size()), (index, row) -> {
+            var menu = moduleView.status.menu();
             var conditions = moduleView.status.conditions();
-            row.findPaneOfTypeByID("condition", Text.class).setText(Component.translatable(
-                    "fourtwenty.dispensary.status.condition." + (conditions.isEmpty() ? "ready" : conditions.get(index))));
+            Component text;
+            if (index < menu.size()) {
+                var line = menu.get(index);
+                text = Component.translatable("fourtwenty.dispensary.status.menu", name(line.itemId()), line.held(), line.target());
+            } else if (conditions.isEmpty()) {
+                text = Component.translatable("fourtwenty.dispensary.status.condition.ready");
+            } else {
+                String condition = conditions.get(index - menu.size());
+                text = condition.startsWith("needs:")
+                        ? Component.translatable("fourtwenty.dispensary.status.condition.needs", name(condition.substring(6)))
+                        : Component.translatable("fourtwenty.dispensary.status.condition." + condition);
+            }
+            row.findPaneOfTypeByID("condition", Text.class).setText(text);
         });
         updateLabels();
     }
@@ -26,6 +40,9 @@ public final class DispensaryStatusWindow extends AbstractModuleWindow<Dispensar
                 : Component.translatable("fourtwenty.dispensary.status.worker", s.worker()));
         label("ingredients", s.buds(), s.paper()); label("joints", s.joints(), s.target());
         label("available", s.available()); label("customers", s.customers());
+    }
+    private static Component name(String itemId) {
+        return new net.minecraft.world.item.ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemId))).getHoverName();
     }
     private void label(String id, Object... values) {
         findPaneOfTypeByID(id, Text.class).setText(Component.translatable("fourtwenty.dispensary.status." + id, values));

@@ -73,5 +73,7 @@
   "fourtwenty.dispensary.affinity.step.4": "twice a day",
   "fourtwenty.dispensary.affinity.step.5": "three times a day",
   "fourtwenty.dispensary.affinity.step.6": "four times a day",
-  "fourtwenty.dispensary.affinity.step.7": "over the limit"
+  "fourtwenty.dispensary.affinity.step.7": "over the limit",
+  "fourtwenty.dispensary.status.menu": "%s: %s / %s target",
+  "fourtwenty.dispensary.status.condition.needs": "Production needs %s."
 }

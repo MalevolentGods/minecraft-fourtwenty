@@ -50,9 +50,28 @@ public final class DispensaryStatusModule extends AbstractBuildingModule {
                 .map(hut.getColony().getRequestManager()::getRequestForToken)
                 .anyMatch(r -> r != null && r.getRequest() instanceof Stack stack && stack.matches(new ItemStack(ModItems.WEED_JOINT.get())));
         if (request) conditions.add("request");
+        // The rest of the menu: stock against target, and any ingredient the hut has none of.
+        var sources = new ArrayList<IItemHandler>();
+        if (hut.getItemHandlerCap() != null) sources.add(hut.getItemHandlerCap());
+        for (var citizen : assigned) sources.add(citizen.getInventory());
+        var menu = new ArrayList<DispensaryStatus.MenuLine>();
+        var needed = new java.util.LinkedHashSet<String>();
+        for (var item : com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem.menu(hut.getBuildingLevel())) {
+            if (item == com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem.JOINT) continue;
+            int held = JointService.count(sources, JointService.item(item));
+            int target = com.malevolentgods.fourtwenty.compat.minecolonies.domain.ProductionRules.target(item, hut.getBuildingLevel());
+            menu.add(new DispensaryStatus.MenuLine(item.itemId, held, target));
+            if (held >= target) continue;
+            for (var input : com.malevolentgods.fourtwenty.compat.minecolonies.domain.ProductionRules.recipe(item)) {
+                if (input.itemId().equals("fourtwenty:weed_bud")) continue;   // buds have their own condition
+                var ingredient = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.minecraft.resources.ResourceLocation.parse(input.itemId()));
+                if (JointService.count(sources, ingredient) < input.count()) needed.add("needs:" + input.itemId());
+            }
+        }
+        conditions.addAll(needed);
         long now = DispensarySavedData.get((ServerLevel) hut.getColony().getWorld()).time();
         return new DispensaryStatus(hut.getBuildingLevel(), assigned.isEmpty() ? "" : assigned.getFirst().getName(),
-                totals[0], totals[1], totals[2], available, hut.stockTarget(), hut.waitingCustomers(now), conditions);
+                totals[0], totals[1], totals[2], available, hut.stockTarget(), hut.waitingCustomers(now), conditions, menu);
     }
     private static int[] count(IItemHandler inventory) {
         int[] counts = new int[3];
