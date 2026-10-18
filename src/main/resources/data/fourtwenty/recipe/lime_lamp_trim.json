@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "fourtwenty:lime_lamp"
+      "item": "fourtwenty:lime_inverted_lamp"
     }
   ],
   "result": {

@@ -33,21 +33,39 @@ public class ModBlocks {
           .sound(SoundType.GRASS)
       ));
 
-    /** Always-lit coloured lamps (FourTwenty's own, so blueprints need no lighting mod). */
-    public static final DeferredHolder<Block, Block> LIME_LAMP = lamp("lime_lamp");
-    public static final DeferredHolder<Block, Block> GREEN_LAMP = lamp("green_lamp");
-    public static final DeferredHolder<Block, Block> WHITE_LAMP = lamp("white_lamp");
-    /** A thin glowing lime plate on any face, like a microblock cover; one lamp crafts eight. */
-    public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampTrimBlock> LIME_LAMP_TRIM = BLOCKS.register("lime_lamp_trim",
-      () -> new com.malevolentgods.fourtwenty.block.LampTrimBlock(lampProperties().noOcclusion()));
+    /**
+     * Coloured lamps in all 16 dye colours (FourTwenty's own, so builds need no lighting mod): a
+     * Lamp lights while powered, an Inverted Lamp is lit unless powered, and Lamp Trim is a thin
+     * always-lit plate on any face (one inverted lamp crafts eight).
+     */
+    public static final java.util.Map<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampBlock>> LAMPS = lamps(false);
+    public static final java.util.Map<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampBlock>> INVERTED_LAMPS = lamps(true);
+    public static final java.util.Map<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampTrimBlock>> LAMP_TRIMS = lampTrims();
 
     private static BlockBehaviour.Properties lampProperties() {
       return BlockBehaviour.Properties.of().strength(0.3f).sound(SoundType.GLASS)
-        .lightLevel(state -> 15).emissiveRendering((state, level, pos) -> true);
+        .lightLevel(state -> !state.hasProperty(com.malevolentgods.fourtwenty.block.LampBlock.LIT)
+            || state.getValue(com.malevolentgods.fourtwenty.block.LampBlock.LIT) ? 15 : 0)
+        .emissiveRendering((state, level, pos) -> !state.hasProperty(com.malevolentgods.fourtwenty.block.LampBlock.LIT)
+            || state.getValue(com.malevolentgods.fourtwenty.block.LampBlock.LIT));
     }
 
-    private static DeferredHolder<Block, Block> lamp(String name) {
-      return BLOCKS.register(name, () -> new Block(lampProperties()));
+    private static java.util.Map<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampBlock>> lamps(boolean inverted) {
+      var lamps = new java.util.EnumMap<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampBlock>>(net.minecraft.world.item.DyeColor.class);
+      for (var color : net.minecraft.world.item.DyeColor.values()) {
+        lamps.put(color, BLOCKS.register(color.getName() + (inverted ? "_inverted_lamp" : "_lamp"),
+            () -> new com.malevolentgods.fourtwenty.block.LampBlock(inverted, lampProperties())));
+      }
+      return java.util.Collections.unmodifiableMap(lamps);
+    }
+
+    private static java.util.Map<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampTrimBlock>> lampTrims() {
+      var trims = new java.util.EnumMap<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampTrimBlock>>(net.minecraft.world.item.DyeColor.class);
+      for (var color : net.minecraft.world.item.DyeColor.values()) {
+        trims.put(color, BLOCKS.register(color.getName() + "_lamp_trim",
+            () -> new com.malevolentgods.fourtwenty.block.LampTrimBlock(lampProperties().noOcclusion())));
+      }
+      return java.util.Collections.unmodifiableMap(trims);
     }
 
     public static final DeferredHolder<Block, WeedBongBlock> WEED_BONG = BLOCKS.register("weed_bong",

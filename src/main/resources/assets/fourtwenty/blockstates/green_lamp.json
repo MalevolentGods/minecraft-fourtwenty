@@ -1,7 +1,10 @@
 {
   "variants": {
-    "": {
-      "model": "fourtwenty:block/green_lamp"
+    "lit=true": {
+      "model": "fourtwenty:block/green_lamp_on"
+    },
+    "lit=false": {
+      "model": "fourtwenty:block/green_lamp_off"
     }
   }
 }

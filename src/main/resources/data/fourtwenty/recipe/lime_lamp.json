@@ -1,21 +1,26 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    {
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GDG",
+    "GTG",
+    "GRG"
+  ],
+  "key": {
+    "G": {
       "item": "minecraft:glass"
     },
-    {
-      "item": "minecraft:glowstone_dust"
-    },
-    {
-      "item": "minecraft:glowstone_dust"
-    },
-    {
+    "D": {
       "item": "minecraft:lime_dye"
+    },
+    "T": {
+      "item": "minecraft:torch"
+    },
+    "R": {
+      "item": "minecraft:redstone"
     }
-  ],
+  },
   "result": {
     "id": "fourtwenty:lime_lamp",
-    "count": 1
+    "count": 4
   }
 }

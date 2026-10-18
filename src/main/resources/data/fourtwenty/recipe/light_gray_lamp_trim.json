@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "fourtwenty:light_gray_inverted_lamp"
+    }
+  ],
+  "result": {
+    "id": "fourtwenty:light_gray_lamp_trim",
+    "count": 8
+  }
+}

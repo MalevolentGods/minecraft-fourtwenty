@@ -101,7 +101,13 @@ The [Phase 5 handoff](docs/DISPENSARY_PHASE5.md) records automated and client ev
 
 ## Lamps
 
-Always-lit decorative lamps for builds: **Lime Lamp**, **Green Lamp** and **White Lamp**, each crafted from glass, 2 glowstone dust and the matching dye (shapeless). **Lime Lamp Trim** is a thin glowing plate that sticks to whichever face you click, like a microblock cover. One Lime Lamp crafts into 8 trims. The bundled Dispensary uses them, so it needs no lighting mod.
+Coloured lamps in all 16 dye colours, for builds that need lighting without another mod:
+
+- **Lamp:** lights while powered by redstone. Craft 6 glass around a torch, with the dye on top and redstone below, for **4 lamps**.
+- **Inverted Lamp:** lit unless powered, so it is always on as decoration. Craft a lamp and a redstone torch.
+- **Lamp Trim:** a thin, always-lit plate that sticks to whichever face you click, like a microblock cover. One inverted lamp crafts into 8.
+
+The bundled Dispensary uses them, so it needs no lighting mod. `tools/import_dispensary_blueprints.py --lamps-only` converts blueprints that use ProjectRed illumar lamps or CB Multipart lamp covers to these blocks.
 
 ## Use a bong
 
