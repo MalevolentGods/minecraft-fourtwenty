@@ -99,6 +99,17 @@ By default, completed consumption satisfies demand and grants **one extra maximu
 
 The [Phase 5 handoff](docs/DISPENSARY_PHASE5.md) records automated and client evidence separately from outstanding native builder, upgrade, repair, and gameplay observations.
 
+## Sensi Heights style pack
+
+FourTwenty ships the **Sensi Heights** MineColonies style: "A hillside town that grows around the grow." Pick it in the Build Tool (**Switch Pack → Sensi Heights**). It currently includes:
+
+- **Supply camp:** stocked racks and weed seeds. It is also level 1 of the Workshop.
+- **Workshop (levels 1–5):** an upgradable decoration. Its racks are never broken on upgrade.
+- **Residence (levels 1–5).**
+- **Dispensary (levels 1–5):** the same design as the FourTwenty pack's.
+
+More huts are added as they're built. The pack lives in its own repository and is bundled with `python3 tools/import_sensi_heights.py <pack>/sensiheights`, which validates it (huts link to their own files, no ProjectRed/CB blocks). A few blueprints use a Farmer's Delight cutting board, which is simply left out without that mod.
+
 ## Lamps
 
 Coloured lamps in all 16 dye colours, for builds that need lighting without another mod:
