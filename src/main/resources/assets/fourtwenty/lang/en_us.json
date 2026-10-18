@@ -75,5 +75,13 @@
   "fourtwenty.dispensary.affinity.step.6": "four times a day",
   "fourtwenty.dispensary.affinity.step.7": "over the limit",
   "fourtwenty.dispensary.status.menu": "%s: %s / %s target",
-  "fourtwenty.dispensary.status.condition.needs": "Production needs %s."
+  "fourtwenty.dispensary.status.condition.needs": "Production needs %s.",
+  "block.fourtwenty.lime_lamp": "Lime Lamp",
+  "item.fourtwenty.lime_lamp": "Lime Lamp",
+  "block.fourtwenty.green_lamp": "Green Lamp",
+  "item.fourtwenty.green_lamp": "Green Lamp",
+  "block.fourtwenty.white_lamp": "White Lamp",
+  "item.fourtwenty.white_lamp": "White Lamp",
+  "block.fourtwenty.lime_lamp_trim": "Lime Lamp Trim",
+  "item.fourtwenty.lime_lamp_trim": "Lime Lamp Trim"
 }

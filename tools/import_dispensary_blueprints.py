@@ -6,8 +6,9 @@ its five levels into src/main/resources/blueprints/fourtwenty/dispensary/dispens
 
 - the hut block's pack/path become FourTwenty's (``FourTwenty`` / ``dispensary/dispensaryN.blueprint``)
   so upgrades find the next level inside the mod;
-- blocks from mods FourTwenty doesn't depend on get vanilla stand-ins (ProjectRed illumar lamps
-  become froglights or sea lanterns, CB Multipart covers become lime carpet);
+- blocks from mods FourTwenty doesn't depend on become FourTwenty's own equivalents: ProjectRed's
+  always-lit illumar lamps become FourTwenty lamps of the same colour, and CB Multipart lamp covers
+  become Lime Lamp Trim on the same face;
 - ``required_mods`` is recomputed from what's left.
 
 Usage:  python3 tools/import_dispensary_blueprints.py <Sensi Heights pack dir>/craftsmanship/luxury
@@ -26,11 +27,13 @@ PACK, HUT = 'FourTwenty', 'fourtwenty:dispensary'
 # Mods every FourTwenty Dispensary may rely on: MineColonies and its own dependencies.
 ALLOWED = {'minecraft', 'minecolonies', 'structurize', 'domum_ornamentum', 'fourtwenty'}
 STAND_INS = {
-    'projectred_illumination:lime_inverted_illumar_lamp': 'minecraft:verdant_froglight',
-    'projectred_illumination:green_inverted_illumar_lamp': 'minecraft:verdant_froglight',
-    'projectred_illumination:white_inverted_illumar_lamp': 'minecraft:sea_lantern',
-    'cb_multipart:multipart': 'minecraft:lime_carpet',
+    'projectred_illumination:lime_inverted_illumar_lamp': 'fourtwenty:lime_lamp',
+    'projectred_illumination:green_inverted_illumar_lamp': 'fourtwenty:green_lamp',
+    'projectred_illumination:white_inverted_illumar_lamp': 'fourtwenty:white_lamp',
 }
+TRIM = 'fourtwenty:lime_lamp_trim'
+# CB Multipart cover sides, by the low nibble of a face part's "shape".
+CB_SIDES = ('down', 'up', 'north', 'south', 'west', 'east')
 PASSABLE = ('_door', 'fence_gate', 'carpet', 'pressure_plate', 'button', 'torch', '_sign', 'rail', 'flower', 'vine', 'lever', 'snow', 'tripwire', 'redstone_wire')
 END, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, BYTES, STRING, LIST, COMPOUND, INTS, LONGS = range(13)
 
@@ -130,19 +133,39 @@ def convert(root, level):
     sx, sy, sz = size(root)
     palette = root['palette'][1][1]
     blocks = unpack(root)
-    # Map every palette entry to a (possibly substituted) state, merging duplicates.
-    new_palette, remap, seen = [], {}, {}
-    for i, entry in enumerate(palette):
-        name = entry['Name'][1]
-        if name in STAND_INS:
-            entry = {'Name': (STRING, STAND_INS[name])}
+    # The face each CB cover sits on, by position (from its saved parts).
+    cover_side = {}
+    for te in root['tile_entities'][1][1]:
+        if te.get('id', (0, ''))[1].startswith('cb_multipart:'):
+            parts = te.get('parts', (LIST, (COMPOUND, [])))[1][1]
+            faces = [part['shape'][1] & 0x0F for part in parts if part.get('id', (0, ''))[1] == 'cb_microblock:face']
+            cover_side[(te['x'][1], te['y'][1], te['z'][1])] = CB_SIDES[faces[0]] if faces else 'down'
+    new_palette, seen = [], {}
+
+    def index(entry):
         key = repr(sorted((k, v) for k, v in entry.items()))
         if key not in seen:
             seen[key] = len(new_palette)
             new_palette.append(entry)
-        remap[i] = seen[key]
-    root['palette'] = (LIST, (COMPOUND, new_palette))
-    root['blocks'] = (INTS, pack([remap[b] for b in blocks]))
+        return seen[key]
+
+    remap = {}
+    for i, entry in enumerate(palette):
+        name = entry['Name'][1]
+        remap[i] = index({'Name': (STRING, STAND_INS[name])} if name in STAND_INS else entry)
+    converted = []
+    for i, b in enumerate(blocks):
+        if palette[b]['Name'][1] == 'cb_multipart:multipart':
+            y, z, x = i // (sx * sz), (i % (sx * sz)) // sx, i % sx
+            side = cover_side.get((x, y, z), 'down')
+            converted.append(index({'Name': (STRING, TRIM), 'Properties': (COMPOUND, {'facing': (STRING, side)})}))
+        else:
+            converted.append(remap[b])
+    # Keep only palette entries still in use (the replaced ones would still list their mods).
+    used = sorted(set(converted))
+    compact = {old: new for new, old in enumerate(used)}
+    root['palette'] = (LIST, (COMPOUND, [new_palette[i] for i in used]))
+    root['blocks'] = (INTS, pack([compact[i] for i in converted]))
     # Drop tile data of substituted blocks (CB Multipart's saved parts).
     kept = [te for te in root['tile_entities'][1][1] if not te.get('id', (0, ''))[1].startswith('cb_multipart:')]
     root['tile_entities'] = (LIST, (COMPOUND, kept))

@@ -99,6 +99,10 @@ By default, completed consumption satisfies demand and grants **one extra maximu
 
 The [Phase 5 handoff](docs/DISPENSARY_PHASE5.md) records automated and client evidence separately from outstanding native builder, upgrade, repair, and gameplay observations.
 
+## Lamps
+
+Always-lit decorative lamps for builds: **Lime Lamp**, **Green Lamp** and **White Lamp**, each crafted from glass, 2 glowstone dust and the matching dye (shapeless). **Lime Lamp Trim** is a thin glowing plate that sticks to whichever face you click, like a microblock cover. One Lime Lamp crafts into 8 trims. The bundled Dispensary uses them, so it needs no lighting mod.
+
 ## Use a bong
 
 Right-click the bong to open its inventory:

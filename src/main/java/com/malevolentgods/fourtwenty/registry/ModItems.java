@@ -20,6 +20,15 @@ public class ModItems {
             new ItemNameBlockItem(com.malevolentgods.fourtwenty.registry.ModBlocks.WEED_CROP.get(),
                 new Item.Properties()));
 
+    public static final DeferredHolder<Item, BlockItem> LIME_LAMP = blockItem("lime_lamp", ModBlocks.LIME_LAMP);
+    public static final DeferredHolder<Item, BlockItem> GREEN_LAMP = blockItem("green_lamp", ModBlocks.GREEN_LAMP);
+    public static final DeferredHolder<Item, BlockItem> WHITE_LAMP = blockItem("white_lamp", ModBlocks.WHITE_LAMP);
+    public static final DeferredHolder<Item, BlockItem> LIME_LAMP_TRIM = blockItem("lime_lamp_trim", ModBlocks.LIME_LAMP_TRIM);
+
+    private static DeferredHolder<Item, BlockItem> blockItem(String name, DeferredHolder<? extends net.minecraft.world.level.block.Block, ? extends net.minecraft.world.level.block.Block> block) {
+        return ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+    }
+
     public static final DeferredHolder<Item, Item> WEED_BUD =
         ITEMS.register("weed_bud", () ->
             new Item(new Item.Properties()));
