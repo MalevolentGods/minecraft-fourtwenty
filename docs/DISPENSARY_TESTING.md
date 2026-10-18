@@ -138,6 +138,13 @@ Also check that:
 7. With no specialty bong in the shop, a level 5 smoker smokes a joint as before.
 8. `/fourtwenty clock 24000`: the buff expires and their skills return to normal.
 
+## Sensi Heights style pack
+
+Build Tool → Switch Pack → **Sensi Heights**:
+- The supply camp, Workshop 1–5, Residence 1–5 and Dispensary 1–5 are listed.
+- A placed Residence upgrades from level 1 to level 5.
+- A server or client without Farmer's Delight still loads the pack; the cutting boards are just missing.
+
 ## Other branches
 
 - **Builder costs** (`feat/froglight-placement-handler`): a blueprint with froglights lists sea lanterns in the builder's resources. CB microblock covers cost their source block at 1 per 8 covers, so the Dispensary level 5 roof trim needs 6 lime lamps.

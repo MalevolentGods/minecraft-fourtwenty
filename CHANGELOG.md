@@ -30,6 +30,8 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - **Lamps:** Lamp, Inverted Lamp and Lamp Trim in 16 colours, with ProjectRed's illumar textures and halo.
   - Halos merge between touching lamps.
   - Lit lamp items glow in inventories.
+- **The Sensi Heights style pack** is bundled (`blueprints/fourtwenty/sensiheights`): supply camp, Workshop 1–5, Residence 1–5 and Dispensary 1–5.
+  - `tools/import_sensi_heights.py` imports and validates it from its own repository.
 - **Bundled Sensi Heights Dispensary** (levels 1–5) and a 3D two-block counter hut block.
   - `tools/import_dispensary_blueprints.py` re-imports and validates the levels, and converts ProjectRed lamps and CB covers to FourTwenty lamps.
 - **Builder costs:** froglights cost a sea lantern, and CB Multipart microblocks cost their source block at 1 per 8 covers.

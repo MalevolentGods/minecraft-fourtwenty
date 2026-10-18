@@ -30,6 +30,7 @@ This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and 
 - **Lamps.** Lamps, inverted (always-lit) lamps and thin lamp trim in all 16 colours.
   - They use ProjectRed's illumar textures and soft glow halo.
   - Touching lamps share one glow.
+- **The Sensi Heights style is built in.** The Sensi Heights MineColonies style pack ships with the mod: supply camp, Workshop 1–5, Residence 1–5 and Dispensary 1–5. Pick it with Switch Pack in the Build Tool.
 - **A new Dispensary.**
   - The bundled hut is now the Sensi Heights Dispensary: a wooden shop that grows into a rooftop lounge.
   - Its hut block is a 3D two-block shop counter.
