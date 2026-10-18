@@ -6,14 +6,18 @@ its five levels into src/main/resources/blueprints/fourtwenty/dispensary/dispens
 
 - the hut block's pack/path become FourTwenty's (``FourTwenty`` / ``dispensary/dispensaryN.blueprint``)
   so upgrades find the next level inside the mod;
-- blocks from mods FourTwenty doesn't depend on become FourTwenty's own equivalents: ProjectRed's
-  always-lit illumar lamps become FourTwenty lamps of the same colour, and CB Multipart lamp covers
-  become Lime Lamp Trim on the same face;
+- blocks from mods FourTwenty doesn't depend on become FourTwenty's own equivalents: ProjectRed
+  illumar lamps become FourTwenty lamps of the same colour and type (inverted stays inverted, lit
+  state kept), and CB Multipart lamp covers become that colour's Lamp Trim on the same face;
 - ``required_mods`` is recomputed from what's left.
 
 Usage:  python3 tools/import_dispensary_blueprints.py <Sensi Heights pack dir>/craftsmanship/luxury
 Then:   python3 -m unittest discover -s tools/tests   (validates the bundled levels)
+
+        python3 tools/import_dispensary_blueprints.py --lamps-only FILE.blueprint...
+        rewrites any blueprints in place with only the lamp/cover replacement (e.g. a style pack).
 """
+import re
 import gzip
 import io
 import struct
@@ -26,12 +30,7 @@ BUNDLED = ROOT / 'src/main/resources/blueprints/fourtwenty/dispensary/dispensary
 PACK, HUT = 'FourTwenty', 'fourtwenty:dispensary'
 # Mods every FourTwenty Dispensary may rely on: MineColonies and its own dependencies.
 ALLOWED = {'minecraft', 'minecolonies', 'structurize', 'domum_ornamentum', 'fourtwenty'}
-STAND_INS = {
-    'projectred_illumination:lime_inverted_illumar_lamp': 'fourtwenty:lime_lamp',
-    'projectred_illumination:green_inverted_illumar_lamp': 'fourtwenty:green_lamp',
-    'projectred_illumination:white_inverted_illumar_lamp': 'fourtwenty:white_lamp',
-}
-TRIM = 'fourtwenty:lime_lamp_trim'
+ILLUMAR = re.compile(r'projectred_illumination:(?P<color>[a-z_]+?)_(?P<inverted>inverted_)?illumar_lamp')
 # CB Multipart cover sides, by the low nibble of a face part's "shape".
 CB_SIDES = ('down', 'up', 'north', 'south', 'west', 'east')
 PASSABLE = ('_door', 'fence_gate', 'carpet', 'pressure_plate', 'button', 'torch', '_sign', 'rail', 'flower', 'vine', 'lever', 'snow', 'tripwire', 'redstone_wire')
@@ -128,18 +127,33 @@ def hut_tile(root):
     return None
 
 
-def convert(root, level):
-    """Rewrite one Sensi Heights level into FourTwenty's bundled form (in place)."""
+def lamp_for(name):
+    """FourTwenty's block for a ProjectRed illumar lamp id, or None."""
+    match = ILLUMAR.fullmatch(name)
+    if not match: return None
+    return f"fourtwenty:{match['color']}_{'inverted_' if match['inverted'] else ''}lamp"
+
+
+def trim_for(material):
+    """FourTwenty's lamp trim for a CB cover material such as 'projectred_illumination:lime_inverted_illumar_lamp//lit.true'."""
+    match = ILLUMAR.match(material or '')
+    return f"fourtwenty:{match['color']}_lamp_trim" if match else 'fourtwenty:lime_lamp_trim'
+
+
+def replace_lighting(root):
+    """Swap ProjectRed lamps and CB lamp covers for FourTwenty's lamps and lamp trims (in place)."""
     sx, sy, sz = size(root)
     palette = root['palette'][1][1]
     blocks = unpack(root)
-    # The face each CB cover sits on, by position (from its saved parts).
-    cover_side = {}
+    # The face and material of each CB cover, by position (from its saved parts).
+    covers = {}
     for te in root['tile_entities'][1][1]:
         if te.get('id', (0, ''))[1].startswith('cb_multipart:'):
             parts = te.get('parts', (LIST, (COMPOUND, [])))[1][1]
-            faces = [part['shape'][1] & 0x0F for part in parts if part.get('id', (0, ''))[1] == 'cb_microblock:face']
-            cover_side[(te['x'][1], te['y'][1], te['z'][1])] = CB_SIDES[faces[0]] if faces else 'down'
+            faces = [part for part in parts if part.get('id', (0, ''))[1] == 'cb_microblock:face']
+            side = CB_SIDES[faces[0]['shape'][1] & 0x0F] if faces else 'down'
+            material = faces[0].get('material', (STRING, ''))[1] if faces else ''
+            covers[(te['x'][1], te['y'][1], te['z'][1])] = (side, trim_for(material))
     new_palette, seen = [], {}
 
     def index(entry):
@@ -151,14 +165,14 @@ def convert(root, level):
 
     remap = {}
     for i, entry in enumerate(palette):
-        name = entry['Name'][1]
-        remap[i] = index({'Name': (STRING, STAND_INS[name])} if name in STAND_INS else entry)
+        lamp = lamp_for(entry['Name'][1])
+        remap[i] = index(dict(entry, Name=(STRING, lamp)) if lamp else entry)   # keeps the lit property
     converted = []
     for i, b in enumerate(blocks):
         if palette[b]['Name'][1] == 'cb_multipart:multipart':
             y, z, x = i // (sx * sz), (i % (sx * sz)) // sx, i % sx
-            side = cover_side.get((x, y, z), 'down')
-            converted.append(index({'Name': (STRING, TRIM), 'Properties': (COMPOUND, {'facing': (STRING, side)})}))
+            side, trim = covers.get((x, y, z), ('down', 'fourtwenty:lime_lamp_trim'))
+            converted.append(index({'Name': (STRING, trim), 'Properties': (COMPOUND, {'facing': (STRING, side)})}))
         else:
             converted.append(remap[b])
     # Keep only palette entries still in use (the replaced ones would still list their mods).
@@ -169,6 +183,14 @@ def convert(root, level):
     # Drop tile data of substituted blocks (CB Multipart's saved parts).
     kept = [te for te in root['tile_entities'][1][1] if not te.get('id', (0, ''))[1].startswith('cb_multipart:')]
     root['tile_entities'] = (LIST, (COMPOUND, kept))
+    mods = sorted({n.split(':')[0] for n in names(root)} - {'minecraft'})
+    root['required_mods'] = (LIST, (STRING, mods))
+    return root
+
+
+def convert(root, level):
+    """Rewrite one Sensi Heights level into FourTwenty's bundled form (in place)."""
+    replace_lighting(root)
     provider = hut_tile(root)['blueprintDataProvider'][1]
     provider['pack'] = (STRING, PACK)
     provider['path'] = (STRING, f'dispensary/dispensary{level}.blueprint')
@@ -264,7 +286,18 @@ def main(source):
               + ('OK' if not problems else 'PROBLEMS: ' + '; '.join(problems)))
 
 
+def lamps_only(files):
+    for path in files:
+        root = replace_lighting(load(path))
+        Path(path).write_bytes(dump(root))
+        left = sorted({n.split(':')[0] for n in names(root)} & {'projectred_illumination', 'cb_multipart'})
+        print(f'{path}: mods {root["required_mods"][1][1]}' + (f' STILL USES {left}' if left else ''))
+
+
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
+    if len(sys.argv) >= 3 and sys.argv[1] == '--lamps-only':
+        lamps_only(sys.argv[2:])
+    elif len(sys.argv) == 2:
+        main(sys.argv[1])
+    else:
         sys.exit(__doc__)
-    main(sys.argv[1])
