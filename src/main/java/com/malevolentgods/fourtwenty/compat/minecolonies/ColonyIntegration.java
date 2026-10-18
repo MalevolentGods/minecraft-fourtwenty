@@ -28,6 +28,12 @@ public final class ColonyIntegration {
             var voices = com.minecolonies.api.sounds.ModSoundEvents.CITIZEN_SOUND_EVENTS;
             voices.putIfAbsent("budtender", java.util.Map.copyOf(java.util.Objects.requireNonNull(voices.get("unemployed"))));
         }));
+        // Builders pay a craftable substitute for froglights; see BuilderCostSubstitutions.
+        bus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) -> event.enqueueWork(() -> {
+            com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.add(
+                    new com.malevolentgods.fourtwenty.compat.minecolonies.placement.SubstituteCostPlacementHandler());
+            com.mojang.logging.LogUtils.getLogger().info("FourTwenty builder cost substitutions enabled (froglights cost a sea lantern)");
+        }));
         com.mojang.logging.LogUtils.getLogger().info("FourTwenty dispensary foundation enabled (MineColonies 1.1.1343)");
     }
     /** Guard housing is the native home assignment, including work-at-home guard quarters. Never use workplace fallback. */
