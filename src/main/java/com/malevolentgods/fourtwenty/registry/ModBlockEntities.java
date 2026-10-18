@@ -15,4 +15,13 @@ public class ModBlockEntities {
         BLOCK_ENTITIES.register("weed_bong", () -> 
             BlockEntityType.Builder.of(WeedBongBlockEntity::new, ModBlocks.WEED_BONG.get())
                 .build(null));
+
+    /** Every lamp, inverted lamp and lamp trim (for the client-side halo). */
+    @SuppressWarnings("null")
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.malevolentgods.fourtwenty.blockentity.LampBlockEntity>> LAMP =
+        BLOCK_ENTITIES.register("lamp", () -> BlockEntityType.Builder.of(com.malevolentgods.fourtwenty.blockentity.LampBlockEntity::new,
+                java.util.stream.Stream.of(ModBlocks.LAMPS, ModBlocks.INVERTED_LAMPS, ModBlocks.LAMP_TRIMS)
+                    .flatMap(map -> map.values().stream()).map(holder -> (net.minecraft.world.level.block.Block) holder.get())
+                    .toArray(net.minecraft.world.level.block.Block[]::new))
+            .build(null));
 }

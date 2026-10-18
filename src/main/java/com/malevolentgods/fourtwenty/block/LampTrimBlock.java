@@ -22,8 +22,8 @@ import java.util.Map;
  * A thin glowing lamp plate (2 pixels) on one face of its block space, like a microblock cover:
  * {@code FACING} is the side it's attached to. Placed against the face you click.
  */
-public class LampTrimBlock extends DirectionalBlock {
-    public static final MapCodec<LampTrimBlock> CODEC = simpleCodec(LampTrimBlock::new);
+public class LampTrimBlock extends DirectionalBlock implements net.minecraft.world.level.block.EntityBlock {
+    public static final MapCodec<LampTrimBlock> CODEC = simpleCodec(properties -> new LampTrimBlock(net.minecraft.world.item.DyeColor.LIME, properties));
     private static final Map<Direction, VoxelShape> SHAPES = new EnumMap<>(Map.of(
             Direction.DOWN, Block.box(0, 0, 0, 16, 2, 16),
             Direction.UP, Block.box(0, 14, 0, 16, 16, 16),
@@ -32,12 +32,22 @@ public class LampTrimBlock extends DirectionalBlock {
             Direction.WEST, Block.box(0, 0, 0, 2, 16, 16),
             Direction.EAST, Block.box(14, 0, 0, 16, 16, 16)));
 
-    public LampTrimBlock(Properties properties) {
+    private final net.minecraft.world.item.DyeColor color;
+
+    public LampTrimBlock(net.minecraft.world.item.DyeColor color, Properties properties) {
         super(properties);
+        this.color = color;
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.DOWN));
     }
 
     @Override protected MapCodec<? extends DirectionalBlock> codec() { return CODEC; }
+
+    public net.minecraft.world.item.DyeColor color() { return color; }
+
+    /** Only so the client can draw the halo (see LampHaloRenderer). */
+    @Override public net.minecraft.world.level.block.entity.BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
+        return new com.malevolentgods.fourtwenty.blockentity.LampBlockEntity(pos, state);
+    }
 
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);

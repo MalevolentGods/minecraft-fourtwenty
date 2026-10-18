@@ -15,17 +15,25 @@ import javax.annotation.Nonnull;
  * A coloured lamp. A regular lamp lights while powered by redstone; an inverted lamp is lit unless
  * powered (always on as decoration). Lit lamps glow at full brightness.
  */
-public class LampBlock extends Block {
+public class LampBlock extends Block implements net.minecraft.world.level.block.EntityBlock {
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
+    private final net.minecraft.world.item.DyeColor color;
     private final boolean inverted;
 
-    public LampBlock(boolean inverted, Properties properties) {
+    public LampBlock(net.minecraft.world.item.DyeColor color, boolean inverted, Properties properties) {
         super(properties);
+        this.color = color;
         this.inverted = inverted;
         registerDefaultState(stateDefinition.any().setValue(LIT, inverted));
     }
 
     public boolean inverted() { return inverted; }
+    public net.minecraft.world.item.DyeColor color() { return color; }
+
+    /** Only so the client can draw the halo (see LampHaloRenderer). */
+    @Override public net.minecraft.world.level.block.entity.BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
+        return new com.malevolentgods.fourtwenty.blockentity.LampBlockEntity(pos, state);
+    }
 
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(LIT);
