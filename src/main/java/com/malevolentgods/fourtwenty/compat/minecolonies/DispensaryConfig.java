@@ -50,7 +50,12 @@ public final class DispensaryConfig {
         }
         return prices;
     }
+    /** Native colony tests pin drift (null = use the config). Never set in normal play. */
+    private static volatile com.malevolentgods.fourtwenty.compat.minecolonies.domain.AffinityRules.Tuning tuningOverride;
+    public static void overrideTuning(com.malevolentgods.fourtwenty.compat.minecolonies.domain.AffinityRules.Tuning tuning) { tuningOverride = tuning; }
     public static com.malevolentgods.fourtwenty.compat.minecolonies.domain.AffinityRules.Tuning tuning() {
+        var override = tuningOverride;
+        if (override != null) return override;
         return new com.malevolentgods.fourtwenty.compat.minecolonies.domain.AffinityRules.Tuning(CHANGE_CHANCE.get(), UP_CHANCE.get(), BREAK_TICKS.get());
     }
     public static double toleranceBreakWeight() { return BREAK_WEIGHT.get(); }
