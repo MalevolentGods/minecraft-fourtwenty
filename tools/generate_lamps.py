@@ -37,6 +37,18 @@ def loot(name):
                                                   'conditions': [{'condition': 'minecraft:survives_explosion'}]}]}
 
 
+def BUILTIN_ITEM(particle):
+    """An item model drawn by a custom renderer, held and shown like a block."""
+    return {'parent': 'minecraft:builtin/entity', 'textures': {'particle': particle}, 'gui_light': 'side', 'display': {
+        'gui': {'rotation': [30, 225, 0], 'translation': [0, 0, 0], 'scale': [0.625, 0.625, 0.625]},
+        'ground': {'rotation': [0, 0, 0], 'translation': [0, 3, 0], 'scale': [0.25, 0.25, 0.25]},
+        'head': {'rotation': [0, 0, 0], 'translation': [0, 0, 0], 'scale': [1, 1, 1]},
+        'fixed': {'rotation': [0, 0, 0], 'translation': [0, 0, 0], 'scale': [0.5, 0.5, 0.5]},
+        'thirdperson_righthand': {'rotation': [75, 45, 0], 'translation': [0, 2.5, 0], 'scale': [0.375, 0.375, 0.375]},
+        'firstperson_righthand': {'rotation': [0, 45, 0], 'translation': [0, 0, 0], 'scale': [0.4, 0.4, 0.4]},
+        'firstperson_lefthand': {'rotation': [0, 225, 0], 'translation': [0, 0, 0], 'scale': [0.4, 0.4, 0.4]}}}
+
+
 def title(color): return ' '.join(part.capitalize() for part in color.split('_'))
 
 
@@ -63,25 +75,26 @@ def generate():
             write(ASSETS / f'blockstates/{lamp}.json', {'variants': {
                 'lit=true': {'model': f'fourtwenty:block/{color}_lamp_on'},
                 'lit=false': {'model': f'fourtwenty:block/{color}_lamp_off'}}})
-            write(ASSETS / f'models/item/{lamp}.json', {'parent': f'fourtwenty:block/{color}_lamp_{item_state}'})
+            # Lit (inverted) lamp items are drawn by LampItemRenderer with their halo, like ProjectRed's.
+            write(ASSETS / f'models/item/{lamp}.json', BUILTIN_ITEM(f'fourtwenty:block/{color}_lamp_on') if item_state == 'on'
+                  else {'parent': f'fourtwenty:block/{color}_lamp_{item_state}'})
             write(DATA / f'loot_table/blocks/{lamp}.json', loot(lamp))
         trim = f'{color}_lamp_trim'
         write(ASSETS / f'models/block/{trim}.json', {'parent': 'fourtwenty:block/lamp_trim',
                                                      'textures': {'lamp': f'fourtwenty:block/{color}_lamp_on'}})
         write(ASSETS / f'blockstates/{trim}.json', {'variants': {
             f'facing={d}': {'model': f'fourtwenty:block/{trim}', **r} for d, r in trim_rotation.items()}})
-        write(ASSETS / f'models/item/{trim}.json', {'parent': f'fourtwenty:block/{trim}'})
+        write(ASSETS / f'models/item/{trim}.json', BUILTIN_ITEM(f'fourtwenty:block/{color}_lamp_on'))
         write(DATA / f'loot_table/blocks/{trim}.json', loot(trim))
-        # Recipes from Overworld resources, a little effort but no grind: 6 glass around a torch
-        # with a dye above and redstone below -> 4 lamps; inverted = lamp + redstone torch;
-        # 1 inverted lamp -> 8 trims.
+        # Recipes, a little effort but no grind: 6 glass around a torch with a dye above and a weed
+        # bud below -> 4 lamps; inverted = lamp + joint; 1 inverted lamp -> 8 trims.
         write(DATA / f'recipe/{color}_lamp.json', {'type': 'minecraft:crafting_shaped',
             'pattern': ['GDG', 'GTG', 'GRG'],
             'key': {'G': {'item': 'minecraft:glass'}, 'D': {'item': f'minecraft:{color}_dye'},
-                    'T': {'item': 'minecraft:torch'}, 'R': {'item': 'minecraft:redstone'}},
+                    'T': {'item': 'minecraft:torch'}, 'R': {'item': 'fourtwenty:weed_bud'}},
             'result': {'id': f'fourtwenty:{color}_lamp', 'count': 4}})
         write(DATA / f'recipe/{color}_inverted_lamp.json', {'type': 'minecraft:crafting_shapeless', 'ingredients': [
-            {'item': f'fourtwenty:{color}_lamp'}, {'item': 'minecraft:redstone_torch'}],
+            {'item': f'fourtwenty:{color}_lamp'}, {'item': 'fourtwenty:weed_joint'}],
             'result': {'id': f'fourtwenty:{color}_inverted_lamp', 'count': 1}})
         write(DATA / f'recipe/{trim}.json', {'type': 'minecraft:crafting_shapeless', 'ingredients': [
             {'item': f'fourtwenty:{color}_inverted_lamp'}], 'result': {'id': f'fourtwenty:{trim}', 'count': 8}})

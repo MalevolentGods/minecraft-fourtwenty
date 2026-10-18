@@ -13,15 +13,23 @@ public final class LampGlow {
             -1819044960, 8882080, 1577107616, 320061600, 1327956128, 143065248, -1576073568, 522133408};
     private static final float[] BRIGHTNESS = {
             0.9F, 0.8F, 0.8F, 0.9F, 0.8F, 0.9F, 0.9F, 0.5F, 0.6F, 0.8F, 0.8F, 0.8F, 0.5F, 0.7F, 0.8F, 0.4F};
+    /** ProjectRed's item (inventory and hand) glow brightness per colour. */
+    private static final float[] ITEM_BRIGHTNESS = {
+            0.8F, 0.8F, 0.8F, 0.9F, 0.8F, 0.9F, 0.9F, 0.5F, 0.6F, 0.8F, 0.8F, 0.8F, 0.5F, 0.7F, 0.8F, 0.4F};
     /** How far the halo extends past the lamp on every side, in blocks. */
     public static final double EXPAND = 0.05;
 
     /** The halo colour (0xRRGGBBAA) for dye colour index {@code index} (0 white .. 15 black). */
-    public static int rgba(int index) {
+    public static int rgba(int index) { return scaled(index, BRIGHTNESS[index]); }
+
+    /** The halo colour for a lamp item (inventory, hand, item frame). */
+    public static int itemRgba(int index) { return scaled(index, ITEM_BRIGHTNESS[index]); }
+
+    private static int scaled(int index, float brightness) {
         int base = BASE_RGBA[index];
         int r = base >> 24 & 0xFF, g = base >> 16 & 0xFF, b = base >> 8 & 0xFF, a = base & 0xFF;
         float[] hsb = Color.RGBtoHSB(r, g, b, null);
-        return Color.HSBtoRGB(hsb[0], hsb[1], BRIGHTNESS[index]) << 8 | a;
+        return Color.HSBtoRGB(hsb[0], hsb[1], brightness) << 8 | a;
     }
 
     private LampGlow() {}
