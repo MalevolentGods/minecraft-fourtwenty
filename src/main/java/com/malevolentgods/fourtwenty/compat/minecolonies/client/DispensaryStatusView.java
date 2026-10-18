@@ -12,5 +12,5 @@ public final class DispensaryStatusView extends AbstractBuildingModuleView {
     @Override public void deserialize(RegistryFriendlyByteBuf buffer) { status = DispensaryStatus.read(buffer); }
     @Override public BOWindow getWindow() { return new DispensaryStatusWindow(this); }
     @Override public Component getDesc() { return Component.translatable("fourtwenty.dispensary.status.title"); }
-    @Override public ResourceLocation getIconResourceLocation() { return ResourceLocation.parse("fourtwenty:textures/gui/dispensary.png"); }
+    @Override public ResourceLocation getIconResourceLocation() { return ResourceLocation.parse("fourtwenty:textures/gui/dispensary_tab.png"); }
 }
