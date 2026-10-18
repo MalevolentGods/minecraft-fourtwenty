@@ -45,9 +45,49 @@ public final class ProductionRules {
         return outstanding ? 0 : Math.min(size, Math.max(0, target(item, completedLevel) - held));
     }
 
+    /** Raw buds the Budtender never crafts from (bong sessions, the hookah), by Dispensary level. */
+    public static int budReserve(int completedLevel) {
+        return completedLevel < 1 || completedLevel > 5 ? 0 : new int[]{0, 4, 6, 8, 12, 16}[completedLevel];
+    }
+
+    /** Small batches so stock is shared out between the menu items. */
+    public static int smallBatch(MenuItem item) {
+        return switch (item) { case JOINT -> 8; case COOKIE, BROWNIE -> 4; case PIPE -> 2; };
+    }
+
     /**
-     * Ingredients the hut keeps on hand for its menu: a few batches' worth per item. At level 1
-     * this is the original 16 buds and 32 paper.
+     * The next production step: {@code item} x {@code count} to craft (null when nothing should
+     * start), and {@code budsToRequest} raw buds to ask the colony for.
+     */
+    public record Step(MenuItem item, int count, int budsToRequest) {}
+
+    /**
+     * Balanced production. One batch at a time, always for the menu item least stocked relative to
+     * its target, sized to use only buds above the reserve (each menu recipe uses one bud). Buds are
+     * requested up to the reserve plus the next batch.
+     */
+    public static Step next(int completedLevel, java.util.Map<MenuItem, Integer> held, int buds,
+                            boolean productionOpen, boolean budRequestOpen) {
+        MenuItem neediest = null;
+        double lowest = Double.MAX_VALUE;
+        for (var item : MenuItem.menu(completedLevel)) {
+            int target = target(item, completedLevel);
+            int have = held.getOrDefault(item, 0);
+            if (target <= 0 || have >= target) continue;
+            double fill = have / (double) target;
+            if (fill < lowest) { lowest = fill; neediest = item; }
+        }
+        int reserve = budReserve(completedLevel);
+        int want = neediest == null ? 0 : Math.min(smallBatch(neediest), target(neediest, completedLevel) - held.getOrDefault(neediest, 0));
+        int budsWanted = reserve + (productionOpen ? 0 : want);
+        int budsToRequest = budRequestOpen ? 0 : Math.max(0, budsWanted - buds);
+        int count = productionOpen || neediest == null ? 0 : Math.min(want, Math.max(0, buds - reserve));
+        return new Step(count > 0 ? neediest : null, count, budsToRequest);
+    }
+
+    /**
+     * Ingredients the hut keeps on hand for its menu: a few batches' worth per item, plus the raw
+     * bud reserve. At level 1 this is the original 16 buds and 32 paper, plus 4 reserve buds.
      */
     public static Map<String, Integer> ingredientsKept(int completedLevel) {
         var kept = new LinkedHashMap<String, Integer>();
@@ -55,6 +95,7 @@ public final class ProductionRules {
             int batches = switch (item) { case JOINT -> 16; case COOKIE -> 8; case BROWNIE -> 4; case PIPE -> 2; };
             for (var input : recipe(item)) kept.merge(input.itemId(), input.count() * batches, Integer::sum);
         }
+        if (!kept.isEmpty()) kept.merge("fourtwenty:weed_bud", budReserve(completedLevel), Integer::sum);
         return kept;
     }
 
