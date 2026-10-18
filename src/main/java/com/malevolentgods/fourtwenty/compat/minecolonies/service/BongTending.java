@@ -54,7 +54,7 @@ public final class BongTending {
     public boolean tick(EntityCitizen worker, DispensaryBuilding building, long now, Supplies supplies) {
         if (target == null) {
             if (now % 20 != 0 || building.waitingCustomers(now) > 0) return false;
-            boolean serving = building.hasCustomers(now);
+            boolean serving = building.hasCustomers(now) || visitorsInside(worker, building);
             if (now >= scanAt) {
                 bongs = scan(worker, building);
                 scanAt = now + SCAN_EVERY;
@@ -103,6 +103,16 @@ public final class BongTending {
         if (needBuds > 0 && count(sources, s -> s.is(ModItems.WEED_BUD.get())) == 0) {
             supplies.request(new ItemStack(ModItems.WEED_BUD.get()), BongTendingRules.MAX_BUDS);
         }
+    }
+
+    /**
+     * Any colonist other than the budtender inside the hut. Customers smoke standing wherever they
+     * got their joint, so the queue and seat leases alone almost never show anyone around.
+     */
+    private static boolean visitorsInside(EntityCitizen worker, DispensaryBuilding building) {
+        var corners = building.getCorners();
+        var box = net.minecraft.world.phys.AABB.encapsulatingFullBlocks(corners.getA(), corners.getB());
+        return !worker.level().getEntitiesOfClass(EntityCitizen.class, box, c -> c != worker && c.isAlive()).isEmpty();
     }
 
     /** Only the front bong: the one nearest the hut block (the counter). Lounge bongs are self-serve. */
