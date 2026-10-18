@@ -85,12 +85,16 @@ public final class BongTending {
         return null;
     }
 
-    /** Raise native requests for what the bongs are missing and nobody has stocked (water is free). */
+    /**
+     * Raise native requests for what the bongs are missing and nobody has stocked (water is free).
+     * Buds are stocked ahead of customers (needs are checked as if serving), so the bong can be
+     * lit the moment someone walks in; they are only put in the bong while serving.
+     */
     private void requestSupplies(EntityCitizen worker, DispensaryBuilding building, boolean serving, Supplies supplies) {
         int needFuel = 0, needBuds = 0;
         for (var pos : bongs) {
             if (!(worker.level().getBlockEntity(pos) instanceof WeedBongBlockEntity bong)) continue;
-            var need = need(bong, serving);
+            var need = need(bong, true);
             if (need.fuel()) needFuel++;
             if (need.buds()) needBuds++;
         }
@@ -101,13 +105,16 @@ public final class BongTending {
         }
     }
 
+    /** Only the front bong: the one nearest the hut block (the counter). Lounge bongs are self-serve. */
     private static List<BlockPos> scan(EntityCitizen worker, DispensaryBuilding building) {
         var corners = building.getCorners();
-        var found = new ArrayList<BlockPos>();
+        var counter = building.getPosition();
+        BlockPos front = null;
         for (var pos : BlockPos.betweenClosed(corners.getA(), corners.getB())) {
-            if (worker.level().getBlockEntity(pos) instanceof WeedBongBlockEntity) found.add(pos.immutable());
+            if (worker.level().getBlockEntity(pos) instanceof WeedBongBlockEntity
+                    && (front == null || pos.distSqr(counter) < front.distSqr(counter))) front = pos.immutable();
         }
-        return List.copyOf(found);
+        return front == null ? List.of() : List.of(front);
     }
 
     private static BongTendingRules.Need need(WeedBongBlockEntity bong, boolean serving) {
