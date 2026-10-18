@@ -48,6 +48,15 @@ public final class JointService {
         return -1;
     }
 
+    /**
+     * Housing tier used for a visit. Staff of this Dispensary are always at the shop, so they only
+     * get something for the spot (as level 1–2 homes do), never a take-away to dump back into stock.
+     */
+    static int serviceLevel(EntityCitizen citizen, DispensaryBuilding building) {
+        int home = homeLevel(citizen);
+        return citizen.getCitizenData() != null && citizen.getCitizenData().getWorkBuilding() == building ? Math.min(home, 1) : home;
+    }
+
     /** Housing tier for service; no home means no service. */
     public static int homeLevel(EntityCitizen citizen) {
         var home = citizen.getCitizenData() == null ? null : citizen.getCitizenData().getHomeBuilding();
@@ -69,7 +78,7 @@ public final class JointService {
     public static boolean serve(EntityCitizen citizen, DispensaryBuilding building, List<IItemHandler> sources) {
         if (!live(building) || !inShop(citizen, building) || !due(citizen) || !CitizenSmokingTask.available(citizen)
                 || doseSlot(citizen.getInventoryCitizen()) >= 0) return false;
-        var plan = ServiceRules.plan(homeLevel(citizen), preference(citizen), stock(building, sources));
+        var plan = ServiceRules.plan(serviceLevel(citizen, building), preference(citizen), stock(building, sources));
         if (!plan.any()) return false;
         int moved = 0;
         if (plan.onSpot() != null) moved += move(sources, item(plan.onSpot()), 1, citizen.getInventoryCitizen());
@@ -98,7 +107,7 @@ public final class JointService {
         for (var data : building.getAllAssignedCitizen()) {
             if (data.getEntity().orElse(null) instanceof EntityCitizen worker && inShop(worker, building)) sources.add(data.getInventory());
         }
-        return ServiceRules.plan(homeLevel(citizen), preference(citizen), stock(building, sources)).any();
+        return ServiceRules.plan(serviceLevel(citizen, building), preference(citizen), stock(building, sources)).any();
     }
 
     public static int count(List<IItemHandler> sources, Item item) {
