@@ -38,9 +38,12 @@ public class LampHaloRenderer implements BlockEntityRenderer<LampBlockEntity> {
             box = state.getShape(lamp.getLevel(), lamp.getBlockPos()).bounds();
             colour = trim.color().getId();
         } else return;
-        int rgba = LampGlow.rgba(colour);
-        box = box.inflate(LampGlow.EXPAND);
-        cube(pose, buffers.getBuffer(HaloRenderType.HALO), box,
+        halo(pose, buffers, box, LampGlow.rgba(colour));
+    }
+
+    /** Draw the halo for a lamp occupying {@code box} (block-local), in colour {@code rgba} (0xRRGGBBAA). */
+    static void halo(PoseStack pose, MultiBufferSource buffers, AABB box, int rgba) {
+        cube(pose, buffers.getBuffer(HaloRenderType.HALO), box.inflate(LampGlow.EXPAND),
                 (rgba >>> 24) & 0xFF, (rgba >> 16) & 0xFF, (rgba >> 8) & 0xFF, rgba & 0xFF);
     }
 
