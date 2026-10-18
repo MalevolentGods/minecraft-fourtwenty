@@ -22,8 +22,11 @@ public final class LampGlow {
     /** The halo colour (0xRRGGBBAA) for dye colour index {@code index} (0 white .. 15 black). */
     public static int rgba(int index) { return scaled(index, BRIGHTNESS[index]); }
 
+    /** Item halos are a little more opaque than ProjectRed's 0xA0, so they read on inventory slots. */
+    public static final int ITEM_ALPHA = 0xC8;
+
     /** The halo colour for a lamp item (inventory, hand, item frame). */
-    public static int itemRgba(int index) { return scaled(index, ITEM_BRIGHTNESS[index]); }
+    public static int itemRgba(int index) { return scaled(index, ITEM_BRIGHTNESS[index]) & 0xFFFFFF00 | ITEM_ALPHA; }
 
     private static int scaled(int index, float brightness) {
         int base = BASE_RGBA[index];
