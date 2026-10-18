@@ -15,6 +15,7 @@ Unit tests (`./gradlew test`) cover the pure rules. The native colony GameTests 
 | `/fourtwenty expose <citizens> <type> <step>` | First exposure with a fixed type (`smoke`, `edible`, `both`, `none`) and step (0–6) |
 | `/fourtwenty forget <citizens>` | Back to "never tried it" (first exposure N/A) |
 | `/fourtwenty due <citizens>` | A craving colonist is due now (their grace deadline is kept) |
+| `/fourtwenty clear <citizens>` | Move their carried joints, edibles and pipes back into the nearest Dispensary (so the next craving sends them to the shop) |
 | `/fourtwenty break <citizens> start` / `end` | Start or end a tolerance break |
 | `/fourtwenty drift <citizens> <rolls>` | Apply drift rolls with the configured odds and print the steps |
 | `/fourtwenty clock <ticks>` | Advance the dispensary clock: due times, grace, health and breaks move; the world's day/night does not |
