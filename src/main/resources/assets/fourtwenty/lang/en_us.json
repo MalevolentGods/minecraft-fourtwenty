@@ -79,5 +79,13 @@
   "tag.item.fourtwenty.bong_fuel": "Hookah Fuel",
   "block.fourtwenty.glass_bong": "Bong",
   "item.fourtwenty.glass_bong": "Bong",
-  "block.fourtwenty.glass_bong.needs_bud": "You need a Weed Bud to pack the bong."
+  "block.fourtwenty.glass_bong.needs_bud": "You need a Weed Bud to pack the bong.",
+  "block.fourtwenty.lime_lamp": "Lime Lamp",
+  "item.fourtwenty.lime_lamp": "Lime Lamp",
+  "block.fourtwenty.green_lamp": "Green Lamp",
+  "item.fourtwenty.green_lamp": "Green Lamp",
+  "block.fourtwenty.white_lamp": "White Lamp",
+  "item.fourtwenty.white_lamp": "White Lamp",
+  "block.fourtwenty.lime_lamp_trim": "Lime Lamp Trim",
+  "item.fourtwenty.lime_lamp_trim": "Lime Lamp Trim"
 }
