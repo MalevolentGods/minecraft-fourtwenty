@@ -61,6 +61,19 @@ public final class DispensarySavedData extends SavedData {
         }
         return next;
     }
+    /**
+     * Testing aid (/fourtwenty due): make a craving citizen due now, keeping their grace deadline.
+     * Bumps the revision so any in-flight completion from before is rejected. False if not craving.
+     */
+    public boolean forceDue(int colony, UUID citizen) {
+        var state = citizen(colony, citizen);
+        if (!state.eligible()) return false;
+        var next = new CitizenDemand(true, time, Math.max(state.graceUntil(), time), state.satisfiedUntil(),
+                state.healthUntil(), state.lastConsumedAt(), Math.incrementExact(state.revision()));
+        citizens.put(new Key(colony, citizen), next);
+        setDirty();
+        return true;
+    }
     /** Native colony IDs (and their derived citizen UUIDs) can be reused after explicit colony deletion. */
     public void removeColony(int colony) {
         boolean changed = citizens.keySet().removeIf(key -> key.colony() == colony);

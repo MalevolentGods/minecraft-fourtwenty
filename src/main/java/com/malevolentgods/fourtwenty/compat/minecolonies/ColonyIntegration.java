@@ -17,6 +17,7 @@ public final class ColonyIntegration {
         container.registerConfig(ModConfig.Type.SERVER, DispensaryConfig.SPEC, "fourtwenty-dispensary-server.toml");
         NeoForge.EVENT_BUS.addListener(ColonyIntegration::tick);
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.service.PlayerSales::interact);
+        NeoForge.EVENT_BUS.addListener(DispensaryCommands::register);
         com.malevolentgods.fourtwenty.util.SmokeEvents.smokedListener =
                 com.malevolentgods.fourtwenty.compat.minecolonies.service.Exposure::secondhand;
         com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.burningListener =

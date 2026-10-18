@@ -41,6 +41,18 @@ class DispensarySavedDataTest {
         assertEquals(Affinity.UNEXPOSED, reloaded.affinity(1, UUID.randomUUID()));
     }
 
+    @Test void forceDueMakesACravingCitizenDueAndInvalidatesOldCompletions() {
+        var data = DispensarySavedData.load(v1(), null);   // dueAt 900, clock 500
+        var before = data.citizen(1, CITIZEN);
+        assertFalse(before.due(500));
+        assertTrue(data.forceDue(1, CITIZEN));
+        var after = data.citizen(1, CITIZEN);
+        assertTrue(after.due(500));
+        assertEquals(before.revision() + 1, after.revision());
+        assertEquals(before.graceUntil(), after.graceUntil(), "grace is kept");
+        assertFalse(data.forceDue(1, UUID.randomUUID()), "no craving, nothing to force");
+    }
+
     @Test void futureVersionsAndBrokenLogsAreRejected() {
         var future = v1(); future.putInt("version", 3);
         assertThrows(IllegalArgumentException.class, () -> DispensarySavedData.load(future, null));
