@@ -37,11 +37,11 @@ public final class BudtenderAI extends AbstractEntityAICrafting<BudtenderJob, Di
      */
     @Override public boolean isAfterDumpPickupAllowed() { return false; }
 
-    /** Native completion/pickup may leave a finished batch carried after its request is closed. */
+    /** Native completion/pickup may leave a finished batch (any menu item) carried after its request is closed. */
     @Override protected boolean wantInventoryDumped() {
         return super.wantInventoryDumped() || (currentRecipeStorage == null
                 && com.minecolonies.api.util.InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
-                    stack -> stack.is(com.malevolentgods.fourtwenty.registry.ModItems.WEED_JOINT.get())) > 0);
+                    stack -> com.malevolentgods.fourtwenty.compat.minecolonies.service.JointService.menuItem(stack) != null) > 0);
     }
 
     /** The pinned native dumper discards an insertion remainder; reserve capacity before it extracts anything. */
@@ -68,7 +68,7 @@ public final class BudtenderAI extends AbstractEntityAICrafting<BudtenderJob, Di
     /** Keep the production request pending until its output has actually reached storage. */
     @Override public com.minecolonies.api.entity.ai.statemachine.states.IAIState afterDump() {
         if (com.minecolonies.api.util.InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
-                stack -> stack.is(com.malevolentgods.fourtwenty.registry.ModItems.WEED_JOINT.get())) > 0) {
+                stack -> com.malevolentgods.fourtwenty.compat.minecolonies.service.JointService.menuItem(stack) != null) > 0) {
             setDelay(100);
             return com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.INVENTORY_FULL;
         }

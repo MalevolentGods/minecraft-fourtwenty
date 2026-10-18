@@ -14,7 +14,7 @@
   "item.fourtwenty.dispensary": "Dispensary",
   "com.minecolonies.building.dispensary": "Dispensary",
   "com.fourtwenty.building.dispensary": "Dispensary",
-  "com.fourtwenty.building.dispensary.desc": "The Budtender crafts joints from weed buds and paper and serves eligible adult colonists.",
+  "com.fourtwenty.building.dispensary.desc": "The Budtender crafts the Dispensary menu (joints, then weed cookies, pipes and brownies as the Dispensary grows) and serves colonists and players in the shop.",
   "com.minecolonies.job.budtender": "Budtender",
   "job.fourtwenty.budtender": "Budtender",
   "com.fourtwenty.job.budtender": "Budtender",
@@ -55,5 +55,6 @@
   "fourtwenty.dispensary.sales.sold_out": "Sold out",
   "fourtwenty.dispensary.sales.cost": "That costs %s emerald(s).",
   "fourtwenty.dispensary.sales.sold": "%s hands you a %s.",
-  "fourtwenty.dispensary.sales.out": "%s is sold out."
+  "fourtwenty.dispensary.sales.out": "%s is sold out.",
+  "fourtwenty.dispensary.poor": "The dispensary had nothing for me to take home, so I only had one at the shop."
 }

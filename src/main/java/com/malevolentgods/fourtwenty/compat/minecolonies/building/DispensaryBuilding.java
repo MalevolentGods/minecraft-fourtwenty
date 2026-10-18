@@ -38,11 +38,17 @@ public final class DispensaryBuilding extends AbstractBuilding {
     public boolean hasServiceStock() {
         // Native getHandlers() is empty without staff and includes remote worker inventories with staff.
         var storage = getItemHandlerCap();
-        if (storage != null && JointService.jointSlot(storage) >= 0) return true;
+        if (storage != null && hasMenuItem(storage)) return true;
         for (var data : getAllAssignedCitizen()) {
             var entity = data.getEntity().orElse(null);
             if (entity instanceof EntityCitizen worker && JointService.inShop(worker, this)
-                    && JointService.jointSlot(data.getInventory()) >= 0) return true;
+                    && hasMenuItem(data.getInventory())) return true;
+        }
+        return false;
+    }
+    private boolean hasMenuItem(net.neoforged.neoforge.items.IItemHandler inventory) {
+        for (var item : com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem.menu(getBuildingLevel())) {
+            if (com.minecolonies.api.util.InventoryUtils.findFirstSlotInItemHandlerWith(inventory, JointService.item(item)) >= 0) return true;
         }
         return false;
     }
@@ -100,21 +106,27 @@ public final class DispensaryBuilding extends AbstractBuilding {
         }
         return null;
     }
-    /** Hand one joint to a customer the Budtender is standing next to, from his inventory first, then the hut's storage. */
+    /** Serve a customer the Budtender is standing next to, from his inventory first, then the hut's storage. */
     public boolean serve(EntityCitizen worker, EntityCitizen customer) {
         if (!JointService.live(this) || worker.getCitizenData().getWorkBuilding() != this || !CitizenSmokingTask.available(worker)) return false;
-        boolean served = JointService.collect(customer, this, worker.getInventoryCitizen());
-        if (!served) served = JointService.collect(customer, this, getItemHandlerCap());
+        var sources = new java.util.ArrayList<net.neoforged.neoforge.items.IItemHandler>();
+        sources.add(worker.getInventoryCitizen());
+        if (getItemHandlerCap() != null) sources.add(getItemHandlerCap());
+        boolean served = JointService.serve(customer, this, sources);
         if (served) customers.remove(customer.getUUID());
         return served;
     }
 
-    /** Retain the service target and one production batch; workers still dump their output normally. */
+    /** Retain each menu item's service target and a few batches of ingredients; workers still dump their output normally. */
     @Override public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount() {
         var required = super.getRequiredItemsAndAmount();
-        retain(required, ModItems.WEED_JOINT.get(), stockTarget());
-        retain(required, ModItems.WEED_BUD.get(), getBuildingLevel() > 0 ? 16 : 0);
-        retain(required, Items.PAPER, getBuildingLevel() > 0 ? 32 : 0);
+        for (var item : com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem.values()) {
+            retain(required, JointService.item(item), ProductionRules.target(item, getBuildingLevel()));
+        }
+        for (var input : ProductionRules.ingredientsKept(getBuildingLevel()).entrySet()) {
+            retain(required, net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
+                    net.minecraft.resources.ResourceLocation.parse(input.getKey())), input.getValue());
+        }
         return required;
     }
     private static void retain(Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> required, Item item, int minimum) {

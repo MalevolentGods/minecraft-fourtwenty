@@ -63,7 +63,8 @@ public final class CitizenSmokingTask {
         failedBuildings.values().removeIf(until -> now() >= until);
         revision = DispensarySavedData.get((ServerLevel) citizen.level()).citizen(
                 citizen.getCitizenData().getColony().getID(), citizen.getCitizenData().getUUID()).revision();
-        if (JointService.jointSlot(citizen.getInventoryCitizen()) >= 0) {
+        // A carried joint, edible or pipe is used wherever the citizen is, without a trip.
+        if (JointService.doseSlot(citizen.getInventoryCitizen()) >= 0) {
             if (!safeStanding(citizen.blockPosition())) { retryAt = now() + RETRY_TICKS; return nativeState; }
             beginSmoke();
         } else {
@@ -106,10 +107,10 @@ public final class CitizenSmokingTask {
                 if (!JointService.inShop(citizen, building)) return finish(true);
                 boolean self = citizen.getCitizenData().getWorkBuilding() == building
                         || !building.getModule(DispensaryRegistry.WORK).hasAssignedCitizen() || time >= deadline;
-                if (JointService.jointSlot(citizen.getInventoryCitizen()) < 0 && self) {
-                    JointService.collect(citizen, building, building.getItemHandlerCap());
+                if (JointService.doseSlot(citizen.getInventoryCitizen()) < 0 && self && building.getItemHandlerCap() != null) {
+                    JointService.serve(citizen, building, java.util.List.of(building.getItemHandlerCap()));
                 }
-                if (JointService.jointSlot(citizen.getInventoryCitizen()) >= 0) {
+                if (JointService.doseSlot(citizen.getInventoryCitizen()) >= 0) {
                     building.releaseCustomer(citizen.getUUID());
                     seat = building.reserveSeat(citizen, time);
                     step = Step.SEAT; deadline = time + SEAT_TICKS;
@@ -130,18 +131,24 @@ public final class CitizenSmokingTask {
             }
             case SMOKE -> {
                 if (sittingVehicle != null ? citizen.getVehicle() != sittingVehicle : !safeStanding(citizen.blockPosition())) return finish(true);
-                int slot = JointService.jointSlot(citizen.getInventoryCitizen());
+                int slot = JointService.doseSlot(citizen.getInventoryCitizen());
                 if (slot < 0) return finish(true);
-                citizen.setItemInHand(InteractionHand.MAIN_HAND, citizen.getInventoryCitizen().getStackInSlot(slot).copyWithCount(1));
+                var dose = citizen.getInventoryCitizen().getStackInSlot(slot);
+                boolean edible = isEdible(dose);
+                citizen.setItemInHand(InteractionHand.MAIN_HAND, dose.copyWithCount(1));
                 showingJoint = true;
                 if (time % 20 == 0) {
                     citizen.swing(InteractionHand.MAIN_HAND);
+                    if (edible) citizen.playSound(net.minecraft.sounds.SoundEvents.GENERIC_EAT, 0.5f, 1f);
                 }
                 if (time - smokeStarted >= SMOKE_TICKS) {
-                    if (JointService.consume(citizen, revision)) JointSmoke.puff(citizen, 5);
+                    if (JointService.consume(citizen, revision)) {
+                        if (edible) citizen.playSound(net.minecraft.sounds.SoundEvents.PLAYER_BURP, 0.5f, 1f);
+                        else JointSmoke.puff(citizen, 5);
+                    }
                     return finish(false);
                 }
-                JointSmoke.tick(citizen, time - smokeStarted);
+                if (!edible) JointSmoke.tick(citizen, time - smokeStarted);
             }
             default -> { return finish(true); }
         }
@@ -149,7 +156,12 @@ public final class CitizenSmokingTask {
     }
     private void beginSmoke() {
         citizen.getNavigation().stop(); step = Step.SMOKE; smokeStarted = now();
-        JointSmoke.puff(citizen, 2);
+        int slot = JointService.doseSlot(citizen.getInventoryCitizen());
+        if (slot < 0 || !isEdible(citizen.getInventoryCitizen().getStackInSlot(slot))) JointSmoke.puff(citizen, 2);
+    }
+    private static boolean isEdible(ItemStack stack) {
+        var item = JointService.menuItem(stack);
+        return item != null && item.edible;
     }
     private boolean safeStanding(BlockPos pos) {
         var world = citizen.level();
@@ -171,13 +183,13 @@ public final class CitizenSmokingTask {
         if (failed) unavailable();
         return CitizenAIState.IDLE;
     }
-    /** Only clean resources owned by this visit. An already transferred joint stays in the real inventory. */
+    /** Only clean resources owned by this visit. Already transferred items stay in the real inventory. */
     public void interrupt() {
         if (step == Step.INACTIVE) return;
         if (building != null) { building.releaseCustomer(citizen.getUUID()); building.releaseSeat(citizen.getUUID()); }
         citizen.getNavigation().stop();
         if (sittingVehicle != null && citizen.getVehicle() == sittingVehicle) citizen.stopRiding();
-        if (showingJoint && citizen.getMainHandItem().is(com.malevolentgods.fourtwenty.registry.ModItems.WEED_JOINT.get())) {
+        if (showingJoint && JointService.menuItem(citizen.getMainHandItem()) != null) {
             citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         }
         building = null; seat = null; sittingVehicle = null; showingJoint = false; step = Step.INACTIVE;
