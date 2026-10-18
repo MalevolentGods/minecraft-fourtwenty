@@ -103,11 +103,11 @@ The [Phase 5 handoff](docs/DISPENSARY_PHASE5.md) records automated and client ev
 
 Coloured lamps in all 16 dye colours, for builds that need lighting without another mod:
 
-- **Lamp:** lights while powered by redstone. Craft 6 glass around a torch, with the dye on top and redstone below, for **4 lamps**.
-- **Inverted Lamp:** lit unless powered, so it is always on as decoration. Craft a lamp and a redstone torch.
+- **Lamp:** lights while powered by redstone. Craft 6 glass around a torch, with the dye on top and a weed bud below, for **4 lamps**.
+- **Inverted Lamp:** lit unless powered, so it is always on as decoration. Craft a lamp and a joint.
 - **Lamp Trim:** a thin, always-lit plate that sticks to whichever face you click, like a microblock cover. One inverted lamp crafts into 8.
 
-Lit lamps and trims glow with a soft coloured halo that spills onto neighbouring blocks. The lamp textures and halo come from [ProjectRed](https://github.com/MrTJP/ProjectRed)'s illumar lamps (MIT License; see `licenses/ProjectRed-LICENSE.txt`). The bundled Dispensary uses them, so it needs no lighting mod. `tools/import_dispensary_blueprints.py --lamps-only` converts blueprints that use ProjectRed illumar lamps or CB Multipart lamp covers to these blocks.
+Lit lamps and trims glow with a soft coloured halo that spills onto neighbouring blocks, including in your inventory and hands. The lamp textures and halo come from [ProjectRed](https://github.com/MrTJP/ProjectRed)'s illumar lamps (MIT License; see `licenses/ProjectRed-LICENSE.txt`). The bundled Dispensary uses them, so it needs no lighting mod. `tools/import_dispensary_blueprints.py --lamps-only` converts blueprints that use ProjectRed illumar lamps or CB Multipart lamp covers to these blocks.
 
 ## Use a bong
 
