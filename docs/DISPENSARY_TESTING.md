@@ -122,7 +122,7 @@ Also check that:
 - **Phantom:**
   - You can fly; double-tap jump.
   - Flight survives a relog and death.
-  - When it ends (`/fourtwenty clock` doesn't affect it; wait or use `/time add` on a test world), you get Slow Falling.
+  - It lasts 24,000 game ticks, about 20 minutes of play. Neither `/fourtwenty clock` nor `/time` shortens it. When it ends, you get Slow Falling.
 - Item tooltips list each buff and the colonist skills.
 
 **Colonist sessions:**
