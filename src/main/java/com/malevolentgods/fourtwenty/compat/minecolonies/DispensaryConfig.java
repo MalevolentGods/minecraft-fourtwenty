@@ -14,6 +14,15 @@ public final class DispensaryConfig {
     private static final ModConfigSpec.DoubleValue PENALTY_WEIGHT = BUILDER
             .comment("Native weighted happiness contribution at factor 0, not flat happiness points. Zero disables the penalty.")
             .defineInRange("unmetDemandWeight", 0.1, 0, 1);
+    private static final ModConfigSpec.DoubleValue BONG_WEIGHT = BUILDER
+            .comment("Bong session: native weighted happiness contribution at factor 1.1 for colonists near a burning bong. Zero disables it.")
+            .defineInRange("bongSessionWeight", 0.1, 0, 1);
+    private static final ModConfigSpec.IntValue BONG_RADIUS = BUILDER
+            .comment("Bong session: blocks from a burning bong within which colonists get the bonus.")
+            .defineInRange("bongSessionRadius", 6, 1, 32);
+    private static final ModConfigSpec.IntValue BONG_TICKS = BUILDER
+            .comment("Bong session: elapsed simulation ticks the bonus lasts after a colonist was last near a burning bong.")
+            .defineInRange("bongSessionTicks", 6_000, 20, DemandRules.MAX_TICKS);
     public static final ModConfigSpec SPEC = BUILDER.build();
     private static ModConfigSpec.IntValue duration(String name) {
         return BUILDER.comment("Elapsed simulation ticks. Changes affect future deadlines; existing deadlines are preserved.")
@@ -22,5 +31,8 @@ public final class DispensaryConfig {
     public static DemandRules rules() { return new DemandRules(INTERVAL.get(), GRACE.get(), HEALTH.get()); }
     public static double satisfactionWeight() { return BONUS_WEIGHT.get(); }
     public static double unmetDemandWeight() { return PENALTY_WEIGHT.get(); }
+    public static double bongSessionWeight() { return BONG_WEIGHT.get(); }
+    public static int bongSessionRadius() { return BONG_RADIUS.get(); }
+    public static int bongSessionTicks() { return BONG_TICKS.get(); }
     private DispensaryConfig() {}
 }

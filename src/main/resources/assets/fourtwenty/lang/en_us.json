@@ -21,6 +21,8 @@
   "fourtwenty.dispensary.unavailable": "I could not get a joint at the dispensary. I will try again later.",
   "com.minecolonies.coremod.gui.townhall.happiness.fourtwenty:cannabis_satisfaction": "Cannabis satisfaction",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.fourtwenty:cannabis_satisfaction": "Smoking a joint brings a small happiness benefit. Pending demand has a grace period; prolonged unmet demand slightly reduces happiness.",
+  "com.minecolonies.coremod.gui.townhall.happiness.fourtwenty:bong_session": "Bong session",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.fourtwenty:bong_session": "Hanging out near a burning bong lifts the mood for a while afterwards.",
   "fourtwenty.dispensary.happiness.satisfied": "Cannabis: satisfied",
   "fourtwenty.dispensary.happiness.satisfied.description": "I have smoked a joint and feel content. This gives a small happiness benefit until my next joint is due.",
   "fourtwenty.dispensary.happiness.grace": "Cannabis: pending",

@@ -16,6 +16,8 @@ public final class ColonyIntegration {
         DispensaryRegistry.register(bus);
         container.registerConfig(ModConfig.Type.SERVER, DispensaryConfig.SPEC, "fourtwenty-dispensary-server.toml");
         NeoForge.EVENT_BUS.addListener(ColonyIntegration::tick);
+        com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.burningListener =
+                com.malevolentgods.fourtwenty.compat.minecolonies.benefits.BongSessionBenefits::burning;
         bus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) -> event.enqueueWork(() ->
                 com.minecolonies.api.IMinecoloniesAPI.getInstance().getEventBus().subscribe(
                         com.minecolonies.api.eventbus.events.colony.ColonyDeletedModEvent.class, deleted -> {
@@ -44,6 +46,7 @@ public final class ColonyIntegration {
             for (var citizen : colony.getCitizenManager().getCitizens()) {
                 var state = data.observe(colony.getID(), citizen.getUUID(), eligible(citizen), rules);
                 com.malevolentgods.fourtwenty.compat.minecolonies.benefits.CitizenBenefits.refresh(citizen, state, data.time());
+                com.malevolentgods.fourtwenty.compat.minecolonies.benefits.BongSessionBenefits.refresh(citizen, data.time());
             }
             // This listener runs on each simulation tick; native building callbacks do not.
             if (data.time() % 100 == 0) {

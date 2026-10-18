@@ -44,6 +44,11 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     public static final int FUEL_SLOT = 2;
     /** Older name for {@link #FUEL_SLOT}, from when only blaze powder could light the bong. */
     public static final int BLAZE_POWDER_SLOT = FUEL_SLOT;
+    /**
+     * Told once a second while a bong burns. Set by the MineColonies integration (bong session
+     * happiness); stays null without MineColonies, so the core mod has no colony references.
+     */
+    public static volatile java.util.function.BiConsumer<net.minecraft.server.level.ServerLevel, BlockPos> burningListener;
     private NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
     private int burnTime;
     private int burnDuration = BURN_DURATION;
@@ -226,6 +231,8 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
             for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, new AABB(worldPosition).inflate(4))) {
                 if (player.isAlive() && !player.isSpectator()) applyBongEffects(player);
             }
+            var listener = burningListener;
+            if (listener != null) listener.accept((net.minecraft.server.level.ServerLevel) level, worldPosition);
         }
         if (burnTime >= burnDuration) extinguish();
         // Mark every elapsed tick durable; dirty marking does not itself write the chunk to disk.
