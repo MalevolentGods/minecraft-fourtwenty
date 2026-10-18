@@ -101,5 +101,13 @@
   "fourtwenty.bong.flight.start": "You feel weightless. Double-tap jump to fly.",
   "fourtwenty.bong.flight.end": "The weightless feeling fades.",
   "item.fourtwenty.bong.use": "Right-click with a Weed Bud to take a hit",
-  "item.fourtwenty.bong.colonists": "Level 5 colonists: +%s %s and %s for a day (double for a matching job)"
+  "item.fourtwenty.bong.colonists": "Level 5 colonists: +%s %s and %s for a day (double for a matching job)",
+  "block.fourtwenty.lime_lamp": "Lime Lamp",
+  "item.fourtwenty.lime_lamp": "Lime Lamp",
+  "block.fourtwenty.green_lamp": "Green Lamp",
+  "item.fourtwenty.green_lamp": "Green Lamp",
+  "block.fourtwenty.white_lamp": "White Lamp",
+  "item.fourtwenty.white_lamp": "White Lamp",
+  "block.fourtwenty.lime_lamp_trim": "Lime Lamp Trim",
+  "item.fourtwenty.lime_lamp_trim": "Lime Lamp Trim"
 }

@@ -111,6 +111,10 @@ By default, completed consumption satisfies demand and grants **one extra maximu
 
 The [Phase 5 handoff](docs/DISPENSARY_PHASE5.md) records automated and client evidence separately from outstanding native builder, upgrade, repair, and gameplay observations.
 
+## Lamps
+
+Always-lit decorative lamps for builds: **Lime Lamp**, **Green Lamp** and **White Lamp**, each crafted from glass, 2 glowstone dust and the matching dye (shapeless). **Lime Lamp Trim** is a thin glowing plate that sticks to whichever face you click, like a microblock cover. One Lime Lamp crafts into 8 trims. The bundled Dispensary uses them, so it needs no lighting mod.
+
 ## Use a bong
 
 Place the bong anywhere; it faces you, bowl toward you. Right-click it with a **Weed Bud** anywhere in your inventory to take a hit: it uses one bud (none in creative) and gives the same effects as a pipe, with bubbling and smoke. Hits have a 5-second cooldown. Without a bud you are told to pack it first. With MineColonies, a hit is also secondhand smoke for colonists within 4 blocks.
