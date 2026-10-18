@@ -58,9 +58,11 @@ The stock target for each item scales with level, like today's joint target. Exa
 
 | Home level | Smoker | Edible-only | Both |
 | --- | --- | --- | --- |
-| 1–2 | Joint at the shop | 1 edible eaten at the shop | Whichever is in stock, joints first |
-| 3–4 | Pipe to carry (4 doses) | 4 edibles to carry (cookies before brownies) | Pipe, or edibles if no pipes |
-| 5 | Joint at the shop + pipe to carry | Edible at the shop + 4 to carry | Both options |
+| 1–2 | Joint at the shop | 1 edible eaten at the shop | Best item in stock: brownie, cookie, joint |
+| 3–4 | Pipe to carry (4 doses) | 4 edibles to carry (brownies first) | Best take-away in stock: brownies, pipe, cookies |
+| 5 | Joint at the shop + pipe to carry | Edible at the shop + 4 to carry | Best on-the-spot item + best take-away |
+
+**"Both" citizens take whatever is in stock, preferring the higher-level menu item.** Ranking: brownie (4), pipe (3), cookie (2), joint (1).
 
 **Fallbacks:**
 - **Take-away item out of stock:** the citizen gets an on-the-spot joint or edible if one is in stock, and raises a "poor dispensary" interaction.
@@ -114,7 +116,16 @@ The stock target for each item scales with level, like today's joint target. Exa
 - **Who gets served:** players inside the shop are served like the cook serves them.
 - **Payment:**
   - Players with colony hut permission get menu items free (restaurant parity).
-  - Other players **pay one emerald per item**, taken from their inventory when served.
+  - Other players pay emeralds, taken from their inventory when served:
+
+    | Item | Price |
+    | --- | ---: |
+    | Joint | 1 emerald |
+    | Weed cookie | 1 emerald |
+    | Weed brownie | 2 emeralds |
+    | Pipe (4 uses) | 3 emeralds |
+
+  - Prices are server config values.
 - **Interaction:** standing in the shop and right-clicking the Budtender opens a small choice of the current menu.
 
 ## Phases
@@ -183,8 +194,8 @@ Each phase is a separate branch-sized package with its own tests and handoff not
 - **Save migration:** v2 must load every v1 save written so far. Back up `fourtwenty_dispensary.dat` before the first v2 deploy.
 - **Shared jar:** registry or happiness additions (the new happiness status, menu UI) need the same jar on client and server.
 
-## Open questions
+## Decisions (2026-10-18)
 
-1. Is one emerald per item for non-permission players right, or should prices differ per item (a pipe worth more than a joint)?
-2. Should **"Both"** citizens alternate between smoking and edibles, or take whichever is in stock?
-3. Should the tolerance break return the citizen exactly to their original step, or one step below it, so heavy users trend down?
+1. Player prices are set per item (table above): the pipe is cheaper per use, and the brownie is premium.
+2. "Both" citizens take whatever is in stock, preferring the higher-level item: pipe over joint, brownie over cookie.
+3. A tolerance break returns the citizen exactly to their original step.
