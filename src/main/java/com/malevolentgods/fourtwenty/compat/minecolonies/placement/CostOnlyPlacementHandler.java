@@ -21,8 +21,8 @@ import java.util.List;
  * which inserts at index 3, ahead of the general handlers.
  */
 public abstract class CostOnlyPlacementHandler implements IPlacementHandler {
-    /** What a builder pays instead of the normal cost; null to keep the normal cost. */
-    protected abstract List<ItemStack> builderCost(BlockState state, CompoundTag tileEntityData);
+    /** What a builder pays instead of the normal cost (an empty list means free here); null keeps the normal cost. */
+    protected abstract List<ItemStack> builderCost(Level world, BlockPos pos, BlockState state, CompoundTag tileEntityData, IPlacementContext context);
 
     @Override
     public ActionProcessingResult handle(Level world, BlockPos pos, BlockState state, CompoundTag tileEntityData, IPlacementContext context) {
@@ -33,7 +33,7 @@ public abstract class CostOnlyPlacementHandler implements IPlacementHandler {
     public List<ItemStack> getRequiredItems(Level world, BlockPos pos, BlockState state, CompoundTag tileEntityData, IPlacementContext context) {
         // fancyPlacement() is true for survival builders, false for creative paste.
         if (context.fancyPlacement()) {
-            var cost = builderCost(state, tileEntityData);
+            var cost = builderCost(world, pos, state, tileEntityData, context);
             if (cost != null) return cost;
         }
         return next(world, pos, state).getRequiredItems(world, pos, state, tileEntityData, context);

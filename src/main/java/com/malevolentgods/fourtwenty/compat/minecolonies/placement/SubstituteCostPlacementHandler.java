@@ -20,7 +20,8 @@ public final class SubstituteCostPlacementHandler extends CostOnlyPlacementHandl
     }
 
     @Override
-    protected List<ItemStack> builderCost(BlockState state, CompoundTag tileEntityData) {
+    protected List<ItemStack> builderCost(Level world, BlockPos pos, BlockState state, CompoundTag tileEntityData,
+                                          com.ldtteam.structurize.placement.IPlacementContext context) {
         return List.of(new ItemStack(substitute(state)));
     }
 

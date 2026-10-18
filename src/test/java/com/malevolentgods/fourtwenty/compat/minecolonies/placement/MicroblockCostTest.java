@@ -33,6 +33,24 @@ class MicroblockCostTest {
                 new MicroblockCost.Part("cb_microblock:face", 17, "minecraft:glass")));
         assertEquals(Map.of("minecraft:oak_planks", 1, "minecraft:glass", 1), cost);
     }
+    @Test void blueprintAllocationChargesOneSourceBlockPerEightCovers() {
+        // The Dispensary roof trim: 48 positions, one 1/8 lamp cover each -> 6 lamps in total.
+        var cover = MicroblockCost.volumes(List.of(new MicroblockCost.Part("cb_microblock:face", 16, LAMP + "//lit.true")));
+        var charges = MicroblockCost.allocate(java.util.Collections.nCopies(48, cover));
+        assertEquals(6, charges.stream().mapToInt(c -> c.getOrDefault(LAMP, 0)).sum());
+        assertEquals(Map.of(LAMP, 1), charges.get(0));
+        for (int i = 1; i < 8; i++) assertTrue(charges.get(i).isEmpty(), "cover " + i + " rides on the first lamp");
+        assertEquals(Map.of(LAMP, 1), charges.get(8));
+    }
+    @Test void allocationTracksEachMaterialSeparatelyAndRoundsUp() {
+        var stoneHalf = Map.of("minecraft:stone", 256);
+        var glassCover = Map.of("minecraft:glass", 64);
+        var charges = MicroblockCost.allocate(List.of(stoneHalf, glassCover, stoneHalf, stoneHalf));
+        assertEquals(Map.of("minecraft:stone", 1), charges.get(0));
+        assertEquals(Map.of("minecraft:glass", 1), charges.get(1));
+        assertTrue(charges.get(2).isEmpty());                       // two halves = the first stone block
+        assertEquals(Map.of("minecraft:stone", 1), charges.get(3)); // a third half needs a second block
+    }
     @Test void unknownPartsCountAsWholeBlocksAndMissingMaterialIsFree() {
         assertEquals(512, MicroblockCost.volume(new MicroblockCost.Part("someaddon:fancy", 16, "minecraft:stone")));
         assertTrue(MicroblockCost.blocks(List.of(new MicroblockCost.Part("cb_microblock:face", 16, ""))).isEmpty());
