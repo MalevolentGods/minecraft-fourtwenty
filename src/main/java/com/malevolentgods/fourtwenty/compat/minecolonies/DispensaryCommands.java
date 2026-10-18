@@ -38,6 +38,7 @@ import java.util.Locale;
  * /fourtwenty expose &lt;citizens&gt; [type] [step]    first exposure (rolled, or a fixed type/frequency)
  * /fourtwenty forget &lt;citizens&gt;                  back to "never tried it"
  * /fourtwenty due &lt;citizens&gt;                     crave right now
+ * /fourtwenty clear &lt;citizens&gt;                   return carried doses to the nearest Dispensary
  * /fourtwenty break &lt;citizens&gt; start|end         tolerance break
  * /fourtwenty drift &lt;citizens&gt; &lt;rolls&gt;           run drift rolls with the configured odds
  * /fourtwenty clock &lt;ticks&gt;                       advance the dispensary clock
@@ -63,6 +64,8 @@ public final class DispensaryCommands {
                         .executes(DispensaryCommands::forget)))
                 .then(Commands.literal("due").then(Commands.argument("citizens", EntityArgument.entities())
                         .executes(DispensaryCommands::due)))
+                .then(Commands.literal("clear").then(Commands.argument("citizens", EntityArgument.entities())
+                        .executes(DispensaryCommands::clear)))
                 .then(Commands.literal("break").then(Commands.argument("citizens", EntityArgument.entities())
                         .then(Commands.literal("start").executes(context -> toleranceBreak(context, true)))
                         .then(Commands.literal("end").executes(context -> toleranceBreak(context, false)))))
@@ -179,6 +182,27 @@ public final class DispensaryCommands {
             if (!saved.forceDue(citizen.getCitizenData().getColony().getID(), citizen.getCitizenData().getUUID())) {
                 say(context, citizen.getCitizenData().getName() + ": no craving to make due (expose them, give them a home)");
             } else say(context, describe(saved, citizen));
+        }
+        return found.size();
+    }
+
+    /** Move carried joints, edibles and pipes back into the nearest Dispensary's storage (dropped if it is full). */
+    private static int clear(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        var saved = saved(context);
+        var found = citizens(context);
+        var hut = nearestDispensary(context.getSource().getLevel(), BlockPos.containing(context.getSource().getPosition()));
+        for (var citizen : found) {
+            var inventory = citizen.getInventoryCitizen();
+            int moved = 0;
+            for (int slot = 0; slot < inventory.getSlots(); slot++) {
+                if (JointService.menuItem(inventory.getStackInSlot(slot)) == null) continue;
+                var stack = inventory.extractItem(slot, inventory.getStackInSlot(slot).getCount(), false);
+                moved += stack.getCount();
+                if (hut != null && hut.getItemHandlerCap() != null) stack = ItemHandlerHelper.insertItemStacked(hut.getItemHandlerCap(), stack, false);
+                if (!stack.isEmpty()) citizen.spawnAtLocation(stack);
+            }
+            say(context, citizen.getCitizenData().getName() + ": returned " + moved + " carried item(s)");
+            say(context, describe(saved, citizen));
         }
         return found.size();
     }
