@@ -17,20 +17,27 @@ public final class CitizenBenefits {
     public static void refresh(ICitizenData citizen) {
         if (!(citizen.getColony().getWorld() instanceof ServerLevel level)) return;
         var saved = DispensarySavedData.get(level);
-        var state = saved.observe(citizen.getColony().getID(), citizen.getUUID(), ColonyIntegration.eligible(citizen), DispensaryConfig.rules());
+        var state = saved.observe(citizen.getColony().getID(), citizen.getUUID(), ColonyIntegration.qualifies(citizen, saved),
+                ColonyIntegration.rules(citizen, saved));
         refresh(citizen, state, saved.time());
     }
     public static void refresh(ICitizenData citizen, CitizenDemand state, long now) {
-        var status = state.status(now);
+        var affinity = citizen.getColony().getWorld() instanceof ServerLevel level
+                ? DispensarySavedData.get(level).affinity(citizen.getColony().getID(), citizen.getUUID())
+                : com.malevolentgods.fourtwenty.compat.minecolonies.domain.Affinity.UNEXPOSED;
+        var status = !affinity.exposed() ? CitizenDemand.Status.UNEXPOSED
+                : affinity.onBreak(now) ? CitizenDemand.Status.TOLERANCE_BREAK : state.status(now);
         double weight = switch (status) {
             case SATISFIED -> DispensaryConfig.satisfactionWeight();
             case UNMET -> DispensaryConfig.unmetDemandWeight();
+            case TOLERANCE_BREAK -> DispensaryConfig.toleranceBreakWeight();
             default -> 0;
         };
         var handler = citizen.getCitizenHappinessHandler();
-        if (!(handler.getModifier(DispensaryIds.SATISFACTION) instanceof CannabisHappinessModifier old) || !old.matches(status, weight)) {
+        if (!(handler.getModifier(DispensaryIds.SATISFACTION) instanceof CannabisHappinessModifier old)
+                || !old.matches(status, weight, affinity.preference(), affinity.step())) {
             // addModifier invalidates the native cache; dirty citizen data drives the existing view packet.
-            handler.addModifier(new CannabisHappinessModifier(status, weight));
+            handler.addModifier(new CannabisHappinessModifier(status, weight, affinity.preference(), affinity.step()));
             handler.getHappiness(citizen.getColony(), citizen);
             citizen.markDirty(0);
         }

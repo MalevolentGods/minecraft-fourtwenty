@@ -75,6 +75,7 @@ public final class DispensaryLifecycleGameTests {
                             .assignCitizen(citizen), "Native persistent residence assignment");
                     boolean paid = state.equals("satisfied");
                     var rules = state.equals("penalty") ? new DemandRules(1, 1, 1) : DemandRules.defaults();
+                    Exposures.dailySmoker(citizen);
                     var demand = saved.observe(colony.getID(), citizen.getUUID(), true, rules);
                     if (paid) h.assertTrue(saved.recordConsumption(colony.getID(), citizen.getUUID(), demand.revision(), rules), "Paid checkpoint");
                     if (state.equals("transfer") || state.equals("smoke")) citizen.getInventory().setStackInSlot(0, new ItemStack(ModItems.WEED_JOINT.get()));
@@ -183,7 +184,7 @@ public final class DispensaryLifecycleGameTests {
         var paid = saved.citizen(f.colony.getID(), actor.getUUID());
         citizen.setHomeBuilding(other); CitizenBenefits.refresh(citizen);
         h.assertTrue(saved.citizen(f.colony.getID(), actor.getUUID()).equals(paid), "Qualifying reassignment preserves deadlines");
-        other.setBuildingLevel(2); CitizenBenefits.refresh(citizen);
+        other.setBuildingLevel(0); CitizenBenefits.refresh(citizen);
         h.assertTrue(!JointService.due(actor) && actor.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH)
                 .hasModifier(CitizenBenefits.HEALTH_ID), "Eligibility loss suppresses demand but preserves earned health");
         other.setBuildingLevel(3); CitizenBenefits.refresh(citizen);

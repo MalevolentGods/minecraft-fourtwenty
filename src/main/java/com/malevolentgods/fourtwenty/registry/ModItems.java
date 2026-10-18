@@ -20,6 +20,23 @@ public class ModItems {
             new ItemNameBlockItem(com.malevolentgods.fourtwenty.registry.ModBlocks.WEED_CROP.get(),
                 new Item.Properties()));
 
+    /** Lamps, inverted lamps and lamp trims in all 16 dye colours (block ids as in {@link ModBlocks}). */
+    public static final java.util.List<DeferredHolder<Item, BlockItem>> LAMPS = lampItems();
+
+    private static java.util.List<DeferredHolder<Item, BlockItem>> lampItems() {
+        var items = new java.util.ArrayList<DeferredHolder<Item, BlockItem>>();
+        for (var color : net.minecraft.world.item.DyeColor.values()) {
+            items.add(blockItem(color.getName() + "_lamp", ModBlocks.LAMPS.get(color)));
+            items.add(blockItem(color.getName() + "_inverted_lamp", ModBlocks.INVERTED_LAMPS.get(color)));
+            items.add(blockItem(color.getName() + "_lamp_trim", ModBlocks.LAMP_TRIMS.get(color)));
+        }
+        return java.util.List.copyOf(items);
+    }
+
+    private static DeferredHolder<Item, BlockItem> blockItem(String name, DeferredHolder<? extends net.minecraft.world.level.block.Block, ? extends net.minecraft.world.level.block.Block> block) {
+        return ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+    }
+
     public static final DeferredHolder<Item, Item> WEED_BUD =
         ITEMS.register("weed_bud", () ->
             new Item(new Item.Properties()));

@@ -32,7 +32,9 @@ public final class DispensaryRegistry {
     private static final DeferredRegister<com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.HappinessFactorTypeEntry> HAPPINESS =
             DeferredRegister.create(CommonMinecoloniesAPIImpl.HAPPINESS_FACTOR_TYPES, "fourtwenty");
     static { HAPPINESS.register("cannabis_satisfaction", () -> new com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.HappinessFactorTypeEntry(
-            com.malevolentgods.fourtwenty.compat.minecolonies.benefits.CannabisHappinessModifier::new)); }
+            com.malevolentgods.fourtwenty.compat.minecolonies.benefits.CannabisHappinessModifier::new));
+        HAPPINESS.register("bong_session", () -> new com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.HappinessFactorTypeEntry(
+            com.malevolentgods.fourtwenty.compat.minecolonies.benefits.BongSessionHappinessModifier::new)); }
     public static final DeferredHolder<Block, DispensaryBlock> HUT = BLOCKS.register("dispensary", DispensaryBlock::new);
     public static final DeferredHolder<Item, ItemBlockHut> ITEM = ITEMS.register("dispensary", () -> new ItemBlockHut(HUT.get(), new Item.Properties()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityColonyBuilding>> ENTITY = ENTITIES.register("dispensary",

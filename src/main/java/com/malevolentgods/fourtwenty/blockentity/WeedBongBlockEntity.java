@@ -1,6 +1,8 @@
 package com.malevolentgods.fourtwenty.blockentity;
 
 import com.malevolentgods.fourtwenty.block.WeedBongBlock;
+import com.malevolentgods.fourtwenty.domain.BongFuel;
+import net.minecraft.core.registries.BuiltInRegistries;
 import com.malevolentgods.fourtwenty.menu.WeedBongMenu;
 import com.malevolentgods.fourtwenty.registry.ModBlockEntities;
 import com.malevolentgods.fourtwenty.registry.ModItems;
@@ -34,12 +36,22 @@ import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 /** One inventory backs menus, hoppers and every capability side. */
 public class WeedBongBlockEntity extends BlockEntity implements Container, MenuProvider {
+    /** Blaze powder's burn, and the length assumed for saves from before per-fuel durations. */
     public static final int BURN_DURATION = 1200;
     public static final int WEED_SLOT = 0;
     public static final int WATER_SLOT = 1;
-    public static final int BLAZE_POWDER_SLOT = 2;
+    /** Takes any {@link BongFuel}: flint and steel, a lava bucket or blaze powder. */
+    public static final int FUEL_SLOT = 2;
+    /** Older name for {@link #FUEL_SLOT}, from when only blaze powder could light the bong. */
+    public static final int BLAZE_POWDER_SLOT = FUEL_SLOT;
+    /**
+     * Told once a second while a bong burns. Set by the MineColonies integration (bong session
+     * happiness); stays null without MineColonies, so the core mod has no colony references.
+     */
+    public static volatile java.util.function.BiConsumer<net.minecraft.server.level.ServerLevel, BlockPos> burningListener;
     private NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
     private int burnTime;
+    private int burnDuration = BURN_DURATION;
     private boolean isLit;
     private boolean chargePaid;
     private boolean removing;
@@ -109,10 +121,11 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
         return switch (slot) {
             case WEED_SLOT -> stack.is(ModItems.WEED_BUD.get());
             case WATER_SLOT -> stack.is(Items.WATER_BUCKET);
-            case BLAZE_POWDER_SLOT -> stack.is(Items.BLAZE_POWDER);
+            case FUEL_SLOT -> BongFuel.isFuel(id(stack));
             default -> false;
         };
     }
+    private static String id(ItemStack stack) { return BuiltInRegistries.ITEM.getKey(stack.getItem()).toString(); }
 
     @Override public int getContainerSize() { return 3; }
     @Override public boolean isEmpty() { return items.stream().allMatch(ItemStack::isEmpty); }
@@ -175,7 +188,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     public boolean isLit() { return isLit; }
     public int burnTime() { return burnTime; }
     public boolean canLight() {
-        return live() && hasWater() && queuedBuds() > 0 && getItem(BLAZE_POWDER_SLOT).is(Items.BLAZE_POWDER) && !isLit;
+        return live() && hasWater() && queuedBuds() > 0 && BongFuel.isFuel(id(getItem(FUEL_SLOT))) && !isLit;
     }
     public boolean canUse() { return live() && isLit && chargePaid && hasWater(); }
 
@@ -200,7 +213,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     /** Legacy lit saves paid fuel at ignition but left their bud in the inventory. */
     private void migrateLegacyBurn() {
         if (isLit && !chargePaid) {
-            if (hasWater() && queuedBuds() > 0 && burnTime >= 0 && burnTime < BURN_DURATION) {
+            if (hasWater() && queuedBuds() > 0 && burnTime >= 0 && burnTime < burnDuration) {
                 getItem(WEED_SLOT).shrink(1);
                 chargePaid = true;
             } else extinguish();
@@ -218,8 +231,10 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
             for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, new AABB(worldPosition).inflate(4))) {
                 if (player.isAlive() && !player.isSpectator()) applyBongEffects(player);
             }
+            var listener = burningListener;
+            if (listener != null) listener.accept((net.minecraft.server.level.ServerLevel) level, worldPosition);
         }
-        if (burnTime >= BURN_DURATION) extinguish();
+        if (burnTime >= burnDuration) extinguish();
         // Mark every elapsed tick durable; dirty marking does not itself write the chunk to disk.
         setChanged();
     }
@@ -227,16 +242,26 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     /** Inputs are paid atomically before the first effect, independently of later extraction. */
     public void lightBong(ServerPlayer player) {
         if (!canLight() || level.isClientSide()) return;
+        var fuel = getItem(FUEL_SLOT);
+        int duration = BongFuel.burnTicks(id(fuel)).orElseThrow();
         getItem(WEED_SLOT).shrink(1);
-        getItem(BLAZE_POWDER_SLOT).shrink(1);
+        if (fuel.is(Items.LAVA_BUCKET)) {
+            items.set(FUEL_SLOT, new ItemStack(Items.BUCKET));   // the lava is used; the bucket stays for pickup
+        } else if (fuel.isDamageableItem()) {
+            fuel.hurtAndBreak(1, (net.minecraft.server.level.ServerLevel) level, player, item -> {});
+        } else {
+            fuel.shrink(1);
+        }
         isLit = true;
         chargePaid = true;
         burnTime = 0;
+        burnDuration = duration;
         setChanged();
         level.playSound(null, worldPosition, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1, 1);
     }
 
-    private void extinguish() { isLit = false; chargePaid = false; burnTime = 0; }
+    private void extinguish() { isLit = false; chargePaid = false; burnTime = 0; burnDuration = BURN_DURATION; }
+    public int burnDuration() { return burnDuration; }
 
     private void applyBongEffects(ServerPlayer player) {
         player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 400, 1));
@@ -250,6 +275,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     @Override protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("BurnTime", burnTime);
+        tag.putInt("BurnDuration", burnDuration);
         tag.putBoolean("IsLit", isLit);
         tag.putBoolean("ChargePaid", chargePaid);
         ContainerHelper.saveAllItems(tag, items, registries);
@@ -262,7 +288,10 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
         burnTime = tag.getInt("BurnTime");
         isLit = tag.getBoolean("IsLit");
         chargePaid = tag.getBoolean("ChargePaid");
-        if (!isLit || burnTime < 0 || burnTime >= BURN_DURATION) extinguish();
+        // Saves from before per-fuel burn lengths were always blaze powder sessions.
+        burnDuration = tag.contains("BurnDuration") ? tag.getInt("BurnDuration") : BURN_DURATION;
+        if (burnDuration <= 0 || burnDuration > BURN_DURATION) burnDuration = BURN_DURATION;
+        if (!isLit || burnTime < 0 || burnTime >= burnDuration) extinguish();
     }
     @Override public ClientboundBlockEntityDataPacket getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
     @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) { return saveWithoutMetadata(registries); }

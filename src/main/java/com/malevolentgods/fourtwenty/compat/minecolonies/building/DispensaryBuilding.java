@@ -38,11 +38,17 @@ public final class DispensaryBuilding extends AbstractBuilding {
     public boolean hasServiceStock() {
         // Native getHandlers() is empty without staff and includes remote worker inventories with staff.
         var storage = getItemHandlerCap();
-        if (storage != null && JointService.jointSlot(storage) >= 0) return true;
+        if (storage != null && hasMenuItem(storage)) return true;
         for (var data : getAllAssignedCitizen()) {
             var entity = data.getEntity().orElse(null);
-            if (entity instanceof EntityCitizen worker && JointService.atCounter(worker, this)
-                    && JointService.jointSlot(data.getInventory()) >= 0) return true;
+            if (entity instanceof EntityCitizen worker && JointService.inShop(worker, this)
+                    && hasMenuItem(data.getInventory())) return true;
+        }
+        return false;
+    }
+    private boolean hasMenuItem(net.neoforged.neoforge.items.IItemHandler inventory) {
+        for (var item : com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem.menu(getBuildingLevel())) {
+            if (com.minecolonies.api.util.InventoryUtils.findFirstSlotInItemHandlerWith(inventory, JointService.item(item)) >= 0) return true;
         }
         return false;
     }
@@ -60,6 +66,8 @@ public final class DispensaryBuilding extends AbstractBuilding {
     }
     /** Active queue length; stale reservations are never shown as waiting customers. */
     public int waitingCustomers(long now) { prune(now); return customers.size(); }
+    /** Anyone queuing at the counter or holding a seat (smoking) right now. */
+    public boolean hasCustomers(long now) { prune(now); return !customers.isEmpty() || !seats.isEmpty(); }
     public boolean ownsSeat(UUID citizen, BlockPos pos, long now) {
         prune(now);
         var lease = seats.get(pos);
@@ -79,29 +87,46 @@ public final class DispensaryBuilding extends AbstractBuilding {
         }
         return null;
     }
-    /** Serve one waiting customer at the counter without disturbing an in-flight crafting recipe. */
-    public boolean serveCustomer(EntityCitizen worker, long now) {
+    /** The waiting customer with this identity, if still queued inside the shop. */
+    public EntityCitizen waitingCustomer(UUID id, long now) {
         prune(now);
-        if (!JointService.live(this) || !JointService.atCounter(worker, this)
-                || worker.getCitizenData().getWorkBuilding() != this || !CitizenSmokingTask.available(worker)) return false;
+        if (!customers.containsKey(id)) return null;
+        var entity = ((net.minecraft.server.level.ServerLevel) getColony().getWorld()).getEntity(id);
+        if (!(entity instanceof EntityCitizen customer)) { customers.remove(id); return null; }
+        var task = ((DispensaryCustomer) customer).fourtwenty$smokingTask();
+        if (task == null || !task.waitingAt(this) || !JointService.inShop(customer, this)) { customers.remove(id); return null; }
+        return customer;
+    }
+    /** First still-valid customer in queue order, skipping {@code skip} (one the Budtender could not reach). */
+    public EntityCitizen nextCustomer(long now, UUID skip) {
         for (var id : java.util.List.copyOf(customers.keySet())) {
-            var entity = ((net.minecraft.server.level.ServerLevel) getColony().getWorld()).getEntity(id);
-            if (!(entity instanceof EntityCitizen customer)) { customers.remove(id); continue; }
-            var task = ((DispensaryCustomer) customer).fourtwenty$smokingTask();
-            if (task == null || !task.waitingAt(this) || !JointService.atCounter(customer, this)) { customers.remove(id); continue; }
-            boolean served = JointService.collect(customer, this, worker.getInventoryCitizen());
-            if (!served) served = JointService.collect(customer, this, getItemHandlerCap());
-            if (served) { customers.remove(id); return true; }
+            if (id.equals(skip)) continue;
+            var customer = waitingCustomer(id, now);
+            if (customer != null) return customer;
         }
-        return false;
+        return null;
+    }
+    /** Serve a customer the Budtender is standing next to, from his inventory first, then the hut's storage. */
+    public boolean serve(EntityCitizen worker, EntityCitizen customer) {
+        if (!JointService.live(this) || worker.getCitizenData().getWorkBuilding() != this || !CitizenSmokingTask.available(worker)) return false;
+        var sources = new java.util.ArrayList<net.neoforged.neoforge.items.IItemHandler>();
+        sources.add(worker.getInventoryCitizen());
+        if (getItemHandlerCap() != null) sources.add(getItemHandlerCap());
+        boolean served = JointService.serve(customer, this, sources);
+        if (served) customers.remove(customer.getUUID());
+        return served;
     }
 
-    /** Retain the service target and one production batch; workers still dump their output normally. */
+    /** Retain each menu item's service target and a few batches of ingredients; workers still dump their output normally. */
     @Override public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount() {
         var required = super.getRequiredItemsAndAmount();
-        retain(required, ModItems.WEED_JOINT.get(), stockTarget());
-        retain(required, ModItems.WEED_BUD.get(), getBuildingLevel() > 0 ? 16 : 0);
-        retain(required, Items.PAPER, getBuildingLevel() > 0 ? 32 : 0);
+        for (var item : com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem.values()) {
+            retain(required, JointService.item(item), ProductionRules.target(item, getBuildingLevel()));
+        }
+        for (var input : ProductionRules.ingredientsKept(getBuildingLevel()).entrySet()) {
+            retain(required, net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
+                    net.minecraft.resources.ResourceLocation.parse(input.getKey())), input.getValue());
+        }
         return required;
     }
     private static void retain(Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> required, Item item, int minimum) {

@@ -4,26 +4,44 @@ import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting
 
 /** Native request queue, ingredient pickup, work-position navigation, crafting and inventory dumping. */
 public final class BudtenderAI extends AbstractEntityAICrafting<BudtenderJob, DispensaryBuilding> {
-    private long nextServiceTick;
+    private final com.malevolentgods.fourtwenty.compat.minecolonies.service.CustomerService customers =
+            new com.malevolentgods.fourtwenty.compat.minecolonies.service.CustomerService();
+    private static final net.minecraft.tags.TagKey<net.minecraft.world.item.Item> BONG_FUEL = net.minecraft.tags.TagKey.create(
+            net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.ResourceLocation.parse("fourtwenty:bong_fuel"));
+    private final com.malevolentgods.fourtwenty.compat.minecolonies.service.BongTending bongs =
+            new com.malevolentgods.fourtwenty.compat.minecolonies.service.BongTending();
+    /** Native requests: checks worker and hut stock and open requests before creating one. */
+    private final com.malevolentgods.fourtwenty.compat.minecolonies.service.BongTending.Supplies supplies =
+            new com.malevolentgods.fourtwenty.compat.minecolonies.service.BongTending.Supplies() {
+                @Override public void request(net.minecraft.world.item.ItemStack stack, int count) {
+                    checkIfRequestForItemExistOrCreateAsync(stack, count, 1);
+                }
+                @Override public void requestFuel(int count) { checkIfRequestForTagExistOrCreateAsync(BONG_FUEL, count); }
+            };
     public BudtenderAI(BudtenderJob job) { super(job); }
     @Override public Class<DispensaryBuilding> getExpectedBuildingClass() { return DispensaryBuilding.class; }
 
     /** Called only while native citizen AI allows work; essential tasks still preempt service and production. */
     @Override public void tick() {
         long now = com.malevolentgods.fourtwenty.compat.minecolonies.DispensarySavedData.get(world).time();
-        if (currentRecipeStorage == null && now >= nextServiceTick
-                && worker instanceof com.minecolonies.core.entity.citizen.EntityCitizen citizen) {
-            nextServiceTick = now + 20;
-            building.serveCustomer(citizen, now);
-        }
+        // Serve waiting customers first (walking to them), then keep the hut's bongs set up and lit.
+        // While either is steering the worker, skip the native AI so the two don't both move him.
+        if (currentRecipeStorage == null && worker instanceof com.minecolonies.core.entity.citizen.EntityCitizen tender
+                && (customers.tick(tender, building, now) || bongs.tick(tender, building, now, supplies))) return;
         super.tick();
     }
 
-    /** Native completion/pickup may leave a finished batch carried after its request is closed. */
+    /**
+     * Native crafters call the courier after every dump; the hut already keeps its service stock, so
+     * that left a pickup permanently open. A full hut still requests a pickup natively.
+     */
+    @Override public boolean isAfterDumpPickupAllowed() { return false; }
+
+    /** Native completion/pickup may leave a finished batch (any menu item) carried after its request is closed. */
     @Override protected boolean wantInventoryDumped() {
         return super.wantInventoryDumped() || (currentRecipeStorage == null
                 && com.minecolonies.api.util.InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
-                    stack -> stack.is(com.malevolentgods.fourtwenty.registry.ModItems.WEED_JOINT.get())) > 0);
+                    stack -> com.malevolentgods.fourtwenty.compat.minecolonies.service.JointService.menuItem(stack) != null) > 0);
     }
 
     /** The pinned native dumper discards an insertion remainder; reserve capacity before it extracts anything. */
@@ -50,7 +68,7 @@ public final class BudtenderAI extends AbstractEntityAICrafting<BudtenderJob, Di
     /** Keep the production request pending until its output has actually reached storage. */
     @Override public com.minecolonies.api.entity.ai.statemachine.states.IAIState afterDump() {
         if (com.minecolonies.api.util.InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
-                stack -> stack.is(com.malevolentgods.fourtwenty.registry.ModItems.WEED_JOINT.get())) > 0) {
+                stack -> com.malevolentgods.fourtwenty.compat.minecolonies.service.JointService.menuItem(stack) != null) > 0) {
             setDelay(100);
             return com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.INVENTORY_FULL;
         }

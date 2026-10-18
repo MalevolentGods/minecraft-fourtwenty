@@ -4,7 +4,7 @@
   "package": "com.malevolentgods.fourtwenty.compat.minecolonies.mixin",
   "plugin": "com.malevolentgods.fourtwenty.compat.ColonyMixinPlugin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": ["CitizenAIMixin", "CitizenServiceMixin", "CitizenRemovalMixin", "CitizenHappinessMixin", "CitizenAttributesMixin", "HealthRecalculationMixin"],
+  "mixins": ["CitizenAIMixin", "CitizenServiceMixin", "CitizenRemovalMixin", "CitizenHappinessMixin", "CitizenAttributesMixin", "HealthRecalculationMixin", "WorkerDumpMixin"],
   "client": ["CitizenHappinessWindowMixin"],
   "injectors": {"defaultRequire": 1}
 }

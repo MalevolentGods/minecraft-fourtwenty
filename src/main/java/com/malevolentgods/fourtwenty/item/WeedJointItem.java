@@ -22,6 +22,7 @@ public class WeedJointItem extends Item {
     @Override
     public @Nonnull ItemStack finishUsingItem(@Nonnull ItemStack stack, @Nonnull Level level, @Nonnull LivingEntity entity) {
         if (!level.isClientSide() && entity instanceof Player player) {
+            com.malevolentgods.fourtwenty.util.SmokeEvents.smoked(player);
             // Apply multiple effects to simulate being "high"
             player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 600, 1)); // 30 seconds regeneration II
             player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 2400, 0)); // 2 minutes night vision

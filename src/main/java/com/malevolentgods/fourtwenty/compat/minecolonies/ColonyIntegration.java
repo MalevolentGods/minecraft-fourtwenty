@@ -16,6 +16,12 @@ public final class ColonyIntegration {
         DispensaryRegistry.register(bus);
         container.registerConfig(ModConfig.Type.SERVER, DispensaryConfig.SPEC, "fourtwenty-dispensary-server.toml");
         NeoForge.EVENT_BUS.addListener(ColonyIntegration::tick);
+        NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.service.PlayerSales::interact);
+        NeoForge.EVENT_BUS.addListener(DispensaryCommands::register);
+        com.malevolentgods.fourtwenty.util.SmokeEvents.smokedListener =
+                com.malevolentgods.fourtwenty.compat.minecolonies.service.Exposure::secondhand;
+        com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.burningListener =
+                com.malevolentgods.fourtwenty.compat.minecolonies.benefits.BongSessionBenefits::burning;
         bus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) -> event.enqueueWork(() ->
                 com.minecolonies.api.IMinecoloniesAPI.getInstance().getEventBus().subscribe(
                         com.minecolonies.api.eventbus.events.colony.ColonyDeletedModEvent.class, deleted -> {
@@ -43,15 +49,29 @@ public final class ColonyIntegration {
         var home = citizen.getHomeBuilding();
         return DemandRules.eligible(!citizen.isChild(), home != null, home == null ? 0 : home.getBuildingLevel());
     }
+    /** Housing plus affinity: a craving exists only after first exposure, with interest, and not on a tolerance break. */
+    public static boolean qualifies(ICitizenData citizen, DispensarySavedData saved) {
+        return eligible(citizen) && saved.affinity(citizen.getColony().getID(), citizen.getUUID()).wantsDoses(saved.time());
+    }
+    /** The citizen's own interval (and equal grace), scaled from the configured daily values by their step. */
+    public static DemandRules rules(ICitizenData citizen, DispensarySavedData saved) {
+        var base = DispensaryConfig.rules();
+        int step = saved.affinity(citizen.getColony().getID(), citizen.getUUID()).step();
+        if (step < 1 || step >= com.malevolentgods.fourtwenty.compat.minecolonies.domain.AffinityRules.MAX_STEP) return base;
+        return new DemandRules(com.malevolentgods.fourtwenty.compat.minecolonies.domain.AffinityRules.intervalTicks(step, base.intervalTicks()),
+                com.malevolentgods.fourtwenty.compat.minecolonies.domain.AffinityRules.intervalTicks(step, base.graceTicks()), base.healthTicks());
+    }
     private static void tick(LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel level) || !level.tickRateManager().runsNormally()) return;
         var data = DispensarySavedData.get(level);
         data.advance();
-        var rules = DispensaryConfig.rules();
         for (var colony : IColonyManager.getInstance().getColonies(level)) {
             for (var citizen : colony.getCitizenManager().getCitizens()) {
-                var state = data.observe(colony.getID(), citizen.getUUID(), eligible(citizen), rules);
+                data.updateAffinity(colony.getID(), citizen.getUUID(),
+                        affinity -> com.malevolentgods.fourtwenty.compat.minecolonies.domain.AffinityRules.tick(affinity, data.time()));
+                var state = data.observe(colony.getID(), citizen.getUUID(), qualifies(citizen, data), rules(citizen, data));
                 com.malevolentgods.fourtwenty.compat.minecolonies.benefits.CitizenBenefits.refresh(citizen, state, data.time());
+                com.malevolentgods.fourtwenty.compat.minecolonies.benefits.BongSessionBenefits.refresh(citizen, data.time());
             }
             // This listener runs on each simulation tick; native building callbacks do not.
             if (data.time() % 100 == 0) {
