@@ -23,7 +23,7 @@ public final class BongBuffs {
     public static void apply(ServerLevel level, Player player, BongVariety variety) {
         for (var effect : variety.effects) {
             BuiltInRegistries.MOB_EFFECT.getHolder(ResourceLocation.parse(effect.id())).ifPresent(holder ->
-                    player.addEffect(new MobEffectInstance(holder, BongVariety.BUFF_TICKS, effect.amplifier())));
+                    player.addEffect(SmokeEffects.quiet(holder, BongVariety.BUFF_TICKS, effect.amplifier())));
         }
         if (variety.flight && player instanceof ServerPlayer server) {
             persisted(server).putLong(FLIGHT_UNTIL, now(server) + BongVariety.BUFF_TICKS);

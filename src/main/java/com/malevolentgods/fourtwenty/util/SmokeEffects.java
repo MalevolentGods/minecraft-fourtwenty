@@ -10,14 +10,19 @@ import net.minecraft.world.entity.player.Player;
 public final class SmokeEffects {
     public static void apply(ServerLevel level, Player player) {
         SmokeEvents.smoked(player);
-        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 600, 1)); // 30 seconds regeneration II
-        player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 2400, 0)); // 2 minutes night vision
-        player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 200, 1)); // 10 seconds hunger II (makes player hungrier)
-        player.addEffect(new MobEffectInstance(MobEffects.LUCK, 1800, 0)); // 1.5 minutes luck I (better loot/fishing)
+        player.addEffect(quiet(MobEffects.REGENERATION, 600, 1)); // 30 seconds regeneration II
+        player.addEffect(quiet(MobEffects.NIGHT_VISION, 2400, 0)); // 2 minutes night vision
+        player.addEffect(quiet(MobEffects.HUNGER, 200, 1)); // 10 seconds hunger II (makes player hungrier)
+        player.addEffect(quiet(MobEffects.LUCK, 1800, 0)); // 1.5 minutes luck I (better loot/fishing)
         if (level.random.nextFloat() < 0.3f) { // 30% chance
-            player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 400, 0)); // 20 seconds confusion
+            player.addEffect(quiet(MobEffects.CONFUSION, 400, 0)); // 20 seconds confusion
         }
         exhale(level, player, 5);
+    }
+
+    /** An effect without swirl particles (they get tiresome on long buffs); the HUD icon still shows. */
+    public static MobEffectInstance quiet(net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect> effect, int ticks, int amplifier) {
+        return new MobEffectInstance(effect, ticks, amplifier, false, false, true);
     }
 
     /** Smoke puffs above the player's head. */
