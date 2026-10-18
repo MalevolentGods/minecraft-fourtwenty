@@ -2,14 +2,16 @@
   "version": 1,
   "pack-format": 1,
   "name": "FourTwenty",
-  "desc": "Five timber-and-stone dispensaries: a village shop growing into a sheltered lounge.",
+  "desc": "The Sensi Heights Dispensary: a wooden shop, a stone shop, a modern storefront, a deeper store with lit display cases, and a rooftop lounge.",
   "authors": [
+    "IgnusVanMule",
     "FourTwenty contributors"
   ],
   "mods": [
     "fourtwenty",
     "minecolonies",
-    "structurize"
+    "structurize",
+    "domum_ornamentum"
   ],
   "icon": "dispensary.png"
 }
