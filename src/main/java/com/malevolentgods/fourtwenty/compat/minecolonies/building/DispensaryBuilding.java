@@ -41,7 +41,7 @@ public final class DispensaryBuilding extends AbstractBuilding {
         if (storage != null && JointService.jointSlot(storage) >= 0) return true;
         for (var data : getAllAssignedCitizen()) {
             var entity = data.getEntity().orElse(null);
-            if (entity instanceof EntityCitizen worker && JointService.atCounter(worker, this)
+            if (entity instanceof EntityCitizen worker && JointService.inShop(worker, this)
                     && JointService.jointSlot(data.getInventory()) >= 0) return true;
         }
         return false;
@@ -81,21 +81,32 @@ public final class DispensaryBuilding extends AbstractBuilding {
         }
         return null;
     }
-    /** Serve one waiting customer at the counter without disturbing an in-flight crafting recipe. */
-    public boolean serveCustomer(EntityCitizen worker, long now) {
+    /** The waiting customer with this identity, if still queued inside the shop. */
+    public EntityCitizen waitingCustomer(UUID id, long now) {
         prune(now);
-        if (!JointService.live(this) || !JointService.atCounter(worker, this)
-                || worker.getCitizenData().getWorkBuilding() != this || !CitizenSmokingTask.available(worker)) return false;
+        if (!customers.containsKey(id)) return null;
+        var entity = ((net.minecraft.server.level.ServerLevel) getColony().getWorld()).getEntity(id);
+        if (!(entity instanceof EntityCitizen customer)) { customers.remove(id); return null; }
+        var task = ((DispensaryCustomer) customer).fourtwenty$smokingTask();
+        if (task == null || !task.waitingAt(this) || !JointService.inShop(customer, this)) { customers.remove(id); return null; }
+        return customer;
+    }
+    /** First still-valid customer in queue order, skipping {@code skip} (one the Budtender could not reach). */
+    public EntityCitizen nextCustomer(long now, UUID skip) {
         for (var id : java.util.List.copyOf(customers.keySet())) {
-            var entity = ((net.minecraft.server.level.ServerLevel) getColony().getWorld()).getEntity(id);
-            if (!(entity instanceof EntityCitizen customer)) { customers.remove(id); continue; }
-            var task = ((DispensaryCustomer) customer).fourtwenty$smokingTask();
-            if (task == null || !task.waitingAt(this) || !JointService.atCounter(customer, this)) { customers.remove(id); continue; }
-            boolean served = JointService.collect(customer, this, worker.getInventoryCitizen());
-            if (!served) served = JointService.collect(customer, this, getItemHandlerCap());
-            if (served) { customers.remove(id); return true; }
+            if (id.equals(skip)) continue;
+            var customer = waitingCustomer(id, now);
+            if (customer != null) return customer;
         }
-        return false;
+        return null;
+    }
+    /** Hand one joint to a customer the Budtender is standing next to, from his inventory first, then the hut's storage. */
+    public boolean serve(EntityCitizen worker, EntityCitizen customer) {
+        if (!JointService.live(this) || worker.getCitizenData().getWorkBuilding() != this || !CitizenSmokingTask.available(worker)) return false;
+        boolean served = JointService.collect(customer, this, worker.getInventoryCitizen());
+        if (!served) served = JointService.collect(customer, this, getItemHandlerCap());
+        if (served) customers.remove(customer.getUUID());
+        return served;
     }
 
     /** Retain the service target and one production batch; workers still dump their output normally. */

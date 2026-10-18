@@ -35,7 +35,7 @@ public final class DispensaryStatusModule extends AbstractBuildingModule {
         for (var citizen : assigned) {
             var held = count(citizen.getInventory());
             for (int n = 0; n < totals.length; n++) totals[n] += held[n];
-            if (citizen.getEntity().orElse(null) instanceof EntityCitizen worker && JointService.atCounter(worker, hut)) {
+            if (citizen.getEntity().orElse(null) instanceof EntityCitizen worker && JointService.inShop(worker, hut)) {
                 atCounter = true; available += held[2];
             }
         }

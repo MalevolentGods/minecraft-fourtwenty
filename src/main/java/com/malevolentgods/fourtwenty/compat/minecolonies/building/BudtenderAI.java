@@ -4,7 +4,8 @@ import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting
 
 /** Native request queue, ingredient pickup, work-position navigation, crafting and inventory dumping. */
 public final class BudtenderAI extends AbstractEntityAICrafting<BudtenderJob, DispensaryBuilding> {
-    private long nextServiceTick;
+    private final com.malevolentgods.fourtwenty.compat.minecolonies.service.CustomerService customers =
+            new com.malevolentgods.fourtwenty.compat.minecolonies.service.CustomerService();
     private static final net.minecraft.tags.TagKey<net.minecraft.world.item.Item> BONG_FUEL = net.minecraft.tags.TagKey.create(
             net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.ResourceLocation.parse("fourtwenty:bong_fuel"));
     private final com.malevolentgods.fourtwenty.compat.minecolonies.service.BongTending bongs =
@@ -23,17 +24,18 @@ public final class BudtenderAI extends AbstractEntityAICrafting<BudtenderJob, Di
     /** Called only while native citizen AI allows work; essential tasks still preempt service and production. */
     @Override public void tick() {
         long now = com.malevolentgods.fourtwenty.compat.minecolonies.DispensarySavedData.get(world).time();
-        // Keep the hut's bongs set up (and lit while customers are around); queued customers are served first.
-        // While walking to or refilling a bong, skip the native AI so the two don't both steer the worker.
+        // Serve waiting customers first (walking to them), then keep the hut's bongs set up and lit.
+        // While either is steering the worker, skip the native AI so the two don't both move him.
         if (currentRecipeStorage == null && worker instanceof com.minecolonies.core.entity.citizen.EntityCitizen tender
-                && bongs.tick(tender, building, now, supplies)) return;
-        if (currentRecipeStorage == null && now >= nextServiceTick
-                && worker instanceof com.minecolonies.core.entity.citizen.EntityCitizen citizen) {
-            nextServiceTick = now + 20;
-            building.serveCustomer(citizen, now);
-        }
+                && (customers.tick(tender, building, now) || bongs.tick(tender, building, now, supplies))) return;
         super.tick();
     }
+
+    /**
+     * Native crafters call the courier after every dump; the hut already keeps its service stock, so
+     * that left a pickup permanently open. A full hut still requests a pickup natively.
+     */
+    @Override public boolean isAfterDumpPickupAllowed() { return false; }
 
     /** Native completion/pickup may leave a finished batch carried after its request is closed. */
     @Override protected boolean wantInventoryDumped() {

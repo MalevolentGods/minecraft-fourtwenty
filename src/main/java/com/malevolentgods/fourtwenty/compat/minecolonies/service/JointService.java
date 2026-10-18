@@ -27,14 +27,15 @@ public final class JointService {
                 && level.getBlockState(building.getPosition()).is(DispensaryRegistry.HUT.get())
                 && building.getColony().getServerBuildingManager().getBuilding(building.getPosition()) == building;
     }
-    public static boolean atCounter(EntityCitizen citizen, DispensaryBuilding building) {
+    /** Anywhere inside the hut (as the restaurant serves), or within 5 blocks of the hut block for odd footprints. */
+    public static boolean inShop(EntityCitizen citizen, DispensaryBuilding building) {
         return citizen.getCitizenData() != null && citizen.getCitizenData().getColony() == building.getColony()
                 && citizen.level() == building.getColony().getWorld()
-                && citizen.blockPosition().distSqr(building.getPosition()) <= 25;
+                && (building.isInBuilding(citizen.blockPosition()) || citizen.blockPosition().distSqr(building.getPosition()) <= 25);
     }
     /** Used by both the worker and the bounded self-service fallback; revalidate every handoff. */
     public static boolean collect(EntityCitizen citizen, DispensaryBuilding building, IItemHandler source) {
-        if (!live(building) || !atCounter(citizen, building) || !due(citizen)
+        if (!live(building) || !inShop(citizen, building) || !due(citizen)
                 || !CitizenSmokingTask.available(citizen) || jointSlot(citizen.getInventoryCitizen()) >= 0 || source == null) return false;
         int slot = jointSlot(source);
         if (slot < 0 || source.extractItem(slot, 1, true).isEmpty()) return false;

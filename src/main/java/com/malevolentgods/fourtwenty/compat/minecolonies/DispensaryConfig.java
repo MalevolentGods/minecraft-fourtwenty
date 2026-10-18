@@ -23,7 +23,19 @@ public final class DispensaryConfig {
     private static final ModConfigSpec.IntValue BONG_TICKS = BUILDER
             .comment("Bong session: elapsed simulation ticks the bonus lasts after a colonist was last near a burning bong.")
             .defineInRange("bongSessionTicks", 6_000, 20, DemandRules.MAX_TICKS);
+    private static final java.util.Map<com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem, ModConfigSpec.IntValue> PRICES = prices();
     public static final ModConfigSpec SPEC = BUILDER.build();
+    private static java.util.Map<com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem, ModConfigSpec.IntValue> prices() {
+        var prices = new java.util.EnumMap<com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem, ModConfigSpec.IntValue>(
+                com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem.class);
+        for (var item : com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem.values()) {
+            String name = item.name().toLowerCase(java.util.Locale.ROOT);
+            prices.put(item, BUILDER.comment("Emeralds a player without colony permission pays the Budtender for one " + name + ". Colony members are served free.")
+                    .defineInRange(name + "Price", item.defaultPrice, 0, 64));
+        }
+        return prices;
+    }
+    public static int price(com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem item) { return PRICES.get(item).get(); }
     private static ModConfigSpec.IntValue duration(String name) {
         return BUILDER.comment("Elapsed simulation ticks. Changes affect future deadlines; existing deadlines are preserved.")
                 .defineInRange(name, 24_000, 1, DemandRules.MAX_TICKS);

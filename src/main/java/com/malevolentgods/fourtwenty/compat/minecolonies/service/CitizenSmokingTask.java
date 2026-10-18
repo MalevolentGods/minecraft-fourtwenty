@@ -23,7 +23,7 @@ import net.minecraft.world.item.ItemStack;
 public final class CitizenSmokingTask {
     public enum State implements IState { VISIT }
     public enum Step { INACTIVE, TRAVEL, WAIT, SEAT, SMOKE }
-    public static final int TRAVEL_TICKS = 600, WAIT_TICKS = 200, SEAT_TICKS = 100, SMOKE_TICKS = 100, RETRY_TICKS = 1200;
+    public static final int TRAVEL_TICKS = 600, WAIT_TICKS = 400, SEAT_TICKS = 100, SMOKE_TICKS = 100, RETRY_TICKS = 1200;
     private final EntityCitizen citizen;
     private Step step = Step.INACTIVE;
     private DispensaryBuilding building;
@@ -97,12 +97,13 @@ public final class CitizenSmokingTask {
         switch (step) {
             case TRAVEL -> {
                 if (time >= deadline) return finish(true);
-                if (JointService.atCounter(citizen, building) && EntityNavigationUtils.walkToBuilding(citizen, building)) {
+                // Like the restaurant: once inside the shop, wait there and the Budtender comes over.
+                if (JointService.inShop(citizen, building)) {
                     citizen.getNavigation().stop(); step = Step.WAIT; deadline = time + WAIT_TICKS;
                 } else EntityNavigationUtils.walkToBuilding(citizen, building);
             }
             case WAIT -> {
-                if (!JointService.atCounter(citizen, building)) return finish(true);
+                if (!JointService.inShop(citizen, building)) return finish(true);
                 boolean self = citizen.getCitizenData().getWorkBuilding() == building
                         || !building.getModule(DispensaryRegistry.WORK).hasAssignedCitizen() || time >= deadline;
                 if (JointService.jointSlot(citizen.getInventoryCitizen()) < 0 && self) {
