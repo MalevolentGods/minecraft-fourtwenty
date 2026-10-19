@@ -22,9 +22,10 @@ import javax.annotation.Nonnull;
  * trim plate) on every side, in the lamp's halo colour, blended additively like lightning, so a
  * soft coloured film shows over the neighbouring blocks' faces.
  *
- * <p>Touching lamps share one glow: on a side where a lamp meets another lit lamp (or a trim meets
- * a trim on the same face), the halo neither extends nor draws a face, so the additive halos don't
- * overlap into bright seams.
+ * <p>The glow only spreads into open air: on a side where the next block is anything else (another
+ * lamp, a ladder, a pane, a trapdoor...) the halo neither extends nor draws a face. Touching lamps
+ * so share one glow instead of overlapping into bright seams, and nothing gets a coloured film
+ * drawn over it. (Against a full block that face was hidden inside the block anyway.)
  */
 public class LampHaloRenderer implements BlockEntityRenderer<LampBlockEntity> {
     public LampHaloRenderer(BlockEntityRendererProvider.Context context) {}
@@ -43,18 +44,14 @@ public class LampHaloRenderer implements BlockEntityRenderer<LampBlockEntity> {
             if (!state.getValue(LampBlock.LIT)) return;
             box = new AABB(0, 0, 0, 1, 1, 1);
             colour = block.color().getId();
-            for (var side : Direction.values()) {
-                var next = level.getBlockState(pos.relative(side));
-                joined[side.ordinal()] = next.getBlock() instanceof LampBlock && next.getValue(LampBlock.LIT);
-            }
+            for (var side : Direction.values()) joined[side.ordinal()] = !level.getBlockState(pos.relative(side)).isAir();
         } else if (state.getBlock() instanceof LampTrimBlock trim) {
             box = state.getShape(level, pos).bounds();
             colour = trim.color().getId();
             var facing = state.getValue(LampTrimBlock.FACING);
+            // The plate's front and back faces lie inside its own block space; only its edges meet neighbours.
             for (var side : Direction.values()) {
-                if (side.getAxis() == facing.getAxis()) continue;
-                var next = level.getBlockState(pos.relative(side));
-                joined[side.ordinal()] = next.getBlock() instanceof LampTrimBlock && next.getValue(LampTrimBlock.FACING) == facing;
+                if (side.getAxis() != facing.getAxis()) joined[side.ordinal()] = !level.getBlockState(pos.relative(side)).isAir();
             }
         } else return;
         halo(pose, buffers, box, LampGlow.rgba(colour), joined);
