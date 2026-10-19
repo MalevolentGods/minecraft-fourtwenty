@@ -5,6 +5,6 @@
   "plugin": "com.malevolentgods.fourtwenty.compat.ColonyMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": ["CitizenAIMixin", "CitizenServiceMixin", "CitizenRemovalMixin", "CitizenHappinessMixin", "CitizenAttributesMixin", "HealthRecalculationMixin", "WorkerDumpMixin", "SkillBonusMixin"],
-  "client": ["CitizenHappinessWindowMixin"],
+  "client": ["CitizenHappinessWindowMixin", "CitizenGuideTabMixin"],
   "injectors": {"defaultRequire": 1}
 }
