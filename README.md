@@ -4,58 +4,21 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
-## What's new in 0.6.0
+## What's new in 0.7.0
 
-- **The Dispensary works like a restaurant.**
-  - The Budtender walks over to customers anywhere in the shop.
-  - The menu grows with the Dispensary's level: joints, then weed cookies, pipes and brownies. He crafts small balanced batches and keeps a reserve of raw buds.
-  - Players can buy too: right-click him holding an emerald. Colony members get it free.
-- **Take-away by home level.**
-  - Colonists in level 1–2 homes have one at the shop.
-  - Levels 3–4 take a supply home: a 4-use pipe or 4 edibles.
-  - Level 5 do both.
-  - Carried doses are used anywhere, and workers never dump them.
-- **Colonist affinity.**
-  - Colonists only crave weed after their first exposure: a hookah session, secondhand smoke, or a dose.
-  - That exposure rolls a type (smoker, edibles, both or not interested) and a frequency, from every 4 days to four times a day.
-  - The frequency drifts up over time, until a two-day tolerance break resets it.
-  - The happiness tab shows each colonist's profile.
-- **Bongs.**
-  - A placeable glass bong: right-click it with a bud to take a hit.
-  - Six specialty bongs (Jackrabbit, Deep Sea, Forge, Owl, Sage, Phantom) give one-day buffs, Phantom includes **flight**.
-  - Level 5 colonists take their shop session at the bong that matches their job, for a one-day skill boost.
-- **The hookah** (the old bong) burns flint and steel, lava or blaze powder for different lengths of time.
-  - Colonists near a burning hookah get a "Hookah session" happiness bonus.
-  - The Budtender keeps the front hookah going and requests its fuel.
-- **Lamps.** Lamps, inverted (always-lit) lamps and thin lamp trim in all 16 colours.
-  - They use ProjectRed's illumar textures and soft glow halo.
-  - Touching lamps share one glow.
-- **The Sensi Heights style is built in.** The Sensi Heights MineColonies style pack ships with the mod: supply camp, Workshop 1–5, Residence 1–5 and Dispensary 1–5. Pick it with Switch Pack in the Build Tool.
-- **A new Dispensary.**
-  - The bundled hut is now the Sensi Heights Dispensary: a wooden shop that grows into a rooftop lounge.
-  - Its hut block is a 3D two-block shop counter.
-- **Builder costs.** MineColonies builders pay a sea lantern for each froglight, and source blocks for CB Multipart microblocks (1 per 8 covers).
-- **Testing tools.** Op-only `/fourtwenty` commands set up and inspect Dispensary scenarios. See [the in-game test playbook](docs/DISPENSARY_TESTING.md).
+- **The Budtender's Guide.** Talk to a Budtender and his citizen window has a new tab (the bud icon) explaining all of FourTwenty in his own words: growing, recipes, smoking and edibles, bongs and the hookah, running a Dispensary, how colonists pick up the habit, buying for yourself, lamps, Sensi Heights, and troubleshooting.
+- **A Sensi Heights Builder's Hut, levels 1–5.** It starts as a quick open shelter that leaves the terrain alone, then grows through a timber cabin and a stone-and-timber house with a storeroom into a polished two-story house with a front yard. Rack space grows with it: 1, 3, 8, 18, then 24 racks.
+- **Architect's cutters are cheap to build.** MineColonies builders pay a single cobblestone for one (the Builder's Hut hands one out at level 2).
+- **Lamp glow stays in the air.** A lamp's halo no longer paints over a neighbouring ladder, pane, trapdoor or fence; it only spreads into open air.
 
-## Changes from 0.5.0
+## Changes from 0.6.0
 
-- **The old Weed Bong is now called the Hookah.** Its id (`fourtwenty:weed_bong`) and placed hookahs are unchanged.
-- **Dispensary demand:**
-  - Any completed home level now qualifies, not just level 3+, but only after a first exposure.
-  - Existing colonists start as "never tried it". The dispensary save upgrades itself (format v3).
-- **Bundled Dispensary blueprints:**
-  - They are replaced by the Sensi Heights design.
-  - Dispensaries already built keep their blueprint.
-  - The hut needs the block above it clear.
-- **The Budtender:**
-  - He no longer calls the courier after every craft.
-  - He keeps a raw bud reserve: 4 at level 1, rising to 16 at level 5.
-- **Effects:** FourTwenty's potion effects no longer show swirl particles. Their HUD icons remain.
+- **Bundled Dispensary blueprints** are 11 blocks tall instead of 16: the top five layers only held keep-terrain placeholders. Dispensaries already built are unaffected.
+- **Sensi Heights Residence:** builders no longer dig a hole under the front steps or under bare eaves.
 - **Fixes:**
-  - Weed crops keep their farmland.
-  - The hookah faces whoever placed it.
-  - Budtenders no longer give themselves take-aways.
-- **Credits:** see [CHANGELOG](CHANGELOG.md) for details. The lamp textures and halo come from ProjectRed (MIT License).
+  - Workshop 4–5 lamps no longer carry ProjectRed tile data.
+  - The README and the guide give the Sensi Heights Dispensary's real seats and space.
+- See the [CHANGELOG](CHANGELOG.md) for 0.6.0 and earlier.
 
 ## Grow and harvest
 
@@ -133,15 +96,17 @@ Use **Build Tool → Switch Pack → FourTwenty → Dispensary → dispensary1**
 
 Keep the block above the hut clear: the hut block is a two-block counter.
 
-Reserve **17×23 blocks** for the finished shop and lounge. Facing the north-facing entrance, the hut stays in the same place at every level: reserve eight blocks to either side, three toward the entrance, and nineteen behind it, including the hut column. Keep fourteen blocks of vertical space from the foundation. Rotate or mirror this area with your preview.
+Reserve **11×24 blocks, 11 tall**, for every level: the hut stays in the same place as the shop grows. Facing the north-facing entrance, that is five blocks to either side of the hut, seven toward the entrance and sixteen behind it, from two layers below the hut's floor to eight above it. Rotate or mirror this area with your preview.
 
-| Completed level | Footprint | Indoor seats | Joint stock target |
-| --- | --- | ---: | ---: |
-| 1 | 9×11 | 2 | 16 |
-| 2 | 11×14 | 4 | 32 |
-| 3 | 13×17 | 6 | 64 |
-| 4 | 15×20 | 8 | 96 |
-| 5 | 17×23 | 10 | 128 |
+| Completed level | Built | Indoor seats | Rooftop seats | Joint stock target |
+| --- | --- | ---: | ---: | ---: |
+| 1 | front 13 rows | 6 | | 16 |
+| 2 | front 13 rows | 6 | | 32 |
+| 3 | front 13 rows | 6 | | 64 |
+| 4 | 19 rows (store and lounge) | 9 | | 96 |
+| 5 | all 24 rows and the roof | 9 | 17 | 128 |
+
+Customers use any seat, but skip the rooftop in the rain.
 
 Hire one Budtender and stock your warehouse with weed buds and paper. Native couriers supply production: **one bud and two paper make one joint**. As the Dispensary levels up he also crafts the rest of the menu with the crafting-table recipes: **weed cookies** at level 2 (a cookie and a bud), **pipes** at level 3 (oak, birch and spruce planks, charcoal and a bud) and **weed brownies** at level 4 (four cocoa beans, four wheat and a bud), keeping each item stocked. He makes one small batch at a time for whichever item is least stocked against its target (8 joints, 4 cookies or brownies, or 2 pipes), so the shop always has some of everything. He also keeps a reserve of raw buds that he never crafts from (4 at level 1, up to 16 at level 5), for bong sessions and the hookah, and requests buds from the colony to keep that reserve plus his next batch on hand. Use the hut and linked racks for service stock; the decorative barrel is separate storage. The **Dispensary service** tab shows staff, ingredients, total joints, stock target, joints available in the shop, waiting customers, and supply problems. Total stock includes the Budtender's inventory; stock the Budtender carries out of the shop is not immediately available. Standard management and crafting tabs remain available. Clear storage space if production backs up.
 
@@ -171,6 +136,7 @@ FourTwenty ships the **Sensi Heights** MineColonies style: "A hillside town that
 - **Supply camp:** stocked racks and weed seeds. It is also level 1 of the Workshop.
 - **Workshop (levels 1–5):** an upgradable decoration. Its racks are never broken on upgrade.
 - **Residence (levels 1–5).**
+- **Builder's Hut (levels 1–2 so far):** an open shelter whose placeholders keep all the surrounding terrain, for a quick first build, then a timber cabin with an architect's cutter.
 - **Dispensary (levels 1–5):** the same design as the FourTwenty pack's.
 
 More huts are added as they're built. The pack lives in its own repository and is bundled with `python3 tools/import_sensi_heights.py <pack>/sensiheights`, which validates it (huts link to their own files, no ProjectRed/CB blocks). A few blueprints use a Farmer's Delight cutting board, which is simply left out without that mod.
@@ -234,7 +200,7 @@ Hoppers and standard NeoForge item-handler automation can access all three slots
 
 ## Install and upgrade
 
-Install the same FourTwenty build on the server and every client. This work retains the version **0.3.2**, so compare the JAR's SHA-256 as well as its filename when replacing an older build with that version. MineColonies and the other pack mods are optional, with exact tested versions recorded in the [frozen inventory](validation/compatibility-lock.json).
+Install the same FourTwenty build on the server and every client. Development builds can share a version number, so compare the JAR's SHA-256 as well as its filename when replacing one. MineColonies and the other pack mods are optional, with exact tested versions recorded in the [frozen inventory](validation/compatibility-lock.json).
 
 Back up a world before upgrading. Registry IDs and inventory slot numbers are preserved. Existing lit hookahs receive an additive `ChargePaid` marker: their remaining bud is consumed once on the first server tick, their already-paid fuel is not charged again; saves without a per-charge burn length resume as blaze powder charges, and elapsed burn time is retained. Invalid legacy contents remain recoverable through extraction. An invalid active legacy burn stops. Unloaded hookahs pause instead of catching up offline.
 

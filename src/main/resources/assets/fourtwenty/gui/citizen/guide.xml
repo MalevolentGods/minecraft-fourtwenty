@@ -1,0 +1,12 @@
+<window size="210 244" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <layout source="minecolonies:gui/citizen/nav.xml"/>
+    <text id="title" pos="40 14" size="150 12" textalign="MIDDLE" color="black"/>
+    <list id="topics" pos="40 30" size="158 204">
+        <view size="147 18">
+            <button id="topic" size="147 16" textcolor="black" source="minecolonies:textures/gui/citizen/colonist_button_big.png"/>
+        </view>
+    </list>
+    <scrollgroup id="page" pos="40 30" size="158 184" visible="false"/>
+    <button id="back" pos="78 220" size="74 16" textcolor="black" visible="false"
+            label="$(fourtwenty.guide.back)" source="minecolonies:textures/gui/citizen/colonist_button_medium.png"/>
+</window>

@@ -2,6 +2,23 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [0.7.0] - The Budtender's Guide and the Builder's Hut
+
+### Added
+- **The Budtender's Guide:** a citizen-window tab (bud icon) on every Budtender with 17 topics covering the whole mod, written in his voice. The text lives in the lang file (`fourtwenty.guide.<topic>.title` / `.text`).
+- **Sensi Heights Builder's Hut, levels 1–5** (`fundamentals/builder1`–`5`): an open shelter that keeps the terrain, a timber cabin, a stone-and-timber house with a storeroom, a polished house with a roof terrace and the second story begun, and the full two-story house with a front yard. Racks: 1, 3, 8, 18, 24.
+- **Builder cost:** the Domum Ornamentum architect's cutter costs one cobblestone.
+
+### Changed
+- Lamp and lamp trim halos only spread into open air: no side is drawn against any neighbouring block (ladders, panes, trapdoors, other lamps).
+- Bundled Dispensary blueprints trimmed from 16 to 11 blocks tall (the top layers were keep-terrain placeholders only).
+- Sensi Heights Residence: keep-terrain under the front steps and bare eaves; huts record their own pack and path.
+- `tools/import_dispensary_blueprints.py --lamps-only` also rewrites lamp tile entity ids, and the Sensi Heights validator rejects foreign tile entities.
+
+### Fixed
+- Workshop 4–5 shipped 59 lamps with ProjectRed tile entity ids.
+- README and guide: the Dispensary's seats (6/6/6/9/9, plus 17 rooftop seats at level 5) and space (11×24, 11 tall).
+
 ## [0.6.0] - Dispensary service, affinity, bongs and lamps
 
 ### Added
