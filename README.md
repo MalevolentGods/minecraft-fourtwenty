@@ -34,7 +34,7 @@ This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and 
 - **A new Dispensary.**
   - The bundled hut is now the Sensi Heights Dispensary: a wooden shop that grows into a rooftop lounge.
   - Its hut block is a 3D two-block shop counter.
-- **Builder costs.** MineColonies builders pay a sea lantern for each froglight, and source blocks for CB Multipart microblocks (1 per 8 covers).
+- **Builder costs.** MineColonies builders pay a sea lantern for each froglight, a single cobblestone for an architect's cutter, and source blocks for CB Multipart microblocks (1 per 8 covers).
 - **Testing tools.** Op-only `/fourtwenty` commands set up and inspect Dispensary scenarios. See [the in-game test playbook](docs/DISPENSARY_TESTING.md).
 
 ## Changes from 0.5.0
@@ -173,7 +173,7 @@ FourTwenty ships the **Sensi Heights** MineColonies style: "A hillside town that
 - **Supply camp:** stocked racks and weed seeds. It is also level 1 of the Workshop.
 - **Workshop (levels 1–5):** an upgradable decoration. Its racks are never broken on upgrade.
 - **Residence (levels 1–5).**
-- **Builder's Hut (level 1 so far):** an open shelter whose placeholders keep all the surrounding terrain, for a quick first build.
+- **Builder's Hut (levels 1–2 so far):** an open shelter whose placeholders keep all the surrounding terrain, for a quick first build, then a timber cabin with an architect's cutter.
 - **Dispensary (levels 1–5):** the same design as the FourTwenty pack's.
 
 More huts are added as they're built. The pack lives in its own repository and is bundled with `python3 tools/import_sensi_heights.py <pack>/sensiheights`, which validates it (huts link to their own files, no ProjectRed/CB blocks). A few blueprints use a Farmer's Delight cutting board, which is simply left out without that mod.
