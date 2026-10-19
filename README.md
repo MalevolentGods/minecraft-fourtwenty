@@ -133,15 +133,17 @@ Use **Build Tool → Switch Pack → FourTwenty → Dispensary → dispensary1**
 
 Keep the block above the hut clear: the hut block is a two-block counter.
 
-Reserve **17×23 blocks** for the finished shop and lounge. Facing the north-facing entrance, the hut stays in the same place at every level: reserve eight blocks to either side, three toward the entrance, and nineteen behind it, including the hut column. Keep fourteen blocks of vertical space from the foundation. Rotate or mirror this area with your preview.
+Reserve **11×24 blocks, 11 tall**, for every level: the hut stays in the same place as the shop grows. Facing the north-facing entrance, that is five blocks to either side of the hut, seven toward the entrance and sixteen behind it, from two layers below the hut's floor to eight above it. Rotate or mirror this area with your preview.
 
-| Completed level | Footprint | Indoor seats | Joint stock target |
-| --- | --- | ---: | ---: |
-| 1 | 9×11 | 2 | 16 |
-| 2 | 11×14 | 4 | 32 |
-| 3 | 13×17 | 6 | 64 |
-| 4 | 15×20 | 8 | 96 |
-| 5 | 17×23 | 10 | 128 |
+| Completed level | Built | Indoor seats | Rooftop seats | Joint stock target |
+| --- | --- | ---: | ---: | ---: |
+| 1 | front 13 rows | 6 | | 16 |
+| 2 | front 13 rows | 6 | | 32 |
+| 3 | front 13 rows | 6 | | 64 |
+| 4 | 19 rows (store and lounge) | 9 | | 96 |
+| 5 | all 24 rows and the roof | 9 | 17 | 128 |
+
+Customers use any seat, but skip the rooftop in the rain.
 
 Hire one Budtender and stock your warehouse with weed buds and paper. Native couriers supply production: **one bud and two paper make one joint**. As the Dispensary levels up he also crafts the rest of the menu with the crafting-table recipes: **weed cookies** at level 2 (a cookie and a bud), **pipes** at level 3 (oak, birch and spruce planks, charcoal and a bud) and **weed brownies** at level 4 (four cocoa beans, four wheat and a bud), keeping each item stocked. He makes one small batch at a time for whichever item is least stocked against its target (8 joints, 4 cookies or brownies, or 2 pipes), so the shop always has some of everything. He also keeps a reserve of raw buds that he never crafts from (4 at level 1, up to 16 at level 5), for bong sessions and the hookah, and requests buds from the colony to keep that reserve plus his next batch on hand. Use the hut and linked racks for service stock; the decorative barrel is separate storage. The **Dispensary service** tab shows staff, ingredients, total joints, stock target, joints available in the shop, waiting customers, and supply problems. Total stock includes the Budtender's inventory; stock the Budtender carries out of the shop is not immediately available. Standard management and crafting tabs remain available. Clear storage space if production backs up.
 
