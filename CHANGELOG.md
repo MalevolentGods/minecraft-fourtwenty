@@ -10,7 +10,7 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - **Builder cost:** the Domum Ornamentum architect's cutter costs one cobblestone.
 
 ### Changed
-- Lamp and lamp trim halos only spread into open air: no side is drawn against any neighbouring block (ladders, panes, trapdoors, other lamps).
+- Lamp and lamp trim halos skip ladders: no halo side is drawn against a ladder (as against another lit lamp); the glow still spills onto other neighbouring blocks.
 - Bundled Dispensary blueprints trimmed from 16 to 11 blocks tall (the top layers were keep-terrain placeholders only).
 - Sensi Heights Residence: keep-terrain under the front steps and bare eaves; huts record their own pack and path.
 - `tools/import_dispensary_blueprints.py --lamps-only` also rewrites lamp tile entity ids, and the Sensi Heights validator rejects foreign tile entities.
