@@ -171,6 +171,7 @@ FourTwenty ships the **Sensi Heights** MineColonies style: "A hillside town that
 - **Supply camp:** stocked racks and weed seeds. It is also level 1 of the Workshop.
 - **Workshop (levels 1–5):** an upgradable decoration. Its racks are never broken on upgrade.
 - **Residence (levels 1–5).**
+- **Builder's Hut (level 1 so far):** an open shelter whose placeholders keep all the surrounding terrain, for a quick first build.
 - **Dispensary (levels 1–5):** the same design as the FourTwenty pack's.
 
 More huts are added as they're built. The pack lives in its own repository and is bundled with `python3 tools/import_sensi_heights.py <pack>/sensiheights`, which validates it (huts link to their own files, no ProjectRed/CB blocks). A few blueprints use a Farmer's Delight cutting board, which is simply left out without that mod.
