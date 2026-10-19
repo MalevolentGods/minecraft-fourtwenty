@@ -4,58 +4,21 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
-## What's new in 0.6.0
+## What's new in 0.7.0
 
-- **The Dispensary works like a restaurant.**
-  - The Budtender walks over to customers anywhere in the shop.
-  - The menu grows with the Dispensary's level: joints, then weed cookies, pipes and brownies. He crafts small balanced batches and keeps a reserve of raw buds.
-  - Players can buy too: right-click him holding an emerald. Colony members get it free.
-- **Take-away by home level.**
-  - Colonists in level 1–2 homes have one at the shop.
-  - Levels 3–4 take a supply home: a 4-use pipe or 4 edibles.
-  - Level 5 do both.
-  - Carried doses are used anywhere, and workers never dump them.
-- **Colonist affinity.**
-  - Colonists only crave weed after their first exposure: a hookah session, secondhand smoke, or a dose.
-  - That exposure rolls a type (smoker, edibles, both or not interested) and a frequency, from every 4 days to four times a day.
-  - The frequency drifts up over time, until a two-day tolerance break resets it.
-  - The happiness tab shows each colonist's profile.
-- **Bongs.**
-  - A placeable glass bong: right-click it with a bud to take a hit.
-  - Six specialty bongs (Jackrabbit, Deep Sea, Forge, Owl, Sage, Phantom) give one-day buffs, Phantom includes **flight**.
-  - Level 5 colonists take their shop session at the bong that matches their job, for a one-day skill boost.
-- **The hookah** (the old bong) burns flint and steel, lava or blaze powder for different lengths of time.
-  - Colonists near a burning hookah get a "Hookah session" happiness bonus.
-  - The Budtender keeps the front hookah going and requests its fuel.
-- **Lamps.** Lamps, inverted (always-lit) lamps and thin lamp trim in all 16 colours.
-  - They use ProjectRed's illumar textures and soft glow halo.
-  - Touching lamps share one glow.
-- **The Sensi Heights style is built in.** The Sensi Heights MineColonies style pack ships with the mod: supply camp, Workshop 1–5, Residence 1–5 and Dispensary 1–5. Pick it with Switch Pack in the Build Tool.
-- **A new Dispensary.**
-  - The bundled hut is now the Sensi Heights Dispensary: a wooden shop that grows into a rooftop lounge.
-  - Its hut block is a 3D two-block shop counter.
-- **Builder costs.** MineColonies builders pay a sea lantern for each froglight, a single cobblestone for an architect's cutter, and source blocks for CB Multipart microblocks (1 per 8 covers).
-- **Testing tools.** Op-only `/fourtwenty` commands set up and inspect Dispensary scenarios. See [the in-game test playbook](docs/DISPENSARY_TESTING.md).
+- **The Budtender's Guide.** Talk to a Budtender and his citizen window has a new tab (the bud icon) explaining all of FourTwenty in his own words: growing, recipes, smoking and edibles, bongs and the hookah, running a Dispensary, how colonists pick up the habit, buying for yourself, lamps, Sensi Heights, and troubleshooting.
+- **A Sensi Heights Builder's Hut, levels 1–5.** It starts as a quick open shelter that leaves the terrain alone, then grows through a timber cabin and a stone-and-timber house with a storeroom into a polished two-story house with a front yard. Rack space grows with it: 1, 3, 8, 18, then 24 racks.
+- **Architect's cutters are cheap to build.** MineColonies builders pay a single cobblestone for one (the Builder's Hut hands one out at level 2).
+- **Lamp glow stays in the air.** A lamp's halo no longer paints over a neighbouring ladder, pane, trapdoor or fence; it only spreads into open air.
 
-## Changes from 0.5.0
+## Changes from 0.6.0
 
-- **The old Weed Bong is now called the Hookah.** Its id (`fourtwenty:weed_bong`) and placed hookahs are unchanged.
-- **Dispensary demand:**
-  - Any completed home level now qualifies, not just level 3+, but only after a first exposure.
-  - Existing colonists start as "never tried it". The dispensary save upgrades itself (format v3).
-- **Bundled Dispensary blueprints:**
-  - They are replaced by the Sensi Heights design.
-  - Dispensaries already built keep their blueprint.
-  - The hut needs the block above it clear.
-- **The Budtender:**
-  - He no longer calls the courier after every craft.
-  - He keeps a raw bud reserve: 4 at level 1, rising to 16 at level 5.
-- **Effects:** FourTwenty's potion effects no longer show swirl particles. Their HUD icons remain.
+- **Bundled Dispensary blueprints** are 11 blocks tall instead of 16: the top five layers only held keep-terrain placeholders. Dispensaries already built are unaffected.
+- **Sensi Heights Residence:** builders no longer dig a hole under the front steps or under bare eaves.
 - **Fixes:**
-  - Weed crops keep their farmland.
-  - The hookah faces whoever placed it.
-  - Budtenders no longer give themselves take-aways.
-- **Credits:** see [CHANGELOG](CHANGELOG.md) for details. The lamp textures and halo come from ProjectRed (MIT License).
+  - Workshop 4–5 lamps no longer carry ProjectRed tile data.
+  - The README and the guide give the Sensi Heights Dispensary's real seats and space.
+- See the [CHANGELOG](CHANGELOG.md) for 0.6.0 and earlier.
 
 ## Grow and harvest
 
@@ -237,7 +200,7 @@ Hoppers and standard NeoForge item-handler automation can access all three slots
 
 ## Install and upgrade
 
-Install the same FourTwenty build on the server and every client. This work retains the version **0.3.2**, so compare the JAR's SHA-256 as well as its filename when replacing an older build with that version. MineColonies and the other pack mods are optional, with exact tested versions recorded in the [frozen inventory](validation/compatibility-lock.json).
+Install the same FourTwenty build on the server and every client. Development builds can share a version number, so compare the JAR's SHA-256 as well as its filename when replacing one. MineColonies and the other pack mods are optional, with exact tested versions recorded in the [frozen inventory](validation/compatibility-lock.json).
 
 Back up a world before upgrading. Registry IDs and inventory slot numbers are preserved. Existing lit hookahs receive an additive `ChargePaid` marker: their remaining bud is consumed once on the first server tick, their already-paid fuel is not charged again; saves without a per-charge burn length resume as blaze powder charges, and elapsed burn time is retained. Invalid legacy contents remain recoverable through extraction. An invalid active legacy burn stops. Unloaded hookahs pause instead of catching up offline.
 
