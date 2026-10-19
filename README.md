@@ -9,7 +9,7 @@ This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and 
 - **The Budtender's Guide.** Talk to a Budtender and his citizen window has a new tab (the bud icon) explaining all of FourTwenty in his own words: growing, recipes, smoking and edibles, bongs and the hookah, running a Dispensary, how colonists pick up the habit, buying for yourself, lamps, Sensi Heights, and troubleshooting.
 - **A Sensi Heights Builder's Hut, levels 1–5.** It starts as a quick open shelter that leaves the terrain alone, then grows through a timber cabin and a stone-and-timber house with a storeroom into a polished two-story house with a front yard. Rack space grows with it: 1, 3, 8, 18, then 24 racks.
 - **Architect's cutters are cheap to build.** MineColonies builders pay a single cobblestone for one (the Builder's Hut hands one out at level 2).
-- **Lamp glow stays in the air.** A lamp's halo no longer paints over a neighbouring ladder, pane, trapdoor or fence; it only spreads into open air.
+- **Lamp glow skips ladders.** A lamp's halo still spills onto the blocks around it, but no longer paints over a ladder beside it.
 
 ## Changes from 0.6.0
 

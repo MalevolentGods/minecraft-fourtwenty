@@ -22,10 +22,10 @@ import javax.annotation.Nonnull;
  * trim plate) on every side, in the lamp's halo colour, blended additively like lightning, so a
  * soft coloured film shows over the neighbouring blocks' faces.
  *
- * <p>The glow only spreads into open air: on a side where the next block is anything else (another
- * lamp, a ladder, a pane, a trapdoor...) the halo neither extends nor draws a face. Touching lamps
- * so share one glow instead of overlapping into bright seams, and nothing gets a coloured film
- * drawn over it. (Against a full block that face was hidden inside the block anyway.)
+ * <p>The glow spilling onto neighbouring blocks is the effect, with two exceptions where the halo
+ * neither extends nor draws a face: another lit lamp (or a trim on the same face), so touching lamps
+ * share one glow instead of overlapping into bright seams; and a ladder, which the film would
+ * otherwise cover.
  */
 public class LampHaloRenderer implements BlockEntityRenderer<LampBlockEntity> {
     public LampHaloRenderer(BlockEntityRendererProvider.Context context) {}
@@ -44,17 +44,26 @@ public class LampHaloRenderer implements BlockEntityRenderer<LampBlockEntity> {
             if (!state.getValue(LampBlock.LIT)) return;
             box = new AABB(0, 0, 0, 1, 1, 1);
             colour = block.color().getId();
-            for (var side : Direction.values()) joined[side.ordinal()] = !level.getBlockState(pos.relative(side)).isAir();
+            for (var side : Direction.values()) {
+                var next = level.getBlockState(pos.relative(side));
+                joined[side.ordinal()] = next.getBlock() instanceof LampBlock && next.getValue(LampBlock.LIT) || isLadder(next);
+            }
         } else if (state.getBlock() instanceof LampTrimBlock trim) {
             box = state.getShape(level, pos).bounds();
             colour = trim.color().getId();
             var facing = state.getValue(LampTrimBlock.FACING);
             // The plate's front and back faces lie inside its own block space; only its edges meet neighbours.
             for (var side : Direction.values()) {
-                if (side.getAxis() != facing.getAxis()) joined[side.ordinal()] = !level.getBlockState(pos.relative(side)).isAir();
+                if (side.getAxis() == facing.getAxis()) continue;
+                var next = level.getBlockState(pos.relative(side));
+                joined[side.ordinal()] = next.getBlock() instanceof LampTrimBlock && next.getValue(LampTrimBlock.FACING) == facing || isLadder(next);
             }
         } else return;
         halo(pose, buffers, box, LampGlow.rgba(colour), joined);
+    }
+
+    private static boolean isLadder(net.minecraft.world.level.block.state.BlockState state) {
+        return state.getBlock() instanceof net.minecraft.world.level.block.LadderBlock;
     }
 
     /** Draw the halo for a lamp occupying {@code box} (block-local), in colour {@code rgba} (0xRRGGBBAA). */
