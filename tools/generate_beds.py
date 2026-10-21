@@ -53,6 +53,11 @@ def box(f, t, texture, rotation=None, shift=0):
     whole = texture in ('#panel', '#pillow', '#runner')
     e = {'from': f2, 'to': t2, 'faces': {face: {'texture': texture, 'uv': [0, 0, 16, 16] if whole else uv(face, f, t)}
                                        for face in ('north', 'south', 'east', 'west', 'up', 'down')}}
+    if texture == '#runner':
+        # The runner's stripes run along its length (across the bed); on its sides (the flaps that
+        # fold down) turn the texture a quarter so they carry on down over the fold.
+        for face in ('east', 'west'):
+            e['faces'][face]['rotation'] = 90
     if rotation:
         angle, origin = rotation
         e['rotation'] = {'angle': angle, 'axis': 'x', 'origin': [origin[0], origin[1], origin[2] + shift]}

@@ -110,6 +110,8 @@ def build(model):
                 corners.append(p)
             u0, v0, u1, v1 = spec.get('uv', [0, 0, 16, 16])
             face_uv = [(u0, v1), (u1, v1), (u1, v0), (u0, v0)]
+            k = (spec.get('rotation', 0) // 90) % 4                 # the face's texture, turned clockwise
+            face_uv = face_uv[k:] + face_uv[:k]
             base = len(verts)
             for p in corners:
                 if rot:

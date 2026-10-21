@@ -668,7 +668,7 @@ TRANSLUCENT = ('#glass', '#liquid')
 
 
 def model():
-    """A NeoForge composite: the solid machine as cutout, only the glass and terpene translucent.
+    """A NeoForge composite: the solid machine as mipmapped cutout, only the glass and terpene translucent.
     (One translucent model sorts all its faces back to front by their centres, which on a model this
     detailed draws solid faces over nearer ones: flicker and see-through sides.)"""
     for lit in (False, True):
@@ -685,7 +685,9 @@ def model():
             'parent': 'minecraft:block/block', 'loader': 'neoforge:composite', 'ambientocclusion': False,
             'textures': textures,
             'children': {
-                'machine': {'parent': 'minecraft:block/block', 'render_type': 'minecraft:cutout', 'ambientocclusion': False,
+                # cutout_mipped, not cutout: the plain cutout layer never mipmaps, so 256px textures on
+                # tiny parts sparkle as the view moves (the verdigris flecks on the valve wheel and deck).
+                'machine': {'parent': 'minecraft:block/block', 'render_type': 'minecraft:cutout_mipped', 'ambientocclusion': False,
                             'textures': textures, 'elements': solid},
                 'glass': {'parent': 'minecraft:block/block', 'render_type': 'minecraft:translucent', 'ambientocclusion': False,
                           'textures': textures, 'elements': clear}},

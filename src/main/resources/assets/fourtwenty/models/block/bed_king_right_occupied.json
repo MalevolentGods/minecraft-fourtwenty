@@ -1922,7 +1922,8 @@
             0,
             16,
             16
-          ]
+          ],
+          "rotation": 90
         },
         "west": {
           "texture": "#runner",
@@ -1931,7 +1932,8 @@
             0,
             16,
             16
-          ]
+          ],
+          "rotation": 90
         },
         "up": {
           "texture": "#runner",
@@ -1990,7 +1992,8 @@
             0,
             16,
             16
-          ]
+          ],
+          "rotation": 90
         },
         "west": {
           "texture": "#runner",
@@ -1999,7 +2002,8 @@
             0,
             16,
             16
-          ]
+          ],
+          "rotation": 90
         },
         "up": {
           "texture": "#runner",
