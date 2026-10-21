@@ -1,6 +1,5 @@
 {
   "parent": "minecraft:block/block",
-  "ambientocclusion": false,
   "textures": {
     "particle": "#rug"
   },
@@ -13,7 +12,7 @@
       ],
       "to": [
         8,
-        1,
+        0.5,
         8
       ],
       "faces": {
@@ -29,10 +28,42 @@
         "west": {
           "texture": "#rug",
           "uv": [
-            2.0,
             0,
-            2.5,
+            0,
+            0.5,
+            0.5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        1.5,
+        0.5,
+        0
+      ],
+      "to": [
+        8,
+        1,
+        8
+      ],
+      "faces": {
+        "up": {
+          "texture": "#rug",
+          "uv": [
+            3.0,
+            0,
+            16,
             16
+          ]
+        },
+        "west": {
+          "texture": "#rug",
+          "uv": [
+            0,
+            0,
+            0.5,
+            0.5
           ]
         }
       }

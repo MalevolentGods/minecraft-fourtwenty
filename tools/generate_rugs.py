@@ -68,35 +68,57 @@ def lum(c):
 
 # ---- geometry (the north-west quarter, x and z in 0..8) ---------------------------------------
 
-def box(x0, z0, x1, z1, faces):
-    uvs = {'up': [x0 * 2, z0 * 2, x1 * 2, z1 * 2],
-           'north': [x0 * 2, z0 * 2, x1 * 2, z0 * 2 + 0.5], 'south': [x0 * 2, z1 * 2 - 0.5, x1 * 2, z1 * 2],
-           'west': [x0 * 2, z0 * 2, x0 * 2 + 0.5, z1 * 2], 'east': [x1 * 2 - 0.5, z0 * 2, x1 * 2, z1 * 2]}
-    return {'from': [round(x0, 4), 0, round(z0, 4)], 'to': [round(x1, 4), 1, round(z1, 4)],
-            'faces': {f: {'texture': '#rug', 'uv': [round(v, 4) for v in uvs[f]]} for f in faces}}
+def box(x0, z0, x1, z1, faces, y0=0.0, y1=1.0):
+    """One rug element: its top shows its own place in the quarter's texture, its sides plain rim colour."""
+    # Sides show plain rim colour: the quarter's top-left corner lies outside the rug in every case
+    # with an edge (that is what the texture paints rim there), so a side never picks up the border's
+    # pattern (that was the specks on rounded corners and the stripy, turned-looking edges).
+    rim = [0, 0, 0.5, 0.5]
+    uvs = {'up': ([x0 * 2, z0 * 2, x1 * 2, z1 * 2], 0),
+           'north': (rim, 0), 'south': (rim, 0), 'west': (rim, 0), 'east': (rim, 0)}
+    faces_out = {}
+    for f in faces:
+        uv, rot = uvs[f]
+        spec = {'texture': '#rug', 'uv': [round(v, 4) for v in uv]}
+        if rot:
+            spec['rotation'] = rot
+        faces_out[f] = spec
+    return {'from': [round(x0, 4), round(y0, 4), round(z0, 4)], 'to': [round(x1, 4), round(y1, 4), round(z1, 4)], 'faces': faces_out}
+
+
+def region(case, inset, radius, y0, y1):
+    """The rug's footprint in this quarter at one inset (the edge on open sides), as touching boxes."""
+    if case == 'full':
+        return [box(0, 0, Q, Q, ('up',), y0, y1)]
+    if case == 'edge_n':
+        return [box(0, inset, Q, Q, ('up', 'north'), y0, y1)]
+    if case == 'edge_w':
+        return [box(inset, 0, Q, Q, ('up', 'west'), y0, y1)]
+    if case == 'inner':
+        # Everything but the notch [0, inset]^2 (the corner the missing diagonal neighbour leaves).
+        return [box(inset, 0, Q, inset, ('up', 'west'), y0, y1), box(0, inset, Q, Q, ('up', 'north'), y0, y1)]
+    # Outer corner: bands down the rounded corner (centred where the full-size corner's is), then the rest.
+    c = I + R
+    els = []
+    span = c - inset
+    steps = [inset + span * f for f in (0, 0.1, 0.2, 0.3, 0.5, 0.8, 1.0)]
+    for a, b in zip(steps, steps[1:]):
+        t = c - (a + b) / 2
+        x0 = c - math.sqrt(max(0.0, radius * radius - t * t))
+        els.append(box(x0, a, Q, b, ('up', 'north', 'west'), y0, y1))
+    els.append(box(inset, c, Q, Q, ('up', 'west'), y0, y1))
+    return els
+
+
+BEVEL = 0.5           # the outer half pixel of the rug is half as tall: the edge steps down to the floor
 
 
 def quarter(case):
-    """The elements of one case, faces only where the rug's edge is (sides between quarters, and
-    against a joined neighbour, are hidden)."""
+    """One case: a half-height base out to the edge and the full-height top inset a further half pixel,
+    so every open edge is a soft step rather than a wall. Faces only where the rug's edge is."""
     if case == 'full':
-        return [box(0, 0, Q, Q, ('up',))]
-    if case == 'edge_n':
-        return [box(0, I, Q, Q, ('up', 'north'))]
-    if case == 'edge_w':
-        return [box(I, 0, Q, Q, ('up', 'west'))]
-    if case == 'inner':
-        # Everything but the notch [0, I] x [0, I] (the corner the missing diagonal neighbour leaves).
-        return [box(I, 0, Q, I, ('up', 'west')), box(0, I, Q, Q, ('up', 'north'))]
-    # Outer corner: bands down the rounded corner, then the rest.
-    els = []
-    steps = [I, I + 0.25, I + 0.5, I + 0.75, I + 1.25, I + 2.0, I + R]
-    for a, b in zip(steps, steps[1:]):
-        t = (I + R) - (a + b) / 2
-        x0 = (I + R) - math.sqrt(max(0.0, R * R - t * t))
-        els.append(box(x0, a, Q, b, ('up', 'north', 'west')))
-    els.append(box(I, I + R, Q, Q, ('up', 'west')))
-    return els
+        return region('full', I, R, 0, 1)
+    return region(case, I, R, 0, 0.5) + region(case, I + BEVEL, R - BEVEL, 0.5, 1)
 
 
 # Quarters: (blockstate y turn, the side NW's north turns into, the side NW's west turns into, diagonal).
@@ -227,8 +249,8 @@ class Pattern:
 
     def border_value(self, d, s):
         """d: 0..BW in from the rug's edge; s: 0..8 along it (mirrored about the block middle)."""
-        if d < 0.5:
-            return 2                                        # the dark rim
+        if d < 0.75:
+            return 4                                        # the rim (and the bevel): a soft mid tone
         if abs(d - (BW - 0.35)) < 0.3:
             return 3                                        # the pinstripe on the inside
         t = d - 0.5                                         # 0..~2.2 across the band
@@ -248,7 +270,8 @@ class Pattern:
 
 def texture(case, pattern, colors, rng):
     base, accent, deep, light = colors
-    roles = {0: base, 1: accent, 2: deep, 3: light}
+    rim = mix(mix(deep, accent, 0.5), base, 0.25)
+    roles = {0: base, 1: accent, 2: deep, 3: light, 4: rim}
     img = Image.new('RGB', (Q * PX, Q * PX))
     px = img.load()
     for py in range(Q * PX):
@@ -256,13 +279,14 @@ def texture(case, pattern, colors, rng):
             x, z = (pxx + 0.5) / PX, (py + 0.5) / PX
             d, along = depth(case, x, z)
             if d < 0:
-                col = deep                                  # outside the rug: only its sides sample this
+                col = rim                                   # outside the rug: only its sides sample this
             elif d < BW:
                 col = roles[pattern.border_value(d, along)]
             else:
                 a, b = sorted((abs(x - 8), abs(z - 8)))
                 col = roles[pattern.field_value(a, b)]
-            weave = (0.025 if (pxx + py) % 2 == 0 else -0.025) + rng.uniform(-0.012, 0.012)
+            calm = 0.45 if d < 1.0 else 1.0                 # a quieter weave near the edge (less glint)
+            weave = calm * ((0.025 if (pxx + py) % 2 == 0 else -0.025) + rng.uniform(-0.012, 0.012))
             px[pxx, py] = tuple(clamp(v * (1 + weave) + 255 * weave * (0.3 - 0.25 * lum(col))) for v in col)
     return img
 
@@ -282,7 +306,7 @@ def generate():
         if stale.exists():
             stale.unlink()
     for case in CASES:
-        write(ASSETS / f'models/block/rug_{case}.json', {'parent': 'minecraft:block/block', 'ambientocclusion': False,
+        write(ASSETS / f'models/block/rug_{case}.json', {'parent': 'minecraft:block/block',   # ambient occlusion on: soft contact
                                                         'textures': {'particle': '#rug'}, 'elements': quarter(case)})
     rugs = [(c['code'], c['name'], c['hex']) for c in TERP['colors']] + [('natural', TERP['natural']['name'], TERP['natural']['hex'])]
     names, seen = collections.OrderedDict(), {}
@@ -304,7 +328,7 @@ def generate():
         for e in outer:
             for f in e['faces'].values():
                 f['texture'] = '#rug'
-        write(ASSETS / f'models/item/{block}.json', {'parent': 'minecraft:block/block', 'ambientocclusion': False,
+        write(ASSETS / f'models/item/{block}.json', {'parent': 'minecraft:block/block',
             'textures': {'rug': f'fourtwenty:block/rug/{code}_outer', 'particle': f'fourtwenty:block/rug/{code}_outer'},
             'elements': [e for k in range(4) for e in turned(outer, k)]})
         write(DATA / f'loot_table/blocks/{block}.json', {'type': 'minecraft:block', 'pools': [{'rolls': 1, 'entries': [
