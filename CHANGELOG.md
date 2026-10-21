@@ -2,6 +2,15 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+- Lamp recipe: 3 glass, a weed bud and the dye (shapeless) make 4 lamps, instead of 6 glass round a torch.
+- Lamp Trim: 1 lamp (plain or inverted) makes 4, instead of 1 inverted lamp making 8.
+
+### Added
+- Sensi Heights: the Tavern (levels 1-3). Level 3 uses Handcrafted beds and tables.
+
 ## [0.7.0] - The Budtender's Guide and the Builder's Hut
 
 ### Added

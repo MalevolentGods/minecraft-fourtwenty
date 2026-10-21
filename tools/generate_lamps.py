@@ -86,18 +86,18 @@ def generate():
             f'facing={d}': {'model': f'fourtwenty:block/{trim}', **r} for d, r in trim_rotation.items()}})
         write(ASSETS / f'models/item/{trim}.json', BUILTIN_ITEM(f'fourtwenty:block/{color}_lamp_on'))
         write(DATA / f'loot_table/blocks/{trim}.json', loot(trim))
-        # Recipes, a little effort but no grind: 6 glass around a torch with a dye above and a weed
-        # bud below -> 4 lamps; inverted = lamp + joint; 1 inverted lamp -> 8 trims.
-        write(DATA / f'recipe/{color}_lamp.json', {'type': 'minecraft:crafting_shaped',
-            'pattern': ['GDG', 'GTG', 'GRG'],
-            'key': {'G': {'item': 'minecraft:glass'}, 'D': {'item': f'minecraft:{color}_dye'},
-                    'T': {'item': 'minecraft:torch'}, 'R': {'item': 'fourtwenty:weed_bud'}},
+        # Recipes, cheap on purpose: 3 glass, a weed bud and the dye (anywhere) -> 4 lamps;
+        # inverted = lamp + joint; 1 lamp (either kind) -> 4 trims.
+        write(DATA / f'recipe/{color}_lamp.json', {'type': 'minecraft:crafting_shapeless', 'ingredients': [
+            {'item': 'minecraft:glass'}, {'item': 'minecraft:glass'}, {'item': 'minecraft:glass'},
+            {'item': 'fourtwenty:weed_bud'}, {'item': f'minecraft:{color}_dye'}],
             'result': {'id': f'fourtwenty:{color}_lamp', 'count': 4}})
         write(DATA / f'recipe/{color}_inverted_lamp.json', {'type': 'minecraft:crafting_shapeless', 'ingredients': [
             {'item': f'fourtwenty:{color}_lamp'}, {'item': 'fourtwenty:weed_joint'}],
             'result': {'id': f'fourtwenty:{color}_inverted_lamp', 'count': 1}})
         write(DATA / f'recipe/{trim}.json', {'type': 'minecraft:crafting_shapeless', 'ingredients': [
-            {'item': f'fourtwenty:{color}_inverted_lamp'}], 'result': {'id': f'fourtwenty:{trim}', 'count': 8}})
+            [{'item': f'fourtwenty:{color}_lamp'}, {'item': f'fourtwenty:{color}_inverted_lamp'}]],
+            'result': {'id': f'fourtwenty:{trim}', 'count': 4}})
         names[f'{color}_lamp'] = f'{title(color)} Lamp'
         names[f'{color}_inverted_lamp'] = f'{title(color)} Inverted Lamp'
         names[trim] = f'{title(color)} Lamp Trim'
