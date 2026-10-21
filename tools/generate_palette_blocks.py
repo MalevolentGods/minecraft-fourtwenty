@@ -10,11 +10,11 @@ geometry). Woven texture: a darker border, a light pinstripe, corner diamonds an
 medallion. 2 hemp blocks of the colour make 3; a terpene in the middle of 8 rugs recolours them.
 
 Lamps (lamp_<code>, inverted_lamp_<code>, lamp_trim_<code>): like the 16 dye-colour lamps (a Lamp
-lights while powered, an Inverted Lamp unless powered, a Trim is an always-lit plate), with
-FourTwenty's own 64x64 textures (a bevelled frame round a glass face that glows when lit) and a
-halo in their own colour (LampGlow.forRgb). 3 glass, a weed bud and the final terpene make 4.
+lights while powered, an Inverted Lamp unless powered, a Trim is an always-lit plate), with their
+very texture recoloured (16x16) and a halo in their own colour (LampGlow.forRgb). 3 glass, a weed
+bud and the final terpene make 4.
 
-All textures are 64x64 and seeded. Writes textures, models, blockstates, item models, loot,
+Concrete and rug textures are 64x64 and seeded. Writes textures, models, blockstates, item models, loot,
 recipes, tags and English names. Run again after edits.
 """
 import collections
@@ -161,33 +161,29 @@ def rug_texture(c, seed):
 
 # ---- lamps -----------------------------------------------------------------------------------
 
-def lamp_texture(c, lit, seed):
-    """A bevelled grey frame round a glass face: lit glows from the middle; unlit is dimmed and greyed."""
-    rng = random.Random(seed)
-    img = Image.new('RGB', (S, S))
+def lamp_texture(c, lit, seed=None):
+    """The dye-colour lamps' own texture (white_lamp_on/off, ProjectRed's illumar lamp, MIT), recoloured:
+    the one-pixel grey frame kept as it is, the inside's light-to-dark shading multiplied onto the
+    palette colour (greyed and dimmed for off, as the dye colours are). 16x16, like them."""
+    template = Image.open(ASSETS / f'textures/block/white_lamp_{"on" if lit else "off"}.png').convert('RGBA')
+    tp = template.load()
+    inner = [(x, y) for y in range(1, 15) for x in range(1, 15)]
+    mean = sum(sum(tp[p][:3]) / 3 for p in inner) / len(inner)
+    if lit:
+        target = c
+    else:
+        l = lum(c) * 255 * 0.85
+        target = shade(mix(c, (l, l, l), 0.45), 0.88)
+    img = Image.new('RGBA', template.size)
     px = img.load()
-    glass = c if lit else shade(mix(c, (110, 110, 112), 0.45), 0.72)
-    for y in range(S):
-        for x in range(S):
-            edge = min(x, y, S - 1 - x, S - 1 - y)
-            if edge == 0:
-                col = (34, 34, 38)
-            elif edge < 4:
-                topleft = x < S - 1 - y
-                col = shade((112, 114, 120), (1.25 if topleft else 0.8) - 0.06 * edge)
-            elif edge == 4:
-                col = (40, 40, 44)
+    for y in range(template.size[1]):
+        for x in range(template.size[0]):
+            r, g, b, a = tp[x, y]
+            if x in (0, 15) or y in (0, 15):
+                px[x, y] = (r, g, b, a)                       # the frame, unchanged
             else:
-                r = math.hypot(x - 31.5, y - 31.5) / 32
-                if lit:
-                    col = mix(glass, (255, 255, 255), max(0.0, 0.32 * (1 - r) - 0.04))
-                    col = shade(col, 1 - 0.1 * r)
-                else:
-                    col = shade(glass, 1.04 - 0.12 * r)
-                if 0 <= (x - y) - 6 < 3 and x < 40:            # a sheen across the glass
-                    col = mix(col, (255, 255, 255), 0.18 if lit else 0.1)
-                col = vary(col, rng.uniform(-0.015, 0.015))
-            px[x, y] = col
+                f = ((r + g + b) / 3) / mean                  # the shading, relative to the middle
+                px[x, y] = tuple(clamp(v * f) for v in target) + (a,)
     return img
 
 
@@ -261,7 +257,7 @@ def generate():
         c = rgb(hexc)
         for lit in (True, False):
             state = 'on' if lit else 'off'
-            lamp_texture(c, lit, 7000 + i * 2 + lit).save(tex / f'lamp/{code}_{state}.png')
+            lamp_texture(c, lit).save(tex / f'lamp/{code}_{state}.png')
             write(ASSETS / f'models/block/lamp_{code}_{state}.json',
                   {'parent': 'minecraft:block/cube_all', 'textures': {'all': f'fourtwenty:block/lamp/{code}_{state}'}})
         for block, item_state in ((f'lamp_{code}', 'off'), (f'inverted_lamp_{code}', 'on')):
