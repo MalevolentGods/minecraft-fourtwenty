@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "group": "fourtwenty_rug",
+  "pattern": [
+    "HH"
+  ],
+  "key": {
+    "H": {
+      "item": "fourtwenty:natural_hemp"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:rug_natural",
+    "count": 3
+  }
+}

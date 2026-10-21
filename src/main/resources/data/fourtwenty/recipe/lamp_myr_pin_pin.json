@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "group": "fourtwenty_palette_lamp",
+  "ingredients": [
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "fourtwenty:weed_bud"
+    },
+    {
+      "item": "fourtwenty:terpene_myr_pin_pin"
+    }
+  ],
+  "result": {
+    "id": "fourtwenty:lamp_myr_pin_pin",
+    "count": 4
+  }
+}

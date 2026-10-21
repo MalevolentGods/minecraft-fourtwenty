@@ -68,6 +68,55 @@ public final class ModTerpenes {
         return new Hemp(block, stairs, slab, items);
     }
 
+    /** Concrete in the 64 colours, by code. */
+    public static final Map<String, DeferredHolder<Block, Block>> CONCRETE = palette("concrete_",
+            code -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(1.8f).requiresCorrectToolForDrops()));
+
+    /**
+     * Rugs in the 64 colours and Natural Hemp ("natural"): one pixel thick, inset a pixel from every
+     * edge with rounded corners (tools/generate_palette_blocks.py), and carpets in every other way.
+     */
+    public static final Map<String, DeferredHolder<Block, Block>> RUGS = rugs();
+
+    private static Map<String, DeferredHolder<Block, Block>> rugs() {
+        Map<String, DeferredHolder<Block, Block>> out = new LinkedHashMap<>(palette("rug_", code -> rug()));
+        out.put("natural", register("rug_natural", ModTerpenes::rug));
+        return Collections.unmodifiableMap(out);
+    }
+
+    private static Block rug() {
+        return new net.minecraft.world.level.block.CarpetBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOL).strength(0.1f)
+                .sound(SoundType.WOOL).ignitedByLava().noOcclusion());
+    }
+
+    /** Lamps, inverted lamps and lamp trims in the 64 colours (halos in their own colour). */
+    public static final Map<String, DeferredHolder<Block, Block>> LAMPS = palette("lamp_",
+            code -> new com.malevolentgods.fourtwenty.block.LampBlock(rgb(code), false, ModBlocks.lampProperties()));
+    public static final Map<String, DeferredHolder<Block, Block>> INVERTED_LAMPS = palette("inverted_lamp_",
+            code -> new com.malevolentgods.fourtwenty.block.LampBlock(rgb(code), true, ModBlocks.lampProperties()));
+    public static final Map<String, DeferredHolder<Block, Block>> LAMP_TRIMS = palette("lamp_trim_",
+            code -> new com.malevolentgods.fourtwenty.block.LampTrimBlock(rgb(code), ModBlocks.lampProperties().noOcclusion()));
+
+    private static int rgb(String code) { return com.malevolentgods.fourtwenty.domain.TerpenePalette.color(Terpenes.Code.parse(code).orElseThrow()); }
+
+    /** A block (and its item) per palette colour: prefix + final terpene code. */
+    private static Map<String, DeferredHolder<Block, Block>> palette(String prefix, java.util.function.Function<String, Block> make) {
+        Map<String, DeferredHolder<Block, Block>> out = new LinkedHashMap<>();
+        for (Terpenes.Code code : Terpenes.finals()) out.put(code.id(), register(prefix + code.id(), () -> make.apply(code.id())));
+        return Collections.unmodifiableMap(out);
+    }
+
+    private static DeferredHolder<Block, Block> register(String id, java.util.function.Supplier<Block> block) {
+        DeferredHolder<Block, Block> holder = ModBlocks.BLOCKS.register(id, block);
+        ModItems.ITEMS.register(id, () -> new BlockItem(holder.get(), new Item.Properties()));
+        return holder;
+    }
+
+    /** Every palette lamp, inverted lamp and trim (for the halo block entity and item renderer). */
+    public static java.util.stream.Stream<Block> paletteLamps() {
+        return java.util.stream.Stream.of(LAMPS, INVERTED_LAMPS, LAMP_TRIMS).flatMap(m -> m.values().stream()).map(DeferredHolder::get);
+    }
+
     /** Sticky Situation: pressed from weed buds, refined into base terpenes. Hidden until first pressed. */
     public static final DeferredHolder<Item, Item> RESIN = ModItems.ITEMS.register("sticky_situation", () -> new Item(new Item.Properties()) {
         @Override public @Nonnull Component getName(@Nonnull ItemStack stack) {
@@ -118,6 +167,11 @@ public final class ModTerpenes {
                         all.forEach(h -> output.accept(h.items().get(0).get()));
                         all.forEach(h -> output.accept(h.items().get(1).get()));
                         all.forEach(h -> output.accept(h.items().get(2).get()));
+                        RUGS.values().forEach(b -> output.accept(b.get()));
+                        CONCRETE.values().forEach(b -> output.accept(b.get()));
+                        LAMPS.values().forEach(b -> output.accept(b.get()));
+                        INVERTED_LAMPS.values().forEach(b -> output.accept(b.get()));
+                        LAMP_TRIMS.values().forEach(b -> output.accept(b.get()));
                     })
                     .build());
 

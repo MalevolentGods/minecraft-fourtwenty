@@ -596,15 +596,15 @@ def elements(lit):
     E += cylinder_y(cx, cz, 4.6, 14.6, 15.4, '#copper')
     E += cylinder_y(cx, cz, 2.2, 15.4, 15.9, '#brass')
     E.append(box([cx - 0.25, 15.9, cz - 0.25], [cx + 0.25, 16.4, cz + 0.25], '#iron'))         # valve stem
-    # The valve wheel: two crossed pairs of spokes and a square rim each, the turned pair a hair
-    # higher so nothing shares a plane; spokes stop at the rim and the crossing spoke is split.
-    for rot, y0, y1 in ((None, 16.4, 16.7), (('y', 45, [cx, 16.55, cz]), 16.44, 16.74)):
-        E.append(box([cx - 1.15, y0, cz - 0.15], [cx + 1.15, y1, cz + 0.15], '#iron', rot=rot))
-        E.append(box([cx - 0.15, y0, cz - 1.15], [cx + 0.15, y1, cz - 0.15], '#iron', rot=rot))
-        E.append(box([cx - 0.15, y0, cz + 0.15], [cx + 0.15, y1, cz + 1.15], '#iron', rot=rot))
-        for f, t in (([cx - 1.45, y0, cz - 1.45], [cx + 1.45, y1, cz - 1.15]), ([cx - 1.45, y0, cz + 1.15], [cx + 1.45, y1, cz + 1.45]),
-                     ([cx - 1.45, y0, cz - 1.15], [cx - 1.15, y1, cz + 1.15]), ([cx + 1.15, y0, cz - 1.15], [cx + 1.45, y1, cz + 1.15])):
-            E.append(box(f, t, '#brass', rot=rot))
+    # The valve wheel: one brass rim, a cross of iron spokes and, a little lower, a turned cross
+    # (so the eight spokes never share a plane); spokes stop at the rim, the crossing one is split.
+    for f, t in (([cx - 1.45, 16.4, cz - 1.45], [cx + 1.45, 16.7, cz - 1.15]), ([cx - 1.45, 16.4, cz + 1.15], [cx + 1.45, 16.7, cz + 1.45]),
+                 ([cx - 1.45, 16.4, cz - 1.15], [cx - 1.15, 16.7, cz + 1.15]), ([cx + 1.15, 16.4, cz - 1.15], [cx + 1.45, 16.7, cz + 1.15])):
+        E.append(box(f, t, '#brass'))
+    for rot, y0, y1 in ((None, 16.45, 16.65), (('y', 45, [cx, 16.5, cz]), 16.42, 16.6)):
+        E.append(box([cx - 1.15, y0, cz - 0.12], [cx + 1.15, y1, cz + 0.12], '#iron', rot=rot))
+        E.append(box([cx - 0.12, y0, cz - 1.15], [cx + 0.12, y1, cz - 0.12], '#iron', rot=rot))
+        E.append(box([cx - 0.12, y0, cz + 0.12], [cx + 0.12, y1, cz + 1.15], '#iron', rot=rot))
     # The condenser (back right): a copper tube wound with coil rings, a cap; the swan neck from the dome.
     kx, kz = 13.25, 13.0
     E += cylinder_y(kx, kz, 1.8, 8.75, 14.2, '#pipe')
@@ -658,17 +658,31 @@ def mirror_x(elements):
     return out
 
 
+TRANSLUCENT = ('#glass', '#liquid')
+
+
 def model():
+    """A NeoForge composite: the solid machine as cutout, only the glass and terpene translucent.
+    (One translucent model sorts all its faces back to front by their centres, which on a model this
+    detailed draws solid faces over nearer ones: flicker and see-through sides.)"""
     for lit in (False, True):
+        textures = dict({'particle': 'fourtwenty:block/terpinator/brass'},
+                        **{k: f'fourtwenty:block/terpinator/{k}' for k in (
+                            'panel', 'frame', 'brass', 'copper', 'pipe', 'iron', 'glass', 'gauge', 'dial', 'wheel', 'mouth',
+                            'plates', 'hopper', 'sight', 'grille', 'deck')},
+                        liquid=f'fourtwenty:block/terpinator/liquid{"_lit" if lit else ""}',
+                        lamp=f'fourtwenty:block/terpinator/lamp{"_lit" if lit else ""}')
+        els = mirror_x(elements(lit))
+        solid = [e for e in els if not any(f['texture'] in TRANSLUCENT for f in e['faces'].values())]
+        clear = [e for e in els if any(f['texture'] in TRANSLUCENT for f in e['faces'].values())]
         write(ASSETS / f'models/block/terpinator{"_lit" if lit else ""}.json', {
-            'parent': 'minecraft:block/block', 'render_type': 'minecraft:translucent', 'ambientocclusion': False,
-            'textures': dict({'particle': 'fourtwenty:block/terpinator/brass'},
-                             **{k: f'fourtwenty:block/terpinator/{k}' for k in (
-                                 'panel', 'frame', 'brass', 'copper', 'pipe', 'iron', 'glass', 'gauge', 'dial', 'wheel', 'mouth',
-                                 'plates', 'hopper', 'sight', 'grille', 'deck')},
-                             liquid=f'fourtwenty:block/terpinator/liquid{"_lit" if lit else ""}',
-                             lamp=f'fourtwenty:block/terpinator/lamp{"_lit" if lit else ""}'),
-            'elements': mirror_x(elements(lit)),
+            'parent': 'minecraft:block/block', 'loader': 'neoforge:composite', 'ambientocclusion': False,
+            'textures': textures,
+            'children': {
+                'machine': {'parent': 'minecraft:block/block', 'render_type': 'minecraft:cutout', 'ambientocclusion': False,
+                            'textures': textures, 'elements': solid},
+                'glass': {'parent': 'minecraft:block/block', 'render_type': 'minecraft:translucent', 'ambientocclusion': False,
+                          'textures': textures, 'elements': clear}},
             'display': {'gui': {'rotation': [30, 225, 0], 'translation': [0, 0, 0], 'scale': [0.625, 0.625, 0.625]},
                         'ground': {'rotation': [0, 0, 0], 'translation': [0, 3, 0], 'scale': [0.25, 0.25, 0.25]},
                         'fixed': {'rotation': [0, 0, 0], 'translation': [0, 0, 0], 'scale': [0.5, 0.5, 0.5]},

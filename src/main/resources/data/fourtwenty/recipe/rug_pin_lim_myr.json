@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "group": "fourtwenty_rug",
+  "pattern": [
+    "HH"
+  ],
+  "key": {
+    "H": {
+      "item": "fourtwenty:hemp_pin_lim_myr"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:rug_pin_lim_myr",
+    "count": 3
+  }
+}

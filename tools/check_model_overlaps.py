@@ -35,7 +35,9 @@ def overlap(a, b):
 
 def check(path):
     model = json.load(open(path, encoding='utf-8'))
-    els = model['elements']
+    els = list(model.get('elements', []))
+    for child in model.get('children', {}).values():      # a NeoForge composite: check across all its parts
+        els += child.get('elements', [])
     found = []
     allf = [(i, *fc) for i, e in enumerate(els) for fc in faces(e)]
     for n, (i, name, rot, plane, rect) in enumerate(allf):

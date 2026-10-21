@@ -32,17 +32,30 @@ public class LampTrimBlock extends DirectionalBlock implements net.minecraft.wor
             Direction.WEST, Block.box(0, 0, 0, 2, 16, 16),
             Direction.EAST, Block.box(14, 0, 0, 16, 16, 16)));
 
-    private final net.minecraft.world.item.DyeColor color;
+    /** Halo colours (0xRRGGBBAA) for the block and the item. */
+    private final int halo, itemHalo;
 
+    /** A trim in one of the 16 dye colours (ProjectRed's halo colours). */
     public LampTrimBlock(net.minecraft.world.item.DyeColor color, Properties properties) {
+        this(com.malevolentgods.fourtwenty.domain.LampGlow.rgba(color.getId()), com.malevolentgods.fourtwenty.domain.LampGlow.itemRgba(color.getId()), properties);
+    }
+
+    /** A trim in any colour (0xRRGGBB). */
+    public LampTrimBlock(int rgb, Properties properties) {
+        this(com.malevolentgods.fourtwenty.domain.LampGlow.forRgb(rgb), com.malevolentgods.fourtwenty.domain.LampGlow.itemForRgb(rgb), properties);
+    }
+
+    private LampTrimBlock(int halo, int itemHalo, Properties properties) {
         super(properties);
-        this.color = color;
+        this.halo = halo;
+        this.itemHalo = itemHalo;
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.DOWN));
     }
 
     @Override protected MapCodec<? extends DirectionalBlock> codec() { return CODEC; }
 
-    public net.minecraft.world.item.DyeColor color() { return color; }
+    public int halo() { return halo; }
+    public int itemHalo() { return itemHalo; }
 
     /** Only so the client can draw the halo (see LampHaloRenderer). */
     @Override public net.minecraft.world.level.block.entity.BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {

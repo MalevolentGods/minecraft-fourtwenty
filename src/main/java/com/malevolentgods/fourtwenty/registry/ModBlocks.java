@@ -60,7 +60,7 @@ public class ModBlocks {
     public static final java.util.Map<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampBlock>> INVERTED_LAMPS = lamps(true);
     public static final java.util.Map<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampTrimBlock>> LAMP_TRIMS = lampTrims();
 
-    private static BlockBehaviour.Properties lampProperties() {
+    public static BlockBehaviour.Properties lampProperties() {
       return BlockBehaviour.Properties.of().strength(0.3f).sound(SoundType.GLASS)
         .lightLevel(state -> !state.hasProperty(com.malevolentgods.fourtwenty.block.LampBlock.LIT)
             || state.getValue(com.malevolentgods.fourtwenty.block.LampBlock.LIT) ? 15 : 0)

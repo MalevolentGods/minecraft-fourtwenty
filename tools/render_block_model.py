@@ -173,7 +173,10 @@ def main():
     for o in list(bpy.data.objects):
         bpy.data.objects.remove(o)
     with open(model_path, encoding='utf-8') as fh:
-        build(json.load(fh))
+        model = json.load(fh)
+    if 'children' in model:                                # a NeoForge composite: draw every part
+        model = dict(model, elements=[e for c in model['children'].values() for e in c.get('elements', [])])
+    build(model)
     render(out_prefix, size, views)
 
 

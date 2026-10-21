@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=true": {
+      "model": "fourtwenty:block/lamp_lim_lav_lav_on"
+    },
+    "lit=false": {
+      "model": "fourtwenty:block/lamp_lim_lav_lav_off"
+    }
+  }
+}

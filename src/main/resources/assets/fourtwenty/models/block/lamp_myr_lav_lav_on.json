@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "fourtwenty:block/lamp/myr_lav_lav_on"
+  }
+}

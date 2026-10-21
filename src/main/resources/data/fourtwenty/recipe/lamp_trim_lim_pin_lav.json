@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "decorations",
+  "ingredients": [
+    [
+      {
+        "item": "fourtwenty:lamp_lim_pin_lav"
+      },
+      {
+        "item": "fourtwenty:inverted_lamp_lim_pin_lav"
+      }
+    ]
+  ],
+  "result": {
+    "id": "fourtwenty:lamp_trim_lim_pin_lav",
+    "count": 4
+  }
+}

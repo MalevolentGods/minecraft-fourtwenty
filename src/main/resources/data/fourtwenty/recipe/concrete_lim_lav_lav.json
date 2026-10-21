@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "fourtwenty_concrete",
+  "pattern": [
+    "CCC",
+    "CTC",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "tag": "fourtwenty:concrete"
+    },
+    "T": {
+      "item": "fourtwenty:terpene_lim_lav_lav"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:concrete_lim_lav_lav",
+    "count": 8
+  }
+}

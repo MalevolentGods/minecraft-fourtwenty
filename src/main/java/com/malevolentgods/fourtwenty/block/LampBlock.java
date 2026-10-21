@@ -17,18 +17,32 @@ import javax.annotation.Nonnull;
  */
 public class LampBlock extends Block implements net.minecraft.world.level.block.EntityBlock {
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
-    private final net.minecraft.world.item.DyeColor color;
     private final boolean inverted;
+    /** Halo colours (0xRRGGBBAA) for the block and the item. */
+    private final int halo, itemHalo;
 
+    /** A lamp in one of the 16 dye colours (ProjectRed's halo colours). */
     public LampBlock(net.minecraft.world.item.DyeColor color, boolean inverted, Properties properties) {
+        this(com.malevolentgods.fourtwenty.domain.LampGlow.rgba(color.getId()), com.malevolentgods.fourtwenty.domain.LampGlow.itemRgba(color.getId()),
+                inverted, properties);
+    }
+
+    /** A lamp in any colour (0xRRGGBB), such as the terpene palette. */
+    public LampBlock(int rgb, boolean inverted, Properties properties) {
+        this(com.malevolentgods.fourtwenty.domain.LampGlow.forRgb(rgb), com.malevolentgods.fourtwenty.domain.LampGlow.itemForRgb(rgb), inverted, properties);
+    }
+
+    private LampBlock(int halo, int itemHalo, boolean inverted, Properties properties) {
         super(properties);
-        this.color = color;
+        this.halo = halo;
+        this.itemHalo = itemHalo;
         this.inverted = inverted;
         registerDefaultState(stateDefinition.any().setValue(LIT, inverted));
     }
 
     public boolean inverted() { return inverted; }
-    public net.minecraft.world.item.DyeColor color() { return color; }
+    public int halo() { return halo; }
+    public int itemHalo() { return itemHalo; }
 
     /** Only so the client can draw the halo (see LampHaloRenderer). */
     @Override public net.minecraft.world.level.block.entity.BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {

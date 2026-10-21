@@ -38,19 +38,19 @@ public class LampHaloRenderer implements BlockEntityRenderer<LampBlockEntity> {
         var pos = lamp.getBlockPos();
         if (level == null) return;
         AABB box;
-        int colour;
+        int rgba;
         boolean[] joined = new boolean[6];   // by Direction ordinal: down, up, north, south, west, east
         if (state.getBlock() instanceof LampBlock block) {
             if (!state.getValue(LampBlock.LIT)) return;
             box = new AABB(0, 0, 0, 1, 1, 1);
-            colour = block.color().getId();
+            rgba = block.halo();
             for (var side : Direction.values()) {
                 var next = level.getBlockState(pos.relative(side));
                 joined[side.ordinal()] = next.getBlock() instanceof LampBlock && next.getValue(LampBlock.LIT) || isLadder(next);
             }
         } else if (state.getBlock() instanceof LampTrimBlock trim) {
             box = state.getShape(level, pos).bounds();
-            colour = trim.color().getId();
+            rgba = trim.halo();
             var facing = state.getValue(LampTrimBlock.FACING);
             // The plate's front and back faces lie inside its own block space; only its edges meet neighbours.
             for (var side : Direction.values()) {
@@ -59,7 +59,7 @@ public class LampHaloRenderer implements BlockEntityRenderer<LampBlockEntity> {
                 joined[side.ordinal()] = next.getBlock() instanceof LampTrimBlock && next.getValue(LampTrimBlock.FACING) == facing || isLadder(next);
             }
         } else return;
-        halo(pose, buffers, box, LampGlow.rgba(colour), joined);
+        halo(pose, buffers, box, rgba, joined);
     }
 
     private static boolean isLadder(net.minecraft.world.level.block.state.BlockState state) {

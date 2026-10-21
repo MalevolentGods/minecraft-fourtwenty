@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "group": "fourtwenty_rug_dye",
+  "pattern": [
+    "RRR",
+    "RTR",
+    "RRR"
+  ],
+  "key": {
+    "R": {
+      "tag": "fourtwenty:rugs"
+    },
+    "T": {
+      "item": "fourtwenty:terpene_pin_lim_lim"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:rug_pin_lim_lim",
+    "count": 8
+  }
+}

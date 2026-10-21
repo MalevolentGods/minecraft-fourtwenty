@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:block/lamp_trim",
+  "textures": {
+    "lamp": "fourtwenty:block/lamp/myr_lav_lav_on"
+  }
+}

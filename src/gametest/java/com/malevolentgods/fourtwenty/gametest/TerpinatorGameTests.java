@@ -12,6 +12,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -150,6 +151,45 @@ public final class TerpinatorGameTests {
         int before = t.data().get(DATA_METHOD);
         t.setMethod((before + 1) % 4);
         h.assertTrue(t.data().get(DATA_METHOD) == before, "The dial is locked while refining");
+        h.succeed();
+    }
+
+    private static ItemStack craft(GameTestHelper h, int w, int hgt, List<ItemStack> grid) {
+        var input = CraftingInput.of(w, hgt, grid);
+        return h.getLevel().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, input, h.getLevel())
+                .map(r -> r.value().assemble(input, h.getLevel().registryAccess())).orElse(ItemStack.EMPTY);
+    }
+
+    @GameTest(template = "empty")
+    public static void rugsConcreteAndLampsCraftInEveryColour(GameTestHelper h) {
+        Code teal = Code.of(Base.PIN, Base.LAV, Base.PIN);   // Hippie Hot Tub
+        var hemp = new ItemStack(ModTerpenes.HEMP.get(teal.id()).items().get(0).get());
+        var rugs = craft(h, 2, 1, List.of(hemp, hemp));
+        h.assertTrue(rugs.is(ModTerpenes.RUGS.get(teal.id()).get().asItem()) && rugs.getCount() == 3, "2 hemp make 3 rugs, got " + rugs);
+        var natural = new ItemStack(ModTerpenes.NATURAL_HEMP.items().get(0).get());
+        h.assertTrue(craft(h, 2, 1, List.of(natural, natural)).is(ModTerpenes.RUGS.get("natural").get().asItem()), "Natural Hemp rugs");
+        Code grey = Code.of(Base.MYR, Base.PIN, Base.PIN);
+        List<ItemStack> grid = new java.util.ArrayList<>(Collections.nCopies(9, new ItemStack(rugs.getItem())));
+        grid.set(4, terp(grey, 1));
+        var recoloured = craft(h, 3, 3, grid);
+        h.assertTrue(recoloured.is(ModTerpenes.RUGS.get(grey.id()).get().asItem()) && recoloured.getCount() == 8, "A terpene recolours 8 rugs, got " + recoloured);
+        grid = new java.util.ArrayList<>(Collections.nCopies(9, new ItemStack(net.minecraft.world.item.Items.WHITE_CONCRETE)));
+        grid.set(4, terp(teal, 1));
+        var concrete = craft(h, 3, 3, grid);
+        h.assertTrue(concrete.is(ModTerpenes.CONCRETE.get(teal.id()).get().asItem()) && concrete.getCount() == 8, "8 concrete + a terpene, got " + concrete);
+        var glass = new ItemStack(net.minecraft.world.item.Items.GLASS);
+        var lamps = craft(h, 3, 2, List.of(glass, glass, glass, new ItemStack(ModItems.WEED_BUD.get()), terp(teal, 1), ItemStack.EMPTY));
+        h.assertTrue(lamps.is(ModTerpenes.LAMPS.get(teal.id()).get().asItem()) && lamps.getCount() == 4, "3 glass, a bud and a terpene make 4 lamps, got " + lamps);
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aRugLetsTheFloorShowAndNeedsSupport(GameTestHelper h) {
+        var rug = ModTerpenes.RUGS.get("natural").get().defaultBlockState();
+        h.assertTrue(!rug.canOcclude(), "The floor's top face still draws round the inset rug");
+        h.setBlock(new BlockPos(1, 2, 1), Blocks.STONE);
+        h.assertTrue(rug.canSurvive(h.getLevel(), h.absolutePos(new BlockPos(1, 3, 1))), "A rug sits on a block");
+        h.assertTrue(!rug.canSurvive(h.getLevel(), h.absolutePos(new BlockPos(3, 3, 3))), "...and not on air");
         h.succeed();
     }
 }

@@ -157,6 +157,8 @@ Each port has a job: port 1 sets the family (neutrals, warm, green, cool), port 
 
 The Terpinator's screens use [Atkinson Hyperlegible](https://brailleinstitute.org/freefont) (Braille Institute, SIL Open Font License 1.1; see `licenses/AtkinsonHyperlegible-OFL.txt`), rendered from TrueType so the text stays crisp at any GUI scale. Its model and 256x256 textures come from `tools/generate_terpinator.py`; `tools/render_block_model.py` renders any block model with headless Blender for checking.
 
+The same 64 colours come as **concrete** (a final terpene in the middle of 8 concrete, vanilla or ours, dyes 8), **rugs** (2 hemp blocks make 3; one pixel thick and inset a pixel from every edge, with rounded corners, so the floor always shows round them; a terpene in the middle of 8 rugs recolours them; Natural Hemp rugs too) and **lamps** (3 glass, a weed bud and the final terpene make 4; inverted lamps and trims as for the dye colours, with a halo in their own colour).
+
 Names are discovered: a terpene shows as undiscovered until you make it, or someone hands you one. Colours and rules are never hidden: the Terpinator previews what its ports will make, a hint line walks you through your first session, and its **Guide** maps all 64 colours as you find them. Each discovery gets a toast with its line. Discoveries are per player and survive death.
 
 ## Side tables
