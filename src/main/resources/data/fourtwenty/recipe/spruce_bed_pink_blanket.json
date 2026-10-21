@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "fourtwenty_bed_dye",
+  "ingredients": [
+    {
+      "item": "fourtwenty:spruce_bed"
+    },
+    {
+      "item": "minecraft:pink_dye"
+    }
+  ],
+  "result": {
+    "id": "fourtwenty:spruce_bed",
+    "count": 1,
+    "components": {
+      "minecraft:block_state": {
+        "blanket": "pink"
+      }
+    }
+  }
+}

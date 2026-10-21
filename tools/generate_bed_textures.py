@@ -6,7 +6,8 @@ Writes textures/block/bed/:
   (vertical for posts, horizontal for rails), one per wood in WOODS;
 - <wood>_panel.png: a headboard/footboard panel, an inset centre in a bevelled frame;
 - sheet.png: white linen; pillow.png: a soft cotton pillow with a seam;
-- blanket_<colour>.png: a quilted blanket in each of the 16 dye colours, kept subtle.
+- blanket_<colour>.png: a hotel duvet (tone-on-tone satin stripe) in each of the 16 dye colours;
+- runner_<colour>.png: a hotel bed runner to match, a deeper shade with light edge stripes.
 Needs Pillow. Run again after edits; tools/generate_beds.py uses these.
 """
 import math
@@ -121,23 +122,46 @@ def pillow(seed):
 
 
 def blanket(base, seed):
-    """Quilted: a soft diamond stitch grid, each square gently puffed, with a fine knit texture."""
+    """A hotel duvet: a fine tone-on-tone satin stripe that catches the light, large soft folds and
+    a close cotton weave. Subtle on purpose; the runner carries the contrast."""
     rng = random.Random(seed)
-    broad = smooth_noise(rng, 4, 4)
+    folds = smooth_noise(rng, 3, 4)
     img = Image.new('RGB', (S, S))
     px = img.load()
-    cell = 16
+    lum = sum(base) / 3
+    sheen = 0.035 if lum > 60 else 0.08          # dark colours need a little more to show the stripe
     for y in range(S):
         for x in range(S):
-            u, v = (x + y) % cell, (x - y) % cell
-            du, dv = min(u, cell - u), min(v, cell - v)
-            f = 1 + 0.045 * (min(du, dv) / (cell / 2) - 0.5)   # puff between the stitch lines
-            if du == 0 or dv == 0:
-                f -= 0.06 if (x // 2) % 2 == 0 else 0.03        # a dashed stitch line
-            f += 0.02 * (broad.getpixel((x, y)) / 255 - 0.5)
-            f += 0.018 if (x + 2 * y) % 3 == 0 else 0           # knit
-            f += rng.uniform(-0.012, 0.012)
+            stripe = (x // 4) % 2                 # 4-pixel satin stripes
+            f = 1 + (sheen if stripe else -sheen / 2)
+            if x % 4 == 0:
+                f -= sheen * 0.6                   # the fine line where two stripes meet
+            f += 0.06 * (folds.getpixel((x, y)) / 255 - 0.5)
+            f += 0.012 if (x + y) % 2 == 0 else -0.012
+            f += rng.uniform(-0.01, 0.01)
             px[x, y] = shade(base, f)
+    return img
+
+
+def runner(base, seed):
+    """A hotel bed runner: a deeper shade of the blanket in a soft herringbone, with a light stripe
+    just in from each long edge (the long edges are the top and bottom of the texture)."""
+    rng = random.Random(seed)
+    deep = shade(base, 0.62 if sum(base) / 3 > 60 else 1.6)
+    light = tuple(clamp(c + (255 - c) * 0.55) for c in base)
+    img = Image.new('RGB', (S, S))
+    px = img.load()
+    for y in range(S):
+        for x in range(S):
+            if 7 <= y <= 9 or 54 <= y <= 56:
+                c, f = light, 1.0
+            else:
+                c = deep
+                f = 1 + (0.05 if ((x + (y % 8 if (y // 8) % 2 else 7 - y % 8)) // 2) % 2 else -0.03)  # herringbone
+                if y < 3 or y > 60:
+                    f -= 0.08                       # the edges roll under
+            f += rng.uniform(-0.012, 0.012)
+            px[x, y] = shade(c, f)
     return img
 
 
@@ -151,7 +175,8 @@ def generate():
     pillow(8).save(OUT / 'pillow.png')
     for i, (name, base) in enumerate(COLORS.items()):
         blanket(base, 400 + i).save(OUT / f'blanket_{name}.png')
-    print(f'{len(WOODS) * 3 + 2 + len(COLORS)} textures written to {OUT.relative_to(ROOT).as_posix()}')
+        runner(base, 500 + i).save(OUT / f'runner_{name}.png')
+    print(f'{len(WOODS) * 3 + 2 + 2 * len(COLORS)} textures written to {OUT.relative_to(ROOT).as_posix()}')
 
 
 if __name__ == '__main__':

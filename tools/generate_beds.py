@@ -49,7 +49,7 @@ def box(f, t, texture, rotation=None, shift=0):
     f2, t2 = [f[0], f[1], f[2] + shift], [t[0], t[1], t[2] + shift]
     # Panels and the pillow show their whole texture, so the bevelled frame and the seam sit on the
     # piece's edges; everything else samples the texture by position, like vanilla.
-    whole = texture in ('#panel', '#pillow')
+    whole = texture in ('#panel', '#pillow', '#runner')
     e = {'from': f2, 'to': t2, 'faces': {face: {'texture': texture, 'uv': [0, 0, 16, 16] if whole else uv(face, f, t)}
                                        for face in ('north', 'south', 'east', 'west', 'up', 'down')}}
     if rotation:
@@ -91,8 +91,12 @@ def elements(occupied, shift=0):
               b([0.25, 4.5, z0], [0.75, 5.25, 13.5], '#blanket'), b([15.25, 4.5, z0], [15.75, 5.25, 13.5], '#blanket'),
               b([1, 4.75, 13.5], [15, 7.25, 14], '#blanket'),                    # the foot drape
               b([1, 4.5, 13.75], [15, 5.25, 14.25], '#blanket'),
-              b([0.25, 6.75, b0], [15.75, 7.75, b1], '#sheet'),                  # the folded band
-              b([0.75, 7.75, b0 + 0.25], [15.25, 8.25, b1 - 0.25], '#sheet')]
+              # the folded band, sitting just above the blanket so no two faces share a plane
+              b([0.25, 7, b0], [15.75, 8, b1], '#sheet'),
+              b([0.75, 8, b0 + 0.25], [15.25, 8.5, b1 - 0.25], '#sheet'),
+              # a hotel runner across the foot, a deeper shade with fine light edge stripes
+              b([0.4, 7.75, 9], [15.6, 8, 12], '#runner'),
+              b([0.15, 5, 9], [0.4, 8, 12], '#runner'), b([15.6, 5, 9], [15.85, 8, 12], '#runner')]
     return parts
 
 
@@ -121,7 +125,8 @@ def generate():
         name = f'{wood}_bed'
         textures = lambda color: {'post': f'fourtwenty:block/bed/{wood}_post', 'rail': f'fourtwenty:block/bed/{wood}_rail',
                                   'panel': f'fourtwenty:block/bed/{wood}_panel', 'sheet': 'fourtwenty:block/bed/sheet',
-                                  'pillow': 'fourtwenty:block/bed/pillow', 'blanket': f'fourtwenty:block/bed/blanket_{color}'}
+                                  'pillow': 'fourtwenty:block/bed/pillow', 'blanket': f'fourtwenty:block/bed/blanket_{color}',
+                                  'runner': f'fourtwenty:block/bed/runner_{color}'}
         write(ASSETS / f'models/block/{name}_head.json', {'parent': 'fourtwenty:block/bed_head',
                                                           'textures': {'post': f'fourtwenty:block/bed/{wood}_post'}})
         for color in COLORS:
@@ -138,11 +143,24 @@ def generate():
                         variants[f'blanket={color},facing={facing},occupied={occupied},part={part}'] = \
                             {'model': model, 'y': rot} if rot else {'model': model}
         write(ASSETS / f'blockstates/{name}.json', {'variants': variants})
-        write(ASSETS / f'models/item/{name}.json', {'parent': 'fourtwenty:item/bed_template', 'textures': textures('lime')})
+        # The item shows its blanket colour: an item model per colour, picked by the "fourtwenty:blanket"
+        # property (dye id / 16, registered in ModClientEvents); no component means lime.
+        for color in COLORS:
+            write(ASSETS / f'models/item/{name}_{color}.json', {'parent': 'fourtwenty:item/bed_template', 'textures': textures(color)})
+        write(ASSETS / f'models/item/{name}.json', {'parent': 'fourtwenty:item/bed_template', 'textures': textures('lime'),
+            'overrides': [{'predicate': {'fourtwenty:blanket': i / 16}, 'model': f'fourtwenty:item/{name}_{color}'}
+                          for i, color in enumerate(COLORS)]})
+        # Breaking the bed keeps its blanket colour on the item.
         write(DATA / f'loot_table/blocks/{name}.json', {'type': 'minecraft:block', 'pools': [{
             'rolls': 1, 'entries': [{'type': 'minecraft:item', 'name': f'fourtwenty:{name}', 'conditions': [{
-                'condition': 'minecraft:block_state_property', 'block': f'fourtwenty:{name}', 'properties': {'part': 'head'}}]}],
+                'condition': 'minecraft:block_state_property', 'block': f'fourtwenty:{name}', 'properties': {'part': 'head'}}],
+                'functions': [{'function': 'minecraft:copy_state', 'block': f'fourtwenty:{name}', 'properties': ['blanket']}]}],
             'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
+        # Any bed of this wood + a dye -> the same bed with that blanket.
+        for color in COLORS:
+            write(DATA / f'recipe/{name}_{color}_blanket.json', {'type': 'minecraft:crafting_shapeless', 'category': 'misc',
+                'group': 'fourtwenty_bed_dye', 'ingredients': [{'item': f'fourtwenty:{name}'}, {'item': f'minecraft:{color}_dye'}],
+                'result': {'id': f'fourtwenty:{name}', 'count': 1, 'components': {'minecraft:block_state': {'blanket': color}}}})
         # 3 white wool over planks either side of a weed bud -> 1 bed.
         write(DATA / f'recipe/{name}.json', {'type': 'minecraft:crafting_shaped', 'category': 'misc', 'group': 'fourtwenty_bed',
             'pattern': ['WWW', 'PBP'],
@@ -161,6 +179,7 @@ def generate():
     for name, label in names.items():
         data[f'block.fourtwenty.{name}'] = label
         data[f'item.fourtwenty.{name}'] = label
+    data['item.fourtwenty.bed.blanket'] = 'Blanket: %s'
     lang.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     print(f'{len(names)} beds generated')
 

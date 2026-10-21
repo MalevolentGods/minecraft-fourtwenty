@@ -15,6 +15,11 @@ public class ModClientEvents {
         if (net.neoforged.fml.ModList.get().isLoaded("minecolonies")) {
             event.enqueueWork(com.malevolentgods.fourtwenty.compat.minecolonies.client.DispensaryClient::registerModel);
         }
+        // Bed items show their blanket colour: the item model overrides on this (dye id / 16).
+        event.enqueueWork(() -> com.malevolentgods.fourtwenty.registry.ModItems.BEDS.forEach(bed ->
+                net.minecraft.client.renderer.item.ItemProperties.register(bed.get(),
+                        net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("fourtwenty", "blanket"),
+                        (stack, level, entity, seed) -> com.malevolentgods.fourtwenty.item.FancyBedItem.blanket(stack).getId() / 16f)));
     }
 
     @SubscribeEvent

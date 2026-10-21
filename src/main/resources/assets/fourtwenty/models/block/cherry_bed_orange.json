@@ -6,6 +6,7 @@
     "panel": "fourtwenty:block/bed/cherry_panel",
     "sheet": "fourtwenty:block/bed/sheet",
     "pillow": "fourtwenty:block/bed/pillow",
-    "blanket": "fourtwenty:block/bed/blanket_orange"
+    "blanket": "fourtwenty:block/bed/blanket_orange",
+    "runner": "fourtwenty:block/bed/runner_orange"
   }
 }

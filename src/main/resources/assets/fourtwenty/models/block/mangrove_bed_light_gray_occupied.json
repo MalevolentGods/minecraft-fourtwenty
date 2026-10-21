@@ -6,6 +6,7 @@
     "panel": "fourtwenty:block/bed/mangrove_panel",
     "sheet": "fourtwenty:block/bed/sheet",
     "pillow": "fourtwenty:block/bed/pillow",
-    "blanket": "fourtwenty:block/bed/blanket_light_gray"
+    "blanket": "fourtwenty:block/bed/blanket_light_gray",
+    "runner": "fourtwenty:block/bed/runner_light_gray"
   }
 }

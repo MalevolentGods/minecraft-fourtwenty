@@ -15,6 +15,15 @@
                 "part": "head"
               }
             }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:copy_state",
+              "block": "fourtwenty:cherry_bed",
+              "properties": [
+                "blanket"
+              ]
+            }
           ]
         }
       ],

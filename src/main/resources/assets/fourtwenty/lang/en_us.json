@@ -274,5 +274,6 @@
   "block.fourtwenty.crimson_bed": "Crimson Bed",
   "item.fourtwenty.crimson_bed": "Crimson Bed",
   "block.fourtwenty.warped_bed": "Warped Bed",
-  "item.fourtwenty.warped_bed": "Warped Bed"
+  "item.fourtwenty.warped_bed": "Warped Bed",
+  "item.fourtwenty.bed.blanket": "Blanket: %s"
 }

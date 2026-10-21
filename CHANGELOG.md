@@ -9,7 +9,7 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - Lamp Trim: 1 lamp (plain or inverted) makes 4, instead of 1 inverted lamp making 8.
 
 ### Added
-- **Beds** in the same ten woods, with FourTwenty's own 64x64 textures (grained frame wood, panelled boards, linen, a pillow, quilted blankets): tall head posts and a panelled headboard, a footboard, a mattress, a gently tilted pillow, the sheet folded back over a draped blanket (lime when placed; right-click with a dye to recolour, 16 colours), turned back while someone sleeps. Real beds (BedBlock, `#minecraft:beds`), so colonies count them. 3 white wool over planks either side of a weed bud make 1.
+- **Beds** in the same ten woods, with FourTwenty's own 64x64 textures (grained frame wood, panelled boards, linen, a pillow, quilted blankets): tall head posts and a panelled headboard, a footboard, a mattress, a gently tilted pillow, the sheet folded back over a draped hotel duvet and a matching bed runner across the foot (16 colours: every colour is its own item in the creative tab, a bed + a dye crafts that colour, right-click a placed bed with a dye to recolour it, and breaking it keeps the colour; crafted beds are lime), turned back while someone sleeps. Real beds (BedBlock, `#minecraft:beds`), so colonies count them. 3 white wool over planks either side of a weed bud make 1.
 - **Side tables** in ten woods (every vanilla wood but bamboo): a nightstand with a drawer front, a brass knob, slim stripped-log legs and a low shelf. Decoration; 3 slabs, 4 planks and a weed bud make 2. FourTwenty's own model on vanilla textures.
 - Sensi Heights: the Tavern (levels 1-3). Level 3 uses Handcrafted beds and tables.
 
