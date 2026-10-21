@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:block/bed_head",
+  "textures": {
+    "planks": "minecraft:block/crimson_planks"
+  }
+}

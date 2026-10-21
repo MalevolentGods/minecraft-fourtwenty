@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "fourtwenty_bed",
+  "pattern": [
+    "WWW",
+    "PBP"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:white_wool"
+    },
+    "P": {
+      "item": "minecraft:mangrove_planks"
+    },
+    "B": {
+      "item": "fourtwenty:weed_bud"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:mangrove_bed",
+    "count": 1
+  }
+}

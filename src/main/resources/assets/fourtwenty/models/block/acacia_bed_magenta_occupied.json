@@ -1,0 +1,9 @@
+{
+  "parent": "fourtwenty:block/bed_occupied",
+  "textures": {
+    "planks": "minecraft:block/acacia_planks",
+    "log": "minecraft:block/stripped_acacia_log",
+    "sheet": "minecraft:block/white_wool",
+    "blanket": "minecraft:block/magenta_wool"
+  }
+}

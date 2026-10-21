@@ -1,0 +1,9 @@
+{
+  "parent": "fourtwenty:block/bed",
+  "textures": {
+    "planks": "minecraft:block/crimson_planks",
+    "log": "minecraft:block/stripped_crimson_stem",
+    "sheet": "minecraft:block/white_wool",
+    "blanket": "minecraft:block/magenta_wool"
+  }
+}

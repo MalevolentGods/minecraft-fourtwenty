@@ -37,6 +37,11 @@ public class ModItems {
     public static final java.util.List<DeferredHolder<Item, BlockItem>> SIDE_TABLES = ModBlocks.SIDE_TABLE_WOODS.stream()
             .map(wood -> blockItem(wood + "_side_table", ModBlocks.SIDE_TABLES.get(wood))).toList();
 
+    /** Beds in every wood of {@link ModBlocks#SIDE_TABLE_WOODS} (vanilla BedItem: places both halves). */
+    public static final java.util.List<DeferredHolder<Item, net.minecraft.world.item.BedItem>> BEDS = ModBlocks.SIDE_TABLE_WOODS.stream()
+            .map(wood -> ITEMS.register(wood + "_bed", () -> new net.minecraft.world.item.BedItem(ModBlocks.BEDS.get(wood).get(),
+                    new Item.Properties().stacksTo(1)))).toList();
+
     private static DeferredHolder<Item, BlockItem> blockItem(String name, DeferredHolder<? extends net.minecraft.world.level.block.Block, ? extends net.minecraft.world.level.block.Block> block) {
         return ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
     }

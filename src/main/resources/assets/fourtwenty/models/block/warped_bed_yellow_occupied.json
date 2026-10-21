@@ -1,0 +1,9 @@
+{
+  "parent": "fourtwenty:block/bed_occupied",
+  "textures": {
+    "planks": "minecraft:block/warped_planks",
+    "log": "minecraft:block/stripped_warped_stem",
+    "sheet": "minecraft:block/white_wool",
+    "blanket": "minecraft:block/yellow_wool"
+  }
+}

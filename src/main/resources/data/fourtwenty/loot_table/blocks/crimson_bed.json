@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "fourtwenty:crimson_bed",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "fourtwenty:crimson_bed",
+              "properties": {
+                "part": "head"
+              }
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}

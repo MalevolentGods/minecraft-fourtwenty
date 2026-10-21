@@ -145,6 +145,10 @@ More huts are added as they're built. The pack lives in its own repository and i
 
 Nightstands in oak, spruce, birch, jungle, acacia, dark oak, mangrove, cherry, crimson and warped wood: a slim top, a drawer with a brass knob, slim legs and a low shelf. Craft 3 slabs over planks either side of a weed bud, with two plank legs below, for **2 side tables**. They're decoration and face whoever places them.
 
+## Beds
+
+Beds in the same ten woods: tall head posts and a headboard, a footboard, a mattress, a pillow and a draped blanket that's lime when placed. Right-click either half with a dye to recolour the blanket (all 16 colours); it's turned back while someone sleeps in it. They're real beds (sleeping, respawn) and count as beds for MineColonies homes and taverns. Craft 3 white wool over planks either side of a weed bud for **1 bed**.
+
 ## Lamps
 
 Coloured lamps in all 16 dye colours, for builds that need lighting without another mod:

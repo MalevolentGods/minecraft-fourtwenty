@@ -102,6 +102,19 @@ public class ModBlocks {
       return java.util.Collections.unmodifiableMap(tables);
     }
 
+    /** Beds in the same woods; see {@link com.malevolentgods.fourtwenty.block.FancyBedBlock}. */
+    public static final java.util.Map<String, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.FancyBedBlock>> BEDS = beds();
+
+    private static java.util.Map<String, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.FancyBedBlock>> beds() {
+      var beds = new java.util.LinkedHashMap<String, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.FancyBedBlock>>();
+      for (var wood : SIDE_TABLE_WOODS) {
+        beds.put(wood, BLOCKS.register(wood + "_bed", () -> new com.malevolentgods.fourtwenty.block.FancyBedBlock(
+            BlockBehaviour.Properties.of().strength(0.2f).sound(SoundType.WOOD).noOcclusion()
+                .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY).ignitedByLava())));
+      }
+      return java.util.Collections.unmodifiableMap(beds);
+    }
+
     public static final DeferredHolder<Block, WeedBongBlock> WEED_BONG = BLOCKS.register("weed_bong",
       () -> new WeedBongBlock(
         BlockBehaviour.Properties.of()

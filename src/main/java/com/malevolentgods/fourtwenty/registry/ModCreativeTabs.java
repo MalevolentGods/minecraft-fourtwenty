@@ -27,6 +27,7 @@ public class ModCreativeTabs {
                 ModItems.BONGS.values().forEach(bong -> output.accept(bong.get()));
                 ModItems.LAMPS.forEach(lamp -> output.accept(lamp.get()));
                 ModItems.SIDE_TABLES.forEach(table -> output.accept(table.get()));
+                ModItems.BEDS.forEach(bed -> output.accept(bed.get()));
                 // Note: Crop block is not added as it's placed by seeds
             })
             .build());
