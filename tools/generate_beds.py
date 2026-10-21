@@ -54,10 +54,11 @@ def box(f, t, texture, rotation=None, shift=0):
     e = {'from': f2, 'to': t2, 'faces': {face: {'texture': texture, 'uv': [0, 0, 16, 16] if whole else uv(face, f, t)}
                                        for face in ('north', 'south', 'east', 'west', 'up', 'down')}}
     if texture == '#runner':
-        # The runner's stripes run along its length (across the bed); on its sides (the flaps that
-        # fold down) turn the texture a quarter so they carry on down over the fold.
-        for face in ('east', 'west'):
-            e['faces'][face]['rotation'] = 90
+        # The runner's stripes run along its length (across the bed); on the flaps that fold down
+        # (their outer sides and narrow ends) turn the texture a quarter so they carry on over the fold.
+        for face in ('east', 'west', 'north', 'south'):
+            if face in ('east', 'west') or t[0] - f[0] < 1:
+                e['faces'][face]['rotation'] = 90
     if rotation:
         angle, origin = rotation
         e['rotation'] = {'angle': angle, 'axis': 'x', 'origin': [origin[0], origin[1], origin[2] + shift]}
@@ -139,13 +140,14 @@ def elements(occupied, shape='single', shift=0):
               b([0 if lo else 0.25, 7, b0], [16 if ro else 15.75, 8, b1], '#sheet'),
               b([0 if lo else 0.75, 8, b0 + 0.25], [16 if ro else 15.25, 8.5, b1 - 0.25], '#sheet'),
               # a hotel runner across the foot, a deeper shade with fine light edge stripes
-              b([0, 7.75, 9 + end], [16, 8, 12 + end], '#runner')]
-    # The runner folds over the sides: each flap hangs straight down from the top's end (one piece,
-    # no gap), outside the side drape and above the hem, so no faces meet in a plane.
+              b([0 if lo else 0.25, 7.75, 9 + end], [16 if ro else 15.75, 8, 12 + end], '#runner')]
+    # The runner folds over the sides: each flap rises to the runner's top and caps its end, then
+    # hangs down outside the side drape and above the hem; the top stops where the flap begins,
+    # so they meet edge to edge and no two faces share a plane.
     if not lo:
-        parts.append(b([0, 5.4, 9 + end], [0.25, 7.75, 12 + end], '#runner'))
+        parts.append(b([0, 5.4, 9 + end], [0.25, 8, 12 + end], '#runner'))
     if not ro:
-        parts.append(b([15.75, 5.4, 9 + end], [16, 7.75, 12 + end], '#runner'))
+        parts.append(b([15.75, 5.4, 9 + end], [16, 8, 12 + end], '#runner'))
     return parts
 
 

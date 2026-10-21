@@ -96,10 +96,23 @@ public class TerpinatorBlock extends HorizontalDirectionalBlock implements Entit
         super.onRemove(state, level, pos, newState, moved);
     }
 
-    /** A wisp of vapour from the still while it works. */
+    /** Where the valve wheel sits on a north-facing machine (tools/generate_terpinator.py), in pixels. */
+    private static final double VALVE_X = 7.25, VALVE_Z = 8.5, VALVE_TOP = 19.5;   // the hub tops out at 16.85; smoke is a few pixels across
+
+    /**
+     * A wisp of vapour from the still's valve while it works. It starts above the valve wheel: born
+     * inside the wheel, the smoke flickered through its rim (that was the "flashing" on the knob).
+     */
     @Override public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
         if (!state.getValue(LIT) || random.nextInt(3) != 0) return;
-        level.addParticle(ParticleTypes.WHITE_SMOKE, pos.getX() + 0.5 + random.nextGaussian() * 0.06, pos.getY() + 1.02,
-                pos.getZ() + 0.5 + random.nextGaussian() * 0.06, 0, 0.02, 0);
+        double x = VALVE_X, z = VALVE_Z;
+        switch (state.getValue(FACING)) {            // the blockstate turns the model; turn the valve with it
+            case EAST -> { double t = x; x = 16 - z; z = t; }
+            case SOUTH -> { x = 16 - x; z = 16 - z; }
+            case WEST -> { double t = x; x = z; z = 16 - t; }
+            default -> {}
+        }
+        level.addParticle(ParticleTypes.WHITE_SMOKE, pos.getX() + x / 16 + random.nextGaussian() * 0.03, pos.getY() + VALVE_TOP / 16,
+                pos.getZ() + z / 16 + random.nextGaussian() * 0.03, 0, 0.02, 0);
     }
 }
