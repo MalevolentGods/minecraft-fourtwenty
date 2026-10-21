@@ -4,21 +4,22 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
-## What's new in 0.7.0
+## What's new in 0.8.0
 
-- **The Budtender's Guide.** Talk to a Budtender and his citizen window has a new tab (the bud icon) explaining all of FourTwenty in his own words: growing, recipes, smoking and edibles, bongs and the hookah, running a Dispensary, how colonists pick up the habit, buying for yourself, lamps, Sensi Heights, and troubleshooting.
-- **A Sensi Heights Builder's Hut, levels 1–5.** It starts as a quick open shelter that leaves the terrain alone, then grows through a timber cabin and a stone-and-timber house with a storeroom into a polished two-story house with a front yard. Rack space grows with it: 1, 3, 8, 18, then 24 racks.
-- **Architect's cutters are cheap to build.** MineColonies builders pay a single cobblestone for one (the Builder's Hut hands one out at level 2).
-- **Lamp glow skips ladders.** A lamp's halo still spills onto the blocks around it, but no longer paints over a ladder beside it.
+*Sleep in comfort and style with Four Twenty's new weed powered furniture technology!*
 
-## Changes from 0.6.0
+- **Hemp beds.** Ten woods, sixteen blanket colours, a draped duvet and a runner across the foot. Push two together for a double and add a third for a king: a ghost shows you the king before you place it. Two or three players, or colonists, can share one. Craft 3 weed buds over 3 planks.
+- **Side tables.** Nightstands in ten woods, with a drawer, a brass knob and a low shelf.
+- **The Terpinator.** Press weed buds into resin, refine it into four base terpenes and blend them into 84 named terpenes, each with its own colour and a line of philosophy. Names stay hidden until you discover them. A live preview, a guided first session and a Guide map show you the way.
+- **The hemp palette, 64 colours.** Hemp blocks with stairs and slabs, flat concrete and concrete powder (MineColonies' Concrete Mixer makes both), stained glass and panes, lamps with halos in their own colour, and rugs that join into one larger rug, each colour with its own pattern.
+- **Sensi Heights Tavern, levels 1–3**, furnished with hemp beds (a king at level 3) and side tables.
 
-- **Bundled Dispensary blueprints** are 11 blocks tall instead of 16: the top five layers only held keep-terrain placeholders. Dispensaries already built are unaffected.
-- **Sensi Heights Residence:** builders no longer dig a hole under the front steps or under bare eaves.
-- **Fixes:**
-  - Workshop 4–5 lamps no longer carry ProjectRed tile data.
-  - The README and the guide give the Sensi Heights Dispensary's real seats and space.
-- See the [CHANGELOG](CHANGELOG.md) for 0.6.0 and earlier.
+## Changes from 0.7.0
+
+- **Lamp recipes:** 3 glass, a weed bud and the dye make 4 lamps (instead of 6 glass round a torch), and one lamp makes 4 trims.
+- **Concrete** in the terpene colours is one flat colour. The specked texture moved to the new concrete powder, and the 8-concrete re-dye recipe is gone, as in vanilla.
+- MineColonies builders place a king bed's extension for free.
+- See the [CHANGELOG](CHANGELOG.md) for 0.7.0 and earlier.
 
 ## Grow and harvest
 
@@ -136,7 +137,8 @@ FourTwenty ships the **Sensi Heights** MineColonies style: "A hillside town that
 - **Supply camp:** stocked racks and weed seeds. It is also level 1 of the Workshop.
 - **Workshop (levels 1–5):** an upgradable decoration. Its racks are never broken on upgrade.
 - **Residence (levels 1–5).**
-- **Builder's Hut (levels 1–2 so far):** an open shelter whose placeholders keep all the surrounding terrain, for a quick first build, then a timber cabin with an architect's cutter.
+- **Builder's Hut (levels 1–5):** an open shelter whose placeholders keep all the surrounding terrain, for a quick first build, growing through a timber cabin and a stone-and-timber house into a two-story house with a front yard.
+- **Tavern (levels 1–3):** furnished with FourTwenty hemp beds (a king at level 3) and side tables.
 - **Dispensary (levels 1–5):** the same design as the FourTwenty pack's.
 
 More huts are added as they're built. The pack lives in its own repository and is bundled with `python3 tools/import_sensi_heights.py <pack>/sensiheights`, which validates it (huts link to their own files, no ProjectRed/CB blocks). A few blueprints use a Farmer's Delight cutting board, which is simply left out without that mod. The Tavern's beds and side tables are FourTwenty's own hemp beds (level 3 has a king) and side tables.

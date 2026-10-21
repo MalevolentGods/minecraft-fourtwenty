@@ -4,6 +4,8 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+## [0.8.0] - Hemp Beds, the Terpinator and the Hemp Palette
+
 ### Changed
 - Lamp recipe: 3 glass, a weed bud and the dye (shapeless) make 4 lamps, instead of 6 glass round a torch.
 - Lamp Trim: 1 lamp (plain or inverted) makes 4, instead of 1 inverted lamp making 8.
