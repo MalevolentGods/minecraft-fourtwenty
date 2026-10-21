@@ -139,7 +139,7 @@ FourTwenty ships the **Sensi Heights** MineColonies style: "A hillside town that
 - **Builder's Hut (levels 1–2 so far):** an open shelter whose placeholders keep all the surrounding terrain, for a quick first build, then a timber cabin with an architect's cutter.
 - **Dispensary (levels 1–5):** the same design as the FourTwenty pack's.
 
-More huts are added as they're built. The pack lives in its own repository and is bundled with `python3 tools/import_sensi_heights.py <pack>/sensiheights`, which validates it (huts link to their own files, no ProjectRed/CB blocks). A few blueprints use a Farmer's Delight cutting board, which is simply left out without that mod.
+More huts are added as they're built. The pack lives in its own repository and is bundled with `python3 tools/import_sensi_heights.py <pack>/sensiheights`, which validates it (huts link to their own files, no ProjectRed/CB blocks). A few blueprints use a Farmer's Delight cutting board, which is simply left out without that mod. The level 3 Tavern's beds and side tables come from Handcrafted: without it the tavern is built without them, and has no beds for visitors.
 
 ## Lamps
 

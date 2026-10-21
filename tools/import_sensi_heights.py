@@ -21,7 +21,7 @@ BUNDLED = ROOT / 'src/main/resources/blueprints/fourtwenty/sensiheights'
 FOREIGN = ('projectred', 'cb_multipart', 'cb_microblock')
 # Blocks from mods FourTwenty doesn't depend on that the pack may use: missing when that mod isn't
 # installed (the block is just left out), so they're reported but allowed.
-OPTIONAL = {'farmersdelight'}
+OPTIONAL = {'farmersdelight', 'handcrafted'}
 # The supply camp is Workshop level 1: its controller deliberately links to workshop1 so it upgrades.
 LINK_EXCEPTIONS = {'decorations/supplies/supplycamp.blueprint': 'decorations/misc/workshop1.blueprint'}
 
