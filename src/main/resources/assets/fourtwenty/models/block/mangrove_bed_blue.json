@@ -1,9 +1,11 @@
 {
   "parent": "fourtwenty:block/bed",
   "textures": {
-    "planks": "minecraft:block/mangrove_planks",
-    "log": "minecraft:block/stripped_mangrove_log",
-    "sheet": "minecraft:block/white_wool",
-    "blanket": "minecraft:block/blue_wool"
+    "post": "fourtwenty:block/bed/mangrove_post",
+    "rail": "fourtwenty:block/bed/mangrove_rail",
+    "panel": "fourtwenty:block/bed/mangrove_panel",
+    "sheet": "fourtwenty:block/bed/sheet",
+    "pillow": "fourtwenty:block/bed/pillow",
+    "blanket": "fourtwenty:block/bed/blanket_blue"
   }
 }

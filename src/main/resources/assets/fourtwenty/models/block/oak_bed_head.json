@@ -1,6 +1,6 @@
 {
   "parent": "fourtwenty:block/bed_head",
   "textures": {
-    "planks": "minecraft:block/oak_planks"
+    "post": "fourtwenty:block/bed/oak_post"
   }
 }

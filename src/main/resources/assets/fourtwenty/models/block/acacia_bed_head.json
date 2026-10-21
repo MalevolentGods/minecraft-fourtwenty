@@ -1,6 +1,6 @@
 {
   "parent": "fourtwenty:block/bed_head",
   "textures": {
-    "planks": "minecraft:block/acacia_planks"
+    "post": "fourtwenty:block/bed/acacia_post"
   }
 }

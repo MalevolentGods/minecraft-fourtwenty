@@ -1,9 +1,11 @@
 {
   "parent": "fourtwenty:block/bed",
   "textures": {
-    "planks": "minecraft:block/birch_planks",
-    "log": "minecraft:block/stripped_birch_log",
-    "sheet": "minecraft:block/white_wool",
-    "blanket": "minecraft:block/brown_wool"
+    "post": "fourtwenty:block/bed/birch_post",
+    "rail": "fourtwenty:block/bed/birch_rail",
+    "panel": "fourtwenty:block/bed/birch_panel",
+    "sheet": "fourtwenty:block/bed/sheet",
+    "pillow": "fourtwenty:block/bed/pillow",
+    "blanket": "fourtwenty:block/bed/blanket_brown"
   }
 }

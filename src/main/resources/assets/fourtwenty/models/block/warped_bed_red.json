@@ -1,9 +1,11 @@
 {
   "parent": "fourtwenty:block/bed",
   "textures": {
-    "planks": "minecraft:block/warped_planks",
-    "log": "minecraft:block/stripped_warped_stem",
-    "sheet": "minecraft:block/white_wool",
-    "blanket": "minecraft:block/red_wool"
+    "post": "fourtwenty:block/bed/warped_post",
+    "rail": "fourtwenty:block/bed/warped_rail",
+    "panel": "fourtwenty:block/bed/warped_panel",
+    "sheet": "fourtwenty:block/bed/sheet",
+    "pillow": "fourtwenty:block/bed/pillow",
+    "blanket": "fourtwenty:block/bed/blanket_red"
   }
 }

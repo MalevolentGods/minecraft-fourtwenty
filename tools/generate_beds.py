@@ -5,8 +5,9 @@ FourTwenty's own design: tall stripped-log head posts with a top rail and a plan
 lower footboard, a plank base, a white mattress, a pillow tilted against the headboard, and a
 blanket a touch wider than the mattress so it drapes over the sides, with a rolled hem. The whole
 bed is one model drawn from the foot half (reaching into the head block, so there's no seam); the
-head half draws nothing of its own. When someone sleeps in it the blanket is turned back. Only
-vanilla textures (the wood's planks and stripped log, wool). Writes the template, per wood/colour
+head half draws nothing of its own. When someone sleeps in it the blanket is turned back. Its own
+64x64 textures (tools/generate_bed_textures.py): grained frame wood per wood, panelled boards, linen,
+a pillow and quilted blankets in 16 colours. Writes the template, per wood/colour
 models, blockstates, item models, loot tables (the head half drops the bed), recipes, the bed and
 axe tags, and English names. Run again after edits.
 """
@@ -46,7 +47,10 @@ def uv(face, f, t):
 
 def box(f, t, texture, rotation=None, shift=0):
     f2, t2 = [f[0], f[1], f[2] + shift], [t[0], t[1], t[2] + shift]
-    e = {'from': f2, 'to': t2, 'faces': {face: {'texture': texture, 'uv': uv(face, f, t)}
+    # Panels and the pillow show their whole texture, so the bevelled frame and the seam sit on the
+    # piece's edges; everything else samples the texture by position, like vanilla.
+    whole = texture in ('#panel', '#pillow')
+    e = {'from': f2, 'to': t2, 'faces': {face: {'texture': texture, 'uv': [0, 0, 16, 16] if whole else uv(face, f, t)}
                                        for face in ('north', 'south', 'east', 'west', 'up', 'down')}}
     if rotation:
         angle, origin = rotation
@@ -58,25 +62,25 @@ def elements(occupied, shift=0):
     """The whole bed, foot block at z 0..16 and the head block at z -16..0 (head end north)."""
     b = lambda f, t, tex, rot=None: box(f, t, tex, rot, shift)
     parts = [
-        # Head end: two tall posts, a top rail, a plank headboard panel.
-        b([0, 0, -16], [2, 14, -14], '#log'), b([14, 0, -16], [16, 14, -14], '#log'),
-        b([0, 14, -16], [16, 16, -14], '#log'),
-        b([2, 4, -15.5], [14, 14, -14.5], '#planks'),
-        # Foot end: lower posts, a rail, a plank footboard.
-        b([0, 0, 14], [2, 7, 16], '#log'), b([14, 0, 14], [16, 7, 16], '#log'),
-        b([0, 7, 14], [16, 8.5, 16], '#log'),
-        b([2, 3, 14.5], [14, 7, 15.5], '#planks'),
+        # Head end: two tall posts, a top rail, a panelled headboard.
+        b([0, 0, -16], [2, 14, -14], '#post'), b([14, 0, -16], [16, 14, -14], '#post'),
+        b([0, 14, -16], [16, 16, -14], '#rail'),
+        b([2, 4, -15.5], [14, 14, -14.5], '#panel'),
+        # Foot end: lower posts, a rail, a panelled footboard.
+        b([0, 0, 14], [2, 7, 16], '#post'), b([14, 0, 14], [16, 7, 16], '#post'),
+        b([0, 7, 14], [16, 8.5, 16], '#rail'),
+        b([2, 3, 14.5], [14, 7, 15.5], '#panel'),
         # The base and the mattress.
-        b([1, 2, -14], [15, 4, 14], '#planks'),
+        b([1, 2, -14], [15, 4, 14], '#rail'),
         b([1, 4, -14], [15, 7, 14], '#sheet'),
-        # A pillow leaning back against the headboard.
-        b([3, 7, -13.5], [13, 9.5, -10], '#sheet', (-22.5, [8, 7, -12])),
+        # A pillow leaning gently back against the headboard.
+        b([3, 7, -13.75], [13, 9.5, -10.25], '#pillow', (-22.5, [8, 7, -12])),
     ]
-    if occupied:
-        # Turned back: the blanket covers the foot end, its rolled hem halfway down.
-        parts += [b([0.5, 4.5, 2], [15.5, 7.5, 14], '#blanket'), b([0.5, 6.5, 0.5], [15.5, 8.5, 2.5], '#blanket')]
-    else:
-        parts += [b([0.5, 4.5, -7], [15.5, 7.5, 14], '#blanket'), b([0.5, 6.5, -8.5], [15.5, 8, -6.5], '#blanket')]
+    # The blanket drapes half a pixel over each side; the sheet is folded back over its top edge as a
+    # soft band (Handcrafted's idea, kept subtle). Turned back to the foot while someone sleeps.
+    blanket_from, band = (2, (0.5, 3)) if occupied else (-7.5, (-9, -6.5))
+    parts += [b([0.5, 4.5, blanket_from], [15.5, 7.75, 14], '#blanket'),
+              b([0.25, 6.75, band[0]], [15.75, 8.25, band[1]], '#sheet')]
     return parts
 
 
@@ -90,10 +94,10 @@ def title(wood): return ' '.join(part.capitalize() for part in wood.split('_'))
 def generate():
     for occupied in (False, True):
         write(ASSETS / f'models/block/bed{"_occupied" if occupied else ""}.json',
-              {'parent': 'minecraft:block/block', 'textures': {'particle': '#planks'}, 'elements': elements(occupied)})
-    write(ASSETS / 'models/block/bed_head.json', {'textures': {'particle': '#planks'}, 'elements': []})
+              {'parent': 'minecraft:block/block', 'textures': {'particle': '#post'}, 'elements': elements(occupied)})
+    write(ASSETS / 'models/block/bed_head.json', {'textures': {'particle': '#post'}, 'elements': []})
     write(ASSETS / 'models/item/bed_template.json', {
-        'parent': 'minecraft:block/block', 'textures': {'particle': '#planks'}, 'elements': elements(False, shift=8),
+        'parent': 'minecraft:block/block', 'textures': {'particle': '#post'}, 'elements': elements(False, shift=8),
         'display': {'gui': {'rotation': [30, 160, 0], 'translation': [0, 1, 0], 'scale': [0.42, 0.42, 0.42]},
                     'ground': {'rotation': [0, 0, 0], 'translation': [0, 2, 0], 'scale': [0.2, 0.2, 0.2]},
                     'fixed': {'rotation': [0, 180, 0], 'translation': [0, 0, 0], 'scale': [0.4, 0.4, 0.4]},
@@ -103,10 +107,11 @@ def generate():
     names, tagged = {}, []
     for wood in WOODS:
         name = f'{wood}_bed'
-        textures = lambda color: {'planks': f'minecraft:block/{wood}_planks', 'log': log_texture(wood),
-                                  'sheet': 'minecraft:block/white_wool', 'blanket': f'minecraft:block/{color}_wool'}
+        textures = lambda color: {'post': f'fourtwenty:block/bed/{wood}_post', 'rail': f'fourtwenty:block/bed/{wood}_rail',
+                                  'panel': f'fourtwenty:block/bed/{wood}_panel', 'sheet': 'fourtwenty:block/bed/sheet',
+                                  'pillow': 'fourtwenty:block/bed/pillow', 'blanket': f'fourtwenty:block/bed/blanket_{color}'}
         write(ASSETS / f'models/block/{name}_head.json', {'parent': 'fourtwenty:block/bed_head',
-                                                          'textures': {'planks': f'minecraft:block/{wood}_planks'}})
+                                                          'textures': {'post': f'fourtwenty:block/bed/{wood}_post'}})
         for color in COLORS:
             for occupied in (False, True):
                 write(ASSETS / f'models/block/{name}_{color}{"_occupied" if occupied else ""}.json', {
