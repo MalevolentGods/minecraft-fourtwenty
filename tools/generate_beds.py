@@ -73,14 +73,26 @@ def elements(occupied, shift=0):
         # The base and the mattress.
         b([1, 2, -14], [15, 4, 14], '#rail'),
         b([1, 4, -14], [15, 7, 14], '#sheet'),
-        # A pillow leaning gently back against the headboard.
-        b([3, 7, -13.75], [13, 9.5, -10.25], '#pillow', (-22.5, [8, 7, -12])),
     ]
-    # The blanket drapes half a pixel over each side; the sheet is folded back over its top edge as a
-    # soft band (Handcrafted's idea, kept subtle). Turned back to the foot while someone sleeps.
-    blanket_from, band = (2, (0.5, 3)) if occupied else (-7.5, (-9, -6.5))
-    parts += [b([0.5, 4.5, blanket_from], [15.5, 7.75, 14], '#blanket'),
-              b([0.25, 6.75, band[0]], [15.75, 8.25, band[1]], '#sheet')]
+    # The pillow: a core with a smaller puff on top and bulges at the ends and front, so its edges
+    # read as rounded; every piece leans back together against the headboard.
+    lean = (-22.5, [8, 7, -12])
+    parts += [b([3, 7.25, -13.5], [13, 9.25, -10.5], '#pillow', lean),
+              b([3.5, 9.25, -13.25], [12.5, 9.75, -10.75], '#pillow', lean),
+              b([2.5, 7.5, -13.25], [3, 9, -10.75], '#pillow', lean), b([13, 7.5, -13.25], [13.5, 9, -10.75], '#pillow', lean),
+              b([3.5, 7.5, -10.5], [12.5, 9, -10], '#pillow', lean)]
+    # The blanket: its top sits half a pixel above the draped sides, which end in a small rolled
+    # hem, so the edges look rounded; it drapes down at the foot too. The sheet is folded back over
+    # its top edge as a soft band (Handcrafted's idea, kept subtle): a lower roll and a narrower cap.
+    # Turned back towards the foot while someone sleeps.
+    z0, (b0, b1) = (2.5, (0.5, 3)) if occupied else (-7, (-9, -6.5))
+    parts += [b([1, 7, z0], [15, 7.75, 13.5], '#blanket'),                       # the top
+              b([0.5, 4.75, z0], [1, 7.25, 13.5], '#blanket'), b([15, 4.75, z0], [15.5, 7.25, 13.5], '#blanket'),
+              b([0.25, 4.5, z0], [0.75, 5.25, 13.5], '#blanket'), b([15.25, 4.5, z0], [15.75, 5.25, 13.5], '#blanket'),
+              b([1, 4.75, 13.5], [15, 7.25, 14], '#blanket'),                    # the foot drape
+              b([1, 4.5, 13.75], [15, 5.25, 14.25], '#blanket'),
+              b([0.25, 6.75, b0], [15.75, 7.75, b1], '#sheet'),                  # the folded band
+              b([0.75, 7.75, b0 + 0.25], [15.25, 8.25, b1 - 0.25], '#sheet')]
     return parts
 
 
