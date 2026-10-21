@@ -89,9 +89,9 @@ def elements(occupied, shape='single', shift=0):
         parts += [b([14, 0, -16], [16, 14, -14], '#post'), b([14, 0, 14 + end], [16, 7, 16 + end], '#post')]
     # A slim mullion where two headboard panels meet.
     if ro:
-        parts.append(b([15.25, 4, -15.75], [16, 14, -14.25], '#rail'))
+        parts.append(b([15.25, 4.05, -15.75], [16, 13.95, -14.25], '#rail'))   # clear of the panel's top and bottom
     if lo:
-        parts.append(b([0, 4, -15.75], [0.75, 14, -14.25], '#rail'))
+        parts.append(b([0, 4.05, -15.75], [0.75, 13.95, -14.25], '#rail'))
     # The crest over the middle of a joined headboard: one step (and a cap) across a double's seam,
     # a wider, taller stepped crest over the middle of a king.
     crest = {'left': [(6, 16, 16, 17.5), (10, 16, 17.5, 18)],
@@ -118,14 +118,19 @@ def elements(occupied, shape='single', shift=0):
     foot = 13.5 + end
     for za, zb in ([(z0, 16), (16, foot)] if king else [(z0, foot)]):
         parts.append(b([x0, 7, za], [x1, 7.75, zb], '#blanket'))                     # the top
+        # Side drapes and their hems (the hems stop short of the drapes' ends, so no faces share a plane).
         if not lo:
-            parts += [b([0.5, 4.75, za], [1, 7.25, zb], '#blanket'), b([0.25, 4.5, za], [0.75, 5.25, zb], '#blanket')]
+            parts += [b([0.5, 4.75, za], [1, 7.25, zb], '#blanket'), b([0.25, 4.5, za + 0.05], [0.75, 5.25, zb - 0.05], '#blanket')]
         if not ro:
-            parts += [b([15, 4.75, za], [15.5, 7.25, zb], '#blanket'), b([15.25, 4.5, za], [15.75, 5.25, zb], '#blanket')]
-    parts += [b([x0, 4.75, foot], [x1, 7.25, foot + 0.5], '#blanket'),              # the foot drape
-              b([x0, 4.5, foot + 0.25], [x1, 5.25, foot + 0.75], '#blanket'),
+            parts += [b([15, 4.75, za], [15.5, 7.25, zb], '#blanket'), b([15.25, 4.5, za + 0.05], [15.75, 5.25, zb - 0.05], '#blanket')]
+    # The foot drape and hem reach the side drapes' outer edge and hang just past the mattress end,
+    # so neither shares a plane with the mattress.
+    dx0, dx1 = (0 if lo else 0.5), (16 if ro else 15.5)
+    hx0, hx1 = (0 if lo else 0.25), (16 if ro else 15.75)
+    parts += [b([dx0, 4.75, foot], [dx1, 7.25, foot + 0.6], '#blanket'),             # the foot drape
+              b([hx0, 4.5, foot + 0.3], [hx1, 5.25, foot + 0.85], '#blanket'),
               # the folded band, sitting just above the blanket so no two faces share a plane
-              b([0 if lo else 0.25, 7, b0], [16 if ro else 15.75, 8, b1], '#sheet'),
+              b([0 if lo else 0.25, 7.01, b0], [16 if ro else 15.75, 8, b1], '#sheet'),
               b([0 if lo else 0.75, 8, b0 + 0.25], [16 if ro else 15.25, 8.5, b1 - 0.25], '#sheet'),
               # a hotel runner across the foot, a deeper shade with fine light edge stripes
               b([0 if lo else 0.4, 7.75, 9 + end], [16 if ro else 15.6, 8, 12 + end], '#runner')]

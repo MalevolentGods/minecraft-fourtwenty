@@ -494,33 +494,50 @@ def box(f, t, tex, faces=ALL, overrides=None, rot=None, light=False):
     return e
 
 
-def cylinder_y(cx, cz, w, y0, y1, tex, faces=ALL, light=False):
-    """A vertical round part as a pixel circle: three overlapping boxes."""
+# A round part as a "pixel circle": a centre bar, two shoulders and two caps (half-widths
+# 0.5 x 0.29, 0.41 x 0.12, 0.29 x 0.09 of its width). They only touch, never overlap, so no two
+# faces share a plane and flicker (z-fighting); each piece skips its face that meets the centre.
+DISC = [(0.50, -0.29, 0.29, None), (0.41, 0.29, 0.41, -1), (0.41, -0.41, -0.29, 1), (0.29, 0.41, 0.50, -1), (0.29, -0.50, -0.41, 1)]
+
+
+def pixel_circle(axes, centre, w, t0, t1, tex, faces, light=False):
+    """axes: (a axis, b axis, thickness axis) as 0/1/2; faces named per world axis."""
+    names = {0: ('west', 'east'), 1: ('down', 'up'), 2: ('north', 'south')}
+    a_axis, b_axis, t_axis = axes
     out = []
-    for a, b in ((1.0, 0.58), (0.82, 0.82), (0.58, 1.0)):
-        out.append(box([cx - w * a / 2, y0, cz - w * b / 2], [cx + w * a / 2, y1, cz + w * b / 2], tex, faces, light=light))
+    for half_a, b0, b1, inward in DISC:
+        f, t = [0, 0, 0], [0, 0, 0]
+        f[a_axis], t[a_axis] = centre[0] - w * half_a, centre[0] + w * half_a
+        f[b_axis], t[b_axis] = centre[1] + w * b0, centre[1] + w * b1
+        f[t_axis], t[t_axis] = t0, t1
+        skip = None if inward is None else names[b_axis][0 if inward < 0 else 1]
+        out.append(box(f, t, tex, tuple(x for x in faces if x != skip), light=light))
     return out
+
+
+def cylinder_y(cx, cz, w, y0, y1, tex, faces=ALL, light=False):
+    """A vertical round part."""
+    return pixel_circle((0, 2, 1), (cx, cz), w, y0, y1, tex, faces, light)
 
 
 def cylinder_z(cx, cy, w, z0, z1, tex, faces=ALL):
     """A round part facing north/south (its axis along z)."""
-    return [box([cx - w * a / 2, cy - w * b / 2, z0], [cx + w * a / 2, cy + w * b / 2, z1], tex, faces)
-            for a, b in ((1.0, 0.58), (0.82, 0.82), (0.58, 1.0))]
+    return pixel_circle((0, 1, 2), (cx, cy), w, z0, z1, tex, faces)
 
 
 def cylinder_x(cy, cz, w, x0, x1, tex, faces=ALL):
-    return [box([x0, cy - w * a / 2, cz - w * b / 2], [x1, cy + w * a / 2, cz + w * b / 2], tex, faces)
-            for a, b in ((1.0, 0.58), (0.82, 0.82), (0.58, 1.0))]
+    """A round part facing east/west (its axis along x)."""
+    return pixel_circle((1, 2, 0), (cy, cz), w, x0, x1, tex, faces)
 
 
 def elements(lit):
     E = []
     # --- The cabinet -------------------------------------------------------------------------
-    E.append(box([1, 0, 1], [15, 1, 15], '#iron'))                                         # plinth
+    E.append(box([1, 0.02, 1], [15, 1, 15], '#iron'))                                      # plinth (clear of the feet's soles)
     for x in (0.5, 13.5):
         for z in (0.5, 13.5):
             E += cylinder_y(x + 1, z + 1, 2.2, 0, 1.4, '#brass')                             # feet
-    E.append(box([1.75, 1, 1.75], [14.25, 7.75, 14.25], '#panel'))                         # the panels
+    E.append(box([1.75, 1.02, 1.75], [14.25, 7.75, 14.25], '#panel'))                      # the panels
     for x in (1.25, 13.25):
         for z in (1.25, 13.25):
             E.append(box([x, 1, z], [x + 1.5, 8, z + 1.5], '#frame'))                       # corner posts
@@ -535,7 +552,7 @@ def elements(lit):
     for f, t in (([0.75, 8.75, 0.75], [15.25, 9.0, 1.1]), ([0.75, 8.75, 14.9], [15.25, 9.0, 15.25]),
                  ([0.75, 8.75, 1.1], [1.1, 9.0, 14.9]), ([14.9, 8.75, 1.1], [15.25, 9.0, 14.9])):
         E.append(box(f, t, '#brass'))                                                   # its raised lip
-    E.append(box([1.0, 7.75, 1.0], [15.0, 8.0, 15.0], '#iron'))                            # its shadow line
+    E.append(box([1.0, 7.75, 1.0], [15.0, 7.95, 15.0], '#iron'))                           # its shadow line
     # Front: three ports (flange, nozzle, mouth) under engraved plates 1, 2, 3.
     for i, cx in enumerate((3.875, 7.875, 11.875)):
         cy = 3.9
@@ -548,13 +565,13 @@ def elements(lit):
     # East: the method dial (bezel, face, pointer, knob).
     E += cylinder_x(4.5, 8, 3.6, 14.6, 15.3, '#brass')
     E.append(box([15.3, 2.7, 6.2], [15.35, 6.3, 9.8], '#dial', faces=('east',), overrides={'east': ('#dial', [0, 0, 16, 16])}))
-    E.append(box([15.35, 4.35, 7.85], [15.75, 6.0, 8.15], '#iron'))
+    E.append(box([15.36, 4.35, 7.85], [15.75, 6.0, 8.15], '#iron'))   # pointer
     E += cylinder_x(4.5, 8, 0.9, 15.35, 15.9, '#brass')
     # West: the press's crank wheel and hub.
     E.append(box([0.55, 2.0, 5.5], [0.6, 7.0, 10.5], '#wheel', faces=('west', 'east'),
                  overrides={'west': ('#wheel', [0, 0, 16, 16]), 'east': ('#wheel', [16, 0, 0, 16])}))
     E += cylinder_x(4.5, 8, 1.4, 0.2, 1.25, '#iron')
-    E.append(box([-0.3, 6.3, 7.75], [0.6, 6.8, 8.25], '#brass'))                          # the crank handle
+    E.append(box([-0.3, 6.3, 7.75], [0.55, 6.8, 8.25], '#brass'))                         # the crank handle, outside the wheel
     # Back: a vent grille.
     E.append(box([3.25, 2.25, 14.75], [12.75, 6.5, 15.0], '#grille', faces=('south', 'east', 'west', 'up', 'down')))
     # --- On the deck ---------------------------------------------------------------------------
@@ -570,22 +587,23 @@ def elements(lit):
     # ring, a copper dome, a cap and a valve wheel.
     cx, cz = 8.75, 8.5
     E += cylinder_y(cx, cz, 6.4, 8.75, 9.6, '#brass')
-    E.append(box([cx - 2.35, 9.6, cz - 2.35], [cx + 2.35, 12.6, cz + 2.35], '#liquid', light=lit))
+    E.append(box([cx - 2.35, 9.62, cz - 2.35], [cx + 2.35, 12.6, cz + 2.35], '#liquid', light=lit))
     E.append(box([cx - 2.6, 9.6, cz - 2.6], [cx + 2.6, 14.0, cz + 2.6], '#glass'))
     for dx in (-2.75, 2.25):
         for dz in (-2.75, 2.25):
-            E.append(box([cx + dx, 9.6, cz + dz], [cx + dx + 0.5, 14.0, cz + dz + 0.5], '#brass'))   # frame posts
+            E.append(box([cx + dx, 9.58, cz + dz], [cx + dx + 0.5, 14.02, cz + dz + 0.5], '#brass'))   # frame posts, proud of the glass
     E += cylinder_y(cx, cz, 6.4, 14.0, 14.6, '#brass')
     E += cylinder_y(cx, cz, 4.6, 14.6, 15.4, '#copper')
     E += cylinder_y(cx, cz, 2.2, 15.4, 15.9, '#brass')
     E.append(box([cx - 0.25, 15.9, cz - 0.25], [cx + 0.25, 16.4, cz + 0.25], '#iron'))         # valve stem
-    E.append(box([cx - 1.4, 16.4, cz - 0.15], [cx + 1.4, 16.7, cz + 0.15], '#iron'))           # wheel spokes
-    E.append(box([cx - 0.15, 16.4, cz - 1.4], [cx + 0.15, 16.7, cz + 1.4], '#iron'))
-    E.append(box([cx - 1.4, 16.4, cz - 0.15], [cx + 1.4, 16.7, cz + 0.15], '#iron', rot=('y', 45, [cx, 16.5, cz])))
-    E.append(box([cx - 0.15, 16.4, cz - 1.4], [cx + 0.15, 16.7, cz + 1.4], '#iron', rot=('y', 45, [cx, 16.5, cz])))
-    for rot in (None, ('y', 45, [cx, 16.55, cz])):
-        for f, t in (([cx - 1.45, 16.4, cz - 1.45], [cx + 1.45, 16.7, cz - 1.15]), ([cx - 1.45, 16.4, cz + 1.15], [cx + 1.45, 16.7, cz + 1.45]),
-                     ([cx - 1.45, 16.4, cz - 1.15], [cx - 1.15, 16.7, cz + 1.15]), ([cx + 1.15, 16.4, cz - 1.15], [cx + 1.45, 16.7, cz + 1.15])):
+    # The valve wheel: two crossed pairs of spokes and a square rim each, the turned pair a hair
+    # higher so nothing shares a plane; spokes stop at the rim and the crossing spoke is split.
+    for rot, y0, y1 in ((None, 16.4, 16.7), (('y', 45, [cx, 16.55, cz]), 16.44, 16.74)):
+        E.append(box([cx - 1.15, y0, cz - 0.15], [cx + 1.15, y1, cz + 0.15], '#iron', rot=rot))
+        E.append(box([cx - 0.15, y0, cz - 1.15], [cx + 0.15, y1, cz - 0.15], '#iron', rot=rot))
+        E.append(box([cx - 0.15, y0, cz + 0.15], [cx + 0.15, y1, cz + 1.15], '#iron', rot=rot))
+        for f, t in (([cx - 1.45, y0, cz - 1.45], [cx + 1.45, y1, cz - 1.15]), ([cx - 1.45, y0, cz + 1.15], [cx + 1.45, y1, cz + 1.45]),
+                     ([cx - 1.45, y0, cz - 1.15], [cx - 1.15, y1, cz + 1.15]), ([cx + 1.15, y0, cz - 1.15], [cx + 1.45, y1, cz + 1.15])):
             E.append(box(f, t, '#brass', rot=rot))
     # The condenser (back right): a copper tube wound with coil rings, a cap; the swan neck from the dome.
     kx, kz = 13.25, 13.0
@@ -611,8 +629,8 @@ def elements(lit):
     E += cylinder_z(gx, gy, 3.0, 2.35, 3.2, '#brass')
     E.append(box([gx - 1.5, gy - 1.5, 2.3], [gx + 1.5, gy + 1.5, 2.35], '#gauge', faces=('north',),
                  overrides={'north': ('#gauge', [0, 0, 16, 16])}))
-    E.append(box([14.4, 8.75, 1.2], [15.1, 9.55, 1.9], '#brass'))
-    E.append(box([14.5, 9.55, 1.3], [15.0, 10.05, 1.8], '#lamp', light=lit))
+    E.append(box([14.15, 8.75, 1.2], [14.85, 9.55, 1.9], '#brass'))                     # lamp base, inside the deck lip
+    E.append(box([14.25, 9.55, 1.3], [14.75, 10.05, 1.8], '#lamp', light=lit))
     return E
 
 
