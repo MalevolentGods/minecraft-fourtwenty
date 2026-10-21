@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "fourtwenty:block/hemp/lim_lim_myr",
+    "top": "fourtwenty:block/hemp/lim_lim_myr",
+    "side": "fourtwenty:block/hemp/lim_lim_myr"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "fourtwenty_hemp_dye",
+  "pattern": [
+    "HHH",
+    "HTH",
+    "HHH"
+  ],
+  "key": {
+    "H": {
+      "tag": "fourtwenty:hemp_blocks"
+    },
+    "T": {
+      "item": "fourtwenty:terpene_myr_myr_lav"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:hemp_myr_myr_lav",
+    "count": 8
+  }
+}

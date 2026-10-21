@@ -1,0 +1,559 @@
+{
+  "order": [
+    "myr",
+    "lim",
+    "pin",
+    "lav"
+  ],
+  "tones": [
+    "lim",
+    "pin",
+    "lav",
+    "myr"
+  ],
+  "bases": [
+    {
+      "code": "myr",
+      "name": "Myrcenary",
+      "abbr": "Myr",
+      "line": "The couch's gravitational pull, bottled.",
+      "method": "heat",
+      "family": "Neutrals",
+      "hue": "earthy",
+      "tone": "deep",
+      "hex": "#6B5A4C"
+    },
+    {
+      "code": "lim",
+      "name": "Limonade",
+      "abbr": "Lim",
+      "line": "Zest with no ambitions.",
+      "method": "cold",
+      "family": "Warm",
+      "hue": "sunny",
+      "tone": "pale",
+      "hex": "#C98A12"
+    },
+    {
+      "code": "pin",
+      "name": "Pinewise",
+      "abbr": "Pin",
+      "line": "Smells like a forest that knows things.",
+      "method": "pressure",
+      "family": "Green",
+      "hue": "core",
+      "tone": "bright",
+      "hex": "#2F7A47"
+    },
+    {
+      "code": "lav",
+      "name": "Lavendaze",
+      "abbr": "Lav",
+      "line": "Calm, purple, slightly late.",
+      "method": "time",
+      "family": "Cool",
+      "hue": "in-between",
+      "tone": "dusky",
+      "hex": "#6E59A8"
+    }
+  ],
+  "families": [
+    {
+      "code": "myr",
+      "name": "Neutrals",
+      "blurb": "Whites, creams, greys and blacks. Port 2 sets the undertone, port 3 runs light to dark."
+    },
+    {
+      "code": "lim",
+      "name": "Warm",
+      "blurb": "Browns, yellows, reds and oranges."
+    },
+    {
+      "code": "pin",
+      "name": "Green",
+      "blurb": "Olives, limes, greens and teals."
+    },
+    {
+      "code": "lav",
+      "name": "Cool",
+      "blurb": "Purples, pinks, blues and skies."
+    }
+  ],
+  "accords": [
+    {
+      "code": "myr_myr",
+      "name": "Couchlock Hum",
+      "hue": "taupe"
+    },
+    {
+      "code": "myr_lim",
+      "name": "Wake & Bake",
+      "hue": "cream"
+    },
+    {
+      "code": "myr_pin",
+      "name": "Spacebar Static",
+      "hue": "true grey"
+    },
+    {
+      "code": "myr_lav",
+      "name": "Cloud Nine Drift",
+      "hue": "cool grey"
+    },
+    {
+      "code": "lim_myr",
+      "name": "Brownie Batch",
+      "hue": "brown"
+    },
+    {
+      "code": "lim_lim",
+      "name": "Sunshine Daydream",
+      "hue": "yellow"
+    },
+    {
+      "code": "lim_pin",
+      "name": "Cherry Pie Accord",
+      "hue": "red"
+    },
+    {
+      "code": "lim_lav",
+      "name": "Tangie Tango",
+      "hue": "orange"
+    },
+    {
+      "code": "pin_myr",
+      "name": "Mossy Philosopher",
+      "hue": "olive"
+    },
+    {
+      "code": "pin_lim",
+      "name": "Lime in the Coconut",
+      "hue": "lime"
+    },
+    {
+      "code": "pin_pin",
+      "name": "Sticky Icky Accord",
+      "hue": "green"
+    },
+    {
+      "code": "pin_lav",
+      "name": "Mermaid Hotbox",
+      "hue": "teal"
+    },
+    {
+      "code": "lav_myr",
+      "name": "Purple Haze",
+      "hue": "purple"
+    },
+    {
+      "code": "lav_lim",
+      "name": "Cotton Candy Kush",
+      "hue": "pink"
+    },
+    {
+      "code": "lav_pin",
+      "name": "Blue Dream",
+      "hue": "blue"
+    },
+    {
+      "code": "lav_lav",
+      "name": "Third-Eye Tonic",
+      "hue": "sky"
+    }
+  ],
+  "colors": [
+    {
+      "code": "myr_myr_lim",
+      "name": "Uncarved Block",
+      "hex": "#E6DDD2",
+      "line": "Return to being the uncarved block."
+    },
+    {
+      "code": "myr_myr_pin",
+      "name": "Mushroom Mind",
+      "hex": "#B8A897",
+      "line": "It is not enough to have a good mind; the main thing is to use it well."
+    },
+    {
+      "code": "myr_myr_lav",
+      "name": "Dad's Recliner",
+      "hex": "#7E6F62",
+      "line": "All of man's unhappiness comes from one thing: not knowing how to remain quietly in a room."
+    },
+    {
+      "code": "myr_myr_myr",
+      "name": "Espresso Epiphany",
+      "hex": "#3B322C",
+      "line": "By an epiphany he meant a sudden spiritual manifestation."
+    },
+    {
+      "code": "myr_lim_lim",
+      "name": "Cottonmouth White",
+      "hex": "#F6EEDB",
+      "line": "Water, water, every where, / Nor any drop to drink."
+    },
+    {
+      "code": "myr_lim_pin",
+      "name": "Buttercream Brain",
+      "hex": "#E8D7B0",
+      "line": "If the human brain were so simple that we could understand it, we would be so simple that we couldn't."
+    },
+    {
+      "code": "myr_lim_lav",
+      "name": "Dusty Dashboard",
+      "hex": "#A89A7A",
+      "line": "A mote of dust suspended in a sunbeam."
+    },
+    {
+      "code": "myr_lim_myr",
+      "name": "Last Night's Fire Pit",
+      "hex": "#4A4336",
+      "line": "An ever-living fire, kindling in measures and going out in measures."
+    },
+    {
+      "code": "myr_pin_lim",
+      "name": "Rolling Paper White",
+      "hex": "#F7F7F5",
+      "line": "Let us then suppose the mind to be, as we say, white paper, void of all characters."
+    },
+    {
+      "code": "myr_pin_pin",
+      "name": "Touch of Grey",
+      "hex": "#C9C9C7",
+      "line": "When philosophy paints its grey in grey, then has a shape of life grown old."
+    },
+    {
+      "code": "myr_pin_lav",
+      "name": "Middle Way Grey",
+      "hex": "#808080",
+      "line": "Avoiding both these extremes, the Tathagata has realized the Middle Way."
+    },
+    {
+      "code": "myr_pin_myr",
+      "name": "Dave's Not Here",
+      "hex": "#1C1C1E",
+      "line": "I never can catch myself at any time without a perception."
+    },
+    {
+      "code": "myr_lav_lim",
+      "name": "First Exhale",
+      "hex": "#EEF2F5",
+      "line": "Just as our soul, being air, holds us together, so do breath and air encompass the whole world."
+    },
+    {
+      "code": "myr_lav_pin",
+      "name": "Soundcheck Fog",
+      "hex": "#B7C0C8",
+      "line": "The fog comes / on little cat feet."
+    },
+    {
+      "code": "myr_lav_lav",
+      "name": "Monday Morning Slate",
+      "hex": "#5F6B76",
+      "line": "Morning is when I am awake and there is a dawn in me."
+    },
+    {
+      "code": "myr_lav_myr",
+      "name": "The Void Stares Back",
+      "hex": "#252B33",
+      "line": "When you gaze long into an abyss, the abyss also gazes into you."
+    },
+    {
+      "code": "lim_myr_lim",
+      "name": "Graham Cracker Grin",
+      "hex": "#D9B99B",
+      "line": "I've often seen a cat without a grin, but a grin without a cat!"
+    },
+    {
+      "code": "lim_myr_pin",
+      "name": "Munchie Caramel",
+      "hex": "#A0673A",
+      "line": "I can resist everything except temptation."
+    },
+    {
+      "code": "lim_myr_lav",
+      "name": "Grandpa's Stash Box",
+      "hex": "#7A5A44",
+      "line": "The smell and taste of things remain poised a long time, like souls."
+    },
+    {
+      "code": "lim_myr_myr",
+      "name": "Everything Returns to Soil",
+      "hex": "#4A2E1E",
+      "line": "Nothing is lost, nothing is created, everything is transformed."
+    },
+    {
+      "code": "lim_lim_lim",
+      "name": "Butter Fingers",
+      "hex": "#F8EBA6",
+      "line": "Try again. Fail again. Fail better."
+    },
+    {
+      "code": "lim_lim_pin",
+      "name": "Because I Got High-lighter",
+      "hex": "#F2C80F",
+      "line": "Philosophy is written in this grand book, the universe."
+    },
+    {
+      "code": "lim_lim_lav",
+      "name": "Mustard on the Couch",
+      "hex": "#BFA14A",
+      "line": "Flamingoes and mustard both bite."
+    },
+    {
+      "code": "lim_lim_myr",
+      "name": "Old Gold Hippie",
+      "hex": "#8A6A0E",
+      "line": "Those who seek gold dig up much earth and find little."
+    },
+    {
+      "code": "lim_pin_lim",
+      "name": "Blushing at the Dispensary",
+      "hex": "#F2B8B0",
+      "line": "Blushing is the most peculiar and the most human of all expressions."
+    },
+    {
+      "code": "lim_pin_pin",
+      "name": "Scarlet Begonias",
+      "hex": "#D7262E",
+      "line": "Though your sins be as scarlet, they shall be as white as snow."
+    },
+    {
+      "code": "lim_pin_lav",
+      "name": "Red-Eye Flight",
+      "hex": "#9E4A4A",
+      "line": "The eye through which I see God is the same eye through which God sees me."
+    },
+    {
+      "code": "lim_pin_myr",
+      "name": "Heart of the Matter",
+      "hex": "#6B1018",
+      "line": "The heart has its reasons which reason knows nothing of."
+    },
+    {
+      "code": "lim_lav_lim",
+      "name": "Peach Fuzz Daydream",
+      "hex": "#F9CFA8",
+      "line": "Once Zhuang Zhou dreamt he was a butterfly, fluttering about, happy with himself."
+    },
+    {
+      "code": "lim_lav_pin",
+      "name": "Up in Smoke",
+      "hex": "#F07F1A",
+      "line": "The way up and the way down are one and the same."
+    },
+    {
+      "code": "lim_lav_lav",
+      "name": "Rusty Grinder",
+      "hex": "#B8703F",
+      "line": "And yet it moves."
+    },
+    {
+      "code": "lim_lav_myr",
+      "name": "Last Light at 4:20",
+      "hex": "#8A3A0E",
+      "line": "More light!"
+    },
+    {
+      "code": "pin_myr_lim",
+      "name": "Pistachio Pause",
+      "hex": "#D8D9B0",
+      "line": "For in that sleep of death what dreams may come… must give us pause."
+    },
+    {
+      "code": "pin_myr_pin",
+      "name": "Dank Olive",
+      "hex": "#8C8C2E",
+      "line": "And, lo, in her mouth was an olive leaf."
+    },
+    {
+      "code": "pin_myr_lav",
+      "name": "Army Surplus Jacket",
+      "hex": "#6E6E4A",
+      "line": "One resists the invasion of armies; one does not resist the invasion of ideas."
+    },
+    {
+      "code": "pin_myr_myr",
+      "name": "Ancient Bong Water",
+      "hex": "#3F4022",
+      "line": "Water is the first principle of all things."
+    },
+    {
+      "code": "pin_lim_lim",
+      "name": "Key Lime Contact High",
+      "hex": "#E2F5B5",
+      "line": "A riddle, wrapped in a mystery, inside an enigma; but perhaps there is a key."
+    },
+    {
+      "code": "pin_lim_pin",
+      "name": "Grandma's Glaucoma Green",
+      "hex": "#9BD42A",
+      "line": "Grey, dear friend, is all theory, and green the golden tree of life."
+    },
+    {
+      "code": "pin_lim_lav",
+      "name": "Sage Advice",
+      "hex": "#87A05A",
+      "line": "The sage does not hoard."
+    },
+    {
+      "code": "pin_lim_myr",
+      "name": "Leaf of Faith",
+      "hex": "#4E6E14",
+      "line": "Faith is the highest passion in a man."
+    },
+    {
+      "code": "pin_pin_lim",
+      "name": "Mint Condition Mind",
+      "hex": "#BFE6C4",
+      "line": "Such as are thy habitual thoughts, such also will be the character of thy mind; for the soul is dyed by the thoughts."
+    },
+    {
+      "code": "pin_pin_pin",
+      "name": "Kind Bud Green",
+      "hex": "#2EAA4A",
+      "line": "Rough winds do shake the darling buds of May."
+    },
+    {
+      "code": "pin_pin_lav",
+      "name": "Patience of Plants",
+      "hex": "#5E8A68",
+      "line": "Adopt the pace of nature: her secret is patience."
+    },
+    {
+      "code": "pin_pin_myr",
+      "name": "Forest for the Trees",
+      "hex": "#1C4A2A",
+      "line": "Out of all things one, and out of one all things."
+    },
+    {
+      "code": "pin_lav_lim",
+      "name": "Seafoam Sesh",
+      "hex": "#B8E8E0",
+      "line": "Like a boy playing on the sea-shore, whilst the great ocean of truth lay all undiscovered before me."
+    },
+    {
+      "code": "pin_lav_pin",
+      "name": "Hippie Hot Tub",
+      "hex": "#17A398",
+      "line": "Eureka!"
+    },
+    {
+      "code": "pin_lav_lav",
+      "name": "Patina of Time",
+      "hex": "#4E8A86",
+      "line": "What then is time? If no one asks me, I know."
+    },
+    {
+      "code": "pin_lav_myr",
+      "name": "Deep End of the Session",
+      "hex": "#0E4A4A",
+      "line": "You would not find out the boundaries of soul, so deep a measure does it have."
+    },
+    {
+      "code": "lav_myr_lim",
+      "name": "Lavender Laughing Fit",
+      "hex": "#DCCDF0",
+      "line": "Let every truth be false which was not greeted with a laugh!"
+    },
+    {
+      "code": "lav_myr_pin",
+      "name": "Ego Death Violet",
+      "hex": "#8A3FD1",
+      "line": "When we are, death is not come, and when death is come, we are not."
+    },
+    {
+      "code": "lav_myr_lav",
+      "name": "Grape Ape Nap",
+      "hex": "#7A6890",
+      "line": "Even sleepers are workers in what goes on in the universe."
+    },
+    {
+      "code": "lav_myr_myr",
+      "name": "Dark Star Indigo",
+      "hex": "#3A1A5C",
+      "line": "The starry heavens above me and the moral law within me."
+    },
+    {
+      "code": "lav_lim_lim",
+      "name": "Sugar Magnolia",
+      "hex": "#F9D5E5",
+      "line": "The earth laughs in flowers."
+    },
+    {
+      "code": "lav_lim_pin",
+      "name": "Paranoid Pink",
+      "hex": "#F05AA0",
+      "line": "Or in the night, imagining some fear, / How easy is a bush supposed a bear!"
+    },
+    {
+      "code": "lav_lim_lav",
+      "name": "Mauve Over, Man",
+      "hex": "#B07A90",
+      "line": "Man is the measure of all things."
+    },
+    {
+      "code": "lav_lim_myr",
+      "name": "Wine Before Noon",
+      "hex": "#7A1E4A",
+      "line": "The whole universe is in a glass of wine."
+    },
+    {
+      "code": "lav_pin_lim",
+      "name": "Cloud Watching Blue",
+      "hex": "#C5D9F5",
+      "line": "We love to contemplate blue, not because it advances to us, but because it draws us after it."
+    },
+    {
+      "code": "lav_pin_pin",
+      "name": "Big Blue Thought",
+      "hex": "#2F6BE0",
+      "line": "Thought and being are the same."
+    },
+    {
+      "code": "lav_pin_lav",
+      "name": "Denim on Denim",
+      "hex": "#5A7095",
+      "line": "I wish I had invented blue jeans."
+    },
+    {
+      "code": "lav_pin_myr",
+      "name": "Wake of the Flood",
+      "hex": "#1A2A6B",
+      "line": "Upon those who step into the same rivers, different and again different waters flow."
+    },
+    {
+      "code": "lav_lav_lim",
+      "name": "Space Cadet Sky",
+      "hex": "#CFEFFA",
+      "line": "The eternal silence of these infinite spaces frightens me."
+    },
+    {
+      "code": "lav_lav_pin",
+      "name": "Everything Is Connected, Man",
+      "hex": "#2BB5E8",
+      "line": "In everything there is a portion of everything."
+    },
+    {
+      "code": "lav_lav_lav",
+      "name": "Overcast Overthinking",
+      "hex": "#6A9AAE",
+      "line": "Man is but a reed, the most feeble thing in nature; but he is a thinking reed."
+    },
+    {
+      "code": "lav_lav_myr",
+      "name": "3 A.M. Deep Thoughts",
+      "hex": "#12506E",
+      "line": "Thoughts without content are empty, intuitions without concepts are blind."
+    }
+  ],
+  "resin": {
+    "code": "resin",
+    "name": "Sticky Situation",
+    "line": "Two buds walk into a press. One resin walks out."
+  },
+  "natural": {
+    "name": "Natural Hemp",
+    "hex": "#C9B98F"
+  }
+}

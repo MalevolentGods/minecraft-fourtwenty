@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "fourtwenty:block/hemp/pin_lim_lim",
+    "top": "fourtwenty:block/hemp/pin_lim_lim",
+    "side": "fourtwenty:block/hemp/pin_lim_lim"
+  }
+}

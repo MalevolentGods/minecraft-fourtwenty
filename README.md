@@ -141,6 +141,20 @@ FourTwenty ships the **Sensi Heights** MineColonies style: "A hillside town that
 
 More huts are added as they're built. The pack lives in its own repository and is bundled with `python3 tools/import_sensi_heights.py <pack>/sensiheights`, which validates it (huts link to their own files, no ProjectRed/CB blocks). A few blueprints use a Farmer's Delight cutting board, which is simply left out without that mod. The level 3 Tavern's beds and side tables come from Handcrafted: without it the tavern is built without them, and has no beds for visitors.
 
+## Hemp and the Terpinator
+
+**Hemp blocks** are a building block in 64 colours, plus Natural Hemp, each with stairs and slabs: a fine woven-hemp texture up close (64x64) that reads as one even colour from a distance. 4 weed buds make 2 Natural Hemp; a final terpene in the middle of 8 hemp blocks (any colours) dyes them its colour. Stairs and slabs craft the usual way or in a stonecutter.
+
+The colours come from **terpenes**, made in the **Terpinator** (3 glass over copper either side of a brewing stand, over copper either side of a weed bud). It works on its own, no fuel:
+
+- **Press:** 2 weed buds make 1 Sticky Situation (resin), 4 seconds.
+- **Refine:** 1 resin makes 2 of a base terpene, 3 seconds. The method dial picks which: heat makes Myrcenary, cold Limonade, pressure Pinewise, time Lavendaze.
+- **Blend:** two bases in ports 1 and 2 make one of 16 accords; an accord in port 1 and a base in port 3 make one of 64 final terpenes, 2 seconds each.
+
+Each port has a job: port 1 sets the family (neutrals, warm, green, cool), port 2 the hue, port 3 the tone (pale, bright, dusky, deep), so once you've learned one row you can predict the rest. The full codex (all 84 names, colours and flavour lines) is `tools/terpenes.json`.
+
+Names are discovered: a terpene shows as undiscovered until you make it, or someone hands you one. Colours and rules are never hidden: the Terpinator previews what its ports will make, a hint line walks you through your first session, and its **Guide** maps all 64 colours as you find them. Each discovery gets a toast with its line. Discoveries are per player and survive death.
+
 ## Side tables
 
 Nightstands in oak, spruce, birch, jungle, acacia, dark oak, mangrove, cherry, crimson and warped wood: a slim top, a drawer with a brass knob, slim legs and a low shelf. Craft 3 slabs over planks either side of a weed bud, with two plank legs below, for **2 side tables**. They're decoration and face whoever places them.

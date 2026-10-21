@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "fourtwenty_hemp_stairs",
+  "pattern": [
+    "X  ",
+    "XX ",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "fourtwenty:hemp_lav_lav_pin"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:hemp_lav_lav_pin_stairs",
+    "count": 4
+  }
+}
