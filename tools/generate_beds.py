@@ -207,12 +207,12 @@ def generate():
             write(DATA / f'recipe/{name}_{color}_blanket.json', {'type': 'minecraft:crafting_shapeless', 'category': 'misc',
                 'group': 'fourtwenty_bed_dye', 'ingredients': [{'item': f'fourtwenty:{name}'}, {'item': f'minecraft:{color}_dye'}],
                 'result': {'id': f'fourtwenty:{name}', 'count': 1, 'components': {'minecraft:block_state': {'blanket': color}}}})
-        # 3 white wool over planks either side of a weed bud -> 1 bed.
+        # 3 weed buds (the hemp bedding) over 3 planks -> 1 hemp bed.
         write(DATA / f'recipe/{name}.json', {'type': 'minecraft:crafting_shaped', 'category': 'misc', 'group': 'fourtwenty_bed',
-            'pattern': ['WWW', 'PBP'],
-            'key': {'W': {'item': 'minecraft:white_wool'}, 'P': {'item': f'minecraft:{wood}_planks'}, 'B': {'item': 'fourtwenty:weed_bud'}},
+            'pattern': ['BBB', 'PPP'],
+            'key': {'P': {'item': f'minecraft:{wood}_planks'}, 'B': {'item': 'fourtwenty:weed_bud'}},
             'result': {'id': f'fourtwenty:{name}', 'count': 1}})
-        names[name] = f'{title(wood)} Bed'
+        names[name] = f'{title(wood)} Hemp Bed'
         tagged.append(f'fourtwenty:{name}')
     write(RES / 'data/minecraft/tags/block/beds.json', {'replace': False, 'values': tagged})
     write(RES / 'data/minecraft/tags/item/beds.json', {'replace': False, 'values': tagged})
@@ -226,7 +226,7 @@ def generate():
         data[f'block.fourtwenty.{name}'] = label
         data[f'item.fourtwenty.{name}'] = label
     data['item.fourtwenty.bed.blanket'] = 'Blanket: %s'
-    data['block.fourtwenty.bed_extension'] = 'Bed'
+    data['block.fourtwenty.bed_extension'] = 'Hemp Bed'
     lang.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     print(f'{len(names)} beds generated')
 

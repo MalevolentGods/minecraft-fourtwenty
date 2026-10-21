@@ -147,7 +147,9 @@ Nightstands in oak, spruce, birch, jungle, acacia, dark oak, mangrove, cherry, c
 
 ## Beds
 
-Beds in the same ten woods: tall head posts and a headboard, a footboard, a mattress, a pillow and a draped blanket that's lime when placed. Right-click either half with a dye to recolour the blanket (all 16 colours); it's turned back while someone sleeps in it. They're real beds (sleeping, respawn) and count as beds for MineColonies homes and taverns. Craft 3 white wool over planks either side of a weed bud for **1 bed**.
+Hemp beds in the same ten woods: tall head posts and a headboard, a footboard, a mattress, a pillow and a draped blanket that's lime when placed. Right-click any part with a dye to recolour the blanket (all 16 colours); it's turned back while someone sleeps in it. They're real beds (sleeping, respawn) and count as beds for MineColonies homes and taverns. Craft 3 weed buds over 3 planks for **1 hemp bed**.
+
+Place two hemp beds of the same wood side by side, facing the same way, and they join into a double; a third makes a king, one block longer (while you aim the third bed, a ghost shows the king, red if something is in the way past the foot, in which case it stays a single). Every column is still its own bed, so two or three people, or colonists, can share one. Breaking any part breaks the whole bed and gives back each bed that went into it.
 
 ## Lamps
 

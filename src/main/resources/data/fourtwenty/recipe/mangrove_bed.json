@@ -3,13 +3,10 @@
   "category": "misc",
   "group": "fourtwenty_bed",
   "pattern": [
-    "WWW",
-    "PBP"
+    "BBB",
+    "PPP"
   ],
   "key": {
-    "W": {
-      "item": "minecraft:white_wool"
-    },
     "P": {
       "item": "minecraft:mangrove_planks"
     },
