@@ -95,18 +95,36 @@ def region(case, inset, radius, y0, y1):
     if case == 'edge_w':
         return [box(inset, 0, Q, Q, ('up', 'west'), y0, y1)]
     if case == 'inner':
-        # Everything but the notch [0, inset]^2 (the corner the missing diagonal neighbour leaves).
-        return [box(inset, 0, Q, inset, ('up', 'west'), y0, y1), box(0, inset, Q, Q, ('up', 'north'), y0, y1)]
-    # Outer corner: bands down the rounded corner (centred where the full-size corner's is), then the rest.
+        # Everything but the notch [0, inset]^2, in three pieces that meet corner to corner (two pieces
+        # left a T-junction where the notch's walls meet: a hairline crack).
+        return [box(inset, 0, Q, inset, ('up', 'west'), y0, y1), box(0, inset, inset, Q, ('up', 'north'), y0, y1),
+                box(inset, inset, Q, Q, ('up',), y0, y1)]
+    # Outer corner, built on a grid that's the same both ways: the corner square [inset, c]^2 in cells
+    # (kept where they fall inside the curve), strips beside it and a block for the rest. Every piece
+    # meets its neighbours corner to corner, so there are no T-junctions (hairline cracks that flicker
+    # with the sky behind them), and the quarter's edges carry the same vertices both ways, so turned
+    # neighbouring quarters line up too.
     c = I + R
-    els = []
     span = c - inset
-    steps = [inset + span * f for f in (0, 0.1, 0.2, 0.3, 0.5, 0.8, 1.0)]
-    for a, b in zip(steps, steps[1:]):
-        t = c - (a + b) / 2
-        x0 = c - math.sqrt(max(0.0, radius * radius - t * t))
-        els.append(box(x0, a, Q, b, ('up', 'north', 'west'), y0, y1))
-    els.append(box(inset, c, Q, Q, ('up', 'west'), y0, y1))
+    p = [inset + span * f for f in (0, 0.1, 0.2, 0.3, 0.5, 0.8, 1.0)]
+    n = len(p) - 1
+    inside = [[math.hypot(c - (p[k] + p[k + 1]) / 2, c - (p[j] + p[j + 1]) / 2) <= radius for k in range(n)] for j in range(n)]
+    els = []
+    for j in range(n):
+        for k in range(n):
+            if not inside[j][k]:
+                continue
+            faces = ['up']
+            if j == 0 or not inside[j - 1][k]:
+                faces.append('north')
+            if k == 0 or not inside[j][k - 1]:
+                faces.append('west')
+            els.append(box(p[k], p[j], p[k + 1], p[j + 1], tuple(faces), y0, y1))
+    for j in range(n):
+        els.append(box(c, p[j], Q, p[j + 1], ('up', 'north') if j == 0 else ('up',), y0, y1))
+    for k in range(n):
+        els.append(box(p[k], c, p[k + 1], Q, ('up', 'west') if k == 0 else ('up',), y0, y1))
+    els.append(box(c, c, Q, Q, ('up',), y0, y1))
     return els
 
 
