@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Find z-fighting in a block model: pairs of faces that face the same way, lie in the same
-plane and overlap with real area (the game can't decide which to draw, so they flicker).
+plane or nearly (closer than GAP pixels: at a distance the depth buffer can't separate them) and
+overlap with real area (the game can't decide which to draw, so they flicker).
 
     python3 tools/check_model_overlaps.py <model.json> [...]
 
@@ -9,6 +10,7 @@ Rotated elements are checked against other rotated elements with the same rotati
 import json
 import sys
 
+GAP = 0.1      # pixels; 0.1 px = 1/160 block holds up to ~80 blocks away
 AXIS = {'east': (0, 1), 'west': (0, 0), 'up': (1, 1), 'down': (1, 0), 'south': (2, 1), 'north': (2, 0)}
 
 
@@ -42,7 +44,7 @@ def check(path):
     allf = [(i, *fc) for i, e in enumerate(els) for fc in faces(e)]
     for n, (i, name, rot, plane, rect) in enumerate(allf):
         for (j, name2, rot2, plane2, rect2) in allf[n + 1:]:
-            if i != j and name == name2 and rot == rot2 and plane == plane2:
+            if i != j and name == name2 and rot == rot2 and abs(plane - plane2) < GAP:
                 area = overlap(rect, rect2)
                 if area > 1e-3:
                     found.append((i, j, name, plane, round(area, 3)))

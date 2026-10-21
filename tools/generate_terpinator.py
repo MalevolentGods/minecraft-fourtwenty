@@ -533,11 +533,11 @@ def cylinder_x(cy, cz, w, x0, x1, tex, faces=ALL):
 def elements(lit):
     E = []
     # --- The cabinet -------------------------------------------------------------------------
-    E.append(box([1, 0.02, 1], [15, 1, 15], '#iron'))                                      # plinth (clear of the feet's soles)
+    E.append(box([1, 0.15, 1], [15, 1, 15], '#iron'))                                      # plinth (clear of the feet's soles)
     for x in (0.5, 13.5):
         for z in (0.5, 13.5):
             E += cylinder_y(x + 1, z + 1, 2.2, 0, 1.4, '#brass')                             # feet
-    E.append(box([1.75, 1.02, 1.75], [14.25, 7.75, 14.25], '#panel'))                      # the panels
+    E.append(box([1.75, 1.15, 1.75], [14.25, 7.5, 14.25], '#panel'))                       # the panels (top hidden by the rails)
     for x in (1.25, 13.25):
         for z in (1.25, 13.25):
             E.append(box([x, 1, z], [x + 1.5, 8, z + 1.5], '#frame'))                       # corner posts
@@ -552,26 +552,26 @@ def elements(lit):
     for f, t in (([0.75, 8.75, 0.75], [15.25, 9.0, 1.1]), ([0.75, 8.75, 14.9], [15.25, 9.0, 15.25]),
                  ([0.75, 8.75, 1.1], [1.1, 9.0, 14.9]), ([14.9, 8.75, 1.1], [15.25, 9.0, 14.9])):
         E.append(box(f, t, '#brass'))                                                   # its raised lip
-    E.append(box([1.0, 7.75, 1.0], [15.0, 7.95, 15.0], '#iron'))                           # its shadow line
+    E.append(box([1.0, 7.65, 1.0], [15.0, 7.82, 15.0], '#iron'))                           # its shadow line, clear of panel and posts
     # Front: three ports (flange, nozzle, mouth) under engraved plates 1, 2, 3.
     for i, cx in enumerate((3.875, 7.875, 11.875)):
         cy = 3.9
         E += cylinder_z(cx, cy, 3.0, 0.9, 1.75, '#brass')
         E += cylinder_z(cx, cy, 1.9, 0.35, 0.9, '#iron')
-        E.append(box([cx - 0.95, cy - 0.95, 0.3], [cx + 0.95, cy + 0.95, 0.35], '#mouth', faces=('north',),
+        E.append(box([cx - 0.95, cy - 0.95, 0.15], [cx + 0.95, cy + 0.95, 0.2], '#mouth', faces=('north',),
                      overrides={'north': ('#mouth', [0, 0, 16, 16])}))
         E.append(box([cx - 1.0, 5.85, 1.45], [cx + 1.0, 6.85, 1.75], '#brass',
                      overrides={'north': ('#plates', [0, i * 4, 8, i * 4 + 4])}))
     # East: the method dial (bezel, face, pointer, knob).
     E += cylinder_x(4.5, 8, 3.6, 14.6, 15.3, '#brass')
-    E.append(box([15.3, 2.7, 6.2], [15.35, 6.3, 9.8], '#dial', faces=('east',), overrides={'east': ('#dial', [0, 0, 16, 16])}))
-    E.append(box([15.36, 4.35, 7.85], [15.75, 6.0, 8.15], '#iron'))   # pointer
-    E += cylinder_x(4.5, 8, 0.9, 15.35, 15.9, '#brass')
+    E.append(box([15.4, 2.7, 6.2], [15.45, 6.3, 9.8], '#dial', faces=('east',), overrides={'east': ('#dial', [0, 0, 16, 16])}))
+    E.append(box([15.45, 4.35, 7.85], [15.75, 6.0, 8.15], '#iron'))   # pointer
+    E.append(box([15.6, 4.1, 7.6], [16.0, 4.9, 8.4], '#brass'))                         # the knob (too small to round)
     # West: the press's crank wheel and hub.
     E.append(box([0.55, 2.0, 5.5], [0.6, 7.0, 10.5], '#wheel', faces=('west', 'east'),
                  overrides={'west': ('#wheel', [0, 0, 16, 16]), 'east': ('#wheel', [16, 0, 0, 16])}))
     E += cylinder_x(4.5, 8, 1.4, 0.2, 1.25, '#iron')
-    E.append(box([-0.3, 6.3, 7.75], [0.55, 6.8, 8.25], '#brass'))                         # the crank handle, outside the wheel
+    E.append(box([-0.3, 6.3, 7.75], [0.4, 6.8, 8.25], '#brass'))                          # the crank handle, clear of the wheel
     # Back: a vent grille.
     E.append(box([3.25, 2.25, 14.75], [12.75, 6.5, 15.0], '#grille', faces=('south', 'east', 'west', 'up', 'down')))
     # --- On the deck ---------------------------------------------------------------------------
@@ -587,30 +587,31 @@ def elements(lit):
     # ring, a copper dome, a cap and a valve wheel.
     cx, cz = 8.75, 8.5
     E += cylinder_y(cx, cz, 6.4, 8.75, 9.6, '#brass')
-    E.append(box([cx - 2.35, 9.62, cz - 2.35], [cx + 2.35, 12.6, cz + 2.35], '#liquid', light=lit))
+    E.append(box([cx - 2.35, 9.75, cz - 2.35], [cx + 2.35, 12.6, cz + 2.35], '#liquid', light=lit))
     E.append(box([cx - 2.6, 9.6, cz - 2.6], [cx + 2.6, 14.0, cz + 2.6], '#glass'))
     for dx in (-2.75, 2.25):
         for dz in (-2.75, 2.25):
-            E.append(box([cx + dx, 9.58, cz + dz], [cx + dx + 0.5, 14.02, cz + dz + 0.5], '#brass'))   # frame posts, proud of the glass
+            E.append(box([cx + dx, 9.4, cz + dz], [cx + dx + 0.5, 14.2, cz + dz + 0.5], '#brass'))    # frame posts, into the rings
     E += cylinder_y(cx, cz, 6.4, 14.0, 14.6, '#brass')
     E += cylinder_y(cx, cz, 4.6, 14.6, 15.4, '#copper')
     E += cylinder_y(cx, cz, 2.2, 15.4, 15.9, '#brass')
     E.append(box([cx - 0.25, 15.9, cz - 0.25], [cx + 0.25, 16.4, cz + 0.25], '#iron'))         # valve stem
-    # The valve wheel: one brass rim, a cross of iron spokes and, a little lower, a turned cross
-    # (so the eight spokes never share a plane); spokes stop at the rim, the crossing one is split.
+    # The valve wheel: a brass rim, a cross of iron spokes (the crossing one split, so they only
+    # touch) and an iron hub over the stem.
     for f, t in (([cx - 1.45, 16.4, cz - 1.45], [cx + 1.45, 16.7, cz - 1.15]), ([cx - 1.45, 16.4, cz + 1.15], [cx + 1.45, 16.7, cz + 1.45]),
                  ([cx - 1.45, 16.4, cz - 1.15], [cx - 1.15, 16.7, cz + 1.15]), ([cx + 1.15, 16.4, cz - 1.15], [cx + 1.45, 16.7, cz + 1.15])):
         E.append(box(f, t, '#brass'))
-    for rot, y0, y1 in ((None, 16.45, 16.65), (('y', 45, [cx, 16.5, cz]), 16.42, 16.6)):
-        E.append(box([cx - 1.15, y0, cz - 0.12], [cx + 1.15, y1, cz + 0.12], '#iron', rot=rot))
-        E.append(box([cx - 0.12, y0, cz - 1.15], [cx + 0.12, y1, cz - 0.12], '#iron', rot=rot))
-        E.append(box([cx - 0.12, y0, cz + 0.12], [cx + 0.12, y1, cz + 1.15], '#iron', rot=rot))
+    E.append(box([cx - 1.15, 16.45, cz - 0.15], [cx - 0.4, 16.62, cz + 0.15], '#iron'))
+    E.append(box([cx + 0.4, 16.45, cz - 0.15], [cx + 1.15, 16.62, cz + 0.15], '#iron'))
+    E.append(box([cx - 0.15, 16.45, cz - 1.15], [cx + 0.15, 16.62, cz - 0.4], '#iron'))
+    E.append(box([cx - 0.15, 16.45, cz + 0.4], [cx + 0.15, 16.62, cz + 1.15], '#iron'))
+    E.append(box([cx - 0.4, 16.3, cz - 0.4], [cx + 0.4, 16.85, cz + 0.4], '#iron'))
     # The condenser (back right): a copper tube wound with coil rings, a cap; the swan neck from the dome.
     kx, kz = 13.25, 13.0
-    E += cylinder_y(kx, kz, 1.8, 8.75, 14.2, '#pipe')
+    E += cylinder_y(kx, kz, 1.3, 8.75, 14.2, '#pipe')
     for i, y in enumerate((9.35, 10.3, 11.25, 12.2, 13.15)):
         off = (-0.2, 0.0, 0.2, 0.0)[i % 4], (0.0, 0.2, 0.0, -0.2)[i % 4]
-        E += cylinder_y(kx + off[0], kz + off[1], 3.3, y, y + 0.45, '#pipe')
+        E += cylinder_y(kx + off[0], kz + off[1], 3.6, y, y + 0.45, '#pipe')
     E += cylinder_y(kx, kz, 2.4, 14.2, 14.6, '#brass')
     E.append(box([kx - 0.4, 14.6, kz - 0.4], [kx + 0.4, 15.5, kz + 0.4], '#pipe'))
     neck = math.hypot(kx - cx, kz - cz)
@@ -619,7 +620,7 @@ def elements(lit):
     # The resin tank (back left), its sight glass and lid; a pipe to the still.
     tx, tz = 3.4, 12.4
     E += cylinder_y(tx, tz, 3.8, 8.75, 12.6, '#copper')
-    E.append(box([tx - 0.7, 9.4, tz - 1.95], [tx + 0.7, 12.0, tz - 1.9], '#sight', faces=('north',),
+    E.append(box([tx - 0.7, 9.4, tz - 2.1], [tx + 0.7, 12.0, tz - 2.05], '#sight', faces=('north',),
                  overrides={'north': ('#sight', [0, 0, 16, 16])}))
     E += cylinder_y(tx, tz, 3.2, 12.6, 13.1, '#brass')
     E.append(box([tx + 1.6, 10.0, tz - 0.35], [cx - 2.6, 10.7, tz + 0.35], '#pipe'))
@@ -627,7 +628,7 @@ def elements(lit):
     gx, gy = 13.0, 11.6
     E.append(box([gx - 0.45, 8.75, 2.75], [gx + 0.45, gy - 1.2, 3.65], '#iron'))
     E += cylinder_z(gx, gy, 3.0, 2.35, 3.2, '#brass')
-    E.append(box([gx - 1.5, gy - 1.5, 2.3], [gx + 1.5, gy + 1.5, 2.35], '#gauge', faces=('north',),
+    E.append(box([gx - 1.5, gy - 1.5, 2.15], [gx + 1.5, gy + 1.5, 2.2], '#gauge', faces=('north',),
                  overrides={'north': ('#gauge', [0, 0, 16, 16])}))
     E.append(box([14.15, 8.75, 1.2], [14.85, 9.55, 1.9], '#brass'))                     # lamp base, inside the deck lip
     E.append(box([14.25, 9.55, 1.3], [14.75, 10.05, 1.8], '#lamp', light=lit))
