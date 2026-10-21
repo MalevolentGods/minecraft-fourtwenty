@@ -1,0 +1,12 @@
+{
+  "parent": "fourtwenty:block/bed_right_occupied",
+  "textures": {
+    "post": "fourtwenty:block/bed/warped_post",
+    "rail": "fourtwenty:block/bed/warped_rail",
+    "panel": "fourtwenty:block/bed/warped_panel",
+    "sheet": "fourtwenty:block/bed/sheet",
+    "pillow": "fourtwenty:block/bed/pillow",
+    "blanket": "fourtwenty:block/bed/blanket_white",
+    "runner": "fourtwenty:block/bed/runner_white"
+  }
+}

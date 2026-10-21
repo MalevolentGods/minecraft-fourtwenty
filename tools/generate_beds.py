@@ -5,7 +5,8 @@ FourTwenty's own design: tall stripped-log head posts with a top rail and a plan
 lower footboard, a plank base, a white mattress, a pillow tilted against the headboard, and a
 blanket a touch wider than the mattress so it drapes over the sides, with a rolled hem. The whole
 bed is one model drawn from the foot half (reaching into the head block, so there's no seam); the
-head half draws nothing of its own. When someone sleeps in it the blanket is turned back. Its own
+head half draws nothing of its own. When someone sleeps in it the blanket is turned back. Beds
+side by side join into a double or a king (BedShape); each column gets its own models. Its own
 64x64 textures (tools/generate_bed_textures.py): grained frame wood per wood, panelled boards, linen,
 a pillow and quilted blankets in 16 colours. Writes the template, per wood/colour
 models, blockstates, item models, loot tables (the head half drops the bed), recipes, the bed and
@@ -58,24 +59,52 @@ def box(f, t, texture, rotation=None, shift=0):
     return e
 
 
-def elements(occupied, shift=0):
-    """The whole bed, foot block at z 0..16 and the head block at z -16..0 (head end north)."""
+SHAPES = ['single', 'left', 'right', 'king_left', 'king_middle', 'king_right']
+
+
+def elements(occupied, shape='single', shift=0):
+    """One bed column, foot block at z 0..16 and the head block at z -16..0 (head end north, so the
+    left of someone at the foot looking at the head is x 0). Joined beds (BedShape) leave out the
+    posts, sides and drapes where the bed carries on into the next column, so mattress, blanket,
+    band and runner run straight across; the headboard gets a crest over the middle and a slim
+    mullion at each seam. A king column is a block longer: its foot end is in the extension block
+    (z 16..32)."""
     b = lambda f, t, tex, rot=None: box(f, t, tex, rot, shift)
+    lo = shape in ('right', 'king_middle', 'king_right')     # the bed carries on to the left
+    ro = shape in ('left', 'king_left', 'king_middle')       # ... and to the right
+    king = shape.startswith('king')
+    end = 16 if king else 0                                  # how much further the foot end is
+    x0, x1 = (0 if lo else 1), (16 if ro else 15)            # mattress, blanket top, drape
     parts = [
-        # Head end: two tall posts, a top rail, a panelled headboard.
-        b([0, 0, -16], [2, 14, -14], '#post'), b([14, 0, -16], [16, 14, -14], '#post'),
+        # Head end: posts on the outer sides, a top rail, a panelled headboard.
         b([0, 14, -16], [16, 16, -14], '#rail'),
-        b([2, 4, -15.5], [14, 14, -14.5], '#panel'),
-        # Foot end: lower posts, a rail, a panelled footboard.
-        b([0, 0, 14], [2, 7, 16], '#post'), b([14, 0, 14], [16, 7, 16], '#post'),
-        b([0, 7, 14], [16, 8.5, 16], '#rail'),
-        b([2, 3, 14.5], [14, 7, 15.5], '#panel'),
-        # The base and the mattress.
-        b([1, 2, -14], [15, 4, 14], '#rail'),
-        b([1, 4, -14], [15, 7, 14], '#sheet'),
+        b([0 if lo else 2, 4, -15.5], [16 if ro else 14, 14, -14.5], '#panel'),
+        # Foot end: lower posts on the outer sides, a rail, a panelled footboard.
+        b([0, 7, 14 + end], [16, 8.5, 16 + end], '#rail'),
+        b([0 if lo else 2, 3, 14.5 + end], [16 if ro else 14, 7, 15.5 + end], '#panel'),
     ]
+    if not lo:
+        parts += [b([0, 0, -16], [2, 14, -14], '#post'), b([0, 0, 14 + end], [2, 7, 16 + end], '#post')]
+    if not ro:
+        parts += [b([14, 0, -16], [16, 14, -14], '#post'), b([14, 0, 14 + end], [16, 7, 16 + end], '#post')]
+    # A slim mullion where two headboard panels meet.
+    if ro:
+        parts.append(b([15.25, 4, -15.75], [16, 14, -14.25], '#rail'))
+    if lo:
+        parts.append(b([0, 4, -15.75], [0.75, 14, -14.25], '#rail'))
+    # The crest over the middle of a joined headboard: one step (and a cap) across a double's seam,
+    # a wider, taller stepped crest over the middle of a king.
+    crest = {'left': [(6, 16, 16, 17.5), (10, 16, 17.5, 18)],
+             'right': [(0, 10, 16, 17.5), (0, 6, 17.5, 18)],
+             'king_left': [(10, 16, 16, 17.5)],
+             'king_middle': [(0, 16, 16, 17.5), (2.5, 13.5, 17.5, 19), (5, 11, 19, 19.5)],
+             'king_right': [(0, 6, 16, 17.5)]}.get(shape, [])
+    parts += [b([cx0, cy0, -16], [cx1, cy1, -14], '#rail') for cx0, cx1, cy0, cy1 in crest]
+    # The base and the mattress (split where a king's runs into its extension block).
+    for za, zb in ([(-14, 16), (16, 30)] if king else [(-14, 14)]):
+        parts += [b([x0, 2, za], [x1, 4, zb], '#rail'), b([x0, 4, za], [x1, 7, zb], '#sheet')]
     # The pillow: a core with a smaller puff on top and bulges at the ends and front, so its edges
-    # read as rounded; every piece leans back together against the headboard.
+    # read as rounded; every piece leans back together against the headboard. One per column.
     lean = (-22.5, [8, 7, -12])
     parts += [b([3, 7.25, -13.5], [13, 9.25, -10.5], '#pillow', lean),
               b([3.5, 9.25, -13.25], [12.5, 9.75, -10.75], '#pillow', lean),
@@ -86,17 +115,24 @@ def elements(occupied, shift=0):
     # its top edge as a soft band (Handcrafted's idea, kept subtle): a lower roll and a narrower cap.
     # Turned back towards the foot while someone sleeps.
     z0, (b0, b1) = (2.5, (0.5, 3)) if occupied else (-7, (-9, -6.5))
-    parts += [b([1, 7, z0], [15, 7.75, 13.5], '#blanket'),                       # the top
-              b([0.5, 4.75, z0], [1, 7.25, 13.5], '#blanket'), b([15, 4.75, z0], [15.5, 7.25, 13.5], '#blanket'),
-              b([0.25, 4.5, z0], [0.75, 5.25, 13.5], '#blanket'), b([15.25, 4.5, z0], [15.75, 5.25, 13.5], '#blanket'),
-              b([1, 4.75, 13.5], [15, 7.25, 14], '#blanket'),                    # the foot drape
-              b([1, 4.5, 13.75], [15, 5.25, 14.25], '#blanket'),
+    foot = 13.5 + end
+    for za, zb in ([(z0, 16), (16, foot)] if king else [(z0, foot)]):
+        parts.append(b([x0, 7, za], [x1, 7.75, zb], '#blanket'))                     # the top
+        if not lo:
+            parts += [b([0.5, 4.75, za], [1, 7.25, zb], '#blanket'), b([0.25, 4.5, za], [0.75, 5.25, zb], '#blanket')]
+        if not ro:
+            parts += [b([15, 4.75, za], [15.5, 7.25, zb], '#blanket'), b([15.25, 4.5, za], [15.75, 5.25, zb], '#blanket')]
+    parts += [b([x0, 4.75, foot], [x1, 7.25, foot + 0.5], '#blanket'),              # the foot drape
+              b([x0, 4.5, foot + 0.25], [x1, 5.25, foot + 0.75], '#blanket'),
               # the folded band, sitting just above the blanket so no two faces share a plane
-              b([0.25, 7, b0], [15.75, 8, b1], '#sheet'),
-              b([0.75, 8, b0 + 0.25], [15.25, 8.5, b1 - 0.25], '#sheet'),
+              b([0 if lo else 0.25, 7, b0], [16 if ro else 15.75, 8, b1], '#sheet'),
+              b([0 if lo else 0.75, 8, b0 + 0.25], [16 if ro else 15.25, 8.5, b1 - 0.25], '#sheet'),
               # a hotel runner across the foot, a deeper shade with fine light edge stripes
-              b([0.4, 7.75, 9], [15.6, 8, 12], '#runner'),
-              b([0.15, 5, 9], [0.4, 8, 12], '#runner'), b([15.6, 5, 9], [15.85, 8, 12], '#runner')]
+              b([0 if lo else 0.4, 7.75, 9 + end], [16 if ro else 15.6, 8, 12 + end], '#runner')]
+    if not lo:
+        parts.append(b([0.15, 5, 9 + end], [0.4, 8, 12 + end], '#runner'))
+    if not ro:
+        parts.append(b([15.6, 5, 9 + end], [15.85, 8, 12 + end], '#runner'))
     return parts
 
 
@@ -104,13 +140,22 @@ def log_texture(wood):
     return f'minecraft:block/stripped_{wood}_stem' if wood in ('crimson', 'warped') else f'minecraft:block/stripped_{wood}_log'
 
 
+def model_name(base, shape, occupied):
+    """bed, bed_occupied, bed_left, bed_left_occupied, ... (a single keeps its original names)."""
+    return base + ('' if shape == 'single' else f'_{shape}') + ('_occupied' if occupied else '')
+
+
 def title(wood): return ' '.join(part.capitalize() for part in wood.split('_'))
 
 
 def generate():
-    for occupied in (False, True):
-        write(ASSETS / f'models/block/bed{"_occupied" if occupied else ""}.json',
-              {'parent': 'minecraft:block/block', 'textures': {'particle': '#post'}, 'elements': elements(occupied)})
+    for shape in SHAPES:
+        for occupied in (False, True):
+            write(ASSETS / f'models/block/{model_name("bed", shape, occupied)}.json',
+                  {'parent': 'minecraft:block/block', 'textures': {'particle': '#post'}, 'elements': elements(occupied, shape)})
+    # A king's extra length: invisible (the column's own model draws over it).
+    write(ASSETS / 'models/block/bed_extension.json', {'textures': {'particle': 'minecraft:block/oak_planks'}, 'elements': []})
+    write(ASSETS / 'blockstates/bed_extension.json', {'variants': {'': {'model': 'fourtwenty:block/bed_extension'}}})
     write(ASSETS / 'models/block/bed_head.json', {'textures': {'particle': '#post'}, 'elements': []})
     write(ASSETS / 'models/item/bed_template.json', {
         'parent': 'minecraft:block/block', 'textures': {'particle': '#post'}, 'elements': elements(False, shift=8),
@@ -130,17 +175,18 @@ def generate():
         write(ASSETS / f'models/block/{name}_head.json', {'parent': 'fourtwenty:block/bed_head',
                                                           'textures': {'post': f'fourtwenty:block/bed/{wood}_post'}})
         for color in COLORS:
-            for occupied in (False, True):
-                write(ASSETS / f'models/block/{name}_{color}{"_occupied" if occupied else ""}.json', {
-                    'parent': f'fourtwenty:block/bed{"_occupied" if occupied else ""}', 'textures': textures(color)})
-        variants = {}
+            for shape in SHAPES:
+                for occupied in (False, True):
+                    write(ASSETS / f'models/block/{model_name(f"{name}_{color}", shape, occupied)}.json', {
+                        'parent': f'fourtwenty:block/{model_name("bed", shape, occupied)}', 'textures': textures(color)})
+        # The head half draws nothing whatever its state; the foot half draws the whole column.
+        variants = {'part=head': {'model': f'fourtwenty:block/{name}_head'}}
         for facing, rot in ROTATION.items():
             for color in COLORS:
-                for occupied in ('false', 'true'):
-                    for part in ('foot', 'head'):
-                        model = f'fourtwenty:block/{name}_head' if part == 'head' else \
-                            f'fourtwenty:block/{name}_{color}{"_occupied" if occupied == "true" else ""}'
-                        variants[f'blanket={color},facing={facing},occupied={occupied},part={part}'] = \
+                for shape in SHAPES:
+                    for occupied in ('false', 'true'):
+                        model = f'fourtwenty:block/{model_name(f"{name}_{color}", shape, occupied == "true")}'
+                        variants[f'blanket={color},facing={facing},occupied={occupied},part=foot,shape={shape}'] = \
                             {'model': model, 'y': rot} if rot else {'model': model}
         write(ASSETS / f'blockstates/{name}.json', {'variants': variants})
         # The item shows its blanket colour: an item model per colour, picked by the "fourtwenty:blanket"
@@ -180,6 +226,7 @@ def generate():
         data[f'block.fourtwenty.{name}'] = label
         data[f'item.fourtwenty.{name}'] = label
     data['item.fourtwenty.bed.blanket'] = 'Blanket: %s'
+    data['block.fourtwenty.bed_extension'] = 'Bed'
     lang.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     print(f'{len(names)} beds generated')
 

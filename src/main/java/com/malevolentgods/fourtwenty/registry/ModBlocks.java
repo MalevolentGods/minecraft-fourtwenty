@@ -115,6 +115,12 @@ public class ModBlocks {
       return java.util.Collections.unmodifiableMap(beds);
     }
 
+    /** A king bed's extra length; see {@link com.malevolentgods.fourtwenty.block.BedExtensionBlock}. No item. */
+    public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.block.BedExtensionBlock> BED_EXTENSION = BLOCKS.register(
+        "bed_extension", () -> new com.malevolentgods.fourtwenty.block.BedExtensionBlock(
+            BlockBehaviour.Properties.of().strength(0.2f).sound(SoundType.WOOD).noOcclusion().noLootTable()
+                .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK)));
+
     public static final DeferredHolder<Block, WeedBongBlock> WEED_BONG = BLOCKS.register("weed_bong",
       () -> new WeedBongBlock(
         BlockBehaviour.Properties.of()
