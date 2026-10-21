@@ -614,9 +614,14 @@ def elements(lit):
         E += cylinder_y(kx + off[0], kz + off[1], 3.6, y, y + 0.45, '#pipe')
     E += cylinder_y(kx, kz, 2.4, 14.2, 14.6, '#brass')
     E.append(box([kx - 0.4, 14.6, kz - 0.4], [kx + 0.4, 15.5, kz + 0.4], '#pipe'))
-    neck = math.hypot(kx - cx, kz - cz)
-    mx, mz = (kx + cx) / 2, (kz + cz) / 2
-    E.append(box([mx - neck / 2, 15.0, mz - 0.4], [mx + neck / 2, 15.8, mz + 0.4], '#pipe', rot=('y', -45, [mx, 15.4, mz])))
+    # The swan neck leaves the dome at its edge (clear of the cap, whose top it would otherwise sit
+    # just under) and runs to the condenser, its top well clear of both the dome and the cap.
+    dist = math.hypot(kx - cx, kz - cz)
+    ux, uz = (kx - cx) / dist, (kz - cz) / dist
+    sx, sz = cx + ux * 1.9, cz + uz * 1.9
+    neck = math.hypot(kx - sx, kz - sz)
+    mx, mz = (kx + sx) / 2, (kz + sz) / 2
+    E.append(box([mx - neck / 2, 15.0, mz - 0.4], [mx + neck / 2, 15.65, mz + 0.4], '#pipe', rot=('y', -45, [mx, 15.3, mz])))
     # The resin tank (back left), its sight glass and lid; a pipe to the still.
     tx, tz = 3.4, 12.4
     E += cylinder_y(tx, tz, 3.8, 8.75, 12.6, '#copper')

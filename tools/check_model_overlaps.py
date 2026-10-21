@@ -16,12 +16,23 @@ AXIS = {'east': (0, 1), 'west': (0, 0), 'up': (1, 1), 'down': (1, 0), 'south': (
 
 def faces(e):
     f, t = e['from'], e['to']
-    rot = json.dumps(e.get('rotation'), sort_keys=True)
+    r = e.get('rotation')
+    rot = json.dumps(r, sort_keys=True)
     for name in e['faces']:
         axis, hi = AXIS[name]
         plane = t[axis] if hi else f[axis]
         others = [i for i in range(3) if i != axis]
         rect = [(f[i], t[i]) for i in others]
+        # A y-rotation leaves up/down faces horizontal: compare them with everything, using the
+        # rotated footprint's bounds (a slight over-estimate, which is the safe side).
+        if r and r['axis'] == 'y' and name in ('up', 'down'):
+            import math
+            a = math.radians(r['angle'])
+            ox, oz = r['origin'][0], r['origin'][2]
+            pts = [((x - ox) * math.cos(a) + (z - oz) * math.sin(a) + ox, -(x - ox) * math.sin(a) + (z - oz) * math.cos(a) + oz)
+                   for x in (f[0], t[0]) for z in (f[2], t[2])]
+            rect = [(min(p[0] for p in pts), max(p[0] for p in pts)), (min(p[1] for p in pts), max(p[1] for p in pts))]
+            rot = 'null'
         yield name, rot, round(plane, 4), rect
 
 
