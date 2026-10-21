@@ -1,0 +1,38 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "fourtwenty_concrete_powder",
+  "ingredients": [
+    {
+      "item": "minecraft:sand"
+    },
+    {
+      "item": "minecraft:sand"
+    },
+    {
+      "item": "minecraft:sand"
+    },
+    {
+      "item": "minecraft:gravel"
+    },
+    {
+      "item": "minecraft:gravel"
+    },
+    {
+      "item": "minecraft:gravel"
+    },
+    {
+      "item": "fourtwenty:weed_bud"
+    },
+    {
+      "item": "fourtwenty:weed_bud"
+    },
+    {
+      "item": "fourtwenty:terpene_lim_pin_myr"
+    }
+  ],
+  "result": {
+    "id": "fourtwenty:concrete_powder_lim_pin_myr",
+    "count": 4
+  }
+}

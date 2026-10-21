@@ -68,9 +68,29 @@ public final class ModTerpenes {
         return new Hemp(block, stairs, slab, items);
     }
 
-    /** Concrete in the 64 colours, by code. */
+    /** Concrete in the 64 colours, by code (one flat colour, like vanilla's). */
     public static final Map<String, DeferredHolder<Block, Block>> CONCRETE = palette("concrete_",
             code -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(1.8f).requiresCorrectToolForDrops()));
+
+    /**
+     * Concrete powder: vanilla's ConcretePowderBlock, so it falls and sets into its concrete in water,
+     * and MineColonies' Concrete Mixer (which looks for a ConcretePowderBlock) can set it in its pond.
+     */
+    public static final Map<String, DeferredHolder<Block, Block>> CONCRETE_POWDER = palette("concrete_powder_",
+            code -> new net.minecraft.world.level.block.ConcretePowderBlock(CONCRETE.get(code).get(),
+                    BlockBehaviour.Properties.of().mapColor(MapColor.SAND).strength(0.5f).sound(SoundType.SAND)));
+
+    /** Stained glass and glass panes in the 64 colours (translucent; drop only with silk touch). */
+    public static final Map<String, DeferredHolder<Block, Block>> GLASS = palette("glass_",
+            code -> new net.minecraft.world.level.block.TransparentBlock(glass()));
+    public static final Map<String, DeferredHolder<Block, Block>> GLASS_PANES = palette("glass_pane_",
+            code -> new net.minecraft.world.level.block.IronBarsBlock(glass()));
+
+    private static BlockBehaviour.Properties glass() {
+        return BlockBehaviour.Properties.of().strength(0.3f).sound(SoundType.GLASS).noOcclusion()
+                .isValidSpawn((state, level, pos, type) -> false).isRedstoneConductor((state, level, pos) -> false)
+                .isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false);
+    }
 
     /**
      * Rugs in the 64 colours and Natural Hemp ("natural"): one pixel thick, inset a pixel from every
@@ -169,6 +189,9 @@ public final class ModTerpenes {
                         all.forEach(h -> output.accept(h.items().get(2).get()));
                         RUGS.values().forEach(b -> output.accept(b.get()));
                         CONCRETE.values().forEach(b -> output.accept(b.get()));
+                        CONCRETE_POWDER.values().forEach(b -> output.accept(b.get()));
+                        GLASS.values().forEach(b -> output.accept(b.get()));
+                        GLASS_PANES.values().forEach(b -> output.accept(b.get()));
                         LAMPS.values().forEach(b -> output.accept(b.get()));
                         INVERTED_LAMPS.values().forEach(b -> output.accept(b.get()));
                         LAMP_TRIMS.values().forEach(b -> output.accept(b.get()));

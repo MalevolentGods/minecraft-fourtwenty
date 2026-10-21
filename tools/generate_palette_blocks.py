@@ -1,8 +1,16 @@
 #!/usr/bin/env python3
 """Concrete, rugs and lamps in the 64 terpene colours, from tools/terpenes.json.
 
-Concrete (concrete_<code>): smooth, with fine aggregate specks and nothing large enough to repeat
-block to block. A final terpene in the middle of 8 concrete (any colour, vanilla or ours) dyes 8.
+Concrete (concrete_<code>): one flat colour, like vanilla concrete. Concrete powder
+(concrete_powder_<code>): vanilla's ConcretePowderBlock, so it falls and sets into its concrete in
+water; fine aggregate specks. Vanilla's powder recipe with 1 sand and 1 gravel swapped for weed buds
+(3 sand, 3 gravel, 2 buds, the final terpene) makes 4. MineColonies' Concrete Mixer gets the same two
+recipes (data/minecolonies/crafterrecipes/concretemixer/fourtwenty_*): it recognises powder by its
+ConcretePowderBlock and sets it in its pond.
+
+Glass and panes (glass_<code>, glass_pane_<code>): stained glass, recoloured from the white stained
+glass and pane edge in tools/source_textures/faithful (Classic Faithful 64x, Faithful License;
+see its README). A terpene in the middle of 8 glass (or 8 panes) dyes 8; 6 glass make 16 panes.
 
 Rugs (rug_<code>, and rug_natural): one pixel thick and inset a pixel from every edge, so the
 block underneath always shows round them, with rounded corners (stepped bands of quarter-pixel
@@ -71,6 +79,24 @@ def loot(name):
 
 
 # ---- concrete --------------------------------------------------------------------------------
+
+def flat_texture(c):
+    """Concrete: one flat colour."""
+    return Image.new('RGB', (16, 16), c)
+
+
+def glass_texture(c, template):
+    """A stained glass texture: the template's transparency (face, frame, glint) in colour c."""
+    t = Image.open(ROOT / 'tools/source_textures/faithful' / template).convert('RGBA')
+    tp = t.load()
+    img = Image.new('RGBA', t.size)
+    px = img.load()
+    for y in range(t.size[1]):
+        for x in range(t.size[0]):
+            r, g, b, a = tp[x, y]
+            px[x, y] = (clamp(c[0] * r / 255), clamp(c[1] * g / 255), clamp(c[2] * b / 255), a)
+    return img
+
 
 def concrete_texture(c, seed):
     rng = random.Random(seed)
@@ -233,25 +259,89 @@ def generate():
                 'result': {'id': f'fourtwenty:{block}', 'count': 8}})
         names[block] = f'{name} Rug'
     write(DATA / 'tags/item/rugs.json', {'replace': False, 'values': [f'fourtwenty:rug_{code}' for code, _, _ in rugs]})
-    # Concrete.
+    # Concrete (flat) and concrete powder (specked; sets into the concrete in water).
+    for old in list(DATA.glob('recipe/concrete_*.json')):
+        old.unlink()                                     # the old 8 concrete + terpene recipes
+    old_tag = DATA / 'tags/item/concrete.json'
+    if old_tag.exists():
+        old_tag.unlink()
+    mixer = RES / 'data/minecolonies/crafterrecipes/concretemixer'
+    for sub in ('concrete_powder', 'glass'):
+        (tex / sub).mkdir(parents=True, exist_ok=True)
     for i, (code, name, hexc) in enumerate(colors):
         c = rgb(hexc)
-        concrete_texture(c, 5000 + i).save(tex / f'concrete/{code}.png')
-        block = f'concrete_{code}'
-        write(ASSETS / f'models/block/{block}.json', {'parent': 'minecraft:block/cube_all', 'textures': {'all': f'fourtwenty:block/concrete/{code}'}})
-        write(ASSETS / f'blockstates/{block}.json', {'variants': {'': {'model': f'fourtwenty:block/{block}'}}})
-        write(ASSETS / f'models/item/{block}.json', {'parent': f'fourtwenty:block/{block}'})
-        write(DATA / f'loot_table/blocks/{block}.json', loot(block))
-        write(DATA / f'recipe/{block}.json', {'type': 'minecraft:crafting_shaped', 'category': 'building', 'group': 'fourtwenty_concrete',
-            'pattern': ['CCC', 'CTC', 'CCC'], 'key': {'C': {'tag': 'fourtwenty:concrete'}, 'T': {'item': f'fourtwenty:terpene_{code}'}},
-            'result': {'id': f'fourtwenty:{block}', 'count': 8}})
-        names[block] = f'{name} Concrete'
-    concrete = [f'minecraft:{v}_concrete' for v in VANILLA_COLORS] + [f'fourtwenty:concrete_{code}' for code, _, _ in colors]
-    write(DATA / 'tags/item/concrete.json', {'replace': False, 'values': concrete})
+        flat_texture(c).save(tex / f'concrete/{code}.png')
+        concrete_texture(c, 5000 + i).save(tex / f'concrete_powder/{code}.png')
+        for block, texture in ((f'concrete_{code}', f'concrete/{code}'), (f'concrete_powder_{code}', f'concrete_powder/{code}')):
+            write(ASSETS / f'models/block/{block}.json', {'parent': 'minecraft:block/cube_all', 'textures': {'all': f'fourtwenty:block/{texture}'}})
+            write(ASSETS / f'blockstates/{block}.json', {'variants': {'': {'model': f'fourtwenty:block/{block}'}}})
+            write(ASSETS / f'models/item/{block}.json', {'parent': f'fourtwenty:block/{block}'})
+            write(DATA / f'loot_table/blocks/{block}.json', loot(block))
+        powder = f'concrete_powder_{code}'
+        ingredients = [{'item': 'minecraft:sand'}] * 3 + [{'item': 'minecraft:gravel'}] * 3 + \
+                      [{'item': 'fourtwenty:weed_bud'}] * 2 + [{'item': f'fourtwenty:terpene_{code}'}]
+        write(DATA / f'recipe/{powder}.json', {'type': 'minecraft:crafting_shapeless', 'category': 'building',
+            'group': 'fourtwenty_concrete_powder', 'ingredients': ingredients, 'result': {'id': f'fourtwenty:{powder}', 'count': 4}})
+        write(mixer / f'fourtwenty_{powder}.json', {'type': 'recipe', 'crafter': 'concretemixer_custom', 'inputs': [
+            {'count': 3, 'id': 'minecraft:sand'}, {'count': 3, 'id': 'minecraft:gravel'}, {'count': 2, 'id': 'fourtwenty:weed_bud'},
+            {'id': f'fourtwenty:terpene_{code}'}], 'intermediate': 'minecraft:air', 'result': {'count': 4, 'id': f'fourtwenty:{powder}'}})
+        write(mixer / f'fourtwenty_concrete_{code}.json', {'type': 'recipe', 'crafter': 'concretemixer_custom',
+            'inputs': [{'id': f'fourtwenty:{powder}'}], 'intermediate': 'minecraft:air', 'result': {'id': f'fourtwenty:concrete_{code}'}})
+        names[f'concrete_{code}'] = f'{name} Concrete'
+        names[powder] = f'{name} Concrete Powder'
     pick = RES / 'data/minecraft/tags/block/mineable/pickaxe.json'
     current = json.loads(pick.read_text(encoding='utf-8')) if pick.exists() else {'replace': False, 'values': []}
     current['values'] = sorted(set(current['values']) | {f'fourtwenty:concrete_{code}' for code, _, _ in colors})
     write(pick, current)
+    shovel = RES / 'data/minecraft/tags/block/mineable/shovel.json'
+    current = json.loads(shovel.read_text(encoding='utf-8')) if shovel.exists() else {'replace': False, 'values': []}
+    current['values'] = sorted(set(current['values']) | {f'fourtwenty:concrete_powder_{code}' for code, _, _ in colors})
+    write(shovel, current)
+    # Glass and glass panes (translucent).
+    pane_parts = {'post': 'template_glass_pane_post', 'side': 'template_glass_pane_side', 'side_alt': 'template_glass_pane_side_alt',
+                  'noside': 'template_glass_pane_noside', 'noside_alt': 'template_glass_pane_noside_alt'}
+    for code, name, hexc in colors:
+        c = rgb(hexc)
+        glass_texture(c, 'white_stained_glass.png').save(tex / f'glass/{code}.png')
+        glass_texture(c, 'white_stained_glass_pane_top.png').save(tex / f'glass/{code}_pane_top.png')
+        glass, pane = f'glass_{code}', f'glass_pane_{code}'
+        textures = {'pane': f'fourtwenty:block/glass/{code}', 'edge': f'fourtwenty:block/glass/{code}_pane_top'}
+        write(ASSETS / f'models/block/{glass}.json', {'parent': 'minecraft:block/cube_all', 'render_type': 'minecraft:translucent',
+                                                     'textures': {'all': f'fourtwenty:block/glass/{code}'}})
+        write(ASSETS / f'blockstates/{glass}.json', {'variants': {'': {'model': f'fourtwenty:block/{glass}'}}})
+        write(ASSETS / f'models/item/{glass}.json', {'parent': f'fourtwenty:block/{glass}'})
+        for part, parent in pane_parts.items():
+            write(ASSETS / f'models/block/{pane}_{part}.json', {'parent': f'minecraft:block/{parent}', 'render_type': 'minecraft:translucent',
+                                                               'textures': textures})
+
+        def m(part, **r):
+            return dict({'model': f'fourtwenty:block/{pane}_{part}'}, **r)
+        write(ASSETS / f'blockstates/{pane}.json', {'multipart': [
+            {'apply': m('post')},
+            {'when': {'north': 'true'}, 'apply': m('side')}, {'when': {'east': 'true'}, 'apply': m('side', y=90)},
+            {'when': {'south': 'true'}, 'apply': m('side_alt')}, {'when': {'west': 'true'}, 'apply': m('side_alt', y=90)},
+            {'when': {'north': 'false'}, 'apply': m('noside')}, {'when': {'east': 'false'}, 'apply': m('noside_alt')},
+            {'when': {'south': 'false'}, 'apply': m('noside_alt', y=90)}, {'when': {'west': 'false'}, 'apply': m('noside', y=270)}]})
+        write(ASSETS / f'models/item/{pane}.json', {'parent': 'minecraft:item/generated', 'textures': {'layer0': f'fourtwenty:block/glass/{code}'}})
+        # Glass drops only with silk touch, like vanilla glass.
+        for block in (glass, pane):
+            write(DATA / f'loot_table/blocks/{block}.json', {'type': 'minecraft:block', 'pools': [{'rolls': 1, 'entries': [
+                {'type': 'minecraft:item', 'name': f'fourtwenty:{block}'}], 'conditions': [{'condition': 'minecraft:match_tool', 'predicate': {
+                    'predicates': {'minecraft:enchantments': [{'enchantments': 'minecraft:silk_touch', 'levels': {'min': 1}}]}}}]}]})
+        write(DATA / f'recipe/{glass}.json', {'type': 'minecraft:crafting_shaped', 'category': 'building', 'group': 'fourtwenty_glass',
+            'pattern': ['GGG', 'GTG', 'GGG'], 'key': {'G': {'item': 'minecraft:glass'}, 'T': {'item': f'fourtwenty:terpene_{code}'}},
+            'result': {'id': f'fourtwenty:{glass}', 'count': 8}})
+        write(DATA / f'recipe/{pane}.json', {'type': 'minecraft:crafting_shaped', 'category': 'decorations', 'group': 'fourtwenty_glass_pane',
+            'pattern': ['GGG', 'GGG'], 'key': {'G': {'item': f'fourtwenty:{glass}'}}, 'result': {'id': f'fourtwenty:{pane}', 'count': 16}})
+        write(DATA / f'recipe/{pane}_dyeing.json', {'type': 'minecraft:crafting_shaped', 'category': 'decorations',
+            'group': 'fourtwenty_glass_pane_dye', 'pattern': ['PPP', 'PTP', 'PPP'],
+            'key': {'P': {'tag': 'c:glass_panes'}, 'T': {'item': f'fourtwenty:terpene_{code}'}},
+            'result': {'id': f'fourtwenty:{pane}', 'count': 8}})
+        names[glass] = f'{name} Glass'
+        names[pane] = f'{name} Glass Pane'
+    for kind, ids in (('glass_blocks', [f'fourtwenty:glass_{c}' for c, _, _ in colors]), ('glass_panes', [f'fourtwenty:glass_pane_{c}' for c, _, _ in colors])):
+        write(RES / f'data/c/tags/item/{kind}.json', {'replace': False, 'values': ids})
+        write(RES / f'data/c/tags/block/{kind}.json', {'replace': False, 'values': ids})
     # Lamps.
     for i, (code, name, hexc) in enumerate(colors):
         c = rgb(hexc)
@@ -288,7 +378,7 @@ def generate():
     for block, label in names.items():
         data[f'block.fourtwenty.{block}'] = label
     lang.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
-    print(f'{len(rugs)} rugs, {len(colors)} concrete, {len(colors) * 3} lamps; {len(rug_elements())} rug elements')
+    print(f'{len(rugs)} rugs, {len(colors)} concrete + powder, {len(colors)} glass + panes, {len(colors) * 3} lamps')
 
 
 if __name__ == '__main__':

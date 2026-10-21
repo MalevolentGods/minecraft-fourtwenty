@@ -173,12 +173,20 @@ public final class TerpinatorGameTests {
         grid.set(4, terp(grey, 1));
         var recoloured = craft(h, 3, 3, grid);
         h.assertTrue(recoloured.is(ModTerpenes.RUGS.get(grey.id()).get().asItem()) && recoloured.getCount() == 8, "A terpene recolours 8 rugs, got " + recoloured);
-        grid = new java.util.ArrayList<>(Collections.nCopies(9, new ItemStack(net.minecraft.world.item.Items.WHITE_CONCRETE)));
+        var sand = new ItemStack(net.minecraft.world.item.Items.SAND);
+        var gravel = new ItemStack(net.minecraft.world.item.Items.GRAVEL);
+        var bud = new ItemStack(ModItems.WEED_BUD.get());
+        var powder = craft(h, 3, 3, List.of(sand, sand, sand, gravel, gravel, gravel, bud, bud, terp(teal, 1)));
+        h.assertTrue(powder.is(ModTerpenes.CONCRETE_POWDER.get(teal.id()).get().asItem()) && powder.getCount() == 4,
+                "3 sand, 3 gravel, 2 buds and a terpene make 4 powder, got " + powder);
+        grid = new java.util.ArrayList<>(Collections.nCopies(9, new ItemStack(net.minecraft.world.item.Items.GLASS)));
         grid.set(4, terp(teal, 1));
-        var concrete = craft(h, 3, 3, grid);
-        h.assertTrue(concrete.is(ModTerpenes.CONCRETE.get(teal.id()).get().asItem()) && concrete.getCount() == 8, "8 concrete + a terpene, got " + concrete);
-        var glass = new ItemStack(net.minecraft.world.item.Items.GLASS);
-        var lamps = craft(h, 3, 2, List.of(glass, glass, glass, new ItemStack(ModItems.WEED_BUD.get()), terp(teal, 1), ItemStack.EMPTY));
+        var glass = craft(h, 3, 3, grid);
+        h.assertTrue(glass.is(ModTerpenes.GLASS.get(teal.id()).get().asItem()) && glass.getCount() == 8, "8 glass + a terpene, got " + glass);
+        var panes = craft(h, 3, 2, Collections.nCopies(6, new ItemStack(glass.getItem())));
+        h.assertTrue(panes.is(ModTerpenes.GLASS_PANES.get(teal.id()).get().asItem()) && panes.getCount() == 16, "6 glass make 16 panes, got " + panes);
+        var plain = new ItemStack(net.minecraft.world.item.Items.GLASS);
+        var lamps = craft(h, 3, 2, List.of(plain, plain, plain, new ItemStack(ModItems.WEED_BUD.get()), terp(teal, 1), ItemStack.EMPTY));
         h.assertTrue(lamps.is(ModTerpenes.LAMPS.get(teal.id()).get().asItem()) && lamps.getCount() == 4, "3 glass, a bud and a terpene make 4 lamps, got " + lamps);
         h.succeed();
     }
@@ -191,5 +199,14 @@ public final class TerpinatorGameTests {
         h.assertTrue(rug.canSurvive(h.getLevel(), h.absolutePos(new BlockPos(1, 3, 1))), "A rug sits on a block");
         h.assertTrue(!rug.canSurvive(h.getLevel(), h.absolutePos(new BlockPos(3, 3, 3))), "...and not on air");
         h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void powderSetsIntoItsConcreteInWater(GameTestHelper h) {
+        String code = Code.of(Base.LAV, Base.PIN, Base.PIN).id();
+        h.setBlock(new BlockPos(2, 1, 2), Blocks.STONE);
+        h.setBlock(new BlockPos(2, 2, 2), ModTerpenes.CONCRETE_POWDER.get(code).get());
+        h.setBlock(new BlockPos(3, 2, 2), Blocks.WATER);
+        h.succeedWhen(() -> h.assertBlockPresent(ModTerpenes.CONCRETE.get(code).get(), new BlockPos(2, 2, 2)));
     }
 }
