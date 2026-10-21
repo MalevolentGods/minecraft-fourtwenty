@@ -134,11 +134,13 @@ def elements(occupied, shape='single', shift=0):
               b([0 if lo else 0.25, 7, b0], [16 if ro else 15.75, 8, b1], '#sheet'),
               b([0 if lo else 0.75, 8, b0 + 0.25], [16 if ro else 15.25, 8.5, b1 - 0.25], '#sheet'),
               # a hotel runner across the foot, a deeper shade with fine light edge stripes
-              b([0 if lo else 0.4, 7.75, 9 + end], [16 if ro else 15.6, 8, 12 + end], '#runner')]
+              b([0, 7.75, 9 + end], [16, 8, 12 + end], '#runner')]
+    # The runner folds over the sides: each flap hangs straight down from the top's end (one piece,
+    # no gap), outside the side drape and above the hem, so no faces meet in a plane.
     if not lo:
-        parts.append(b([0.0, 5, 9 + end], [0.05, 8, 12 + end], '#runner'))     # flaps clear of the hems
+        parts.append(b([0, 5.4, 9 + end], [0.25, 7.75, 12 + end], '#runner'))
     if not ro:
-        parts.append(b([15.95, 5, 9 + end], [16.0, 8, 12 + end], '#runner'))
+        parts.append(b([15.75, 5.4, 9 + end], [16, 7.75, 12 + end], '#runner'))
     return parts
 
 
