@@ -209,4 +209,31 @@ public final class TerpinatorGameTests {
         h.setBlock(new BlockPos(3, 2, 2), Blocks.WATER);
         h.succeedWhen(() -> h.assertBlockPresent(ModTerpenes.CONCRETE.get(code).get(), new BlockPos(2, 2, 2)));
     }
+
+    /** Places a rug as a player would (state for placement, then onPlace). */
+    private static void rug(GameTestHelper h, BlockPos rel, net.minecraft.world.level.block.Block block) {
+        BlockPos pos = h.absolutePos(rel);
+        var rugBlock = (com.malevolentgods.fourtwenty.block.RugBlock) block;
+        h.getLevel().setBlock(pos, rugBlock.connected(h.getLevel(), pos, block.defaultBlockState()), 3);
+    }
+
+    @GameTest(template = "empty")
+    public static void rugsJoinTheSameRugOnEverySideAndDiagonal(GameTestHelper h) {
+        var teal = ModTerpenes.RUGS.get(Code.of(Base.PIN, Base.LAV, Base.PIN).id()).get();
+        var grey = ModTerpenes.RUGS.get(Code.of(Base.MYR, Base.PIN, Base.PIN).id()).get();
+        for (int x = 0; x < 5; x++) for (int z = 0; z < 5; z++) h.setBlock(new BlockPos(x, 1, z), Blocks.STONE);
+        BlockPos centre = new BlockPos(2, 2, 2);
+        rug(h, centre, teal);
+        rug(h, centre.east(), teal);                 // a side neighbour
+        rug(h, centre.north().west(), teal);         // a diagonal one (Minecraft doesn't tell the centre)
+        rug(h, centre.south(), grey);                // another colour: a separate rug
+        var state = h.getBlockState(centre);
+        h.assertTrue(state.getValue(com.malevolentgods.fourtwenty.block.RugBlock.EAST), "Joined to the rug beside it");
+        h.assertTrue(state.getValue(com.malevolentgods.fourtwenty.block.RugBlock.NORTH_WEST), "Told about the diagonal rug");
+        h.assertTrue(!state.getValue(com.malevolentgods.fourtwenty.block.RugBlock.SOUTH), "Another colour stays separate");
+        h.assertTrue(h.getBlockState(centre.east()).getValue(com.malevolentgods.fourtwenty.block.RugBlock.WEST), "...both ways");
+        h.destroyBlock(centre.north().west());
+        h.assertTrue(!h.getBlockState(centre).getValue(com.malevolentgods.fourtwenty.block.RugBlock.NORTH_WEST), "Told when the diagonal goes");
+        h.succeed();
+    }
 }

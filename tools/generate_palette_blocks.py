@@ -12,7 +12,7 @@ Glass and panes (glass_<code>, glass_pane_<code>): stained glass, recoloured fro
 glass and pane edge in tools/source_textures/faithful (Classic Faithful 64x, Faithful License;
 see its README). A terpene in the middle of 8 glass (or 8 panes) dyes 8; 6 glass make 16 panes.
 
-Rugs (rug_<code>, and rug_natural): one pixel thick and inset a pixel from every edge, so the
+Rugs: see tools/generate_rugs.py (they join into larger rugs). Formerly here: rugs (rug_<code>, and rug_natural): one pixel thick and inset a pixel from every edge, so the
 block underneath always shows round them, with rounded corners (stepped bands of quarter-pixel
 geometry). Woven texture: a darker border, a light pinstripe, corner diamonds and a central
 medallion. 2 hemp blocks of the colour make 3; a terpene in the middle of 8 rugs recolours them.
@@ -237,28 +237,6 @@ def generate():
     for sub in ('concrete', 'rug', 'lamp'):
         (tex / sub).mkdir(parents=True, exist_ok=True)
     colors = [(c['code'], c['name'], c['hex']) for c in TERP['colors']]
-    # Rug template.
-    write(ASSETS / 'models/block/rug.json', {'parent': 'minecraft:block/block', 'ambientocclusion': False,
-                                            'textures': {'particle': '#rug'}, 'elements': rug_elements()})
-    rugs = colors + [('natural', TERP['natural']['name'], TERP['natural']['hex'])]
-    for i, (code, name, hexc) in enumerate(rugs):
-        c = rgb(hexc)
-        rug_texture(c, 3000 + i).save(tex / f'rug/{code}.png')
-        block = f'rug_{code}'
-        write(ASSETS / f'models/block/{block}.json', {'parent': 'fourtwenty:block/rug', 'textures': {'rug': f'fourtwenty:block/rug/{code}'}})
-        write(ASSETS / f'blockstates/{block}.json', {'variants': {'': {'model': f'fourtwenty:block/{block}'}}})
-        write(ASSETS / f'models/item/{block}.json', {'parent': f'fourtwenty:block/{block}'})
-        write(DATA / f'loot_table/blocks/{block}.json', loot(block))
-        hemp = 'natural_hemp' if code == 'natural' else f'hemp_{code}'
-        write(DATA / f'recipe/{block}.json', {'type': 'minecraft:crafting_shaped', 'category': 'decorations', 'group': 'fourtwenty_rug',
-            'pattern': ['HH'], 'key': {'H': {'item': f'fourtwenty:{hemp}'}}, 'result': {'id': f'fourtwenty:{block}', 'count': 3}})
-        if code != 'natural':
-            write(DATA / f'recipe/{block}_dyeing.json', {'type': 'minecraft:crafting_shaped', 'category': 'decorations',
-                'group': 'fourtwenty_rug_dye', 'pattern': ['RRR', 'RTR', 'RRR'],
-                'key': {'R': {'tag': 'fourtwenty:rugs'}, 'T': {'item': f'fourtwenty:terpene_{code}'}},
-                'result': {'id': f'fourtwenty:{block}', 'count': 8}})
-        names[block] = f'{name} Rug'
-    write(DATA / 'tags/item/rugs.json', {'replace': False, 'values': [f'fourtwenty:rug_{code}' for code, _, _ in rugs]})
     # Concrete (flat) and concrete powder (specked; sets into the concrete in water).
     for old in list(DATA.glob('recipe/concrete_*.json')):
         old.unlink()                                     # the old 8 concrete + terpene recipes
@@ -378,7 +356,7 @@ def generate():
     for block, label in names.items():
         data[f'block.fourtwenty.{block}'] = label
     lang.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
-    print(f'{len(rugs)} rugs, {len(colors)} concrete + powder, {len(colors)} glass + panes, {len(colors) * 3} lamps')
+    print(f'{len(colors)} concrete + powder, {len(colors)} glass + panes, {len(colors) * 3} lamps (rugs: tools/generate_rugs.py)')
 
 
 if __name__ == '__main__':

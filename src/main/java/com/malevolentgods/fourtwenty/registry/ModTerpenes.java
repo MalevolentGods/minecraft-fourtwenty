@@ -93,8 +93,9 @@ public final class ModTerpenes {
     }
 
     /**
-     * Rugs in the 64 colours and Natural Hemp ("natural"): one pixel thick, inset a pixel from every
-     * edge with rounded corners (tools/generate_palette_blocks.py), and carpets in every other way.
+     * Rugs in the 64 colours and Natural Hemp ("natural"): one pixel thick, inset a pixel round the
+     * outside with rounded corners, joining the same rug around them into one larger rug
+     * ({@link com.malevolentgods.fourtwenty.block.RugBlock}); carpets in every other way.
      */
     public static final Map<String, DeferredHolder<Block, Block>> RUGS = rugs();
 
@@ -105,7 +106,7 @@ public final class ModTerpenes {
     }
 
     private static Block rug() {
-        return new net.minecraft.world.level.block.CarpetBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOL).strength(0.1f)
+        return new com.malevolentgods.fourtwenty.block.RugBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOL).strength(0.1f)
                 .sound(SoundType.WOOL).ignitedByLava().noOcclusion());
     }
 
