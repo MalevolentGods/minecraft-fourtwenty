@@ -9,6 +9,7 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - Lamp Trim: 1 lamp (plain or inverted) makes 4, instead of 1 inverted lamp making 8.
 
 ### Added
+- **Side tables** in ten woods (every vanilla wood but bamboo): a nightstand with a drawer front, a brass knob, slim stripped-log legs and a low shelf. Decoration; 3 slabs, 4 planks and a weed bud make 2. FourTwenty's own model on vanilla textures.
 - Sensi Heights: the Tavern (levels 1-3). Level 3 uses Handcrafted beds and tables.
 
 ## [0.7.0] - The Budtender's Guide and the Builder's Hut

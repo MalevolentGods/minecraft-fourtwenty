@@ -1,0 +1,9 @@
+{
+  "parent": "fourtwenty:block/side_table",
+  "textures": {
+    "top": "minecraft:block/oak_planks",
+    "body": "minecraft:block/oak_planks",
+    "legs": "minecraft:block/stripped_oak_log",
+    "knob": "minecraft:block/gold_block"
+  }
+}

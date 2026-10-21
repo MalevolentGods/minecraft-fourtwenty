@@ -33,6 +33,10 @@ public class ModItems {
         return java.util.List.copyOf(items);
     }
 
+    /** Side tables in every wood of {@link ModBlocks#SIDE_TABLE_WOODS}. */
+    public static final java.util.List<DeferredHolder<Item, BlockItem>> SIDE_TABLES = ModBlocks.SIDE_TABLE_WOODS.stream()
+            .map(wood -> blockItem(wood + "_side_table", ModBlocks.SIDE_TABLES.get(wood))).toList();
+
     private static DeferredHolder<Item, BlockItem> blockItem(String name, DeferredHolder<? extends net.minecraft.world.level.block.Block, ? extends net.minecraft.world.level.block.Block> block) {
         return ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
     }

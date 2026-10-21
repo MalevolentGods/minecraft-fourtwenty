@@ -86,6 +86,22 @@ public class ModBlocks {
       return java.util.Collections.unmodifiableMap(trims);
     }
 
+    /** Side tables (nightstands) in every vanilla wood but bamboo; see {@link com.malevolentgods.fourtwenty.block.SideTableBlock}. */
+    public static final java.util.List<String> SIDE_TABLE_WOODS = java.util.List.of(
+        "oak", "spruce", "birch", "jungle", "acacia", "dark_oak", "mangrove", "cherry", "crimson", "warped");
+    public static final java.util.Map<String, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.SideTableBlock>> SIDE_TABLES = sideTables();
+
+    private static java.util.Map<String, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.SideTableBlock>> sideTables() {
+      var tables = new java.util.LinkedHashMap<String, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.SideTableBlock>>();
+      for (var wood : SIDE_TABLE_WOODS) {
+        boolean nether = wood.equals("crimson") || wood.equals("warped");
+        tables.put(wood, BLOCKS.register(wood + "_side_table", () -> new com.malevolentgods.fourtwenty.block.SideTableBlock(
+            BlockBehaviour.Properties.of().strength(2.0f, 3.0f).noOcclusion()
+                .sound(nether ? SoundType.NETHER_WOOD : wood.equals("cherry") ? SoundType.CHERRY_WOOD : SoundType.WOOD))));
+      }
+      return java.util.Collections.unmodifiableMap(tables);
+    }
+
     public static final DeferredHolder<Block, WeedBongBlock> WEED_BONG = BLOCKS.register("weed_bong",
       () -> new WeedBongBlock(
         BlockBehaviour.Properties.of()

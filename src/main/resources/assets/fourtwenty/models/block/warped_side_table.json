@@ -1,0 +1,9 @@
+{
+  "parent": "fourtwenty:block/side_table",
+  "textures": {
+    "top": "minecraft:block/warped_planks",
+    "body": "minecraft:block/warped_planks",
+    "legs": "minecraft:block/stripped_warped_stem",
+    "knob": "minecraft:block/gold_block"
+  }
+}

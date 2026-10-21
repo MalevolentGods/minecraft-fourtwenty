@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "SSS",
+    "PBP",
+    "P P"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:warped_slab"
+    },
+    "P": {
+      "item": "minecraft:warped_planks"
+    },
+    "B": {
+      "item": "fourtwenty:weed_bud"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:warped_side_table",
+    "count": 2
+  }
+}

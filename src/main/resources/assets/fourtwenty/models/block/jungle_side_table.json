@@ -1,0 +1,9 @@
+{
+  "parent": "fourtwenty:block/side_table",
+  "textures": {
+    "top": "minecraft:block/jungle_planks",
+    "body": "minecraft:block/jungle_planks",
+    "legs": "minecraft:block/stripped_jungle_log",
+    "knob": "minecraft:block/gold_block"
+  }
+}

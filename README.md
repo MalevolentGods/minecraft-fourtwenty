@@ -141,6 +141,10 @@ FourTwenty ships the **Sensi Heights** MineColonies style: "A hillside town that
 
 More huts are added as they're built. The pack lives in its own repository and is bundled with `python3 tools/import_sensi_heights.py <pack>/sensiheights`, which validates it (huts link to their own files, no ProjectRed/CB blocks). A few blueprints use a Farmer's Delight cutting board, which is simply left out without that mod. The level 3 Tavern's beds and side tables come from Handcrafted: without it the tavern is built without them, and has no beds for visitors.
 
+## Side tables
+
+Nightstands in oak, spruce, birch, jungle, acacia, dark oak, mangrove, cherry, crimson and warped wood: a slim top, a drawer with a brass knob, slim legs and a low shelf. Craft 3 slabs over planks either side of a weed bud, with two plank legs below, for **2 side tables**. They're decoration and face whoever places them.
+
 ## Lamps
 
 Coloured lamps in all 16 dye colours, for builds that need lighting without another mod:

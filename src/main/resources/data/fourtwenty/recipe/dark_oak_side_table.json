@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "SSS",
+    "PBP",
+    "P P"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:dark_oak_slab"
+    },
+    "P": {
+      "item": "minecraft:dark_oak_planks"
+    },
+    "B": {
+      "item": "fourtwenty:weed_bud"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:dark_oak_side_table",
+    "count": 2
+  }
+}
