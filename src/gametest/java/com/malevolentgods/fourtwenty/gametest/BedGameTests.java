@@ -97,27 +97,70 @@ public final class BedGameTests {
         h.succeed();
     }
 
+    /** The oak beds lying around after a break, and their blankets all {@code color}. */
+    private static int dropped(GameTestHelper h, DyeColor color) {
+        int count = 0;
+        for (var item : h.getEntities(net.minecraft.world.entity.EntityType.ITEM)) {
+            var stack = item.getItem();
+            if (!stack.is(ModItems.BEDS.get(0).get())) continue;
+            h.assertTrue(com.malevolentgods.fourtwenty.item.FancyBedItem.blanket(stack) == color, "Dropped bed keeps its blanket");
+            count += stack.getCount();
+        }
+        return count;
+    }
+
+    private static void assertGone(GameTestHelper h, BlockPos... feet) {
+        for (BlockPos foot : feet) {
+            h.assertBlockNotPresent(ModBlocks.BEDS.get("oak").get(), foot);
+            h.assertBlockNotPresent(ModBlocks.BEDS.get("oak").get(), foot.north());
+            h.assertBlockNotPresent(ModBlocks.BED_EXTENSION.get(), foot.south());
+        }
+    }
+
     @GameTest(template = "empty")
-    public static void breakingAKingColumnSplitsItIntoSingles(GameTestHelper h) {
-        place(h, LEFT, DyeColor.LIME);
-        place(h, MIDDLE, DyeColor.LIME);
-        place(h, RIGHT, DyeColor.LIME);
-        h.destroyBlock(MIDDLE.north());
-        h.assertBlockNotPresent(ModBlocks.BEDS.get("oak").get(), MIDDLE);
-        assertColumn(h, LEFT, BedShape.SINGLE, DyeColor.LIME);
-        assertColumn(h, RIGHT, BedShape.SINGLE, DyeColor.LIME);
-        h.assertTrue(!extension(h, LEFT) && !extension(h, MIDDLE) && !extension(h, RIGHT), "The extensions go with the king");
+    public static void breakingAKingColumnBreaksTheWholeBed(GameTestHelper h) {
+        place(h, LEFT, DyeColor.ORANGE);
+        place(h, MIDDLE, DyeColor.ORANGE);
+        place(h, RIGHT, DyeColor.ORANGE);
+        h.getLevel().destroyBlock(h.absolutePos(MIDDLE.north()), true);   // a survival break, with drops
+        assertGone(h, LEFT, MIDDLE, RIGHT);
+        h.assertTrue(dropped(h, DyeColor.ORANGE) == 3, "A king gives back its three beds, got " + dropped(h, DyeColor.ORANGE));
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void breakingAnExtensionSplitsTheKingButKeepsTheBeds(GameTestHelper h) {
+    public static void breakingADoublesFootBreaksBothBeds(GameTestHelper h) {
+        place(h, LEFT, DyeColor.BLUE);
+        place(h, MIDDLE, DyeColor.BLUE);
+        h.destroyBlock(LEFT);
+        assertGone(h, LEFT, MIDDLE);
+        h.assertTrue(dropped(h, DyeColor.BLUE) == 2, "A double gives back its two beds, got " + dropped(h, DyeColor.BLUE));
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void breakingAnExtensionBreaksTheWholeKing(GameTestHelper h) {
         place(h, LEFT, DyeColor.LIME);
         place(h, MIDDLE, DyeColor.LIME);
         place(h, RIGHT, DyeColor.LIME);
         h.destroyBlock(LEFT.south());
-        for (BlockPos foot : new BlockPos[] {LEFT, MIDDLE, RIGHT}) assertColumn(h, foot, BedShape.SINGLE, DyeColor.LIME);
-        h.assertTrue(!extension(h, MIDDLE) && !extension(h, RIGHT), "The other extensions go too");
+        assertGone(h, LEFT, MIDDLE, RIGHT);
+        h.assertTrue(dropped(h, DyeColor.LIME) == 3, "Three beds back, got " + dropped(h, DyeColor.LIME));
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aCreativePlayerBreakingAKingGetsNoDrops(GameTestHelper h) {
+        place(h, LEFT, DyeColor.LIME);
+        place(h, MIDDLE, DyeColor.LIME);
+        place(h, RIGHT, DyeColor.LIME);
+        var player = h.makeMockPlayer(GameType.CREATIVE);
+        BlockPos pos = h.absolutePos(RIGHT.north());
+        BlockState state = h.getLevel().getBlockState(pos);
+        state.getBlock().playerWillDestroy(h.getLevel(), pos, state, player);
+        h.getLevel().removeBlock(pos, false);
+        assertGone(h, LEFT, MIDDLE, RIGHT);
+        h.assertTrue(dropped(h, DyeColor.LIME) == 0, "Nothing drops in creative");
         h.succeed();
     }
 
@@ -136,6 +179,66 @@ public final class BedGameTests {
         assertColumn(h, MIDDLE, BedShape.KING_MIDDLE, DyeColor.PURPLE);
         assertColumn(h, RIGHT, BedShape.KING_RIGHT, DyeColor.PURPLE);
         h.assertTrue(dye.getCount() == 3, "One dye used");
+        h.succeed();
+    }
+
+    private static boolean occupied(GameTestHelper h, BlockPos foot) {
+        return h.getBlockState(foot).getValue(FancyBedBlock.OCCUPIED) && h.getBlockState(foot.north()).getValue(FancyBedBlock.OCCUPIED);
+    }
+
+    /** What MineColonies checks before a colonist claims a bed: a BedBlock HEAD, in #minecraft:beds, isBed, not occupied. */
+    private static boolean colonistCanUse(GameTestHelper h, BlockPos foot, net.minecraft.world.entity.LivingEntity who) {
+        BlockPos head = h.absolutePos(foot.north());
+        BlockState s = h.getLevel().getBlockState(head);
+        return s.getBlock() instanceof net.minecraft.world.level.block.BedBlock
+                && s.getValue(FancyBedBlock.PART) == net.minecraft.world.level.block.state.properties.BedPart.HEAD
+                && s.is(net.minecraft.tags.BlockTags.BEDS) && s.isBed(h.getLevel(), head, who) && !s.getValue(FancyBedBlock.OCCUPIED);
+    }
+
+    @GameTest(template = "empty")
+    public static void threeSleepersShareAKingOneColumnEach(GameTestHelper h) {
+        place(h, LEFT, DyeColor.LIME);
+        place(h, MIDDLE, DyeColor.LIME);
+        place(h, RIGHT, DyeColor.LIME);
+        var sleepers = new java.util.ArrayList<net.minecraft.world.entity.player.Player>();
+        for (BlockPos foot : new BlockPos[] {LEFT, MIDDLE, RIGHT}) {
+            var sleeper = h.makeMockPlayer(GameType.SURVIVAL);
+            h.assertTrue(colonistCanUse(h, foot, sleeper), "Column at " + foot + " is free for the next sleeper");
+            sleeper.startSleeping(h.absolutePos(foot.north()));
+            h.assertTrue(occupied(h, foot), "Sleeper takes the column at " + foot);
+            sleepers.add(sleeper);
+        }
+        for (BlockPos foot : new BlockPos[] {LEFT, MIDDLE, RIGHT}) {
+            h.assertTrue(h.getBlockState(foot).getValue(FancyBedBlock.SHAPE).king(), "Still a king with everyone asleep");
+        }
+        sleepers.get(1).stopSleeping();
+        h.assertTrue(!occupied(h, MIDDLE) && occupied(h, LEFT) && occupied(h, RIGHT), "Waking frees only that column");
+        h.assertTrue(colonistCanUse(h, MIDDLE, sleepers.get(1)), "The middle is free again");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void bothSidesOfADoubleAreBedsForColonists(GameTestHelper h) {
+        place(h, LEFT, DyeColor.LIME);
+        place(h, MIDDLE, DyeColor.LIME);
+        var first = h.makeMockPlayer(GameType.SURVIVAL);
+        h.assertTrue(colonistCanUse(h, LEFT, first) && colonistCanUse(h, MIDDLE, first), "Two beds to claim");
+        first.startSleeping(h.absolutePos(LEFT.north()));
+        h.assertTrue(!colonistCanUse(h, LEFT, first) && colonistCanUse(h, MIDDLE, first), "The other side stays free");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void usingAKingsFootEndUsesThatColumnsBed(GameTestHelper h) {
+        place(h, LEFT, DyeColor.LIME);
+        place(h, MIDDLE, DyeColor.LIME);
+        place(h, RIGHT, DyeColor.LIME);
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        BlockPos ext = h.absolutePos(RIGHT.south());
+        var result = h.getLevel().getBlockState(ext).useWithoutItem(h.getLevel(), player,
+                new BlockHitResult(Vec3.atCenterOf(ext), Direction.UP, ext, false));
+        // It's day in the test world, so the bed refuses sleep; what matters is that the bed answered.
+        h.assertTrue(result != net.minecraft.world.InteractionResult.PASS, "The bed handles the click, got " + result);
         h.succeed();
     }
 }

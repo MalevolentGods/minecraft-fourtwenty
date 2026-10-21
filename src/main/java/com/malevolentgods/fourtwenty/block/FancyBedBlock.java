@@ -97,13 +97,26 @@ public class FancyBedBlock extends BedBlock {
         if (!level.isClientSide && level.getBlockState(pos).is(this)) BedGroups.join(level, pos);
     }
 
-    /** Removing either half of a joined column splits its bed back into singles. */
+    /** The columns of the joined bed this half belongs to. */
+    private static java.util.List<BlockPos> columns(BlockState state, BlockPos pos) {
+        Direction facing = state.getValue(FACING);
+        BlockPos foot = state.getValue(PART) == BedPart.FOOT ? pos : pos.relative(facing.getOpposite());
+        return BedGroups.columns(foot, facing, state.getValue(SHAPE));
+    }
+
+    /** A creative player breaking a joined bed takes all of it, with no drops (vanilla does this for the other half). */
+    @Override public BlockState playerWillDestroy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull Player player) {
+        if (!level.isClientSide && player.isCreative() && state.getValue(SHAPE) != BedShape.SINGLE) {
+            BedGroups.breakQuietly(level, columns(state, pos), state.getValue(FACING));
+        }
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    /** Breaking any half of a joined bed breaks the whole bed; each column drops its own bed. */
     @Override protected void onRemove(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState newState,
                                       boolean moved) {
         if (!level.isClientSide && !newState.is(this) && state.getValue(SHAPE) != BedShape.SINGLE) {
-            Direction facing = state.getValue(FACING);
-            BlockPos foot = state.getValue(PART) == BedPart.FOOT ? pos : pos.relative(facing.getOpposite());
-            BedGroups.split(level, foot, facing, state.getValue(SHAPE), foot);
+            BedGroups.breakAll(level, columns(state, pos), state.getValue(FACING));
         }
         super.onRemove(state, level, pos, newState, moved);
     }
