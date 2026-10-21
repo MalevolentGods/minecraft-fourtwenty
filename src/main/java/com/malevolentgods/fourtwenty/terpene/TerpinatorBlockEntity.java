@@ -28,16 +28,22 @@ import java.util.Optional;
  * The Terpinator: three timed processes side by side, no fuel. Press: 2 weed buds -> 1 resin.
  * Refine: 1 resin -> 2 of the base the method dial picks. Blend: two bases in ports 1 and 2 -> an
  * accord, or an accord in port 1 and a base in port 3 -> a final terpene (see
- * {@link Terpenes#result}). The press feeds the refiner's resin slot directly.
+ * {@link Terpenes#result}). The press feeds the refiner's resin slot directly. Each stage runs only
+ * while switched on (the screen's Start/Stop buttons); refining only starts with its output slot
+ * empty, and its method can't change while it runs, so one run never mixes two bases.
  */
 public class TerpinatorBlockEntity extends BlockEntity implements Container, MenuProvider {
     public static final int BUDS = 0, RESIN = 1, BASE_OUT = 2, PORT1 = 3, PORT2 = 4, PORT3 = 5, BLEND_OUT = 6, SIZE = 7;
     /** Ticks per step: quick but not instant (a tech upgrade could shorten these later). */
     public static final int PRESS_TIME = 80, REFINE_TIME = 60, BLEND_TIME = 40;
-    public static final int DATA_PRESS = 0, DATA_REFINE = 1, DATA_BLEND = 2, DATA_METHOD = 3, DATA_COUNT = 4;
+    public static final int DATA_PRESS = 0, DATA_REFINE = 1, DATA_BLEND = 2, DATA_METHOD = 3, DATA_RUNNING = 4, DATA_COUNT = 5;
+    /** Stages, as bits of {@link #DATA_RUNNING} and as Start/Stop button ids (10 + stage). */
+    public static final int STAGE_PRESS = 0, STAGE_REFINE = 1, STAGE_BLEND = 2;
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
     private int press, refine, blend, method;
+    /** Which stages are switched on (bit per stage). */
+    private int running;
     /** What the blend in progress is making, so changing the ports restarts it. */
     private String blending = "";
 
@@ -48,6 +54,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
                 case DATA_REFINE -> refine;
                 case DATA_BLEND -> blend;
                 case DATA_METHOD -> method;
+                case DATA_RUNNING -> running;
                 default -> 0;
             };
         }
@@ -58,6 +65,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
                 case DATA_REFINE -> refine = value;
                 case DATA_BLEND -> blend = value;
                 case DATA_METHOD -> method = Math.floorMod(value, 4);
+                case DATA_RUNNING -> running = value;
                 default -> {}
             }
         }
@@ -110,7 +118,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
         boolean changed = false;
         boolean working = false;
         // Press.
-        if (t.items.get(BUDS).getCount() >= 2 && t.fits(RESIN, ModTerpenes.RESIN.get(), 1)) {
+        if (t.isRunning(STAGE_PRESS) && t.items.get(BUDS).getCount() >= 2 && t.fits(RESIN, ModTerpenes.RESIN.get(), 1)) {
             working = true;
             if (++t.press >= PRESS_TIME) {
                 t.press = 0;
@@ -119,12 +127,12 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
                 t.discovered(TerpeneKnowledge.RESIN);
                 changed = true;
             }
-        } else if (t.press != 0) {
-            t.press = 0;
+        } else if (t.isRunning(STAGE_PRESS) && t.press != 0) {
+            t.press = 0;                       // ran out of inputs (a stopped stage keeps its progress)
         }
         // Refine.
         Item base = ModTerpenes.terpene(Terpenes.Code.of(method(t.method)));
-        if (!t.items.get(RESIN).isEmpty() && t.fits(BASE_OUT, base, 2)) {
+        if (t.isRunning(STAGE_REFINE) && !t.items.get(RESIN).isEmpty() && t.fits(BASE_OUT, base, 2)) {
             working = true;
             if (++t.refine >= REFINE_TIME) {
                 t.refine = 0;
@@ -133,8 +141,8 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
                 t.discovered(method(t.method).code());
                 changed = true;
             }
-        } else if (t.refine != 0) {
-            t.refine = 0;
+        } else if (t.isRunning(STAGE_REFINE) && t.refine != 0) {
+            t.refine = 0;                       // ran out of inputs (a stopped stage keeps its progress)
         }
         // Blend.
         Optional<Terpenes.Code> made = result(t.items.get(PORT1), t.items.get(PORT2), t.items.get(PORT3));
@@ -143,7 +151,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
             t.blending = target;
             t.blend = 0;
         }
-        if (made.isPresent() && t.fits(BLEND_OUT, ModTerpenes.terpene(made.get()), 1)) {
+        if (t.isRunning(STAGE_BLEND) && made.isPresent() && t.fits(BLEND_OUT, ModTerpenes.terpene(made.get()), 1)) {
             working = true;
             if (++t.blend >= BLEND_TIME) {
                 t.blend = 0;
@@ -152,8 +160,8 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
                 t.discovered(made.get().id());
                 changed = true;
             }
-        } else if (t.blend != 0) {
-            t.blend = 0;
+        } else if (t.isRunning(STAGE_BLEND) && t.blend != 0) {
+            t.blend = 0;                       // ran out of inputs (a stopped stage keeps its progress)
         }
         if (state.getValue(TerpinatorBlock.LIT) != working) level.setBlock(pos, state.setValue(TerpinatorBlock.LIT, working), 3);
         if (changed) t.setChanged();
@@ -169,9 +177,25 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
         }
     }
 
-    /** Sets the refining method (0..3, in base order); resets the refine in progress. */
+    public boolean isRunning(int stage) { return (running & (1 << stage)) != 0; }
+
+    /** Why a stage can't start now (a translation key), or null if it can. */
+    public static String cannotStart(int stage, ItemStack refineOutput) {
+        return stage == STAGE_REFINE && !refineOutput.isEmpty() ? "gui.fourtwenty.terpinator.refuse.output" : null;
+    }
+
+    /** Switches a stage on or off; returns false if it may not start (see {@link #cannotStart}). Stopping keeps its progress. */
+    public boolean toggle(int stage) {
+        if (stage < 0 || stage > 2) return false;
+        if (!isRunning(stage) && cannotStart(stage, items.get(BASE_OUT)) != null) return false;
+        running ^= 1 << stage;
+        setChanged();
+        return true;
+    }
+
+    /** Sets the refining method (0..3, in base order); resets the refine in progress. Not while refining. */
     public void setMethod(int dial) {
-        if (Math.floorMod(dial, 4) == method) return;
+        if (isRunning(STAGE_REFINE) || Math.floorMod(dial, 4) == method) return;
         method = Math.floorMod(dial, 4);
         refine = 0;
         setChanged();
@@ -222,6 +246,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
         tag.putInt("refine", refine);
         tag.putInt("blend", blend);
         tag.putInt("method", method);
+        tag.putInt("running", running);
     }
 
     @Override protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
@@ -232,5 +257,6 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
         refine = tag.getInt("refine");
         blend = tag.getInt("blend");
         method = Math.floorMod(tag.getInt("method"), 4);
+        running = tag.getInt("running") & 7;
     }
 }

@@ -27,7 +27,9 @@ public final class TerpinatorGameTests {
 
     private static TerpinatorBlockEntity place(GameTestHelper h) {
         h.setBlock(POS, ModTerpenes.TERPINATOR.get());
-        return (TerpinatorBlockEntity) h.getBlockEntity(POS);
+        var t = (TerpinatorBlockEntity) h.getBlockEntity(POS);
+        for (int stage = 0; stage < 3; stage++) t.toggle(stage);   // every stage on
+        return t;
     }
 
     private static void run(GameTestHelper h, TerpinatorBlockEntity t, int ticks) {
@@ -39,7 +41,9 @@ public final class TerpinatorGameTests {
     @GameTest(template = "empty")
     public static void budsPressIntoResinThatRefinesIntoTheDialledBase(GameTestHelper h) {
         var t = place(h);
+        t.toggle(STAGE_REFINE);
         t.setMethod(Base.LIM.ordinal());
+        t.toggle(STAGE_REFINE);
         t.setItem(BUDS, new ItemStack(ModItems.WEED_BUD.get(), 4));
         run(h, t, PRESS_TIME - 1);
         h.assertTrue(t.getItem(RESIN).isEmpty(), "Pressing takes " + PRESS_TIME + " ticks");
@@ -118,6 +122,34 @@ public final class TerpinatorGameTests {
         h.assertTrue(dye.isPresent(), "A terpene recolours 8 hemp of any colour");
         var dyed = dye.get().value().assemble(input, level.registryAccess());
         h.assertTrue(dyed.is(ModTerpenes.HEMP.get(grey.id()).items().get(0).get()) && dyed.getCount() == 8, "... 8 Touch of Grey Hemp, got " + dyed);
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aStoppedStageWaitsAndKeepsItsProgress(GameTestHelper h) {
+        var t = place(h);
+        t.setItem(BUDS, new ItemStack(ModItems.WEED_BUD.get(), 2));
+        run(h, t, PRESS_TIME / 2);
+        t.toggle(STAGE_PRESS);
+        run(h, t, PRESS_TIME * 2);
+        h.assertTrue(t.getItem(RESIN).isEmpty() && t.getItem(BUDS).getCount() == 2, "Nothing happens while stopped");
+        t.toggle(STAGE_PRESS);
+        run(h, t, PRESS_TIME / 2);
+        h.assertTrue(t.getItem(RESIN).getCount() == 1, "It picks up where it stopped");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void refiningOnlyStartsWithAnEmptyOutputAndLocksTheDial(GameTestHelper h) {
+        var t = place(h);
+        t.toggle(STAGE_REFINE);
+        t.setItem(BASE_OUT, terp(Code.of(Base.PIN), 3));
+        h.assertTrue(!t.toggle(STAGE_REFINE) && !t.isRunning(STAGE_REFINE), "A full output refuses to start");
+        t.setItem(BASE_OUT, ItemStack.EMPTY);
+        h.assertTrue(t.toggle(STAGE_REFINE) && t.isRunning(STAGE_REFINE), "An empty one starts");
+        int before = t.data().get(DATA_METHOD);
+        t.setMethod((before + 1) % 4);
+        h.assertTrue(t.data().get(DATA_METHOD) == before, "The dial is locked while refining");
         h.succeed();
     }
 }

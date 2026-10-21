@@ -35,7 +35,25 @@ import javax.annotation.Nullable;
 public class TerpinatorBlock extends HorizontalDirectionalBlock implements EntityBlock {
     public static final MapCodec<TerpinatorBlock> CODEC = simpleCodec(TerpinatorBlock::new);
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
-    private static final VoxelShape SHAPE = Shapes.or(Block.box(1, 0, 1, 15, 10, 15), Block.box(3, 10, 3, 13, 16, 13));
+    /** Built for a north-facing machine (tools/generate_terpinator.py): cabinet and deck, then the still, condenser and tank. */
+    private static final java.util.Map<Direction, VoxelShape> SHAPES = new java.util.EnumMap<>(Direction.class);
+
+    static {
+        for (Direction facing : Direction.Plane.HORIZONTAL) {
+            SHAPES.put(facing, Shapes.or(rotate(0.5, 0, 0.5, 15.5, 9, 15.5, facing), rotate(1, 9, 5, 15, 15.5, 15, facing),
+                    rotate(10.5, 9, 1.5, 14.5, 12, 5.5, facing)));
+        }
+    }
+
+    /** A box given for a north-facing machine, turned to {@code facing}. */
+    private static VoxelShape rotate(double x0, double y0, double z0, double x1, double y1, double z1, Direction facing) {
+        return switch (facing) {
+            case EAST -> Block.box(16 - z1, y0, x0, 16 - z0, y1, x1);
+            case SOUTH -> Block.box(16 - x1, y0, 16 - z1, 16 - x0, y1, 16 - z0);
+            case WEST -> Block.box(z0, y0, 16 - x1, z1, y1, 16 - x0);
+            default -> Block.box(x0, y0, z0, x1, y1, z1);
+        };
+    }
 
     public TerpinatorBlock(Properties properties) {
         super(properties);
@@ -51,7 +69,7 @@ public class TerpinatorBlock extends HorizontalDirectionalBlock implements Entit
     }
 
     @Override protected @Nonnull VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos,
-                                                     @Nonnull CollisionContext context) { return SHAPE; }
+                                                     @Nonnull CollisionContext context) { return SHAPES.get(state.getValue(FACING)); }
 
     @Override protected @Nonnull InteractionResult useWithoutItem(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos,
                                                                   @Nonnull Player player, @Nonnull BlockHitResult hit) {

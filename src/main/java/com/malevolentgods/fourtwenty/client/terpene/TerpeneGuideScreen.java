@@ -23,7 +23,7 @@ import java.util.List;
  * colour; its name once made. Hovering anything tells you how it's made.
  */
 public class TerpeneGuideScreen extends Screen {
-    private static final int W = 420, H = 236, LEFT_W = 168, CELL = 15, PITCH = 17, ROW_LABEL = 34;
+    private static final int W = 420, H = 236, LEFT_W = 168, CELL = 15, PITCH = 17, ROW_LABEL = 40;
     private final Screen parent;
     private int x0, y0;
 
@@ -61,11 +61,11 @@ public class TerpeneGuideScreen extends Screen {
 
     private List<Component> left(GuiGraphics g, int mx, int my, List<Component> tip) {
         int x = x0 + 9, y = y0 + 8;
-        g.drawString(font, title, x, y, TerpeneDraw.TEXT, false);
+        g.drawString(font, TerpeneDraw.bold(title), x, y, TerpeneDraw.TEXT, false);
         int found = TerpeneKnowledge.count(1) + TerpeneKnowledge.count(2) + TerpeneKnowledge.count(3);
-        g.drawString(font, Component.translatable("gui.fourtwenty.guide.progress", found, Terpenes.all().size()), x, y + 11, TerpeneDraw.ACCENT, false);
+        g.drawString(font, TerpeneDraw.t(Component.translatable("gui.fourtwenty.guide.progress", found, Terpenes.all().size())), x, y + 11, TerpeneDraw.ACCENT, false);
         y += 26;
-        g.drawString(font, Component.translatable("gui.fourtwenty.guide.first_session"), x, y, TerpeneDraw.TEXT, false);
+        g.drawString(font, TerpeneDraw.bold(Component.translatable("gui.fourtwenty.guide.first_session")), x, y, TerpeneDraw.TEXT, false);
         y += 11;
         boolean[] done = {
                 TerpeneKnowledge.knows(TerpeneKnowledge.RESIN), TerpeneKnowledge.count(1) > 0, TerpeneKnowledge.count(1) == 4,
@@ -74,29 +74,29 @@ public class TerpeneGuideScreen extends Screen {
         for (int i = 0; i < steps.length; i++) {
             boolean ok = done[i];
             g.drawString(font, ok ? "✔" : "○", x, y, ok ? 0xFF2F7A47 : TerpeneDraw.MUTED, false);
-            g.drawString(font, Component.translatable("gui.fourtwenty.guide.step." + steps[i]), x + 10, y, ok ? TerpeneDraw.MUTED : TerpeneDraw.TEXT, false);
+            g.drawString(font, TerpeneDraw.t(Component.translatable("gui.fourtwenty.guide.step." + steps[i])), x + 10, y, ok ? TerpeneDraw.MUTED : TerpeneDraw.TEXT, false);
             y += 10;
         }
         y += 8;
         // The legend: what each base does in each port.
-        g.drawString(font, Component.translatable("gui.fourtwenty.guide.legend"), x, y, TerpeneDraw.TEXT, false);
+        g.drawString(font, TerpeneDraw.bold(Component.translatable("gui.fourtwenty.guide.legend")), x, y, TerpeneDraw.TEXT, false);
         y += 11;
         int c1 = x + 30, c2 = x + 78, c3 = x + 122;
-        g.drawString(font, Component.translatable("gui.fourtwenty.guide.port", 1), c1, y, TerpeneDraw.MUTED, false);
-        g.drawString(font, Component.translatable("gui.fourtwenty.guide.port", 2), c2, y, TerpeneDraw.MUTED, false);
-        g.drawString(font, Component.translatable("gui.fourtwenty.guide.port", 3), c3, y, TerpeneDraw.MUTED, false);
+        g.drawString(font, TerpeneDraw.t(Component.translatable("gui.fourtwenty.guide.port", 1)), c1, y, TerpeneDraw.MUTED, false);
+        g.drawString(font, TerpeneDraw.t(Component.translatable("gui.fourtwenty.guide.port", 2)), c2, y, TerpeneDraw.MUTED, false);
+        g.drawString(font, TerpeneDraw.t(Component.translatable("gui.fourtwenty.guide.port", 3)), c3, y, TerpeneDraw.MUTED, false);
         y += 10;
         for (Terpenes.Base b : Terpenes.Base.values()) {
             int w = TerpeneDraw.chip(g, font, b, x, y);
             String k = "terpene.fourtwenty." + b.code();
-            g.drawString(font, Component.translatable(k + ".family"), c1, y + 1, TerpeneDraw.TEXT, false);
-            g.drawString(font, Component.translatable(k + ".hue"), c2, y + 1, TerpeneDraw.TEXT, false);
-            g.drawString(font, Component.translatable(k + ".tone"), c3, y + 1, TerpeneDraw.TEXT, false);
+            g.drawString(font, TerpeneDraw.t(Component.translatable(k + ".family")), c1, y + 1, TerpeneDraw.TEXT, false);
+            g.drawString(font, TerpeneDraw.t(Component.translatable(k + ".hue")), c2, y + 1, TerpeneDraw.TEXT, false);
+            g.drawString(font, TerpeneDraw.t(Component.translatable(k + ".tone")), c3, y + 1, TerpeneDraw.TEXT, false);
             if (mx >= x && mx < x + w && my >= y && my < y + 10) tip = describe(Terpenes.Code.of(b));
             y += 12;
         }
         y += 4;
-        for (FormattedLine line : wrap(Component.translatable("gui.fourtwenty.guide.rule"), LEFT_W - 12)) {
+        for (FormattedLine line : wrap(TerpeneDraw.t(Component.translatable("gui.fourtwenty.guide.rule")), LEFT_W - 12)) {
             g.drawString(font, line.text, x, y, TerpeneDraw.MUTED, false);
             y += 9;
         }
@@ -115,13 +115,13 @@ public class TerpeneGuideScreen extends Screen {
 
     private List<Component> map(GuiGraphics g, int mx, int my, List<Component> tip) {
         int mapX = x0 + LEFT_W + 16, mapY = y0 + 8;
-        g.drawString(font, Component.translatable("gui.fourtwenty.guide.map"), mapX, mapY, TerpeneDraw.TEXT, false);
-        g.drawString(font, Component.translatable("gui.fourtwenty.guide.columns"), mapX, mapY + 11, TerpeneDraw.MUTED, false);
+        g.drawString(font, TerpeneDraw.bold(Component.translatable("gui.fourtwenty.guide.map")), mapX, mapY, TerpeneDraw.TEXT, false);
+        g.drawString(font, TerpeneDraw.t(Component.translatable("gui.fourtwenty.guide.columns")), mapX, mapY + 11, TerpeneDraw.MUTED, false);
         int famW = ROW_LABEL + 4 * PITCH, famH = 12 + 4 * PITCH;
         for (int f = 0; f < 4; f++) {
             Terpenes.Base family = Terpenes.Base.values()[f];
-            int fx = mapX + (f % 2) * (famW + 14), fy = mapY + 26 + (f / 2) * (famH + 8);
-            g.drawString(font, Component.translatable("terpene.fourtwenty.family." + family.code()), fx, fy, TerpeneDraw.TEXT, false);
+            int fx = mapX + (f % 2) * (famW + 8), fy = mapY + 26 + (f / 2) * (famH + 8);
+            g.drawString(font, TerpeneDraw.bold(Component.translatable("terpene.fourtwenty.family." + family.code())), fx, fy, TerpeneDraw.TEXT, false);
             for (int h = 0; h < 4; h++) {
                 Terpenes.Code accord = Terpenes.Code.of(family, Terpenes.Base.values()[h]);
                 int ry = fy + 12 + h * PITCH;

@@ -139,7 +139,7 @@ FourTwenty ships the **Sensi Heights** MineColonies style: "A hillside town that
 - **Builder's Hut (levels 1–2 so far):** an open shelter whose placeholders keep all the surrounding terrain, for a quick first build, then a timber cabin with an architect's cutter.
 - **Dispensary (levels 1–5):** the same design as the FourTwenty pack's.
 
-More huts are added as they're built. The pack lives in its own repository and is bundled with `python3 tools/import_sensi_heights.py <pack>/sensiheights`, which validates it (huts link to their own files, no ProjectRed/CB blocks). A few blueprints use a Farmer's Delight cutting board, which is simply left out without that mod. The level 3 Tavern's beds and side tables come from Handcrafted: without it the tavern is built without them, and has no beds for visitors.
+More huts are added as they're built. The pack lives in its own repository and is bundled with `python3 tools/import_sensi_heights.py <pack>/sensiheights`, which validates it (huts link to their own files, no ProjectRed/CB blocks). A few blueprints use a Farmer's Delight cutting board, which is simply left out without that mod. The Tavern's beds and side tables are FourTwenty's own hemp beds (level 3 has a king) and side tables.
 
 ## Hemp and the Terpinator
 
@@ -147,11 +147,15 @@ More huts are added as they're built. The pack lives in its own repository and i
 
 The colours come from **terpenes**, made in the **Terpinator** (3 glass over copper either side of a brewing stand, over copper either side of a weed bud). It works on its own, no fuel:
 
+Each stage has a **Start/Stop** button and says what it's doing (running, needs buds, output full...). Stopping a stage keeps its progress. The refiner only starts with its output slot empty, and its method dial is locked while it runs, so one run never mixes two bases.
+
 - **Press:** 2 weed buds make 1 Sticky Situation (resin), 4 seconds.
 - **Refine:** 1 resin makes 2 of a base terpene, 3 seconds. The method dial picks which: heat makes Myrcenary, cold Limonade, pressure Pinewise, time Lavendaze.
 - **Blend:** two bases in ports 1 and 2 make one of 16 accords; an accord in port 1 and a base in port 3 make one of 64 final terpenes, 2 seconds each.
 
 Each port has a job: port 1 sets the family (neutrals, warm, green, cool), port 2 the hue, port 3 the tone (pale, bright, dusky, deep), so once you've learned one row you can predict the rest. The full codex (all 84 names, colours and flavour lines) is `tools/terpenes.json`.
+
+The Terpinator's screens use [Atkinson Hyperlegible](https://brailleinstitute.org/freefont) (Braille Institute, SIL Open Font License 1.1; see `licenses/AtkinsonHyperlegible-OFL.txt`), rendered from TrueType so the text stays crisp at any GUI scale. Its model and 256x256 textures come from `tools/generate_terpinator.py`; `tools/render_block_model.py` renders any block model with headless Blender for checking.
 
 Names are discovered: a terpene shows as undiscovered until you make it, or someone hands you one. Colours and rules are never hidden: the Terpinator previews what its ports will make, a hint line walks you through your first session, and its **Guide** maps all 64 colours as you find them. Each discovery gets a toast with its line. Discoveries are per player and survive death.
 

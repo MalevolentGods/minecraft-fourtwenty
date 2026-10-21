@@ -19,13 +19,14 @@ import static com.malevolentgods.fourtwenty.terpene.TerpinatorBlockEntity.*;
 
 /**
  * The Terpinator's menu. Slots are laid out for {@code TerpinatorScreen}; buttons 0..3 set the
- * refining method. Taking from an output records the discovery straight away (the inventory scan
+ * refining method, 10 + stage starts or stops a stage. Taking from an output records the discovery straight away (the inventory scan
  * would catch it within a second anyway).
  */
 public class TerpinatorMenu extends AbstractContainerMenu {
     /** Slot positions, shared with the screen. */
-    public static final int ROW_PRESS = 38, ROW_BLEND = 92, X_BUDS = 17, X_RESIN = 71, X_OUT = 143, X_P1 = 17, X_P2 = 37, X_P3 = 57,
-            INV_Y = 140;
+    public static final int WIDTH = 232, HEIGHT = 266, ROW_PRESS = 62, ROW_BLEND = 130, X_BUDS = 18, X_RESIN = 76, X_BASE_OUT = 196,
+            X_P1 = 18, X_P2 = 40, X_P3 = 62, X_BLEND_OUT = 196, INV_X = 35, INV_Y = 182;
+    public static final int BUTTON_TOGGLE = 10;
 
     private final Container container;
     private final ContainerData data;
@@ -38,15 +39,15 @@ public class TerpinatorMenu extends AbstractContainerMenu {
         this.data = data;
         addSlot(new Input(container, BUDS, X_BUDS, ROW_PRESS));
         addSlot(new Input(container, RESIN, X_RESIN, ROW_PRESS));
-        addSlot(new Output(container, BASE_OUT, X_OUT, ROW_PRESS, inventory.player));
+        addSlot(new Output(container, BASE_OUT, X_BASE_OUT, ROW_PRESS, inventory.player));
         addSlot(new Input(container, PORT1, X_P1, ROW_BLEND));
         addSlot(new Input(container, PORT2, X_P2, ROW_BLEND));
         addSlot(new Input(container, PORT3, X_P3, ROW_BLEND));
-        addSlot(new Output(container, BLEND_OUT, X_OUT, ROW_BLEND, inventory.player));
+        addSlot(new Output(container, BLEND_OUT, X_BLEND_OUT, ROW_BLEND, inventory.player));
         for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col + row * 9 + 9, 8 + col * 18, INV_Y + row * 18));
+            for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col + row * 9 + 9, INV_X + col * 18, INV_Y + row * 18));
         }
-        for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col, 8 + col * 18, INV_Y + 58));
+        for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col, INV_X + col * 18, INV_Y + 58));
         addDataSlots(data);
     }
 
@@ -58,10 +59,20 @@ public class TerpinatorMenu extends AbstractContainerMenu {
 
     public int method() { return data.get(DATA_METHOD); }
 
+    public boolean running(int stage) { return (data.get(DATA_RUNNING) & (1 << stage)) != 0; }
+
     public Container container() { return container; }
 
     @Override public boolean clickMenuButton(@Nonnull Player player, int id) {
-        if (id < 0 || id > 3) return false;
+        if (id >= BUTTON_TOGGLE && id <= BUTTON_TOGGLE + 2) {
+            int stage = id - BUTTON_TOGGLE;
+            if (container instanceof TerpinatorBlockEntity t) return t.toggle(stage);
+            // Client side: predict, so the button answers at once (the server's data follows).
+            if (!running(stage) && cannotStart(stage, container.getItem(BASE_OUT)) != null) return false;
+            data.set(DATA_RUNNING, data.get(DATA_RUNNING) ^ (1 << stage));
+            return true;
+        }
+        if (id < 0 || id > 3 || running(STAGE_REFINE)) return false;
         if (container instanceof TerpinatorBlockEntity t) t.setMethod(id);
         else data.set(DATA_METHOD, id);
         return true;
