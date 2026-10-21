@@ -1,6 +1,0 @@
-{
-  "parent": "fourtwenty:block/rug",
-  "textures": {
-    "rug": "fourtwenty:block/rug/lim_lim_pin"
-  }
-}

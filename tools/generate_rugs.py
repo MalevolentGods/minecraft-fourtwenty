@@ -277,6 +277,10 @@ def generate():
     old = ASSETS / 'models/block/rug.json'
     if old.exists():
         old.unlink()
+    for code in [c['code'] for c in TERP['colors']] + ['natural']:      # the old one-piece rug models
+        stale = ASSETS / f'models/block/rug_{code}.json'
+        if stale.exists():
+            stale.unlink()
     for case in CASES:
         write(ASSETS / f'models/block/rug_{case}.json', {'parent': 'minecraft:block/block', 'ambientocclusion': False,
                                                         'textures': {'particle': '#rug'}, 'elements': quarter(case)})
