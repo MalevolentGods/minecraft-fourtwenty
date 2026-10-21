@@ -1699,14 +1699,14 @@
             0,
             0,
             16,
-            16
+            1
           ]
         },
         "south": {
           "texture": "#runner",
           "uv": [
             0,
-            0,
+            15,
             16,
             16
           ]
@@ -1714,22 +1714,20 @@
         "east": {
           "texture": "#runner",
           "uv": [
-            0,
+            15,
             0,
             16,
             16
-          ],
-          "rotation": 90
+          ]
         },
         "west": {
           "texture": "#runner",
           "uv": [
             0,
             0,
-            16,
+            1,
             16
-          ],
-          "rotation": 90
+          ]
         },
         "up": {
           "texture": "#runner",

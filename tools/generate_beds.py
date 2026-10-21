@@ -53,12 +53,6 @@ def box(f, t, texture, rotation=None, shift=0):
     whole = texture in ('#panel', '#pillow', '#runner')
     e = {'from': f2, 'to': t2, 'faces': {face: {'texture': texture, 'uv': [0, 0, 16, 16] if whole else uv(face, f, t)}
                                        for face in ('north', 'south', 'east', 'west', 'up', 'down')}}
-    if texture == '#runner':
-        # The runner's stripes run along its length (across the bed); on the flaps that fold down
-        # (their outer sides and narrow ends) turn the texture a quarter so they carry on over the fold.
-        for face in ('east', 'west', 'north', 'south'):
-            if face in ('east', 'west') or t[0] - f[0] < 1:
-                e['faces'][face]['rotation'] = 90
     if rotation:
         angle, origin = rotation
         e['rotation'] = {'angle': angle, 'axis': 'x', 'origin': [origin[0], origin[1], origin[2] + shift]}
@@ -66,6 +60,33 @@ def box(f, t, texture, rotation=None, shift=0):
 
 
 SHAPES = ['single', 'left', 'right', 'king_left', 'king_middle', 'king_right']
+
+
+def runner_uv(e, flap, length):
+    """Each face of a runner piece shows its own slice of the runner texture at one scale (16 texture
+    units over the runner's length): the top the whole runner, its long edges the edge band, a flap's
+    top the sliver at that end, its outer face a continuing section turned to run down the fold, its
+    narrow ends the edge band. (The whole texture on every face crushed it onto the thin ones.)"""
+    scale = 16 / length                                   # texture units per pixel along the runner
+    depth = (e['to'][1] - e['from'][1]) * scale           # how much runner the fold's drop shows
+    sliver = (e['to'][0] - e['from'][0]) * scale
+    left = flap == 'left'
+    if flap is None:
+        uv = {'up': ([0, 0, 16, 16], 0), 'down': ([0, 0, 16, 16], 0), 'north': ([0, 0, 16, 1], 0), 'south': ([0, 15, 16, 16], 0),
+              'east': ([15, 0, 16, 16], 0), 'west': ([0, 0, 1, 16], 0)}
+    else:
+        end = [0, sliver] if left else [16 - sliver, 16]
+        side = [0, 0, depth, 16]
+        uv = {'up': ([end[0], 0, end[1], 16], 0), 'down': ([end[0], 0, end[1], 16], 0),
+              'west' if left else 'east': (side, 90), 'east' if left else 'west': (side, 90),
+              'north': ([0, 0, depth, 1], 90), 'south': ([0, 15, depth, 16], 90)}
+    for face, (coords, rot) in uv.items():
+        e['faces'][face]['uv'] = [round(v, 4) for v in coords]
+        if rot:
+            e['faces'][face]['rotation'] = rot
+        else:
+            e['faces'][face].pop('rotation', None)
+    return e
 
 
 def elements(occupied, shape='single', shift=0):
@@ -140,14 +161,14 @@ def elements(occupied, shape='single', shift=0):
               b([0 if lo else 0.25, 7, b0], [16 if ro else 15.75, 8, b1], '#sheet'),
               b([0 if lo else 0.75, 8, b0 + 0.25], [16 if ro else 15.25, 8.5, b1 - 0.25], '#sheet'),
               # a hotel runner across the foot, a deeper shade with fine light edge stripes
-              b([0 if lo else 0.25, 7.75, 9 + end], [16 if ro else 15.75, 8, 12 + end], '#runner')]
+              runner_uv(b([0 if lo else 0.25, 7.75, 9 + end], [16 if ro else 15.75, 8, 12 + end], '#runner'), None, 15.5)]
     # The runner folds over the sides: each flap rises to the runner's top and caps its end, then
     # hangs down outside the side drape and above the hem; the top stops where the flap begins,
     # so they meet edge to edge and no two faces share a plane.
     if not lo:
-        parts.append(b([0, 5.4, 9 + end], [0.25, 8, 12 + end], '#runner'))
+        parts.append(runner_uv(b([0, 5.4, 9 + end], [0.25, 8, 12 + end], '#runner'), 'left', 15.5))
     if not ro:
-        parts.append(b([15.75, 5.4, 9 + end], [16, 8, 12 + end], '#runner'))
+        parts.append(runner_uv(b([15.75, 5.4, 9 + end], [16, 8, 12 + end], '#runner'), 'right', 15.5))
     return parts
 
 

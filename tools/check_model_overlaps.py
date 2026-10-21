@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Find z-fighting in a block model: pairs of faces that face the same way, lie in the same
+"""Find flicker in a block model. Z-fighting: pairs of faces that face the same way, lie in the same
 plane or nearly (closer than GAP pixels: at a distance the depth buffer can't separate them) and
-overlap with real area (the game can't decide which to draw, so they flicker).
+overlap with real area (the game can't decide which to draw, so they flicker). And faces whose
+UV has no size (they sample their sprite's edge in the atlas and flicker with its neighbours).
 
     python3 tools/check_model_overlaps.py <model.json> [...]
 
@@ -59,6 +60,18 @@ def check(path):
                 area = overlap(rect, rect2)
                 if area > 1e-3:
                     found.append((i, j, name, plane, round(area, 3)))
+    # A face with real size whose UV has none samples one line on its sprite's edge in the atlas:
+    # it picks up neighbouring sprites (transparent ones punch flickering holes). Same fault class.
+    for i, e in enumerate(els):
+        f, t = e['from'], e['to']
+        for name, spec in e['faces'].items():
+            if 'uv' not in spec:
+                continue
+            u0, v0, u1, v1 = spec['uv']
+            axes = {'north': (0, 1), 'south': (0, 1), 'east': (2, 1), 'west': (2, 1), 'up': (0, 2), 'down': (0, 2)}[name]
+            size = [t[a] - f[a] for a in axes]
+            if (abs(u1 - u0) < 1e-6 and size[0] > 0.01) or (abs(v1 - v0) < 1e-6 and size[1] > 0.01):
+                found.append((i, i, name + ' (degenerate uv)', spec['uv'], 0))
     return els, found
 
 

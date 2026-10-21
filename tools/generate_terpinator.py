@@ -469,12 +469,24 @@ def textures():
 # ---- model -----------------------------------------------------------------------------------
 
 def auto_uv(face, f, t):
-    """Vanilla's automatic UV: the face's position within the block."""
+    """Vanilla's automatic UV: the face's position within the block. Parts reaching past the block
+    (the valve wheel above 16, the crank handle below 0) wrap back into the texture rather than
+    clamp: a clamped face samples one line right on its sprite's edge in the atlas, picks up the
+    neighbouring sprites (the transparent corners of the gauge and dial) and flickers with holes."""
     (x0, y0, z0), (x1, y1, z1) = f, t
     uv = {'north': [16 - x1, 16 - y1, 16 - x0, 16 - y0], 'south': [x0, 16 - y1, x1, 16 - y0],
           'east': [16 - z1, 16 - y1, 16 - z0, 16 - y0], 'west': [z0, 16 - y1, z1, 16 - y0],
           'up': [x0, z0, x1, z1], 'down': [x0, 16 - z1, x1, 16 - z0]}[face]
-    return [min(16, max(0, v)) for v in uv]
+    out = list(uv)
+    for i in (0, 1):
+        lo, hi = uv[i], uv[i + 2]
+        shift = 0.0
+        if lo < 0:
+            shift = 16 * math.ceil(-lo / 16)
+        elif hi > 16:
+            shift = -16 * math.ceil((hi - 16) / 16)
+        out[i], out[i + 2] = min(16.0, max(0.0, lo + shift)), min(16.0, max(0.0, hi + shift))
+    return [round(v, 4) for v in out]
 
 
 ALL = ('north', 'south', 'east', 'west', 'up', 'down')
