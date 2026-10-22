@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GGG",
+    "CSC",
+    "CBC"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "S": {
+      "item": "minecraft:brewing_stand"
+    },
+    "B": {
+      "item": "fourtwenty:weed_bud"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:terpinator",
+    "count": 1
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "fourtwenty:block/hemp/natural",
+    "top": "fourtwenty:block/hemp/natural",
+    "side": "fourtwenty:block/hemp/natural"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "parent": "fourtwenty:block/bed",
+  "textures": {
+    "post": "fourtwenty:block/bed/jungle_post",
+    "rail": "fourtwenty:block/bed/jungle_rail",
+    "panel": "fourtwenty:block/bed/jungle_panel",
+    "sheet": "fourtwenty:block/bed/sheet",
+    "pillow": "fourtwenty:block/bed/pillow",
+    "blanket": "fourtwenty:block/bed/blanket_light_gray",
+    "runner": "fourtwenty:block/bed/runner_light_gray"
+  }
+}

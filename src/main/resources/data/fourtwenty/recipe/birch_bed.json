@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "fourtwenty_bed",
+  "pattern": [
+    "BBB",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "minecraft:birch_planks"
+    },
+    "B": {
+      "item": "fourtwenty:weed_bud"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:birch_bed",
+    "count": 1
+  }
+}

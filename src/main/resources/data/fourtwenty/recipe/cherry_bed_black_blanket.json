@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "fourtwenty_bed_dye",
+  "ingredients": [
+    {
+      "item": "fourtwenty:cherry_bed"
+    },
+    {
+      "item": "minecraft:black_dye"
+    }
+  ],
+  "result": {
+    "id": "fourtwenty:cherry_bed",
+    "count": 1,
+    "components": {
+      "minecraft:block_state": {
+        "blanket": "black"
+      }
+    }
+  }
+}

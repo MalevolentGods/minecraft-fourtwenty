@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "fourtwenty_hemp_slab",
+  "pattern": [
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "fourtwenty:hemp_pin_lim_lim"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:hemp_pin_lim_lim_slab",
+    "count": 6
+  }
+}

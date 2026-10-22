@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "fourtwenty_glass",
+  "pattern": [
+    "GGG",
+    "GTG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "T": {
+      "item": "fourtwenty:terpene_lim_pin_lim"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:glass_lim_pin_lim",
+    "count": 8
+  }
+}

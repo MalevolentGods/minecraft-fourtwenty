@@ -1,0 +1,12 @@
+{
+  "parent": "fourtwenty:block/bed_king_left",
+  "textures": {
+    "post": "fourtwenty:block/bed/dark_oak_post",
+    "rail": "fourtwenty:block/bed/dark_oak_rail",
+    "panel": "fourtwenty:block/bed/dark_oak_panel",
+    "sheet": "fourtwenty:block/bed/sheet",
+    "pillow": "fourtwenty:block/bed/pillow",
+    "blanket": "fourtwenty:block/bed/blanket_lime",
+    "runner": "fourtwenty:block/bed/runner_lime"
+  }
+}

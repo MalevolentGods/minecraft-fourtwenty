@@ -2,7 +2,6 @@ package com.malevolentgods.fourtwenty.client;
 
 import com.malevolentgods.fourtwenty.block.LampBlock;
 import com.malevolentgods.fourtwenty.block.LampTrimBlock;
-import com.malevolentgods.fourtwenty.domain.LampGlow;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -42,14 +41,14 @@ public class LampItemRenderer extends BlockEntityWithoutLevelRenderer {
         var state = block.defaultBlockState();
         Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, pose, buffers, 0xF000F0, OverlayTexture.NO_OVERLAY);
         AABB box;
-        int colour;
+        int rgba;
         if (block instanceof LampBlock lamp && state.getValue(LampBlock.LIT)) {
             box = new AABB(0, 0, 0, 1, 1, 1);
-            colour = lamp.color().getId();
+            rgba = lamp.itemHalo();
         } else if (block instanceof LampTrimBlock trim) {
             box = new AABB(0, 0, 0, 1, 2 / 16.0, 1);   // the default (floor) plate
-            colour = trim.color().getId();
+            rgba = trim.itemHalo();
         } else return;
-        LampHaloRenderer.halo(pose, buffers, box, LampGlow.itemRgba(colour));
+        LampHaloRenderer.halo(pose, buffers, box, rgba);
     }
 }

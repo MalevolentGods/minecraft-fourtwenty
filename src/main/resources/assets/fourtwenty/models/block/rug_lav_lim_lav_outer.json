@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:block/rug_outer",
+  "textures": {
+    "rug": "fourtwenty:block/rug/lav_lim_lav_outer"
+  }
+}

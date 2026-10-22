@@ -1,24 +1,22 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "GDG",
-    "GTG",
-    "GRG"
-  ],
-  "key": {
-    "G": {
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
       "item": "minecraft:glass"
     },
-    "D": {
-      "item": "minecraft:cyan_dye"
+    {
+      "item": "minecraft:glass"
     },
-    "T": {
-      "item": "minecraft:torch"
+    {
+      "item": "minecraft:glass"
     },
-    "R": {
+    {
       "item": "fourtwenty:weed_bud"
+    },
+    {
+      "item": "minecraft:cyan_dye"
     }
-  },
+  ],
   "result": {
     "id": "fourtwenty:cyan_lamp",
     "count": 4

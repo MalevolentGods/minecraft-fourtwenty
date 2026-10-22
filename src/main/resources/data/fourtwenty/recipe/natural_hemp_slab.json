@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "fourtwenty_hemp_slab",
+  "pattern": [
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "fourtwenty:natural_hemp"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:natural_hemp_slab",
+    "count": 6
+  }
+}

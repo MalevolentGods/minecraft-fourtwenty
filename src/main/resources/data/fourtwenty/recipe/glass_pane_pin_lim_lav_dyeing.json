@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "group": "fourtwenty_glass_pane_dye",
+  "pattern": [
+    "PPP",
+    "PTP",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "tag": "c:glass_panes"
+    },
+    "T": {
+      "item": "fourtwenty:terpene_pin_lim_lav"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:glass_pane_pin_lim_lav",
+    "count": 8
+  }
+}

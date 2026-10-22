@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "SSS",
+    "PBP",
+    "P P"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:crimson_slab"
+    },
+    "P": {
+      "item": "minecraft:crimson_planks"
+    },
+    "B": {
+      "item": "fourtwenty:weed_bud"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:crimson_side_table",
+    "count": 2
+  }
+}

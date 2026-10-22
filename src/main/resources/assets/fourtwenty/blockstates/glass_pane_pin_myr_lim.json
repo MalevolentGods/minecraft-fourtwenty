@@ -1,0 +1,77 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "fourtwenty:block/glass_pane_pin_myr_lim_post"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_pane_pin_myr_lim_side"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_pane_pin_myr_lim_side",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_pane_pin_myr_lim_side_alt"
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_pane_pin_myr_lim_side_alt",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "north": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_pane_pin_myr_lim_noside"
+      }
+    },
+    {
+      "when": {
+        "east": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_pane_pin_myr_lim_noside_alt"
+      }
+    },
+    {
+      "when": {
+        "south": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_pane_pin_myr_lim_noside_alt",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "west": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_pane_pin_myr_lim_noside",
+        "y": 270
+      }
+    }
+  ]
+}

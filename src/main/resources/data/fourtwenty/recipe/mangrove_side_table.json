@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "SSS",
+    "PBP",
+    "P P"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:mangrove_slab"
+    },
+    "P": {
+      "item": "minecraft:mangrove_planks"
+    },
+    "B": {
+      "item": "fourtwenty:weed_bud"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:mangrove_side_table",
+    "count": 2
+  }
+}

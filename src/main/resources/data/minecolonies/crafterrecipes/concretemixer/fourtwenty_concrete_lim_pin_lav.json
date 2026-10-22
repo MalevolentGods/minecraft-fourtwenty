@@ -1,0 +1,13 @@
+{
+  "type": "recipe",
+  "crafter": "concretemixer_custom",
+  "inputs": [
+    {
+      "id": "fourtwenty:concrete_powder_lim_pin_lav"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "result": {
+    "id": "fourtwenty:concrete_lim_pin_lav"
+  }
+}

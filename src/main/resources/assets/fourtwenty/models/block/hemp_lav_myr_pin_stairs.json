@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "fourtwenty:block/hemp/lav_myr_pin",
+    "top": "fourtwenty:block/hemp/lav_myr_pin",
+    "side": "fourtwenty:block/hemp/lav_myr_pin"
+  }
+}

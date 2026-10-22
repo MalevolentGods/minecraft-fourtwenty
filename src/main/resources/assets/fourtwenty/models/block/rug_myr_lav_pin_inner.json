@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:block/rug_inner",
+  "textures": {
+    "rug": "fourtwenty:block/rug/myr_lav_pin_inner"
+  }
+}

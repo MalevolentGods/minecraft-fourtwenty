@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "fourtwenty:oak_bed",
+    "fourtwenty:spruce_bed",
+    "fourtwenty:birch_bed",
+    "fourtwenty:jungle_bed",
+    "fourtwenty:acacia_bed",
+    "fourtwenty:dark_oak_bed",
+    "fourtwenty:mangrove_bed",
+    "fourtwenty:cherry_bed",
+    "fourtwenty:crimson_bed",
+    "fourtwenty:warped_bed"
+  ]
+}

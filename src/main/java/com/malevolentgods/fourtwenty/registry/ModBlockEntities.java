@@ -20,8 +20,9 @@ public class ModBlockEntities {
     @SuppressWarnings("null")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.malevolentgods.fourtwenty.blockentity.LampBlockEntity>> LAMP =
         BLOCK_ENTITIES.register("lamp", () -> BlockEntityType.Builder.of(com.malevolentgods.fourtwenty.blockentity.LampBlockEntity::new,
-                java.util.stream.Stream.of(ModBlocks.LAMPS, ModBlocks.INVERTED_LAMPS, ModBlocks.LAMP_TRIMS)
-                    .flatMap(map -> map.values().stream()).map(holder -> (net.minecraft.world.level.block.Block) holder.get())
+                java.util.stream.Stream.concat(java.util.stream.Stream.of(ModBlocks.LAMPS, ModBlocks.INVERTED_LAMPS, ModBlocks.LAMP_TRIMS)
+                    .flatMap(map -> map.values().stream()).map(holder -> (net.minecraft.world.level.block.Block) holder.get()),
+                    ModTerpenes.paletteLamps())
                     .toArray(net.minecraft.world.level.block.Block[]::new))
             .build(null));
 }

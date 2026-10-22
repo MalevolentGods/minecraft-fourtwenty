@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "fourtwenty:lamp_lim_pin_lav"
+    },
+    {
+      "item": "fourtwenty:weed_joint"
+    }
+  ],
+  "result": {
+    "id": "fourtwenty:inverted_lamp_lim_pin_lav",
+    "count": 1
+  }
+}

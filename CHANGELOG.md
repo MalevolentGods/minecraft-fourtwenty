@@ -2,6 +2,27 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+## [0.8.0] - Hemp Beds, the Terpinator and the Hemp Palette
+
+### Changed
+- Lamp recipe: 3 glass, a weed bud and the dye (shapeless) make 4 lamps, instead of 6 glass round a torch.
+- Lamp Trim: 1 lamp (plain or inverted) makes 4, instead of 1 inverted lamp making 8.
+
+### Added
+- **Hemp blocks and the Terpinator.** 64 coloured hemp blocks plus Natural Hemp, each with stairs and slabs (FourTwenty's own seamless 64x64 woven texture). The Terpinator presses weed buds into resin, refines resin into four base terpenes (a method dial: heat, cold, pressure, time) and blends them: two bases make one of 16 accords, an accord and a third base one of 64 final terpenes, each dyeing 8 hemp blocks its colour. 84 named terpenes with flavour lines, discovered per player (names hidden until you make one or are given one), with a live preview, a guided first session, a guide map and discovery toasts. Data: `tools/terpenes.json`; generators: `tools/generate_terpenes.py`, `tools/generate_terpene_textures.py`, `tools/generate_terpinator.py`.
+- **Rugs join into larger rugs**, each colour with its own pattern: a rug knows its eight same-colour neighbours (RugBlock), and each quarter of its model is an outer corner, an edge, an inner corner or interior, so the border runs only round the outside of the whole rug and the pattern flows across the inside (`tools/generate_rugs.py`).
+- **Concrete powder, stained glass and glass panes in the 64 terpene colours.** Concrete is now one flat colour; the specked texture moved to new concrete powder (vanilla ConcretePowderBlock: sets in water; 3 sand, 3 gravel, 2 weed buds and the terpene make 4; MineColonies' Concrete Mixer makes powder and concrete). The 8-concrete re-dye recipe is gone, as in vanilla. Glass and panes recoloured from Classic Faithful 64x (Faithful License, credited). Palette lamps use the dye-colour lamps' own texture, recoloured.
+- **Concrete, rugs and lamps in the 64 terpene colours.** Concrete (8 + a final terpene), rugs (2 hemp make 3; inset a pixel with rounded corners so the floor shows round them; Natural Hemp rugs too) and lamps, inverted lamps and trims (3 glass, a bud and the terpene make 4; halos in their own colour). FourTwenty's own 64x64 textures from `tools/generate_palette_blocks.py`. Lamps now carry their halo colour, so any colour works.
+- Terpinator model: the solid machine renders as cutout and only the glass and terpene as translucent (a NeoForge composite), fixing flicker and see-through sides; a simpler valve wheel.
+- Terpinator: Start/Stop for each stage (progress kept), the refiner starts only with an empty output and locks its dial while running, a TrueType font (Atkinson Hyperlegible, OFL), and a detailed model with 256x256 textures (walnut cabinet, numbered brass ports, a method dial in the four base colours, a press crank and hopper, a glass still, a coil condenser, a resin tank and a pressure gauge; the terpene and a status lamp glow while it works).
+- MineColonies builders place a king bed's extension for free (it has no item).
+- Sensi Heights Tavern levels 2-3 use FourTwenty hemp beds (a king in level 3) and side tables instead of Handcrafted ones.
+- **Hemp beds** in the same ten woods, with FourTwenty's own 64x64 textures (grained frame wood, panelled boards, linen, a pillow, quilted blankets): tall head posts and a panelled headboard, a footboard, a mattress, a gently tilted pillow, the sheet folded back over a draped hotel duvet and a matching bed runner across the foot (16 colours: every colour is its own item in the creative tab, a bed + a dye crafts that colour, right-click a placed bed with a dye to recolour it, and breaking it keeps the colour; crafted beds are lime), turned back while someone sleeps. Real beds (BedBlock, `#minecraft:beds`), so colonies count them. 3 weed buds over 3 planks make 1. Two side by side join into a double, three into a king one block longer (a placement ghost shows the king, red when there's no room, in which case the bed stays a single); each column is still its own bed for players and colonists, and breaking any part breaks the whole bed.
+- **Side tables** in ten woods (every vanilla wood but bamboo): a nightstand with a drawer front, a brass knob, slim stripped-log legs and a low shelf. Decoration; 3 slabs, 4 planks and a weed bud make 2. FourTwenty's own model on vanilla textures.
+- Sensi Heights: the Tavern (levels 1-3). Level 3 uses Handcrafted beds and tables.
+
 ## [0.7.0] - The Budtender's Guide and the Builder's Hut
 
 ### Added

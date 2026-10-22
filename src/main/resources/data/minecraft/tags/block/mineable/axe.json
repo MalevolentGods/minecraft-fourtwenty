@@ -1,0 +1,25 @@
+{
+  "replace": false,
+  "values": [
+    "fourtwenty:acacia_bed",
+    "fourtwenty:acacia_side_table",
+    "fourtwenty:birch_bed",
+    "fourtwenty:birch_side_table",
+    "fourtwenty:cherry_bed",
+    "fourtwenty:cherry_side_table",
+    "fourtwenty:crimson_bed",
+    "fourtwenty:crimson_side_table",
+    "fourtwenty:dark_oak_bed",
+    "fourtwenty:dark_oak_side_table",
+    "fourtwenty:jungle_bed",
+    "fourtwenty:jungle_side_table",
+    "fourtwenty:mangrove_bed",
+    "fourtwenty:mangrove_side_table",
+    "fourtwenty:oak_bed",
+    "fourtwenty:oak_side_table",
+    "fourtwenty:spruce_bed",
+    "fourtwenty:spruce_side_table",
+    "fourtwenty:warped_bed",
+    "fourtwenty:warped_side_table"
+  ]
+}

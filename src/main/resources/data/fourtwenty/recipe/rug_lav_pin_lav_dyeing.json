@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "group": "fourtwenty_rug_dye",
+  "pattern": [
+    "RRR",
+    "RTR",
+    "RRR"
+  ],
+  "key": {
+    "R": {
+      "tag": "fourtwenty:rugs"
+    },
+    "T": {
+      "item": "fourtwenty:terpene_lav_pin_lav"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:rug_lav_pin_lav",
+    "count": 8
+  }
+}

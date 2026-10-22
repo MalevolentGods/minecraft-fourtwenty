@@ -1,0 +1,26 @@
+{
+  "type": "recipe",
+  "crafter": "concretemixer_custom",
+  "inputs": [
+    {
+      "count": 3,
+      "id": "minecraft:sand"
+    },
+    {
+      "count": 3,
+      "id": "minecraft:gravel"
+    },
+    {
+      "count": 2,
+      "id": "fourtwenty:weed_bud"
+    },
+    {
+      "id": "fourtwenty:terpene_lav_lav_lim"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "result": {
+    "count": 4,
+    "id": "fourtwenty:concrete_powder_lav_lav_lim"
+  }
+}

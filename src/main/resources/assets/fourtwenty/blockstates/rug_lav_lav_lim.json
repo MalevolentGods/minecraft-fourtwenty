@@ -1,0 +1,207 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "north": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_outer"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_edge_n"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_edge_w"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "west": "true",
+        "northwest": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_inner"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "west": "true",
+        "northwest": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_full"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "north": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_outer",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "north": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_edge_n",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "north": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_edge_w",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "north": "true",
+        "northeast": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_inner",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "north": "true",
+        "northeast": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_full",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "east": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_outer",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "east": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_edge_n",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "east": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_edge_w",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "east": "true",
+        "southeast": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_inner",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "east": "true",
+        "southeast": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_full",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "south": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_outer",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "south": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_edge_n",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "south": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_edge_w",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "south": "true",
+        "southwest": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_inner",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "south": "true",
+        "southwest": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/rug_lav_lav_lim_full",
+        "y": 270
+      }
+    }
+  ]
+}

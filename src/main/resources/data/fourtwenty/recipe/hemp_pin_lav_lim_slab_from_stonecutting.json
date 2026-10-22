@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "fourtwenty:hemp_pin_lav_lim"
+  },
+  "result": {
+    "id": "fourtwenty:hemp_pin_lav_lim_slab",
+    "count": 2
+  }
+}

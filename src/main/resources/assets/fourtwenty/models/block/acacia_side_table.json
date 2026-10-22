@@ -1,0 +1,9 @@
+{
+  "parent": "fourtwenty:block/side_table",
+  "textures": {
+    "top": "minecraft:block/acacia_planks",
+    "body": "minecraft:block/acacia_planks",
+    "legs": "minecraft:block/stripped_acacia_log",
+    "knob": "minecraft:block/gold_block"
+  }
+}

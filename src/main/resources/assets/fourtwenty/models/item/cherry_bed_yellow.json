@@ -1,0 +1,12 @@
+{
+  "parent": "fourtwenty:item/bed_template",
+  "textures": {
+    "post": "fourtwenty:block/bed/cherry_post",
+    "rail": "fourtwenty:block/bed/cherry_rail",
+    "panel": "fourtwenty:block/bed/cherry_panel",
+    "sheet": "fourtwenty:block/bed/sheet",
+    "pillow": "fourtwenty:block/bed/pillow",
+    "blanket": "fourtwenty:block/bed/blanket_yellow",
+    "runner": "fourtwenty:block/bed/runner_yellow"
+  }
+}

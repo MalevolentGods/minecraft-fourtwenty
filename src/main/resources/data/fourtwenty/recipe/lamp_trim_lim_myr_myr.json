@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "decorations",
+  "ingredients": [
+    [
+      {
+        "item": "fourtwenty:lamp_lim_myr_myr"
+      },
+      {
+        "item": "fourtwenty:inverted_lamp_lim_myr_myr"
+      }
+    ]
+  ],
+  "result": {
+    "id": "fourtwenty:lamp_trim_lim_myr_myr",
+    "count": 4
+  }
+}

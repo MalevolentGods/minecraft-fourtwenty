@@ -40,7 +40,9 @@ public final class ColonyIntegration {
                     new com.malevolentgods.fourtwenty.compat.minecolonies.placement.SubstituteCostPlacementHandler());
             com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.add(
                     new com.malevolentgods.fourtwenty.compat.minecolonies.placement.MicroblockPlacementHandler());
-            com.mojang.logging.LogUtils.getLogger().info("FourTwenty builder cost substitutions enabled (froglights cost a sea lantern; the architect's cutter a cobblestone; CB microblocks cost their source blocks)");
+            com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.add(
+                    new com.malevolentgods.fourtwenty.compat.minecolonies.placement.BedExtensionPlacementHandler());
+            com.mojang.logging.LogUtils.getLogger().info("FourTwenty builder cost substitutions enabled (froglights cost a sea lantern; the architect's cutter a cobblestone; CB microblocks cost their source blocks; a king bed's extension is free)");
         }));
         com.mojang.logging.LogUtils.getLogger().info("FourTwenty dispensary foundation enabled (MineColonies 1.1.1343)");
     }

@@ -1,12 +1,17 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "fourtwenty:magenta_inverted_lamp"
-    }
+    [
+      {
+        "item": "fourtwenty:magenta_lamp"
+      },
+      {
+        "item": "fourtwenty:magenta_inverted_lamp"
+      }
+    ]
   ],
   "result": {
     "id": "fourtwenty:magenta_lamp_trim",
-    "count": 8
+    "count": 4
   }
 }

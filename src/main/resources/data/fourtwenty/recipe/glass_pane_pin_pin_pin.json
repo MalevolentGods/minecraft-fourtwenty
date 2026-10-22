@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "group": "fourtwenty_glass_pane",
+  "pattern": [
+    "GGG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "fourtwenty:glass_pin_pin_pin"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:glass_pane_pin_pin_pin",
+    "count": 16
+  }
+}

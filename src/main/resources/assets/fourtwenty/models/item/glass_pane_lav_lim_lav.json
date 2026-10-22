@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "fourtwenty:block/glass/lav_lim_lav"
+  }
+}

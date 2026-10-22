@@ -4,21 +4,22 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
-## What's new in 0.7.0
+## What's new in 0.8.0
 
-- **The Budtender's Guide.** Talk to a Budtender and his citizen window has a new tab (the bud icon) explaining all of FourTwenty in his own words: growing, recipes, smoking and edibles, bongs and the hookah, running a Dispensary, how colonists pick up the habit, buying for yourself, lamps, Sensi Heights, and troubleshooting.
-- **A Sensi Heights Builder's Hut, levels 1–5.** It starts as a quick open shelter that leaves the terrain alone, then grows through a timber cabin and a stone-and-timber house with a storeroom into a polished two-story house with a front yard. Rack space grows with it: 1, 3, 8, 18, then 24 racks.
-- **Architect's cutters are cheap to build.** MineColonies builders pay a single cobblestone for one (the Builder's Hut hands one out at level 2).
-- **Lamp glow skips ladders.** A lamp's halo still spills onto the blocks around it, but no longer paints over a ladder beside it.
+*Sleep in comfort and style with Four Twenty's new weed powered furniture technology!*
 
-## Changes from 0.6.0
+- **Hemp beds.** Ten woods, sixteen blanket colours, a draped duvet and a runner across the foot. Push two together for a double and add a third for a king: a ghost shows you the king before you place it. Two or three players, or colonists, can share one. Craft 3 weed buds over 3 planks.
+- **Side tables.** Nightstands in ten woods, with a drawer, a brass knob and a low shelf.
+- **The Terpinator.** Press weed buds into resin, refine it into four base terpenes and blend them into 84 named terpenes, each with its own colour and a line of philosophy. Names stay hidden until you discover them. A live preview, a guided first session and a Guide map show you the way.
+- **The hemp palette, 64 colours.** Hemp blocks with stairs and slabs, flat concrete and concrete powder (MineColonies' Concrete Mixer makes both), stained glass and panes, lamps with halos in their own colour, and rugs that join into one larger rug, each colour with its own pattern.
+- **Sensi Heights Tavern, levels 1–3**, furnished with hemp beds (a king at level 3) and side tables.
 
-- **Bundled Dispensary blueprints** are 11 blocks tall instead of 16: the top five layers only held keep-terrain placeholders. Dispensaries already built are unaffected.
-- **Sensi Heights Residence:** builders no longer dig a hole under the front steps or under bare eaves.
-- **Fixes:**
-  - Workshop 4–5 lamps no longer carry ProjectRed tile data.
-  - The README and the guide give the Sensi Heights Dispensary's real seats and space.
-- See the [CHANGELOG](CHANGELOG.md) for 0.6.0 and earlier.
+## Changes from 0.7.0
+
+- **Lamp recipes:** 3 glass, a weed bud and the dye make 4 lamps (instead of 6 glass round a torch), and one lamp makes 4 trims.
+- **Concrete** in the terpene colours is one flat colour. The specked texture moved to the new concrete powder, and the 8-concrete re-dye recipe is gone, as in vanilla.
+- MineColonies builders place a king bed's extension for free.
+- See the [CHANGELOG](CHANGELOG.md) for 0.7.0 and earlier.
 
 ## Grow and harvest
 
@@ -136,18 +137,51 @@ FourTwenty ships the **Sensi Heights** MineColonies style: "A hillside town that
 - **Supply camp:** stocked racks and weed seeds. It is also level 1 of the Workshop.
 - **Workshop (levels 1–5):** an upgradable decoration. Its racks are never broken on upgrade.
 - **Residence (levels 1–5).**
-- **Builder's Hut (levels 1–2 so far):** an open shelter whose placeholders keep all the surrounding terrain, for a quick first build, then a timber cabin with an architect's cutter.
+- **Builder's Hut (levels 1–5):** an open shelter whose placeholders keep all the surrounding terrain, for a quick first build, growing through a timber cabin and a stone-and-timber house into a two-story house with a front yard.
+- **Tavern (levels 1–3):** furnished with FourTwenty hemp beds (a king at level 3) and side tables.
 - **Dispensary (levels 1–5):** the same design as the FourTwenty pack's.
 
-More huts are added as they're built. The pack lives in its own repository and is bundled with `python3 tools/import_sensi_heights.py <pack>/sensiheights`, which validates it (huts link to their own files, no ProjectRed/CB blocks). A few blueprints use a Farmer's Delight cutting board, which is simply left out without that mod.
+More huts are added as they're built. The pack lives in its own repository and is bundled with `python3 tools/import_sensi_heights.py <pack>/sensiheights`, which validates it (huts link to their own files, no ProjectRed/CB blocks). A few blueprints use a Farmer's Delight cutting board, which is simply left out without that mod. The Tavern's beds and side tables are FourTwenty's own hemp beds (level 3 has a king) and side tables.
+
+## Hemp and the Terpinator
+
+**Hemp blocks** are a building block in 64 colours, plus Natural Hemp, each with stairs and slabs: a fine woven-hemp texture up close (64x64) that reads as one even colour from a distance. 4 weed buds make 2 Natural Hemp; a final terpene in the middle of 8 hemp blocks (any colours) dyes them its colour. Stairs and slabs craft the usual way or in a stonecutter.
+
+The colours come from **terpenes**, made in the **Terpinator** (3 glass over copper either side of a brewing stand, over copper either side of a weed bud). It works on its own, no fuel:
+
+Each stage has a **Start/Stop** button and says what it's doing (running, needs buds, output full...). Stopping a stage keeps its progress. The refiner only starts with its output slot empty, and its method dial is locked while it runs, so one run never mixes two bases.
+
+- **Press:** 2 weed buds make 1 Sticky Situation (resin), 4 seconds.
+- **Refine:** 1 resin makes 2 of a base terpene, 3 seconds. The method dial picks which: heat makes Myrcenary, cold Limonade, pressure Pinewise, time Lavendaze.
+- **Blend:** two bases in ports 1 and 2 make one of 16 accords; an accord in port 1 and a base in port 3 make one of 64 final terpenes, 2 seconds each.
+
+Each port has a job: port 1 sets the family (neutrals, warm, green, cool), port 2 the hue, port 3 the tone (pale, bright, dusky, deep), so once you've learned one row you can predict the rest. The full codex (all 84 names, colours and flavour lines) is `tools/terpenes.json`.
+
+The coloured glass and pane textures are recoloured from [Classic Faithful 64x](https://faithfulpack.net/) (via the Malevolent Gods resource pack), used under the Faithful License; see `licenses/Faithful-LICENSE.txt` and `tools/source_textures/faithful/README.md`.
+
+The Terpinator's screens use [Atkinson Hyperlegible](https://brailleinstitute.org/freefont) (Braille Institute, SIL Open Font License 1.1; see `licenses/AtkinsonHyperlegible-OFL.txt`), rendered from TrueType so the text stays crisp at any GUI scale. Its model and 256x256 textures come from `tools/generate_terpinator.py`; `tools/render_block_model.py` renders any block model with headless Blender for checking.
+
+The same 64 colours come as **concrete** (one flat colour, like vanilla's) and **concrete powder** (3 sand, 3 gravel, 2 weed buds and the final terpene make 4; it sets into concrete in water, and MineColonies' Concrete Mixer makes both), **stained glass** and **glass panes** (a terpene in the middle of 8 glass or panes dyes them; 6 glass make 16 panes), **rugs** (2 hemp blocks make 3; rugs of the same colour side by side join into one larger rug, with a border only round its outside, inset a pixel with rounded corners so the floor shows, and the pattern flowing across the inside; every colour has its own pattern; a terpene in the middle of 8 rugs recolours them; Natural Hemp rugs too) and **lamps** (3 glass, a weed bud and the final terpene make 4; inverted lamps and trims as for the dye colours, with a halo in their own colour).
+
+Names are discovered: a terpene shows as undiscovered until you make it, or someone hands you one. Colours and rules are never hidden: the Terpinator previews what its ports will make, a hint line walks you through your first session, and its **Guide** maps all 64 colours as you find them. Each discovery gets a toast with its line. Discoveries are per player and survive death.
+
+## Side tables
+
+Nightstands in oak, spruce, birch, jungle, acacia, dark oak, mangrove, cherry, crimson and warped wood: a slim top, a drawer with a brass knob, slim legs and a low shelf. Craft 3 slabs over planks either side of a weed bud, with two plank legs below, for **2 side tables**. They're decoration and face whoever places them.
+
+## Beds
+
+Hemp beds in the same ten woods: tall head posts and a headboard, a footboard, a mattress, a pillow and a draped blanket that's lime when placed. Right-click any part with a dye to recolour the blanket (all 16 colours); it's turned back while someone sleeps in it. They're real beds (sleeping, respawn) and count as beds for MineColonies homes and taverns. Craft 3 weed buds over 3 planks for **1 hemp bed**.
+
+Place two hemp beds of the same wood side by side, facing the same way, and they join into a double; a third makes a king, one block longer (while you aim the third bed, a ghost shows the king, red if something is in the way past the foot, in which case it stays a single). Every column is still its own bed, so two or three people, or colonists, can share one. Breaking any part breaks the whole bed and gives back each bed that went into it.
 
 ## Lamps
 
 Coloured lamps in all 16 dye colours, for builds that need lighting without another mod:
 
-- **Lamp:** lights while powered by redstone. Craft 6 glass around a torch, with the dye on top and a weed bud below, for **4 lamps**.
+- **Lamp:** lights while powered by redstone. Craft 3 glass, a weed bud and the dye (anywhere in the grid) for **4 lamps**.
 - **Inverted Lamp:** lit unless powered, so it is always on as decoration. Craft a lamp and a joint.
-- **Lamp Trim:** a thin, always-lit plate that sticks to whichever face you click, like a microblock cover. One inverted lamp crafts into 8.
+- **Lamp Trim:** a thin, always-lit plate that sticks to whichever face you click, like a microblock cover. One lamp (plain or inverted) crafts into 4.
 
 Lit lamps and trims glow with a soft coloured halo that spills onto neighbouring blocks, including in your inventory and hands. The lamp textures and halo come from [ProjectRed](https://github.com/MrTJP/ProjectRed)'s illumar lamps (MIT License; see `licenses/ProjectRed-LICENSE.txt`). The bundled Dispensary uses them, so it needs no lighting mod. `tools/import_dispensary_blueprints.py --lamps-only` converts blueprints that use ProjectRed illumar lamps or CB Multipart lamp covers to these blocks.
 

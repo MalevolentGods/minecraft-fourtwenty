@@ -35,5 +35,17 @@ public final class LampGlow {
         return Color.HSBtoRGB(hsb[0], hsb[1], brightness) << 8 | a;
     }
 
+    /** The halo for a lamp of any colour (0xRRGGBB): its hue, re-lit so even deep tones glow, at alpha 0xA0. */
+    public static int forRgb(int rgb) { return relit(rgb, 0.0F) | 0xA0; }
+
+    /** The item halo for a lamp of any colour. */
+    public static int itemForRgb(int rgb) { return relit(rgb, 0.05F) | ITEM_ALPHA; }
+
+    private static int relit(int rgb, float extra) {
+        float[] hsb = Color.RGBtoHSB(rgb >> 16 & 0xFF, rgb >> 8 & 0xFF, rgb & 0xFF, null);
+        float brightness = Math.min(0.95F, Math.max(0.4F, hsb[2] * 0.85F + 0.12F + extra));
+        return Color.HSBtoRGB(hsb[0], hsb[1], brightness) << 8;
+    }
+
     private LampGlow() {}
 }

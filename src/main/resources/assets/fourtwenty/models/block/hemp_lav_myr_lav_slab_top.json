@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "fourtwenty:block/hemp/lav_myr_lav",
+    "top": "fourtwenty:block/hemp/lav_myr_lav",
+    "side": "fourtwenty:block/hemp/lav_myr_lav"
+  }
+}

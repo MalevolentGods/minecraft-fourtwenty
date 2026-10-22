@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "group": "fourtwenty_glass_pane",
+  "pattern": [
+    "GGG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "fourtwenty:glass_lim_lav_myr"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:glass_pane_lim_lav_myr",
+    "count": 16
+  }
+}

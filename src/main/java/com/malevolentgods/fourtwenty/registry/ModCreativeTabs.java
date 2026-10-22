@@ -26,6 +26,14 @@ public class ModCreativeTabs {
                 output.accept(ModItems.WEED_BONG.get());
                 ModItems.BONGS.values().forEach(bong -> output.accept(bong.get()));
                 ModItems.LAMPS.forEach(lamp -> output.accept(lamp.get()));
+                ModItems.SIDE_TABLES.forEach(table -> output.accept(table.get()));
+                // Every blanket colour of every bed, lime (as crafted) first.
+                ModItems.BEDS.forEach(bed -> {
+                    output.accept(bed.get());
+                    for (var color : net.minecraft.world.item.DyeColor.values()) {
+                        if (color != net.minecraft.world.item.DyeColor.LIME) output.accept(bed.get().withBlanket(color));
+                    }
+                });
                 // Note: Crop block is not added as it's placed by seeds
             })
             .build());

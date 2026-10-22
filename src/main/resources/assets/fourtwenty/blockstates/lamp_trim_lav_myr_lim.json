@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "fourtwenty:block/lamp_trim_lav_myr_lim"
+    },
+    "facing=up": {
+      "model": "fourtwenty:block/lamp_trim_lav_myr_lim",
+      "x": 180
+    },
+    "facing=north": {
+      "model": "fourtwenty:block/lamp_trim_lav_myr_lim",
+      "x": 270
+    },
+    "facing=south": {
+      "model": "fourtwenty:block/lamp_trim_lav_myr_lim",
+      "x": 270,
+      "y": 180
+    },
+    "facing=west": {
+      "model": "fourtwenty:block/lamp_trim_lav_myr_lim",
+      "x": 270,
+      "y": 270
+    },
+    "facing=east": {
+      "model": "fourtwenty:block/lamp_trim_lav_myr_lim",
+      "x": 270,
+      "y": 90
+    }
+  }
+}

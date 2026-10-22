@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "fourtwenty_hemp_dye",
+  "pattern": [
+    "HHH",
+    "HTH",
+    "HHH"
+  ],
+  "key": {
+    "H": {
+      "tag": "fourtwenty:hemp_blocks"
+    },
+    "T": {
+      "item": "fourtwenty:terpene_lav_lim_pin"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:hemp_lav_lim_pin",
+    "count": 8
+  }
+}

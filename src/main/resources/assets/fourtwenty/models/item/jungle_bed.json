@@ -1,0 +1,110 @@
+{
+  "parent": "fourtwenty:item/bed_template",
+  "textures": {
+    "post": "fourtwenty:block/bed/jungle_post",
+    "rail": "fourtwenty:block/bed/jungle_rail",
+    "panel": "fourtwenty:block/bed/jungle_panel",
+    "sheet": "fourtwenty:block/bed/sheet",
+    "pillow": "fourtwenty:block/bed/pillow",
+    "blanket": "fourtwenty:block/bed/blanket_lime",
+    "runner": "fourtwenty:block/bed/runner_lime"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.0
+      },
+      "model": "fourtwenty:item/jungle_bed_white"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.0625
+      },
+      "model": "fourtwenty:item/jungle_bed_orange"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.125
+      },
+      "model": "fourtwenty:item/jungle_bed_magenta"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.1875
+      },
+      "model": "fourtwenty:item/jungle_bed_light_blue"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.25
+      },
+      "model": "fourtwenty:item/jungle_bed_yellow"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.3125
+      },
+      "model": "fourtwenty:item/jungle_bed_lime"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.375
+      },
+      "model": "fourtwenty:item/jungle_bed_pink"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.4375
+      },
+      "model": "fourtwenty:item/jungle_bed_gray"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.5
+      },
+      "model": "fourtwenty:item/jungle_bed_light_gray"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.5625
+      },
+      "model": "fourtwenty:item/jungle_bed_cyan"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.625
+      },
+      "model": "fourtwenty:item/jungle_bed_purple"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.6875
+      },
+      "model": "fourtwenty:item/jungle_bed_blue"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.75
+      },
+      "model": "fourtwenty:item/jungle_bed_brown"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.8125
+      },
+      "model": "fourtwenty:item/jungle_bed_green"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.875
+      },
+      "model": "fourtwenty:item/jungle_bed_red"
+    },
+    {
+      "predicate": {
+        "fourtwenty:blanket": 0.9375
+      },
+      "model": "fourtwenty:item/jungle_bed_black"
+    }
+  ]
+}

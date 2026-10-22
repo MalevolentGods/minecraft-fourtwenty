@@ -60,7 +60,7 @@ public class ModBlocks {
     public static final java.util.Map<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampBlock>> INVERTED_LAMPS = lamps(true);
     public static final java.util.Map<net.minecraft.world.item.DyeColor, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.LampTrimBlock>> LAMP_TRIMS = lampTrims();
 
-    private static BlockBehaviour.Properties lampProperties() {
+    public static BlockBehaviour.Properties lampProperties() {
       return BlockBehaviour.Properties.of().strength(0.3f).sound(SoundType.GLASS)
         .lightLevel(state -> !state.hasProperty(com.malevolentgods.fourtwenty.block.LampBlock.LIT)
             || state.getValue(com.malevolentgods.fourtwenty.block.LampBlock.LIT) ? 15 : 0)
@@ -85,6 +85,41 @@ public class ModBlocks {
       }
       return java.util.Collections.unmodifiableMap(trims);
     }
+
+    /** Side tables (nightstands) in every vanilla wood but bamboo; see {@link com.malevolentgods.fourtwenty.block.SideTableBlock}. */
+    public static final java.util.List<String> SIDE_TABLE_WOODS = java.util.List.of(
+        "oak", "spruce", "birch", "jungle", "acacia", "dark_oak", "mangrove", "cherry", "crimson", "warped");
+    public static final java.util.Map<String, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.SideTableBlock>> SIDE_TABLES = sideTables();
+
+    private static java.util.Map<String, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.SideTableBlock>> sideTables() {
+      var tables = new java.util.LinkedHashMap<String, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.SideTableBlock>>();
+      for (var wood : SIDE_TABLE_WOODS) {
+        boolean nether = wood.equals("crimson") || wood.equals("warped");
+        tables.put(wood, BLOCKS.register(wood + "_side_table", () -> new com.malevolentgods.fourtwenty.block.SideTableBlock(
+            BlockBehaviour.Properties.of().strength(2.0f, 3.0f).noOcclusion()
+                .sound(nether ? SoundType.NETHER_WOOD : wood.equals("cherry") ? SoundType.CHERRY_WOOD : SoundType.WOOD))));
+      }
+      return java.util.Collections.unmodifiableMap(tables);
+    }
+
+    /** Beds in the same woods; see {@link com.malevolentgods.fourtwenty.block.FancyBedBlock}. */
+    public static final java.util.Map<String, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.FancyBedBlock>> BEDS = beds();
+
+    private static java.util.Map<String, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.FancyBedBlock>> beds() {
+      var beds = new java.util.LinkedHashMap<String, DeferredHolder<Block, com.malevolentgods.fourtwenty.block.FancyBedBlock>>();
+      for (var wood : SIDE_TABLE_WOODS) {
+        beds.put(wood, BLOCKS.register(wood + "_bed", () -> new com.malevolentgods.fourtwenty.block.FancyBedBlock(
+            BlockBehaviour.Properties.of().strength(0.2f).sound(SoundType.WOOD).noOcclusion()
+                .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY).ignitedByLava())));
+      }
+      return java.util.Collections.unmodifiableMap(beds);
+    }
+
+    /** A king bed's extra length; see {@link com.malevolentgods.fourtwenty.block.BedExtensionBlock}. No item. */
+    public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.block.BedExtensionBlock> BED_EXTENSION = BLOCKS.register(
+        "bed_extension", () -> new com.malevolentgods.fourtwenty.block.BedExtensionBlock(
+            BlockBehaviour.Properties.of().strength(0.2f).sound(SoundType.WOOD).noOcclusion().noLootTable()
+                .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK)));
 
     public static final DeferredHolder<Block, WeedBongBlock> WEED_BONG = BLOCKS.register("weed_bong",
       () -> new WeedBongBlock(

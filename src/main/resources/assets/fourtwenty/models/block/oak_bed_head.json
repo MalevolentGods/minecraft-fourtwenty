@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:block/bed_head",
+  "textures": {
+    "post": "fourtwenty:block/bed/oak_post"
+  }
+}

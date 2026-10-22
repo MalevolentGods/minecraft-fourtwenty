@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "fourtwenty:block/lamp/lim_pin_pin_on"
+  }
+}

@@ -1,0 +1,204 @@
+package com.malevolentgods.fourtwenty.registry;
+
+import com.malevolentgods.fourtwenty.domain.Terpenes;
+import com.malevolentgods.fourtwenty.terpene.TerpeneItem;
+import com.malevolentgods.fourtwenty.terpene.TerpeneKnowledge;
+import com.malevolentgods.fourtwenty.terpene.TerpinatorBlock;
+import com.malevolentgods.fourtwenty.terpene.TerpinatorBlockEntity;
+import com.malevolentgods.fourtwenty.terpene.TerpinatorMenu;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.inventory.MenuType;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * The terpene system: hemp blocks (Natural Hemp and the 64 colours, each with stairs and a slab),
+ * the 84 terpene items and the resin, and the Terpinator. Ids come from terpene codes
+ * (hemp_myr_pin_lim, terpene_myr_pin_lim); names and colours from tools/terpenes.json.
+ */
+public final class ModTerpenes {
+    private ModTerpenes() {}
+
+    /** A hemp block with its stairs and slab, and their items. */
+    public record Hemp(DeferredHolder<Block, Block> block, DeferredHolder<Block, StairBlock> stairs, DeferredHolder<Block, SlabBlock> slab,
+                       List<DeferredHolder<Item, BlockItem>> items) {}
+
+    public static final Hemp NATURAL_HEMP = hemp("natural_hemp");
+
+    /** The 64 colours, by final terpene code, in codex order. */
+    public static final Map<String, Hemp> HEMP = coloured();
+
+    private static Map<String, Hemp> coloured() {
+        Map<String, Hemp> out = new LinkedHashMap<>();
+        for (Terpenes.Code code : Terpenes.finals()) out.put(code.id(), hemp("hemp_" + code.id()));
+        return Collections.unmodifiableMap(out);
+    }
+
+    private static Hemp hemp(String id) {
+        BlockBehaviour.Properties props = BlockBehaviour.Properties.of().mapColor(MapColor.WOOL).strength(0.8f).sound(SoundType.WOOL);
+        DeferredHolder<Block, Block> block = ModBlocks.BLOCKS.register(id, () -> new Block(props));
+        DeferredHolder<Block, StairBlock> stairs = ModBlocks.BLOCKS.register(id + "_stairs",
+                () -> new StairBlock(block.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(block.get())));
+        DeferredHolder<Block, SlabBlock> slab = ModBlocks.BLOCKS.register(id + "_slab",
+                () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(block.get())));
+        List<DeferredHolder<Item, BlockItem>> items = List.of(
+                ModItems.ITEMS.register(id, () -> new BlockItem(block.get(), new Item.Properties())),
+                ModItems.ITEMS.register(id + "_stairs", () -> new BlockItem(stairs.get(), new Item.Properties())),
+                ModItems.ITEMS.register(id + "_slab", () -> new BlockItem(slab.get(), new Item.Properties())));
+        return new Hemp(block, stairs, slab, items);
+    }
+
+    /** Concrete in the 64 colours, by code (one flat colour, like vanilla's). */
+    public static final Map<String, DeferredHolder<Block, Block>> CONCRETE = palette("concrete_",
+            code -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(1.8f).requiresCorrectToolForDrops()));
+
+    /**
+     * Concrete powder: vanilla's ConcretePowderBlock, so it falls and sets into its concrete in water,
+     * and MineColonies' Concrete Mixer (which looks for a ConcretePowderBlock) can set it in its pond.
+     */
+    public static final Map<String, DeferredHolder<Block, Block>> CONCRETE_POWDER = palette("concrete_powder_",
+            code -> new net.minecraft.world.level.block.ConcretePowderBlock(CONCRETE.get(code).get(),
+                    BlockBehaviour.Properties.of().mapColor(MapColor.SAND).strength(0.5f).sound(SoundType.SAND)));
+
+    /** Stained glass and glass panes in the 64 colours (translucent; drop only with silk touch). */
+    public static final Map<String, DeferredHolder<Block, Block>> GLASS = palette("glass_",
+            code -> new net.minecraft.world.level.block.TransparentBlock(glass()));
+    public static final Map<String, DeferredHolder<Block, Block>> GLASS_PANES = palette("glass_pane_",
+            code -> new net.minecraft.world.level.block.IronBarsBlock(glass()));
+
+    private static BlockBehaviour.Properties glass() {
+        return BlockBehaviour.Properties.of().strength(0.3f).sound(SoundType.GLASS).noOcclusion()
+                .isValidSpawn((state, level, pos, type) -> false).isRedstoneConductor((state, level, pos) -> false)
+                .isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false);
+    }
+
+    /**
+     * Rugs in the 64 colours and Natural Hemp ("natural"): one pixel thick, inset a pixel round the
+     * outside with rounded corners, joining the same rug around them into one larger rug
+     * ({@link com.malevolentgods.fourtwenty.block.RugBlock}); carpets in every other way.
+     */
+    public static final Map<String, DeferredHolder<Block, Block>> RUGS = rugs();
+
+    private static Map<String, DeferredHolder<Block, Block>> rugs() {
+        Map<String, DeferredHolder<Block, Block>> out = new LinkedHashMap<>(palette("rug_", code -> rug()));
+        out.put("natural", register("rug_natural", ModTerpenes::rug));
+        return Collections.unmodifiableMap(out);
+    }
+
+    private static Block rug() {
+        return new com.malevolentgods.fourtwenty.block.RugBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOL).strength(0.1f)
+                .sound(SoundType.WOOL).ignitedByLava().noOcclusion());
+    }
+
+    /** Lamps, inverted lamps and lamp trims in the 64 colours (halos in their own colour). */
+    public static final Map<String, DeferredHolder<Block, Block>> LAMPS = palette("lamp_",
+            code -> new com.malevolentgods.fourtwenty.block.LampBlock(rgb(code), false, ModBlocks.lampProperties()));
+    public static final Map<String, DeferredHolder<Block, Block>> INVERTED_LAMPS = palette("inverted_lamp_",
+            code -> new com.malevolentgods.fourtwenty.block.LampBlock(rgb(code), true, ModBlocks.lampProperties()));
+    public static final Map<String, DeferredHolder<Block, Block>> LAMP_TRIMS = palette("lamp_trim_",
+            code -> new com.malevolentgods.fourtwenty.block.LampTrimBlock(rgb(code), ModBlocks.lampProperties().noOcclusion()));
+
+    private static int rgb(String code) { return com.malevolentgods.fourtwenty.domain.TerpenePalette.color(Terpenes.Code.parse(code).orElseThrow()); }
+
+    /** A block (and its item) per palette colour: prefix + final terpene code. */
+    private static Map<String, DeferredHolder<Block, Block>> palette(String prefix, java.util.function.Function<String, Block> make) {
+        Map<String, DeferredHolder<Block, Block>> out = new LinkedHashMap<>();
+        for (Terpenes.Code code : Terpenes.finals()) out.put(code.id(), register(prefix + code.id(), () -> make.apply(code.id())));
+        return Collections.unmodifiableMap(out);
+    }
+
+    private static DeferredHolder<Block, Block> register(String id, java.util.function.Supplier<Block> block) {
+        DeferredHolder<Block, Block> holder = ModBlocks.BLOCKS.register(id, block);
+        ModItems.ITEMS.register(id, () -> new BlockItem(holder.get(), new Item.Properties()));
+        return holder;
+    }
+
+    /** Every palette lamp, inverted lamp and trim (for the halo block entity and item renderer). */
+    public static java.util.stream.Stream<Block> paletteLamps() {
+        return java.util.stream.Stream.of(LAMPS, INVERTED_LAMPS, LAMP_TRIMS).flatMap(m -> m.values().stream()).map(DeferredHolder::get);
+    }
+
+    /** Sticky Situation: pressed from weed buds, refined into base terpenes. Hidden until first pressed. */
+    public static final DeferredHolder<Item, Item> RESIN = ModItems.ITEMS.register("sticky_situation", () -> new Item(new Item.Properties()) {
+        @Override public @Nonnull Component getName(@Nonnull ItemStack stack) {
+            return TerpeneKnowledge.knows(TerpeneKnowledge.RESIN) ? super.getName(stack) : Component.translatable("item.fourtwenty.terpene.unknown.resin");
+        }
+    });
+
+    /** All 84 terpenes by code. */
+    public static final Map<String, DeferredHolder<Item, TerpeneItem>> TERPENES = terpenes();
+
+    private static Map<String, DeferredHolder<Item, TerpeneItem>> terpenes() {
+        Map<String, DeferredHolder<Item, TerpeneItem>> out = new LinkedHashMap<>();
+        for (Terpenes.Code code : Terpenes.all()) {
+            out.put(code.id(), ModItems.ITEMS.register("terpene_" + code.id(), () -> new TerpeneItem(code, new Item.Properties())));
+        }
+        return Collections.unmodifiableMap(out);
+    }
+
+    public static TerpeneItem terpene(Terpenes.Code code) { return TERPENES.get(code.id()).get(); }
+
+    public static final DeferredHolder<Block, TerpinatorBlock> TERPINATOR = ModBlocks.BLOCKS.register("terpinator",
+            () -> new TerpinatorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.5f, 6f).sound(SoundType.COPPER)
+                    .noOcclusion().requiresCorrectToolForDrops().lightLevel(state -> state.getValue(TerpinatorBlock.LIT) ? 7 : 2)));
+
+    public static final DeferredHolder<Item, BlockItem> TERPINATOR_ITEM = ModItems.ITEMS.register("terpinator",
+            () -> new BlockItem(TERPINATOR.get(), new Item.Properties()));
+
+    @SuppressWarnings("null")
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TerpinatorBlockEntity>> TERPINATOR_ENTITY =
+            ModBlockEntities.BLOCK_ENTITIES.register("terpinator",
+                    () -> BlockEntityType.Builder.of(TerpinatorBlockEntity::new, TERPINATOR.get()).build(null));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<TerpinatorMenu>> TERPINATOR_MENU = ModMenuTypes.MENU_TYPES.register("terpinator",
+            () -> IMenuTypeExtension.create((id, inventory, data) -> new TerpinatorMenu(id, inventory)));
+
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB = ModCreativeTabs.CREATIVE_MODE_TABS.register("hemp_and_terpenes",
+            () -> CreativeModeTab.builder()
+                    .title(Component.translatable("itemGroup.fourtwenty.hemp_and_terpenes"))
+                    .icon(() -> new ItemStack(TERPINATOR_ITEM.get()))
+                    .withTabsBefore(ModCreativeTabs.FOUR_TWENTY_TAB.getKey())
+                    .displayItems((parameters, output) -> {
+                        output.accept(TERPINATOR_ITEM.get());
+                        output.accept(RESIN.get());
+                        TERPENES.values().forEach(t -> output.accept(t.get()));
+                        List<Hemp> all = new ArrayList<>();
+                        all.add(NATURAL_HEMP);
+                        all.addAll(HEMP.values());
+                        all.forEach(h -> output.accept(h.items().get(0).get()));
+                        all.forEach(h -> output.accept(h.items().get(1).get()));
+                        all.forEach(h -> output.accept(h.items().get(2).get()));
+                        RUGS.values().forEach(b -> output.accept(b.get()));
+                        CONCRETE.values().forEach(b -> output.accept(b.get()));
+                        CONCRETE_POWDER.values().forEach(b -> output.accept(b.get()));
+                        GLASS.values().forEach(b -> output.accept(b.get()));
+                        GLASS_PANES.values().forEach(b -> output.accept(b.get()));
+                        LAMPS.values().forEach(b -> output.accept(b.get()));
+                        INVERTED_LAMPS.values().forEach(b -> output.accept(b.get()));
+                        LAMP_TRIMS.values().forEach(b -> output.accept(b.get()));
+                    })
+                    .build());
+
+    /** Loads this class, so everything above is registered before the registers fire. */
+    public static void init() {}
+}
