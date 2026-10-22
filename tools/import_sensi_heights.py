@@ -7,7 +7,8 @@ loads it from the jar like the FourTwenty Dispensary pack.
 
 Usage:  python3 tools/import_sensi_heights.py <Sensi Heights repo>/sensiheights
 
-Copies pack.json, icons and every blueprint, then validates the bundled copy (see validate()).
+Copies pack.json, icons and every blueprint (except EXCLUDE), then validates the bundled copy (see
+validate()).
 """
 import shutil
 import sys
@@ -24,6 +25,8 @@ FOREIGN = ('projectred', 'cb_multipart', 'cb_microblock')
 OPTIONAL = {'farmersdelight', 'handcrafted'}
 # The supply camp is Workshop level 1: its controller deliberately links to workshop1 so it upgrades.
 LINK_EXCEPTIONS = {'decorations/supplies/supplycamp.blueprint': 'decorations/misc/workshop1.blueprint'}
+# Blueprints the pack has that the public mod leaves out (third-party characters).
+EXCLUDE = {'decorations/signs/gokuleaf.blueprint'}
 
 
 def blueprints(root=BUNDLED):
@@ -77,6 +80,11 @@ def main(source):
     if BUNDLED.exists():
         shutil.rmtree(BUNDLED)
     shutil.copytree(source, BUNDLED, ignore=shutil.ignore_patterns('*.py', '__pycache__', '.gitkeep'))
+    for rel in EXCLUDE:
+        (BUNDLED / rel).unlink(missing_ok=True)
+    for folder in sorted((p for p in BUNDLED.rglob('*') if p.is_dir()), reverse=True):
+        if not any(folder.iterdir()):
+            folder.rmdir()                      # e.g. a category left empty by EXCLUDE
     problems, optional = validate()
     assert not problems, problems
     print(f'imported {len(blueprints())} blueprints into {BUNDLED.relative_to(ROOT).as_posix()}')

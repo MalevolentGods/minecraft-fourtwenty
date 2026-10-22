@@ -4,6 +4,10 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- Sensi Heights Tavern level 3 (pack v52): terpene rugs in place of carpets, diorite floors and roof, panel ceilings with lamp trim, a deepslate hearth, and rearranged guest rooms (still 36 indoor and 8 outdoor seats).
+- `tools/import_sensi_heights.py` leaves out blueprints listed in `EXCLUDE` (pack decorations that use third-party characters).
+
 ## [0.8.0] - Hemp Beds, the Terpinator and the Hemp Palette
 
 ### Changed
