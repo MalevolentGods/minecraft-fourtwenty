@@ -110,6 +110,23 @@ public final class ModTerpenes {
                 .sound(SoundType.WOOL).ignitedByLava().noOcclusion());
     }
 
+    /**
+     * Couches in the 64 colours and Natural Hemp ("natural"): hemp seats with a back, arm rests and
+     * wooden legs that join each other like stairs ({@link com.malevolentgods.fourtwenty.block.CouchBlock}).
+     */
+    public static final Map<String, DeferredHolder<Block, Block>> COUCHES = couches();
+
+    private static Map<String, DeferredHolder<Block, Block>> couches() {
+        Map<String, DeferredHolder<Block, Block>> out = new LinkedHashMap<>(palette("couch_", code -> couch()));
+        out.put("natural", register("couch_natural", ModTerpenes::couch));
+        return Collections.unmodifiableMap(out);
+    }
+
+    private static Block couch() {
+        return new com.malevolentgods.fourtwenty.block.CouchBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOL).strength(0.8f)
+                .sound(SoundType.WOOL).ignitedByLava().noOcclusion());
+    }
+
     /** Lamps, inverted lamps and lamp trims in the 64 colours (halos in their own colour). */
     public static final Map<String, DeferredHolder<Block, Block>> LAMPS = palette("lamp_",
             code -> new com.malevolentgods.fourtwenty.block.LampBlock(rgb(code), false, ModBlocks.lampProperties()));
@@ -189,6 +206,7 @@ public final class ModTerpenes {
                         all.forEach(h -> output.accept(h.items().get(1).get()));
                         all.forEach(h -> output.accept(h.items().get(2).get()));
                         RUGS.values().forEach(b -> output.accept(b.get()));
+                        COUCHES.values().forEach(b -> output.accept(b.get()));
                         CONCRETE.values().forEach(b -> output.accept(b.get()));
                         CONCRETE_POWDER.values().forEach(b -> output.accept(b.get()));
                         GLASS.values().forEach(b -> output.accept(b.get()));

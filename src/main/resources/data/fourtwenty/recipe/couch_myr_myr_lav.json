@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "group": "fourtwenty_couch",
+  "pattern": [
+    "SSS",
+    "T T"
+  ],
+  "key": {
+    "S": {
+      "item": "fourtwenty:hemp_myr_myr_lav_stairs"
+    },
+    "T": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:couch_myr_myr_lav",
+    "count": 3
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:block/couch_seat_inner",
+  "textures": {
+    "cushion": "fourtwenty:block/hemp/pin_pin_myr"
+  }
+}

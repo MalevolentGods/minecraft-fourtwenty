@@ -4,6 +4,16 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Couches** in the 64 terpene colours and Natural Hemp (CouchBlock): a hemp cushion and back with softened edges, arm rests and dark oak legs. They join each other like stairs (vanilla's stair shape rule: straight, inner and outer corners), with arms only on a straight couch's open ends; colours join too. No sturdy faces, so fences, walls and panes don't join them. 3 hemp stairs over 2 sticks make 3. Players sit with an empty-handed right-click (an invisible, unsaved seat entity; one per couch; sneak, or breaking the couch, stands them up). `/sit` (any player) sits down where you stand: on a couch's cushion, or on the floor, a step or a slab. MineColonies: a couch a player sits on counts as taken for colonists, and a colonist sitting on a couch faces out of it (`CouchSittingMixin`); MineColonies already seats them at the cushion height. Models from `tools/generate_couches.py`; game tests in `CouchGameTests` (48 in all).
+
+### Changed
+- Sensi Heights pack v60: the Restaurant (cook), all 5 levels: a timber dining hall with a sunken seating pit that grows into a polished restaurant with a covered patio, a big sunken dining pit, a roof terrace and an upper dining room, topped at level 5 with cherry trim and a lamp-lit skylight.
+- Sensi Heights pack v56: every seat is tagged (wall benches and chairs in the Residence and Tavern 1), and Builder's Hut level 4's front door is saved closed.
+- Sensi Heights pack v54: Workshop levels 3-5 have a Terpinator in place of the middle pillar (and no longer need Farmer's Delight), terpene-coloured lamps in Workshop 4-5 and Residence 4-5, a reworked Residence 5 (terpene concrete, FourTwenty hemp beds including a king, rugs and a side table), Residence 1 and Tavern 1 clear a path to their front doors, and Tavern 1's loft is opened up.
+- Sensi Heights Tavern level 3: terpene rugs in place of carpets (through the lounge, the bar and every upstairs room), diorite floors and roof, panel ceilings with lamp trim, a deepslate hearth, and rearranged guest rooms (still 36 indoor and 8 outdoor seats).
+- `tools/import_sensi_heights.py` leaves out blueprints listed in `EXCLUDE` (pack decorations that use third-party characters).
+
 ## [0.8.0] - Hemp Beds, the Terpinator and the Hemp Palette
 
 ### Changed

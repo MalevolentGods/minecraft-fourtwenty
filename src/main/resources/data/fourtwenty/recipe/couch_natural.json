@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "group": "fourtwenty_couch",
+  "pattern": [
+    "SSS",
+    "T T"
+  ],
+  "key": {
+    "S": {
+      "item": "fourtwenty:natural_hemp_stairs"
+    },
+    "T": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:couch_natural",
+    "count": 3
+  }
+}
