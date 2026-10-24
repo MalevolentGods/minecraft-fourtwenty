@@ -32,7 +32,8 @@ import java.util.Map;
  * a ring of seats. A straight couch has an arm on each side that doesn't continue into another couch
  * (one facing the same way, or a corner). FACING is the side its back is on, as for stairs.
  *
- * Fences, walls and panes don't join it: it has no sturdy faces (an empty support shape).
+ * Fences, walls and panes don't join it: it has no sturdy faces (an empty support shape). Players
+ * sit on it with an empty-handed right-click ({@link SeatEntity}); sneaking stands them up.
  * Models: tools/generate_couches.py.
  */
 public class CouchBlock extends HorizontalDirectionalBlock {
@@ -131,6 +132,15 @@ public class CouchBlock extends HorizontalDirectionalBlock {
     /** No sturdy faces, so fences, walls and panes don't join a couch. */
     @Override protected @Nonnull VoxelShape getBlockSupportShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos) {
         return Shapes.empty();
+    }
+
+    /** Right-click with an empty hand to sit (sneak to stand up). */
+    @Override protected @Nonnull net.minecraft.world.InteractionResult useWithoutItem(@Nonnull BlockState state, @Nonnull net.minecraft.world.level.Level level,
+                                                                                      @Nonnull BlockPos pos, @Nonnull net.minecraft.world.entity.player.Player player,
+                                                                                      @Nonnull net.minecraft.world.phys.BlockHitResult hit) {
+        if (player.isShiftKeyDown() || player.isPassenger()) return net.minecraft.world.InteractionResult.PASS;
+        if (level.isClientSide) return net.minecraft.world.InteractionResult.SUCCESS;
+        return SeatEntity.sit(level, pos, player) ? net.minecraft.world.InteractionResult.CONSUME : net.minecraft.world.InteractionResult.PASS;
     }
 
     @Override protected boolean isPathfindable(@Nonnull BlockState state, @Nonnull PathComputationType type) { return false; }

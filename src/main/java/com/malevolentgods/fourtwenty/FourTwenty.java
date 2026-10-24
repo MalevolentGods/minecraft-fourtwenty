@@ -32,6 +32,7 @@ public class FourTwenty {
         
         // Register block entities
         ModBlockEntities.BLOCK_ENTITIES.register(bus);
+        com.malevolentgods.fourtwenty.registry.ModEntities.ENTITY_TYPES.register(bus);
         
         // Register menus
         ModMenuTypes.MENU_TYPES.register(bus);

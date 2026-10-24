@@ -1310,5 +1310,6 @@
   "block.fourtwenty.couch_lav_lav_pin": "Everything Is Connected, Man Couch",
   "block.fourtwenty.couch_lav_lav_lav": "Overcast Overthinking Couch",
   "block.fourtwenty.couch_lav_lav_myr": "3 A.M. Deep Thoughts Couch",
-  "block.fourtwenty.couch_natural": "Natural Hemp Couch"
+  "block.fourtwenty.couch_natural": "Natural Hemp Couch",
+  "entity.fourtwenty.seat": "Seat"
 }

@@ -68,6 +68,22 @@ public final class CouchGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void aPlayerSitsOneToACouchAndStandsUpWhenItBreaks(GameTestHelper h) {
+        place(h, "natural", 2, 2, Direction.NORTH);
+        BlockPos pos = h.absolutePos(new BlockPos(2, 2, 2));
+        var a = h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        var b = h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        h.assertTrue(com.malevolentgods.fourtwenty.block.SeatEntity.sit(h.getLevel(), pos, a), "couldn't sit");
+        h.assertTrue(a.getVehicle() instanceof com.malevolentgods.fourtwenty.block.SeatEntity, "not riding a seat");
+        h.assertTrue(!com.malevolentgods.fourtwenty.block.SeatEntity.sit(h.getLevel(), pos, b), "two sat on one couch");
+        h.setBlock(new BlockPos(2, 2, 2), Blocks.AIR);
+        h.succeedWhen(() -> {
+            h.assertTrue(!a.isPassenger(), "still sitting after the couch broke");
+            h.assertTrue(!com.malevolentgods.fourtwenty.block.SeatEntity.occupied(h.getLevel(), pos), "the seat is still there");
+        });
+    }
+
+    @GameTest(template = "empty")
     public static void fencesAndWallsDontJoinACouch(GameTestHelper h) {
         place(h, "natural", 2, 2, Direction.NORTH);
         h.setBlock(new BlockPos(3, 2, 2), Blocks.OAK_FENCE);
