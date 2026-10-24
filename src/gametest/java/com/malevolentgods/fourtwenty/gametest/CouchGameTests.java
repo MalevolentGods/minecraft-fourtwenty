@@ -84,6 +84,46 @@ public final class CouchGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void sitCommandSitsOnTheGroundAndOnACouch(GameTestHelper h) {
+        h.setBlock(new BlockPos(1, 1, 1), Blocks.STONE);
+        var a = h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        BlockPos feet = h.absolutePos(new BlockPos(1, 2, 1));
+        a.moveTo(feet.getX() + 0.5, feet.getY(), feet.getZ() + 0.5);
+        a.setOnGround(true);
+        h.assertTrue(com.malevolentgods.fourtwenty.block.SeatEntity.sitHere(a), "couldn't sit on the ground");
+        h.assertTrue(Math.abs(a.getVehicle().getY() - (feet.getY() - 0.15)) < 1e-6, "ground seat at the wrong height: " + a.getVehicle().getY());
+        a.stopRiding();
+        h.assertTrue(Math.abs(a.getY() - feet.getY()) < 1e-6, "stood up at " + a.getY() + ", not where they sat");
+
+        place(h, "natural", 3, 2, Direction.NORTH);
+        var b = h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        BlockPos couch = h.absolutePos(new BlockPos(3, 2, 2));
+        b.moveTo(couch.getX() + 0.5, couch.getY() + 0.5, couch.getZ() + 0.5);
+        b.setOnGround(true);
+        h.assertTrue(com.malevolentgods.fourtwenty.block.SeatEntity.sitHere(b), "/sit on a couch didn't sit");
+        h.assertTrue(Math.abs(b.getVehicle().getY() - (couch.getY() + 0.35)) < 1e-6, "couch seat at the wrong height");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aCouchSomeoneElseSitsOnIsTaken(GameTestHelper h) {
+        // Another mod's seat (MineColonies sits a citizen on an entity most of a block below the seat).
+        place(h, "natural", 2, 2, Direction.NORTH);
+        BlockPos pos = h.absolutePos(new BlockPos(2, 2, 2));
+        var seat = net.minecraft.world.entity.EntityType.BOAT.create(h.getLevel());   // a plain (not living) entity, like MineColonies' SittingEntity
+        seat.moveTo(pos.getX() + 0.5, pos.getY() - 0.65, pos.getZ() + 0.5);
+        seat.setNoGravity(true);
+        h.getLevel().addFreshEntity(seat);
+        var rider = net.minecraft.world.entity.EntityType.VILLAGER.create(h.getLevel());
+        rider.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        h.getLevel().addFreshEntity(rider);
+        h.assertTrue(rider.startRiding(seat, true), "test setup: the rider didn't mount");
+        var player = h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        h.assertTrue(!com.malevolentgods.fourtwenty.block.SeatEntity.sit(h.getLevel(), pos, player), "sat on an occupied couch");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void fencesAndWallsDontJoinACouch(GameTestHelper h) {
         place(h, "natural", 2, 2, Direction.NORTH);
         h.setBlock(new BlockPos(3, 2, 2), Blocks.OAK_FENCE);

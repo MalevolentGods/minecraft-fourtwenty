@@ -1311,5 +1311,6 @@
   "block.fourtwenty.couch_lav_lav_lav": "Overcast Overthinking Couch",
   "block.fourtwenty.couch_lav_lav_myr": "3 A.M. Deep Thoughts Couch",
   "block.fourtwenty.couch_natural": "Natural Hemp Couch",
-  "entity.fourtwenty.seat": "Seat"
+  "entity.fourtwenty.seat": "Seat",
+  "commands.fourtwenty.sit.failed": "You can't sit here: stand on solid ground (or a free couch), out of the water."
 }
