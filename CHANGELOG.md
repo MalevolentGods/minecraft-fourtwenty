@@ -4,6 +4,8 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+## [0.9.0] - Hemp Couches and the Restaurant
+
 ### Added
 - **Couches** in the 64 terpene colours and Natural Hemp (CouchBlock): a hemp cushion and back with softened edges, arm rests and dark oak legs. They join each other like stairs (vanilla's stair shape rule: straight, inner and outer corners), with arms only on a straight couch's open ends; colours join too. No sturdy faces, so fences, walls and panes don't join them. 3 hemp stairs over 2 sticks make 3. Players sit with an empty-handed right-click (an invisible, unsaved seat entity; one per couch; sneak, or breaking the couch, stands them up). `/sit` (any player) sits down where you stand: on a couch's cushion, or on the floor, a step or a slab. MineColonies: a couch a player sits on counts as taken for colonists, and a colonist sitting on a couch faces out of it (`CouchSittingMixin`); MineColonies already seats them at the cushion height. Models from `tools/generate_couches.py`; game tests in `CouchGameTests` (48 in all).
 
