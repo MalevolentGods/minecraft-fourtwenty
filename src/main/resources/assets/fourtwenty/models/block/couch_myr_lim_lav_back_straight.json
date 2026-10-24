@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:block/couch_back_straight",
+  "textures": {
+    "cushion": "fourtwenty:block/hemp/myr_lim_lav"
+  }
+}

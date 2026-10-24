@@ -4,6 +4,9 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Couches** in the 64 terpene colours and Natural Hemp (CouchBlock): a hemp cushion and back with softened edges, arm rests and dark oak legs. They join each other like stairs (vanilla's stair shape rule: straight, inner and outer corners), with arms only on a straight couch's open ends; colours join too. No sturdy faces, so fences, walls and panes don't join them. 3 hemp stairs over 2 sticks make 3. Models from `tools/generate_couches.py`; game tests in `CouchGameTests`.
+
 ### Changed
 - Sensi Heights pack v60: the Restaurant (cook), all 5 levels: a timber dining hall with a sunken seating pit that grows into a polished restaurant with a covered patio, a big sunken dining pit, a roof terrace and an upper dining room, topped at level 5 with cherry trim and a lamp-lit skylight.
 - Sensi Heights pack v56: every seat is tagged (wall benches and chairs in the Residence and Tavern 1), and Builder's Hut level 4's front door is saved closed.

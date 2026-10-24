@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:block/couch_back_outer",
+  "textures": {
+    "cushion": "fourtwenty:block/hemp/lav_lim_pin"
+  }
+}

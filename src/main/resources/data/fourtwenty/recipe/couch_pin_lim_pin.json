@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "group": "fourtwenty_couch",
+  "pattern": [
+    "SSS",
+    "T T"
+  ],
+  "key": {
+    "S": {
+      "item": "fourtwenty:hemp_pin_lim_pin_stairs"
+    },
+    "T": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:couch_pin_lim_pin",
+    "count": 3
+  }
+}

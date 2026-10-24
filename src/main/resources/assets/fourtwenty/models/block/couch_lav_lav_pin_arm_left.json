@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:block/couch_arm_left",
+  "textures": {
+    "cushion": "fourtwenty:block/hemp/lav_lav_pin"
+  }
+}

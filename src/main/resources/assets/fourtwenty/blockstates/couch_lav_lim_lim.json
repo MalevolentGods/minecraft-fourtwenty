@@ -1,0 +1,533 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "fourtwenty:block/couch_legs"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "shape": "straight"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_straight",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "shape": "straight"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_straight",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_inner",
+        "uvlock": true,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_inner",
+        "uvlock": true,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_inner",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_inner",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_outer",
+        "uvlock": true,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_outer",
+        "uvlock": true,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_outer",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_outer",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "shape": "straight",
+        "left_arm": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_arm_left",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "shape": "straight",
+        "right_arm": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_arm_right",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "shape": "straight"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_straight",
+        "uvlock": true,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "shape": "straight"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_straight",
+        "uvlock": true,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_inner",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_inner",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_inner",
+        "uvlock": true,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_inner",
+        "uvlock": true,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_outer",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_outer",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_outer",
+        "uvlock": true,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_outer",
+        "uvlock": true,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "shape": "straight",
+        "left_arm": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_arm_left",
+        "uvlock": true,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "shape": "straight",
+        "right_arm": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_arm_right",
+        "uvlock": true,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "shape": "straight"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_straight",
+        "uvlock": true,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "shape": "straight"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_straight",
+        "uvlock": true,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_inner",
+        "uvlock": true,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_inner",
+        "uvlock": true,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_inner",
+        "uvlock": true,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_inner",
+        "uvlock": true,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_outer",
+        "uvlock": true,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_outer",
+        "uvlock": true,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_outer",
+        "uvlock": true,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_outer",
+        "uvlock": true,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "shape": "straight",
+        "left_arm": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_arm_left",
+        "uvlock": true,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "shape": "straight",
+        "right_arm": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_arm_right",
+        "uvlock": true,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "shape": "straight"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_straight",
+        "uvlock": true,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "shape": "straight"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_straight",
+        "uvlock": true,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_inner",
+        "uvlock": true,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_inner",
+        "uvlock": true,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_inner",
+        "uvlock": true,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_inner",
+        "uvlock": true,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_outer",
+        "uvlock": true,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_outer",
+        "uvlock": true,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_seat_outer",
+        "uvlock": true,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_back_outer",
+        "uvlock": true,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "shape": "straight",
+        "left_arm": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_arm_left",
+        "uvlock": true,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "shape": "straight",
+        "right_arm": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/couch_lav_lim_lim_arm_right",
+        "uvlock": true,
+        "y": 270
+      }
+    }
+  ]
+}

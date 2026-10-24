@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:block/couch_arm_right",
+  "textures": {
+    "cushion": "fourtwenty:block/hemp/myr_pin_lim"
+  }
+}
