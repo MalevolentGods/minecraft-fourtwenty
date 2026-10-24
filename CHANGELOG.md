@@ -5,6 +5,7 @@ All notable changes to the FourTwenty mod will be documented in this file.
 ## [Unreleased]
 
 ### Changed
+- Sensi Heights pack v55: every seat is tagged (wall benches and chairs in the Residence, Workshop and Tavern 1), and Builder's Hut level 4's front door is saved closed.
 - Sensi Heights pack v54: Workshop levels 3-5 have a Terpinator in place of the middle pillar (and no longer need Farmer's Delight), terpene-coloured lamps in Workshop 4-5 and Residence 4-5, a reworked Residence 5 (terpene concrete, FourTwenty hemp beds including a king, rugs and a side table), Residence 1 and Tavern 1 clear a path to their front doors, and Tavern 1's loft is opened up.
 - Sensi Heights Tavern level 3: terpene rugs in place of carpets (through the lounge, the bar and every upstairs room), diorite floors and roof, panel ceilings with lamp trim, a deepslate hearth, and rearranged guest rooms (still 36 indoor and 8 outdoor seats).
 - `tools/import_sensi_heights.py` leaves out blueprints listed in `EXCLUDE` (pack decorations that use third-party characters).
