@@ -100,10 +100,13 @@ public final class PathGameTests {
             double bottom = h.getBlockState(p).getShape(h.getLevel(), h.absolutePos(p)).max(Direction.Axis.Y);
             h.setBlock(p, slab.defaultBlockState().setValue(net.minecraft.world.level.block.SlabBlock.TYPE, net.minecraft.world.level.block.state.properties.SlabType.DOUBLE));
             double full = h.getBlockState(p).getShape(h.getLevel(), h.absolutePos(p)).max(Direction.Axis.Y);
+            h.setBlock(p, slab.defaultBlockState().setValue(net.minecraft.world.level.block.SlabBlock.TYPE, net.minecraft.world.level.block.state.properties.SlabType.TOP));
+            double under = h.getBlockState(p).getShape(h.getLevel(), h.absolutePos(p)).min(Direction.Axis.Y);
             h.setBlock(p, stairs.defaultBlockState());
             double stair = h.getBlockState(p).getShape(h.getLevel(), h.absolutePos(p)).max(Direction.Axis.Y);
-            h.assertTrue(Math.abs(bottom - 7 / 16.0) < 1e-6 && Math.abs(full - 15 / 16.0) < 1e-6 && Math.abs(stair - 15 / 16.0) < 1e-6,
-                    "tier " + (t + 1) + " heights: slab " + bottom * 16 + ", double " + full * 16 + ", stairs " + stair * 16);
+            h.assertTrue(Math.abs(bottom - 7 / 16.0) < 1e-6 && Math.abs(full - 15 / 16.0) < 1e-6 && Math.abs(stair - 15 / 16.0) < 1e-6
+                    && Math.abs(under - 7 / 16.0) < 1e-6,
+                    "tier " + (t + 1) + " heights: slab " + bottom * 16 + ", double " + full * 16 + ", top slab from " + under * 16 + ", stairs " + stair * 16);
         }
         h.succeed();
     }
@@ -165,10 +168,156 @@ public final class PathGameTests {
         h.setBlock(corner, Block.updateFromNeighbourShapes(up, h.getLevel(), h.absolutePos(corner)));
         h.assertTrue(h.getBlockState(corner).getValue(StairBlock.SHAPE) == StairsShape.OUTER_LEFT, "test setup: " + h.getBlockState(corner));
         h.assertTrue(edges(h, corner, -1, -1) == (RoadShape.E | RoadShape.S), "the corner's high step: " + edges(h, corner, -1, -1));
-        // Its fronts: the tread fronts south run on across the stair, and round the corner.
-        h.assertTrue(RoadShape.front(h.getBlockState(corner), 1, 1, Direction.SOUTH) == RoadShape.TREAD
-                && RoadShape.frontRunsOn(h.getLevel(), h.absolutePos(corner), h.getBlockState(corner), 1, 1, Direction.SOUTH, Direction.EAST),
-                "the corner's tread front doesn't turn the corner");
+        // Its fronts: the tread front south runs on round the corner.
+        BlockPos at = h.absolutePos(corner);
+        BlockState cs = h.getBlockState(corner);
+        h.assertTrue(RoadShape.stepFace(h.getLevel(), at, cs, 1, 1, Direction.SOUTH) == 7
+                && RoadShape.stepRunsOn(h.getLevel(), at, cs, 1, 1, Direction.SOUTH, Direction.EAST), "the corner's tread front doesn't turn the corner");
         h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aCoveredRoadIsAWallToTheRoadBesideIt(GameTestHelper h) {
+        Block road = ModTerpenes.PATHS.get(0).get();
+        BlockPos a = new BlockPos(1, 2, 1), b = new BlockPos(2, 2, 1);
+        h.setBlock(a, road);
+        h.setBlock(b, road);
+        h.assertTrue((edges(h, a, 1, -1) & RoadShape.E) == 0, "test setup: two roads side by side don't join");
+        h.setBlock(new BlockPos(2, 3, 1), Blocks.STONE);
+        h.assertTrue((edges(h, a, 1, -1) & RoadShape.E) != 0, "a road beside a covered road isn't bordered");
+        h.assertTrue(RoadShape.covered(h.getLevel(), h.absolutePos(b), h.getBlockState(b), -1, -1), "stone on a road doesn't cover it");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void stepFacesRunBetweenBlocks(GameTestHelper h) {
+        Block road = ModTerpenes.PATHS.get(1).get(), slab = ModTerpenes.PATH_SLABS.get(1).get();
+        // Two roads, two bottom slabs east of them: the roads' faces above the slabs are one bordered strip.
+        for (int z = 1; z <= 2; z++) {
+            h.setBlock(new BlockPos(1, 2, z), road);
+            h.setBlock(new BlockPos(2, 2, z), slab.defaultBlockState());
+        }
+        BlockPos r = h.absolutePos(new BlockPos(1, 2, 1));
+        BlockState rs = h.getBlockState(new BlockPos(1, 2, 1));
+        h.assertTrue(RoadShape.stepFace(h.getLevel(), r, rs, 1, 1, Direction.EAST) == (7 << 5 | 15), "no step face above the slab");
+        h.assertTrue(RoadShape.stepRunsOn(h.getLevel(), r, rs, 1, 1, Direction.EAST, Direction.SOUTH), "the step face doesn't run on into the next road's");
+        h.assertTrue(!RoadShape.stepRunsOn(h.getLevel(), r, rs, 1, -1, Direction.EAST, Direction.NORTH), "the step face isn't bordered where it ends");
+        // A top slab beside a bottom slab: flush underneath, its face above the bottom slab a step face too.
+        BlockPos t = new BlockPos(1, 2, 4), u = new BlockPos(2, 2, 4);
+        h.setBlock(t, slab.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP));
+        h.setBlock(u, slab.defaultBlockState());
+        h.assertTrue(RoadShape.stepFace(h.getLevel(), h.absolutePos(t), h.getBlockState(t), 1, -1, Direction.EAST) == (7 << 5 | 15), "no step face on the top slab");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void undersidesBorderByTheirOwnHeights(GameTestHelper h) {
+        Block road = ModTerpenes.PATHS.get(1).get(), slab = ModTerpenes.PATH_SLABS.get(1).get();
+        BlockPos t = new BlockPos(1, 3, 1), r = new BlockPos(2, 3, 1), r2 = new BlockPos(3, 3, 1);
+        h.setBlock(t, slab.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP));
+        h.setBlock(r, road);
+        h.setBlock(r2, road);
+        int slabUnder = RoadShape.underBorder(h.getLevel(), h.absolutePos(t), h.getBlockState(t), 1, -1);
+        int roadUnder = RoadShape.underBorder(h.getLevel(), h.absolutePos(r), h.getBlockState(r), -1, -1);
+        int roadUnder2 = RoadShape.underBorder(h.getLevel(), h.absolutePos(r), h.getBlockState(r), 1, -1);
+        h.assertTrue((slabUnder & RoadShape.E) != 0 && (roadUnder & RoadShape.W) != 0, "a top slab's underside joined a road's");
+        h.assertTrue((roadUnder2 & RoadShape.E) == 0, "two roads' undersides don't join");
+        h.assertTrue((edges(h, t, 1, -1) & RoadShape.E) == 0, "test setup: the top slab's top joins the road's");
+        h.succeed();
+    }
+
+    /** Every road block state to try against every other: roads of two tiers, every slab, every stair; and stone and air. */
+    private static java.util.List<BlockState> everyShape() {
+        java.util.List<BlockState> out = new java.util.ArrayList<>();
+        out.add(ModTerpenes.PATHS.get(0).get().defaultBlockState());
+        out.add(ModTerpenes.PATHS.get(1).get().defaultBlockState());
+        for (SlabType type : SlabType.values()) out.add(ModTerpenes.PATH_SLABS.get(0).get().defaultBlockState().setValue(SlabBlock.TYPE, type));
+        for (Direction f : Direction.Plane.HORIZONTAL) {
+            for (net.minecraft.world.level.block.state.properties.Half half : net.minecraft.world.level.block.state.properties.Half.values()) {
+                for (StairsShape shape : StairsShape.values()) {
+                    out.add(ModTerpenes.PATH_STAIRS.get(0).get().defaultBlockState().setValue(StairBlock.FACING, f)
+                            .setValue(StairBlock.HALF, half).setValue(StairBlock.SHAPE, shape));
+                }
+            }
+        }
+        out.add(Blocks.STONE.defaultBlockState());
+        out.add(Blocks.AIR.defaultBlockState());
+        return out;
+    }
+
+    /**
+     * Every pair of shapes, side by side both ways: joins are two-sided (tops and undersides), a border
+     * running along a joined edge's side carries on across it or turns into a notch, never just stops,
+     * and step faces that run on into each other agree.
+     */
+    @GameTest(template = "empty", timeoutTicks = 400)
+    public static void everyPairOfShapesBordersAsOneSurface(GameTestHelper h) {
+        java.util.List<BlockState> shapes = everyShape();
+        net.minecraft.server.level.ServerLevel level = h.getLevel();
+        BlockPos a = h.absolutePos(new BlockPos(2, 2, 2));
+        java.util.List<String> faults = new java.util.ArrayList<>();
+        for (Direction way : new Direction[]{Direction.EAST, Direction.SOUTH}) {
+            BlockPos b = a.relative(way);
+            for (BlockState sa : shapes) {
+                for (BlockState sb : shapes) {
+                    level.setBlock(a, sa, 2 | 16);
+                    level.setBlock(b, sb, 2 | 16);
+                    check(level, a, way, faults, sa, sb);
+                    if (faults.size() > 20) break;
+                }
+            }
+            level.setBlock(b, Blocks.AIR.defaultBlockState(), 2 | 16);
+        }
+        level.setBlock(a, Blocks.AIR.defaultBlockState(), 2 | 16);
+        h.assertTrue(faults.isEmpty(), faults.size() + " faults, e.g. " + String.join(" | ", faults.subList(0, Math.min(5, faults.size()))));
+        h.succeed();
+    }
+
+    /** Checks every quarter edge across the pair at a (the other block `way` from it) and inside each block. */
+    private static void check(net.minecraft.server.level.ServerLevel level, BlockPos a, Direction way, java.util.List<String> faults, BlockState sa, BlockState sb) {
+        // the edges between quarter P and quarter Q, `way` from P: across the pair, and inside both blocks
+        for (BlockPos p : new BlockPos[]{a, a.relative(way)}) {
+            BlockState ps = level.getBlockState(p);
+            if (RoadShape.tier(ps) < 0) continue;
+            for (int sx : new int[]{-1, 1}) {
+                for (int sz : new int[]{-1, 1}) {
+                    int dx = way.getStepX(), dz = way.getStepZ();
+                    // Q: the quarter `way` from P on the half-block grid
+                    int gx = (sx < 0 ? 0 : 1) + dx, gz = (sz < 0 ? 0 : 1) + dz;
+                    BlockPos qp = p.offset(Math.floorDiv(gx, 2), 0, Math.floorDiv(gz, 2));
+                    BlockState qs = level.getBlockState(qp);
+                    int qx = Math.floorMod(gx, 2) == 0 ? -1 : 1, qz = Math.floorMod(gz, 2) == 0 ? -1 : 1;
+                    if (RoadShape.tier(qs) < 0) continue;
+                    String where = sa.toString().replace("fourtwenty:", "") + " / " + sb.toString().replace("fourtwenty:", "") + " " + way
+                            + " at " + (p.equals(a) ? "a" : "b") + "(" + sx + "," + sz + ")";
+                    boolean pq = RoadShape.joins(level, p, ps, sx, sz, dx, dz), qp2 = RoadShape.joins(level, qp, qs, qx, qz, -dx, -dz);
+                    if (pq != qp2) faults.add("one-sided top join " + where);
+                    boolean upq = RoadShape.joinsUnder(level, p, ps, sx, sz, dx, dz), uqp = RoadShape.joinsUnder(level, qp, qs, qx, qz, -dx, -dz);
+                    if (upq != uqp) faults.add("one-sided underside join " + where);
+                    if (pq) continuity(faults, "top " + where, way, RoadShape.border(level, p, ps, sx, sz), RoadShape.border(level, qp, qs, qx, qz));
+                    if (upq) continuity(faults, "underside " + where, way, RoadShape.underBorder(level, p, ps, sx, sz), RoadShape.underBorder(level, qp, qs, qx, qz));
+                }
+            }
+        }
+    }
+
+    /** Across a joined edge (P to Q, going `way`): each border along it on either side carries on in Q, or one of them turns there. */
+    private static void continuity(java.util.List<String> faults, String where, Direction way, int fp, int fq) {
+        boolean eastWest = way.getAxis() == Direction.Axis.X;
+        int[] sides = eastWest ? new int[]{RoadShape.N, RoadShape.S} : new int[]{RoadShape.W, RoadShape.E};
+        for (int side : sides) {
+            boolean bp = (fp & side) != 0, bq = (fq & side) != 0;
+            if (bp == bq) continue;
+            // the shared corner on that side: P's corner toward Q, Q's toward P (bits NW 16, NE 32, SW 64, SE 128)
+            int pCorner, qCorner;
+            if (eastWest) {
+                pCorner = side == RoadShape.N ? 32 : 128;               // P's NE / SE
+                qCorner = side == RoadShape.N ? 16 : 64;                // Q's NW / SW
+            } else {
+                pCorner = side == RoadShape.W ? 64 : 128;               // P's SW / SE
+                qCorner = side == RoadShape.W ? 16 : 32;                // Q's NW / NE
+            }
+            if ((fp & pCorner) == 0 && (fq & qCorner) == 0) faults.add("border stops short (" + side + ") " + where);
+        }
     }
 }

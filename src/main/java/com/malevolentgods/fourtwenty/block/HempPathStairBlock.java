@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * a ramp of them runs from one road down to the next with no lip. Shapes (straight, inner, outer
  * corner) follow vanilla's stair rule. It's drawn as separate steps, bordered on top and down their
  * fronts, joining whatever's level with them, quarter by quarter ({@link RoadShape}, client.RoadModel).
- * Same speed as its road. Upside-down stairs are the same, mirrored: flush on top, 8/16 under the
+ * Same speed as its road. Upside-down stairs are the same, mirrored: flush on top, 7/16 under the
  * tread.
  */
 public class HempPathStairBlock extends StairBlock {
@@ -66,7 +66,7 @@ public class HempPathStairBlock extends StairBlock {
                 for (int sz : new int[]{-1, 1}) {
                     boolean h = high(s.getValue(FACING), s.getValue(SHAPE), sx, sz);
                     double x0 = sx < 0 ? 0 : 8, z0 = sz < 0 ? 0 : 8;
-                    double y0 = h || !top ? 0 : 8, y1 = h || top ? 15 : 7;
+                    double y0 = h || !top ? 0 : 7, y1 = h || top ? 15 : 7;
                     out = Shapes.or(out, Block.box(x0, y0, z0, x0 + 8, y1, z0 + 8));
                 }
             }

@@ -369,25 +369,38 @@ def front_tile(field, band, thin, half, low, high):
     return img
 
 
-def tops_and_fronts(block, tier, tex_dir, field, band, mitre, rosette, inner):
-    """Every quarter top (per quarter: each set of bordered edges, each set of notches its joined
-    corners allow; the yellow brick road's rosette variant 'r' at a quarter's block corner) and every
-    step front tile, named as RoadModel asks for them."""
-    for old in list(tex_dir.glob(f'{block}_step_*.png')) + list(tex_dir.glob(f'{block}_top_*.png')) + list(tex_dir.glob(f'{block}_front_*.png')):
-        old.unlink()
+FLIP = {'north': 'south', 'south': 'north', 'east': 'east', 'west': 'west', 'nw': 'sw', 'ne': 'se', 'sw': 'nw', 'se': 'ne'}
+
+
+def quarter_combos():
+    """Every (quarter, edge bits, notch bits, edges, notches) a quarter's top or underside can have:
+    any set of bordered edges, and notches at any of the corners whose two edges are both joined."""
     for q in QUARTERS:
         for e in range(16):
             edges = {d for d, b in EDGE_BITS.items() if e & b}
-            free = [c for c in CORNER_BITS if ('north' if c[0] == 'n' else 'south') not in edges and ('west' if c[1] == 'w' else 'east') not in edges]
+            free = {c for c in CORNER_BITS if ('north' if c[0] == 'n' else 'south') not in edges and ('west' if c[1] == 'w' else 'east') not in edges}
             for n in range(16):
                 notches = {c for c, b in CORNER_BITS.items() if n & b}
-                if not notches <= set(free):
-                    continue
-                name = f'{block}_top_{q}_{e:x}{n:x}'
-                quarter_tile(field, band, lambda c: mitre, inner, q, edges, notches).save(tex_dir / f'{name}.png')
-                outer = {'north' if q[0] == 'n' else 'south', 'west' if q[1] == 'w' else 'east'}
-                if rosette and outer <= edges:                  # a road's block corner: the rosette
-                    quarter_tile(field, band, lambda c, q=q: rosette if c == q else mitre, inner, q, edges, notches).save(tex_dir / f'{name}r.png')
+                if notches <= free:
+                    yield q, e, n, edges, notches
+
+
+def tops_and_fronts(block, tier, tex_dir, field, band, mitre, rosette, inner, under, uband, under_mitre, under_inner):
+    """Every quarter top and underside (per quarter: each set of bordered edges, each set of notches its
+    joined corners allow; the yellow brick road's rosette variant 'r' wherever a top's border turns its
+    block corner) and every step face tile, named as RoadModel asks for them. An underside is seen from
+    below: its texture runs north-south the other way, so it's painted on the mirrored quarter."""
+    for pattern in ('step', 'top', 'under', 'front'):
+        for old in tex_dir.glob(f'{block}_{pattern}_*.png'):
+            old.unlink()
+    for q, e, n, edges, notches in quarter_combos():
+        name = f'{block}_top_{q}_{e:x}{n:x}'
+        quarter_tile(field, band, lambda c: mitre, inner, q, edges, notches).save(tex_dir / f'{name}.png')
+        outer = {'north' if q[0] == 'n' else 'south', 'west' if q[1] == 'w' else 'east'}
+        if rosette and outer <= edges:                          # the border turns the block corner: the rosette
+            quarter_tile(field, band, lambda c, q=q: rosette if c == q else mitre, inner, q, edges, notches).save(tex_dir / f'{name}r.png')
+        quarter_tile(under, uband, lambda c: under_mitre, under_inner, FLIP[q], {FLIP[d] for d in edges}, {FLIP[c] for c in notches}) \
+            .save(tex_dir / f'{block}_under_{q}_{e:x}{n:x}.png')
     thin = {(a, d): band[(a, round(d * (BW - 1) / (SW - 1)))] for a in range(T) for d in range(SW)}
     for half in (0, 1):
         for ends in range(4):
@@ -628,7 +641,7 @@ def box_faces(q, y0, y1, up_tex, down_tex, sides, extra=()):
     return {'from': [x0, y0, z0], 'to': [x1, y1, z1], 'faces': faces}
 
 
-SLAB_Y = {'bottom': (0, 7), 'top': (8, 15), 'double': (0, 15)}
+SLAB_Y = {'bottom': (0, 7), 'top': (7, 15), 'double': (0, 15)}
 
 
 def slab_part(q, case, kind):
@@ -728,7 +741,8 @@ def generate(preview=None):
             img.save(tex_dir / f'{block}_{case}.png')
             textures[block][case] = img
             case_texture(under, uband, under_mitre, case, under_inner).save(tex_dir / f'{block}_bottom_{case}.png')
-        tops_and_fronts(block, tier, tex_dir, field, band, mitre, corner_rosette_paint if tier == 2 else None, inner_paint)
+        tops_and_fronts(block, tier, tex_dir, field, band, mitre, corner_rosette_paint if tier == 2 else None, inner_paint,
+                        under, uband, under_mitre, under_inner)
         for corners, img in ((False, side_texture(tier, rng, False)), (True, side_texture(tier, rng, True))):
             name = f'{block}_side' + ('_corner' if corners else '')
             img.save(tex_dir / f'{name}.png')

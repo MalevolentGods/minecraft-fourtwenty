@@ -16,14 +16,14 @@ import javax.annotation.Nonnull;
 
 /**
  * A road slab, sized to the road rather than a full block: a bottom slab is 7/16 high (half a step
- * down from a road), a top slab runs from 8/16 to the road's 15/16, and a double slab is a road's
+ * down from a road), a top slab runs from 7/16 to the road's 15/16 (flush on a bottom slab or a tread beside it), and a double slab is a road's
  * full 15/16. So a top or double slab is flush with a road and joins it ({@link RoadShape}), and
  * bottom slabs join each other; the border runs round the whole surface. Same speed as its road.
  */
 public class HempPathSlabBlock extends SlabBlock implements RoadSurface {
     public static final MapCodec<HempPathSlabBlock> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             Codec.INT.fieldOf("tier").forGetter(b -> b.tier), propertiesCodec()).apply(i, HempPathSlabBlock::new));
-    private static final VoxelShape BOTTOM = Block.box(0, 0, 0, 16, 7, 16), TOP = Block.box(0, 8, 0, 16, 15, 16), DOUBLE = Block.box(0, 0, 0, 16, 15, 16);
+    private static final VoxelShape BOTTOM = Block.box(0, 0, 0, 16, 7, 16), TOP = Block.box(0, 7, 0, 16, 15, 16), DOUBLE = Block.box(0, 0, 0, 16, 15, 16);
 
     private final int tier;
 

@@ -1,6 +1,5 @@
 package com.malevolentgods.fourtwenty.client;
 
-import com.malevolentgods.fourtwenty.block.HempPathStairBlock;
 import com.malevolentgods.fourtwenty.block.RoadShape;
 import com.malevolentgods.fourtwenty.registry.ModTerpenes;
 import net.minecraft.client.Minecraft;
@@ -23,6 +22,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.event.ModelEvent;
@@ -34,41 +35,51 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The model of every road, road slab and road stair state, built as the chunk is drawn: four quarter
- * boxes, each with its top bordered where {@link RoadShape} says the surface ends or steps (one of the
- * quarter-top textures tools/generate_paths.py makes for every arrangement of borders and notches),
- * its underside joined like a road's, its sides the cut through the road (running on as one wall in a
- * stack), and a stair's step fronts bordered strips that run on into the fronts beside them.
- * Quarters: 0 nw, 1 ne, 2 sw, 3 se (bit 0 east, bit 1 south).
+ * The model of every road, road slab and road stair state, built as the chunk is drawn from what
+ * {@link RoadShape} says of each quarter: its top bordered where the surface ends, steps or is
+ * covered (one of the quarter-top textures tools/generate_paths.py makes for every arrangement of
+ * borders and notches), its underside the same, and each side split by the quarter across it: a
+ * bordered step face above a lower step of the road, the cut through the road elsewhere (corner quoins
+ * where two open sides meet, running on as one wall in a stack), and the pixel up to a full block under
+ * anything solid. Quarters: 0 nw, 1 ne, 2 sw, 3 se (bit 0 east, bit 1 south).
  */
 public final class RoadModel implements IDynamicBakedModel {
     private static final ModelProperty<Key> KEY = new ModelProperty<>();
     private static final String[] QUARTERS = {"nw", "ne", "sw", "se"};
-    private static final String[] CASES = {"outer", "ns", "ew", "inner", "full"};
     private static final Direction[] SIDES = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
     private static final FaceBakery BAKERY = new FaceBakery();
+    /** Per-quarter flags in the key. */
+    private static final int COVERED = 1, CAPPED = 2, ON_ROAD = 4, SUPPORTED = 8;
 
-    /** What a block's drawing depends on: per quarter, its top's borders and notches and whether it's stacked (tops); its fronts' open ends (fronts). */
-    private record Key(long tops, int fronts) {}
+    /** What a block's drawing depends on: per quarter its top, underside and flags; per quarter and side what's across it. */
+    private static final class Key {
+        final int[] v;
+
+        Key(int[] v) { this.v = v; }
+
+        @Override public boolean equals(Object o) { return o instanceof Key k && Arrays.equals(v, k.v); }
+
+        @Override public int hashCode() { return Arrays.hashCode(v); }
+    }
 
     private final Textures textures;
     private final BlockState state;
-    private final boolean rosettes;
     private final int[] y0 = new int[4], y1 = new int[4];
     private final Map<Key, List<BakedQuad>[]> quads = new ConcurrentHashMap<>();
+    private volatile Key alone;
 
     private RoadModel(BlockState state, Textures textures) {
         this.state = state;
         this.textures = textures;
-        this.rosettes = textures.rosettes && !(state.getBlock() instanceof HempPathStairBlock);   // the yellow brick road's corners; not on steps
         for (int q = 0; q < 4; q++) {
             y0[q] = RoadShape.bottom(state, sx(q), sz(q));
-            y1[q] = RoadShape.top(state, sx(q), sz(q)) == 7 ? 7 : 15;
+            y1[q] = RoadShape.top(state, sx(q), sz(q));
         }
     }
 
@@ -76,40 +87,40 @@ public final class RoadModel implements IDynamicBakedModel {
 
     private static int sz(int q) { return (q & 2) == 0 ? -1 : 1; }
 
-    @Override public @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData data) {
-        long tops = 0;
-        int fronts = 0;
+    /** A side's packed facts: road across (1), its underside (5 bits) and top (5), covered (1), the step face (10), its open ends (2), the side open to view (1). */
+    private static Key key(BlockGetter level, BlockPos pos, BlockState state) {
+        int[] v = new int[4 * 3 + 16];
         for (int q = 0; q < 4; q++) {
             int sx = sx(q), sz = sz(q);
-            long bits = RoadShape.border(level, pos, state, sx, sz);
-            if (RoadShape.capped(level, pos, state, sx, sz)) bits |= 1 << 8;
-            if (RoadShape.standsOnRoad(level, pos, state, sx, sz)) bits |= 1 << 9;
-            tops |= bits << (10 * q);
+            v[3 * q] = RoadShape.border(level, pos, state, sx, sz);
+            v[3 * q + 1] = RoadShape.underBorder(level, pos, state, sx, sz);
+            v[3 * q + 2] = (RoadShape.covered(level, pos, state, sx, sz) ? COVERED : 0) | (RoadShape.capped(level, pos, state, sx, sz) ? CAPPED : 0)
+                    | (RoadShape.standsOnRoad(level, pos, state, sx, sz) ? ON_ROAD : 0) | (RoadShape.supported(level, pos, state, sx, sz) ? SUPPORTED : 0);
             for (int i = 0; i < SIDES.length; i++) {
                 Direction d = SIDES[i];
-                if (RoadShape.front(state, sx, sz, d) == 0) continue;
-                int open = (RoadShape.frontRunsOn(level, pos, state, sx, sz, d, uLow(d)) ? 1 : 0)
-                        | (RoadShape.frontRunsOn(level, pos, state, sx, sz, d, uLow(d).getOpposite()) ? 2 : 0);
-                fronts |= open << (2 * (4 * q + i));
+                RoadShape.Across a = RoadShape.across(level, pos, state, sx, sz, d);
+                int face = RoadShape.stepFace(level, pos, state, sx, sz, d);
+                int ends = face == 0 ? 0 : (RoadShape.stepRunsOn(level, pos, state, sx, sz, d, uLow(d)) ? 1 : 0)
+                        | (RoadShape.stepRunsOn(level, pos, state, sx, sz, d, uLow(d).getOpposite()) ? 2 : 0);
+                v[12 + 4 * q + i] = (a.road() ? 1 : 0) | a.bottom() << 1 | a.top() << 6 | (a.covered() ? 1 << 11 : 0)
+                        | face << 12 | ends << 22 | (RoadShape.open(level, pos, state, sx, sz, d) ? 1 << 24 : 0);
             }
         }
-        return ModelData.of(KEY, new Key(tops, fronts));
+        return new Key(v);
+    }
+
+    @Override public @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData data) {
+        return ModelData.of(KEY, key(level, pos, state));
     }
 
     @Override public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand,
                                                        @NotNull ModelData data, @Nullable RenderType renderType) {
         Key key = data.get(KEY);
-        return quads.computeIfAbsent(key == null ? new Key(alone(), 0) : key, this::build)[side == null ? 6 : side.ordinal()];
-    }
-
-    /** A lone block's tops (bordered all round, a stair's steps each bordered): for drawing it with no level round it. */
-    private long alone() {
-        long tops = 0;
-        for (int q = 0; q < 4; q++) {
-            int f = RoadShape.N | RoadShape.E | RoadShape.S | RoadShape.W;
-            tops |= (long) f << (10 * q);
+        if (key == null) {                                      // drawn with no level round it (moving, breaking): a lone block
+            if (alone == null) alone = key(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, this.state);
+            key = alone;
         }
-        return tops;
+        return quads.computeIfAbsent(key, this::build)[side == null ? 6 : side.ordinal()];
     }
 
     /** The world side at a face's u = 0 (looking at it from outside). */
@@ -128,48 +139,51 @@ public final class RoadModel implements IDynamicBakedModel {
         for (int i = 0; i < 7; i++) out[i] = new ArrayList<>();
         for (int q = 0; q < 4; q++) {
             int sx = sx(q), sz = sz(q);
-            int bits = (int) (key.tops() >> (10 * q)) & 0x3ff, border = bits & 0xff;
-            boolean up = (bits & 256) != 0, down = (bits & 512) != 0;
+            int top = key.v[3 * q], under = key.v[3 * q + 1], flags = key.v[3 * q + 2];
             float x0 = sx < 0 ? 0 : 8, z0 = sz < 0 ? 0 : 8, x1 = x0 + 8, z1 = z0 + 8;
             int lo = y0[q], hi = y1[q];
-            // Top: this quarter's piece of the bordered surface.
-            boolean rosette = rosettes && (border & (sz < 0 ? RoadShape.N : RoadShape.S)) != 0 && (border & (sx < 0 ? RoadShape.W : RoadShape.E)) != 0;
-            String top = String.format("top_%s_%x%x%s", QUARTERS[q], border & 15, border >> 4, rosette ? "r" : "");
-            add(out, null, x0, hi, z0, x1, hi, z1, Direction.UP, new float[]{0, 0, 16, 16}, textures.sprite(top));
-            // Underside: joined like a road's, at the block's edges.
-            String under = "bottom_" + CASES[RoadShape.caseOf(border, sx, sz)];
-            add(out, lo == 0 ? Direction.DOWN : null, x0, lo, z0, x1, lo, z1, Direction.DOWN, new float[]{x0, 16 - z1, x1, 16 - z0}, textures.sprite(under));
-            // Outer sides: the cut through the road (quoins at a convex corner), or a stair's step front.
-            boolean corner = (border & (sz < 0 ? RoadShape.N : RoadShape.S)) != 0 && (border & (sx < 0 ? RoadShape.W : RoadShape.E)) != 0;
-            String stack = (up ? "u" : "") + (down ? "d" : "");
-            String side = "side" + (corner ? "_corner" : "") + (stack.isEmpty() ? "" : "_" + stack);
+            Direction ns = sz < 0 ? Direction.NORTH : Direction.SOUTH, ew = sx < 0 ? Direction.WEST : Direction.EAST;
+            // Top, unless something stands on it: the yellow brick road's rosette where its border turns a block corner.
+            if ((flags & COVERED) == 0) {
+                boolean rosette = textures.rosettes && (top & bit(ns)) != 0 && (top & bit(ew)) != 0;
+                String name = String.format("top_%s_%x%x%s", QUARTERS[q], top & 15, top >> 4, rosette ? "r" : "");
+                add(out, null, Direction.UP, x0, hi, z0, x1, hi, z1, new float[]{0, 0, 16, 16}, textures.sprite(name));
+            }
+            // Underside, unless it rests on something.
+            if ((flags & SUPPORTED) == 0) {
+                String name = String.format("under_%s_%x%x", QUARTERS[q], under & 15, under >> 4);
+                add(out, lo == 0 ? Direction.DOWN : null, Direction.DOWN, x0, lo, z0, x1, lo, z1, new float[]{0, 0, 16, 16}, textures.sprite(name));
+            }
+            // Sides.
+            String stack = ((flags & CAPPED) != 0 ? "u" : "") + ((flags & ON_ROAD) != 0 ? "d" : "");
             for (int i = 0; i < SIDES.length; i++) {
                 Direction d = SIDES[i];
-                boolean outer = d.getStepX() != 0 ? d.getStepX() == sx : d.getStepZ() == sz;
+                int f = key.v[12 + 4 * q + i];
+                boolean road = (f & 1) != 0, outer = d == ns || d == ew;
+                int aBottom = (f >> 1) & 31, aTop = (f >> 6) & 31, face = (f >> 12) & 1023, ends = (f >> 22) & 3;
                 float[] u = span(d, x0, z0);
-                int kind = RoadShape.front(state, sx, sz, d);
-                int open = (key.fronts() >> (2 * (4 * q + i))) & 3;
-                if (outer) {
-                    if (kind != 0) {
-                        face(out, d, d, x0, lo, z0, x1, hi, z1, new float[]{0, 0, 16, 16}, front(u, open));
-                    } else {
-                        face(out, d, d, x0, lo, z0, x1, hi, z1, new float[]{u[0], 16 - hi, u[1], 16 - lo}, textures.sprite(side));
-                        if (up && hi == 15) {                   // the pixel up to a full block (no cullface: a stair's back hides a 15/16 face, not this)
-                            face(out, null, d, x0, 15, z0, x1, 16, z1, new float[]{u[0], 0, u[1], 1}, textures.sprite(side));
-                        }
+                // The cut: quoins at the block corner where the side round it is open too.
+                Direction round = d == ns ? ew : ns;
+                boolean quoin = outer && (key.v[12 + 4 * q + index(round)] & (1 << 24)) != 0;
+                TextureAtlasSprite cut = textures.sprite("side" + (quoin ? "_corner" : "") + (stack.isEmpty() ? "" : "_" + stack));
+                if (road) {
+                    if (aTop < hi) {                            // above the step across: its face, or the cut where it's a wall
+                        int from = Math.max(aTop, lo);
+                        if (face != 0) side(out, null, d, x0, from, z0, x1, hi, z1, new float[]{0, 0, 16, 16}, front(u, ends));
+                        else side(out, null, d, x0, from, z0, x1, hi, z1, new float[]{u[0], 16 - hi, u[1], 16 - from}, cut);
                     }
-                    continue;
+                    if (aBottom > lo) {                         // under the quarter across, where it overhangs
+                        int to = Math.min(aBottom, hi);
+                        side(out, null, d, x0, lo, z0, x1, to, z1, new float[]{u[0], 16 - to, u[1], 16 - lo}, cut);
+                    }
+                } else if (outer) {
+                    if (face != 0) side(out, d, d, x0, lo, z0, x1, hi, z1, new float[]{0, 0, 16, 16}, front(u, ends));
+                    else side(out, d, d, x0, lo, z0, x1, hi, z1, new float[]{u[0], 16 - hi, u[1], 16 - lo}, cut);
                 }
-                // Inside the block: where this quarter rises above the one beside it (a stair).
-                int other = q ^ (d.getStepX() != 0 ? 1 : 2);
-                if (y1[other] < hi) {                           // a riser, above the lower step
-                    float b = y1[other];
-                    if (kind != 0) face(out, null, d, x0, b, z0, x1, hi, z1, new float[]{0, 0, 16, 16}, front(u, open));
-                    else face(out, null, d, x0, b, z0, x1, hi, z1, new float[]{u[0], 16 - hi, u[1], 16 - b}, textures.sprite("side"));
-                }
-                if (y0[other] > lo) {                           // below an upside-down stair's higher underside
-                    float t = y0[other];
-                    face(out, null, d, x0, lo, z0, x1, t, z1, new float[]{u[0], 16 - t, u[1], 16 - lo}, textures.sprite(down ? "side_d" : "side"));
+                // The pixel up to a full block, where something stands on this quarter (unless the same fills it across).
+                boolean coveredAcross = road && aTop == 15 && (f & (1 << 11)) != 0;
+                if (outer && (flags & COVERED) != 0 && hi == 15 && !coveredAcross) {
+                    side(out, null, d, x0, 15, z0, x1, 16, z1, new float[]{u[0], 0, u[1], 1}, cut);
                 }
             }
         }
@@ -178,7 +192,21 @@ public final class RoadModel implements IDynamicBakedModel {
         return lists;
     }
 
-    /** A step front's tile: the half of the face this quarter's in, bordered at the ends that don't run on. */
+    private static int bit(Direction d) {
+        return switch (d) {
+            case NORTH -> RoadShape.N;
+            case EAST -> RoadShape.E;
+            case SOUTH -> RoadShape.S;
+            default -> RoadShape.W;
+        };
+    }
+
+    private static int index(Direction d) {
+        for (int i = 0; i < SIDES.length; i++) if (SIDES[i] == d) return i;
+        return 0;
+    }
+
+    /** A step face's tile: the half of the face this quarter's in, bordered at the ends that don't run on. */
     private TextureAtlasSprite front(float[] u, int open) {
         int half = u[0] < 8 ? 0 : 1, ends = ((open & 1) == 0 ? 1 : 0) | ((open & 2) == 0 ? 2 : 0);
         return textures.sprite("front_" + half + ends);
@@ -194,14 +222,14 @@ public final class RoadModel implements IDynamicBakedModel {
         };
     }
 
-    /** The face on side `side` of the box (x0, y0, z0)-(x1, y1, z1). */
-    private static void face(List<BakedQuad>[] out, @Nullable Direction cull, Direction side, float x0, float y0, float z0, float x1, float y1, float z1,
+    private static void side(List<BakedQuad>[] out, @Nullable Direction cull, Direction d, float x0, float ya, float z0, float x1, float yb, float z1,
                              float[] uv, TextureAtlasSprite sprite) {
-        add(out, cull, x0, y0, z0, x1, y1, z1, side, uv, sprite);
+        add(out, cull, d, x0, ya, z0, x1, yb, z1, uv, sprite);
     }
 
-    private static void add(List<BakedQuad>[] out, @Nullable Direction cull, float x0, float y0, float z0, float x1, float y1, float z1,
-                            Direction side, float[] uv, TextureAtlasSprite sprite) {
+    /** The face on side `side` of the box (x0, y0, z0)-(x1, y1, z1). */
+    private static void add(List<BakedQuad>[] out, @Nullable Direction cull, Direction side, float x0, float y0, float z0, float x1, float y1, float z1,
+                            float[] uv, TextureAtlasSprite sprite) {
         BlockElementFace face = new BlockElementFace(cull, -1, "", new BlockFaceUV(uv, 0));
         BakedQuad quad = BAKERY.bakeQuad(new Vector3f(x0, y0, z0), new Vector3f(x1, y1, z1), face, sprite, side, BlockModelRotation.X0_Y0, null, true);
         out[cull == null ? 6 : cull.ordinal()].add(quad);
