@@ -186,6 +186,12 @@ public final class RoadModel implements IDynamicBakedModel {
                     if (aBottom > lo) {                         // under the quarter across, where it overhangs
                         wall(out, null, d, x0, lo, z0, x1, Math.min(aBottom, hi), z1, u, cut, reach && lo == 0);
                     }
+                    // Standing on a road block with this side hidden down to the bottom by the road beside it:
+                    // still reach down the pixel to the block below, which is open under the one beside.
+                    boolean reachedDown = (aTop < hi && Math.max(aTop, lo) == 0 && face == 0) || aBottom > lo;
+                    if (outer && reach && lo == 0 && !reachedDown) {
+                        side(out, null, d, x0, -1, z0, x1, 0, z1, new float[]{0, 15, 16, 16}, cut);
+                    }
                 } else if (outer) {
                     if (face != 0) side(out, d, d, x0, reach ? -1 : lo, z0, x1, hi, z1, new float[]{0, 0, 16, 16}, front(u, ends));
                     else wall(out, d, d, x0, lo, z0, x1, hi, z1, u, cut, reach && lo == 0);
