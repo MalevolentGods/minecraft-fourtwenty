@@ -116,7 +116,7 @@ public final class PathGameTests {
         h.setBlock(new BlockPos(1, 2, 1), slab.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP));
         h.setBlock(new BlockPos(3, 2, 1), slab.defaultBlockState());                       // a bottom slab: a step lower, no join
         // A two-wide ramp rising north to the road, down to a road a level lower; and north of the
-        // road a stair facing east, which the road joins whatever its height (the stair has the border).
+        // road a stair facing east: the road joins its high back, and borders its lower tread.
         BlockState up = stairs.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH);
         h.setBlock(new BlockPos(2, 2, 2), up);
         h.setBlock(new BlockPos(3, 2, 2), up);
@@ -125,8 +125,8 @@ public final class PathGameTests {
         h.setBlock(new BlockPos(3, 1, 3), road);
         h.setBlock(new BlockPos(2, 2, 0), stairs.defaultBlockState().setValue(StairBlock.FACING, Direction.EAST));
         h.setBlock(r, road);
-        h.assertTrue(quarter(h, r, -1, -1) == RoadShape.INNER, "road nw: joins the top slab and the stair: " + quarter(h, r, -1, -1));
-        h.assertTrue(quarter(h, r, 1, -1) == RoadShape.EW, "road ne: joins the stair, not the bottom slab: " + quarter(h, r, 1, -1));
+        h.assertTrue(quarter(h, r, -1, -1) == RoadShape.NS, "road nw: joins the top slab, not the stair's tread: " + quarter(h, r, -1, -1));
+        h.assertTrue(quarter(h, r, 1, -1) == RoadShape.EW, "road ne: joins the stair's back, not the bottom slab: " + quarter(h, r, 1, -1));
         h.assertTrue(quarter(h, r, -1, 1) == RoadShape.INNER, "road sw: joins the ramp and the slab: " + quarter(h, r, -1, 1));
         h.assertTrue(quarter(h, r, 1, 1) == RoadShape.EW, "road se: joins the ramp: " + quarter(h, r, 1, 1));
         h.assertTrue(quarter(h, new BlockPos(2, 1, 3), -1, -1) == RoadShape.EW, "the lower road joins the tread above it (nothing under the stair)");

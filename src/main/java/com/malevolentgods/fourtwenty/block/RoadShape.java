@@ -14,8 +14,8 @@ import net.minecraft.world.level.block.state.properties.Half;
  * outer side joins the quarter across it when that's the same road at the same height, and its case
  * (outer corner, edge, inner corner, field) follows from its two sides and its diagonal, as for a
  * road ({@link HempPathBlock}). So a straight stair beside a corner stair, or a road beside a stair's
- * tread, gets its border exactly where the surface steps. A road beside its own stairs joins them
- * whatever their height: the stair draws its own borders and shares them with the road.
+ * tread, gets its border exactly where the surface steps: beside a stair's lower step a road's border
+ * wraps round its end, and joins the stair's own.
  *
  * A ramp carries the road between levels: a tread joins the road (or the stair's back) a level down
  * off its downhill sides, the front of the stair, and for a corner stair also the side away from its
@@ -99,7 +99,7 @@ public final class RoadShape {
         int mx = dx != 0 ? -sx : sx, mz = dz != 0 ? -sz : sz;           // the quarter across, in its block
         BlockPos n = pos.offset(dx, 0, dz);
         BlockState o = level.getBlockState(n);
-        if (tier(o) >= 0) return tier(o) == tier && (top(o, mx, mz) == top || o.getBlock() instanceof HempPathStairBlock);   // shares a stair's borders
+        if (tier(o) >= 0) return tier(o) == tier && top(o, mx, mz) == top;
         // No road beside: a ramp carries it on a level down (off a tread) or up (onto one).
         if (tread(s, sx, sz) && downhill(s, dx, dz)) {
             BlockState below = level.getBlockState(n.below());

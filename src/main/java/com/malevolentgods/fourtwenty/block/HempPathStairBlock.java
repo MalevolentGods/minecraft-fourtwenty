@@ -28,10 +28,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * a ramp of them runs from one road down to the next with no lip. Shapes (straight, inner, outer
  * corner) follow vanilla's stair rule. It's drawn as separate steps, each bordered all round on top
  * and down its front (tools/generate_paths.py). It shares its borders with what carries its road on
- * ({@link #NORTH}, {@link #EAST}, {@link #SOUTH}, {@link #WEST}): its road beside it, and stairs and
- * slabs of its road whose steps meet its own at the same heights, whichever way they face (so a wide
- * flight reads as one and its corner stairs join the flights either side); the road joins it back
- * ({@link RoadShape}). Same speed as its road. Upside-down stairs are the same, mirrored: flush on
+ * ({@link #NORTH}, {@link #EAST}, {@link #SOUTH}, {@link #WEST}): blocks of its road (roads, slabs,
+ * stairs, whichever way they face) whose tops meet its own at the same heights all along the side, so
+ * a wide flight reads as one, its corner stairs join the flights either side, and its high back runs
+ * on into the road behind; the road does the same quarter by quarter ({@link RoadShape}), its border
+ * wrapping round where it meets a lower step. Same speed as its road. Upside-down stairs are the same, mirrored: flush on
  * top, 8/16 under the tread.
  */
 public class HempPathStairBlock extends StairBlock {
@@ -105,18 +106,11 @@ public class HempPathStairBlock extends StairBlock {
         return true;
     }
 
-    /** Whether a block is this stair's road at full height (a road, a top or double slab). */
-    private boolean road(BlockState b) {
-        return b.getBlock() instanceof RoadSurface r && r.tier() == tier && r.surface(b) == 15;
-    }
-
     /**
-     * Whether the block on side d carries this stair on: its road at full height, or another of its
-     * stairs or slabs, whichever way it faces, whose tops meet this one's at the same heights along the
-     * shared edge.
+     * Whether the block on side d carries this stair on: a block of its road (road, slab or stair,
+     * whichever way it faces) whose top meets this one's at the same heights all along the shared edge.
      */
     private boolean joins(BlockState state, BlockState beside, Direction d) {
-        if (road(beside)) return true;
         if (RoadShape.tier(beside) != tier) return false;
         for (int a : new int[]{-1, 1}) {                // the two quarters along the shared edge
             int sx = d.getStepX() != 0 ? d.getStepX() : a, sz = d.getStepZ() != 0 ? d.getStepZ() : a;
