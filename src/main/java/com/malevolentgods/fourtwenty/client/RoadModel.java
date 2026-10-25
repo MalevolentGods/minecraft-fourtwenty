@@ -166,7 +166,8 @@ public final class RoadModel implements IDynamicBakedModel {
                 add(out, lo == 0 ? Direction.DOWN : null, Direction.DOWN, x0, lo, z0, x1, lo, z1, new float[]{0, 0, 16, 16}, textures.sprite(name));
             }
             // Sides.
-            String stack = ((flags & CAPPED) != 0 ? "u" : "") + ((flags & ON_ROAD) != 0 ? "d" : "");
+            // A wall's tile: its top edging at its own top (a low wall's at 7), dropped in a stack; its footing dropped standing on a road block.
+            String stack = (hi == 7 ? "l" : (flags & CAPPED) != 0 ? "u" : "") + ((flags & ON_ROAD) != 0 ? "d" : "");
             boolean reach = (flags & ON_ROAD) != 0;                 // down the pixel to the road block below
             for (int i = 0; i < SIDES.length; i++) {
                 Direction d = SIDES[i];

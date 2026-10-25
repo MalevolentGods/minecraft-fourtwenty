@@ -519,7 +519,19 @@ def stacked_side(img, tier, up, down, corners):
     return out
 
 
-WALL_BANDS = {'n': None, 'f': 0, '7': 7, 'h': 15}       # RoadModel's wall end bands: none, the whole height, from 7, from 15
+WALL_BANDS = {'n': None, 'f': 0, '7': 7, 'h': 15}
+
+
+def low_side(img, tier, down):
+    """A side for a low wall (a bottom slab's, a stair tread's: 0 to 7): the surface's edge along its
+    own top (rows 36 on), then the footing, or the body where it stands on a road block."""
+    out = img.copy()
+    src = (stacked_side(img, tier, False, True, False) if down else img).load()
+    edge, px = img.load(), out.load()
+    for y in range(36, T):
+        for x in range(T):
+            px[x, y] = edge[x, y - 36] if y < 52 else src[x, y]
+    return out       # RoadModel's wall end bands: none, the whole height, from 7, from 15
 
 
 def wall_tile(img, tier, half, low, high):
@@ -773,8 +785,8 @@ def generate(preview=None):
         for old in tex_dir.glob(f'{block}_wall_*.png'):
             old.unlink()
         plain = Image.open(tex_dir / f'{block}_side.png').convert('RGB')
-        for v in ('x',) + tuple(STACKS):
-            img = plain if v == 'x' else stacked_side(plain, tier, *STACKS[v], False)
+        for v in ('x',) + tuple(STACKS) + ('l', 'ld'):
+            img = plain if v == 'x' else low_side(plain, tier, v == 'ld') if v[0] == 'l' else stacked_side(plain, tier, *STACKS[v], False)
             for half in (0, 1):
                 for a, low in WALL_BANDS.items():
                     for b, high in WALL_BANDS.items():
