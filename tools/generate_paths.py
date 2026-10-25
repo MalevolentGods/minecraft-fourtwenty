@@ -88,7 +88,7 @@ def cobble_field(rng):
             base = rng.choice([(138, 132, 122), (150, 142, 128), (122, 118, 112), (160, 150, 134), (132, 124, 110),
                                (118, 126, 100), (164, 138, 104)])          # greys, taupes, a mossy one, an ochre one
             seeds.append((x, y, base, rng.uniform(0.92, 1.08)))
-    earth, earth_dark, grass = (96, 78, 58), (74, 60, 44), (92, 120, 58)
+    earth, earth_dark, grass = (96, 78, 58), (74, 60, 44), (88, 98, 60)      # grass: a muted olive, close to the earth
     img = Image.new('RGB', (T, T))
     px = img.load()
     for y in range(T):
@@ -99,7 +99,7 @@ def cobble_field(rng):
             edge = d2 - d1
             if edge < 2.2:                                  # the joint: packed earth, a little grass
                 c = earth if edge > 1.1 else earth_dark
-                if rng.random() < 0.07:
+                if rng.random() < 0.03:
                     c = grass
             else:
                 _, (vx, vy) = pdist(sx, sy, x + 0.5, y + 0.5)
