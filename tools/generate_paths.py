@@ -746,13 +746,14 @@ def generate(preview=None):
             img.save(tex_dir / f'{block}_{case}.png')
             textures[block][case] = img
             case_texture(under, uband, under_mitre, case, under_inner).save(tex_dir / f'{block}_bottom_{case}.png')
-        # Stair tops, one per arrangement of the high quarters; a step's front uses the north-half one
+        # Stair tops, one per arrangement of the high quarters, mitred (no rosettes: too busy on steps);
+        # a step's front uses the north-half one
         # (a bordered strip) or the north-west one (a bordered square).
         masks = {step_mask([q for q in QUARTERS if stair_high(f, sh, q)]) for f in FACINGS for sh in STAIR_SHAPES}
         for old in tex_dir.glob(f'{block}_step_*.png'):
             old.unlink()
         for mask in sorted(masks):
-            step_texture(field, band, corner_paint, inner_paint, mask.split('_')).save(tex_dir / f'{block}_step_{mask}.png')
+            step_texture(field, band, mitre, inner_paint, mask.split('_')).save(tex_dir / f'{block}_step_{mask}.png')
         side_texture(tier, rng, False).save(tex_dir / f'{block}_side.png')
         side_texture(tier, rng, True).save(tex_dir / f'{block}_side_corner.png')
         # Parts: one per quarter and case, its outer sides drawn, with quoins at a road's corners.
