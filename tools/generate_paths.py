@@ -14,9 +14,17 @@ for ns, round all four corners for outer...) and each quarter shows its own quar
 repeats every block, so the paving runs on unbroken across a whole road, and borders line up block
 to block along an edge.
 
-Writes per tier: 5 top textures (64x64, 4 px per model pixel) and a side texture, 20 quarter models
-(4 quarters x 5 cases), a multipart blockstate, an item model (a lone road: four outer corners), loot,
-a recipe, names, and the fourtwenty:paths / mineable tags. A top-down preview of a sample road per
+Sides are a cut through the road (the surface's own edge on top, what it's laid on, the footing),
+drawn only where a road's side is open, with corner quoins where two open sides meet (a road's outer
+corners). The underside is structural (foundation flagstones, a concrete coffer grid, a brick bed)
+and joins like the top, with a rim round the outside.
+
+Writes per tier: 5 top and 5 underside textures (64x64, 4 px per model pixel), two side textures
+(plain and with corner quoins), 20 quarter models (4 quarters x 5 cases), a multipart blockstate, an item model (a lone road: four outer corners), loot,
+a recipe, names, and the fourtwenty:paths / mineable tags. And its slab and stairs, sized to the road:
+slab quarters at 7/16 (bottom), 8-15/16 (top) and 15/16 (double), joined by the same cases; stairs
+of four quarters, high (15/16) or tread (7/16), each tread's top bordered only on the ramp's open
+side, the step faces and risers showing the surface's edge of the cut. A top-down preview of a sample road per
 tier goes to the path given with --preview. Run again after edits.
 """
 import collections
@@ -297,41 +305,170 @@ def case_texture(field, band, corner_paint, case, inner_paint):
     return img
 
 
-def side_texture(tier, rng):
-    """The road's sides: the surface's top edge over its bed."""
+def strata(tier, rng):
+    """A side face as a cut through the road (64 x 64; rows 0-3 sit above the 15/16 top and never show).
+    The surface's own edge on top, then what it's laid on, down to the footing."""
     img = Image.new('RGB', (T, T))
     px = img.load()
     for y in range(T):
         for x in range(T):
-            if tier == 0:
-                c = (96, 78, 58) if y > 6 else (130, 124, 112)
-                if y > 6 and rng.random() < 0.12:
-                    c = (128, 120, 106)
-            elif tier == 1:
-                c = (150, 150, 154) if y < 8 else ((112, 112, 116) if (y // 16 + x // 32) % 2 else (120, 120, 124))
-                if y >= 8 and (y % 16 == 8 or x % 32 == 0):
-                    c = (88, 88, 92)
-            else:
-                row = (y - 8) // 8
-                xs = (x + (8 if row % 2 else 0)) % T
-                c = (208, 132, 48) if y < 8 else ((236, 196, 74) if (xs // 16 + row) % 3 else (226, 180, 60))
-                if y >= 8 and ((y - 8) % 8 == 0 or xs % 16 == 0):
-                    c = (238, 226, 196)
-            px[x, y] = shade(c, rng.uniform(0.97, 1.03))
+            n = rng.uniform(0.95, 1.05)
+            if tier == 0:                                       # cobble: edging stones, earth, gravel, footing stones
+                if y < 16:
+                    u = x % 16
+                    top = 4 + round(2.5 * (1 - math.cos(2 * math.pi * u / 16)) / 2)   # rounded stone tops
+                    c = (84, 70, 52) if y < top or u in (0, 15) else shade((124, 116, 104), 1.08 if y < top + 3 else 0.96)
+                elif y < 30:
+                    c = (96, 78, 58) if rng.random() > 0.1 else (128, 120, 106)       # packed earth, pebbles
+                elif y < 46:
+                    c = rng.choice([(116, 108, 98), (98, 92, 86), (132, 124, 112)])    # gravel bed
+                else:
+                    u = (x + (12 if (y // 9) % 2 else 0)) % 24
+                    c = (70, 60, 50) if u == 0 or y in (46, 55) else (96, 92, 88)       # rough footing stones
+            elif tier == 1:                                     # paved: kerb, mortar bed, crushed stone, concrete footing
+                if y < 16:
+                    c = (78, 78, 80) if x % 32 == 0 else ((150, 150, 154) if y < 7 else (124, 124, 128))
+                elif y < 19:
+                    c = (92, 92, 96)                                                     # mortar bed
+                elif y < 42:
+                    c = rng.choice([(140, 138, 134), (122, 120, 118), (152, 150, 146)])  # crushed stone base
+                else:
+                    c = (104, 104, 108) if x % 16 == 0 or y == 42 else (132, 132, 136)  # concrete footing, formwork lines
+            else:                                               # yellow brick: soldier bricks, trim, footing, plinth
+                if y < 16:
+                    c = (150, 98, 46) if x % 4 == 0 else shade((198, 136, 64), 1.06 if y < 7 else 0.96)
+                elif y < 20:
+                    c = (214, 168, 58) if y == 18 and x % 8 == 4 else (232, 214, 172)    # cream trim, gold dots
+                elif y < 54:
+                    row = (y - 20) // 8
+                    xs = (x + (8 if row % 2 else 0)) % T
+                    c = (196, 172, 128) if (y - 20) % 8 == 0 or xs % 16 == 0 else ((216, 186, 104) if (xs // 16 + row) % 3 else (204, 172, 96))
+                else:
+                    c = (150, 96, 54) if y == 54 or x % 16 == 0 else (172, 112, 64)      # terracotta plinth
+            px[x, y] = shade(c, n)
     return img
+
+
+def quoin(tier, x, y):
+    """The colour of a corner quoin at column x (0 = the corner, BW wide) of a side face's row y, or None."""
+    if x >= BW:
+        return None
+    if tier == 0:                                               # stacked rough stones
+        course = (y - 4) // 10
+        edge = (y - 4) % 10 == 0 or x == BW - 1
+        return (70, 58, 44) if edge else shade((118, 110, 98) if course % 2 else (106, 100, 92), 1.06 if x < 3 else 0.97)
+    if tier == 1:                                               # a chamfered granite corner block
+        if x == BW - 1 or y in (16, 42):
+            return (84, 84, 88)
+        return (160, 160, 164) if x < 2 else (138, 138, 142)
+    course = (y - 4) // 8                                       # classic long-and-short cream quoins, gold edged
+    width = BW if course % 2 == 0 else BW - 5
+    if x >= width:
+        return None
+    if (y - 4) % 8 == 0 or x == width - 1:
+        return (214, 168, 58)
+    return (236, 222, 186) if x > 0 else (246, 236, 208)
+
+
+def side_texture(tier, rng, corners):
+    """A side face's texture. With corners, a quoin stands at both ends (each side quarter shows the
+    half with its own corner, at that end)."""
+    img = strata(tier, rng)
+    if corners:
+        px = img.load()
+        for y in range(4, T):
+            for x in range(BW):
+                for xx in (x, T - 1 - x):
+                    c = quoin(tier, x, y)
+                    if c is not None:
+                        px[xx, y] = c
+    return img
+
+
+# ---- the underside: structural, and joining like the top -------------------------------------
+
+def cobble_under(rng):
+    """Big foundation flagstones, irregular, bedded in dark earth."""
+    seeds = [((i + 0.5 + rng.uniform(-0.3, 0.3)) * T / 3, (j + 0.5 + rng.uniform(-0.3, 0.3)) * T / 3,
+              rng.choice([(92, 88, 84), (102, 96, 88), (86, 84, 82)])) for i in range(3) for j in range(3)]
+    img = Image.new('RGB', (T, T))
+    px = img.load()
+    for y in range(T):
+        for x in range(T):
+            ds = sorted(pdist(x + 0.5, y + 0.5, sx, sy)[0] for sx, sy, _ in seeds)
+            k = min(range(len(seeds)), key=lambda i: pdist(x + 0.5, y + 0.5, seeds[i][0], seeds[i][1])[0])
+            px[x, y] = (62, 52, 42) if ds[1] - ds[0] < 1.6 else shade(seeds[k][2], rng.uniform(0.95, 1.05))
+    return img
+
+
+def paved_under(rng):
+    """A concrete coffer grid: bevelled 32-pixel panels between ribs."""
+    img = Image.new('RGB', (T, T))
+    px = img.load()
+    for y in range(T):
+        for x in range(T):
+            u, v = x % 32, y % 32
+            if u < 3 or v < 3:
+                c = (146, 146, 150)                                 # the rib
+            elif u < 5 or v < 5:
+                c = (112, 112, 116)                                 # the bevel down into the coffer
+            else:
+                c = shade((124, 124, 128), rng.uniform(0.97, 1.03))
+            px[x, y] = c
+    return img
+
+
+def brick_under(rng):
+    """Deeper ochre bricks in a stretcher bond: the road's brick bed seen from below."""
+    img = Image.new('RGB', (T, T))
+    px = img.load()
+    for y in range(T):
+        row = y // 8
+        for x in range(T):
+            xs = (x + (8 if row % 2 else 0)) % T
+            if y % 8 == 0 or xs % 16 == 0:
+                c = (150, 118, 76)
+            else:
+                c = shade((184, 140, 72) if (xs // 16 + row) % 3 else (172, 128, 64), rng.uniform(0.96, 1.04))
+            px[x, y] = c
+    return img
+
+
+def under_band(tier):
+    """The rim round the outside of the underside (keyed (along, depth) for the north edge)."""
+    band = {}
+    for x in range(T):
+        for d in range(BW):
+            if tier == 0:
+                c = (74, 64, 54) if (x // 6 + d // 4) % 2 else (84, 74, 62)       # a rubble rim
+                if d == BW - 1:
+                    c = (58, 48, 40)
+            elif tier == 1:
+                c = (96, 96, 100) if d == 0 or d == BW - 1 else ((154, 154, 158) if d < 3 else (136, 136, 140))   # perimeter beam
+            else:
+                c = (232, 214, 172) if d in (BW - 3, BW - 2) else ((126, 80, 36) if d == 0 or x % 4 == 0 else (186, 124, 56))   # amber rim, cream bead
+            band[(x, d)] = c
+    return band
 
 
 # ---- models -----------------------------------------------------------------------------------
 
-def quarter_model(q):
+def quarter_model(q, sides):
+    """A quarter of a road: its top and bottom, and the outer sides given (the open ones)."""
     x0, z0, ns, ew, _ = QUARTERS[q]
     x1, z1 = x0 + 8, z0 + 8
     side_uv = {'north': [16 - x1, 1, 16 - x0, 16], 'south': [x0, 1, x1, 16], 'west': [z0, 1, z1, 16], 'east': [16 - z1, 1, 16 - z0, 16]}
     faces = {'up': {'texture': '#top', 'uv': [x0, z0, x1, z1]},
-             'down': {'texture': '#side', 'uv': [x0, z0, x1, z1], 'cullface': 'down'}}
-    for side in (ns, ew):
+             'down': {'texture': '#bottom', 'uv': [x0, 16 - z1, x1, 16 - z0], 'cullface': 'down'}}
+    for side in sides:
         faces[side] = {'texture': '#side', 'uv': side_uv[side], 'cullface': side}
     return {'from': [x0, 0, z0], 'to': [x1, 15, z1], 'faces': faces}
+
+
+def open_sides(q, case):
+    """The quarter's outer sides with no road beside them (only those are drawn)."""
+    _, _, ns, ew, _ = QUARTERS[q]
+    return {'outer': [ns, ew], 'ns': [ns], 'ew': [ew], 'inner': [], 'full': []}[case]
 
 
 def condition(q, case):
@@ -353,12 +490,163 @@ def case_for(conn, q):
     return 'full' if diag in conn else 'inner'
 
 
+# ---- slabs and stairs -------------------------------------------------------------------------
+
+SIDE_DIR = {'north': (0, -1), 'south': (0, 1), 'east': (1, 0), 'west': (-1, 0)}
+FACINGS = ('north', 'east', 'south', 'west')
+CCW = {'north': 'west', 'west': 'south', 'south': 'east', 'east': 'north'}
+CW = {v: k for k, v in CCW.items()}
+STAIR_SHAPES = ('straight', 'inner_left', 'inner_right', 'outer_left', 'outer_right')
+
+
+def box_faces(q, y0, y1, up_tex, down_tex, sides, side_rows, extra=()):
+    """A quarter box from y0 to y1: its top and bottom, the given outer sides and any inner faces (risers)."""
+    x0, z0 = QUARTERS[q][0], QUARTERS[q][1]
+    x1, z1 = x0 + 8, z0 + 8
+    v0, v1 = side_rows
+    span = {'north': (16 - x1, 16 - x0), 'south': (x0, x1), 'west': (z0, z1), 'east': (16 - z1, 16 - z0)}
+    faces = {'up': {'texture': up_tex, 'uv': [x0, z0, x1, z1]},
+             'down': {'texture': down_tex, 'uv': [x0, 16 - z1, x1, 16 - z0]}}
+    if y0 == 0:
+        faces['down']['cullface'] = 'down'
+    for side in sides:
+        u0, u1 = span[side]
+        faces[side] = {'texture': '#side', 'uv': [u0, v0, u1, v1], 'cullface': side}
+    for side in extra:                                          # a riser inside the block: no cullface
+        u0, u1 = span[side]
+        faces[side] = {'texture': '#side', 'uv': [u0, 1, u1, 16]}
+    return {'from': [x0, y0, z0], 'to': [x1, y1, z1], 'faces': faces}
+
+
+SLAB_Y = {'bottom': (0, 7, (1, 8)), 'top': (8, 15, (1, 8)), 'double': (0, 15, (1, 16))}
+
+
+def slab_part(q, case, kind):
+    y0, y1, rows = SLAB_Y[kind]
+    return box_faces(q, y0, y1, '#top', '#bottom', open_sides(q, case), rows)
+
+
+def stair_high(facing, shape, q):
+    """HempPathStairBlock.high: is quarter q at full height for this stair?"""
+    qx, qz = (-1 if QUARTERS[q][0] == 0 else 1), (-1 if QUARTERS[q][1] == 0 else 1)
+    fx, fz = SIDE_DIR[facing]
+    lx, lz = SIDE_DIR[CCW[facing]]
+    back = qx * fx + qz * fz > 0
+    left = qx * lx + qz * lz > 0
+    return {'straight': back, 'outer_left': back and left, 'outer_right': back and not left,
+            'inner_left': back or left, 'inner_right': back or not left}[shape]
+
+
+def stair_model(block, facing, half, shape, left_open, right_open):
+    """A road stair: four quarters, high (15/16) or tread (7/16; upside down 8/16 to 15/16)."""
+    lateral = 'ew' if facing in ('north', 'south') else 'ns'
+    elements, textures = [], {'side': f'fourtwenty:block/path/{block}_side', 'particle': f'fourtwenty:block/path/{block}_side'}
+    for q in QUARTERS:
+        _, _, ns, ew, _ = QUARTERS[q]
+        h = stair_high(facing, shape, q)
+        if half == 'bottom':
+            y0, y1 = (0, 15) if h else (0, 7)
+        else:
+            y0, y1 = (0, 15) if h else (8, 15)
+        # Its top: a border down the ramp's open side, if this quarter is on it (straight stairs).
+        case = 'full'
+        if shape == 'straight':
+            on_left = (ns == CCW[facing] or ew == CCW[facing])
+            on_right = (ns == CW[facing] or ew == CW[facing])
+            if (on_left and left_open) or (on_right and right_open):
+                case = lateral
+        else:
+            case = 'outer' if False else 'full'
+        textures[f'top_{case}'] = f'fourtwenty:block/path/{block}_{case}'
+        textures[f'bottom_{case}'] = f'fourtwenty:block/path/{block}_bottom_{case}'
+        # Outer sides drawn: the front and back, and a lateral side only where the ramp is open.
+        sides = []
+        for side in (ns, ew):
+            if side in (facing, {'north': 'south', 'south': 'north', 'east': 'west', 'west': 'east'}[facing]):
+                sides.append(side)
+            elif shape != 'straight' or (side == CCW[facing] and left_open) or (side == CW[facing] and right_open):
+                sides.append(side)
+        rows = (1, 16) if h else (1, 8)
+        # Risers: a high quarter's face toward a tread quarter beside it in this block.
+        risers = []
+        if h:
+            for side, (dx, dz) in SIDE_DIR.items():
+                qx = QUARTERS[q][0] + dx * 8
+                qz = QUARTERS[q][1] + dz * 8
+                other = next((k for k, v in QUARTERS.items() if (v[0], v[1]) == (qx, qz)), None)
+                if other and not stair_high(facing, shape, other):
+                    risers.append(side)
+        elements.append(box_faces(q, y0, y1, f'#top_{case}', f'#bottom_{case}', sides, rows, risers))
+    return {'parent': 'minecraft:block/block', 'ambientocclusion': True, 'textures': textures, 'elements': elements}
+
+
+def slabs_and_stairs(block, label, names):
+    # Slabs: the road's quarters at a slab's height, joined by the same cases (RoadSurface).
+    parts = []
+    for kind in SLAB_Y:
+        for q in QUARTERS:
+            for case in CASES:
+                side = f'fourtwenty:block/path/{block}_side_corner' if case == 'outer' else f'fourtwenty:block/path/{block}_side'
+                model = f'{block}_slab_{kind}_{q}_{case}'
+                write(ASSETS / f'models/block/{model}.json', {'parent': 'minecraft:block/block', 'ambientocclusion': True,
+                    'textures': {'top': f'fourtwenty:block/path/{block}_{case}', 'bottom': f'fourtwenty:block/path/{block}_bottom_{case}',
+                                 'side': side, 'particle': f'fourtwenty:block/path/{block}_side'},
+                    'elements': [slab_part(q, case, kind)]})
+                parts.append({'when': dict(condition(q, case), type=kind), 'apply': {'model': f'fourtwenty:block/{model}'}})
+    slab = f'{block}_slab'
+    write(ASSETS / f'blockstates/{slab}.json', {'multipart': parts})
+    write(ASSETS / f'models/item/{slab}.json', {'parent': 'minecraft:block/block', 'textures': {
+        'top': f'fourtwenty:block/path/{block}_outer', 'bottom': f'fourtwenty:block/path/{block}_bottom_outer',
+        'side': f'fourtwenty:block/path/{block}_side_corner', 'particle': f'fourtwenty:block/path/{block}_side'},
+        'elements': [slab_part(q, 'outer', 'bottom') for q in QUARTERS]})
+    write(DATA / f'loot_table/blocks/{slab}.json', {'type': 'minecraft:block', 'pools': [{'rolls': 1, 'entries': [{
+        'type': 'minecraft:item', 'name': f'fourtwenty:{slab}', 'functions': [
+            {'function': 'minecraft:set_count', 'count': 2, 'add': False, 'conditions': [{'condition': 'minecraft:block_state_property',
+             'block': f'fourtwenty:{slab}', 'properties': {'type': 'double'}}]},
+            {'function': 'minecraft:explosion_decay'}]}]}]})
+    write(DATA / f'recipe/{slab}.json', {'type': 'minecraft:crafting_shaped', 'category': 'building', 'pattern': ['RRR'],
+        'key': {'R': {'item': f'fourtwenty:{block}'}}, 'result': {'id': f'fourtwenty:{slab}', 'count': 6}})
+    write(DATA / f'recipe/{slab}_from_stonecutting.json', {'type': 'minecraft:stonecutting',
+        'ingredient': {'item': f'fourtwenty:{block}'}, 'result': {'id': f'fourtwenty:{slab}', 'count': 2}})
+    names[slab] = f'{label} Slab'
+    # Stairs.
+    stairs = f'{block}_stairs'
+    parts = []
+    for facing in FACINGS:
+        for half in ('bottom', 'top'):
+            for shape in STAIR_SHAPES:
+                combos = [(lo, ro) for lo in (True, False) for ro in (True, False)] if shape == 'straight' else [(True, True)]
+                for lo, ro in combos:
+                    model = f'{stairs}_{facing}_{half}_{shape}' + (f'_{"l" if lo else ""}{"r" if ro else ""}' if shape == 'straight' else '')
+                    write(ASSETS / f'models/block/{model}.json', stair_model(block, facing, half, shape, lo, ro))
+                    when = {'facing': facing, 'half': half, 'shape': shape}
+                    if shape == 'straight':
+                        when.update(left_open=str(lo).lower(), right_open=str(ro).lower())
+                    parts.append({'when': when, 'apply': {'model': f'fourtwenty:block/{model}'}})
+    write(ASSETS / f'blockstates/{stairs}.json', {'multipart': parts})
+    item = stair_model(block, 'east', 'bottom', 'straight', True, True)
+    write(ASSETS / f'models/item/{stairs}.json', dict(item, parent='minecraft:block/block'))
+    write(DATA / f'loot_table/blocks/{stairs}.json', {'type': 'minecraft:block', 'pools': [{'rolls': 1, 'entries': [
+        {'type': 'minecraft:item', 'name': f'fourtwenty:{stairs}'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
+    write(DATA / f'recipe/{stairs}.json', {'type': 'minecraft:crafting_shaped', 'category': 'building', 'pattern': ['R  ', 'RR ', 'RRR'],
+        'key': {'R': {'item': f'fourtwenty:{block}'}}, 'result': {'id': f'fourtwenty:{stairs}', 'count': 4}})
+    write(DATA / f'recipe/{stairs}_from_stonecutting.json', {'type': 'minecraft:stonecutting',
+        'ingredient': {'item': f'fourtwenty:{block}'}, 'result': {'id': f'fourtwenty:{stairs}', 'count': 1}})
+    names[stairs] = f'{label} Stairs'
+    return [slab, stairs]
+
+
 # ---- generate ---------------------------------------------------------------------------------
 
 def generate(preview=None):
     tex_dir = ASSETS / 'textures/block/path'
     tex_dir.mkdir(parents=True, exist_ok=True)
+    for q in QUARTERS:                                          # the old shared quarter parents
+        old = ASSETS / f'models/block/path_quarter_{q}.json'
+        if old.exists():
+            old.unlink()
     names = collections.OrderedDict()
+    extra_blocks = []
     builders = [(cobble_field, cobble_band), (paved_field, paved_band), (brick_field, brick_band)]
     textures = {}
     for tier, ((block, label), (field_fn, band_fn)) in enumerate(zip(TIERS, builders)):
@@ -372,27 +660,36 @@ def generate(preview=None):
         corner_paint = (lambda x, y, r=corner_rosette(): r[(x, y)]) if tier == 2 else mitre
         inner_paint = lambda x, y, b=band, f=fpx: b[(8 + x + y, max(x, y))] if max(x, y) < BW else f[x, y]
         textures[block] = {}
+        under, uband = [cobble_under, paved_under, brick_under][tier](rng), under_band(tier)
+        upx = under.load()
+        under_mitre = lambda x, y, b=uband: b[(x, y)] if x >= y else b[(y, x)]
+        under_inner = lambda x, y, b=uband, f=upx: b[(8 + x + y, max(x, y))] if max(x, y) < BW else f[x, y]
         for case in CASES:
             img = case_texture(field, band, corner_paint, case, inner_paint)
             img.save(tex_dir / f'{block}_{case}.png')
             textures[block][case] = img
-        side_texture(tier, rng).save(tex_dir / f'{block}_side.png')
-        # Models: one per quarter and case.
+            case_texture(under, uband, under_mitre, case, under_inner).save(tex_dir / f'{block}_bottom_{case}.png')
+        side_texture(tier, rng, False).save(tex_dir / f'{block}_side.png')
+        side_texture(tier, rng, True).save(tex_dir / f'{block}_side_corner.png')
+        # Models: one per quarter and case; only the open sides are drawn, with quoins at a road's corners.
         parts = []
         for q in QUARTERS:
-            write(ASSETS / f'models/block/path_quarter_{q}.json', {'parent': 'minecraft:block/block', 'ambientocclusion': True,
-                                                                    'textures': {'particle': '#side'}, 'elements': [quarter_model(q)]})
             for case in CASES:
-                write(ASSETS / f'models/block/{block}_{q}_{case}.json', {'parent': f'fourtwenty:block/path_quarter_{q}', 'textures': {
-                    'top': f'fourtwenty:block/path/{block}_{case}', 'side': f'fourtwenty:block/path/{block}_side'}})
+                side = f'fourtwenty:block/path/{block}_side_corner' if case == 'outer' else f'fourtwenty:block/path/{block}_side'
+                write(ASSETS / f'models/block/{block}_{q}_{case}.json', {'parent': 'minecraft:block/block', 'ambientocclusion': True,
+                    'textures': {'top': f'fourtwenty:block/path/{block}_{case}', 'bottom': f'fourtwenty:block/path/{block}_bottom_{case}',
+                                 'side': side, 'particle': f'fourtwenty:block/path/{block}_side'},
+                    'elements': [quarter_model(q, open_sides(q, case))]})
                 parts.append({'when': condition(q, case), 'apply': {'model': f'fourtwenty:block/{block}_{q}_{case}'}})
         write(ASSETS / f'blockstates/{block}.json', {'multipart': parts})
         write(ASSETS / f'models/item/{block}.json', {'parent': 'minecraft:block/block', 'textures': {
-            'top': f'fourtwenty:block/path/{block}_outer', 'side': f'fourtwenty:block/path/{block}_side', 'particle': f'fourtwenty:block/path/{block}_side'},
-            'elements': [quarter_model(q) for q in QUARTERS]})
+            'top': f'fourtwenty:block/path/{block}_outer', 'bottom': f'fourtwenty:block/path/{block}_bottom_outer',
+            'side': f'fourtwenty:block/path/{block}_side_corner', 'particle': f'fourtwenty:block/path/{block}_side'},
+            'elements': [quarter_model(q, open_sides(q, 'outer')) for q in QUARTERS]})
         write(DATA / f'loot_table/blocks/{block}.json', {'type': 'minecraft:block', 'pools': [{'rolls': 1, 'entries': [
             {'type': 'minecraft:item', 'name': f'fourtwenty:{block}'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
         names[block] = label
+        extra_blocks.extend(slabs_and_stairs(block, label, names))
     # Recipes: a cheap path, upgraded tier by tier.
     write(DATA / 'recipe/cobble_path.json', {'type': 'minecraft:crafting_shapeless', 'category': 'building', 'ingredients': [
         {'item': 'minecraft:cobblestone'}, {'item': 'minecraft:cobblestone'}, {'item': 'minecraft:gravel'}, {'item': 'minecraft:gravel'},
@@ -403,11 +700,19 @@ def generate(preview=None):
     write(DATA / 'recipe/yellow_brick_road.json', {'type': 'minecraft:crafting_shaped', 'category': 'building',
         'pattern': ['PPP', 'PGP', 'PPP'], 'key': {'P': {'item': 'fourtwenty:paved_road'}, 'G': {'item': 'minecraft:gold_ingot'}},
         'result': {'id': 'fourtwenty:yellow_brick_road', 'count': 8}})
-    write(DATA / 'tags/item/paths.json', {'replace': False, 'values': [f'fourtwenty:{b}' for b, _ in TIERS]})
-    write(DATA / 'tags/block/paths.json', {'replace': False, 'values': [f'fourtwenty:{b}' for b, _ in TIERS]})
+    every = [f'fourtwenty:{b}' for b, _ in TIERS] + [f'fourtwenty:{b}' for b in extra_blocks]
+    write(DATA / 'tags/item/paths.json', {'replace': False, 'values': every})
+    write(DATA / 'tags/block/paths.json', {'replace': False, 'values': every})
+    for kind in ('slabs', 'stairs'):                            # vanilla's tags, so they behave as slabs and stairs
+        ids = [f'fourtwenty:{b}' for b in extra_blocks if b.endswith('_slab' if kind == 'slabs' else '_stairs')]
+        for reg in ('block', 'item'):
+            f = RES / f'data/minecraft/tags/{reg}/{kind}.json'
+            current = json.loads(f.read_text(encoding='utf-8')) if f.exists() else {'replace': False, 'values': []}
+            current['values'] = sorted(set(current['values']) | set(ids))
+            write(f, current)
     pick = RES / 'data/minecraft/tags/block/mineable/pickaxe.json'
     current = json.loads(pick.read_text(encoding='utf-8'))
-    current['values'] = sorted(set(current['values']) | {f'fourtwenty:{b}' for b, _ in TIERS})
+    current['values'] = sorted(set(current['values']) | set(every))
     write(pick, current)
     lang = ASSETS / 'lang/en_us.json'
     data = json.loads(lang.read_text(encoding='utf-8'), object_pairs_hook=collections.OrderedDict)
@@ -416,7 +721,7 @@ def generate(preview=None):
     lang.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     if preview:
         save_preview(preview, textures)
-    print(f'{len(TIERS)} roads, {len(TIERS) * 4 * len(CASES)} quarter models')
+    print(f'{len(TIERS)} roads with slabs and stairs ({len(extra_blocks)} more blocks)')
 
 
 def save_preview(path, textures):

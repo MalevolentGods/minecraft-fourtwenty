@@ -1,0 +1,708 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_bottom_straight_lr"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_bottom_straight_l"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_bottom_straight_r"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_bottom_straight_"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "bottom",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_bottom_inner_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "bottom",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_bottom_inner_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "bottom",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_bottom_outer_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "bottom",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_bottom_outer_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_top_straight_lr"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_top_straight_l"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_top_straight_r"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_top_straight_"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "top",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_top_inner_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "top",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_top_inner_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "top",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_top_outer_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "top",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_north_top_outer_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_bottom_straight_lr"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_bottom_straight_l"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_bottom_straight_r"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_bottom_straight_"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "bottom",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_bottom_inner_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "bottom",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_bottom_inner_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "bottom",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_bottom_outer_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "bottom",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_bottom_outer_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_top_straight_lr"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_top_straight_l"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_top_straight_r"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_top_straight_"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "top",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_top_inner_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "top",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_top_inner_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "top",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_top_outer_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "top",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_east_top_outer_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_bottom_straight_lr"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_bottom_straight_l"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_bottom_straight_r"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_bottom_straight_"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "bottom",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_bottom_inner_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "bottom",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_bottom_inner_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "bottom",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_bottom_outer_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "bottom",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_bottom_outer_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_top_straight_lr"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_top_straight_l"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_top_straight_r"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_top_straight_"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "top",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_top_inner_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "top",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_top_inner_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "top",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_top_outer_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "top",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_south_top_outer_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_bottom_straight_lr"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_bottom_straight_l"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_bottom_straight_r"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "bottom",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_bottom_straight_"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "bottom",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_bottom_inner_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "bottom",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_bottom_inner_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "bottom",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_bottom_outer_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "bottom",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_bottom_outer_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_top_straight_lr"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "true",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_top_straight_l"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_top_straight_r"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "top",
+        "shape": "straight",
+        "left_open": "false",
+        "right_open": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_top_straight_"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "top",
+        "shape": "inner_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_top_inner_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "top",
+        "shape": "inner_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_top_inner_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "top",
+        "shape": "outer_left"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_top_outer_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "top",
+        "shape": "outer_right"
+      },
+      "apply": {
+        "model": "fourtwenty:block/paved_road_stairs_west_top_outer_right"
+      }
+    }
+  ]
+}

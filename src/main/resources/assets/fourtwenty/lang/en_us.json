@@ -1315,5 +1315,11 @@
   "commands.fourtwenty.sit.failed": "You can't sit here: stand on solid ground (or a free couch), out of the water.",
   "block.fourtwenty.cobble_path": "Cobble Path",
   "block.fourtwenty.paved_road": "Paved Road",
-  "block.fourtwenty.yellow_brick_road": "Yellow Brick Road"
+  "block.fourtwenty.yellow_brick_road": "Yellow Brick Road",
+  "block.fourtwenty.cobble_path_slab": "Cobble Path Slab",
+  "block.fourtwenty.cobble_path_stairs": "Cobble Path Stairs",
+  "block.fourtwenty.paved_road_slab": "Paved Road Slab",
+  "block.fourtwenty.paved_road_stairs": "Paved Road Stairs",
+  "block.fourtwenty.yellow_brick_road_slab": "Yellow Brick Road Slab",
+  "block.fourtwenty.yellow_brick_road_stairs": "Yellow Brick Road Stairs"
 }

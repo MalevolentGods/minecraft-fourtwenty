@@ -3,6 +3,12 @@
   "values": [
     "fourtwenty:cobble_path",
     "fourtwenty:paved_road",
-    "fourtwenty:yellow_brick_road"
+    "fourtwenty:yellow_brick_road",
+    "fourtwenty:cobble_path_slab",
+    "fourtwenty:cobble_path_stairs",
+    "fourtwenty:paved_road_slab",
+    "fourtwenty:paved_road_stairs",
+    "fourtwenty:yellow_brick_road_slab",
+    "fourtwenty:yellow_brick_road_stairs"
   ]
 }

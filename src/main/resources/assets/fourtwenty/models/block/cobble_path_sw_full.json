@@ -1,7 +1,45 @@
 {
-  "parent": "fourtwenty:block/path_quarter_sw",
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
   "textures": {
     "top": "fourtwenty:block/path/cobble_path_full",
-    "side": "fourtwenty:block/path/cobble_path_side"
-  }
+    "bottom": "fourtwenty:block/path/cobble_path_bottom_full",
+    "side": "fourtwenty:block/path/cobble_path_side",
+    "particle": "fourtwenty:block/path/cobble_path_side"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        8
+      ],
+      "to": [
+        8,
+        15,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#top",
+          "uv": [
+            0,
+            8,
+            8,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#bottom",
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "cullface": "down"
+        }
+      }
+    }
+  ]
 }

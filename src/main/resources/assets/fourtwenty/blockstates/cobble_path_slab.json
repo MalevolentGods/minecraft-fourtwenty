@@ -1,0 +1,628 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "north": "false",
+        "west": "false",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_nw_outer"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "west": "true",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_nw_ns"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "west": "false",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_nw_ew"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "west": "true",
+        "northwest": "false",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_nw_inner"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "west": "true",
+        "northwest": "true",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_nw_full"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_ne_outer"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_ne_ns"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_ne_ew"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "northeast": "false",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_ne_inner"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "northeast": "true",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_ne_full"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "false",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_sw_outer"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "true",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_sw_ns"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "west": "false",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_sw_ew"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "west": "true",
+        "southwest": "false",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_sw_inner"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "west": "true",
+        "southwest": "true",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_sw_full"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "east": "false",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_se_outer"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "east": "true",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_se_ns"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "east": "false",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_se_ew"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "east": "true",
+        "southeast": "false",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_se_inner"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "east": "true",
+        "southeast": "true",
+        "type": "bottom"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_bottom_se_full"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "west": "false",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_nw_outer"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "west": "true",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_nw_ns"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "west": "false",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_nw_ew"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "west": "true",
+        "northwest": "false",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_nw_inner"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "west": "true",
+        "northwest": "true",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_nw_full"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_ne_outer"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_ne_ns"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_ne_ew"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "northeast": "false",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_ne_inner"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "northeast": "true",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_ne_full"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "false",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_sw_outer"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "true",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_sw_ns"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "west": "false",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_sw_ew"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "west": "true",
+        "southwest": "false",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_sw_inner"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "west": "true",
+        "southwest": "true",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_sw_full"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "east": "false",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_se_outer"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "east": "true",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_se_ns"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "east": "false",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_se_ew"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "east": "true",
+        "southeast": "false",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_se_inner"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "east": "true",
+        "southeast": "true",
+        "type": "top"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_top_se_full"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "west": "false",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_nw_outer"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "west": "true",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_nw_ns"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "west": "false",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_nw_ew"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "west": "true",
+        "northwest": "false",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_nw_inner"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "west": "true",
+        "northwest": "true",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_nw_full"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_ne_outer"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_ne_ns"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_ne_ew"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "northeast": "false",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_ne_inner"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "northeast": "true",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_ne_full"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "false",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_sw_outer"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "true",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_sw_ns"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "west": "false",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_sw_ew"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "west": "true",
+        "southwest": "false",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_sw_inner"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "west": "true",
+        "southwest": "true",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_sw_full"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "east": "false",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_se_outer"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "east": "true",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_se_ns"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "east": "false",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_se_ew"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "east": "true",
+        "southeast": "false",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_se_inner"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "east": "true",
+        "southeast": "true",
+        "type": "double"
+      },
+      "apply": {
+        "model": "fourtwenty:block/cobble_path_slab_double_se_full"
+      }
+    }
+  ]
+}

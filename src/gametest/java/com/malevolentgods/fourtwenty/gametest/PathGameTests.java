@@ -1,6 +1,7 @@
 package com.malevolentgods.fourtwenty.gametest;
 
 import com.malevolentgods.fourtwenty.block.HempPathBlock;
+import com.malevolentgods.fourtwenty.block.HempPathStairBlock;
 import com.malevolentgods.fourtwenty.registry.ModTerpenes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -81,6 +82,48 @@ public final class PathGameTests {
         BlockState end = h.getBlockState(new BlockPos(2, 2, 1));
         h.assertTrue(end.getValue(HempPathBlock.WEST) && end.getValue(HempPathBlock.SOUTH_WEST) && !end.getValue(HempPathBlock.EAST),
                 "the arm end's connections: " + end);
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void slabsAndStairsAreSizedToTheRoadAndAsFast(GameTestHelper h) {
+        for (int t = 0; t < 3; t++) {
+            Block road = ModTerpenes.PATHS.get(t).get(), slab = ModTerpenes.PATH_SLABS.get(t).get(), stairs = ModTerpenes.PATH_STAIRS.get(t).get();
+            h.assertTrue(slab.getSpeedFactor() == road.getSpeedFactor() && stairs.getSpeedFactor() == road.getSpeedFactor(), "tier " + (t + 1) + " speeds differ");
+            BlockPos p = new BlockPos(1, 2, 1);
+            h.setBlock(p, slab.defaultBlockState());
+            double bottom = h.getBlockState(p).getShape(h.getLevel(), h.absolutePos(p)).max(Direction.Axis.Y);
+            h.setBlock(p, slab.defaultBlockState().setValue(net.minecraft.world.level.block.SlabBlock.TYPE, net.minecraft.world.level.block.state.properties.SlabType.DOUBLE));
+            double full = h.getBlockState(p).getShape(h.getLevel(), h.absolutePos(p)).max(Direction.Axis.Y);
+            h.setBlock(p, stairs.defaultBlockState());
+            double stair = h.getBlockState(p).getShape(h.getLevel(), h.absolutePos(p)).max(Direction.Axis.Y);
+            h.assertTrue(Math.abs(bottom - 7 / 16.0) < 1e-6 && Math.abs(full - 15 / 16.0) < 1e-6 && Math.abs(stair - 15 / 16.0) < 1e-6,
+                    "tier " + (t + 1) + " heights: slab " + bottom * 16 + ", double " + full * 16 + ", stairs " + stair * 16);
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void topSlabsJoinRoadsAndRoadsJoinTheirRamps(GameTestHelper h) {
+        Block road = ModTerpenes.PATHS.get(1).get(), slab = ModTerpenes.PATH_SLABS.get(1).get();
+        HempPathStairBlock stairs = (HempPathStairBlock) ModTerpenes.PATH_STAIRS.get(1).get();
+        BlockPos r = new BlockPos(2, 2, 1);
+        h.setBlock(new BlockPos(1, 2, 1), slab.defaultBlockState().setValue(net.minecraft.world.level.block.SlabBlock.TYPE, net.minecraft.world.level.block.state.properties.SlabType.TOP));
+        h.setBlock(new BlockPos(3, 2, 1), slab.defaultBlockState());                       // a bottom slab: a step lower, no join
+        // A two-wide ramp rising north to the road: stairs at (2,2,2) and (3,2,2), and one beside the road facing east (no join).
+        BlockState up = stairs.defaultBlockState().setValue(net.minecraft.world.level.block.StairBlock.FACING, Direction.NORTH);
+        h.setBlock(new BlockPos(2, 2, 2), up);
+        h.setBlock(new BlockPos(3, 2, 2), up);
+        h.setBlock(new BlockPos(2, 2, 0), stairs.defaultBlockState().setValue(net.minecraft.world.level.block.StairBlock.FACING, Direction.EAST));
+        h.setBlock(r, ((HempPathBlock) road).connected(h.getLevel(), h.absolutePos(r), road.defaultBlockState()));
+        BlockState s = h.getBlockState(r);
+        h.assertTrue(s.getValue(HempPathBlock.WEST), "a top slab at the road's height doesn't join it");
+        h.assertTrue(!s.getValue(HempPathBlock.EAST), "a bottom slab joined the road");
+        h.assertTrue(s.getValue(HempPathBlock.SOUTH) && s.getValue(HempPathBlock.SOUTH_EAST), "the ramp leading up doesn't join the road");
+        h.assertTrue(!s.getValue(HempPathBlock.NORTH), "a stair beside the road (not leading up to it) joined it");
+        BlockState left = h.getBlockState(new BlockPos(2, 2, 2)), right = h.getBlockState(new BlockPos(3, 2, 2));
+        h.assertTrue(left.getValue(HempPathStairBlock.LEFT_OPEN) && !left.getValue(HempPathStairBlock.RIGHT_OPEN)
+                && !right.getValue(HempPathStairBlock.LEFT_OPEN) && right.getValue(HempPathStairBlock.RIGHT_OPEN), "the ramp's open sides: " + left + " / " + right);
         h.succeed();
     }
 }

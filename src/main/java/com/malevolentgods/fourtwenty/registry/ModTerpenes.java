@@ -135,9 +135,23 @@ public final class ModTerpenes {
     public static final java.util.List<DeferredHolder<Block, Block>> PATHS = java.util.List.of(
             register("cobble_path", () -> path(1)), register("paved_road", () -> path(2)), register("yellow_brick_road", () -> path(3)));
 
+    /** Road slabs and stairs, sized to the roads (HempPathSlabBlock, HempPathStairBlock). */
+    public static final java.util.List<DeferredHolder<Block, Block>> PATH_SLABS = java.util.List.of(
+            register("cobble_path_slab", () -> new com.malevolentgods.fourtwenty.block.HempPathSlabBlock(1, roadProperties(1))),
+            register("paved_road_slab", () -> new com.malevolentgods.fourtwenty.block.HempPathSlabBlock(2, roadProperties(2))),
+            register("yellow_brick_road_slab", () -> new com.malevolentgods.fourtwenty.block.HempPathSlabBlock(3, roadProperties(3))));
+    public static final java.util.List<DeferredHolder<Block, Block>> PATH_STAIRS = java.util.List.of(
+            register("cobble_path_stairs", () -> new com.malevolentgods.fourtwenty.block.HempPathStairBlock(1, PATHS.get(0).get().defaultBlockState(), roadProperties(1))),
+            register("paved_road_stairs", () -> new com.malevolentgods.fourtwenty.block.HempPathStairBlock(2, PATHS.get(1).get().defaultBlockState(), roadProperties(2))),
+            register("yellow_brick_road_stairs", () -> new com.malevolentgods.fourtwenty.block.HempPathStairBlock(3, PATHS.get(2).get().defaultBlockState(), roadProperties(3))));
+
     private static Block path(int tier) {
-        return new com.malevolentgods.fourtwenty.block.HempPathBlock(tier, BlockBehaviour.Properties.of().mapColor(tier == 3 ? MapColor.GOLD : MapColor.STONE)
-                .strength(1.2f, 6.0f).requiresCorrectToolForDrops().sound(SoundType.STONE));
+        return new com.malevolentgods.fourtwenty.block.HempPathBlock(tier, roadProperties(tier));
+    }
+
+    private static BlockBehaviour.Properties roadProperties(int tier) {
+        return BlockBehaviour.Properties.of().mapColor(tier == 3 ? MapColor.GOLD : MapColor.STONE)
+                .strength(1.2f, 6.0f).requiresCorrectToolForDrops().sound(SoundType.STONE);
     }
 
     /** Lamps, inverted lamps and lamp trims in the 64 colours (halos in their own colour). */
@@ -220,7 +234,11 @@ public final class ModTerpenes {
                         all.forEach(h -> output.accept(h.items().get(2).get()));
                         RUGS.values().forEach(b -> output.accept(b.get()));
                         COUCHES.values().forEach(b -> output.accept(b.get()));
-                        PATHS.forEach(b -> output.accept(b.get()));
+                        for (int t = 0; t < 3; t++) {
+                            output.accept(PATHS.get(t).get());
+                            output.accept(PATH_SLABS.get(t).get());
+                            output.accept(PATH_STAIRS.get(t).get());
+                        }
                         CONCRETE.values().forEach(b -> output.accept(b.get()));
                         CONCRETE_POWDER.values().forEach(b -> output.accept(b.get()));
                         GLASS.values().forEach(b -> output.accept(b.get()));

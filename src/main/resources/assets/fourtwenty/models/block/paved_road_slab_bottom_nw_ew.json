@@ -1,0 +1,55 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "top": "fourtwenty:block/path/paved_road_ew",
+    "bottom": "fourtwenty:block/path/paved_road_bottom_ew",
+    "side": "fourtwenty:block/path/paved_road_side",
+    "particle": "fourtwenty:block/path/paved_road_side"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        8,
+        7,
+        8
+      ],
+      "faces": {
+        "up": {
+          "texture": "#top",
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ]
+        },
+        "down": {
+          "texture": "#bottom",
+          "uv": [
+            0,
+            8,
+            8,
+            16
+          ],
+          "cullface": "down"
+        },
+        "west": {
+          "texture": "#side",
+          "uv": [
+            0,
+            1,
+            8,
+            8
+          ],
+          "cullface": "west"
+        }
+      }
+    }
+  ]
+}

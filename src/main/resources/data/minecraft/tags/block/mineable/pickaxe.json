@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "fourtwenty:cobble_path",
+    "fourtwenty:cobble_path_slab",
+    "fourtwenty:cobble_path_stairs",
     "fourtwenty:concrete_lav_lav_lav",
     "fourtwenty:concrete_lav_lav_lim",
     "fourtwenty:concrete_lav_lav_myr",
@@ -67,7 +69,11 @@
     "fourtwenty:concrete_pin_pin_myr",
     "fourtwenty:concrete_pin_pin_pin",
     "fourtwenty:paved_road",
+    "fourtwenty:paved_road_slab",
+    "fourtwenty:paved_road_stairs",
     "fourtwenty:terpinator",
-    "fourtwenty:yellow_brick_road"
+    "fourtwenty:yellow_brick_road",
+    "fourtwenty:yellow_brick_road_slab",
+    "fourtwenty:yellow_brick_road_stairs"
   ]
 }

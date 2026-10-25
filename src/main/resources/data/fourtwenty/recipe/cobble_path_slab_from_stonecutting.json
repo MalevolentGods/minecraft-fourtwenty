@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "fourtwenty:cobble_path"
+  },
+  "result": {
+    "id": "fourtwenty:cobble_path_slab",
+    "count": 2
+  }
+}

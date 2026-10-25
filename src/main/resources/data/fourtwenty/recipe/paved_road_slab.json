@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "RRR"
+  ],
+  "key": {
+    "R": {
+      "item": "fourtwenty:paved_road"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:paved_road_slab",
+    "count": 6
+  }
+}

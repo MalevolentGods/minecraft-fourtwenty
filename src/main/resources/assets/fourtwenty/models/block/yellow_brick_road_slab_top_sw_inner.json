@@ -1,0 +1,44 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "top": "fourtwenty:block/path/yellow_brick_road_inner",
+    "bottom": "fourtwenty:block/path/yellow_brick_road_bottom_inner",
+    "side": "fourtwenty:block/path/yellow_brick_road_side",
+    "particle": "fourtwenty:block/path/yellow_brick_road_side"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        8,
+        8
+      ],
+      "to": [
+        8,
+        15,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#top",
+          "uv": [
+            0,
+            8,
+            8,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#bottom",
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ]
+        }
+      }
+    }
+  ]
+}

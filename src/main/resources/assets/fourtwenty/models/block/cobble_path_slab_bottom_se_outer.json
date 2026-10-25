@@ -1,0 +1,65 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "top": "fourtwenty:block/path/cobble_path_outer",
+    "bottom": "fourtwenty:block/path/cobble_path_bottom_outer",
+    "side": "fourtwenty:block/path/cobble_path_side_corner",
+    "particle": "fourtwenty:block/path/cobble_path_side"
+  },
+  "elements": [
+    {
+      "from": [
+        8,
+        0,
+        8
+      ],
+      "to": [
+        16,
+        7,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#top",
+          "uv": [
+            8,
+            8,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#bottom",
+          "uv": [
+            8,
+            0,
+            16,
+            8
+          ],
+          "cullface": "down"
+        },
+        "south": {
+          "texture": "#side",
+          "uv": [
+            8,
+            1,
+            16,
+            8
+          ],
+          "cullface": "south"
+        },
+        "east": {
+          "texture": "#side",
+          "uv": [
+            0,
+            1,
+            8,
+            8
+          ],
+          "cullface": "east"
+        }
+      }
+    }
+  ]
+}
