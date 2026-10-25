@@ -347,7 +347,10 @@ def step_texture(field, bands, high, open_edges=(), thin_axis=None):
                 if kind(ns) != kind(ew):
                     continue                                    # the full band runs through
                 _, paint, _, w = bands[kind(ns)]
-            elif not border[ns] and not border[ew] and (i + di, j + dj) in at and step((i + di, j + dj)) != mine:
+            elif not border[ns] and not border[ew] and ((i + di, j + dj) in at and step((i + di, j + dj)) != mine
+                                                         or (i + di, j) not in at and (i, j + dj) not in at and not mine):
+                # the notch of an L step; or the low step's outer corner joined on both sides (the inside
+                # corner of a ring of stairs), where the two flights' front borders meet
                 _, _, paint, w = bands['thin' if thin_axis else 'full']
             else:
                 continue
