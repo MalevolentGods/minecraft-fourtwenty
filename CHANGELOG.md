@@ -4,6 +4,9 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- Sensi Heights pack v61: the Tavern's and Restaurant's red wool chairs are Heart of the Matter couches (joined into sofas, on the floor of their design), and floor fixes (parquet and log grain, cherry trim facing).
+
 ## [0.9.0] - Hemp Couches and the Restaurant
 
 ### Added
