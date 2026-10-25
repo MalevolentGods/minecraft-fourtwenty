@@ -227,6 +227,31 @@ public final class RoadShape {
         };
     }
 
+    /** How high a quarter's side wall reaches: its top, or on up (99) where a road block stands on it (a stack is one wall). */
+    private static int wallTop(BlockGetter level, BlockPos pos, BlockState s, int sx, int sz) {
+        return capped(level, pos, s, sx, sz) ? 99 : top(s, sx, sz);
+    }
+
+    /**
+     * The corner band at the end toward e of quarter (sx, sz)'s side wall on side d (the cut through the
+     * road), as the height it runs up from: 0 (the whole height), 7 or 15; or -1, none. A wall reads as
+     * one face, bordered round its outline: the band runs up an end where the wall turns an outside
+     * corner or meets another block, and where the wall beside it in the same face is lower, from that
+     * wall's top up (its top border running into the band).
+     */
+    public static int wallEnd(BlockGetter level, BlockPos pos, BlockState s, int sx, int sz, Direction d, Direction e) {
+        Quarter o = step(level, pos, s, sx, sz, e.getStepX(), e.getStepZ());
+        if (tier(o.state) >= 0) {
+            if (tier(o.state) != tier(s)) return 0;                     // another road: a border between them
+            Across front = across(level, o.pos, o.state, o.sx, o.sz, d);
+            if (front.road() && front.bottom() <= bottom(o.state, o.sx, o.sz) && front.top() >= top(o.state, o.sx, o.sz)) return -1;   // an inside corner
+            return wallTop(level, o.pos, o.state, o.sx, o.sz) < wallTop(level, pos, s, sx, sz) ? top(o.state, o.sx, o.sz) : -1;
+        }
+        VoxelShape shape = o.state.getCollisionShape(level, o.pos);
+        if (!shape.isEmpty()) return 0;                                 // the wall runs into another block
+        return open(level, pos, s, sx, sz, e) ? 0 : -1;                 // an outside corner, or it meets a wall round it
+    }
+
     /**
      * Whether quarter (sx, sz)'s side d is open to view over its whole height (lo to hi): nothing of the
      * road across covers it and no other block fills it. Side faces take corner quoins where two open

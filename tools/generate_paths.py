@@ -519,6 +519,27 @@ def stacked_side(img, tier, up, down, corners):
     return out
 
 
+WALL_BANDS = {'n': None, 'f': 0, '7': 7, 'h': 15}       # RoadModel's wall end bands: none, the whole height, from 7, from 15
+
+
+def wall_tile(img, tier, half, low, high):
+    """A side wall's half (32 x 64: the half of the block's width it sits in, its full height): the cut
+    through the road (img, with or without its top edging and footing, as stacked), and a corner band
+    of quoins up each end given, from that height (in pixels) up: where the wall turns a corner, meets
+    another block or rises above the wall beside it."""
+    tile = img.crop((half * (T // 2), 0, half * (T // 2) + T // 2, T))
+    px = tile.load()
+    for end, start in ((0, low), (1, high)):
+        if start is None:
+            continue
+        for y in range(0, (16 - start) * PX):
+            for x in range(BW):
+                c = quoin(tier, x, y if y >= 4 else y + 4)
+                if c is not None:
+                    px[x if end == 0 else T // 2 - 1 - x, y] = c
+    return tile
+
+
 # ---- the underside: structural, and joining like the top -------------------------------------
 
 def cobble_under(rng):
@@ -746,8 +767,18 @@ def generate(preview=None):
         for corners, img in ((False, side_texture(tier, rng, False)), (True, side_texture(tier, rng, True))):
             name = f'{block}_side' + ('_corner' if corners else '')
             img.save(tex_dir / f'{name}.png')
-            for v, (up, down) in STACKS.items():
-                stacked_side(img, tier, up, down, corners).save(tex_dir / f'{name}_{v}.png')
+            for v in STACKS:                                    # (stacked sides are in the wall tiles now)
+                (tex_dir / f'{name}_{v}.png').unlink(missing_ok=True)
+        # Wall tiles (RoadModel): per half of the block's width, stacked or not, each pair of end bands.
+        for old in tex_dir.glob(f'{block}_wall_*.png'):
+            old.unlink()
+        plain = Image.open(tex_dir / f'{block}_side.png').convert('RGB')
+        for v in ('x',) + tuple(STACKS):
+            img = plain if v == 'x' else stacked_side(plain, tier, *STACKS[v], False)
+            for half in (0, 1):
+                for a, low in WALL_BANDS.items():
+                    for b, high in WALL_BANDS.items():
+                        wall_tile(img, tier, half, low, high).save(tex_dir / f'{block}_wall_{half}_{v}_{a}{b}.png')
         # Models: RoadModel draws every placed road, slab and stair from the textures above; the
         # blockstates name a plain block model (a lone block), which the items use too.
         for old in (ASSETS / 'models/block').glob(f'{block}_*.json'):

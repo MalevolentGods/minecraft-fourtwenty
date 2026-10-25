@@ -226,6 +226,26 @@ public final class PathGameTests {
         h.succeed();
     }
 
+    @GameTest(template = "empty")
+    public static void wallsAreBorderedRoundTheirOutline(GameTestHelper h) {
+        Block road = ModTerpenes.PATHS.get(1).get();
+        // A wall two roads long, a second road stacked on its west end: seen from the south.
+        h.setBlock(new BlockPos(1, 2, 1), road);
+        h.setBlock(new BlockPos(2, 2, 1), road);
+        h.setBlock(new BlockPos(1, 3, 1), road);
+        net.minecraft.server.level.ServerLevel level = h.getLevel();
+        BlockPos west = h.absolutePos(new BlockPos(1, 2, 1)), east = h.absolutePos(new BlockPos(2, 2, 1)), top = h.absolutePos(new BlockPos(1, 3, 1));
+        BlockState r = road.defaultBlockState();
+        // The low wall's east end turns a corner: a band the whole height; its west end meets the stack, which rises above it.
+        h.assertTrue(RoadShape.wallEnd(level, east, r, 1, 1, Direction.SOUTH, Direction.EAST) == 0, "no corner band at the wall's end");
+        h.assertTrue(RoadShape.wallEnd(level, east, r, -1, 1, Direction.SOUTH, Direction.WEST) == -1, "a band where the wall runs on into the stack's lower block");
+        h.assertTrue(RoadShape.wallEnd(level, west, r, 1, 1, Direction.SOUTH, Direction.EAST) == 15, "no band up the stack from the lower wall's top: "
+                + RoadShape.wallEnd(level, west, r, 1, 1, Direction.SOUTH, Direction.EAST));
+        h.assertTrue(RoadShape.wallEnd(level, top, r, 1, 1, Direction.SOUTH, Direction.EAST) == 0, "no corner band up the stack's top block");
+        h.assertTrue(RoadShape.wallEnd(level, west, r, 1, 1, Direction.SOUTH, Direction.WEST) == -1, "a band inside one block's wall");
+        h.succeed();
+    }
+
     /** Every road block state to try against every other: roads of two tiers, every slab, every stair; and stone and air. */
     private static java.util.List<BlockState> everyShape() {
         java.util.List<BlockState> out = new java.util.ArrayList<>();

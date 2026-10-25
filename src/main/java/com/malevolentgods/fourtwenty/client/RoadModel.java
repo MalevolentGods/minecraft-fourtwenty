@@ -45,9 +45,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@link RoadShape} says of each quarter: its top bordered where the surface ends, steps or is
  * covered (one of the quarter-top textures tools/generate_paths.py makes for every arrangement of
  * borders and notches), its underside the same, and each side split by the quarter across it: a
- * bordered step face above a lower step of the road, the cut through the road elsewhere (corner quoins
- * where two open sides meet, running on as one wall in a stack), and the pixel up to a full block under
- * anything solid. Quarters: 0 nw, 1 ne, 2 sw, 3 se (bit 0 east, bit 1 south).
+ * bordered step face above a lower step of the road, the cut through the road elsewhere: a wall read as
+ * one face, its top border running along its top and corner bands up its ends where it turns a corner,
+ * meets another block or rises above the wall beside it (wall tiles for every arrangement of those).
+ * Standing on a road block, its faces reach down the pixel to that block's top, so the two read as one
+ * face; under any other solid block, the road below fills that pixel itself. Quarters: 0 nw, 1 ne, 2 sw, 3 se (bit 0 east, bit 1 south).
  */
 public final class RoadModel implements IDynamicBakedModel {
     private static final ModelProperty<Key> KEY = new ModelProperty<>();
@@ -87,7 +89,7 @@ public final class RoadModel implements IDynamicBakedModel {
 
     private static int sz(int q) { return (q & 2) == 0 ? -1 : 1; }
 
-    /** A side's packed facts: road across (1), its underside (5 bits) and top (5), covered (1), the step face (10), its open ends (2), the side open to view (1). */
+    /** A side's packed facts: road across (1), its underside (5 bits) and top (5), covered (1), the step face (10), its open ends (2), the side open to view (1), the wall's end bands (2 + 2). */
     private static Key key(BlockGetter level, BlockPos pos, BlockState state) {
         int[] v = new int[4 * 3 + 16];
         for (int q = 0; q < 4; q++) {
@@ -103,11 +105,20 @@ public final class RoadModel implements IDynamicBakedModel {
                 int ends = face == 0 ? 0 : (RoadShape.stepRunsOn(level, pos, state, sx, sz, d, uLow(d)) ? 1 : 0)
                         | (RoadShape.stepRunsOn(level, pos, state, sx, sz, d, uLow(d).getOpposite()) ? 2 : 0);
                 v[12 + 4 * q + i] = (a.road() ? 1 : 0) | a.bottom() << 1 | a.top() << 6 | (a.covered() ? 1 << 11 : 0)
-                        | face << 12 | ends << 22 | (RoadShape.open(level, pos, state, sx, sz, d) ? 1 << 24 : 0);
+                        | face << 12 | ends << 22 | (RoadShape.open(level, pos, state, sx, sz, d) ? 1 << 24 : 0)
+                        | band(RoadShape.wallEnd(level, pos, state, sx, sz, d, uLow(d))) << 25
+                        | band(RoadShape.wallEnd(level, pos, state, sx, sz, d, uLow(d).getOpposite())) << 27;
             }
         }
         return new Key(v);
     }
+
+    /** A wall end's band, packed: none, the whole height, from 7, from 15. */
+    private static int band(int from) {
+        return from < 0 ? 0 : from == 0 ? 1 : from == 7 ? 2 : 3;
+    }
+
+    private static final String BANDS = "nf7h";
 
     @Override public @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData data) {
         return ModelData.of(KEY, key(level, pos, state));
@@ -156,34 +167,32 @@ public final class RoadModel implements IDynamicBakedModel {
             }
             // Sides.
             String stack = ((flags & CAPPED) != 0 ? "u" : "") + ((flags & ON_ROAD) != 0 ? "d" : "");
+            boolean reach = (flags & ON_ROAD) != 0;                 // down the pixel to the road block below
             for (int i = 0; i < SIDES.length; i++) {
                 Direction d = SIDES[i];
                 int f = key.v[12 + 4 * q + i];
                 boolean road = (f & 1) != 0, outer = d == ns || d == ew;
                 int aBottom = (f >> 1) & 31, aTop = (f >> 6) & 31, face = (f >> 12) & 1023, ends = (f >> 22) & 3;
                 float[] u = span(d, x0, z0);
-                // The cut: quoins at the block corner where the side round it is open too.
-                Direction round = d == ns ? ew : ns;
-                boolean quoin = outer && (key.v[12 + 4 * q + index(round)] & (1 << 24)) != 0;
-                TextureAtlasSprite cut = textures.sprite("side" + (quoin ? "_corner" : "") + (stack.isEmpty() ? "" : "_" + stack));
+                TextureAtlasSprite cut = textures.sprite("wall_" + (u[0] < 8 ? 0 : 1) + "_" + (stack.isEmpty() ? "x" : stack) + "_"
+                        + BANDS.charAt((f >> 25) & 3) + BANDS.charAt((f >> 27) & 3));
                 if (road) {
                     if (aTop < hi) {                            // above the step across: its face, or the cut where it's a wall
                         int from = Math.max(aTop, lo);
                         if (face != 0) side(out, null, d, x0, from, z0, x1, hi, z1, new float[]{0, 0, 16, 16}, front(u, ends));
-                        else side(out, null, d, x0, from, z0, x1, hi, z1, new float[]{u[0], 16 - hi, u[1], 16 - from}, cut);
+                        else wall(out, null, d, x0, from, z0, x1, hi, z1, u, cut, reach && from == 0);
                     }
                     if (aBottom > lo) {                         // under the quarter across, where it overhangs
-                        int to = Math.min(aBottom, hi);
-                        side(out, null, d, x0, lo, z0, x1, to, z1, new float[]{u[0], 16 - to, u[1], 16 - lo}, cut);
+                        wall(out, null, d, x0, lo, z0, x1, Math.min(aBottom, hi), z1, u, cut, reach && lo == 0);
                     }
                 } else if (outer) {
-                    if (face != 0) side(out, d, d, x0, lo, z0, x1, hi, z1, new float[]{0, 0, 16, 16}, front(u, ends));
-                    else side(out, d, d, x0, lo, z0, x1, hi, z1, new float[]{u[0], 16 - hi, u[1], 16 - lo}, cut);
+                    if (face != 0) side(out, d, d, x0, reach ? -1 : lo, z0, x1, hi, z1, new float[]{0, 0, 16, 16}, front(u, ends));
+                    else wall(out, d, d, x0, lo, z0, x1, hi, z1, u, cut, reach && lo == 0);
                 }
-                // The pixel up to a full block, where something stands on this quarter (unless the same fills it across).
+                // The pixel up to a full block, under a solid block that isn't a road block (a road block reaches down itself).
                 boolean coveredAcross = road && aTop == 15 && (f & (1 << 11)) != 0;
-                if (outer && (flags & COVERED) != 0 && hi == 15 && !coveredAcross) {
-                    side(out, null, d, x0, 15, z0, x1, 16, z1, new float[]{u[0], 0, u[1], 1}, cut);
+                if (outer && (flags & COVERED) != 0 && (flags & CAPPED) == 0 && hi == 15 && !coveredAcross) {
+                    side(out, null, d, x0, 15, z0, x1, 16, z1, new float[]{0, 0, 16, 1}, cut);
                 }
             }
         }
@@ -201,11 +210,6 @@ public final class RoadModel implements IDynamicBakedModel {
         };
     }
 
-    private static int index(Direction d) {
-        for (int i = 0; i < SIDES.length; i++) if (SIDES[i] == d) return i;
-        return 0;
-    }
-
     /** A step face's tile: the half of the face this quarter's in, bordered at the ends that don't run on. */
     private TextureAtlasSprite front(float[] u, int open) {
         int half = u[0] < 8 ? 0 : 1, ends = ((open & 1) == 0 ? 1 : 0) | ((open & 2) == 0 ? 2 : 0);
@@ -220,6 +224,13 @@ public final class RoadModel implements IDynamicBakedModel {
             case WEST -> new float[]{z0, z0 + 8};
             default -> new float[]{8 - z0, 16 - z0};
         };
+    }
+
+    /** A wall face from ya to yb (its tile's rows pinned to the block's height), reaching one pixel further down where `reach`. */
+    private static void wall(List<BakedQuad>[] out, @Nullable Direction cull, Direction d, float x0, float ya, float z0, float x1, float yb, float z1,
+                             float[] u, TextureAtlasSprite tile, boolean reach) {
+        side(out, cull, d, x0, ya, z0, x1, yb, z1, new float[]{0, 16 - yb, 16, 16 - ya}, tile);
+        if (reach) side(out, null, d, x0, -1, z0, x1, 0, z1, new float[]{0, 15, 16, 16}, tile);
     }
 
     private static void side(List<BakedQuad>[] out, @Nullable Direction cull, Direction d, float x0, float ya, float z0, float x1, float yb, float z1,
