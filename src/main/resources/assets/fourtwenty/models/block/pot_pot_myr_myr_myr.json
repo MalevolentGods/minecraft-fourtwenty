@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:block/block",
   "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
   "textures": {
     "side": "fourtwenty:block/pot_pot/myr_myr_myr",
     "soil": "fourtwenty:block/pot_pot/soil",

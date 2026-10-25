@@ -141,13 +141,15 @@ def generate(preview=None):
         pot, potted = f'pot_pot_{code}', f'potted_pot_pot_{code}'
         textures = {'side': f'fourtwenty:block/pot_pot/{code}', 'soil': 'fourtwenty:block/pot_pot/soil',
                     'particle': f'fourtwenty:block/pot_pot/{code}'}
-        write(ASSETS / f'models/block/{pot}.json', {'parent': 'minecraft:block/block', 'render_type': 'minecraft:cutout',
+        # No ambient occlusion (as vanilla's flower pot): the potted blockstate takes it from the pot, its first
+        # part, and with it on the plant was shaded dark as if in a corner.
+        write(ASSETS / f'models/block/{pot}.json', {'parent': 'minecraft:block/block', 'render_type': 'minecraft:cutout', 'ambientocclusion': False,
                                                    'textures': textures, 'elements': pot_elements(code)})
         write(ASSETS / f'blockstates/{pot}.json', {'variants': {'': {'model': f'fourtwenty:block/{pot}'}}})
         write(ASSETS / f'blockstates/{potted}.json', {'multipart': [{'apply': {'model': f'fourtwenty:block/{pot}'}}] + [
             {'when': {'age': str(n)}, 'apply': {'model': f'fourtwenty:block/potted_weed_stage{n}'}} for n in range(8)]})
         write(ASSETS / f'models/item/{pot}.json', {'parent': f'fourtwenty:block/{pot}'})
-        write(ASSETS / f'models/item/{potted}.json', {'parent': 'minecraft:block/block', 'render_type': 'minecraft:cutout',
+        write(ASSETS / f'models/item/{potted}.json', {'parent': 'minecraft:block/block', 'render_type': 'minecraft:cutout', 'ambientocclusion': False,
                                                       'textures': dict(textures, plant='fourtwenty:block/weed_crop_stage3'),
                                                       'elements': pot_elements(code) + plant_elements()})
         for block in (pot, potted):
