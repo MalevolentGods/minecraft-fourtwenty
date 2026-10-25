@@ -495,11 +495,11 @@ CW = {v: k for k, v in CCW.items()}
 STAIR_SHAPES = ('straight', 'inner_left', 'inner_right', 'outer_left', 'outer_right')
 
 
-def box_faces(q, y0, y1, up_tex, down_tex, sides, side_rows, extra=()):
+def box_faces(q, y0, y1, up_tex, down_tex, sides, extra=()):
     """A quarter box from y0 to y1: its top and bottom, the given outer sides and any inner faces (risers)."""
     x0, z0 = QUARTERS[q][0], QUARTERS[q][1]
     x1, z1 = x0 + 8, z0 + 8
-    v0, v1 = side_rows
+    v0, v1 = 16 - y1, 16 - y0                                   # the side texture pinned to the block, as on a road's full side
     span = {'north': (16 - x1, 16 - x0), 'south': (x0, x1), 'west': (z0, z1), 'east': (16 - z1, 16 - z0)}
     faces = {'up': {'texture': up_tex, 'uv': [x0, z0, x1, z1]},
              'down': {'texture': down_tex, 'uv': [x0, 16 - z1, x1, 16 - z0]}}
@@ -510,16 +510,16 @@ def box_faces(q, y0, y1, up_tex, down_tex, sides, side_rows, extra=()):
         faces[side] = {'texture': '#side', 'uv': [u0, v0, u1, v1], 'cullface': side}
     for side in extra:                                          # a riser inside the block: no cullface
         u0, u1 = span[side]
-        faces[side] = {'texture': '#side', 'uv': [u0, 1, u1, 16]}
+        faces[side] = {'texture': '#side', 'uv': [u0, v0, u1, v1]}
     return {'from': [x0, y0, z0], 'to': [x1, y1, z1], 'faces': faces}
 
 
-SLAB_Y = {'bottom': (0, 7, (1, 8)), 'top': (8, 15, (1, 8)), 'double': (0, 15, (1, 16))}
+SLAB_Y = {'bottom': (0, 7), 'top': (8, 15), 'double': (0, 15)}
 
 
 def slab_part(q, case, kind):
-    y0, y1, rows = SLAB_Y[kind]
-    return box_faces(q, y0, y1, '#top', '#bottom', open_sides(q, case), rows)
+    y0, y1 = SLAB_Y[kind]
+    return box_faces(q, y0, y1, '#top', '#bottom', open_sides(q, case))
 
 
 def stair_high(facing, shape, q):
@@ -549,7 +549,7 @@ def stair_model(block, facing, half, shape):
                 other = next((k for k, v in QUARTERS.items() if (v[0], v[1]) == (QUARTERS[q][0] + dx * 8, QUARTERS[q][1] + dz * 8)), None)
                 if other and not stair_high(facing, shape, other):
                     risers.append(side)
-        elements.append(box_faces(q, y0, y1, '#top', '#bottom', [ns, ew], (1, 16) if h else (1, 8), risers))
+        elements.append(box_faces(q, y0, y1, '#top', '#bottom', [ns, ew], risers))
     return {'parent': 'minecraft:block/block', 'ambientocclusion': True, 'textures': textures, 'elements': elements}
 
 

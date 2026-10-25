@@ -42,9 +42,9 @@
           "texture": "#side",
           "uv": [
             8,
-            1,
+            9,
             16,
-            8
+            16
           ],
           "cullface": "north"
         },
@@ -52,9 +52,9 @@
           "texture": "#side",
           "uv": [
             0,
-            1,
+            9,
             8,
-            8
+            16
           ],
           "cullface": "west"
         }
@@ -95,9 +95,9 @@
           "texture": "#side",
           "uv": [
             0,
-            1,
+            9,
             8,
-            8
+            16
           ],
           "cullface": "north"
         },
@@ -105,9 +105,9 @@
           "texture": "#side",
           "uv": [
             8,
-            1,
+            9,
             16,
-            8
+            16
           ],
           "cullface": "east"
         }
@@ -148,9 +148,9 @@
           "texture": "#side",
           "uv": [
             0,
-            1,
+            9,
             8,
-            8
+            16
           ],
           "cullface": "south"
         },
@@ -158,9 +158,9 @@
           "texture": "#side",
           "uv": [
             8,
-            1,
+            9,
             16,
-            8
+            16
           ],
           "cullface": "west"
         }
@@ -201,9 +201,9 @@
           "texture": "#side",
           "uv": [
             8,
-            1,
+            9,
             16,
-            8
+            16
           ],
           "cullface": "south"
         },
@@ -211,9 +211,9 @@
           "texture": "#side",
           "uv": [
             0,
-            1,
+            9,
             8,
-            8
+            16
           ],
           "cullface": "east"
         }
