@@ -1,0 +1,69 @@
+package com.malevolentgods.fourtwenty.block;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import javax.annotation.Nonnull;
+
+/**
+ * A road: a path block in three tiers (cobble path, paved road, yellow brick road), each faster to
+ * walk on than the last. Like a dirt path it stands 15/16 high and shapes its light occlusion to
+ * that, so the top pixel row of a block beside it still shows: a lamp or glowstone set flush beside
+ * a road reads as a strip of light along it. Road slabs and stairs ({@link HempPathSlabBlock},
+ * {@link HempPathStairBlock}) keep the same heights, so a road runs on through them.
+ *
+ * Speed: everything that walks on it (players, mobs, colonists) moves 5, 10 or 15% faster. Vanilla
+ * multiplies an entity's velocity by the block's speed factor each tick, and ground friction
+ * (0.6 x 0.91) carries it into the next, so the factor compounds: a factor m gives a steady speed
+ * (1 - 0.546) / (1 - 0.546 m) times normal. {@link #speedFactorFor} solves that for the wanted gain.
+ *
+ * Joining: like the rugs, each quarter of a road's top is drawn as an outer corner, an edge, an inner
+ * corner or field, by which of its neighbours carry on its road ({@link RoadShape}: the same tier with
+ * its top at the same height), so the border runs only round the outside of the whole road. The
+ * client model works that out as the chunk is drawn (tools/generate_paths.py makes its parts).
+ */
+public class HempPathBlock extends Block implements RoadSurface {
+    public static final MapCodec<HempPathBlock> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+            Codec.INT.fieldOf("tier").forGetter(b -> b.tier), propertiesCodec()).apply(i, HempPathBlock::new));
+    protected static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 15, 16);
+    /** Ground friction a walker carries from tick to tick (block friction 0.6 x air drag 0.91). */
+    private static final double CARRY = 0.6 * 0.91;
+
+    private final int tier;
+
+    public HempPathBlock(int tier, Properties properties) {
+        super(properties.speedFactor(speedFactorFor(gainFor(tier))));
+        this.tier = tier;
+    }
+
+    /** The walking speed gain of a tier: 5, 10, 15%. */
+    public static double gainFor(int tier) { return 0.05 * tier; }
+
+    /** The block speed factor that makes an entity's steady walking speed (1 + gain) times normal. */
+    public static float speedFactorFor(double gain) {
+        return (float) ((1 - (1 - CARRY) / (1 + gain)) / CARRY);
+    }
+
+    @Override public int tier() { return tier; }
+
+    @Override public int surface(BlockState state) { return 15; }
+
+    @Override protected @Nonnull MapCodec<? extends Block> codec() { return CODEC; }
+
+    @Override protected @Nonnull VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
+        return SHAPE;
+    }
+
+    /** Light and face culling follow the 15/16 shape, as for a dirt path: the strip above shows. */
+    @Override protected boolean useShapeForLightOcclusion(@Nonnull BlockState state) { return true; }
+
+    @Override protected boolean isPathfindable(@Nonnull BlockState state, @Nonnull PathComputationType type) { return false; }
+}

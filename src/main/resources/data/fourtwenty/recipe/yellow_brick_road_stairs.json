@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "R  ",
+    "RR ",
+    "RRR"
+  ],
+  "key": {
+    "R": {
+      "item": "fourtwenty:yellow_brick_road"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:yellow_brick_road_stairs",
+    "count": 4
+  }
+}

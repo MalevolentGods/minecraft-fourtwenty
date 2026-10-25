@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "RRR"
+  ],
+  "key": {
+    "R": {
+      "item": "fourtwenty:cobble_path"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:cobble_path_slab",
+    "count": 6
+  }
+}

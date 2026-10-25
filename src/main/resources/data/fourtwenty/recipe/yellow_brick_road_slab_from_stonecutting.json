@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "fourtwenty:yellow_brick_road"
+  },
+  "result": {
+    "id": "fourtwenty:yellow_brick_road_slab",
+    "count": 2
+  }
+}

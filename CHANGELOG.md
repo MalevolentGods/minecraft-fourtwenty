@@ -4,6 +4,22 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Roads** in three tiers: Cobble Path, Paved Road, Yellow Brick Road (HempPathBlock), with **road slabs and stairs** (HempPathSlabBlock, HempPathStairBlock). Roads stand 15/16 high like a dirt path, with light occlusion shaped to it, so a lamp beside a road shows a strip of light. Walkers (players, mobs, colonists) are 5, 10 and 15% faster on all three blocks of a tier: the block speed factor is solved for that steady-state gain, since vanilla's factor compounds with ground friction. Slabs are sized to the road (bottom 0-7/16, top 7-15/16, double 15/16), and stairs have 7/16 treads and 15/16 backs, so a ramp runs road to road with no lip.
+- **Roads read as one bordered surface wherever their faces meet** (RoadShape, drawn by the dynamic client model RoadModel, so the blocks carry no join properties). The rule is: faces side by side are one space, and a border runs wherever the next face rises, drops, is covered or is another block. Each quarter of each block is handled separately.
+  - **Tops:** these join any road, slab or stair of the tier at the same height, whichever way it faces. Borders mitre where they meet, and inner-corner notches carry them round where two joined edges meet a gap. Yellow brick road rosettes sit where a border turns a block corner.
+  - **Stairs:** these are drawn as separate steps. Flights, corner stairs, rings and stairs set into a road all join up.
+  - **Undersides:** these join by their own heights.
+  - **Step faces:** a face from a lower step of the road up to a higher one, inside a block or across two, is a bordered strip. Strips run on into each other and round inside and outside corners.
+  - **Side walls:** these are the cut through the road, bordered round their outline, with top edging at their own height. Corner bands run up a wall's end where it turns a corner, meets another block or rises above the wall beside it.
+  - **Stacks:** these read as one wall. A road block standing on a road block draws its faces down the pixel between them, while other blocks underneath leave that gap open. Under any other solid block, a road fills the pixel itself.
+- **Road textures:** 64x64 tiles for every arrangement of borders and notches (tops, undersides, step faces and walls) come from `tools/generate_paths.py`.
+- **Tests:** `PathGameTests` checks the speed on a walking mob, the light strip, slab and stair heights, joins, covered roads, step faces, undersides and wall bands. It also places every pair of road shapes side by side both ways and checks that every join is two-sided and no border stops short at a joined edge. `render_block_model.py --fit 1` frames a whole scene.
+
+### Changed
+- Sensi Heights pack v62: placeholders used the way MineColonies' Colonial style uses them: every building's area is cleared above ground from level 1 (so colonists can walk anywhere in it), with solid fill in and under the ground layer (the level 1 Builder's Hut and Residence keep their terrain-keeping quick builds).
+- Sensi Heights pack v61: the Tavern's and Restaurant's red wool chairs are Heart of the Matter couches (joined into sofas, on the floor of their design), and floor fixes (parquet and log grain, cherry trim facing).
+
 ## [0.9.0] - Hemp Couches and the Restaurant
 
 ### Added

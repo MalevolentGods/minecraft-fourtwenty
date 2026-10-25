@@ -1,6 +1,6 @@
 """Render a Minecraft block model JSON with headless Blender, for checking models by eye.
 
-    blender -b --python tools/render_block_model.py -- <model.json> <out_prefix> [--size 512] [--views fl,fr,bl,br,f,top]
+    blender -b --python tools/render_block_model.py -- <model.json> <out_prefix> [--size 512] [--views fl,fr,bl,br,f,top] [--fit 1]
 
 Builds every element (from/to, rotation, per-face texture and UV) in Blender, shades each face
 the way Minecraft does (top 1.0, north/south 0.8, east/west 0.6, bottom 0.5, as unlit emission),
@@ -37,7 +37,7 @@ def args():
         else:
             pos.append(a[i])
             i += 1
-    return pos[0], pos[1], int(opts['size']), opts['views'].split(',')
+    return pos[0], pos[1], int(opts['size']), opts['views'].split(','), 'fit' in opts and opts['fit'] != '0'
 
 
 def texture_path(ref, textures, depth=0):
@@ -142,7 +142,7 @@ def build(model):
 VIEWS = {'fl': (-45, 30), 'fr': (45, 30), 'bl': (-135, 30), 'br': (135, 30), 'f': (0, 8), 'top': (-30, 70)}
 
 
-def render(out_prefix, size, views):
+def render(out_prefix, size, views, frame=None):
     scene = bpy.context.scene
     scene.render.engine = 'CYCLES'
     scene.cycles.samples = 8
@@ -153,25 +153,25 @@ def render(out_prefix, size, views):
     scene.world = bpy.data.worlds.new('w')
     cam_data = bpy.data.cameras.new('cam')
     cam_data.type = 'ORTHO'
-    cam_data.ortho_scale = 1.75
+    cam_data.ortho_scale = frame[1] if frame else 1.75
     cam = bpy.data.objects.new('cam', cam_data)
     scene.collection.objects.link(cam)
     scene.camera = cam
-    centre = Vector((0.5, -0.5, 0.55))
+    centre = frame[0] if frame else Vector((0.5, -0.5, 0.55))
     for v in views:
         yaw, pitch = VIEWS[v]
         # yaw 0 looks at the front (MC north, Blender +y side... front faces -z in MC = +y in Blender).
         d = Vector((math.sin(math.radians(yaw)) * math.cos(math.radians(pitch)),
                     math.cos(math.radians(yaw)) * math.cos(math.radians(pitch)),
                     math.sin(math.radians(pitch))))
-        cam.location = centre + d * 4
+        cam.location = centre + d * (4 + (frame[1] if frame else 0))
         cam.rotation_euler = (-d).to_track_quat('-Z', 'Y').to_euler()
         scene.render.filepath = f'{out_prefix}_{v}.png'
         bpy.ops.render.render(write_still=True)
 
 
 def main():
-    model_path, out_prefix, size, views = args()
+    model_path, out_prefix, size, views, fit = args()
     for o in list(bpy.data.objects):
         bpy.data.objects.remove(o)
     with open(model_path, encoding='utf-8') as fh:
@@ -179,7 +179,13 @@ def main():
     if 'children' in model:                                # a NeoForge composite: draw every part
         model = dict(model, elements=[e for c in model['children'].values() for e in c.get('elements', [])])
     build(model)
-    render(out_prefix, size, views)
+    frame = None
+    if fit:                                                # --fit 1: frame the whole model (a scene of several blocks)
+        lo = [min(e['from'][i] for e in model['elements']) / 16 for i in range(3)]
+        hi = [max(e['to'][i] for e in model['elements']) / 16 for i in range(3)]
+        centre = Vector(((lo[0] + hi[0]) / 2, -(lo[2] + hi[2]) / 2, (lo[1] + hi[1]) / 2))
+        frame = (centre, max(h - l for l, h in zip(lo, hi)) * 1.35)
+    render(out_prefix, size, views, frame)
 
 
 main()

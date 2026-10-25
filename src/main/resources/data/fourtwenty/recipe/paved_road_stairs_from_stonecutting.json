@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "fourtwenty:paved_road"
+  },
+  "result": {
+    "id": "fourtwenty:paved_road_stairs",
+    "count": 1
+  }
+}
