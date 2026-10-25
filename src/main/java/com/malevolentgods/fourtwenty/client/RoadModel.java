@@ -1,6 +1,5 @@
 package com.malevolentgods.fourtwenty.client;
 
-import com.malevolentgods.fourtwenty.block.HempPathStairBlock;
 import com.malevolentgods.fourtwenty.block.RoadShape;
 import com.malevolentgods.fourtwenty.registry.ModTerpenes;
 import net.minecraft.client.renderer.RenderType;
@@ -19,9 +18,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.model.IDynamicBakedModel;
@@ -36,43 +33,32 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The model of every road, road slab and road stair state: four quarter boxes, each one of the
- * road's case parts (tools/generate_paths.py) picked by {@link RoadShape} from the blocks round it as
- * the chunk is drawn, plus a stair's risers. Quarters: 0 nw, 1 ne, 2 sw, 3 se (bit 0 east, bit 1 south).
+ * The model of every road and road slab state: four quarter boxes, each one of the road's case parts
+ * (tools/generate_paths.py) picked by {@link RoadShape} from the blocks round it as the chunk is
+ * drawn, and a cap up to a full block where another road block stands on it. (Stairs are separate
+ * steps with plain models.) Quarters: 0 nw, 1 ne, 2 sw, 3 se (bit 0 east, bit 1 south).
  */
 public final class RoadModel implements IDynamicBakedModel {
     private static final ModelProperty<Integer> CASES = new ModelProperty<>();
     private static final String[] QUARTERS = {"nw", "ne", "sw", "se"};
     private static final String[] CASE_NAMES = {"outer", "ns", "ew", "inner", "full"};
-    /** A quarter's boxes: 0..15 (a road's), 0..7 (a bottom slab's or tread's), 8..15 (a top slab's, an upside-down tread's). */
+    /** A quarter's boxes: 0..15 (a road's, a double slab's), 0..7 (a bottom slab's), 8..15 (a top slab's). */
     private static final String[] BOXES = {"%s_%s_%s", "%s_slab_bottom_%s_%s", "%s_slab_top_%s_%s"};
     private static final RandomSource RANDOM = RandomSource.create(42);
 
     /** parts[box][quarter][case] */
     private final BakedModel[][][] parts;
+    /** caps[quarter][plain, at an outer corner] */
+    private final BakedModel[][] caps;
     private final int[] box = new int[4];
-    private final List<BakedModel> risers = new ArrayList<>();
     private final Map<Integer, List<BakedQuad>[]> quads = new ConcurrentHashMap<>();
 
-    private RoadModel(BlockState state, BakedModel[][][] parts, BakedModel[][][] risers) {
+    private RoadModel(BlockState state, BakedModel[][][] parts, BakedModel[][] caps) {
         this.parts = parts;
-        boolean stair = state.getBlock() instanceof HempPathStairBlock;
-        for (int q = 0; q < 4; q++) {
-            int sx = sx(q), sz = sz(q);
-            if (state.getBlock() instanceof SlabBlock) {
-                SlabType type = state.getValue(SlabBlock.TYPE);
-                box[q] = type == SlabType.BOTTOM ? 1 : type == SlabType.TOP ? 2 : 0;
-            } else if (stair && !RoadShape.high(state, sx, sz)) {
-                box[q] = state.getValue(StairBlock.HALF) == Half.BOTTOM ? 1 : 2;
-            }
-        }
-        if (stair) {                                // a high quarter's face toward a lower one beside it
-            int half = state.getValue(StairBlock.HALF) == Half.BOTTOM ? 0 : 1;
-            for (int q = 0; q < 4; q++) {
-                if (box[q] != 0) continue;
-                if (box[q ^ 1] != 0) this.risers.add(risers[half][q][0]);
-                if (box[q ^ 2] != 0) this.risers.add(risers[half][q][1]);
-            }
+        this.caps = caps;
+        if (state.getBlock() instanceof SlabBlock) {
+            SlabType type = state.getValue(SlabBlock.TYPE);
+            java.util.Arrays.fill(box, type == SlabType.BOTTOM ? 1 : type == SlabType.TOP ? 2 : 0);
         }
     }
 
@@ -82,7 +68,10 @@ public final class RoadModel implements IDynamicBakedModel {
 
     @Override public @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData data) {
         int packed = 0;
-        for (int q = 0; q < 4; q++) packed |= RoadShape.caseOf(level, pos, state, sx(q), sz(q)) << (3 * q);
+        for (int q = 0; q < 4; q++) {
+            packed |= RoadShape.caseOf(level, pos, state, sx(q), sz(q)) << (3 * q);
+            if (RoadShape.capped(level, pos, state, sx(q), sz(q))) packed |= 1 << (12 + q);
+        }
         return ModelData.of(CASES, packed);
     }
 
@@ -98,8 +87,11 @@ public final class RoadModel implements IDynamicBakedModel {
         for (int i = 0; i < 7; i++) {
             Direction side = i == 6 ? null : Direction.values()[i];
             List<BakedQuad> list = new ArrayList<>();
-            for (int q = 0; q < 4; q++) list.addAll(parts[box[q]][q][(cases >> (3 * q)) & 7].getQuads(state, side, RANDOM));
-            for (BakedModel riser : risers) list.addAll(riser.getQuads(state, side, RANDOM));
+            for (int q = 0; q < 4; q++) {
+                int c = (cases >> (3 * q)) & 7;
+                list.addAll(parts[box[q]][q][c].getQuads(state, side, RANDOM));
+                if ((cases & (1 << (12 + q))) != 0) list.addAll(caps[q][c == RoadShape.OUTER ? 1 : 0].getQuads(state, side, RANDOM));
+            }
             out[i] = List.copyOf(list);
         }
         return out;
@@ -128,18 +120,9 @@ public final class RoadModel implements IDynamicBakedModel {
     private static List<String> partNames(String road) {
         List<String> names = new ArrayList<>();
         for (String b : BOXES) for (String q : QUARTERS) for (String c : CASE_NAMES) names.add(String.format(b, road, q, c));
-        names.addAll(riserNames(road));
-        return names;
-    }
-
-    /** riser parts, in order [half][quarter][toward the other x quarter, toward the other z quarter]. */
-    private static List<String> riserNames(String road) {
-        List<String> names = new ArrayList<>();
-        for (String half : new String[]{"bottom", "top"}) {
-            for (int q = 0; q < 4; q++) {
-                names.add(road + "_riser_" + half + "_" + QUARTERS[q] + "_" + (sx(q) < 0 ? "east" : "west"));
-                names.add(road + "_riser_" + half + "_" + QUARTERS[q] + "_" + (sz(q) < 0 ? "south" : "north"));
-            }
+        for (String q : QUARTERS) {
+            names.add(road + "_cap_" + q);
+            names.add(road + "_cap_" + q + "_corner");
         }
         return names;
     }
@@ -151,23 +134,25 @@ public final class RoadModel implements IDynamicBakedModel {
         for (int t = 0; t < ModTerpenes.PATHS.size(); t++) partNames(road(t)).forEach(n -> event.register(part(n)));
     }
 
-    /** Every state of the road blocks gets this model; a tier whose parts are missing keeps its plain model. */
+    /** Every road and slab state gets this model; a tier whose parts are missing keeps its plain model. */
     public static void replace(ModelEvent.ModifyBakingResult event) {
         Map<ModelResourceLocation, BakedModel> models = event.getModels();
         for (int t = 0; t < ModTerpenes.PATHS.size(); t++) {
             String road = road(t);
             BakedModel[][][] parts = new BakedModel[3][4][5];
-            BakedModel[][][] risers = new BakedModel[2][4][2];
-            List<String> riserNames = riserNames(road);
+            BakedModel[][] caps = new BakedModel[4][2];
             boolean ok = true;
             for (int b = 0; b < 3; b++) for (int q = 0; q < 4; q++) for (int c = 0; c < 5; c++) {
                 ok &= (parts[b][q][c] = models.get(part(String.format(BOXES[b], road, QUARTERS[q], CASE_NAMES[c])))) != null;
             }
-            for (int i = 0; i < riserNames.size(); i++) ok &= (risers[i / 8][(i / 2) % 4][i % 2] = models.get(part(riserNames.get(i)))) != null;
+            for (int q = 0; q < 4; q++) {
+                ok &= (caps[q][0] = models.get(part(road + "_cap_" + QUARTERS[q]))) != null;
+                ok &= (caps[q][1] = models.get(part(road + "_cap_" + QUARTERS[q] + "_corner"))) != null;
+            }
             if (!ok) continue;
-            for (Block block : List.<Block>of(ModTerpenes.PATHS.get(t).get(), ModTerpenes.PATH_SLABS.get(t).get(), ModTerpenes.PATH_STAIRS.get(t).get())) {
+            for (Block block : List.<Block>of(ModTerpenes.PATHS.get(t).get(), ModTerpenes.PATH_SLABS.get(t).get())) {
                 for (BlockState state : block.getStateDefinition().getPossibleStates()) {
-                    models.put(BlockModelShaper.stateToModelLocation(state), new RoadModel(state, parts, risers));
+                    models.put(BlockModelShaper.stateToModelLocation(state), new RoadModel(state, parts, caps));
                 }
             }
         }

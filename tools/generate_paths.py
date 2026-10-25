@@ -21,10 +21,11 @@ and joins like the top, with a rim round the outside.
 
 Writes per tier: 5 top and 5 underside textures (64x64, 4 px per model pixel), two side textures
 (plain and with corner quoins), the part models (4 quarters x 5 cases, each as a road's 0-15/16 box,
-a bottom slab's 0-7/16 and a top slab's 8-15/16; and a stair's risers), blockstates, item models (a
+a bottom slab's 0-7/16 and a top slab's 8-15/16; and caps to a full block under another road),
+blockstates, item models (a
 lone block: outer corners all round), loot, recipes, names, and the fourtwenty:paths / mineable
-tags. A stair is four quarters, high (15/16) or tread (7/16; upside down 8-15/16), and a double slab
-is a road's quarters, so the same parts make all three. A top-down preview of a sample road per
+tags. A double slab is a road's quarters. Stairs are plain models of separate steps, each bordered
+all round on top and on its front (stair_model), from step textures per arrangement of high quarters. A top-down preview of a sample road per
 tier goes to the path given with --preview. Run again after edits.
 """
 import collections
@@ -305,6 +306,52 @@ def case_texture(field, band, corner_paint, case, inner_paint):
     return img
 
 
+def step_texture(field, band, corner_paint, inner_paint, high):
+    """A stair's top as separate steps: the quarters in `high` are one step, the rest another, and each
+    step is bordered all round (every block edge, and between the two steps), mitred at its corners,
+    with the inner-corner notch where a step is an L."""
+    img = field.copy()
+    px = img.load()
+    H = T // 2
+    at = {(QUARTERS[q][0] // 8, QUARTERS[q][1] // 8): q for q in QUARTERS}
+    step = lambda c: at[c] in high
+    for q, (qx, qz, *_rest) in QUARTERS.items():
+        i, j = qx // 8, qz // 8
+        x0, y0 = i * H, j * H
+        mine = step((i, j))
+        # an edge is bordered at the block's edge or where the other step begins
+        border = {d: (i + di, j + dj) not in at or step((i + di, j + dj)) != mine
+                  for d, (di, dj) in {'north': (0, -1), 'south': (0, 1), 'west': (-1, 0), 'east': (1, 0)}.items()}
+        for a in range(H):
+            for d in range(BW):
+                if border['north']:
+                    px[x0 + a, y0 + d] = band[(x0 + a, d)]
+                if border['south']:
+                    px[x0 + a, y0 + H - 1 - d] = band[(T - 1 - x0 - a, d)]
+                if border['west']:
+                    px[x0 + d, y0 + a] = band[(T - 1 - y0 - a, d)]
+                if border['east']:
+                    px[x0 + H - 1 - d, y0 + a] = band[(y0 + a, d)]
+        for ns, ew in (('north', 'west'), ('north', 'east'), ('south', 'west'), ('south', 'east')):
+            di, dj = (-1 if ew == 'west' else 1), (-1 if ns == 'north' else 1)
+            if border[ns] and border[ew]:
+                paint = corner_paint
+            elif not border[ns] and not border[ew] and step((i + di, j + dj)) != mine:
+                paint = inner_paint
+            else:
+                continue
+            cx = x0 if ew == 'west' else x0 + H - BW
+            cy = y0 if ns == 'north' else y0 + H - BW
+            for y in range(BW):
+                for x in range(BW):
+                    px[cx + x, cy + y] = paint(x if ew == 'west' else BW - 1 - x, y if ns == 'north' else BW - 1 - y)
+    return img
+
+
+def step_mask(high):
+    return '_'.join(q for q in QUARTERS if q in high)
+
+
 def strata(tier, rng):
     """A side face as a cut through the road (64 x 64; rows 0-3 sit above the 15/16 top and never show).
     The surface's own edge on top, then what it's laid on, down to the footing."""
@@ -533,43 +580,83 @@ def stair_high(facing, shape, q):
             'inner_left': back or left, 'inner_right': back or not left}[shape]
 
 
+OPP = {'north': 'south', 'south': 'north', 'east': 'west', 'west': 'east'}
+
+
+def span(x0, z0, side):
+    """A quarter's u range on one of its sides."""
+    return {'north': (8 - x0, 16 - x0), 'south': (x0, x0 + 8), 'west': (z0, z0 + 8), 'east': (8 - z0, 16 - z0)}[side]
+
+
+def downhill(facing, shape):
+    """The sides a right-way-up stair steps down off (RoadShape.downhill): its front, and for a corner
+    stair the side away from its high corner."""
+    out = {OPP[facing]}
+    if shape in ('outer_left', 'inner_left'):
+        out.add(CW[facing])
+    elif shape in ('outer_right', 'inner_right'):
+        out.add(CCW[facing])
+    return out
+
+
 def stair_model(block, facing, half, shape):
-    """A lone road stair (the item model): four quarters, high (15/16) or tread (7/16; upside down 8/16
-    to 15/16), bordered all round. Placed stairs are drawn by RoadModel from the parts."""
-    textures = {'side': f'fourtwenty:block/path/{block}_side_corner', 'particle': f'fourtwenty:block/path/{block}_side',
-                'top': f'fourtwenty:block/path/{block}_outer', 'bottom': f'fourtwenty:block/path/{block}_bottom_outer'}
+    """A road stair of separate steps: four quarters, high (15/16) or tread (7/16; upside down 8/16 to
+    15/16). Each step's top is bordered all round, and each step's front (a tread's downhill faces and
+    the risers above them) is a bordered strip of road, or a bordered square where it's one quarter
+    wide. An upside-down stair's top is flat, bordered all round. The other sides are the cut."""
+    path = f'fourtwenty:block/path/{block}'
+    high = {q for q in QUARTERS if stair_high(facing, shape, q)}
+    top = f'{path}_outer' if half == 'top' else f'{path}_step_{step_mask(high)}'
+    textures = {'top': top, 'bottom': f'{path}_bottom_outer', 'side': f'{path}_side_corner', 'particle': f'{path}_side',
+                'strip': f'{path}_step_nw_ne', 'square': f'{path}_step_nw'}
+    down = downhill(facing, shape) if half == 'bottom' else set()
+    beside = lambda q, side: next((k for k, v in QUARTERS.items()
+                                   if (v[0], v[1]) == (QUARTERS[q][0] + SIDE_DIR[side][0] * 8, QUARTERS[q][1] + SIDE_DIR[side][1] * 8)), None)
+
+    def fronts(q):
+        """This quarter's step fronts: (side, kind)."""
+        _, _, ns, ew, _ = QUARTERS[q]
+        if q in high:                                           # risers, toward a tread beside it
+            return [(side, 'riser') for side in SIDE_DIR if half == 'bottom' and beside(q, side) and beside(q, side) not in high]
+        return [(side, 'tread') for side in (ns, ew) if side in down]
+
+    face_of = {q: fronts(q) for q in QUARTERS}
     elements = []
     for q in QUARTERS:
-        _, _, ns, ew, _ = QUARTERS[q]
-        h = stair_high(facing, shape, q)
+        x0, z0, ns, ew, _ = QUARTERS[q]
+        h = q in high
         y0, y1 = (0, 15) if h else ((0, 7) if half == 'bottom' else (8, 15))
-        risers = []
-        if h:
-            for side, (dx, dz) in SIDE_DIR.items():
-                other = next((k for k, v in QUARTERS.items() if (v[0], v[1]) == (QUARTERS[q][0] + dx * 8, QUARTERS[q][1] + dz * 8)), None)
-                if other and not stair_high(facing, shape, other):
-                    risers.append(side)
-        elements.append(box_faces(q, y0, y1, '#top', '#bottom', [ns, ew], risers))
+        el = box_faces(q, y0, y1, '#top', '#bottom', [ns, ew], [side for side, kind in face_of[q] if kind == 'riser'])
+        for side, kind in face_of[q]:
+            # Its row-mate: the quarter beside it along this face. A strip if that has the same front.
+            dx, dz = SIDE_DIR[side]
+            mate = beside(q, 'east' if x0 == 0 else 'west') if dz else beside(q, 'south' if z0 == 0 else 'north')
+            u0, u1 = span(x0, z0, side)
+            face = dict(el['faces'][side])
+            if (side, kind) in face_of[mate]:
+                face.update(texture='#strip', uv=[u0, 0, u1, 8])
+            else:
+                face.update(texture='#square', uv=[0, 0, 8, 8])
+            el['faces'][side] = face
+        elements.append(el)
     return {'parent': 'minecraft:block/block', 'ambientocclusion': True, 'textures': textures, 'elements': elements}
 
 
-INNER_SIDES = {'nw': ('east', 'south'), 'ne': ('west', 'south'), 'sw': ('east', 'north'), 'se': ('west', 'north')}
-
-
-def riser_part(block, q, side, half):
-    """A stair's riser: a high quarter's face toward a lower quarter beside it, above a tread (7 to 15)
-    or below an upside-down one (0 to 8)."""
-    x0, z0 = QUARTERS[q][0], QUARTERS[q][1]
-    x1, z1 = x0 + 8, z0 + 8
-    u0, u1 = {'north': (16 - x1, 16 - x0), 'south': (x0, x1), 'west': (z0, z1), 'east': (16 - z1, 16 - z0)}[side]
-    y0, y1, (v0, v1) = (7, 15, (1, 9)) if half == 'bottom' else (0, 8, (8, 16))
-    return {'parent': 'minecraft:block/block', 'ambientocclusion': True,
-            'textures': {'side': f'fourtwenty:block/path/{block}_side', 'particle': f'fourtwenty:block/path/{block}_side'},
-            'elements': [{'from': [x0, y0, z0], 'to': [x1, y1, z1], 'faces': {side: {'texture': '#side', 'uv': [u0, v0, u1, v1]}}}]}
+def cap_part(block, q, corner):
+    """The last pixel up to a full block, for a road with another road on it: the quarter's outer sides
+    from 15 to 16, the top row of the cut."""
+    x0, z0, ns, ew, _ = QUARTERS[q]
+    faces = {}
+    for side in (ns, ew):
+        u0, u1 = span(x0, z0, side)
+        faces[side] = {'texture': '#side', 'uv': [u0, 0, u1, 1], 'cullface': side}
+    side = f'fourtwenty:block/path/{block}_side_corner' if corner else f'fourtwenty:block/path/{block}_side'
+    return {'parent': 'minecraft:block/block', 'ambientocclusion': True, 'textures': {'side': side, 'particle': side},
+            'elements': [{'from': [x0, 15, z0], 'to': [x0 + 8, 16, z0 + 8], 'faces': faces}]}
 
 
 def fallback(model):
-    """A blockstate naming one model for every state: RoadModel replaces it."""
+    """A blockstate naming one model for every state: RoadModel replaces it (roads and slabs)."""
     return {'variants': {'': {'model': f'fourtwenty:block/{model}'}}}
 
 
@@ -602,12 +689,20 @@ def slabs_and_stairs(block, label, names):
     names[slab] = f'{label} Slab'
     # Stairs.
     stairs = f'{block}_stairs'
-    for q in QUARTERS:
-        for side in INNER_SIDES[q]:
-            for half in ('bottom', 'top'):
-                write(ASSETS / f'models/block/{block}_riser_{half}_{q}_{side}.json', riser_part(block, q, side, half))
-    write(ASSETS / f'blockstates/{stairs}.json', fallback(f'{block}_nw_outer'))
+    for old in (ASSETS / 'models/block').glob(f'{block}_riser_*.json'):
+        old.unlink()
+    variants = {}
+    for facing in FACINGS:
+        for half in ('bottom', 'top'):
+            for shape in STAIR_SHAPES:
+                model = f'{stairs}_{facing}_{half}_{shape}'
+                write(ASSETS / f'models/block/{model}.json', stair_model(block, facing, half, shape))
+                variants[f'facing={facing},half={half},shape={shape}'] = {'model': f'fourtwenty:block/{model}'}
+    write(ASSETS / f'blockstates/{stairs}.json', {'variants': variants})
     write(ASSETS / f'models/item/{stairs}.json', stair_model(block, 'east', 'bottom', 'straight'))
+    for q in QUARTERS:
+        for corner in (False, True):
+            write(ASSETS / 'models/block' / (f'{block}_cap_{q}' + ('_corner' if corner else '') + '.json'), cap_part(block, q, corner))
     write(DATA / f'loot_table/blocks/{stairs}.json', {'type': 'minecraft:block', 'pools': [{'rolls': 1, 'entries': [
         {'type': 'minecraft:item', 'name': f'fourtwenty:{stairs}'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
     write(DATA / f'recipe/{stairs}.json', {'type': 'minecraft:crafting_shaped', 'category': 'building', 'pattern': ['R  ', 'RR ', 'RRR'],
@@ -651,6 +746,13 @@ def generate(preview=None):
             img.save(tex_dir / f'{block}_{case}.png')
             textures[block][case] = img
             case_texture(under, uband, under_mitre, case, under_inner).save(tex_dir / f'{block}_bottom_{case}.png')
+        # Stair tops, one per arrangement of the high quarters; a step's front uses the north-half one
+        # (a bordered strip) or the north-west one (a bordered square).
+        masks = {step_mask([q for q in QUARTERS if stair_high(f, sh, q)]) for f in FACINGS for sh in STAIR_SHAPES}
+        for old in tex_dir.glob(f'{block}_step_*.png'):
+            old.unlink()
+        for mask in sorted(masks):
+            step_texture(field, band, corner_paint, inner_paint, mask.split('_')).save(tex_dir / f'{block}_step_{mask}.png')
         side_texture(tier, rng, False).save(tex_dir / f'{block}_side.png')
         side_texture(tier, rng, True).save(tex_dir / f'{block}_side_corner.png')
         # Parts: one per quarter and case, its outer sides drawn, with quoins at a road's corners.

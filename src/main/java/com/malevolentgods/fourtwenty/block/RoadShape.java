@@ -45,6 +45,23 @@ public final class RoadShape {
         return s.getValue(StairBlock.HALF) == Half.TOP || high(s, sx, sz) ? 15 : 7;
     }
 
+    /** The height of quarter (sx, sz)'s underside in pixels: 0, or 8 for a top slab and an upside-down stair's tread. */
+    public static int bottom(BlockState s, int sx, int sz) {
+        if (s.getBlock() instanceof RoadSurface r) return r.surface(s) == 15 && s.getBlock() instanceof net.minecraft.world.level.block.SlabBlock
+                && s.getValue(net.minecraft.world.level.block.SlabBlock.TYPE) == net.minecraft.world.level.block.state.properties.SlabType.TOP ? 8 : 0;
+        return s.getValue(StairBlock.HALF) == Half.TOP && !high(s, sx, sz) ? 8 : 0;
+    }
+
+    /**
+     * Whether quarter (sx, sz) of a road or slab at pos reaches up to a full block: another road block
+     * stands on it, so the pixel between them is filled (drawn only; its shape stays 15/16).
+     */
+    public static boolean capped(BlockGetter level, BlockPos pos, BlockState s, int sx, int sz) {
+        if (!(s.getBlock() instanceof RoadSurface r) || r.surface(s) != 15) return false;
+        BlockState above = level.getBlockState(pos.above());
+        return tier(above) >= 0 && bottom(above, sx, sz) == 0;
+    }
+
     /** Whether quarter (sx, sz) is the tread of a right-way-up stair. */
     public static boolean tread(BlockState s, int sx, int sz) {
         return s.getBlock() instanceof HempPathStairBlock && s.getValue(StairBlock.HALF) == Half.BOTTOM && !high(s, sx, sz);

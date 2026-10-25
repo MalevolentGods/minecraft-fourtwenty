@@ -2,10 +2,12 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": true,
   "textures": {
+    "top": "fourtwenty:block/path/cobble_path_step_ne_se",
+    "bottom": "fourtwenty:block/path/cobble_path_bottom_outer",
     "side": "fourtwenty:block/path/cobble_path_side_corner",
     "particle": "fourtwenty:block/path/cobble_path_side",
-    "top": "fourtwenty:block/path/cobble_path_outer",
-    "bottom": "fourtwenty:block/path/cobble_path_bottom_outer"
+    "strip": "fourtwenty:block/path/cobble_path_step_nw_ne",
+    "square": "fourtwenty:block/path/cobble_path_step_nw"
   },
   "elements": [
     {
@@ -50,12 +52,12 @@
           "cullface": "north"
         },
         "west": {
-          "texture": "#side",
+          "texture": "#strip",
           "uv": [
             0,
-            9,
+            0,
             8,
-            16
+            8
           ],
           "cullface": "west"
         }
@@ -113,12 +115,12 @@
           "cullface": "east"
         },
         "west": {
-          "texture": "#side",
+          "texture": "#strip",
           "uv": [
             0,
-            1,
+            0,
             8,
-            16
+            8
           ]
         }
       }
@@ -165,12 +167,12 @@
           "cullface": "south"
         },
         "west": {
-          "texture": "#side",
+          "texture": "#strip",
           "uv": [
             8,
-            9,
+            0,
             16,
-            16
+            8
           ],
           "cullface": "west"
         }
@@ -228,12 +230,12 @@
           "cullface": "east"
         },
         "west": {
-          "texture": "#side",
+          "texture": "#strip",
           "uv": [
             8,
-            1,
+            0,
             16,
-            16
+            8
           ]
         }
       }

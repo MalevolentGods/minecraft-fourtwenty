@@ -22,9 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Road stairs, sized to the road: the tread is 7/16 high and the back reaches the road's 15/16, so
  * a ramp of them runs from one road down to the next with no lip. Shapes (straight, inner, outer
- * corner) follow vanilla's stair rule. Its top joins the road round it quarter by quarter
- * ({@link RoadShape}): a border only where the surface steps or ends, and the treads' paving lines up
- * with the road round it. Same speed as its road. Upside-down stairs are the same, mirrored: flush
+ * corner) follow vanilla's stair rule. It's drawn as separate steps, each bordered all round on top
+ * and down its front (tools/generate_paths.py); the road round it joins it ({@link RoadShape}). Same
+ * speed as its road. Upside-down stairs are the same, mirrored: flush
  * on top, 8/16 under the tread.
  */
 public class HempPathStairBlock extends StairBlock {

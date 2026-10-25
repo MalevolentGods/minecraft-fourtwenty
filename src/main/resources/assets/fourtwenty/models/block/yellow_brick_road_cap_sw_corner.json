@@ -1,0 +1,44 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "side": "fourtwenty:block/path/yellow_brick_road_side_corner",
+    "particle": "fourtwenty:block/path/yellow_brick_road_side_corner"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        15,
+        8
+      ],
+      "to": [
+        8,
+        16,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            8,
+            1
+          ],
+          "cullface": "south"
+        },
+        "west": {
+          "texture": "#side",
+          "uv": [
+            8,
+            0,
+            16,
+            1
+          ],
+          "cullface": "west"
+        }
+      }
+    }
+  ]
+}
