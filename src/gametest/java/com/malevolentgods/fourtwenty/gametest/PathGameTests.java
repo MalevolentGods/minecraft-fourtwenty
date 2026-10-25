@@ -2,6 +2,7 @@ package com.malevolentgods.fourtwenty.gametest;
 
 import com.malevolentgods.fourtwenty.block.HempPathBlock;
 import com.malevolentgods.fourtwenty.block.HempPathStairBlock;
+import com.malevolentgods.fourtwenty.block.RoadShape;
 import com.malevolentgods.fourtwenty.registry.ModTerpenes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,7 +12,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -68,20 +73,20 @@ public final class PathGameTests {
         h.succeed();
     }
 
+    /** Quarter (sx, sz)'s case at a test position. */
+    private static int quarter(GameTestHelper h, BlockPos p, int sx, int sz) {
+        return RoadShape.caseOf(h.getLevel(), h.absolutePos(p), h.getBlockState(p), sx, sz);
+    }
+
     @GameTest(template = "empty")
     public static void roadsJoinIntoOneRoad(GameTestHelper h) {
         Block road = ModTerpenes.PATHS.get(0).get();
         // An L: (1,1) (2,1) and (1,2); (2,2) open, so (1,1) has the notch of an L at its south-east.
-        for (BlockPos p : new BlockPos[]{new BlockPos(1, 2, 1), new BlockPos(2, 2, 1), new BlockPos(1, 2, 2)}) {
-            BlockState s = ((HempPathBlock) road).connected(h.getLevel(), h.absolutePos(p), road.defaultBlockState());
-            h.setBlock(p, s);
-        }
-        BlockState corner = h.getBlockState(new BlockPos(1, 2, 1));
-        h.assertTrue(corner.getValue(HempPathBlock.EAST) && corner.getValue(HempPathBlock.SOUTH) && !corner.getValue(HempPathBlock.SOUTH_EAST)
-                && !corner.getValue(HempPathBlock.NORTH) && !corner.getValue(HempPathBlock.WEST), "the corner's connections: " + corner);
-        BlockState end = h.getBlockState(new BlockPos(2, 2, 1));
-        h.assertTrue(end.getValue(HempPathBlock.WEST) && end.getValue(HempPathBlock.SOUTH_WEST) && !end.getValue(HempPathBlock.EAST),
-                "the arm end's connections: " + end);
+        for (BlockPos p : new BlockPos[]{new BlockPos(1, 2, 1), new BlockPos(2, 2, 1), new BlockPos(1, 2, 2)}) h.setBlock(p, road);
+        BlockPos corner = new BlockPos(1, 2, 1), end = new BlockPos(2, 2, 1);
+        h.assertTrue(quarter(h, corner, 1, 1) == RoadShape.INNER && quarter(h, corner, -1, -1) == RoadShape.OUTER
+                && quarter(h, corner, 1, -1) == RoadShape.NS, "the corner's quarters");
+        h.assertTrue(quarter(h, end, -1, 1) == RoadShape.NS && quarter(h, end, 1, -1) == RoadShape.OUTER, "the arm end's quarters");
         h.succeed();
     }
 
@@ -108,22 +113,40 @@ public final class PathGameTests {
         Block road = ModTerpenes.PATHS.get(1).get(), slab = ModTerpenes.PATH_SLABS.get(1).get();
         HempPathStairBlock stairs = (HempPathStairBlock) ModTerpenes.PATH_STAIRS.get(1).get();
         BlockPos r = new BlockPos(2, 2, 1);
-        h.setBlock(new BlockPos(1, 2, 1), slab.defaultBlockState().setValue(net.minecraft.world.level.block.SlabBlock.TYPE, net.minecraft.world.level.block.state.properties.SlabType.TOP));
+        h.setBlock(new BlockPos(1, 2, 1), slab.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP));
         h.setBlock(new BlockPos(3, 2, 1), slab.defaultBlockState());                       // a bottom slab: a step lower, no join
-        // A two-wide ramp rising north to the road: stairs at (2,2,2) and (3,2,2), and one beside the road facing east (no join).
-        BlockState up = stairs.defaultBlockState().setValue(net.minecraft.world.level.block.StairBlock.FACING, Direction.NORTH);
+        // A two-wide ramp rising north to the road, down to a road a level lower; and north of the
+        // road a stair facing east, its high back (east) quarter joining the road, its tread not.
+        BlockState up = stairs.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH);
         h.setBlock(new BlockPos(2, 2, 2), up);
         h.setBlock(new BlockPos(3, 2, 2), up);
-        h.setBlock(new BlockPos(2, 2, 0), stairs.defaultBlockState().setValue(net.minecraft.world.level.block.StairBlock.FACING, Direction.EAST));
-        h.setBlock(r, ((HempPathBlock) road).connected(h.getLevel(), h.absolutePos(r), road.defaultBlockState()));
-        BlockState s = h.getBlockState(r);
-        h.assertTrue(s.getValue(HempPathBlock.WEST), "a top slab at the road's height doesn't join it");
-        h.assertTrue(!s.getValue(HempPathBlock.EAST), "a bottom slab joined the road");
-        h.assertTrue(s.getValue(HempPathBlock.SOUTH) && s.getValue(HempPathBlock.SOUTH_EAST), "the ramp leading up doesn't join the road");
-        h.assertTrue(!s.getValue(HempPathBlock.NORTH), "a stair beside the road (not leading up to it) joined it");
-        BlockState left = h.getBlockState(new BlockPos(2, 2, 2)), right = h.getBlockState(new BlockPos(3, 2, 2));
-        h.assertTrue(left.getValue(HempPathStairBlock.LEFT_OPEN) && !left.getValue(HempPathStairBlock.RIGHT_OPEN)
-                && !right.getValue(HempPathStairBlock.LEFT_OPEN) && right.getValue(HempPathStairBlock.RIGHT_OPEN), "the ramp's open sides: " + left + " / " + right);
+        h.setBlock(new BlockPos(2, 1, 2), Blocks.AIR);
+        h.setBlock(new BlockPos(2, 1, 3), road);
+        h.setBlock(new BlockPos(3, 1, 3), road);
+        h.setBlock(new BlockPos(2, 2, 0), stairs.defaultBlockState().setValue(StairBlock.FACING, Direction.EAST));
+        h.setBlock(r, road);
+        h.assertTrue(quarter(h, r, -1, -1) == RoadShape.NS, "road nw: joins the top slab, not the stair's tread: " + quarter(h, r, -1, -1));
+        h.assertTrue(quarter(h, r, 1, -1) == RoadShape.EW, "road ne: joins the stair's back, not the bottom slab: " + quarter(h, r, 1, -1));
+        h.assertTrue(quarter(h, r, -1, 1) == RoadShape.INNER, "road sw: joins the ramp and the slab: " + quarter(h, r, -1, 1));
+        h.assertTrue(quarter(h, r, 1, 1) == RoadShape.EW, "road se: joins the ramp: " + quarter(h, r, 1, 1));
+        BlockPos left = new BlockPos(2, 2, 2), right = new BlockPos(3, 2, 2);
+        h.assertTrue(quarter(h, left, -1, 1) == RoadShape.EW, "the ramp's open west edge, joined down to the lower road: " + quarter(h, left, -1, 1));
+        h.assertTrue(quarter(h, right, -1, 1) == RoadShape.FULL && quarter(h, right, 1, 1) == RoadShape.EW, "the ramp's right stair's treads");
+        h.assertTrue(quarter(h, new BlockPos(2, 1, 3), -1, -1) == RoadShape.EW, "the lower road joins the tread above it (nothing under the stair)");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void straightAndCornerStairsJoinWhereTheyMeet(GameTestHelper h) {
+        HempPathStairBlock stairs = (HempPathStairBlock) ModTerpenes.PATH_STAIRS.get(2).get();
+        BlockState up = stairs.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH);
+        BlockPos a = new BlockPos(1, 2, 1), b = new BlockPos(2, 2, 1);
+        h.setBlock(a, up);
+        h.setBlock(b, up.setValue(StairBlock.SHAPE, StairsShape.OUTER_LEFT));       // only its north-west quarter high
+        h.assertTrue(quarter(h, a, 1, -1) == RoadShape.NS, "straight stair ne: its high quarter joins the corner's high nw: " + quarter(h, a, 1, -1));
+        h.assertTrue(quarter(h, a, 1, 1) == RoadShape.NS, "straight stair se: its tread joins the corner's tread: " + quarter(h, a, 1, 1));
+        h.assertTrue(quarter(h, b, 1, -1) == RoadShape.OUTER, "the corner's open ne tread is bordered: " + quarter(h, b, 1, -1));
+        h.assertTrue(quarter(h, b, -1, 1) == RoadShape.NS, "the corner's sw tread joins the straight stair: " + quarter(h, b, -1, 1));
         h.succeed();
     }
 }

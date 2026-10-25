@@ -48,6 +48,16 @@
             16
           ],
           "cullface": "north"
+        },
+        "west": {
+          "texture": "#side",
+          "uv": [
+            0,
+            1,
+            8,
+            16
+          ],
+          "cullface": "west"
         }
       }
     }

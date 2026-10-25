@@ -47,6 +47,16 @@
             8
           ],
           "cullface": "south"
+        },
+        "east": {
+          "texture": "#side",
+          "uv": [
+            0,
+            1,
+            8,
+            8
+          ],
+          "cullface": "east"
         }
       }
     }

@@ -38,6 +38,16 @@
             16
           ]
         },
+        "north": {
+          "texture": "#side",
+          "uv": [
+            0,
+            1,
+            8,
+            8
+          ],
+          "cullface": "north"
+        },
         "east": {
           "texture": "#side",
           "uv": [

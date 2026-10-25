@@ -4,15 +4,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -31,10 +25,10 @@ import javax.annotation.Nonnull;
  * (0.6 x 0.91) carries it into the next, so the factor compounds: a factor m gives a steady speed
  * (1 - 0.546) / (1 - 0.546 m) times normal. {@link #speedFactorFor} solves that for the wanted gain.
  *
- * Joining: like the rugs, a road knows which of its eight neighbours carry on its road
- * ({@link RoadSurface}: the same tier with its top at the same height), and each quarter of its top
- * is drawn as an outer corner, an edge, an inner corner or field (tools/generate_paths.py), so the
- * border runs only round the outside of the whole road.
+ * Joining: like the rugs, each quarter of a road's top is drawn as an outer corner, an edge, an inner
+ * corner or field, by which of its neighbours carry on its road ({@link RoadShape}: the same tier with
+ * its top at the same height), so the border runs only round the outside of the whole road. The
+ * client model works that out as the chunk is drawn (tools/generate_paths.py makes its parts).
  */
 public class HempPathBlock extends Block implements RoadSurface {
     public static final MapCodec<HempPathBlock> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
@@ -48,7 +42,6 @@ public class HempPathBlock extends Block implements RoadSurface {
     public HempPathBlock(int tier, Properties properties) {
         super(properties.speedFactor(speedFactorFor(gainFor(tier))));
         this.tier = tier;
-        registerDefaultState(RoadSurface.unconnected(stateDefinition.any()));
     }
 
     /** The walking speed gain of a tier: 5, 10, 15%. */
@@ -65,10 +58,6 @@ public class HempPathBlock extends Block implements RoadSurface {
 
     @Override protected @Nonnull MapCodec<? extends Block> codec() { return CODEC; }
 
-    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(PROPERTIES);
-    }
-
     @Override protected @Nonnull VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
         return SHAPE;
     }
@@ -77,26 +66,4 @@ public class HempPathBlock extends Block implements RoadSurface {
     @Override protected boolean useShapeForLightOcclusion(@Nonnull BlockState state) { return true; }
 
     @Override protected boolean isPathfindable(@Nonnull BlockState state, @Nonnull PathComputationType type) { return false; }
-
-    /** This road's state with its joins to the road round it. */
-    public BlockState connected(LevelReader level, BlockPos pos, BlockState state) { return RoadSurface.connected(level, pos, state); }
-
-    @Override public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
-        return connected(context.getLevel(), context.getClickedPos(), defaultBlockState());
-    }
-
-    @Override protected @Nonnull BlockState updateShape(@Nonnull BlockState state, @Nonnull Direction direction, @Nonnull BlockState neighbor,
-                                                       @Nonnull LevelAccessor level, @Nonnull BlockPos pos, @Nonnull BlockPos neighborPos) {
-        return direction.getAxis().isHorizontal() ? connected(level, pos, state) : state;
-    }
-
-    @Override protected void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState old, boolean moving) {
-        super.onPlace(state, level, pos, old, moving);
-        if (!level.isClientSide && !old.is(this)) RoadSurface.refreshDiagonals(level, pos);
-    }
-
-    @Override protected void onRemove(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean moving) {
-        super.onRemove(state, level, pos, newState, moving);
-        if (!level.isClientSide && !newState.is(this)) RoadSurface.refreshDiagonals(level, pos);
-    }
 }

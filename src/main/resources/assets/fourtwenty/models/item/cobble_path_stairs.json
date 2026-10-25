@@ -2,10 +2,10 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": true,
   "textures": {
-    "side": "fourtwenty:block/path/cobble_path_side",
+    "side": "fourtwenty:block/path/cobble_path_side_corner",
     "particle": "fourtwenty:block/path/cobble_path_side",
-    "top_ns": "fourtwenty:block/path/cobble_path_ns",
-    "bottom_ns": "fourtwenty:block/path/cobble_path_bottom_ns"
+    "top": "fourtwenty:block/path/cobble_path_outer",
+    "bottom": "fourtwenty:block/path/cobble_path_bottom_outer"
   },
   "elements": [
     {
@@ -21,7 +21,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#top_ns",
+          "texture": "#top",
           "uv": [
             0,
             0,
@@ -30,7 +30,7 @@
           ]
         },
         "down": {
-          "texture": "#bottom_ns",
+          "texture": "#bottom",
           "uv": [
             0,
             8,
@@ -74,7 +74,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#top_ns",
+          "texture": "#top",
           "uv": [
             8,
             0,
@@ -83,7 +83,7 @@
           ]
         },
         "down": {
-          "texture": "#bottom_ns",
+          "texture": "#bottom",
           "uv": [
             8,
             8,
@@ -136,7 +136,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#top_ns",
+          "texture": "#top",
           "uv": [
             0,
             8,
@@ -145,7 +145,7 @@
           ]
         },
         "down": {
-          "texture": "#bottom_ns",
+          "texture": "#bottom",
           "uv": [
             0,
             0,
@@ -189,7 +189,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#top_ns",
+          "texture": "#top",
           "uv": [
             8,
             8,
@@ -198,7 +198,7 @@
           ]
         },
         "down": {
-          "texture": "#bottom_ns",
+          "texture": "#bottom",
           "uv": [
             8,
             0,

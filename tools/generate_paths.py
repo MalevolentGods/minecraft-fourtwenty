@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Roads in three tiers (HempPathBlock): cobble path, paved road, yellow brick road.
 
-A road is a 15/16-high path block. Like the rugs, it knows which of its eight neighbours are the same
-road, and each quarter of its top is one of five cases:
+A road is a 15/16-high path block. Like the rugs, each quarter of its top is one of five cases, by which
+of its neighbours carry on the same road (RoadShape; the client's RoadModel picks the parts as the
+chunk is drawn, so the blockstates name only a fallback):
   outer  both of the quarter's outer sides open (a corner of the whole road)
   ns     the quarter's north/south side open (an edge running east-west)
   ew     its east/west side open (an edge running north-south)
@@ -15,16 +16,15 @@ repeats every block, so the paving runs on unbroken across a whole road, and bor
 to block along an edge.
 
 Sides are a cut through the road (the surface's own edge on top, what it's laid on, the footing),
-drawn only where a road's side is open, with corner quoins where two open sides meet (a road's outer
-corners). The underside is structural (foundation flagstones, a concrete coffer grid, a brick bed)
+with corner quoins where two open sides meet (a road's outer corners). The underside is structural (foundation flagstones, a concrete coffer grid, a brick bed)
 and joins like the top, with a rim round the outside.
 
 Writes per tier: 5 top and 5 underside textures (64x64, 4 px per model pixel), two side textures
-(plain and with corner quoins), 20 quarter models (4 quarters x 5 cases), a multipart blockstate, an item model (a lone road: four outer corners), loot,
-a recipe, names, and the fourtwenty:paths / mineable tags. And its slab and stairs, sized to the road:
-slab quarters at 7/16 (bottom), 8-15/16 (top) and 15/16 (double), joined by the same cases; stairs
-of four quarters, high (15/16) or tread (7/16), each tread's top bordered only on the ramp's open
-side, the step faces and risers showing the surface's edge of the cut. A top-down preview of a sample road per
+(plain and with corner quoins), the part models (4 quarters x 5 cases, each as a road's 0-15/16 box,
+a bottom slab's 0-7/16 and a top slab's 8-15/16; and a stair's risers), blockstates, item models (a
+lone block: outer corners all round), loot, recipes, names, and the fourtwenty:paths / mineable
+tags. A stair is four quarters, high (15/16) or tread (7/16; upside down 8-15/16), and a double slab
+is a road's quarters, so the same parts make all three. A top-down preview of a sample road per
 tier goes to the path given with --preview. Run again after edits.
 """
 import collections
@@ -466,15 +466,11 @@ def quarter_model(q, sides):
 
 
 def open_sides(q, case):
-    """The quarter's outer sides with no road beside them (only those are drawn)."""
+    """The quarter's outer sides. All are drawn, joined or not: a side beside a stair's lower tread
+    shows above it, and between two roads the faces meet back to back, hidden. (The case still picks
+    the texture: corner quoins on an outer corner.)"""
     _, _, ns, ew, _ = QUARTERS[q]
-    return {'outer': [ns, ew], 'ns': [ns], 'ew': [ew], 'inner': [], 'full': []}[case]
-
-
-def condition(q, case):
-    _, _, ns, ew, diag = QUARTERS[q]
-    return {'outer': {ns: 'false', ew: 'false'}, 'ns': {ns: 'false', ew: 'true'}, 'ew': {ns: 'true', ew: 'false'},
-            'inner': {ns: 'true', ew: 'true', diag: 'false'}, 'full': {ns: 'true', ew: 'true', diag: 'true'}}[case]
+    return [ns, ew]
 
 
 def case_for(conn, q):
@@ -537,53 +533,49 @@ def stair_high(facing, shape, q):
             'inner_left': back or left, 'inner_right': back or not left}[shape]
 
 
-def stair_model(block, facing, half, shape, left_open, right_open):
-    """A road stair: four quarters, high (15/16) or tread (7/16; upside down 8/16 to 15/16)."""
-    lateral = 'ew' if facing in ('north', 'south') else 'ns'
-    elements, textures = [], {'side': f'fourtwenty:block/path/{block}_side', 'particle': f'fourtwenty:block/path/{block}_side'}
+def stair_model(block, facing, half, shape):
+    """A lone road stair (the item model): four quarters, high (15/16) or tread (7/16; upside down 8/16
+    to 15/16), bordered all round. Placed stairs are drawn by RoadModel from the parts."""
+    textures = {'side': f'fourtwenty:block/path/{block}_side_corner', 'particle': f'fourtwenty:block/path/{block}_side',
+                'top': f'fourtwenty:block/path/{block}_outer', 'bottom': f'fourtwenty:block/path/{block}_bottom_outer'}
+    elements = []
     for q in QUARTERS:
         _, _, ns, ew, _ = QUARTERS[q]
         h = stair_high(facing, shape, q)
-        if half == 'bottom':
-            y0, y1 = (0, 15) if h else (0, 7)
-        else:
-            y0, y1 = (0, 15) if h else (8, 15)
-        # Its top: a border down the ramp's open side, if this quarter is on it (straight stairs).
-        case = 'full'
-        if shape == 'straight':
-            on_left = (ns == CCW[facing] or ew == CCW[facing])
-            on_right = (ns == CW[facing] or ew == CW[facing])
-            if (on_left and left_open) or (on_right and right_open):
-                case = lateral
-        else:
-            case = 'outer' if False else 'full'
-        textures[f'top_{case}'] = f'fourtwenty:block/path/{block}_{case}'
-        textures[f'bottom_{case}'] = f'fourtwenty:block/path/{block}_bottom_{case}'
-        # Outer sides drawn: the front and back, and a lateral side only where the ramp is open.
-        sides = []
-        for side in (ns, ew):
-            if side in (facing, {'north': 'south', 'south': 'north', 'east': 'west', 'west': 'east'}[facing]):
-                sides.append(side)
-            elif shape != 'straight' or (side == CCW[facing] and left_open) or (side == CW[facing] and right_open):
-                sides.append(side)
-        rows = (1, 16) if h else (1, 8)
-        # Risers: a high quarter's face toward a tread quarter beside it in this block.
+        y0, y1 = (0, 15) if h else ((0, 7) if half == 'bottom' else (8, 15))
         risers = []
         if h:
             for side, (dx, dz) in SIDE_DIR.items():
-                qx = QUARTERS[q][0] + dx * 8
-                qz = QUARTERS[q][1] + dz * 8
-                other = next((k for k, v in QUARTERS.items() if (v[0], v[1]) == (qx, qz)), None)
+                other = next((k for k, v in QUARTERS.items() if (v[0], v[1]) == (QUARTERS[q][0] + dx * 8, QUARTERS[q][1] + dz * 8)), None)
                 if other and not stair_high(facing, shape, other):
                     risers.append(side)
-        elements.append(box_faces(q, y0, y1, f'#top_{case}', f'#bottom_{case}', sides, rows, risers))
+        elements.append(box_faces(q, y0, y1, '#top', '#bottom', [ns, ew], (1, 16) if h else (1, 8), risers))
     return {'parent': 'minecraft:block/block', 'ambientocclusion': True, 'textures': textures, 'elements': elements}
+
+
+INNER_SIDES = {'nw': ('east', 'south'), 'ne': ('west', 'south'), 'sw': ('east', 'north'), 'se': ('west', 'north')}
+
+
+def riser_part(block, q, side, half):
+    """A stair's riser: a high quarter's face toward a lower quarter beside it, above a tread (7 to 15)
+    or below an upside-down one (0 to 8)."""
+    x0, z0 = QUARTERS[q][0], QUARTERS[q][1]
+    x1, z1 = x0 + 8, z0 + 8
+    u0, u1 = {'north': (16 - x1, 16 - x0), 'south': (x0, x1), 'west': (z0, z1), 'east': (16 - z1, 16 - z0)}[side]
+    y0, y1, (v0, v1) = (7, 15, (1, 9)) if half == 'bottom' else (0, 8, (8, 16))
+    return {'parent': 'minecraft:block/block', 'ambientocclusion': True,
+            'textures': {'side': f'fourtwenty:block/path/{block}_side', 'particle': f'fourtwenty:block/path/{block}_side'},
+            'elements': [{'from': [x0, y0, z0], 'to': [x1, y1, z1], 'faces': {side: {'texture': '#side', 'uv': [u0, v0, u1, v1]}}}]}
+
+
+def fallback(model):
+    """A blockstate naming one model for every state: RoadModel replaces it."""
+    return {'variants': {'': {'model': f'fourtwenty:block/{model}'}}}
 
 
 def slabs_and_stairs(block, label, names):
     # Slabs: the road's quarters at a slab's height, joined by the same cases (RoadSurface).
-    parts = []
-    for kind in SLAB_Y:
+    for kind in ('bottom', 'top'):                              # a double slab is a road's quarters
         for q in QUARTERS:
             for case in CASES:
                 side = f'fourtwenty:block/path/{block}_side_corner' if case == 'outer' else f'fourtwenty:block/path/{block}_side'
@@ -592,9 +584,8 @@ def slabs_and_stairs(block, label, names):
                     'textures': {'top': f'fourtwenty:block/path/{block}_{case}', 'bottom': f'fourtwenty:block/path/{block}_bottom_{case}',
                                  'side': side, 'particle': f'fourtwenty:block/path/{block}_side'},
                     'elements': [slab_part(q, case, kind)]})
-                parts.append({'when': dict(condition(q, case), type=kind), 'apply': {'model': f'fourtwenty:block/{model}'}})
     slab = f'{block}_slab'
-    write(ASSETS / f'blockstates/{slab}.json', {'multipart': parts})
+    write(ASSETS / f'blockstates/{slab}.json', fallback(f'{block}_slab_bottom_nw_outer'))
     write(ASSETS / f'models/item/{slab}.json', {'parent': 'minecraft:block/block', 'textures': {
         'top': f'fourtwenty:block/path/{block}_outer', 'bottom': f'fourtwenty:block/path/{block}_bottom_outer',
         'side': f'fourtwenty:block/path/{block}_side_corner', 'particle': f'fourtwenty:block/path/{block}_side'},
@@ -611,21 +602,12 @@ def slabs_and_stairs(block, label, names):
     names[slab] = f'{label} Slab'
     # Stairs.
     stairs = f'{block}_stairs'
-    parts = []
-    for facing in FACINGS:
-        for half in ('bottom', 'top'):
-            for shape in STAIR_SHAPES:
-                combos = [(lo, ro) for lo in (True, False) for ro in (True, False)] if shape == 'straight' else [(True, True)]
-                for lo, ro in combos:
-                    model = f'{stairs}_{facing}_{half}_{shape}' + (f'_{"l" if lo else ""}{"r" if ro else ""}' if shape == 'straight' else '')
-                    write(ASSETS / f'models/block/{model}.json', stair_model(block, facing, half, shape, lo, ro))
-                    when = {'facing': facing, 'half': half, 'shape': shape}
-                    if shape == 'straight':
-                        when.update(left_open=str(lo).lower(), right_open=str(ro).lower())
-                    parts.append({'when': when, 'apply': {'model': f'fourtwenty:block/{model}'}})
-    write(ASSETS / f'blockstates/{stairs}.json', {'multipart': parts})
-    item = stair_model(block, 'east', 'bottom', 'straight', True, True)
-    write(ASSETS / f'models/item/{stairs}.json', dict(item, parent='minecraft:block/block'))
+    for q in QUARTERS:
+        for side in INNER_SIDES[q]:
+            for half in ('bottom', 'top'):
+                write(ASSETS / f'models/block/{block}_riser_{half}_{q}_{side}.json', riser_part(block, q, side, half))
+    write(ASSETS / f'blockstates/{stairs}.json', fallback(f'{block}_nw_outer'))
+    write(ASSETS / f'models/item/{stairs}.json', stair_model(block, 'east', 'bottom', 'straight'))
     write(DATA / f'loot_table/blocks/{stairs}.json', {'type': 'minecraft:block', 'pools': [{'rolls': 1, 'entries': [
         {'type': 'minecraft:item', 'name': f'fourtwenty:{stairs}'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
     write(DATA / f'recipe/{stairs}.json', {'type': 'minecraft:crafting_shaped', 'category': 'building', 'pattern': ['R  ', 'RR ', 'RRR'],
@@ -671,8 +653,10 @@ def generate(preview=None):
             case_texture(under, uband, under_mitre, case, under_inner).save(tex_dir / f'{block}_bottom_{case}.png')
         side_texture(tier, rng, False).save(tex_dir / f'{block}_side.png')
         side_texture(tier, rng, True).save(tex_dir / f'{block}_side_corner.png')
-        # Models: one per quarter and case; only the open sides are drawn, with quoins at a road's corners.
-        parts = []
+        # Parts: one per quarter and case, its outer sides drawn, with quoins at a road's corners.
+        for old in (ASSETS / 'models/block').glob(f'{block}_s*.json'):      # per-state stair models, double-slab parts: gone
+            if old.name.startswith((f'{block}_stairs_', f'{block}_slab_double_')):
+                old.unlink()
         for q in QUARTERS:
             for case in CASES:
                 side = f'fourtwenty:block/path/{block}_side_corner' if case == 'outer' else f'fourtwenty:block/path/{block}_side'
@@ -680,8 +664,7 @@ def generate(preview=None):
                     'textures': {'top': f'fourtwenty:block/path/{block}_{case}', 'bottom': f'fourtwenty:block/path/{block}_bottom_{case}',
                                  'side': side, 'particle': f'fourtwenty:block/path/{block}_side'},
                     'elements': [quarter_model(q, open_sides(q, case))]})
-                parts.append({'when': condition(q, case), 'apply': {'model': f'fourtwenty:block/{block}_{q}_{case}'}})
-        write(ASSETS / f'blockstates/{block}.json', {'multipart': parts})
+        write(ASSETS / f'blockstates/{block}.json', fallback(f'{block}_nw_outer'))
         write(ASSETS / f'models/item/{block}.json', {'parent': 'minecraft:block/block', 'textures': {
             'top': f'fourtwenty:block/path/{block}_outer', 'bottom': f'fourtwenty:block/path/{block}_bottom_outer',
             'side': f'fourtwenty:block/path/{block}_side_corner', 'particle': f'fourtwenty:block/path/{block}_side'},
