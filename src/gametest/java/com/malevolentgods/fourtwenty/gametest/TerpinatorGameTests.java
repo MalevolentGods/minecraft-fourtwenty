@@ -236,4 +236,19 @@ public final class TerpinatorGameTests {
         h.assertTrue(!h.getBlockState(centre).getValue(com.malevolentgods.fourtwenty.block.RugBlock.NORTH_WEST), "Told when the diagonal goes");
         h.succeed();
     }
+
+    /** Domum Ornamentum takes hemp, concrete and glass as materials: the tags load (no missing entries) with every colour in them. */
+    @GameTest(template = "empty")
+    public static void hempConcreteAndGlassAreDomumMaterials(GameTestHelper h) {
+        var tag = (java.util.function.Function<String, net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block>>) id ->
+                net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, net.minecraft.resources.ResourceLocation.parse(id));
+        var domumDefault = tag.apply("domum_ornamentum:default");
+        var domumConcrete = tag.apply("domum_ornamentum:concrete");
+        var glass = tag.apply("c:glass_blocks");
+        h.assertTrue(ModTerpenes.NATURAL_HEMP.block().get().defaultBlockState().is(domumDefault), "natural hemp isn't a Domum material");
+        ModTerpenes.HEMP.forEach((code, hemp) -> h.assertTrue(hemp.block().get().defaultBlockState().is(domumDefault), "hemp " + code + " isn't a Domum material"));
+        ModTerpenes.CONCRETE.forEach((code, b) -> h.assertTrue(b.get().defaultBlockState().is(domumConcrete), "concrete " + code + " isn't a Domum material"));
+        ModTerpenes.GLASS.forEach((code, b) -> h.assertTrue(b.get().defaultBlockState().is(glass), "glass " + code + " isn't c:glass_blocks"));
+        h.succeed();
+    }
 }
