@@ -2,7 +2,7 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": true,
   "textures": {
-    "top": "fourtwenty:block/path/paved_road_step_ne_se_thin_ew",
+    "top": "fourtwenty:block/path/paved_road_step_ne_se",
     "bottom": "fourtwenty:block/path/paved_road_bottom_outer",
     "side": "fourtwenty:block/path/paved_road_side_corner",
     "plain": "fourtwenty:block/path/paved_road_side",

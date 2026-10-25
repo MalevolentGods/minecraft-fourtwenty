@@ -673,16 +673,15 @@ def stair_model(block, facing, half, shape, joined, down, step):
     """A road stair of separate steps: four quarters, high (15/16) or tread (7/16; upside down 8/16 to
     15/16). Each step's top is bordered all round, and each step's front (a tread's downhill faces and
     the riser above it) is a bordered strip of road, turning the corner on a corner stair;
-    borders across the climb (a front's top and bottom, a top's front and back) are thinner than a
-    road's, those along it the road's own, lining up with the roads beside. Where the block on a side
+    a front's top and bottom borders are thinner than a road's, its ends and every top border the
+    road's own, lining up with the roads round it. Where the block on a side
     carries it on (joined: its road, or a stair or slab of it meeting it at the same heights, whichever
     way it faces) there's no border on that side, top or front. An upside-down stair's top is flat, bordered the same way.
     The other sides are the cut; standing on a road block (down), without its footing, running on into
     the road's sides below."""
     path = f'fourtwenty:block/path/{block}'
     high = {q for q in QUARTERS if stair_high(facing, shape, q)}
-    across = 'ns' if facing in ('north', 'south') else 'ew'   # edges across the climb: thin; along it: the road's
-    textures = {'top': step(list(QUARTERS) if half == 'top' else sorted(high), joined, across),
+    textures = {'top': step(list(QUARTERS) if half == 'top' else sorted(high), joined),     # the road's band, to line up with it
                 'bottom': f'{path}_bottom_outer', 'side': f'{path}_side_corner' + ('_d' if down else ''),
                 'plain': f'{path}_side' + ('_d' if down else ''), 'particle': f'{path}_side',
                 }

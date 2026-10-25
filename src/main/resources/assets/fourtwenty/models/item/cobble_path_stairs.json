@@ -2,7 +2,7 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": true,
   "textures": {
-    "top": "fourtwenty:block/path/cobble_path_step_ne_se_thin_ew",
+    "top": "fourtwenty:block/path/cobble_path_step_ne_se",
     "bottom": "fourtwenty:block/path/cobble_path_bottom_outer",
     "side": "fourtwenty:block/path/cobble_path_side_corner",
     "plain": "fourtwenty:block/path/cobble_path_side",
