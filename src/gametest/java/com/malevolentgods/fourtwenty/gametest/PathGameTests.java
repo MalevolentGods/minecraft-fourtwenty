@@ -186,6 +186,11 @@ public final class PathGameTests {
         h.setBlock(new BlockPos(2, 3, 1), Blocks.STONE);
         h.assertTrue((edges(h, a, 1, -1) & RoadShape.E) != 0, "a road beside a covered road isn't bordered");
         h.assertTrue(RoadShape.covered(h.getLevel(), h.absolutePos(b), h.getBlockState(b), -1, -1), "stone on a road doesn't cover it");
+        // Furniture stands on the road: a rug or a couch doesn't cover it.
+        h.setBlock(new BlockPos(2, 3, 1), ModTerpenes.RUGS.get("natural").get());
+        h.assertTrue(!RoadShape.covered(h.getLevel(), h.absolutePos(b), h.getBlockState(b), -1, -1), "a rug covers a road");
+        h.setBlock(new BlockPos(2, 3, 1), ModTerpenes.COUCHES.values().iterator().next().get());
+        h.assertTrue(!RoadShape.covered(h.getLevel(), h.absolutePos(b), h.getBlockState(b), -1, -1), "a couch covers a road");
         h.succeed();
     }
 

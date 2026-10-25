@@ -86,13 +86,18 @@ public final class RoadShape {
         return !shape.isEmpty() && !Shapes.joinIsNotEmpty(Shapes.box(x0, y, z0, x0 + 0.5, y + PIXEL, z0 + 0.5), shape, BooleanOp.ONLY_FIRST);
     }
 
-    /** Whether something stands on quarter (sx, sz)'s full-height top: a road block's underside, or any block solid over it. */
+    /**
+     * Whether something stands on quarter (sx, sz)'s full-height top: a road block's underside, or a
+     * block solid over the whole quarter from bottom to top (a wall, not a rug or a couch: furniture
+     * stands on the road, which keeps its top and its border).
+     */
     public static boolean covered(BlockGetter level, BlockPos pos, BlockState s, int sx, int sz) {
         if (top(s, sx, sz) != 15) return false;
         BlockPos ap = pos.above();
         BlockState above = level.getBlockState(ap);
         if (tier(above) >= 0) return bottom(above, sx, sz) == 0;
-        return fills(above.getCollisionShape(level, ap), sx, sz, 0);
+        VoxelShape shape = above.getCollisionShape(level, ap);
+        return fills(shape, sx, sz, 0) && fills(shape, sx, sz, 1 - PIXEL);
     }
 
     /** Whether a road block stands on quarter (sx, sz): a stack, whose sides read as one wall. */
