@@ -1,0 +1,7 @@
+{
+  "parent": "fourtwenty:block/path_quarter_se",
+  "textures": {
+    "top": "fourtwenty:block/path/cobble_path_ew",
+    "side": "fourtwenty:block/path/cobble_path_side"
+  }
+}

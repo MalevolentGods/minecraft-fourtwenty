@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "fourtwenty:cobble_path",
+    "fourtwenty:paved_road",
+    "fourtwenty:yellow_brick_road"
+  ]
+}

@@ -127,6 +127,19 @@ public final class ModTerpenes {
                 .sound(SoundType.WOOL).ignitedByLava().noOcclusion());
     }
 
+    /**
+     * Roads, in three tiers ({@link com.malevolentgods.fourtwenty.block.HempPathBlock}): a cobble path,
+     * a paved road and a yellow brick road, 5, 10 and 15% faster to walk on, joining into whole roads
+     * with a border round the outside.
+     */
+    public static final java.util.List<DeferredHolder<Block, Block>> PATHS = java.util.List.of(
+            register("cobble_path", () -> path(1)), register("paved_road", () -> path(2)), register("yellow_brick_road", () -> path(3)));
+
+    private static Block path(int tier) {
+        return new com.malevolentgods.fourtwenty.block.HempPathBlock(tier, BlockBehaviour.Properties.of().mapColor(tier == 3 ? MapColor.GOLD : MapColor.STONE)
+                .strength(1.2f, 6.0f).requiresCorrectToolForDrops().sound(SoundType.STONE));
+    }
+
     /** Lamps, inverted lamps and lamp trims in the 64 colours (halos in their own colour). */
     public static final Map<String, DeferredHolder<Block, Block>> LAMPS = palette("lamp_",
             code -> new com.malevolentgods.fourtwenty.block.LampBlock(rgb(code), false, ModBlocks.lampProperties()));
@@ -207,6 +220,7 @@ public final class ModTerpenes {
                         all.forEach(h -> output.accept(h.items().get(2).get()));
                         RUGS.values().forEach(b -> output.accept(b.get()));
                         COUCHES.values().forEach(b -> output.accept(b.get()));
+                        PATHS.forEach(b -> output.accept(b.get()));
                         CONCRETE.values().forEach(b -> output.accept(b.get()));
                         CONCRETE_POWDER.values().forEach(b -> output.accept(b.get()));
                         GLASS.values().forEach(b -> output.accept(b.get()));

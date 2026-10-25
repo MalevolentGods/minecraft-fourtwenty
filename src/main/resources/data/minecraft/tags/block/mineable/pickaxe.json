@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "fourtwenty:cobble_path",
     "fourtwenty:concrete_lav_lav_lav",
     "fourtwenty:concrete_lav_lav_lim",
     "fourtwenty:concrete_lav_lav_myr",
@@ -65,6 +66,8 @@
     "fourtwenty:concrete_pin_pin_lim",
     "fourtwenty:concrete_pin_pin_myr",
     "fourtwenty:concrete_pin_pin_pin",
-    "fourtwenty:terpinator"
+    "fourtwenty:paved_road",
+    "fourtwenty:terpinator",
+    "fourtwenty:yellow_brick_road"
   ]
 }

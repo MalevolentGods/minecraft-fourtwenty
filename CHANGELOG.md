@@ -4,6 +4,9 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Roads** (HempPathBlock), three tiers: Cobble Path, Paved Road, Yellow Brick Road. 15/16 high like a dirt path, with light occlusion shaped to it, so a lamp beside a road shows a strip of light. Walkers (players, mobs, colonists) are 5, 10 and 15% faster on them: the block speed factor is solved for that steady-state gain (vanilla's factor compounds with ground friction, so a factor of 1.15 would give about 22%). Roads join like the rugs (eight neighbours; each quarter of the top an outer corner, an edge, an inner corner or field, drawn in world orientation so the paving runs on across blocks). 64x64 textures from `tools/generate_paths.py`; `PathGameTests` measures the speed on a walking mob, the light strip and the joining.
+
 ### Changed
 - Sensi Heights pack v62: placeholders used the way MineColonies' Colonial style uses them: every building's area is cleared above ground from level 1 (so colonists can walk anywhere in it), with solid fill in and under the ground layer (the level 1 Builder's Hut and Residence keep their terrain-keeping quick builds).
 - Sensi Heights pack v61: the Tavern's and Restaurant's red wool chairs are Heart of the Matter couches (joined into sofas, on the floor of their design), and floor fixes (parquet and log grain, cherry trim facing).

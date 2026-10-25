@@ -1,0 +1,7 @@
+{
+  "parent": "fourtwenty:block/path_quarter_nw",
+  "textures": {
+    "top": "fourtwenty:block/path/paved_road_ns",
+    "side": "fourtwenty:block/path/paved_road_side"
+  }
+}
