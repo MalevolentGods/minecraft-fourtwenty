@@ -53,9 +53,10 @@ QUARTERS = {  # quarter: (x0, z0, its north/south side, its east/west side, its 
 }
 
 
-def write(path, obj):
+def write(path, obj, compact=False):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(obj, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    text = json.dumps(obj, separators=(',', ':'), ensure_ascii=False) if compact else json.dumps(obj, indent=2, ensure_ascii=False)
+    path.write_text(text + '\n', encoding='utf-8')
 
 
 def clamp(v):
@@ -668,24 +669,23 @@ def downhill(facing, shape):
 U_LOW = {'south': 'west', 'north': 'east', 'west': 'north', 'east': 'south'}     # the world side at a face's u = 0
 
 
-def stair_model(block, facing, half, shape, left, right, back, down, step):
+def stair_model(block, facing, half, shape, joined, down, step):
     """A road stair of separate steps: four quarters, high (15/16) or tread (7/16; upside down 8/16 to
     15/16). Each step's top is bordered all round, and each step's front (a tread's downhill faces and
-    the riser above it) is a bordered strip of road, or a bordered square where it's one quarter wide;
+    the riser above it) is a bordered strip of road, turning the corner on a corner stair;
     borders across the climb (a front's top and bottom, a top's front and back) are thinner than a
-    road's, those along it the road's own, lining up with the roads beside. Where the block beside or
-    behind carries it on (left / right: a stair of the same flight or its road; back: its road) there's
-    no border on that side, top or front. An upside-down stair's top is flat, bordered the same way.
+    road's, those along it the road's own, lining up with the roads beside. Where the block on a side
+    carries it on (joined: its road, or a stair or slab of it meeting it at the same heights, whichever
+    way it faces) there's no border on that side, top or front. An upside-down stair's top is flat, bordered the same way.
     The other sides are the cut; standing on a road block (down), without its footing, running on into
     the road's sides below."""
     path = f'fourtwenty:block/path/{block}'
     high = {q for q in QUARTERS if stair_high(facing, shape, q)}
-    joined = {d for d, on in ((CCW[facing], left), (CW[facing], right), (facing, back)) if on}
     across = 'ns' if facing in ('north', 'south') else 'ew'   # edges across the climb: thin; along it: the road's
     textures = {'top': step(list(QUARTERS) if half == 'top' else sorted(high), joined, across),
                 'bottom': f'{path}_bottom_outer', 'side': f'{path}_side_corner' + ('_d' if down else ''),
                 'plain': f'{path}_side' + ('_d' if down else ''), 'particle': f'{path}_side',
-                'square': step(['nw'], (), 'ns')}
+                }
     down = downhill(facing, shape) if half == 'bottom' else set()
     beside = lambda q, side: next((k for k, v in QUARTERS.items()
                                    if (v[0], v[1]) == (QUARTERS[q][0] + SIDE_DIR[side][0] * 8, QUARTERS[q][1] + SIDE_DIR[side][1] * 8)), None)
@@ -708,21 +708,16 @@ def stair_model(block, facing, half, shape, left, right, back, down, step):
             if end in joined:
                 el['faces'][side]['texture'] = '#plain'
         for side, kind in face_of[q]:
-            # Its row-mate: the quarter beside it along this face. A strip if that has the same front,
-            # open at an end where the stair beside carries it on.
-            dx, dz = SIDE_DIR[side]
-            mate = beside(q, 'east' if x0 == 0 else 'west') if dz else beside(q, 'south' if z0 == 0 else 'north')
             u0, u1 = span(x0, z0, side)
             # A riser is the high quarter's whole side (0 to 15); only its top half shows, above the tread.
             v1 = 15 if kind == 'riser' else 8
+            # Its part of a strip across the block: bordered at the block's edge unless the block there
+            # joins it, and never at the middle (where a lone quarter's front turns a corner or meets a wall).
             face = dict(el['faces'][side])
-            if (side, kind) in face_of[mate]:
-                ends = {e for e, world in (('west', U_LOW[side]), ('east', OPP[U_LOW[side]])) if world in joined}
-                key = 'strip' + ''.join(sorted(e[0] for e in ends))
-                textures[key] = step(['nw', 'ne'], ends, 'ns')
-                face.update(texture=f'#{key}', uv=[u0, 0, u1, v1])
-            else:
-                face.update(texture='#square', uv=[0, 0, 8, v1])
+            ends = {e for e, world in (('west', U_LOW[side]), ('east', OPP[U_LOW[side]])) if world in joined}
+            key = 'strip' + ''.join(sorted(e[0] for e in ends))
+            textures[key] = step(['nw', 'ne'], ends, 'ns')
+            face.update(texture=f'#{key}', uv=[u0, 0, u1, v1])
             el['faces'][side] = face
         elements.append(el)
     return {'parent': 'minecraft:block/block', 'ambientocclusion': True, 'textures': textures, 'elements': elements}
@@ -781,17 +776,19 @@ def slabs_and_stairs(block, label, names, step):
     for facing in FACINGS:
         for half in ('bottom', 'top'):
             for shape in STAIR_SHAPES:
-                for left, right, back, down in itertools.product((False, True), repeat=4):
-                    model = f'{stairs}_{facing}_{half}_{shape}' + ''.join(f'_{k}' for k, on in zip('lrbd', (left, right, back, down)) if on)
-                    write(ASSETS / f'models/block/{model}.json', stair_model(block, facing, half, shape, left, right, back, down, step))
-                    flags = ','.join(f'{k}={str(on).lower()}' for k, on in (('back', back), ('down', down)))
-                    key = f'{flags},facing={facing},half={half},left={str(left).lower()},right={str(right).lower()},shape={shape}'
+                for *sides, down in itertools.product((False, True), repeat=5):          # joined north, east, south, west; on a road
+                    joined = {d for d, on in zip(FACINGS, sides) if on}
+                    model = f'{stairs}_{facing}_{half}_{shape}' + ''.join(f'_{d[0]}' for d in FACINGS if d in joined) + ('_d' if down else '')
+                    write(ASSETS / f'models/block/{model}.json', stair_model(block, facing, half, shape, joined, down, step), compact=True)
+                    flags = {d: str(d in joined).lower() for d in FACINGS}
+                    key = (f'down={str(down).lower()},east={flags["east"]},facing={facing},half={half},north={flags["north"]},'
+                           f'shape={shape},south={flags["south"]},west={flags["west"]}')
                     variants[key] = {'model': f'fourtwenty:block/{model}'}
     write(ASSETS / f'blockstates/{stairs}.json', {'variants': variants})
     for old in (ASSETS / 'models/block').glob(f'{stairs}_*.json'):
         if old.stem not in {v['model'].split('/')[-1] for v in variants.values()}:
             old.unlink()
-    write(ASSETS / f'models/item/{stairs}.json', stair_model(block, 'east', 'bottom', 'straight', False, False, False, False, step))
+    write(ASSETS / f'models/item/{stairs}.json', stair_model(block, 'east', 'bottom', 'straight', set(), False, step))
     for q in QUARTERS:
         for corner in (False, True):
             write(ASSETS / 'models/block' / (f'{block}_cap_{q}' + ('_corner' if corner else '') + '.json'), cap_part(block, q, corner))

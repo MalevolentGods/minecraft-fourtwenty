@@ -144,13 +144,22 @@ public final class PathGameTests {
         h.setBlock(new BlockPos(1, 2, 1), Block.updateFromNeighbourShapes(up, h.getLevel(), h.absolutePos(new BlockPos(1, 2, 1))));
         h.setBlock(new BlockPos(2, 2, 1), Block.updateFromNeighbourShapes(up, h.getLevel(), h.absolutePos(new BlockPos(2, 2, 1))));
         BlockState a = h.getBlockState(new BlockPos(1, 2, 1)), b = h.getBlockState(new BlockPos(2, 2, 1));
-        h.assertTrue(a.getValue(HempPathStairBlock.RIGHT) && b.getValue(HempPathStairBlock.LEFT), "the flight's stairs don't join: " + a + " / " + b);
-        h.assertTrue(!a.getValue(HempPathStairBlock.LEFT), "the west stair joined nothing on its left");
-        h.assertTrue(a.getValue(HempPathStairBlock.BACK) && !b.getValue(HempPathStairBlock.BACK), "the road behind: " + a + " / " + b);
-        h.assertTrue(!b.getValue(HempPathStairBlock.RIGHT), "a stair joined another tier's road");
-        // A stair facing the other way beside doesn't join.
+        h.assertTrue(a.getValue(HempPathStairBlock.EAST) && b.getValue(HempPathStairBlock.WEST), "the flight's stairs don't join: " + a + " / " + b);
+        h.assertTrue(!a.getValue(HempPathStairBlock.WEST), "the west stair joined nothing on its west");
+        h.assertTrue(a.getValue(HempPathStairBlock.NORTH) && !b.getValue(HempPathStairBlock.NORTH), "the road behind: " + a + " / " + b);
+        h.assertTrue(!b.getValue(HempPathStairBlock.EAST), "a stair joined another tier's road");
+        // A stair facing the other way beside doesn't join: its steps meet these at other heights.
         h.setBlock(new BlockPos(0, 2, 1), up.setValue(StairBlock.FACING, Direction.SOUTH));
-        h.assertTrue(!h.getBlockState(new BlockPos(1, 2, 1)).getValue(HempPathStairBlock.LEFT), "a stair facing south joined the flight");
+        h.assertTrue(!h.getBlockState(new BlockPos(1, 2, 1)).getValue(HempPathStairBlock.WEST), "a stair facing south joined the flight");
+        // A corner, as round a ring: a stair facing west north of a stair facing north makes that one an
+        // outer corner, which joins it (and the straight stair west of it) though they face other ways.
+        BlockPos corner = new BlockPos(4, 2, 3);
+        h.setBlock(new BlockPos(4, 2, 2), up.setValue(StairBlock.FACING, Direction.WEST));
+        h.setBlock(new BlockPos(3, 2, 3), up);
+        h.setBlock(corner, Block.updateFromNeighbourShapes(up, h.getLevel(), h.absolutePos(corner)));
+        BlockState c = h.getBlockState(corner);
+        h.assertTrue(c.getValue(StairBlock.SHAPE) == net.minecraft.world.level.block.state.properties.StairsShape.OUTER_LEFT, "test setup: " + c);
+        h.assertTrue(c.getValue(HempPathStairBlock.NORTH) && c.getValue(HempPathStairBlock.WEST), "the corner doesn't join its flights: " + c);
         h.succeed();
     }
 }
