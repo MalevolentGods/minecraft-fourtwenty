@@ -129,37 +129,46 @@ public final class PathGameTests {
         h.assertTrue(quarter(h, r, 1, -1) == RoadShape.EW, "road ne: joins the stair's back, not the bottom slab: " + quarter(h, r, 1, -1));
         h.assertTrue(quarter(h, r, -1, 1) == RoadShape.INNER, "road sw: joins the ramp and the slab: " + quarter(h, r, -1, 1));
         h.assertTrue(quarter(h, r, 1, 1) == RoadShape.EW, "road se: joins the ramp: " + quarter(h, r, 1, 1));
-        h.assertTrue(quarter(h, new BlockPos(2, 1, 3), -1, -1) == RoadShape.EW, "the lower road joins the tread above it (nothing under the stair)");
         h.succeed();
     }
 
+    /** Quarter (sx, sz)'s bordered edges at a test position. */
+    private static int edges(GameTestHelper h, BlockPos p, int sx, int sz) {
+        return RoadShape.border(h.getLevel(), h.absolutePos(p), h.getBlockState(p), sx, sz) & 15;
+    }
+
     @GameTest(template = "empty")
-    public static void stairsShareBordersWithTheirFlightAndTheirRoad(GameTestHelper h) {
+    public static void stairsShareBordersWhereverTheirTopsAreLevel(GameTestHelper h) {
         HempPathStairBlock stairs = (HempPathStairBlock) ModTerpenes.PATH_STAIRS.get(2).get();
         Block road = ModTerpenes.PATHS.get(2).get(), other = ModTerpenes.PATHS.get(0).get();
         BlockState up = stairs.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH);
-        // A flight of two (west to east) with its road behind the west one and a cobble path east of the east one.
+        // A flight of two (west to east), its road behind the west one, a cobble path east of the east one.
         h.setBlock(new BlockPos(1, 2, 0), road);
         h.setBlock(new BlockPos(3, 2, 1), other);
-        h.setBlock(new BlockPos(1, 2, 1), Block.updateFromNeighbourShapes(up, h.getLevel(), h.absolutePos(new BlockPos(1, 2, 1))));
-        h.setBlock(new BlockPos(2, 2, 1), Block.updateFromNeighbourShapes(up, h.getLevel(), h.absolutePos(new BlockPos(2, 2, 1))));
-        BlockState a = h.getBlockState(new BlockPos(1, 2, 1)), b = h.getBlockState(new BlockPos(2, 2, 1));
-        h.assertTrue(a.getValue(HempPathStairBlock.EAST) && b.getValue(HempPathStairBlock.WEST), "the flight's stairs don't join: " + a + " / " + b);
-        h.assertTrue(!a.getValue(HempPathStairBlock.WEST), "the west stair joined nothing on its west");
-        h.assertTrue(a.getValue(HempPathStairBlock.NORTH) && !b.getValue(HempPathStairBlock.NORTH), "the road behind: " + a + " / " + b);
-        h.assertTrue(!b.getValue(HempPathStairBlock.EAST), "a stair joined another tier's road");
-        // A stair facing the other way beside doesn't join: its steps meet these at other heights.
+        BlockPos a = new BlockPos(1, 2, 1), b = new BlockPos(2, 2, 1);
+        h.setBlock(a, up);
+        h.setBlock(b, up);
+        h.assertTrue((edges(h, a, 1, -1) & RoadShape.E) == 0 && (edges(h, a, 1, 1) & RoadShape.E) == 0, "the flight's steps don't join across");
+        h.assertTrue(edges(h, a, -1, -1) == (RoadShape.W | RoadShape.S), "the west stair's back step: joins the road behind and its flight: " + edges(h, a, -1, -1));
+        h.assertTrue(edges(h, a, -1, 1) == (RoadShape.W | RoadShape.N | RoadShape.S), "the west stair's tread: bordered but toward its flight: " + edges(h, a, -1, 1));
+        h.assertTrue((edges(h, b, 1, -1) & (RoadShape.N | RoadShape.E)) == (RoadShape.N | RoadShape.E), "the east stair's back step: open behind, another road east");
+        // The road behind wraps its border round the tread-less side: it joins the high step only.
+        h.assertTrue((edges(h, new BlockPos(1, 2, 0), -1, 1) & RoadShape.S) == 0, "the road doesn't join the step level with it");
+        // A stair facing the other way beside: its steps meet these at other heights, so both are bordered.
         h.setBlock(new BlockPos(0, 2, 1), up.setValue(StairBlock.FACING, Direction.SOUTH));
-        h.assertTrue(!h.getBlockState(new BlockPos(1, 2, 1)).getValue(HempPathStairBlock.WEST), "a stair facing south joined the flight");
+        h.assertTrue((edges(h, a, -1, -1) & RoadShape.W) != 0, "a stair facing south joined the flight");
         // A corner, as round a ring: a stair facing west north of a stair facing north makes that one an
-        // outer corner, which joins it (and the straight stair west of it) though they face other ways.
+        // outer corner, whose high quarter joins both flights though they face other ways.
         BlockPos corner = new BlockPos(4, 2, 3);
         h.setBlock(new BlockPos(4, 2, 2), up.setValue(StairBlock.FACING, Direction.WEST));
         h.setBlock(new BlockPos(3, 2, 3), up);
         h.setBlock(corner, Block.updateFromNeighbourShapes(up, h.getLevel(), h.absolutePos(corner)));
-        BlockState c = h.getBlockState(corner);
-        h.assertTrue(c.getValue(StairBlock.SHAPE) == net.minecraft.world.level.block.state.properties.StairsShape.OUTER_LEFT, "test setup: " + c);
-        h.assertTrue(c.getValue(HempPathStairBlock.NORTH) && c.getValue(HempPathStairBlock.WEST), "the corner doesn't join its flights: " + c);
+        h.assertTrue(h.getBlockState(corner).getValue(StairBlock.SHAPE) == StairsShape.OUTER_LEFT, "test setup: " + h.getBlockState(corner));
+        h.assertTrue(edges(h, corner, -1, -1) == (RoadShape.E | RoadShape.S), "the corner's high step: " + edges(h, corner, -1, -1));
+        // Its fronts: the tread fronts south run on across the stair, and round the corner.
+        h.assertTrue(RoadShape.front(h.getBlockState(corner), 1, 1, Direction.SOUTH) == RoadShape.TREAD
+                && RoadShape.frontRunsOn(h.getLevel(), h.absolutePos(corner), h.getBlockState(corner), 1, 1, Direction.SOUTH, Direction.EAST),
+                "the corner's tread front doesn't turn the corner");
         h.succeed();
     }
 }

@@ -5,14 +5,10 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -26,25 +22,14 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Road stairs, sized to the road: the tread is 7/16 high and the back reaches the road's 15/16, so
  * a ramp of them runs from one road down to the next with no lip. Shapes (straight, inner, outer
- * corner) follow vanilla's stair rule. It's drawn as separate steps, each bordered all round on top
- * and down its front (tools/generate_paths.py). It shares its borders with what carries its road on
- * ({@link #NORTH}, {@link #EAST}, {@link #SOUTH}, {@link #WEST}): blocks of its road (roads, slabs,
- * stairs, whichever way they face) whose tops meet its own at the same heights all along the side, so
- * a wide flight reads as one, its corner stairs join the flights either side, and its high back runs
- * on into the road behind; the road does the same quarter by quarter ({@link RoadShape}), its border
- * wrapping round where it meets a lower step. Same speed as its road. Upside-down stairs are the same, mirrored: flush on
- * top, 8/16 under the tread.
+ * corner) follow vanilla's stair rule. It's drawn as separate steps, bordered on top and down their
+ * fronts, joining whatever's level with them, quarter by quarter ({@link RoadShape}, client.RoadModel).
+ * Same speed as its road. Upside-down stairs are the same, mirrored: flush on top, 8/16 under the
+ * tread.
  */
 public class HempPathStairBlock extends StairBlock {
     public static final MapCodec<HempPathStairBlock> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             Codec.INT.fieldOf("tier").forGetter(b -> b.tier), propertiesCodec()).apply(i, (t, p) -> new HempPathStairBlock(t, null, p)));
-    /** The block on that side carries its road on: no border on that side. */
-    public static final BooleanProperty NORTH = BooleanProperty.create("north"), EAST = BooleanProperty.create("east"),
-            SOUTH = BooleanProperty.create("south"), WEST = BooleanProperty.create("west");
-    private static final BooleanProperty[] SIDES = {NORTH, EAST, SOUTH, WEST};
-    private static final Direction[] SIDE_DIRECTIONS = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
-    /** It stands on a road block's full height: its sides run on down into that road's as one wall. */
-    public static final BooleanProperty DOWN = BooleanProperty.create("down");
     private static final Map<BlockState, VoxelShape> SHAPES = new ConcurrentHashMap<>();
 
     private final int tier;
@@ -53,14 +38,6 @@ public class HempPathStairBlock extends StairBlock {
         super(road == null ? net.minecraft.world.level.block.Blocks.STONE.defaultBlockState() : road,
                 properties.speedFactor(HempPathBlock.speedFactorFor(HempPathBlock.gainFor(tier))));
         this.tier = tier;
-        BlockState state = defaultBlockState().setValue(DOWN, false);
-        for (BooleanProperty side : SIDES) state = state.setValue(side, false);
-        registerDefaultState(state);
-    }
-
-    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder);
-        builder.add(NORTH, EAST, SOUTH, WEST, DOWN);
     }
 
     public int tier() { return tier; }
@@ -98,43 +75,4 @@ public class HempPathStairBlock extends StairBlock {
     }
 
     @Override protected boolean useShapeForLightOcclusion(@Nonnull BlockState state) { return true; }
-
-    /** Whether a block is a road block full height all over its top (any tier: a stack's sides read as one wall). */
-    private static boolean onRoad(BlockState below) {
-        if (RoadShape.tier(below) < 0) return false;
-        for (int sx : new int[]{-1, 1}) for (int sz : new int[]{-1, 1}) if (RoadShape.top(below, sx, sz) != 15) return false;
-        return true;
-    }
-
-    /**
-     * Whether the block on side d carries this stair on: a block of its road (road, slab or stair,
-     * whichever way it faces) whose top meets this one's at the same heights all along the shared edge.
-     */
-    private boolean joins(BlockState state, BlockState beside, Direction d) {
-        if (RoadShape.tier(beside) != tier) return false;
-        for (int a : new int[]{-1, 1}) {                // the two quarters along the shared edge
-            int sx = d.getStepX() != 0 ? d.getStepX() : a, sz = d.getStepZ() != 0 ? d.getStepZ() : a;
-            int mx = d.getStepX() != 0 ? -sx : sx, mz = d.getStepZ() != 0 ? -sz : sz;
-            if (RoadShape.top(state, sx, sz) != RoadShape.top(beside, mx, mz)) return false;
-        }
-        return true;
-    }
-
-    private BlockState joined(LevelAccessor level, BlockPos pos, BlockState state) {
-        for (int i = 0; i < SIDES.length; i++) {
-            state = state.setValue(SIDES[i], joins(state, level.getBlockState(pos.relative(SIDE_DIRECTIONS[i])), SIDE_DIRECTIONS[i]));
-        }
-        return state.setValue(DOWN, onRoad(level.getBlockState(pos.below())));
-    }
-
-    @Override public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
-        BlockState state = super.getStateForPlacement(context);
-        return state == null ? null : joined(context.getLevel(), context.getClickedPos(), state);
-    }
-
-    @Override protected @Nonnull BlockState updateShape(@Nonnull BlockState state, @Nonnull Direction direction, @Nonnull BlockState neighbor,
-                                                       @Nonnull LevelAccessor level, @Nonnull BlockPos pos, @Nonnull BlockPos neighborPos) {
-        BlockState updated = super.updateShape(state, direction, neighbor, level, pos, neighborPos);
-        return updated.is(this) ? joined(level, pos, updated) : updated;
-    }
 }

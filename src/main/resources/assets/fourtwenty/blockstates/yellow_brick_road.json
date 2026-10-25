@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "fourtwenty:block/yellow_brick_road_nw_outer"
+      "model": "fourtwenty:block/yellow_brick_road"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "fourtwenty:block/cobble_path_slab_bottom_nw_outer"
+      "model": "fourtwenty:block/cobble_path_slab"
     }
   }
 }
