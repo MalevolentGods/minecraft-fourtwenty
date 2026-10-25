@@ -4,6 +4,8 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+## [0.10.0] - Hemp Roads
+
 ### Added
 - **Roads** in three tiers: Cobble Path, Paved Road, Yellow Brick Road (HempPathBlock), with **road slabs and stairs** (HempPathSlabBlock, HempPathStairBlock). Roads stand 15/16 high like a dirt path, with light occlusion shaped to it, so a lamp beside a road shows a strip of light. Walkers (players, mobs, colonists) are 5, 10 and 15% faster on all three blocks of a tier: the block speed factor is solved for that steady-state gain, since vanilla's factor compounds with ground friction. Slabs are sized to the road (bottom 0-7/16, top 7-15/16, double 15/16), and stairs have 7/16 treads and 15/16 backs, so a ramp runs road to road with no lip.
 - **Roads read as one bordered surface wherever their faces meet** (RoadShape, drawn by the dynamic client model RoadModel, so the blocks carry no join properties). The rule is: faces side by side are one space, and a border runs wherever the next face rises, drops, is covered or is another block. Each quarter of each block is handled separately.

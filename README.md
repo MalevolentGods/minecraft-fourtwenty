@@ -4,24 +4,26 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
-## What's new in 0.9.0
+## What's new in 0.10.0
 
-*Pull up a couch. Four Twenty's weed powered furniture now comes with somewhere to sit.*
+*Pave the way. Four Twenty's roads get everyone there faster.*
 
-- **Hemp couches in every colour.** All 64 terpene colours and Natural Hemp, with a soft hemp cushion and back, arm rests and dark oak legs. They join like stairs: side by side for a sofa (the arms move to the ends), round a corner for a sectional, in any arrangement stairs would make, and colours mix. Fences, walls and panes don't join them. 3 hemp stairs over 2 sticks make 3.
-- **Sit down.** Right-click a couch with an empty hand to sit, one to a couch, and sneak to stand up. **`/sit`** sits you wherever you stand: on a couch, the floor, a step or a slab.
-- **Colonists use couches too.** With MineColonies, visitors, diners and smokers sit on couches tagged as seats, on the cushion and facing out, and a couch a player is sitting on counts as taken.
-- **The Sensi Heights Restaurant, levels 1–5.** A timber dining hall with a sunken seating pit grows into a polished restaurant with a covered patio, a big sunken dining room, a roof terrace and an upper dining room, topped at level 5 with cherry trim and a lamp-lit skylight.
+- **Hemp roads in three tiers.** Cobble Path, Paved Road and Yellow Brick Road make everyone who walks on them 5, 10 and 15% faster, colonists included. Like a dirt path, they sit a pixel low, so a lamp set beside one shows a strip of light.
+- **Slabs and stairs to match.** Each road has its own slab and stairs, sized to it, so a ramp runs from one road up to the next with no lip, and slabs step down half a block.
+- **Roads that read as one surface.** Wherever road faces meet, they share one border that runs round the outside, rises and falls with each step, and wraps round corners. Flights of stairs, corner stairs, rings of steps, slabs and stacks of road all join up, on tops, step fronts, side walls and undersides alike.
+- **Recipes:**
+  - **Cobble Path:** 2 cobblestone, 2 gravel and a weed bud make 4.
+  - **Paved Road:** 8 cobble paths round a smooth stone make 8.
+  - **Yellow Brick Road:** 8 paved roads round a gold ingot make 8.
+  - **Slabs and stairs:** made from the road, like any slab or stair, or in a stonecutter.
 
-## Changes from 0.8.0
+## Changes from 0.9.0
 
 - **Sensi Heights:**
-  - every seat in the pack is tagged, so colonists use them all;
-  - Workshop levels 3–5 have a Terpinator in place of the middle pillar and no longer need Farmer's Delight;
-  - terpene-coloured lamps in the Workshop and Residence, and a reworked Residence 5 (terpene concrete, hemp beds including a king, rugs);
-  - Tavern level 3 is refurnished with terpene rugs, and Tavern level 1's loft is opened up;
-  - doors and gates are always saved closed.
-- See the [CHANGELOG](CHANGELOG.md) for 0.8.0 and earlier.
+  - the Tavern's and Restaurant's chairs are now Heart of the Matter hemp couches, joined into sofas;
+  - floors have fixed parquet and log grain;
+  - building areas are cleared and filled the way MineColonies' Colonial style does it, so colonists can walk anywhere in them (the level 1 Builder's Hut and Residence keep their quick builds).
+- See the [CHANGELOG](CHANGELOG.md) for 0.9.0 and earlier.
 
 ## Grow and harvest
 
