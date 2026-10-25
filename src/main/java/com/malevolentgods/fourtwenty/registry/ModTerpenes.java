@@ -128,6 +128,20 @@ public final class ModTerpenes {
     }
 
     /**
+     * Pot Pots in the 64 colours: terpene-concrete plant pots holding soil, a design of their own per
+     * colour ({@link com.malevolentgods.fourtwenty.block.PotPotBlock}); with a weed seed planted, Potted Pot
+     * Pots, whose plant grows and is harvested like the crop ({@link com.malevolentgods.fourtwenty.block.PottedPotPotBlock}).
+     */
+    public static final Map<String, DeferredHolder<Block, Block>> POTTED_POT_POTS = palette("potted_pot_pot_",
+            code -> new com.malevolentgods.fourtwenty.block.PottedPotPotBlock(potProperties()));
+    public static final Map<String, DeferredHolder<Block, Block>> POT_POTS = palette("pot_pot_",
+            code -> new com.malevolentgods.fourtwenty.block.PotPotBlock(() -> POTTED_POT_POTS.get(code).get(), potProperties()));
+
+    private static BlockBehaviour.Properties potProperties() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(0.5f).sound(SoundType.STONE).noOcclusion();
+    }
+
+    /**
      * Roads, in three tiers ({@link com.malevolentgods.fourtwenty.block.HempPathBlock}): a cobble path,
      * a paved road and a yellow brick road, 5, 10 and 15% faster to walk on, joining into whole roads
      * with a border round the outside.
@@ -234,6 +248,8 @@ public final class ModTerpenes {
                         all.forEach(h -> output.accept(h.items().get(2).get()));
                         RUGS.values().forEach(b -> output.accept(b.get()));
                         COUCHES.values().forEach(b -> output.accept(b.get()));
+                        POT_POTS.values().forEach(b -> output.accept(b.get()));
+                        POTTED_POT_POTS.values().forEach(b -> output.accept(b.get()));
                         for (int t = 0; t < 3; t++) {
                             output.accept(PATHS.get(t).get());
                             output.accept(PATH_SLABS.get(t).get());

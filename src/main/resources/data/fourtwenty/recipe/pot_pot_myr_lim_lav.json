@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "CDC",
+    " C "
+  ],
+  "key": {
+    "C": {
+      "item": "fourtwenty:concrete_myr_lim_lav"
+    },
+    "D": {
+      "item": "minecraft:dirt"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:pot_pot_myr_lim_lav",
+    "count": 1
+  }
+}
