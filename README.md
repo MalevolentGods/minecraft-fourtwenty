@@ -4,26 +4,20 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
-## What's new in 0.10.0
+## What's new in 0.11.0
 
-*Pave the way. Four Twenty's roads get everyone there faster.*
+*Every road leads to Sensi Heights.*
 
-- **Hemp roads in three tiers.** Cobble Path, Paved Road and Yellow Brick Road make everyone who walks on them 5, 10 and 15% faster, colonists included. Like a dirt path, they sit a pixel low, so a lamp set beside one shows a strip of light.
-- **Slabs and stairs to match.** Each road has its own slab and stairs, sized to it, so a ramp runs from one road up to the next with no lip, and slabs step down half a block.
-- **Roads that read as one surface.** Wherever road faces meet, they share one border that runs round the outside, rises and falls with each step, and wraps round corners. Flights of stairs, corner stairs, rings of steps, slabs and stacks of road all join up, on tops, step fronts, side walls and undersides alike.
-- **Recipes:**
-  - **Cobble Path:** 2 cobblestone, 2 gravel and a weed bud make 4.
-  - **Paved Road:** 8 cobble paths round a smooth stone make 8.
-  - **Yellow Brick Road:** 8 paved roads round a gold ingot make 8.
-  - **Slabs and stairs:** made from the road, like any slab or stair, or in a stonecutter.
+- **Roads round every building.** From level 3 up, every Sensi Heights building stands in a two-block border of road: Cobble Path at level 3, Paved Road at level 4, Yellow Brick Road at level 5. Its dirt paths are road too.
+- **Build with hemp in Domum Ornamentum.** Hemp blocks, terpene concrete and hemp glass are all materials in the Architect's Cutter, so frames, panels, shingles and the rest come in all 64 terpene colours.
+- **A new Dispensary level 5,** with a yellow brick roof deck, hemp floors, and couches and rugs through the lounge and up on the roof.
 
-## Changes from 0.9.0
+## Changes from 0.10.0
 
-- **Sensi Heights:**
-  - the Tavern's and Restaurant's chairs are now Heart of the Matter hemp couches, joined into sofas;
-  - floors have fixed parquet and log grain;
-  - building areas are cleared and filled the way MineColonies' Colonial style does it, so colonists can walk anywhere in them (the level 1 Builder's Hut and Residence keep their quick builds).
-- See the [CHANGELOG](CHANGELOG.md) for 0.9.0 and earlier.
+- **Rugs and couches on roads:** placed on a road, they no longer leave a see-through gap under them.
+- **Stacked roads:** road blocks stacked on road blocks no longer show a sliver of sky from below.
+- **Hemp glass icons:** Domum pieces made of hemp glass show their item icons.
+- See the [CHANGELOG](CHANGELOG.md) for 0.10.0 and earlier.
 
 ## Grow and harvest
 
