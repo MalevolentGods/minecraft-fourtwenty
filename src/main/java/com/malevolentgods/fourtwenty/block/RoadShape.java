@@ -14,7 +14,8 @@ import net.minecraft.world.level.block.state.properties.Half;
  * outer side joins the quarter across it when that's the same road at the same height, and its case
  * (outer corner, edge, inner corner, field) follows from its two sides and its diagonal, as for a
  * road ({@link HempPathBlock}). So a straight stair beside a corner stair, or a road beside a stair's
- * tread, gets its border exactly where the surface steps.
+ * tread, gets its border exactly where the surface steps. A road beside its own stairs joins them
+ * whatever their height: the stair draws its own borders and shares them with the road.
  *
  * A ramp carries the road between levels: a tread joins the road (or the stair's back) a level down
  * off its downhill sides, the front of the stair, and for a corner stair also the side away from its
@@ -62,6 +63,13 @@ public final class RoadShape {
         return tier(above) >= 0 && bottom(above, sx, sz) == 0;
     }
 
+    /** Whether quarter (sx, sz) of a road or slab stands on a road block's full-height quarter (drawn as one wall with it). */
+    public static boolean standsOnRoad(BlockGetter level, BlockPos pos, BlockState s, int sx, int sz) {
+        if (!(s.getBlock() instanceof RoadSurface) || bottom(s, sx, sz) != 0) return false;
+        BlockState below = level.getBlockState(pos.below());
+        return tier(below) >= 0 && top(below, sx, sz) == 15 && bottom(below, sx, sz) == 0;
+    }
+
     /** Whether quarter (sx, sz) is the tread of a right-way-up stair. */
     public static boolean tread(BlockState s, int sx, int sz) {
         return s.getBlock() instanceof HempPathStairBlock && s.getValue(StairBlock.HALF) == Half.BOTTOM && !high(s, sx, sz);
@@ -91,7 +99,7 @@ public final class RoadShape {
         int mx = dx != 0 ? -sx : sx, mz = dz != 0 ? -sz : sz;           // the quarter across, in its block
         BlockPos n = pos.offset(dx, 0, dz);
         BlockState o = level.getBlockState(n);
-        if (tier(o) >= 0) return tier(o) == tier && top(o, mx, mz) == top;
+        if (tier(o) >= 0) return tier(o) == tier && (top(o, mx, mz) == top || o.getBlock() instanceof HempPathStairBlock);   // shares a stair's borders
         // No road beside: a ramp carries it on a level down (off a tread) or up (onto one).
         if (tread(s, sx, sz) && downhill(s, dx, dz)) {
             BlockState below = level.getBlockState(n.below());

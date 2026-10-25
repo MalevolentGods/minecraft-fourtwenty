@@ -35,7 +35,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * The model of every road and road slab state: four quarter boxes, each one of the road's case parts
  * (tools/generate_paths.py) picked by {@link RoadShape} from the blocks round it as the chunk is
- * drawn, and a cap up to a full block where another road block stands on it. (Stairs are separate
+ * drawn, and a cap up to a full block where another road block stands on it. In a stack a full-height
+ * quarter's sides drop the surface's edge (a block on it) and the footing (standing on one), so the
+ * stack's sides read as one wall. (Stairs are separate
  * steps with plain models.) Quarters: 0 nw, 1 ne, 2 sw, 3 se (bit 0 east, bit 1 south).
  */
 public final class RoadModel implements IDynamicBakedModel {
@@ -44,16 +46,18 @@ public final class RoadModel implements IDynamicBakedModel {
     private static final String[] CASE_NAMES = {"outer", "ns", "ew", "inner", "full"};
     /** A quarter's boxes: 0..15 (a road's, a double slab's), 0..7 (a bottom slab's), 8..15 (a top slab's). */
     private static final String[] BOXES = {"%s_%s_%s", "%s_slab_bottom_%s_%s", "%s_slab_top_%s_%s"};
+    /** A full-height quarter's sides in a stack: alone, a block on it, standing on one, both. */
+    private static final String[] STACKS = {"", "_u", "_d", "_ud"};
     private static final RandomSource RANDOM = RandomSource.create(42);
 
-    /** parts[box][quarter][case] */
-    private final BakedModel[][][] parts;
+    /** parts[box][quarter][case][stack] (only the full-height box stacks) */
+    private final BakedModel[][][][] parts;
     /** caps[quarter][plain, at an outer corner] */
     private final BakedModel[][] caps;
     private final int[] box = new int[4];
     private final Map<Integer, List<BakedQuad>[]> quads = new ConcurrentHashMap<>();
 
-    private RoadModel(BlockState state, BakedModel[][][] parts, BakedModel[][] caps) {
+    private RoadModel(BlockState state, BakedModel[][][][] parts, BakedModel[][] caps) {
         this.parts = parts;
         this.caps = caps;
         if (state.getBlock() instanceof SlabBlock) {
@@ -71,6 +75,7 @@ public final class RoadModel implements IDynamicBakedModel {
         for (int q = 0; q < 4; q++) {
             packed |= RoadShape.caseOf(level, pos, state, sx(q), sz(q)) << (3 * q);
             if (RoadShape.capped(level, pos, state, sx(q), sz(q))) packed |= 1 << (12 + q);
+            if (RoadShape.standsOnRoad(level, pos, state, sx(q), sz(q))) packed |= 1 << (16 + q);
         }
         return ModelData.of(CASES, packed);
     }
@@ -89,7 +94,8 @@ public final class RoadModel implements IDynamicBakedModel {
             List<BakedQuad> list = new ArrayList<>();
             for (int q = 0; q < 4; q++) {
                 int c = (cases >> (3 * q)) & 7;
-                list.addAll(parts[box[q]][q][c].getQuads(state, side, RANDOM));
+                int stack = box[q] != 0 ? 0 : ((cases >> (12 + q)) & 1) | ((cases >> (16 + q)) & 1) << 1;
+                list.addAll(parts[box[q]][q][c][stack].getQuads(state, side, RANDOM));
                 if ((cases & (1 << (12 + q))) != 0) list.addAll(caps[q][c == RoadShape.OUTER ? 1 : 0].getQuads(state, side, RANDOM));
             }
             out[i] = List.copyOf(list);
@@ -105,7 +111,7 @@ public final class RoadModel implements IDynamicBakedModel {
 
     @Override public boolean isCustomRenderer() { return false; }
 
-    @Override public @NotNull TextureAtlasSprite getParticleIcon() { return parts[0][0][0].getParticleIcon(); }
+    @Override public @NotNull TextureAtlasSprite getParticleIcon() { return parts[0][0][0][0].getParticleIcon(); }
 
     @Override public @NotNull ItemTransforms getTransforms() { return ItemTransforms.NO_TRANSFORMS; }
 
@@ -120,6 +126,7 @@ public final class RoadModel implements IDynamicBakedModel {
     private static List<String> partNames(String road) {
         List<String> names = new ArrayList<>();
         for (String b : BOXES) for (String q : QUARTERS) for (String c : CASE_NAMES) names.add(String.format(b, road, q, c));
+        for (String q : QUARTERS) for (String c : CASE_NAMES) for (int v = 1; v < 4; v++) names.add(String.format(BOXES[0], road, q, c) + STACKS[v]);
         for (String q : QUARTERS) {
             names.add(road + "_cap_" + q);
             names.add(road + "_cap_" + q + "_corner");
@@ -139,11 +146,11 @@ public final class RoadModel implements IDynamicBakedModel {
         Map<ModelResourceLocation, BakedModel> models = event.getModels();
         for (int t = 0; t < ModTerpenes.PATHS.size(); t++) {
             String road = road(t);
-            BakedModel[][][] parts = new BakedModel[3][4][5];
+            BakedModel[][][][] parts = new BakedModel[3][4][5][4];
             BakedModel[][] caps = new BakedModel[4][2];
             boolean ok = true;
-            for (int b = 0; b < 3; b++) for (int q = 0; q < 4; q++) for (int c = 0; c < 5; c++) {
-                ok &= (parts[b][q][c] = models.get(part(String.format(BOXES[b], road, QUARTERS[q], CASE_NAMES[c])))) != null;
+            for (int b = 0; b < 3; b++) for (int q = 0; q < 4; q++) for (int c = 0; c < 5; c++) for (int v = 0; v < (b == 0 ? 4 : 1); v++) {
+                ok &= (parts[b][q][c][v] = models.get(part(String.format(BOXES[b], road, QUARTERS[q], CASE_NAMES[c]) + STACKS[v]))) != null;
             }
             for (int q = 0; q < 4; q++) {
                 ok &= (caps[q][0] = models.get(part(road + "_cap_" + QUARTERS[q]))) != null;

@@ -116,7 +116,7 @@ public final class PathGameTests {
         h.setBlock(new BlockPos(1, 2, 1), slab.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP));
         h.setBlock(new BlockPos(3, 2, 1), slab.defaultBlockState());                       // a bottom slab: a step lower, no join
         // A two-wide ramp rising north to the road, down to a road a level lower; and north of the
-        // road a stair facing east, its high back (east) quarter joining the road, its tread not.
+        // road a stair facing east, which the road joins whatever its height (the stair has the border).
         BlockState up = stairs.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH);
         h.setBlock(new BlockPos(2, 2, 2), up);
         h.setBlock(new BlockPos(3, 2, 2), up);
@@ -125,28 +125,32 @@ public final class PathGameTests {
         h.setBlock(new BlockPos(3, 1, 3), road);
         h.setBlock(new BlockPos(2, 2, 0), stairs.defaultBlockState().setValue(StairBlock.FACING, Direction.EAST));
         h.setBlock(r, road);
-        h.assertTrue(quarter(h, r, -1, -1) == RoadShape.NS, "road nw: joins the top slab, not the stair's tread: " + quarter(h, r, -1, -1));
-        h.assertTrue(quarter(h, r, 1, -1) == RoadShape.EW, "road ne: joins the stair's back, not the bottom slab: " + quarter(h, r, 1, -1));
+        h.assertTrue(quarter(h, r, -1, -1) == RoadShape.INNER, "road nw: joins the top slab and the stair: " + quarter(h, r, -1, -1));
+        h.assertTrue(quarter(h, r, 1, -1) == RoadShape.EW, "road ne: joins the stair, not the bottom slab: " + quarter(h, r, 1, -1));
         h.assertTrue(quarter(h, r, -1, 1) == RoadShape.INNER, "road sw: joins the ramp and the slab: " + quarter(h, r, -1, 1));
         h.assertTrue(quarter(h, r, 1, 1) == RoadShape.EW, "road se: joins the ramp: " + quarter(h, r, 1, 1));
-        BlockPos left = new BlockPos(2, 2, 2), right = new BlockPos(3, 2, 2);
-        h.assertTrue(quarter(h, left, -1, 1) == RoadShape.EW, "the ramp's open west edge, joined down to the lower road: " + quarter(h, left, -1, 1));
-        h.assertTrue(quarter(h, right, -1, 1) == RoadShape.FULL && quarter(h, right, 1, 1) == RoadShape.EW, "the ramp's right stair's treads");
         h.assertTrue(quarter(h, new BlockPos(2, 1, 3), -1, -1) == RoadShape.EW, "the lower road joins the tread above it (nothing under the stair)");
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void straightAndCornerStairsJoinWhereTheyMeet(GameTestHelper h) {
+    public static void stairsShareBordersWithTheirFlightAndTheirRoad(GameTestHelper h) {
         HempPathStairBlock stairs = (HempPathStairBlock) ModTerpenes.PATH_STAIRS.get(2).get();
+        Block road = ModTerpenes.PATHS.get(2).get(), other = ModTerpenes.PATHS.get(0).get();
         BlockState up = stairs.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH);
-        BlockPos a = new BlockPos(1, 2, 1), b = new BlockPos(2, 2, 1);
-        h.setBlock(a, up);
-        h.setBlock(b, up.setValue(StairBlock.SHAPE, StairsShape.OUTER_LEFT));       // only its north-west quarter high
-        h.assertTrue(quarter(h, a, 1, -1) == RoadShape.NS, "straight stair ne: its high quarter joins the corner's high nw: " + quarter(h, a, 1, -1));
-        h.assertTrue(quarter(h, a, 1, 1) == RoadShape.NS, "straight stair se: its tread joins the corner's tread: " + quarter(h, a, 1, 1));
-        h.assertTrue(quarter(h, b, 1, -1) == RoadShape.OUTER, "the corner's open ne tread is bordered: " + quarter(h, b, 1, -1));
-        h.assertTrue(quarter(h, b, -1, 1) == RoadShape.NS, "the corner's sw tread joins the straight stair: " + quarter(h, b, -1, 1));
+        // A flight of two (west to east) with its road behind the west one and a cobble path east of the east one.
+        h.setBlock(new BlockPos(1, 2, 0), road);
+        h.setBlock(new BlockPos(3, 2, 1), other);
+        h.setBlock(new BlockPos(1, 2, 1), Block.updateFromNeighbourShapes(up, h.getLevel(), h.absolutePos(new BlockPos(1, 2, 1))));
+        h.setBlock(new BlockPos(2, 2, 1), Block.updateFromNeighbourShapes(up, h.getLevel(), h.absolutePos(new BlockPos(2, 2, 1))));
+        BlockState a = h.getBlockState(new BlockPos(1, 2, 1)), b = h.getBlockState(new BlockPos(2, 2, 1));
+        h.assertTrue(a.getValue(HempPathStairBlock.RIGHT) && b.getValue(HempPathStairBlock.LEFT), "the flight's stairs don't join: " + a + " / " + b);
+        h.assertTrue(!a.getValue(HempPathStairBlock.LEFT), "the west stair joined nothing on its left");
+        h.assertTrue(a.getValue(HempPathStairBlock.BACK) && !b.getValue(HempPathStairBlock.BACK), "the road behind: " + a + " / " + b);
+        h.assertTrue(!b.getValue(HempPathStairBlock.RIGHT), "a stair joined another tier's road");
+        // A stair facing the other way beside doesn't join.
+        h.setBlock(new BlockPos(0, 2, 1), up.setValue(StairBlock.FACING, Direction.SOUTH));
+        h.assertTrue(!h.getBlockState(new BlockPos(1, 2, 1)).getValue(HempPathStairBlock.LEFT), "a stair facing south joined the flight");
         h.succeed();
     }
 }

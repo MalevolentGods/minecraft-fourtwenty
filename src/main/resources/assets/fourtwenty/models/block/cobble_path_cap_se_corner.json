@@ -2,8 +2,8 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": true,
   "textures": {
-    "side": "fourtwenty:block/path/cobble_path_side_corner",
-    "particle": "fourtwenty:block/path/cobble_path_side_corner"
+    "side": "fourtwenty:block/path/cobble_path_side_corner_u",
+    "particle": "fourtwenty:block/path/cobble_path_side_corner_u"
   },
   "elements": [
     {
@@ -25,8 +25,7 @@
             0,
             16,
             1
-          ],
-          "cullface": "south"
+          ]
         },
         "east": {
           "texture": "#side",
@@ -35,8 +34,7 @@
             0,
             8,
             1
-          ],
-          "cullface": "east"
+          ]
         }
       }
     }

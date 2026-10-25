@@ -2,12 +2,13 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": true,
   "textures": {
-    "top": "fourtwenty:block/path/cobble_path_step_ne",
+    "top": "fourtwenty:block/path/cobble_path_step_ne_thin_ew",
     "bottom": "fourtwenty:block/path/cobble_path_bottom_outer",
     "side": "fourtwenty:block/path/cobble_path_side_corner",
+    "plain": "fourtwenty:block/path/cobble_path_side",
     "particle": "fourtwenty:block/path/cobble_path_side",
-    "strip": "fourtwenty:block/path/cobble_path_step_nw_ne",
-    "square": "fourtwenty:block/path/cobble_path_step_nw"
+    "square": "fourtwenty:block/path/cobble_path_step_nw_thin_ns",
+    "strip": "fourtwenty:block/path/cobble_path_step_nw_ne_thin_ns"
   },
   "elements": [
     {
@@ -120,7 +121,7 @@
             0,
             0,
             8,
-            8
+            15
           ]
         },
         "west": {
@@ -129,7 +130,7 @@
             0,
             0,
             8,
-            8
+            15
           ]
         }
       }
