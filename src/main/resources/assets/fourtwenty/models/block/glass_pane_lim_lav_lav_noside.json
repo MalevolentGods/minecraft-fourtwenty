@@ -1,6 +1,5 @@
 {
   "parent": "minecraft:block/template_glass_pane_noside",
-  "render_type": "minecraft:translucent",
   "textures": {
     "pane": "fourtwenty:block/glass/lim_lav_lav",
     "edge": "fourtwenty:block/glass/lim_lav_lav_pane_top"

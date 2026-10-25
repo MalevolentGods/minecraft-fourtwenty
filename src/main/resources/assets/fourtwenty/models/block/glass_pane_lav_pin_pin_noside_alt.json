@@ -1,6 +1,5 @@
 {
   "parent": "minecraft:block/template_glass_pane_noside_alt",
-  "render_type": "minecraft:translucent",
   "textures": {
     "pane": "fourtwenty:block/glass/lav_pin_pin",
     "edge": "fourtwenty:block/glass/lav_pin_pin_pane_top"

@@ -282,14 +282,16 @@ def generate():
         c = rgb(hexc)
         glass_texture(c, 'white_stained_glass.png').save(tex / f'glass/{code}.png')
         glass_texture(c, 'white_stained_glass_pane_top.png').save(tex / f'glass/{code}_pane_top.png')
+        # No render_type in the models (translucent is set in code, ModClientEvents): Domum Ornamentum reads a
+        # material's faces by render layer, and a model with its own render_type only answers for that one layer.
         glass, pane = f'glass_{code}', f'glass_pane_{code}'
         textures = {'pane': f'fourtwenty:block/glass/{code}', 'edge': f'fourtwenty:block/glass/{code}_pane_top'}
-        write(ASSETS / f'models/block/{glass}.json', {'parent': 'minecraft:block/cube_all', 'render_type': 'minecraft:translucent',
+        write(ASSETS / f'models/block/{glass}.json', {'parent': 'minecraft:block/cube_all',
                                                      'textures': {'all': f'fourtwenty:block/glass/{code}'}})
         write(ASSETS / f'blockstates/{glass}.json', {'variants': {'': {'model': f'fourtwenty:block/{glass}'}}})
         write(ASSETS / f'models/item/{glass}.json', {'parent': f'fourtwenty:block/{glass}'})
         for part, parent in pane_parts.items():
-            write(ASSETS / f'models/block/{pane}_{part}.json', {'parent': f'minecraft:block/{parent}', 'render_type': 'minecraft:translucent',
+            write(ASSETS / f'models/block/{pane}_{part}.json', {'parent': f'minecraft:block/{parent}',
                                                                'textures': textures})
 
         def m(part, **r):
@@ -320,6 +322,12 @@ def generate():
     for kind, ids in (('glass_blocks', [f'fourtwenty:glass_{c}' for c, _, _ in colors]), ('glass_panes', [f'fourtwenty:glass_pane_{c}' for c, _, _ in colors])):
         write(RES / f'data/c/tags/item/{kind}.json', {'replace': False, 'values': ids})
         write(RES / f'data/c/tags/block/{kind}.json', {'replace': False, 'values': ids})
+    # Domum Ornamentum takes its materials from block tags: glass comes in through c:glass_blocks (in its
+    # default tag); concrete and hemp need adding. Its concrete tag lists vanilla's by name; hemp joins
+    # the default tag (the general materials, like wool and planks). Unused if Domum isn't installed.
+    write(RES / 'data/domum_ornamentum/tags/block/concrete.json', {'replace': False, 'values': [f'fourtwenty:concrete_{c}' for c, _, _ in colors]})
+    write(RES / 'data/domum_ornamentum/tags/block/default.json', {'replace': False, 'values':
+          ['fourtwenty:natural_hemp'] + [f'fourtwenty:hemp_{c}' for c, _, _ in colors]})
     # Lamps.
     for i, (code, name, hexc) in enumerate(colors):
         c = rgb(hexc)

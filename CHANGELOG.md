@@ -4,6 +4,18 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Hemp and terpene concrete are Domum Ornamentum materials.** Natural Hemp and the 64 hemp colours join Domum's default material tag, and the 64 terpene concretes join its concrete tag (which lists vanilla's by name). Hemp glass already came in through `c:glass_blocks`. If Domum isn't installed, the tags go unused.
+
+### Fixed
+- **Furniture on roads:** a rug or a couch on a road counted as covering it, so the road dropped its top and you could see through the gap under it. Only a block solid over the whole quarter, top to bottom, covers a road now.
+- **Stacked roads seen from below:** where a road block stands on another road block, it now always draws the pixel down to the block below. Before, a road beside the upper block could hide that strip, and the gap showed through from below.
+- **Hemp glass in Domum Ornamentum:** pieces made of hemp glass showed blank item icons. Domum takes a material's faces by render layer, and the glass models named their own render type, so they gave Domum no faces. The glass and panes are now set translucent in code, the way vanilla's stained glass is.
+
+### Changed
+- **Sensi Heights pack v63:** every building from level 3 up has a road border two blocks thick on the ground: Cobble Path at level 3, Paved Road at level 4 and Yellow Brick Road at level 5. Dirt paths became road too. The border goes round decorative ground, such as the Workshop's cherry ring and rainbow lamps and stone paving. Buildings grew where the border didn't fit, every level alike.
+- **Sensi Heights pack v64:** the user's Dispensary level 5 rework, with a yellow brick roof deck, hemp floors, and couches and rugs through the lounge and on the roof. Its seats are tagged.
+
 ## [0.10.0] - Hemp Roads
 
 ### Added

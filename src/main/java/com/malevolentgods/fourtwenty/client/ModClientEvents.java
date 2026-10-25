@@ -18,6 +18,12 @@ public class ModClientEvents {
         // Terpene names stay hidden until discovered; each discovery gets a toast.
         com.malevolentgods.fourtwenty.terpene.TerpeneKnowledge.installClient(key -> net.minecraft.client.Minecraft.getInstance().getToasts()
                 .addToast(new com.malevolentgods.fourtwenty.client.terpene.DiscoveryToast(key)));
+        // Hemp glass and panes are translucent. Set here rather than in their models (as vanilla's stained glass is):
+        // Domum Ornamentum takes a material's faces by render layer, and a model that names its own render type
+        // gives none for any other layer, so the glass showed blank in Domum pieces' item icons.
+        event.enqueueWork(() -> java.util.stream.Stream.concat(com.malevolentgods.fourtwenty.registry.ModTerpenes.GLASS.values().stream(),
+                        com.malevolentgods.fourtwenty.registry.ModTerpenes.GLASS_PANES.values().stream())
+                .forEach(b -> net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(b.get(), net.minecraft.client.renderer.RenderType.translucent())));
         // Bed items show their blanket colour: the item model overrides on this (dye id / 16).
         event.enqueueWork(() -> com.malevolentgods.fourtwenty.registry.ModItems.BEDS.forEach(bed ->
                 net.minecraft.client.renderer.item.ItemProperties.register(bed.get(),
