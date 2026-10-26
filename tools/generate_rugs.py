@@ -15,14 +15,15 @@ block's centre, so it has the square's full symmetry: it looks the same in every
 meets seamlessly across quarters and blocks. Border motifs run along the edge and are mirrored
 about the middle of the block, for the same reason.
 
-Writes per rug: 5 quarter models + 5 textures (32x32, the quarter at 4 px per pixel), a multipart
+Writes per rug: 5 quarter models + 5 textures (128x128, the quarter at 16 px per pixel, edges anti-aliased), a multipart
 blockstate, an item model (the four outer corners), loot, recipes (2 hemp -> 3; a terpene in the
 middle of 8 rugs recolours them), names and the fourtwenty:rugs tag. Run again after edits.
 """
 import collections
-import hashlib
 import json
 import math
+import multiprocessing
+import sys
 import random
 from pathlib import Path
 
@@ -34,7 +35,8 @@ ASSETS = RES / 'assets/fourtwenty'
 DATA = RES / 'data/fourtwenty'
 TERP = json.loads((ROOT / 'tools/terpenes.json').read_text(encoding='utf-8'))
 Q = 8                 # a quarter is 8x8 pixels
-PX = 4                # texture pixels per model pixel
+PX = 16               # texture pixels per model pixel (128x128 a quarter)
+SS = 4                # samples per side for an anti-aliased pixel
 I = 1.0               # the inset from the block edge on an open side
 R = 2.5               # the outer corner radius
 BW = 3.0              # the border's width
@@ -286,30 +288,77 @@ class Pattern:
         return 1
 
 
+def role(case, pattern, x, z):
+    """What colour role the point (x, z) of the north-west quarter takes: 0 field, 1 accent, 2 deep, 3 light, 4 rim (5 outside)."""
+    d, along = depth(case, x, z)
+    if d < 0:
+        return 5                                            # outside the rug: only its sides sample this
+    if d < BW:
+        return pattern.border_value(d, along)
+    a, b = sorted((abs(x - 8), abs(z - 8)))
+    return pattern.field_value(a, b)
+
+
 def texture(case, pattern, colors, rng):
+    """The quarter at PX texture pixels per model pixel, every motif's edge anti-aliased: a pixel whose
+    corners and centre all take one role is that colour, any other is the average of SS x SS samples."""
     base, accent, deep, light = colors
     rim = mix(mix(deep, accent, 0.5), base, 0.25)
-    roles = {0: base, 1: accent, 2: deep, 3: light, 4: rim}
-    img = Image.new('RGB', (Q * PX, Q * PX))
+    roles = {0: base, 1: accent, 2: deep, 3: light, 4: rim, 5: rim}
+    n = Q * PX
+    corner = [[role(case, pattern, i / PX, j / PX) for i in range(n + 1)] for j in range(n + 1)]
+    img = Image.new('RGB', (n, n))
     px = img.load()
-    for py in range(Q * PX):
-        for pxx in range(Q * PX):
-            x, z = (pxx + 0.5) / PX, (py + 0.5) / PX
-            d, along = depth(case, x, z)
-            if d < 0:
-                col = rim                                   # outside the rug: only its sides sample this
-            elif d < BW:
-                col = roles[pattern.border_value(d, along)]
+    for py in range(n):
+        for pxx in range(n):
+            c = role(case, pattern, (pxx + 0.5) / PX, (py + 0.5) / PX)
+            if corner[py][pxx] == corner[py][pxx + 1] == corner[py + 1][pxx] == corner[py + 1][pxx + 1] == c:
+                col = roles[c]
             else:
-                a, b = sorted((abs(x - 8), abs(z - 8)))
-                col = roles[pattern.field_value(a, b)]
-            calm = 0.45 if d < 1.0 else 1.0                 # a quieter weave near the edge (less glint)
-            weave = calm * ((0.025 if (pxx + py) % 2 == 0 else -0.025) + rng.uniform(-0.012, 0.012))
+                acc = [0.0, 0.0, 0.0]
+                for sj in range(SS):
+                    for si in range(SS):
+                        r = roles[role(case, pattern, (pxx + (si + 0.5) / SS) / PX, (py + (sj + 0.5) / SS) / PX)]
+                        for k in range(3):
+                            acc[k] += r[k]
+                col = tuple(v / (SS * SS) for v in acc)
+            # A fine, quiet weave: a twill of threads a model pixel apart, and a little grain.
+            d, _ = depth(case, (pxx + 0.5) / PX, (py + 0.5) / PX)
+            calm = 0.5 if d < 1.0 else 1.0
+            twill = math.sin((pxx + py) * math.pi / 2) * 0.012 + math.sin((pxx - py) * math.pi / 4) * 0.006
+            weave = calm * (twill + rng.uniform(-0.006, 0.006))
             px[pxx, py] = tuple(clamp(v * (1 + weave) + 255 * weave * (0.3 - 0.25 * lum(col))) for v in col)
     return img
 
 
 # ---- everything ------------------------------------------------------------------------------
+
+def render(i, code, hexc):
+    """Rug i's five quarter textures."""
+    pattern, colors, rng = Pattern(i), palette_for(code, hexc), random.Random(9000 + i)
+    return [texture(case, pattern, colors, rng) for case in CASES]
+
+
+def preview(codes, out):
+    """A 3 x 2 block rug of each code, side by side, from the written textures (quarters turned as the blockstate turns them)."""
+    tex = ASSETS / 'textures/block/rug'
+    n = Image.open(tex / f'{codes[0]}_full.png').size[0]
+    W, H = 3, 2
+    sheet = Image.new('RGB', (len(codes) * (W * 2 * n + n // 2), H * 2 * n), (40, 40, 40))
+    for k, code in enumerate(codes):
+        for gz in range(H * 2):
+            for gx in range(W * 2):
+                # this quarter's two outward neighbours and diagonal, in the NW frame after turning
+                sx, sz = (-1 if gx % 2 == 0 else 1), (-1 if gz % 2 == 0 else 1)
+                inside = lambda x, z: 0 <= x < W * 2 and 0 <= z < H * 2
+                ns, ew, dg = inside(gx, gz + sz), inside(gx + sx, gz), inside(gx + sx, gz + sz)
+                turns = {(-1, -1): 0, (1, -1): 1, (1, 1): 2, (-1, 1): 3}[(sx, sz)]
+                a, b = (ns, ew) if turns % 2 == 0 else (ew, ns)     # the NW frame's north and west
+                case = 'outer' if not a and not b else 'edge_n' if not a else 'edge_w' if not b else 'full' if dg else 'inner'
+                img = Image.open(tex / f'{code}_{case}.png').rotate(-90 * turns)
+                sheet.paste(img, (k * (W * 2 * n + n // 2) + gx * n, gz * n))
+    sheet.save(out)
+
 
 def generate():
     tex = ASSETS / 'textures/block/rug'
@@ -328,15 +377,12 @@ def generate():
                                                         'textures': {'particle': '#rug'}, 'elements': quarter(case)})
     rugs = [(c['code'], c['name'], c['hex']) for c in TERP['colors']] + [('natural', TERP['natural']['name'], TERP['natural']['hex'])]
     names, seen = collections.OrderedDict(), {}
+    with multiprocessing.Pool() as pool:
+        images = pool.starmap(render, [(i, code, hexc) for i, (code, _, hexc) in enumerate(rugs)])
     for i, (code, name, hexc) in enumerate(rugs):
         pattern = Pattern(i)
-        colors = palette_for(code, hexc)
-        rng = random.Random(9000 + i)
-        digest = hashlib.sha1()
-        for case in CASES:
-            img = texture(case, pattern, colors, rng)
+        for case, img in zip(CASES, images[i]):
             img.save(tex / f'{code}_{case}.png')
-            digest.update(img.tobytes())
             write(ASSETS / f'models/block/rug_{code}_{case}.json', {'parent': f'fourtwenty:block/rug_{case}',
                                                                     'textures': {'rug': f'fourtwenty:block/rug/{code}_{case}'}})
         seen.setdefault((pattern.field, pattern.second, pattern.border, tuple(pattern.p)), []).append(code)
@@ -371,4 +417,8 @@ def generate():
 
 
 if __name__ == '__main__':
-    generate()
+    if '--preview' in sys.argv:
+        i = sys.argv.index('--preview')
+        preview(sys.argv[i + 2:], sys.argv[i + 1])
+    else:
+        generate()
