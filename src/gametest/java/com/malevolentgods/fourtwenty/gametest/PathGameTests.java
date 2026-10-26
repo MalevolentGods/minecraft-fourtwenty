@@ -177,6 +177,20 @@ public final class PathGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void roadsGiveOffLightByTier(GameTestHelper h) {
+        int[] light = {6, 10, 15};
+        for (int t = 0; t < 3; t++) {
+            for (Block block : new Block[] {ModTerpenes.PATHS.get(t).get(), ModTerpenes.PATH_SLABS.get(t).get(), ModTerpenes.PATH_STAIRS.get(t).get()}) {
+                BlockPos pos = new BlockPos(1 + 2 * t, 2, 1);
+                h.setBlock(pos, block);
+                int got = h.getLevel().getBlockState(h.absolutePos(pos)).getLightEmission(h.getLevel(), h.absolutePos(pos));
+                h.assertTrue(got == light[t], block + " gives off " + got + ", not " + light[t]);
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void aCoveredRoadIsAWallToTheRoadBesideIt(GameTestHelper h) {
         Block road = ModTerpenes.PATHS.get(0).get();
         BlockPos a = new BlockPos(1, 2, 1), b = new BlockPos(2, 2, 1);

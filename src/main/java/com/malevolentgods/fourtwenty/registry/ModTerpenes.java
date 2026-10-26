@@ -163,9 +163,12 @@ public final class ModTerpenes {
         return new com.malevolentgods.fourtwenty.block.HempPathBlock(tier, roadProperties(tier));
     }
 
+    /** The light a road gives off by tier, without a visible glow: Cobble Path dim (under a redstone torch's 7), Paved Road between, Yellow Brick Road a glowstone's 15. */
+    public static final int[] ROAD_LIGHT = {0, 6, 10, 15};
+
     private static BlockBehaviour.Properties roadProperties(int tier) {
         return BlockBehaviour.Properties.of().mapColor(tier == 3 ? MapColor.GOLD : MapColor.STONE)
-                .strength(1.2f, 6.0f).requiresCorrectToolForDrops().sound(SoundType.STONE);
+                .strength(1.2f, 6.0f).requiresCorrectToolForDrops().sound(SoundType.STONE).lightLevel(state -> ROAD_LIGHT[tier]);
     }
 
     /** Lamps, inverted lamps and lamp trims in the 64 colours (halos in their own colour). */
