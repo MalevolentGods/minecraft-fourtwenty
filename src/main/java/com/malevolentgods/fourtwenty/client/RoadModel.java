@@ -249,13 +249,8 @@ public final class RoadModel implements IDynamicBakedModel {
     private static void add(List<BakedQuad>[] out, @Nullable Direction cull, Direction side, float x0, float y0, float z0, float x1, float y1, float z1,
                             float[] uv, TextureAtlasSprite sprite) {
         BlockElementFace face = new BlockElementFace(cull, -1, "", new BlockFaceUV(uv, 0));
-        BakedQuad quad = BAKERY.bakeQuad(new Vector3f(x0, y0, z0), new Vector3f(x1, y1, z1), face, sprite, side, BlockModelRotation.X0_Y0, null, true);
-        if (side == Direction.UP) {
-            // Tops are lit evenly, without ambient occlusion: a road sits a pixel below the blocks round it, and
-            // smooth lighting shaded a lone road's top dark from every side (a wide road only round its edge).
-            quad = new BakedQuad(quad.getVertices(), quad.getTintIndex(), quad.getDirection(), quad.getSprite(), quad.isShade(), false);
-        }
-        out[cull == null ? 6 : cull.ordinal()].add(quad);
+        // Smooth lighting on every face: roads give off their own light, so a lone road's top isn't shaded dark.
+        out[cull == null ? 6 : cull.ordinal()].add(BAKERY.bakeQuad(new Vector3f(x0, y0, z0), new Vector3f(x1, y1, z1), face, sprite, side, BlockModelRotation.X0_Y0, null, true));
     }
 
     @Override public boolean useAmbientOcclusion() { return true; }
