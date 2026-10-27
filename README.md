@@ -4,20 +4,21 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
-## What's new in 0.11.0
+## What's new in 0.12.0
 
-*Every road leads to Sensi Heights.*
+*Pot it, light it, roll out the rug.*
 
-- **Roads round every building.** From level 3 up, every Sensi Heights building stands in a two-block border of road: Cobble Path at level 3, Paved Road at level 4, Yellow Brick Road at level 5. Its dirt paths are road too.
-- **Build with hemp in Domum Ornamentum.** Hemp blocks, terpene concrete and hemp glass are all materials in the Architect's Cutter, so frames, panels, shingles and the rest come in all 64 terpene colours.
-- **A new Dispensary level 5,** with a yellow brick roof deck, hemp floors, and couches and rugs through the lounge and up on the roof.
+- **Pot Pots.** Plant pots of terpene concrete in all 64 colours, each its own design. Three of a terpene concrete in a V round a block of dirt make one. Plant a weed seed in it and it becomes a Potted Pot Pot: the plant grows in the light (bone meal works) and is harvested with a right-click, like the field crop, then starts again.
+- **Roads light the way.** Cobble Path gives off a little light, Paved Road more, Yellow Brick Road as much as glowstone, all without a visible glow, and lit roads still blend smoothly into one another.
+- **New rugs.** Every rug colour has its own design, drawn at four times the resolution: florals, leaves, waves, night skies, plaids and more.
+- **A Sensi Heights Town Hall,** level 1: an oak apse round the hut with a weed garden and fountain under a pagoda.
 
-## Changes from 0.10.0
+## Changes from 0.11.0
 
-- **Rugs and couches on roads:** placed on a road, they no longer leave a see-through gap under them.
-- **Stacked roads:** road blocks stacked on road blocks no longer show a sliver of sky from below.
-- **Hemp glass icons:** Domum pieces made of hemp glass show their item icons.
-- See the [CHANGELOG](CHANGELOG.md) for 0.10.0 and earlier.
+- **Furniture on roads:** rugs, couches, pots and the rest sit down onto a road instead of hovering a pixel above it.
+- **Builders and Pot Pots:** builders pay a plain Pot Pot of the same colour for a Potted Pot Pot (the seed is free), and leave a grown or harvested one standing.
+- **Sensi Heights:** Pot Pots replace the potted plants across the pack; Dispensary levels are redecorated so no upgrade drops a rack; the Tavern has Paved Road at level 2 and Yellow Brick Road at level 3; Restaurant and Tavern decorating touches.
+- See the [CHANGELOG](CHANGELOG.md) for 0.11.0 and earlier.
 
 ## Grow and harvest
 

@@ -4,6 +4,27 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+## [0.12.0] - Pot Pots and Lit Roads
+
+### Added
+- **Pot Pots** in the 64 terpene colours: 3 of a terpene concrete in a V round a block of dirt make one. A weed seed planted in it makes it a Potted Pot Pot of that colour; the plant grows through the crop's eight stages in the light (bone meal works) and, mature, is harvested with a right-click like the field crop (its loot, one seed kept back), then starts again. Each colour's pot is its own design: body x rim x pattern = 64 (`tools/generate_pot_pots.py`).
+- **Builders and Potted Pot Pots** (PottedPotPotPlacementHandler): a builder pays the plain Pot Pot of the same colour (the seed is free) and accepts any plant age as built.
+- **Roads give off light by tier:** Cobble Path 6, Paved Road 10, Yellow Brick Road 15, with no visible glow.
+- **Rugs redesigned:** a themed design per colour (florals, leaves, ocean, night sky, plaid and more), drawn as smooth anti-aliased shapes at 4x resolution (128x128 a quarter) with a finer weave (`tools/generate_rugs.py`, `tools/rug_designs.py`).
+
+### Fixed
+- **Furniture on roads:** our blocks that aren't full blocks are drawn 1/16 lower when they stand on a road's full top (SunkModel), so they sit on its surface instead of hovering a pixel above it.
+- **Road lighting:** road tops keep smooth lighting even though roads give off light (vanilla draws light-emitting blocks flat), so lit roads blend instead of reading as a grid.
+- **Potted plants** aren't shaded dark (no ambient occlusion on the pots, as with vanilla's flower pot).
+
+### Changed
+- **Sensi Heights pack v65-v71:**
+  - Town Hall level 1 (the user's build).
+  - Pot Pots replace every vanilla potted plant.
+  - Dispensary levels 1-5 are redecorated so racks only accumulate across upgrades.
+  - Tavern road tiers: Paved Road at level 2, Yellow Brick Road at level 3.
+  - The user's Restaurant 4-5, Tavern 3 and Dispensary 4-5 edits.
+
 ## [0.11.0] - Roads Round Every Building
 
 ### Added
