@@ -20,6 +20,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.neoforged.neoforge.common.util.TriState;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
@@ -249,11 +250,16 @@ public final class RoadModel implements IDynamicBakedModel {
     private static void add(List<BakedQuad>[] out, @Nullable Direction cull, Direction side, float x0, float y0, float z0, float x1, float y1, float z1,
                             float[] uv, TextureAtlasSprite sprite) {
         BlockElementFace face = new BlockElementFace(cull, -1, "", new BlockFaceUV(uv, 0));
-        BakedQuad quad = BAKERY.bakeQuad(new Vector3f(x0, y0, z0), new Vector3f(x1, y1, z1), face, sprite, side, BlockModelRotation.X0_Y0, null, true);
-        out[cull == null ? 6 : cull.ordinal()].add(quad);
+        // Smooth lighting on every face (see useAmbientOcclusion).
+        out[cull == null ? 6 : cull.ordinal()].add(BAKERY.bakeQuad(new Vector3f(x0, y0, z0), new Vector3f(x1, y1, z1), face, sprite, side, BlockModelRotation.X0_Y0, null, true));
     }
 
     @Override public boolean useAmbientOcclusion() { return true; }
+
+    /** Smooth lighting even though roads give off light (vanilla draws any light-emitting block flat, which tiled roads block by block). */
+    @Override public @NotNull TriState useAmbientOcclusion(@NotNull BlockState state, @NotNull ModelData data, @NotNull RenderType renderType) {
+        return TriState.TRUE;
+    }
 
     @Override public boolean isGui3d() { return true; }
 

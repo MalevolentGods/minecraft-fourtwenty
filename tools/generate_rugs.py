@@ -8,25 +8,28 @@ outer corner (rounded, inset a pixel so the floor shows), north edge, west edge,
 notch of an L) and interior. So the border runs only round the outside of the whole rug and the
 pattern flows across the inside.
 
-Patterns: each colour gets its own field pattern and border motif, from rug motifs (diamonds,
-squares, lattices, rosettes, crosses, stars, fans; zigzags, dots, chevrons, bars), coloured from its
-own hue's other tones in the palette. A field is a function of (min, max) of the distances from the
-block's centre, so it has the square's full symmetry: it looks the same in every turned quarter and
-meets seamlessly across quarters and blocks. Border motifs run along the edge and are mirrored
-about the middle of the block, for the same reason.
+Designs (tools/rug_designs.py): each colour has its own field and border, themed on its name (begonias,
+waves, a fairy ring of toadstools, stars and moons, plaid...), drawn as smooth shapes. A rug's quarters
+are one quarter's texture turned, so a field is drawn once and repeated under the quarter turns about
+the block's centre (and from the neighbouring blocks), which makes every block alike and every motif
+at a corner or edge join up with its neighbours'. Every pixel averages SS x SS samples: smooth edges.
 
-Writes per rug: 5 quarter models + 5 textures (32x32, the quarter at 4 px per pixel), a multipart
+Writes per rug: 5 quarter models + 5 textures (128x128, the quarter at 16 px per pixel, edges anti-aliased), a multipart
 blockstate, an item model (the four outer corners), loot, recipes (2 hemp -> 3; a terpene in the
 middle of 8 rugs recolours them), names and the fourtwenty:rugs tag. Run again after edits.
 """
 import collections
-import hashlib
 import json
 import math
+import multiprocessing
+import sys
 import random
 from pathlib import Path
 
+import numpy as np
 from PIL import Image
+
+import rug_designs as D
 
 ROOT = Path(__file__).resolve().parents[1]
 RES = ROOT / 'src/main/resources'
@@ -34,7 +37,8 @@ ASSETS = RES / 'assets/fourtwenty'
 DATA = RES / 'data/fourtwenty'
 TERP = json.loads((ROOT / 'tools/terpenes.json').read_text(encoding='utf-8'))
 Q = 8                 # a quarter is 8x8 pixels
-PX = 4                # texture pixels per model pixel
+PX = 16               # texture pixels per model pixel (128x128 a quarter)
+SS = 4                # samples per side for an anti-aliased pixel
 I = 1.0               # the inset from the block edge on an open side
 R = 2.5               # the outer corner radius
 BW = 3.0              # the border's width
@@ -215,101 +219,124 @@ def palette_for(code, hexc):
     return base, accent, deep_c, light_c
 
 
-class Pattern:
-    """A field pattern g(a, b) (a = min, b = max of the distances from the block centre, 0..8) and a
-    border motif, chosen per colour from rug motifs; returns 0 field, 1 accent, 2 deep, 3 light."""
-
-    FIELDS = ['diamonds', 'squares', 'lattice', 'rosette', 'cross', 'star', 'fans', 'medallion', 'checker', 'grid']
-    BORDERS = ['zigzag', 'dots', 'chevron', 'bars', 'waves', 'plain']
-
-    def __init__(self, index):
-        rng = random.Random(4200 + index * 7919)
-        self.field = self.FIELDS[index % len(self.FIELDS)]
-        self.second = self.FIELDS[(index * 3 + 1 + index // len(self.FIELDS)) % len(self.FIELDS)]
-        self.border = self.BORDERS[(index // 2 + index) % len(self.BORDERS)]
-        self.p = [rng.choice((2.0, 2.5, 3.0, 4.0)), rng.choice((1.0, 1.5, 2.0)), rng.uniform(0.6, 1.1), rng.randint(0, 3)]
-
-    def motif(self, kind, a, b, p):
-        d = a + b                                           # diamond distance from the centre
-        r = math.hypot(a, b)
-        period, width, thin, k = p
-        if kind == 'diamonds':
-            return 1 if (d % (period * 2)) < width else 0
-        if kind == 'squares':
-            return 1 if (b % period) < width * 0.6 else 0
-        if kind == 'lattice':                               # a trellis meeting at the block corners
-            return 1 if min((d % 8), 8 - (d % 8)) < thin or abs(a - b) < thin * 0.8 else 0
-        if kind == 'rosette':
-            return 1 if (r % period) < width * 0.7 else (2 if r < 1.2 else 0)
-        if kind == 'cross':
-            return 1 if a < width * 0.6 and b < 6.5 else 0
-        if kind == 'star':
-            return 1 if (b - a) < thin * 1.5 and d < 7 else (2 if d < 2 else 0)
-        if kind == 'fans':                                  # quarter rosettes at the block corners
-            cr = math.hypot(8 - a, 8 - b)
-            return 1 if cr < 5 and (cr % 1.6) < 0.7 else 0
-        if kind == 'medallion':
-            if d < 3:
-                return 2 if d < 1.4 else 3
-            return 1 if abs(d - 5) < thin * 0.7 or abs(b - 6) < thin * 0.5 else 0
-        if kind == 'checker':
-            return 1 if (int(a // 2) + int(b // 2)) % 2 == 0 and b < 7.5 else 0
-        if kind == 'grid':
-            return 1 if (a % 4) < thin * 0.7 or (b % 4) < thin * 0.7 else 0
-        return 0
-
-    def field_value(self, a, b):
-        v = self.motif(self.field, a, b, self.p)
-        if v:
-            return v
-        w = self.motif(self.second, a, b, [self.p[0] * 1.5, self.p[1] * 0.6, self.p[2] * 0.6, self.p[3]])
-        return 3 if w == 1 else w
-
-    def border_value(self, d, s):
-        """d: 0..BW in from the rug's edge; s: 0..8 along it (mirrored about the block middle)."""
-        if d < 0.75:
-            return 4                                        # the rim (and the bevel): a soft mid tone
-        if abs(d - (BW - 0.35)) < 0.3:
-            return 3                                        # the pinstripe on the inside
-        t = d - 0.5                                         # 0..~2.2 across the band
-        if self.border == 'zigzag':
-            tri = abs(((s / 2) % 2) - 1)
-            return 3 if abs(t - (0.3 + 1.4 * tri)) < 0.35 else 1
-        if self.border == 'dots':
-            return 3 if math.hypot((s % 2) - 1, t - 1.0) < 0.55 else 1
-        if self.border == 'chevron':
-            return 3 if abs(t - abs((s % 4) - 2) * 0.8) < 0.3 else 1
-        if self.border == 'bars':
-            return 3 if (s % 2) < 0.5 and 0.3 < t < 1.8 else 1
-        if self.border == 'waves':
-            return 3 if abs(t - (1.0 + 0.6 * math.sin(s * math.pi / 2))) < 0.3 else 1
-        return 1
+# The quarter turns about the block's centre (a rug's quarters are one quarter's texture turned, so a
+# design need only turn into itself, not mirror: motifs swirl rather than make mandalas), and the three
+# neighbouring blocks whose motifs can reach into a north-west quarter.
+TURNS = [(1, 0, 0, 1), (0, -1, 1, 0), (-1, 0, 0, -1), (0, 1, -1, 0)]
+NEIGHBOURS = [(0, 0), (16, 0), (0, 16), (16, 16)]
+ROLES = ('field', 'accent', 'deep', 'light', 'leaf', 'stem', 'extra', 'rim')
 
 
-def texture(case, pattern, colors, rng):
-    base, accent, deep, light = colors
-    rim = mix(mix(deep, accent, 0.5), base, 0.25)
-    roles = {0: base, 1: accent, 2: deep, 3: light, 4: rim}
-    img = Image.new('RGB', (Q * PX, Q * PX))
-    px = img.load()
-    for py in range(Q * PX):
-        for pxx in range(Q * PX):
-            x, z = (pxx + 0.5) / PX, (py + 0.5) / PX
-            d, along = depth(case, x, z)
-            if d < 0:
-                col = rim                                   # outside the rug: only its sides sample this
-            elif d < BW:
-                col = roles[pattern.border_value(d, along)]
+def colours_for(code, hexc):
+    """Every role's colour: the rug's own tones, then the design's choices from the palette."""
+    hexes = {c['code']: c['hex'] for c in TERP['colors']}
+    base, accent, deep, light = palette_for(code, hexc)
+    out = {'field': base, 'accent': accent, 'deep': deep, 'light': light, 'leaf': rgb(hexes['pin_lim_lav']), 'stem': rgb(hexes['pin_lim_myr'])}
+    tones = dict(zip(('pale', 'bright', 'dusky', 'deep'), siblings(code))) if code != 'natural' else {}
+    for role, ref in D.DESIGNS[code][4].items():
+        out[role] = base if ref == 'self' else tones[ref] if ref in tones else rgb(hexes[ref])
+    out.setdefault('extra', out['accent'])
+    out.setdefault('band', out['deep'] if lum(base) > 0.35 else mix(out['deep'], out['accent'], 0.35))
+    out['rim'] = shade(out['band'], 0.85)
+    return out
+
+
+def depths(case, X, Z):
+    """depth() for arrays: distance in from the rug's edge (inf inside) and the coordinate along it."""
+    if case == 'full':
+        return np.full_like(X, np.inf), np.zeros_like(X)
+    if case == 'edge_n':
+        return Z - I, X
+    if case == 'edge_w':
+        return X - I, Z
+    if case == 'inner':
+        corner = (X >= I) & (Z >= I)
+        d = np.where(corner, np.hypot(X - I, Z - I), np.where(X >= I, X - I, Z - I))
+        s = np.where(corner, np.where(X > Z, X, Z), np.where(X >= I, Z, X))
+        return d, s
+    c = I + R
+    round_ = (X < c) & (Z < c)
+    d = np.where(round_, R - np.hypot(c - X, c - Z), np.minimum(X - I, Z - I))
+    s = np.where(round_, np.where(Z < X, X, Z), np.where(Z - I < X - I, X, Z))
+    return d, s
+
+
+def field_roles(code, n):
+    """The field's role at every sample of the north-west quarter (n x n): the design repeated under the
+    square's symmetries and from the neighbouring blocks."""
+    fn, params = D.FIELDS[D.DESIGNS[code][0]], D.DESIGNS[code][1]
+    g = (np.arange(n) + 0.5) / n * Q - 8                          # block coordinates of the NW quarter
+    X, Z = np.meshgrid(g, g)
+    layers = None
+    for tx, tz in NEIGHBOURS:
+        px, pz = X + tx, Z + tz
+        for a, b, c, d in TURNS:
+            ls = fn(a * px + b * pz, c * px + d * pz, params)
+            if layers is None:
+                layers = [[np.asarray(m, bool).copy(), r] for m, r in ls]
             else:
-                a, b = sorted((abs(x - 8), abs(z - 8)))
-                col = roles[pattern.field_value(a, b)]
-            calm = 0.45 if d < 1.0 else 1.0                 # a quieter weave near the edge (less glint)
-            weave = calm * ((0.025 if (pxx + py) % 2 == 0 else -0.025) + rng.uniform(-0.012, 0.012))
-            px[pxx, py] = tuple(clamp(v * (1 + weave) + 255 * weave * (0.3 - 0.25 * lum(col))) for v in col)
-    return img
+                for k, (m, r) in enumerate(ls):
+                    layers[k][0] |= m
+    out = np.zeros((n, n), np.int8)
+    for m, r in layers:
+        out[m] = r
+    return out
+
+
+def texture(case, code, colours, field, rng):
+    """One quarter: the field, the border over it, every edge anti-aliased (SS x SS samples a pixel)."""
+    n = Q * PX * SS
+    g = (np.arange(n) + 0.5) / n * Q
+    X, Z = np.meshgrid(g, g)
+    d, s = depths(case, X, Z)
+    roles = field.copy()
+    band = d < BW
+    roles[band] = 8                                               # the border's band
+    for m, r in D.BORDERS[D.DESIGNS[code][2]](d, s, D.DESIGNS[code][3]):
+        roles[m & band & (d >= 0.75) & (d < BW - 0.25)] = r
+    roles[d < 0.75] = D.RIM                                       # the rim, and outside the rug (only its sides sample that)
+    lut = np.array([colours[k] for k in ROLES] + [colours['band']], np.float64)
+    m = Q * PX
+    rgbs = lut[roles].reshape(m, SS, m, SS, 3).mean(axis=(1, 3))
+    # A fine, quiet weave: a twill of threads a model pixel apart, and a little grain.
+    yy, xx = np.mgrid[0:m, 0:m]
+    twill = np.sin((xx + yy) * np.pi / 2) * 0.012 + np.sin((xx - yy) * np.pi / 4) * 0.006
+    grain = np.array([rng.uniform(-0.006, 0.006) for _ in range(m * m)]).reshape(m, m)
+    weave = np.where(depths(case, (xx + 0.5) / PX, (yy + 0.5) / PX)[0] < 1.0, 0.5, 1.0) * (twill + grain)
+    l = (0.2126 * rgbs[..., 0] + 0.7152 * rgbs[..., 1] + 0.0722 * rgbs[..., 2]) / 255
+    out = rgbs * (1 + weave[..., None]) + 255 * (weave * (0.3 - 0.25 * l))[..., None]
+    return Image.fromarray(np.clip(np.round(out), 0, 255).astype(np.uint8), 'RGB')
 
 
 # ---- everything ------------------------------------------------------------------------------
+
+def render(i, code, hexc):
+    """Rug i's five quarter textures."""
+    colours, rng = colours_for(code, hexc), random.Random(9000 + i)
+    field = field_roles(code, Q * PX * SS)
+    return [texture(case, code, colours, field, rng) for case in CASES]
+
+
+def preview(codes, out):
+    """A 3 x 2 block rug of each code, side by side, from the written textures (quarters turned as the blockstate turns them)."""
+    tex = ASSETS / 'textures/block/rug'
+    n = Image.open(tex / f'{codes[0]}_full.png').size[0]
+    W, H = 3, 2
+    sheet = Image.new('RGB', (len(codes) * (W * 2 * n + n // 2), H * 2 * n), (40, 40, 40))
+    for k, code in enumerate(codes):
+        for gz in range(H * 2):
+            for gx in range(W * 2):
+                # this quarter's two outward neighbours and diagonal, in the NW frame after turning
+                sx, sz = (-1 if gx % 2 == 0 else 1), (-1 if gz % 2 == 0 else 1)
+                inside = lambda x, z: 0 <= x < W * 2 and 0 <= z < H * 2
+                ns, ew, dg = inside(gx, gz + sz), inside(gx + sx, gz), inside(gx + sx, gz + sz)
+                turns = {(-1, -1): 0, (1, -1): 1, (1, 1): 2, (-1, 1): 3}[(sx, sz)]
+                a, b = (ns, ew) if turns % 2 == 0 else (ew, ns)     # the NW frame's north and west
+                case = 'outer' if not a and not b else 'edge_n' if not a else 'edge_w' if not b else 'full' if dg else 'inner'
+                img = Image.open(tex / f'{code}_{case}.png').rotate(-90 * turns)
+                sheet.paste(img, (k * (W * 2 * n + n // 2) + gx * n, gz * n))
+    sheet.save(out)
+
 
 def generate():
     tex = ASSETS / 'textures/block/rug'
@@ -328,18 +355,14 @@ def generate():
                                                         'textures': {'particle': '#rug'}, 'elements': quarter(case)})
     rugs = [(c['code'], c['name'], c['hex']) for c in TERP['colors']] + [('natural', TERP['natural']['name'], TERP['natural']['hex'])]
     names, seen = collections.OrderedDict(), {}
+    with multiprocessing.Pool() as pool:
+        images = pool.starmap(render, [(i, code, hexc) for i, (code, _, hexc) in enumerate(rugs)])
     for i, (code, name, hexc) in enumerate(rugs):
-        pattern = Pattern(i)
-        colors = palette_for(code, hexc)
-        rng = random.Random(9000 + i)
-        digest = hashlib.sha1()
-        for case in CASES:
-            img = texture(case, pattern, colors, rng)
+        for case, img in zip(CASES, images[i]):
             img.save(tex / f'{code}_{case}.png')
-            digest.update(img.tobytes())
             write(ASSETS / f'models/block/rug_{code}_{case}.json', {'parent': f'fourtwenty:block/rug_{case}',
                                                                     'textures': {'rug': f'fourtwenty:block/rug/{code}_{case}'}})
-        seen.setdefault((pattern.field, pattern.second, pattern.border, tuple(pattern.p)), []).append(code)
+        seen.setdefault(json.dumps(D.DESIGNS[code][:4], default=str), []).append(code)
         block = f'rug_{code}'
         write(ASSETS / f'blockstates/{block}.json', multipart(f'fourtwenty:block/{block}'))
         outer = quarter('outer')
@@ -371,4 +394,8 @@ def generate():
 
 
 if __name__ == '__main__':
-    generate()
+    if '--preview' in sys.argv:
+        i = sys.argv.index('--preview')
+        preview(sys.argv[i + 2:], sys.argv[i + 1])
+    else:
+        generate()

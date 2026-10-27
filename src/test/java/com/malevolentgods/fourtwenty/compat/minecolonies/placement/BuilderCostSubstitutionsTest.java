@@ -13,6 +13,10 @@ class BuilderCostSubstitutionsTest {
     @Test void theArchitectsCutterCostsOneCobblestone() {
         assertEquals(Optional.of("minecraft:cobblestone"), BuilderCostSubstitutions.costFor("domum_ornamentum:architectscutter"));
     }
+    @Test void aPottedPotPotCostsThePotPotOfItsColour() {
+        assertEquals(Optional.of("fourtwenty:pot_pot_myr_lav_lim"), BuilderCostSubstitutions.costFor("fourtwenty:potted_pot_pot_myr_lav_lim"));
+        assertEquals(Optional.empty(), BuilderCostSubstitutions.costFor("fourtwenty:pot_pot_myr_lav_lim"));
+    }
     @Test void ordinaryBlocksCostThemselves() {
         assertEquals(Optional.empty(), BuilderCostSubstitutions.costFor("minecraft:sea_lantern"));
         assertEquals(Optional.empty(), BuilderCostSubstitutions.costFor("minecraft:glowstone"));
