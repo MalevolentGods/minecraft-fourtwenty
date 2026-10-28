@@ -246,17 +246,24 @@ public final class ModTerpenes {
         return Collections.unmodifiableMap(out);
     }
 
-    public static final DeferredHolder<Block, TerpinatorBlock> TERPINATOR = ModBlocks.BLOCKS.register("terpinator",
-            () -> new TerpinatorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.5f, 6f).sound(SoundType.COPPER)
-                    .noOcclusion().requiresCorrectToolForDrops().lightLevel(state -> state.getValue(TerpinatorBlock.LIT) ? 7 : 2)));
+    /** The Terpinator in two finishes, Steel and Lab: the same machine (one block entity type, one menu). */
+    public static final DeferredHolder<Block, TerpinatorBlock> TERPINATOR = ModBlocks.BLOCKS.register("terpinator", ModTerpenes::terpinator);
+    public static final DeferredHolder<Block, TerpinatorBlock> TERPINATOR_LAB = ModBlocks.BLOCKS.register("terpinator_lab", ModTerpenes::terpinator);
+
+    private static TerpinatorBlock terpinator() {
+        return new TerpinatorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.5f, 6f).sound(SoundType.METAL)
+                .noOcclusion().requiresCorrectToolForDrops().lightLevel(state -> state.getValue(TerpinatorBlock.LIT) ? 9 : 4));
+    }
 
     public static final DeferredHolder<Item, BlockItem> TERPINATOR_ITEM = ModItems.ITEMS.register("terpinator",
             () -> new BlockItem(TERPINATOR.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> TERPINATOR_LAB_ITEM = ModItems.ITEMS.register("terpinator_lab",
+            () -> new BlockItem(TERPINATOR_LAB.get(), new Item.Properties()));
 
     @SuppressWarnings("null")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TerpinatorBlockEntity>> TERPINATOR_ENTITY =
             ModBlockEntities.BLOCK_ENTITIES.register("terpinator",
-                    () -> BlockEntityType.Builder.of(TerpinatorBlockEntity::new, TERPINATOR.get()).build(null));
+                    () -> BlockEntityType.Builder.of(TerpinatorBlockEntity::new, TERPINATOR.get(), TERPINATOR_LAB.get()).build(null));
 
     public static final DeferredHolder<MenuType<?>, MenuType<TerpinatorMenu>> TERPINATOR_MENU = ModMenuTypes.MENU_TYPES.register("terpinator",
             () -> IMenuTypeExtension.create((id, inventory, data) -> new TerpinatorMenu(id, inventory)));
@@ -268,6 +275,7 @@ public final class ModTerpenes {
                     .withTabsBefore(ModCreativeTabs.FOUR_TWENTY_TAB.getKey())
                     .displayItems((parameters, output) -> {
                         output.accept(TERPINATOR_ITEM.get());
+                        output.accept(TERPINATOR_LAB_ITEM.get());
                         // Resin, bases and accords stay registered for old worlds; the Terpinator makes only finals now.
                         TERPENES.values().stream().filter(t -> t.get().code().isFinal()).forEach(t -> output.accept(t.get()));
                         MINECRAFT_TERPENES.values().forEach(t -> output.accept(t.get()));

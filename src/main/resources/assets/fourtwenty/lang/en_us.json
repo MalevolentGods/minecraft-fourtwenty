@@ -1589,5 +1589,6 @@
   "gui.fourtwenty.terpinator.family.cool": "Cool weed",
   "gui.fourtwenty.terpinator.status.pick": "Waiting for a colour.",
   "gui.fourtwenty.terpinator.status.needs_more": "Needs two buds for a vial.",
-  "gui.fourtwenty.terpinator.status.wrong_family": "These buds aren't the right family for this colour."
+  "gui.fourtwenty.terpinator.status.wrong_family": "These buds aren't the right family for this colour.",
+  "block.fourtwenty.terpinator_lab": "Terpinator (Lab)"
 }

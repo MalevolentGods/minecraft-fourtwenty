@@ -22,8 +22,8 @@ S = 256
 RNG = np.random.default_rng(420)
 
 STYLES = {
-    'steel': dict(body='#7A8088', dark='#1C1F23', trim=('#C9CED5', '#5F656D'), glass=('#2A3236', 0.42), brushed=True),
-    'lab': dict(body='#F1F0EC', dark='#D2D6D9', trim=('#FFFFFF', '#AEB4BB'), glass=('#EEF6F6', 0.24), brushed=False),
+    'steel': dict(body='#555B63', dark='#17191D', trim=('#CDD2D8', '#4C525A'), glass=('#22302A', 0.38), brushed=True),
+    'lab': dict(body='#F4F3EF', dark='#D3D7DA', trim=('#FFFFFF', '#A9B0B8'), glass=('#EEF6F6', 0.26), brushed=False),
 }
 RESINS = ['#F7F7F2', '#141414', '#FCD200', '#FF7A00', '#B5121B', '#C8209E']
 LIME = '#9BD42A'
@@ -51,32 +51,35 @@ def textures(style, st):
     # Seamless materials: the model is mapped by position, so a face shows whatever part of the block it sits in,
     # and anything baked into a texture's border would land in random places. Edges come from the geometry.
     base = rgb(st['body'])
+    # light from above: side faces map the block's height down the texture, so they're brighter at the top (a soft,
+    # wrapping curve, so the top and bottom rows still meet)
+    v = np.arange(S)[:, None, None] / S
+    lift = 1 + (0.06 if st['brushed'] else 0.025) * np.cos(np.pi * v)
     if st['brushed']:
-        fine = tile_noise((S, S), (0.6, 18), 1)            # long horizontal brushing
-        broad = tile_noise((S, S), (40, 40), 2)
-        body = base * (1 + fine[..., None] * 0.05 + broad[..., None] * 0.035)
+        fine = tile_noise((S, S), (0.5, 40), 1)            # long, fine horizontal brushing
+        broad = tile_noise((S, S), (60, 60), 2)
+        body = base * lift * (1 + fine[..., None] * 0.022 + broad[..., None] * 0.018)
     else:
-        broad = tile_noise((S, S), (50, 50), 3)
-        speck = tile_noise((S, S), 0.7, 4)
-        body = base * (1 + broad[..., None] * 0.012 + speck[..., None] * 0.006)
+        broad = tile_noise((S, S), (60, 60), 3)
+        body = base * lift * (1 + broad[..., None] * 0.008)
     save(Image.fromarray(np.clip(body, 0, 255).astype(np.uint8)), f'{style}_body')
     grain = tile_noise((S, S), 0.9, 5)
-    dark = rgb(st['dark']) * (1 + grain[..., None] * (0.06 if st['brushed'] else 0.012) + tile_noise((S, S), 30, 6)[..., None] * 0.03)
+    dark = rgb(st['dark']) * (1 + grain[..., None] * (0.025 if st['brushed'] else 0.006) + tile_noise((S, S), 40, 6)[..., None] * 0.02)
     save(Image.fromarray(np.clip(dark, 0, 255).astype(np.uint8)), f'{style}_dark')
     a, b = rgb(st['trim'][0]), rgb(st['trim'][1])
     y = np.arange(S)[:, None]
     band = 0.5 + 0.5 * np.cos(2 * np.pi * y / S)            # one soft reflection band per block, seamless
     trim = b + (a - b) * band[..., None] ** 1.6
     trim = trim + 26 * np.exp(-((((y - S * 0.22) % S) - S / 2 + S / 2) / (S * 0.03)) ** 2)[..., None] * 0
-    trim = trim * (1 + tile_noise((S, S), (0.5, 22), 7)[..., None] * 0.025)
+    trim = trim * (1 + tile_noise((S, S), (0.5, 40), 7)[..., None] * 0.012)
     save(Image.fromarray(np.clip(trim * np.ones((S, S, 1)), 0, 255).astype(np.uint8)), f'{style}_trim')
     g, ga = rgb(st['glass'][0]), st['glass'][1]
     img = np.zeros((S, S, 4))
     img[..., :3] = g
     yy, xx = np.mgrid[0:S, 0:S]
-    glint = (np.exp(-((((xx + yy * 0.6) % S) - S * 0.5) / (S * 0.05)) ** 2) * 0.28)   # a diagonal glint, wrapping
+    glint = (np.exp(-((((xx + yy * 0.6) % S) - S * 0.5) / (S * 0.04)) ** 2) * 0.14)   # a diagonal glint, wrapping
     img[..., :3] = img[..., :3] * (1 - glint[..., None]) + 255 * glint[..., None]
-    img[..., 3] = np.clip(ga * 255 + glint * 255 * 0.5, 0, 255)
+    img[..., 3] = np.clip(ga * 255 + glint * 255 * 0.4, 0, 255)
     save(Image.fromarray(img.astype(np.uint8), 'RGBA'), f'{style}_glass')
 
 
@@ -91,9 +94,10 @@ def shared_textures():
     # the pool: a round glowing liquid with slow swirls; transparent outside the circle
     r = np.hypot(x - c, y - c) / c
     ang = np.arctan2(y - c, x - c)
-    caustic = tile_noise((S, S), 9, 8)
-    caustic = np.clip(0.5 + caustic * 0.35, 0, 1)
-    col = lime * (0.84 + 0.12 * caustic[..., None]) + (pale - lime) * (np.clip(1 - r * 1.25, 0, 1) * 0.45 + np.exp(-((r - 0.93) / 0.04) ** 2) * 0.6)[..., None]
+    # smooth glowing liquid: a soft bright centre, two faint ripples, a bright meniscus at the edge
+    caustic = tile_noise((S, S), 18, 8)
+    glow = np.clip(1 - r, 0, 1) ** 1.5 * 0.5 + np.exp(-((r - 0.38) / 0.03) ** 2) * 0.1 + np.exp(-((r - 0.66) / 0.03) ** 2) * 0.08         + np.exp(-((r - 0.95) / 0.035) ** 2) * 0.55
+    col = lime * (0.9 + 0.03 * caustic[..., None]) + (pale - lime) * glow[..., None]
     img = np.zeros((S, S, 4))
     img[..., :3] = np.clip(col, 0, 255)
     img[..., 3] = np.where(r <= 1, 255, 0)
@@ -114,17 +118,17 @@ def el(x0, y0, z0, x1, y1, z1, tex, glow=False, rot=None, faces=('north', 'south
     return e
 
 
-def octo(cx, cz, r, y0, y1, thick, tex):
-    """Eight bars round an octagon (apothem r to the bars' centre line); odd ones turned 45 degrees about y."""
+def octo(cx, cz, r, y0, y1, thick, tex, step=0.0, faces=('north', 'south', 'east', 'west', 'up')):
+    """Eight bars round an octagon (apothem r to the bars' centre line); odd ones turned 45 degrees about y. Bars
+    cross at the corners, so where their tops show, odd ones stand {@code step} higher (coplanar faces flicker)."""
     side = 2 * (r + thick / 2) * math.tan(math.radians(22.5))
     out = []
     for k in range(8):
         th = math.radians(45 * k)
         mx, mz = cx + math.cos(th) * r, cz + math.sin(th) * r
         # a bar whose long side runs along x, centred on (mx, mz); turned so it's tangent to the octagon
-        top = y1 + (0.2 if k % 2 else 0)
-        e = el(mx - side / 2, y0, mz - thick / 2, mx + side / 2, top, mz + thick / 2, tex,
-               faces=('north', 'south', 'east', 'west', 'up'))
+        top = y1 + (step if k % 2 else 0)
+        e = el(mx - side / 2, y0, mz - thick / 2, mx + side / 2, top, mz + thick / 2, tex, faces=faces)
         a = (45 * k + 90) % 180              # tangent direction in degrees (0 = along x)
         if a == 90:
             e['from'][0], e['to'][0] = round(mx - thick / 2, 4), round(mx + thick / 2, 4)
@@ -154,22 +158,22 @@ def geometry():
                 el(0.5, 2.5, 0.5, 15.5, 3, 15.5, 'dark', faces=SIDES + ('up',))]
     # the basin: octagonal walls, a dark floor under the round pool, a polished lip, a low glass rim
     cx, cz = 8, 7
-    machine += octo(cx, cz, 5.6, 3, 7.4, 1.4, 'body')
+    machine += octo(cx, cz, 5.6, 3, 7.4, 1.4, 'body', faces=SIDES)          # walls: the lip covers their tops
     # floor under the pool: a square and the same square turned 45 degrees (an eight-point star that stays inside the walls)
     machine.append(el(cx - 4.45, 6.75, cz - 4.45, cx + 4.45, 6.8, cz + 4.45, 'dark', faces=('up',)))
     machine.append(el(cx - 4.45, 6.55, cz - 4.45, cx + 4.45, 6.6, cz + 4.45, 'dark', faces=('up',),
                       rot={'origin': [cx, 6.575, cz], 'axis': 'y', 'angle': 45}))
     # the pool: one face with the whole round texture on it (its square corners are clear and sit inside the walls)
     machine.append(el(cx - 5.2, 6.9, cz - 5.2, cx + 5.2, 7.15, cz + 5.2, 'pool', glow=True, faces=('up',), uv=[0, 0, 16, 16]))
-    machine += octo(cx, cz, 5.75, 7.6, 8.0, 1.25, 'trim')
-    glass += octo(cx, cz, 6.2, 8.2, 9.5, 0.3, 'glass')
+    machine += octo(cx, cz, 5.6, 7.4, 7.8, 1.6, 'trim', step=0.12)
+    glass += octo(cx, cz, 6.0, 7.8, 9.7, 0.3, 'glass', faces=SIDES)
     # a thin polished frame on the glass: a cap along the top and a slim post at every corner
-    machine += octo(cx, cz, 6.2, 9.7, 10.0, 0.45, 'trim')
-    vr = (6.2) / math.cos(math.radians(22.5))
+    machine += octo(cx, cz, 6.0, 9.7, 9.95, 0.5, 'trim', step=0.12)
+    vr = 6.0 / math.cos(math.radians(22.5))
     for k in range(8):
         th = math.radians(45 * k + 22.5)
         px, pz = cx + math.cos(th) * vr, cz + math.sin(th) * vr
-        machine.append(el(px - 0.28, 8.0, pz - 0.28, px + 0.28, 9.7, pz + 0.28, 'trim', faces=SIDES))
+        machine.append(el(px - 0.32, 7.8, pz - 0.32, px + 0.32, 9.7, pz + 0.32, 'trim', faces=SIDES))
     # resin jars on a rail along the back
     machine += [el(1, 3, 13.4, 15, 4, 15.4, 'dark', faces=SIDES + ('up',)),
                 el(1, 9.2, 15, 15, 9.7, 15.6, 'trim', faces=SIDES + ('up',))]
