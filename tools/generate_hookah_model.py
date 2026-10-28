@@ -4,7 +4,8 @@
     python3 tools/generate_hookah_model.py
 
 The cabinet keeps the original paintings (weed_bong_<state>.png sides, weed_bong_top, weed_bong_bottom), each laid whole
-on its face, but stands a little inside the block (10 x 11 x 10) instead of filling it. On the brass socket in the top
+on its face, but stands a little inside the block (9 x 9 x 9, square so nothing stretches) instead of filling it; the whole hookah
+fits in the block. On the brass socket in the top
 painting stands the hookah proper: a brass collar, a stem, a charcoal tray, a clay bowl with coals (glowing while
 lit), and a hose that loops off the stem and hangs down the side to a brass mouthpiece. Smoke puffs off the bowl while
 it's lit (WeedBongBlock#animateTick). Writes models/block/weed_bong_<state>.json and textures/block/hookah/*.png.
@@ -54,34 +55,35 @@ def textures():
     save(Image.fromarray(np.clip(rgb('#1F5E5A') * (0.8 + 0.3 * braid) * (1 + noise((S, S), 0.7, 27)[..., None] * 0.04), 0, 255).astype(np.uint8)), 'hose')
 
 
-def el(x0, y0, z0, x1, y1, z1, tex, faces=SIDES + ('up', 'down'), glow=False, rot=None, uv=None):
-    e = INF.el(x0, y0, z0, x1, y1, z1, tex, glow=glow, rot=rot, faces=faces, uv=uv)
-    return e
+def el(x0, y0, z0, x1, y1, z1, tex, faces=SIDES + ('up', 'down'), glow=False, rot=None):
+    """An element with every face's UV pinned to the whole texture: the parts are small, and a face left to auto-UV
+    above the block's top would read past its texture into the rest of the atlas."""
+    return INF.el(x0, y0, z0, x1, y1, z1, tex, glow=glow, rot=rot, faces=faces, uv=[0, 0, 16, 16])
 
 
 def model(state):
     lit = state.startswith('lit')
     full = [0, 0, 16, 16]
     out = [
-        # the cabinet: the paintings whole on each face, inside the block
-        {'from': [3, 0, 3], 'to': [13, 11, 13], 'faces': {
+        # the cabinet: the paintings whole on each face (square, so nothing stretches), inside the block
+        {'from': [3.5, 0, 3.5], 'to': [12.5, 9, 12.5], 'faces': {
             **{f: {'texture': '#side', 'uv': full} for f in SIDES},
             'up': {'texture': '#top', 'uv': full}, 'down': {'texture': '#bottom', 'uv': full, 'cullface': 'down'}}},
-        # brass collar on the socket, the stem, the charcoal tray
-        el(7.1, 11, 7.1, 8.9, 12, 8.9, 'brass', faces=SIDES + ('up',)),
-        el(7.5, 12, 7.5, 8.5, 18, 8.5, 'stem', faces=SIDES),
-        el(7.25, 14.6, 7.25, 8.75, 15.2, 8.75, 'brass', faces=SIDES + ('up', 'down')),      # a knuckle on the stem
-        el(5.4, 18, 5.4, 10.6, 18.4, 10.6, 'brass'),
-        # the clay bowl, wider at the top, coals in it
-        el(6.9, 18.4, 6.9, 9.1, 19.6, 9.1, 'clay', faces=SIDES),
-        el(6.3, 19.6, 6.3, 9.7, 21.2, 9.7, 'clay', faces=SIDES + ('down',)),
-        el(6.6, 20.9, 6.6, 9.4, 21.3, 9.4, 'coals_lit' if lit else 'coals', glow=lit, faces=('up',)),
-        # the hose: a port off the stem, out and down the side of the cabinet to the mouthpiece
-        el(8.5, 15.4, 7.6, 9.6, 16.2, 8.4, 'brass', faces=('north', 'south', 'east', 'up', 'down')),
-        el(9.4, 15.4, 7.65, 15.4, 16.2, 8.35, 'hose', faces=('north', 'south', 'up', 'down'),
-           rot={'origin': [9.6, 15.8, 8], 'axis': 'z', 'angle': -45}),
-        el(13.4, 4.2, 7.6, 14.2, 12.4, 8.4, 'hose', faces=SIDES),
-        el(13.25, 2.2, 7.45, 14.35, 4.2, 8.55, 'brass', faces=SIDES + ('down',)),
+        # brass collar on the socket, the stem with a knuckle, the charcoal tray
+        el(7.1, 9, 7.1, 8.9, 9.7, 8.9, 'brass', faces=SIDES + ('up',)),
+        el(7.5, 9.7, 7.5, 8.5, 13, 8.5, 'stem', faces=SIDES),
+        el(7.25, 10.6, 7.25, 8.75, 11.1, 8.75, 'brass', faces=SIDES + ('up', 'down')),
+        el(5.6, 13, 5.6, 10.4, 13.3, 10.4, 'brass'),
+        # the clay bowl, wider at the top, coals in it (all of it inside the block)
+        el(6.9, 13.3, 6.9, 9.1, 14.1, 9.1, 'clay', faces=SIDES),
+        el(6.4, 14.1, 6.4, 9.6, 15.6, 9.6, 'clay', faces=SIDES + ('down',)),
+        el(6.7, 15.3, 6.7, 9.3, 15.65, 9.3, 'coals_lit' if lit else 'coals', glow=lit, faces=('up',)),
+        # the hose: a port off the stem, down at 45 degrees past the cabinet's edge, then straight down to the mouthpiece
+        el(8.5, 11.6, 7.6, 9.5, 12.4, 8.4, 'brass', faces=('north', 'south', 'east', 'up', 'down')),
+        el(9.3, 11.6, 7.65, 14.5, 12.4, 8.35, 'hose', faces=('north', 'south', 'up', 'down'),
+           rot={'origin': [9.5, 12.0, 8], 'axis': 'z', 'angle': -45}),
+        el(12.75, 3.0, 7.6, 13.55, 8.75, 8.4, 'hose', faces=SIDES),
+        el(12.6, 1.4, 7.45, 13.7, 3.0, 8.55, 'brass', faces=SIDES + ('down',)),
     ]
     tex = {'particle': 'fourtwenty:block/weed_bong_top', 'side': f'fourtwenty:block/weed_bong_{state}',
            'top': 'fourtwenty:block/weed_bong_top', 'bottom': 'fourtwenty:block/weed_bong_bottom'}
