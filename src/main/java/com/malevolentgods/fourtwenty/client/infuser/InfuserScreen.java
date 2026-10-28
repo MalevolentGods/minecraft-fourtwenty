@@ -49,6 +49,9 @@ public class InfuserScreen extends Screen {
     private int[] pool;
     private final Deque<int[]> history = new ArrayDeque<>();
     private int size = 1;
+    /** How many Drops (32nds of a glob) one click lets fall: 1, 4 or 8. Other bead sizes go one at a time. */
+    private int drops = 1;
+    private static final int[] DROP_COUNTS = {1, 4, 8};
     private double[] shown = rgbParts(tint.emptyRgb());
     private long pulseStart = System.currentTimeMillis(), matchAt = -1, edgeUntil = 0;
     private boolean edgeGood;
@@ -138,11 +141,16 @@ public class InfuserScreen extends Screen {
     private void drop(int i) {
         if (sealed()) { message = "This pool is finished. Drain it to mix again."; return; }
         if (!unlocked(i)) return;
-        int add = Math.min(SIZE_SPECKS[size], tint.capSpecks() - total());
+        int add = Math.min(SIZE_SPECKS[size] * (size == 1 ? drops : 1), tint.capSpecks() - total());
         if (add <= 0) { message = "The pool is full: 12 globs of resin."; return; }
         push();
         pool[i] += add;
-        beads.add(new double[]{System.currentTimeMillis(), (Math.random() - 0.5) * 0.5, tint.swatch(tint.resins().get(i))[0], 3 + Math.log(add) / Math.log(2) * 1.6});
+        // several Drops fall one after another, a quick patter; anything else is one bead sized to its amount
+        int falls = size == 1 ? Math.max(1, add / SIZE_SPECKS[1]) : 1, each = add / falls;
+        for (int k = 0; k < falls; k++) {
+            beads.add(new double[]{System.currentTimeMillis() + k * 70L, (Math.random() - 0.5) * 0.5, tint.swatch(tint.resins().get(i))[0],
+                    3 + Math.log(Math.max(1, each)) / Math.log(2) * 1.6});
+        }
         play(SoundEvents.POINTED_DRIPSTONE_DRIP_WATER, 1.6f - (float) Math.log(add) * 0.08f);
         afterChange();
     }
@@ -219,6 +227,7 @@ public class InfuserScreen extends Screen {
             switch (h[4]) {
                 case 0 -> drop(h[5]);
                 case 1 -> { size = h[5]; play(SoundEvents.UI_BUTTON_CLICK.value(), 1.6f); }
+                case 8 -> { drops = h[5]; play(SoundEvents.UI_BUTTON_CLICK.value(), 1.8f); }
                 case 3 -> takeBack();
                 case 4 -> drain();
                 case 5 -> pickOnMap(mx, my);
@@ -232,6 +241,17 @@ public class InfuserScreen extends Screen {
             return true;
         }
         return super.mouseClicked(mx, my, button);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mx, double my, double dx, double dy) {
+        if (!infuseTab && size == 1 && dy != 0 && mx < x0 + colL) {
+            int k = java.util.Arrays.binarySearch(DROP_COUNTS, drops);
+            int next = DROP_COUNTS[Math.max(0, Math.min(DROP_COUNTS.length - 1, k + (dy > 0 ? 1 : -1)))];
+            if (next != drops) { drops = next; play(SoundEvents.UI_BUTTON_CLICK.value(), 1.8f); }
+            return true;
+        }
+        return super.mouseScrolled(mx, my, dx, dy);
     }
 
     private void pickOnMap(double mx, double my) {
@@ -362,10 +382,16 @@ public class InfuserScreen extends Screen {
         label(g, "Bead size", x, y);
         int bw = (w - 9) / 4;
         for (int i = 0; i < 4; i++) button(g, x + i * (bw + 3), y + 11, bw, 14, SIZE_NAMES[i], size == i, true, mx, my, 1, i);
-        label(g, "Resins · click to drop", x, y + 32);
-        int cw = (w - 4) / 2, chh = Math.max(20, Math.min(26, (y1 - (y + 44) - 8) / 6));
+        // with Drops picked, a little switch for how many fall per click (scroll over the jars to flip it too)
+        if (size == 1) {
+            int dw = 26, dx = x + bw + 3 + (bw - (dw * 3 + 4)) / 2;
+            for (int k = 0; k < 3; k++) button(g, dx + k * (dw + 2), y + 28, dw, 11, "×" + DROP_COUNTS[k], drops == DROP_COUNTS[k], true, mx, my, 8, DROP_COUNTS[k]);
+        }
+        int jarsY = y + 58;
+        label(g, size == 1 && drops > 1 ? "Resins · click to drop " + drops : "Resins · click to drop", x, jarsY - 12);
+        int cw = (w - 4) / 2, chh = Math.max(20, Math.min(26, (y1 - jarsY - 8) / 6));
         for (int i = 0; i < n; i++) {
-            int jx = x + (i % 2) * (cw + 4), jy = y + 44 + (i / 2) * (chh + 3);
+            int jx = x + (i % 2) * (cw + 4), jy = jarsY + (i / 2) * (chh + 3);
             boolean en = unlocked(i) && !sealed();
             boolean hover = en && mx >= jx && mx < jx + cw && my >= jy && my < jy + chh;
             Draw.round(g, jx, jy, jx + cw, jy + chh, 6, hover ? AMBER : LINE);
@@ -441,6 +467,7 @@ public class InfuserScreen extends Screen {
         });
         for (double[] b : beads) {
             double k = (now - b[0]) / 320.0, px = pcx + b[1] * pr, top = pcy - pr - ring - 10;
+            if (k < 0) continue;                                   // still waiting its turn
             Draw.disc(g, px, top + (pcy - top) * k * k, b[3] * 0.7, Draw.argb((int) b[2], 1));
         }
         // caught: a swirling rainbow round the pool and its ring
