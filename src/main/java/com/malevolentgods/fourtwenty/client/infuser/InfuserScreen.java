@@ -659,7 +659,11 @@ public class InfuserScreen extends Screen {
         }
         // what you're chasing, and how inspired you are
         int y = mapY + mapH + 6;
-        g.drawString(font, t == null ? "Nothing yet. Take a hit." : "Chasing " + shownName(t), x, y, FG, false);
+        // the name stops short of the inspiration dots, with an ellipsis if it's long
+        String chasing = t == null ? "Nothing yet. Take a hit." : "Chasing " + shownName(t);
+        int room = w - 5 * 9 - 6;
+        if (font.width(chasing) > room) chasing = font.plainSubstrByWidth(chasing, room - font.width("…")) + "…";
+        g.drawString(font, chasing, x, y, FG, false);
         for (int i = 0; i < 5; i++) {
             int lx = x + w - 5 * 9 + i * 9;
             Draw.round(g, lx, y + 1, lx + 7, y + 5, 2, i < level() ? GLOW : LINE);
