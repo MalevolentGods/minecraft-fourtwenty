@@ -268,8 +268,8 @@ public final class ModTerpenes {
                     .withTabsBefore(ModCreativeTabs.FOUR_TWENTY_TAB.getKey())
                     .displayItems((parameters, output) -> {
                         output.accept(TERPINATOR_ITEM.get());
-                        output.accept(RESIN.get());
-                        TERPENES.values().forEach(t -> output.accept(t.get()));
+                        // Resin, bases and accords stay registered for old worlds; the Terpinator makes only finals now.
+                        TERPENES.values().stream().filter(t -> t.get().code().isFinal()).forEach(t -> output.accept(t.get()));
                         MINECRAFT_TERPENES.values().forEach(t -> output.accept(t.get()));
                         List<Hemp> all = new ArrayList<>();
                         all.add(NATURAL_HEMP);

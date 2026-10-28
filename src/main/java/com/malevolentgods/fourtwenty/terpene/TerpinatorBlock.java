@@ -90,7 +90,7 @@ public class TerpinatorBlock extends HorizontalDirectionalBlock implements Entit
     @Override protected void onRemove(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState newState,
                                       boolean moved) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof TerpinatorBlockEntity t) {
-            Containers.dropContents(level, pos, t);
+            Containers.dropContents(level, pos, t.contents());
             level.updateNeighbourForOutputSignal(pos, this);
         }
         super.onRemove(state, level, pos, newState, moved);

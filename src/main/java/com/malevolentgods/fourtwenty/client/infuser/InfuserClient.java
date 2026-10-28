@@ -28,6 +28,9 @@ public final class InfuserClient {
 
     static InfuserState state = InfuserState.fresh(0);
 
+    /** Whether the local player has caught this colour (a target id: "white", "myr_pin_lim"). */
+    public static boolean caught(String id) { return state.caught.containsKey(id); }
+
     private static List<Integer> washColours = List.of();
     private static long washStart = -1;
     private static int washLevel;
