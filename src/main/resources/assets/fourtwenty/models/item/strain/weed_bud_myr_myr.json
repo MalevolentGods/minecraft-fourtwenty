@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:item/weed_bud",
+  "textures": {
+    "layer0": "fourtwenty:item/strain/weed_bud_myr_myr"
+  }
+}

@@ -2,5 +2,103 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "fourtwenty:item/weed_bud"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.0625
+      },
+      "model": "fourtwenty:item/strain/weed_bud_myr_myr"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.125
+      },
+      "model": "fourtwenty:item/strain/weed_bud_myr_lim"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.1875
+      },
+      "model": "fourtwenty:item/strain/weed_bud_myr_pin"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.25
+      },
+      "model": "fourtwenty:item/strain/weed_bud_myr_lav"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.3125
+      },
+      "model": "fourtwenty:item/strain/weed_bud_lim_myr"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.375
+      },
+      "model": "fourtwenty:item/strain/weed_bud_lim_lim"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.4375
+      },
+      "model": "fourtwenty:item/strain/weed_bud_lim_pin"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.5
+      },
+      "model": "fourtwenty:item/strain/weed_bud_lim_lav"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.5625
+      },
+      "model": "fourtwenty:item/strain/weed_bud_pin_myr"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.625
+      },
+      "model": "fourtwenty:item/strain/weed_bud_pin_lim"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.6875
+      },
+      "model": "fourtwenty:item/strain/weed_bud_pin_pin"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.75
+      },
+      "model": "fourtwenty:item/strain/weed_bud_pin_lav"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.8125
+      },
+      "model": "fourtwenty:item/strain/weed_bud_lav_myr"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.875
+      },
+      "model": "fourtwenty:item/strain/weed_bud_lav_lim"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 0.9375
+      },
+      "model": "fourtwenty:item/strain/weed_bud_lav_pin"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.0
+      },
+      "model": "fourtwenty:item/strain/weed_bud_lav_lav"
+    }
+  ]
 }

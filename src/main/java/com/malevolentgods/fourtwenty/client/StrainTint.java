@@ -26,6 +26,13 @@ public final class StrainTint {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
+        // Bud and joint icons per strain (models/item/<item>.json overrides on this property: ordinal / 16).
+        event.enqueueWork(() -> {
+            var id = ResourceLocation.fromNamespaceAndPath("fourtwenty", "strain");
+            for (var item : java.util.List.of(com.malevolentgods.fourtwenty.registry.ModItems.WEED_BUD.get(), com.malevolentgods.fourtwenty.registry.ModItems.WEED_JOINT.get()))
+                net.minecraft.client.renderer.item.ItemProperties.register(item, id,
+                        (stack, level, entity, seed) -> com.malevolentgods.fourtwenty.registry.ModDataComponents.strain(stack).ordinal() / 16f);
+        });
         StrainEffects.clientTint = t -> {
             var level = Minecraft.getInstance().level;
             if (level == null) return;
