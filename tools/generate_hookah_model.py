@@ -79,11 +79,11 @@ def model(state):
         el(6.4, 14.1, 6.4, 9.6, 15.5, 9.6, 'clay'),                       # its top is the clay rim round the coals
         el(6.75, 15.5, 6.75, 9.25, 15.7, 9.25, 'coals_lit' if lit else 'coals', glow=lit, faces=SIDES + ('up',)),
         # the hose: a port off the stem, down at 45 degrees past the cabinet's edge, then straight down to the mouthpiece
-        el(8.5, 11.6, 7.6, 9.5, 12.4, 8.4, 'brass', faces=('north', 'south', 'east', 'up', 'down')),
-        el(9.3, 11.6, 7.65, 14.5, 12.4, 8.35, 'hose', faces=('north', 'south', 'up', 'down'),
+        el(8.5, 11.6, 7.6, 9.5, 12.4, 8.4, 'brass', faces=('north', 'south', 'up', 'down')),
+        el(9.3, 11.6, 7.65, 14.5, 12.4, 8.35, 'hose',
            rot={'origin': [9.5, 12.0, 8], 'axis': 'z', 'angle': -45}),
-        el(12.75, 3.0, 7.6, 13.55, 8.75, 8.4, 'hose', faces=SIDES),
-        el(12.6, 1.4, 7.45, 13.7, 3.0, 8.55, 'brass', faces=SIDES + ('down',)),
+        el(12.75, 3.0, 7.6, 13.55, 8.75, 8.4, 'hose', faces=SIDES + ('up',)),
+        el(12.6, 1.4, 7.45, 13.7, 3.0, 8.55, 'brass'),
     ]
     tex = {'particle': 'fourtwenty:block/weed_bong_top', 'side': f'fourtwenty:block/weed_bong_{state}',
            'top': 'fourtwenty:block/weed_bong_top', 'bottom': 'fourtwenty:block/weed_bong_bottom'}
