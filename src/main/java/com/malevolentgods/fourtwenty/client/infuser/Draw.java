@@ -75,15 +75,16 @@ final class Draw {
 
     /** A filled rectangle with rounded corners. */
     static void round(GuiGraphics g, double x0, double y0, double x1, double y1, double r, int argb) {
-        r = Math.min(r, Math.min(x1 - x0, y1 - y0) / 2);
+        r = Math.max(0, Math.min(r, Math.min(x1 - x0, y1 - y0) / 2));
         begin();
         Matrix4f m = g.pose().last().pose();
         BufferBuilder b = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
         v(b, m, (x0 + x1) / 2, (y0 + y1) / 2, argb);
-        double[][] corners = {{x1 - r, y0 + r, -Math.PI / 2}, {x0 + r, y0 + r, Math.PI}, {x0 + r, y1 - r, Math.PI / 2}, {x1 - r, y1 - r, 0}};
-        for (int c = 0; c < 4; c++) for (int i = 0; i <= 6; i++) {
-            double a = corners[c][2] - (Math.PI / 2) * i / 6;
-            v(b, m, corners[c][0] + Math.cos(a) * r, corners[c][1] + Math.sin(a) * r, argb);
+        // corner centres and their arcs, going round anticlockwise on screen (y down): top-right, top-left, bottom-left, bottom-right
+        double[][] corners = {{x1 - r, y0 + r, 0}, {x0 + r, y0 + r, -Math.PI / 2}, {x0 + r, y1 - r, -Math.PI}, {x1 - r, y1 - r, -3 * Math.PI / 2}};
+        for (double[] c : corners) for (int i = 0; i <= 6; i++) {
+            double a = c[2] - (Math.PI / 2) * i / 6;
+            v(b, m, c[0] + Math.cos(a) * r, c[1] + Math.sin(a) * r, argb);
         }
         v(b, m, x1, y0 + r, argb);
         BufferUploader.drawWithShader(b.buildOrThrow());

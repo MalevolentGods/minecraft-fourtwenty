@@ -39,41 +39,44 @@ def save(img, name):
     img.save(p, optimize=True)
 
 
-def edge(a, width=10, k=0.82):
-    """A soft darkened border, so every face reads as a crisp machined edge."""
-    y, x = np.mgrid[0:S, 0:S]
-    d = np.minimum(np.minimum(x, S - 1 - x), np.minimum(y, S - 1 - y))
-    f = np.clip(d / width, 0, 1)
-    return a * (k + (1 - k) * f[..., None])
+def tile_noise(shape, sigma, seed):
+    """Seamless noise: blurred with wrap-around so the texture tiles across faces."""
+    from scipy.ndimage import gaussian_filter
+    r = np.random.default_rng(seed).normal(0, 1, shape)
+    n = gaussian_filter(r, sigma, mode='wrap')
+    return (n - n.mean()) / (n.std() + 1e-9)
 
 
 def textures(style, st):
+    # Seamless materials: the model is mapped by position, so a face shows whatever part of the block it sits in,
+    # and anything baked into a texture's border would land in random places. Edges come from the geometry.
     base = rgb(st['body'])
     if st['brushed']:
-        streaks = RNG.normal(0, 1, (S, 1)) * 0.6 + RNG.normal(0, 1, (S, S)) * 0.25
-        streaks = np.array(Image.fromarray(((streaks - streaks.min()) / np.ptp(streaks) * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur((6, 0)))) / 255 - 0.5
-        body = base * (1 + streaks[..., None] * 0.18)
+        fine = tile_noise((S, S), (0.6, 18), 1)            # long horizontal brushing
+        broad = tile_noise((S, S), (40, 40), 2)
+        body = base * (1 + fine[..., None] * 0.05 + broad[..., None] * 0.035)
     else:
-        y = np.linspace(0, 1, S)[:, None, None]
-        body = base * (1.02 - 0.05 * y) * np.ones((S, S, 1))
-    save(Image.fromarray(np.clip(edge(body), 0, 255).astype(np.uint8)), f'{style}_body')
-    dark = rgb(st['dark']) * (1 + RNG.normal(0, 0.03, (S, S, 1)))
-    save(Image.fromarray(np.clip(edge(dark, 8, 0.75), 0, 255).astype(np.uint8)), f'{style}_dark')
+        broad = tile_noise((S, S), (50, 50), 3)
+        speck = tile_noise((S, S), 0.7, 4)
+        body = base * (1 + broad[..., None] * 0.012 + speck[..., None] * 0.006)
+    save(Image.fromarray(np.clip(body, 0, 255).astype(np.uint8)), f'{style}_body')
+    grain = tile_noise((S, S), 0.9, 5)
+    dark = rgb(st['dark']) * (1 + grain[..., None] * (0.06 if st['brushed'] else 0.012) + tile_noise((S, S), 30, 6)[..., None] * 0.03)
+    save(Image.fromarray(np.clip(dark, 0, 255).astype(np.uint8)), f'{style}_dark')
     a, b = rgb(st['trim'][0]), rgb(st['trim'][1])
-    t = np.linspace(0, 1, S)[:, None, None]
-    trim = a * (1 - t) + b * t
-    trim = trim + 40 * np.exp(-((np.arange(S)[:, None, None] - S * 0.3) / (S * 0.05)) ** 2)   # a bright polished band
+    y = np.arange(S)[:, None]
+    band = 0.5 + 0.5 * np.cos(2 * np.pi * y / S)            # one soft reflection band per block, seamless
+    trim = b + (a - b) * band[..., None] ** 1.6
+    trim = trim + 26 * np.exp(-((((y - S * 0.22) % S) - S / 2 + S / 2) / (S * 0.03)) ** 2)[..., None] * 0
+    trim = trim * (1 + tile_noise((S, S), (0.5, 22), 7)[..., None] * 0.025)
     save(Image.fromarray(np.clip(trim * np.ones((S, S, 1)), 0, 255).astype(np.uint8)), f'{style}_trim')
     g, ga = rgb(st['glass'][0]), st['glass'][1]
     img = np.zeros((S, S, 4))
     img[..., :3] = g
-    img[..., 3] = ga * 255
-    y, x = np.mgrid[0:S, 0:S]
-    streak = np.exp(-(((x - y * 0.55) - S * 0.35) / (S * 0.06)) ** 2) * 0.35   # a diagonal glint
-    img[..., :3] = img[..., :3] * (1 - streak[..., None]) + 255 * streak[..., None]
-    img[..., 3] = np.clip(img[..., 3] + streak * 255 * 0.6, 0, 255)
-    rim = np.minimum(np.minimum(x, S - 1 - x), np.minimum(y, S - 1 - y)) < 6
-    img[rim, 3] = np.maximum(img[rim, 3], 150)
+    yy, xx = np.mgrid[0:S, 0:S]
+    glint = (np.exp(-((((xx + yy * 0.6) % S) - S * 0.5) / (S * 0.05)) ** 2) * 0.28)   # a diagonal glint, wrapping
+    img[..., :3] = img[..., :3] * (1 - glint[..., None]) + 255 * glint[..., None]
+    img[..., 3] = np.clip(ga * 255 + glint * 255 * 0.5, 0, 255)
     save(Image.fromarray(img.astype(np.uint8), 'RGBA'), f'{style}_glass')
 
 
@@ -88,8 +91,9 @@ def shared_textures():
     # the pool: a round glowing liquid with slow swirls; transparent outside the circle
     r = np.hypot(x - c, y - c) / c
     ang = np.arctan2(y - c, x - c)
-    swirl = 0.5 + 0.5 * np.sin(ang * 3 + r * 9)
-    col = lime * (0.78 + 0.18 * swirl[..., None]) + (pale - lime) * np.clip(1 - r * 1.3, 0, 1)[..., None] * 0.5
+    caustic = tile_noise((S, S), 9, 8)
+    caustic = np.clip(0.5 + caustic * 0.35, 0, 1)
+    col = lime * (0.84 + 0.12 * caustic[..., None]) + (pale - lime) * (np.clip(1 - r * 1.25, 0, 1) * 0.45 + np.exp(-((r - 0.93) / 0.04) ** 2) * 0.6)[..., None]
     img = np.zeros((S, S, 4))
     img[..., :3] = np.clip(col, 0, 255)
     img[..., 3] = np.where(r <= 1, 255, 0)
@@ -102,9 +106,9 @@ def shared_textures():
 
 # ------------------------------------------------------------------ geometry (pixels, Minecraft axes: x east, y up, z south)
 
-def el(x0, y0, z0, x1, y1, z1, tex, glow=False, rot=None, faces=('north', 'south', 'east', 'west', 'up', 'down')):
+def el(x0, y0, z0, x1, y1, z1, tex, glow=False, rot=None, faces=('north', 'south', 'east', 'west', 'up', 'down'), uv=None):
     e = {'from': [round(x0, 4), round(y0, 4), round(z0, 4)], 'to': [round(x1, 4), round(y1, 4), round(z1, 4)],
-         'faces': {f: {'texture': '#' + tex} for f in faces}}
+         'faces': {f: ({'texture': '#' + tex, 'uv': uv} if uv else {'texture': '#' + tex}) for f in faces}}
     if rot: e['rotation'] = rot
     if glow: e['neoforge_data'] = {'block_light': 15, 'sky_light': 15}
     return e
@@ -151,10 +155,21 @@ def geometry():
     # the basin: octagonal walls, a dark floor under the round pool, a polished lip, a low glass rim
     cx, cz = 8, 7
     machine += octo(cx, cz, 5.6, 3, 7.4, 1.4, 'body')
-    machine.append(el(cx - 5.3, 6.75, cz - 5.3, cx + 5.3, 6.8, cz + 5.3, 'dark', faces=('up',)))
-    machine.append(el(cx - 5.2, 6.9, cz - 5.2, cx + 5.2, 7.15, cz + 5.2, 'pool', glow=True, faces=('up',)))
+    # floor under the pool: a square and the same square turned 45 degrees (an eight-point star that stays inside the walls)
+    machine.append(el(cx - 4.45, 6.75, cz - 4.45, cx + 4.45, 6.8, cz + 4.45, 'dark', faces=('up',)))
+    machine.append(el(cx - 4.45, 6.55, cz - 4.45, cx + 4.45, 6.6, cz + 4.45, 'dark', faces=('up',),
+                      rot={'origin': [cx, 6.575, cz], 'axis': 'y', 'angle': 45}))
+    # the pool: one face with the whole round texture on it (its square corners are clear and sit inside the walls)
+    machine.append(el(cx - 5.2, 6.9, cz - 5.2, cx + 5.2, 7.15, cz + 5.2, 'pool', glow=True, faces=('up',), uv=[0, 0, 16, 16]))
     machine += octo(cx, cz, 5.75, 7.6, 8.0, 1.25, 'trim')
     glass += octo(cx, cz, 6.2, 8.2, 9.5, 0.3, 'glass')
+    # a thin polished frame on the glass: a cap along the top and a slim post at every corner
+    machine += octo(cx, cz, 6.2, 9.7, 10.0, 0.45, 'trim')
+    vr = (6.2) / math.cos(math.radians(22.5))
+    for k in range(8):
+        th = math.radians(45 * k + 22.5)
+        px, pz = cx + math.cos(th) * vr, cz + math.sin(th) * vr
+        machine.append(el(px - 0.28, 8.0, pz - 0.28, px + 0.28, 9.7, pz + 0.28, 'trim', faces=SIDES))
     # resin jars on a rail along the back
     machine += [el(1, 3, 13.4, 15, 4, 15.4, 'dark', faces=SIDES + ('up',)),
                 el(1, 9.2, 15, 15, 9.7, 15.6, 'trim', faces=SIDES + ('up',))]

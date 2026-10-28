@@ -36,7 +36,7 @@ public class InfuserScreen extends Screen {
     private static final String[] SIZE_NAMES = {"Glob", "Drop", "Drip", "Speck"};
     private static final int[] SIZE_SPECKS = {128, 4, 2, 1};
     private static final String KANJI = "〇一二三四五六七八九";
-    private static final int BG = 0xF0141019, PANEL = 0xFF1D1830, LINE = 0xFF352D52, FG = 0xFFEFE9F7, MUTED = 0xFFA99FC2,
+    private static final int BG = 0xF0141019, PANEL = 0xFF1D1830, LINE = 0xFF4A4170, FG = 0xFFEFE9F7, MUTED = 0xFFC2B9DD,
             GLOW = 0xFFB8F06A, AMBER = 0xFFFFC76B, GOOD = 0x6BE38A, BAD = 0xFF6F7D;
     private static final double PERIOD = 4800;
 
@@ -278,6 +278,18 @@ public class InfuserScreen extends Screen {
 
     @Override public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partialTick) { }
 
+    /** Text at 85% size, trimmed with an ellipsis to fit {@code room} pixels. */
+    private void small(GuiGraphics g, String s, int x, int y, int room, int colour) {
+        float k = 0.85f;
+        int max = (int) (room / k);
+        if (font.width(s) > max) s = font.plainSubstrByWidth(s, max - font.width("…")) + "…";
+        g.pose().pushPose();
+        g.pose().translate(x, y, 0);
+        g.pose().scale(k, k, 1);
+        g.drawString(font, s, 0, 0, colour, false);
+        g.pose().popPose();
+    }
+
     private void label(GuiGraphics g, String s, int x, int y) {
         g.drawString(font, s.toUpperCase(), x, y, MUTED, false);
     }
@@ -296,7 +308,7 @@ public class InfuserScreen extends Screen {
         label(g, "Bead size", x, y);
         int bw = (w - 9) / 4;
         for (int i = 0; i < 4; i++) button(g, x + i * (bw + 3), y + 11, bw, 14, SIZE_NAMES[i], size == i, true, mx, my, 1, i);
-        label(g, "Resins · click to drop one in", x, y + 32);
+        label(g, "Resins · click to drop", x, y + 32);
         int cw = (w - 4) / 2, chh = Math.max(20, Math.min(26, (y1 - (y + 44) - 8) / 6));
         for (int i = 0; i < n; i++) {
             int jx = x + (i % 2) * (cw + 4), jy = y + 44 + (i / 2) * (chh + 3);
@@ -310,10 +322,11 @@ public class InfuserScreen extends Screen {
             Draw.disc(g, bx, by, br, Draw.argb(sw[0], en ? 1 : 0.35));
             Draw.disc(g, bx - br * 0.25, by - br * 0.25, br * 0.6, Draw.argb(sw[1], en ? 0.55 : 0.2));
             Draw.disc(g, bx - br * 0.35, by - br * 0.4, br * 0.2, Draw.argb(0xFFFFFF, en ? 0.5 : 0.15));
-            String name = LABELS[i];
-            g.drawString(font, name, (int) (bx + br + 4), (int) (by - 8), en ? FG : 0xFF5A5470, false);
+            // names in a slightly smaller type, cut to the jar so they never run into the next column
+            int tx = (int) (bx + br + 4), room = jx + cw - 4 - tx;
             String family = tint.starter().contains(tint.resins().get(i)) ? "Landrace" : familyOf(tint.resins().get(i));
-            g.drawString(font, family, (int) (bx + br + 4), (int) (by + 1), en ? MUTED : 0xFF454057, false);
+            small(g, LABELS[i], tx, (int) (by - 8), room, en ? FG : 0xFF6E6788);
+            small(g, family, tx, (int) (by + 1), room, en ? 0xFFB9B0D4 : 0xFF544D6B);
             if (en) hits.add(new int[]{jx, jy, jx + cw, jy + chh, 0, i});
         }
     }
@@ -517,7 +530,7 @@ public class InfuserScreen extends Screen {
 
     private void drawRight(GuiGraphics g, long now, int mx, int my) {
         int x = x1 - colR + 6, w = colR - 12;
-        label(g, "Where your mind went · click a glow", x, y0 + 8);
+        label(g, "Your mind's map · click a glow", x, y0 + 8);
         refreshMap();
         Draw.round(g, mapX - 1, mapY - 1, mapX + mapW + 1, mapY + mapH + 1, 4, LINE);
         g.blit(mapId, mapX, mapY, mapW, mapH, 0, 0, MW, MH, MW, MH);
@@ -567,14 +580,24 @@ public class InfuserScreen extends Screen {
         // the recipe card
         y += 14;
         label(g, "Recipe", x, y);
-        int[] cols = {x + w - 92, x + w - 66, x + w - 42, x + w - 18};
-        for (int c = 0; c < 4; c++) g.drawString(font, SIZE_NAMES[c], cols[c] - font.width(SIZE_NAMES[c]) + 12, y, MUTED, false);
+        // four count columns, evenly spaced at the right; headers at a smaller size so they fit their column
+        int colW = Math.min(30, (w - 70) / 4);
+        int[] cols = new int[4];
+        for (int c = 0; c < 4; c++) cols[c] = x + w - (4 - c) * colW + colW - 12;
+        for (int c = 0; c < 4; c++) {
+            String h = SIZE_NAMES[c];
+            g.pose().pushPose();
+            g.pose().translate(cols[c] + 12 - font.width(h) * 0.75f, y + 1, 0);
+            g.pose().scale(0.75f, 0.75f, 1);
+            g.drawString(font, h, 0, 0, MUTED, false);
+            g.pose().popPose();
+        }
         y += 11;
         int rows = 0;
         for (int i = 0; i < n; i++) {
             if (pool[i] == 0) continue;
             int[] parts = {pool[i] / 128, pool[i] % 128 / 4, pool[i] % 4 / 2, pool[i] % 2};
-            g.drawString(font, LABELS[i], x, y, FG, false);
+            small(g, LABELS[i], x, y, cols[0] - x - 4, FG);
             for (int c = 0; c < 4; c++) {
                 String v = parts[c] == 0 ? "·" : Integer.toString(parts[c]);
                 g.drawString(font, v, cols[c] - font.width(v) + 12, y, FG, false);
