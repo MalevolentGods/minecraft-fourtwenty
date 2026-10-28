@@ -33,18 +33,11 @@ public final class StrainItems {
     public static void tooltip(ItemStack stack, List<Component> lines) {
         Strain strain = ModDataComponents.strain(stack);
         lines.add(Component.translatable("tooltip.fourtwenty.strain", strainName(strain)));
-        // what growing it is for: what it inspires, and what it makes in a Terpinator
-        net.minecraft.ChatFormatting grey = net.minecraft.ChatFormatting.GRAY;
-        if (strain == Strain.LANDRACE) {
-            lines.add(Component.translatable("tooltip.fourtwenty.strain.landrace").withStyle(grey));
-            lines.add(Component.translatable("tooltip.fourtwenty.strain.terpinator.landrace").withStyle(grey));
-            return;
+        // its family: what it makes in a Terpinator
+        if (strain != Strain.LANDRACE) {
+            lines.add(Component.translatable("strain.fourtwenty.family." + strain.family().name().toLowerCase(java.util.Locale.ROOT))
+                    .withStyle(net.minecraft.ChatFormatting.GRAY));
         }
-        Component family = Component.translatable("strain.fourtwenty.family." + strain.family().name().toLowerCase(java.util.Locale.ROOT))
-                .withStyle(Style.EMPTY.withColor(strain.color()));
-        lines.add(Component.translatable("tooltip.fourtwenty.strain.inspires", family,
-                Component.translatable("terpene.fourtwenty." + strain.id() + ".hue")).withStyle(grey));
-        lines.add(Component.translatable("tooltip.fourtwenty.strain.terpinator", family).withStyle(grey));
     }
 
     /** Weed seeds: plant the strain they carry. */
