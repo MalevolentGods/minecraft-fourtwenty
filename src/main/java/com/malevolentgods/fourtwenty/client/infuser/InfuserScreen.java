@@ -3,6 +3,10 @@ package com.malevolentgods.fourtwenty.client.infuser;
 import com.malevolentgods.fourtwenty.domain.Tint;
 import com.malevolentgods.fourtwenty.infuser.Infuser;
 import com.malevolentgods.fourtwenty.infuser.InfuserState;
+import com.malevolentgods.fourtwenty.infuser.Infusion;
+import com.malevolentgods.fourtwenty.registry.ModDataComponents;
+import com.malevolentgods.fourtwenty.registry.ModItems;
+import net.minecraft.world.item.ItemStack;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -51,6 +55,8 @@ public class InfuserScreen extends Screen {
     private final List<double[]> ripples = new ArrayList<>();   // {start ms, x offset, rgb, size}
     private final List<double[]> beads = new ArrayList<>();
     private String message = "";
+    /** Which tab: mixing (the game) or infusing (seed + terpene into a strain seed). */
+    private boolean infuseTab;
 
     // layout
     private int x0, y0, x1, y1, colL, colC, colR;
@@ -226,6 +232,11 @@ public class InfuserScreen extends Screen {
                 case 3 -> takeBack();
                 case 4 -> drain();
                 case 5 -> pickOnMap(mx, my);
+                case 6 -> { infuseTab = h[5] == 1; play(SoundEvents.UI_BUTTON_CLICK.value(), 1.4f); }
+                case 7 -> {
+                    PacketDistributor.sendToServer(new Infusion.Infuse(h[5]));
+                    play(SoundEvents.BREWING_STAND_BREW, 1.3f);
+                }
                 default -> {}
             }
             return true;
@@ -250,8 +261,8 @@ public class InfuserScreen extends Screen {
     // ------------------------------------------------------------------ layout
 
     private void layout() {
-        int w = Math.min(width - 16, 640), h = Math.min(height - 12, 340);
-        x0 = (width - w) / 2; y0 = (height - h) / 2; x1 = x0 + w; y1 = y0 + h;
+        int w = Math.min(width - 16, 640), h = Math.min(height - 30, 340);
+        x0 = (width - w) / 2; y0 = (height - h) / 2 + 9; x1 = x0 + w; y1 = y0 + h;      // room above for the tabs
         colL = (int) (w * 0.29); colR = (int) (w * 0.33); colC = w - colL - colR;
         double cx = x0 + colL + colC / 2.0;
         pr = Math.min(colC * 0.30, (h - 70) * 0.30);
@@ -270,10 +281,63 @@ public class InfuserScreen extends Screen {
         g.fill(0, 0, width, height, 0x99000000);
         Draw.round(g, x0, y0, x1, y1, 10, 0xF01A1528);
         Draw.round(g, x0 + 1, y0 + 1, x1 - 1, y1 - 1, 9, BG);
+        int tw = 64, tx = (x0 + x1) / 2 - tw - 2;
+        button(g, tx, y0 - 17, tw, 14, "Mix", !infuseTab, true, mouseX, mouseY, 6, 0);
+        button(g, tx + tw + 4, y0 - 17, tw, 14, "Infuse", infuseTab, true, mouseX, mouseY, 6, 1);
+        if (infuseTab) {
+            drawInfuse(g, mouseX, mouseY);
+            return;
+        }
         drawLeft(g, mouseX, mouseY);
         drawPool(g, now);
         drawCentreText(g, mouseX, mouseY);
         drawRight(g, now, mouseX, mouseY);
+    }
+
+    /**
+     * The Infuse tab: every strain and what breeds it, a Landrace seed and its colour's terpene(s); Infuse when you
+     * carry them. The server checks again and swaps them for the strain's seed.
+     */
+    private void drawInfuse(GuiGraphics g, int mx, int my) {
+        var player = Minecraft.getInstance().player;
+        int x = x0 + 12, y = y0 + 12, w = x1 - x0 - 24;
+        label(g, "Infuse a Landrace seed with a colour's terpene to breed a strain", x, y);
+        List<Infusion.Recipe> recipes = Infusion.RECIPES;
+        int cols = 3, rows = (recipes.size() + cols - 1) / cols, gap = 5;
+        int cw = (w - gap * (cols - 1)) / cols, ch = Math.max(26, Math.min(40, (y1 - y - 26 - gap * (rows - 1)) / rows));
+        ItemStack hover = ItemStack.EMPTY;
+        for (int i = 0; i < recipes.size(); i++) {
+            Infusion.Recipe r = recipes.get(i);
+            int cx = x + (i % cols) * (cw + gap), cy = y + 16 + (i / cols) * (ch + gap);
+            int have = player == null ? 0 : Infusion.available(player, r);
+            Draw.round(g, cx, cy, cx + cw, cy + ch, 6, have > 0 ? LINE : 0xFF2A2440);
+            Draw.round(g, cx + 1, cy + 1, cx + cw - 1, cy + ch - 1, 5, 0xFF161220);
+            double dr = Math.min(11, (ch - 8) / 2.0), dx = cx + 5 + dr, dy = cy + ch / 2.0;
+            Draw.glow(g, dx, dy, dr * 0.6, dr + 3, r.strain().color(), 0.35);
+            Draw.disc(g, dx, dy, dr, Draw.argb(r.strain().color(), 1));
+            ItemStack seed = ModDataComponents.withStrain(new ItemStack(ModItems.WEED_SEEDS.get()), r.strain());
+            g.renderItem(seed, (int) dx - 8, (int) dy - 8);
+            if (Math.hypot(mx - dx, my - dy) <= dr) hover = seed;
+            int tx = (int) (dx + dr + 6), bw = 44, room = cx + cw - bw - 8 - tx;
+            small(g, Component.translatable(r.strain().translationKey()).getString(), tx, cy + 5, room, FG);
+            // the ingredients, drawn at 3/4 size: a Landrace seed + each terpene
+            List<ItemStack> parts = new ArrayList<>();
+            parts.add(new ItemStack(ModItems.WEED_SEEDS.get()));
+            r.items().forEach(it -> parts.add(new ItemStack(it)));
+            int ix = tx, iy = cy + ch - 15;
+            for (int k = 0; k < parts.size(); k++) {
+                if (k > 0) { small(g, "+", ix, iy + 3, 8, MUTED); ix += 7; }
+                g.pose().pushPose();
+                g.pose().translate(ix, iy, 0);
+                g.pose().scale(0.75f, 0.75f, 1);
+                g.renderItem(parts.get(k), 0, 0);
+                g.pose().popPose();
+                if (mx >= ix && mx < ix + 12 && my >= iy && my < iy + 12) hover = parts.get(k);
+                ix += 14;
+            }
+            button(g, cx + cw - bw - 5, cy + (ch - 14) / 2, bw, 14, have > 0 ? "Infuse" : "Need", false, have > 0, mx, my, 7, i);
+        }
+        if (!hover.isEmpty()) g.renderTooltip(font, hover, mx, my);
     }
 
     @Override public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partialTick) { }

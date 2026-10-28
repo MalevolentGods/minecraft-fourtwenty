@@ -2,6 +2,7 @@ package com.malevolentgods.fourtwenty.gametest;
 
 import com.malevolentgods.fourtwenty.block.WeedCropBlock;
 import com.malevolentgods.fourtwenty.domain.Strain;
+import com.malevolentgods.fourtwenty.infuser.Infusion;
 import com.malevolentgods.fourtwenty.item.WeedPipeItem;
 import com.malevolentgods.fourtwenty.registry.ModBlocks;
 import com.malevolentgods.fourtwenty.registry.ModDataComponents;
@@ -85,6 +86,23 @@ public final class StrainGameTests {
         h.assertTrue(WeedPipeItem.fill(pipe, other) == 0 && other.getCount() == 5, "another strain is refused");
         var load = WeedPipeItem.load(pipe);
         h.assertTrue(load.strain() == Strain.MERMAID_HOTBOX && load.buds() == 16, "loaded with 16 Mermaid Hotbox, got " + load);
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void everyStrainCanBeInfusedFromItsColours(GameTestHelper h) {
+        var bred = java.util.EnumSet.noneOf(Strain.class);
+        Infusion.RECIPES.forEach(r -> bred.add(r.strain()));
+        h.assertTrue(bred.size() == Strain.values().length - 1 && !bred.contains(Strain.LANDRACE), "every bred strain has a recipe, got " + bred);
+        var player = h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        var olive = Infusion.RECIPES.stream().filter(r -> r.strain() == Strain.MOSSY_PHILOSOPHER).findFirst().orElseThrow();
+        player.getInventory().add(new ItemStack(ModItems.WEED_SEEDS.get(), 3));
+        player.getInventory().add(new ItemStack(olive.items().get(0), 2));
+        h.assertTrue(Infusion.available(player, olive) == 0, "olive needs brown as well as green");
+        player.getInventory().add(new ItemStack(olive.items().get(1), 5));
+        h.assertTrue(Infusion.available(player, olive) == 2, "two of each: two infusions");
+        player.getInventory().add(ModDataComponents.withStrain(new ItemStack(ModItems.WEED_SEEDS.get(), 9), Strain.BLUE_DREAM));
+        h.assertTrue(Infusion.available(player, olive) == 2, "only Landrace seeds take an infusion");
         h.succeed();
     }
 }

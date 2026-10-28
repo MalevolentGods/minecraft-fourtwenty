@@ -164,6 +164,7 @@ public final class Infuser {
             r.playToClient(Inspired.TYPE, Inspired.CODEC, (m, ctx) -> ctx.enqueueWork(() -> clientInspired.accept(m)));
             r.playToServer(Pool.TYPE, Pool.CODEC, (m, ctx) -> ctx.enqueueWork(() -> onPool(m, ctx)));
             r.playToServer(Catch.TYPE, Catch.CODEC, (m, ctx) -> ctx.enqueueWork(() -> onCatch(m, ctx)));
+            r.playToServer(Infusion.Infuse.TYPE, Infusion.Infuse.CODEC, (m, ctx) -> ctx.enqueueWork(() -> Infusion.onInfuse(m, ctx)));
         });
         NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedInEvent e) -> {
             if (e.getEntity() instanceof ServerPlayer p) PacketDistributor.sendToPlayer(p, new Sync(get(p).save()));
