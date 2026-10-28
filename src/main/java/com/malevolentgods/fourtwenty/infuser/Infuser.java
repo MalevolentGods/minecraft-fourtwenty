@@ -67,10 +67,10 @@ public final class Infuser {
     }
 
     /** A hit: one or two of the strain's colours the player isn't yet fully inspired by gain a level. */
-    public static void inspire(ServerPlayer player, Strain strain) {
+    public static boolean inspire(ServerPlayer player, Strain strain) {
         InfuserState s = get(player);
         List<String> open = new ArrayList<>(colours(strain).stream().filter(id -> s.level(id) < InfuserState.MAX).toList());
-        if (open.isEmpty()) return;
+        if (open.isEmpty()) return false;
         var random = player.getRandom();
         int n = Math.min(open.size(), random.nextFloat() < 0.35f ? 2 : 1);
         List<String> picked = new ArrayList<>();
@@ -80,6 +80,14 @@ public final class Infuser {
         if (s.chasing == null) s.chasing = picked.get(0);
         put(player, s);
         PacketDistributor.sendToPlayer(player, new Inspired(picked, top));
+        return true;
+    }
+
+    /** The drifting moment without new inspiration: the colours this player is most inspired by (level 0: no whisper). */
+    public static void woozy(ServerPlayer player) {
+        List<String> ids = get(player).inspiration.entrySet().stream().filter(e -> e.getValue() > 0)
+                .sorted((a, b) -> b.getValue() - a.getValue()).limit(3).map(java.util.Map.Entry::getKey).toList();
+        PacketDistributor.sendToPlayer(player, new Inspired(ids, 0));
     }
 
     // ------------------------------------------------------------------ messages

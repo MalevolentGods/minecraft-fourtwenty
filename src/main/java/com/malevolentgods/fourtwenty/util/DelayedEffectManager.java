@@ -90,9 +90,9 @@ public class DelayedEffectManager {
                 player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.MOVEMENT_SPEED, duration / 3, amplifier)); // Speed
             }
             
-            // Reduced chance for confusion on edibles (they're more mellow)
-            if (level.random.nextFloat() < 0.15f) { // 15% chance vs 30% for joints
-                player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.CONFUSION, duration / 6, 0)); // Shorter confusion
+            // A colour drift on screen, less often than smoking (edibles are more mellow)
+            if (player instanceof net.minecraft.server.level.ServerPlayer sp && level.random.nextFloat() < 0.15f) {
+                com.malevolentgods.fourtwenty.infuser.Infuser.woozy(sp);
             }
 
             // Spawn effect onset particles

@@ -57,7 +57,6 @@ public final class StrainEffects {
                 player.addEffect(quiet(MobEffects.NIGHT_VISION, 2 * MIN, 0));
                 player.addEffect(quiet(MobEffects.HUNGER, 200, 1));
                 player.addEffect(quiet(MobEffects.LUCK, 1800, 0));
-                if (level.random.nextFloat() < 0.3f) player.addEffect(quiet(MobEffects.CONFUSION, 400, 0));
             }
             case COUCHLOCK_HUM -> {
                 player.addEffect(quiet(MobEffects.DAMAGE_RESISTANCE, 3 * MIN, 0));
@@ -82,7 +81,6 @@ public final class StrainEffects {
             }
             case PURPLE_HAZE -> {
                 player.addEffect(quiet(MobEffects.NIGHT_VISION, 5 * MIN, 0));
-                if (level.random.nextFloat() < 0.3f) player.addEffect(quiet(MobEffects.CONFUSION, 200, 0));
             }
             case COTTON_CANDY_KUSH -> player.addEffect(quiet(MobEffects.ABSORPTION, 2 * MIN, 0));
             case BLUE_DREAM -> {
@@ -95,7 +93,10 @@ public final class StrainEffects {
         HIGHS.put(player.getUUID(), new High(strain, until));
         if (player instanceof ServerPlayer sp) {
             PacketDistributor.sendToPlayer(sp, new Tint(strain, duration(strain)));
-            com.malevolentgods.fourtwenty.infuser.Infuser.inspire(sp, strain);   // smoking inspires colours
+            // smoking inspires colours (a colour drift on screen); with nothing new to inspire, sometimes just the drift
+            if (!com.malevolentgods.fourtwenty.infuser.Infuser.inspire(sp, strain) && level.random.nextFloat() < 0.3f) {
+                com.malevolentgods.fourtwenty.infuser.Infuser.woozy(sp);
+            }
         }
     }
 
