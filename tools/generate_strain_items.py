@@ -71,6 +71,14 @@ def recolour(img, hexc, paper_on=False):
     return Image.fromarray((np.concatenate([out, alpha], -1) * 255).round().astype(np.uint8), 'RGBA')
 
 
+def solid(img):
+    """Every pixel fully opaque or fully clear: an item's edges are extruded per pixel, and a half-clear edge shows its
+    sides as see-through slivers in the hand."""
+    a = np.array(img)
+    a[..., 3] = np.where(a[..., 3] >= 128, 255, 0)
+    return Image.fromarray(a, 'RGBA')
+
+
 def main():
     sheet_rows = []
     for item in ITEMS:
@@ -82,7 +90,7 @@ def main():
         for idx, (sid, hexc) in enumerate(STRAINS):
             if idx == 0:
                 continue
-            tex = recolour(base, hexc, paper_on=(item == 'weed_joint')).resize((SIZE, SIZE), Image.LANCZOS)
+            tex = solid(recolour(base, hexc, paper_on=(item == 'weed_joint')).resize((SIZE, SIZE), Image.LANCZOS))
             (ASSETS / 'textures/item/strain').mkdir(parents=True, exist_ok=True)
             tex.save(ASSETS / f'textures/item/strain/{item}_{sid}.png', optimize=True)
             (ASSETS / 'models/item/strain').mkdir(parents=True, exist_ok=True)

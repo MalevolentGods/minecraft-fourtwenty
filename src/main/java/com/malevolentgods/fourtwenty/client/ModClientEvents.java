@@ -47,6 +47,7 @@ public class ModClientEvents {
                         com.malevolentgods.fourtwenty.registry.ModTerpenes.LAMP_TRIMS.values().stream()).map(block -> block.get().asItem()))
             .toArray(net.minecraft.world.item.Item[]::new);
         event.registerItem(LampItemRenderer.EXTENSIONS, lit);
+        event.registerItem(JointHand.EXTENSIONS, com.malevolentgods.fourtwenty.registry.ModItems.WEED_JOINT.get());
     }
 
     /** Roads, road slabs and road stairs join quarter by quarter as the chunk is drawn (RoadModel); our other blocks sit down onto them (SunkModel). */
