@@ -70,7 +70,14 @@ public final class Infuser {
     public static boolean inspire(ServerPlayer player, Strain strain) {
         InfuserState s = get(player);
         List<String> open = new ArrayList<>(colours(strain).stream().filter(id -> s.level(id) < InfuserState.MAX).toList());
-        if (open.isEmpty()) return false;
+        if (open.isEmpty()) {
+            // nothing left for this strain to show: say so, so it doesn't feel broken
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal(strain == Strain.LANDRACE
+                    ? "Plain weed has shown you all it can. A strain might show you something new."
+                    : "You've seen all " + strain.displayName() + " has to show you. Another strain might show you something new.")
+                    .withStyle(net.minecraft.ChatFormatting.ITALIC, net.minecraft.ChatFormatting.GRAY), true);
+            return false;
+        }
         var random = player.getRandom();
         int n = Math.min(open.size(), random.nextFloat() < 0.35f ? 2 : 1);
         List<String> picked = new ArrayList<>();
