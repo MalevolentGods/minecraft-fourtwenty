@@ -69,9 +69,11 @@ public final class Infuser {
     /** A hit: one or two of the strain's colours the player isn't yet fully inspired by gain a level. */
     public static boolean inspire(ServerPlayer player, Strain strain) {
         InfuserState s = get(player);
-        List<String> open = new ArrayList<>(colours(strain).stream().filter(id -> s.level(id) < InfuserState.MAX).toList());
-        if (open.isEmpty()) {
-            // nothing left for this strain to show: say so, so it doesn't feel broken
+        // a strain inspires its own four colours first; every weed, strains included, also inspires the Minecraft colours
+        List<String> own = open(s, colours(strain));
+        List<String> basic = strain == Strain.LANDRACE ? new ArrayList<>() : open(s, colours(Strain.LANDRACE));
+        if (own.isEmpty() && basic.isEmpty()) {
+            // nothing left for this weed to show: say so, so it doesn't feel broken
             player.displayClientMessage(net.minecraft.network.chat.Component.literal(strain == Strain.LANDRACE
                     ? "Plain weed has shown you all it can. A strain might show you something new."
                     : "You've seen all " + strain.displayName() + " has to show you. Another strain might show you something new.")
@@ -79,15 +81,27 @@ public final class Infuser {
             return false;
         }
         var random = player.getRandom();
-        int n = Math.min(open.size(), random.nextFloat() < 0.35f ? 2 : 1);
         List<String> picked = new ArrayList<>();
-        for (int i = 0; i < n; i++) picked.add(open.remove(random.nextInt(open.size())));
+        if (!own.isEmpty()) {
+            picked.add(own.remove(random.nextInt(own.size())));
+            // Landrace: sometimes a second of its own; a strain: often a Minecraft colour alongside
+            List<String> extra = strain == Strain.LANDRACE ? own : basic;
+            if (!extra.isEmpty() && random.nextFloat() < (strain == Strain.LANDRACE ? 0.35f : 0.5f)) picked.add(extra.remove(random.nextInt(extra.size())));
+        } else {
+            picked.add(basic.remove(random.nextInt(basic.size())));
+            if (!basic.isEmpty() && random.nextFloat() < 0.35f) picked.add(basic.remove(random.nextInt(basic.size())));
+        }
         int top = 0;
         for (String id : picked) { int l = s.level(id) + 1; s.inspiration.put(id, l); top = Math.max(top, l); }
         if (s.chasing == null) s.chasing = picked.get(0);
         put(player, s);
         PacketDistributor.sendToPlayer(player, new Inspired(picked, top));
         return true;
+    }
+
+    /** The colours among these that aren't fully inspired yet. */
+    private static List<String> open(InfuserState s, List<String> ids) {
+        return new ArrayList<>(ids.stream().filter(id -> s.level(id) < InfuserState.MAX).toList());
     }
 
     /** The drifting moment without new inspiration: the colours this player is most inspired by (level 0: no whisper). */
