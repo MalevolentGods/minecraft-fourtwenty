@@ -50,7 +50,7 @@ public class InfuserScreen extends Screen {
     private final Deque<int[]> history = new ArrayDeque<>();
     private int size = 1;
     private double[] shown = rgbParts(tint.emptyRgb());
-    private long pulseStart = System.currentTimeMillis(), matchAt = -1, edgeUntil = 0, swellAt = -1;
+    private long pulseStart = System.currentTimeMillis(), matchAt = -1, edgeUntil = 0;
     private boolean edgeGood;
     private final List<double[]> ripples = new ArrayList<>();   // {start ms, x offset, rgb, size}
     private final List<double[]> beads = new ArrayList<>();
@@ -147,15 +147,6 @@ public class InfuserScreen extends Screen {
         afterChange();
     }
 
-    private void swell() {
-        if (sealed() || total() == 0 || total() * 2 > tint.capSpecks()) return;
-        push();
-        for (int i = 0; i < n; i++) pool[i] *= 2;
-        swellAt = System.currentTimeMillis();
-        play(SoundEvents.BUBBLE_COLUMN_UPWARDS_INSIDE, 0.8f);
-        afterChange();
-    }
-
     private void takeBack() {
         if (sealed() || history.isEmpty()) return;
         pool = history.pop();
@@ -228,7 +219,6 @@ public class InfuserScreen extends Screen {
             switch (h[4]) {
                 case 0 -> drop(h[5]);
                 case 1 -> { size = h[5]; play(SoundEvents.UI_BUTTON_CLICK.value(), 1.6f); }
-                case 2 -> swell();
                 case 3 -> takeBack();
                 case 4 -> drain();
                 case 5 -> pickOnMap(mx, my);
@@ -453,8 +443,6 @@ public class InfuserScreen extends Screen {
             double k = (now - b[0]) / 320.0, px = pcx + b[1] * pr, top = pcy - pr - ring - 10;
             Draw.disc(g, px, top + (pcy - top) * k * k, b[3] * 0.7, Draw.argb((int) b[2], 1));
         }
-        double sk = (now - swellAt) / 700.0;
-        if (swellAt > 0 && sk < 1) Draw.ring(g, pcx, pcy, pr * (0.2 + 0.75 * sk), pr * (0.2 + 0.75 * sk) + 1.2, Draw.argb(0xFFFFFF, (1 - sk) * 0.5));
         // caught: a swirling rainbow round the pool and its ring
         if (sealed()) {
             double k = Math.min(1, (now - matchAt) / 2200.0), flourish = 1 - k;
@@ -501,11 +489,10 @@ public class InfuserScreen extends Screen {
             var lines = font.split(Component.literal(status), sw);
             for (int i = 0; i < lines.size(); i++) g.drawCenteredString(font, lines.get(i), cx, y + 32 + i * 10, statusColour);
         }
-        int by = y1 - 22, bw = Math.min(64, (colC - 24) / 3);
-        int bx = cx - (bw * 3 + 8) / 2;
-        button(g, bx, by, bw, 14, "Swell ×2", false, !sealed() && total() > 0 && total() * 2 <= tint.capSpecks(), mx, my, 2, 0);
-        button(g, bx + bw + 4, by, bw, 14, "Take back (" + history.size() + ")", false, !sealed() && !history.isEmpty(), mx, my, 3, 0);
-        button(g, bx + 2 * (bw + 4), by, bw, 14, "Drain", false, true, mx, my, 4, 0);
+        int by = y1 - 22, bw = Math.min(72, (colC - 20) / 2);
+        int bx = cx - (bw * 2 + 4) / 2;
+        button(g, bx, by, bw, 14, "Take back (" + history.size() + ")", false, !sealed() && !history.isEmpty(), mx, my, 3, 0);
+        button(g, bx + bw + 4, by, bw, 14, "Drain", false, true, mx, my, 4, 0);
     }
 
     // ------------------------------------------------------------------ the right column: map, chase, recipe, collection
