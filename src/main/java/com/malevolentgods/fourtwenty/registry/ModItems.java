@@ -46,6 +46,9 @@ public class ModItems {
         return ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
     }
 
+    public static final DeferredHolder<Item, BlockItem> INFUSER = ITEMS.register("inspiration_infuser", () -> new BlockItem(ModBlocks.INFUSER.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> INFUSER_LAB = ITEMS.register("inspiration_infuser_lab", () -> new BlockItem(ModBlocks.INFUSER_LAB.get(), new Item.Properties()));
+
     public static final DeferredHolder<Item, Item> WEED_BUD =
         ITEMS.register("weed_bud", () ->
             new com.malevolentgods.fourtwenty.item.StrainItems.Bud(new Item.Properties()));

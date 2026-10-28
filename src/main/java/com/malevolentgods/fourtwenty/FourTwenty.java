@@ -33,6 +33,7 @@ public class FourTwenty {
         com.malevolentgods.fourtwenty.registry.ModStrainData.LOOT_FUNCTIONS.register(bus);
         com.malevolentgods.fourtwenty.registry.ModStrainData.RECIPE_SERIALIZERS.register(bus);
         com.malevolentgods.fourtwenty.util.StrainEffects.register(bus);
+        com.malevolentgods.fourtwenty.infuser.Infuser.register(bus);
         
         // Register block entities
         ModBlockEntities.BLOCK_ENTITIES.register(bus);

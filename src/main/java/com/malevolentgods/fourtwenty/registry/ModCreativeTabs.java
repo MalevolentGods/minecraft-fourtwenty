@@ -17,6 +17,8 @@ public class ModCreativeTabs {
             .icon(() -> new ItemStack(ModItems.WEED_SEEDS.get()))
             .displayItems((parameters, output) -> {
                 // Add all mod items here
+                output.accept(ModItems.INFUSER.get());
+                output.accept(ModItems.INFUSER_LAB.get());
                 output.accept(ModItems.WEED_SEEDS.get());
                 output.accept(ModItems.WEED_BUD.get());
                 output.accept(ModItems.WEED_JOINT.get());

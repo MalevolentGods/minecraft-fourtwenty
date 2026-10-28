@@ -1473,5 +1473,7 @@
   "strain.fourtwenty.lav_myr": "Purple Haze",
   "strain.fourtwenty.lav_lim": "Cotton Candy Kush",
   "strain.fourtwenty.lav_pin": "Blue Dream",
-  "strain.fourtwenty.lav_lav": "Third-Eye Tonic"
+  "strain.fourtwenty.lav_lav": "Third-Eye Tonic",
+  "block.fourtwenty.inspiration_infuser": "Inspiration Infuser",
+  "block.fourtwenty.inspiration_infuser_lab": "Inspiration Infuser (Lab)"
 }

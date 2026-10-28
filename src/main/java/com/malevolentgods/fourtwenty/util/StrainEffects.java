@@ -93,7 +93,10 @@ public final class StrainEffects {
         }
         long until = level.getGameTime() + duration(strain);
         HIGHS.put(player.getUUID(), new High(strain, until));
-        if (player instanceof ServerPlayer sp) PacketDistributor.sendToPlayer(sp, new Tint(strain, duration(strain)));
+        if (player instanceof ServerPlayer sp) {
+            PacketDistributor.sendToPlayer(sp, new Tint(strain, duration(strain)));
+            com.malevolentgods.fourtwenty.infuser.Infuser.inspire(sp, strain);   // smoking inspires colours
+        }
     }
 
     // ---- auras: Mossy Philosopher grows crops around you, Third-Eye Tonic shows nearby monsters through walls
