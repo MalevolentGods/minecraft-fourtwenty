@@ -615,10 +615,10 @@ public class InfuserScreen extends Screen {
         g.fill(mapX + mapW - GREY * mapW / MW - 1, mapY, mapX + mapW - GREY * mapW / MW, mapY + mapH, 0xE015111F);
         hits.add(new int[]{mapX, mapY, mapX + mapW, mapY + mapH, 5, 0});
         double sx = (double) mapW / MW, sy = (double) mapH / MH;
-        // fully inspired colours: their exact spot, a swatch with crosshair ticks
+        // fully inspired colours not yet caught: their exact spot, a swatch with crosshair ticks
         for (var e : state().inspiration.entrySet()) {
             Tint.Target t = tint.target(e.getKey());
-            if (t == null || e.getValue() < InfuserState.MAX) continue;
+            if (t == null || e.getValue() < InfuserState.MAX || state().caught.containsKey(e.getKey())) continue;
             double[] p = mapPos(t.lab());
             double px = mapX + p[0] * sx, py = mapY + p[1] * sy;
             for (int[] d : new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}})
@@ -627,11 +627,20 @@ public class InfuserScreen extends Screen {
             Draw.disc(g, px, py, 3.6, 0xFFFFFFFF);
             Draw.disc(g, px, py, 2.6, Draw.argb(t.rgb(), 1));
         }
+        // caught colours (twins too), however inspired: completed, their swatch in an amber ring with a star on it
         for (String id : state().caught.keySet()) {
             Tint.Target t = tint.target(id);
-            if (t == null || state().level(id) <= 0 || state().level(id) >= InfuserState.MAX) continue;
+            if (t == null) continue;
             double[] p = mapPos(t.lab());
-            Draw.disc(g, mapX + p[0] * sx, mapY + p[1] * sy, 1.6, 0xFFFFFFFF);
+            double px = mapX + p[0] * sx, py = mapY + p[1] * sy;
+            Draw.disc(g, px, py, 5, 0xFF15111F);
+            Draw.disc(g, px, py, 4.2, AMBER);
+            Draw.disc(g, px, py, 3.0, Draw.argb(t.rgb(), 1));
+            g.pose().pushPose();
+            g.pose().translate(px + 2.5, py - 7.5, 0);
+            g.pose().scale(0.75f, 0.75f, 1);
+            g.drawString(font, "★", 0, 0, AMBER, true);
+            g.pose().popPose();
         }
         Tint.Target t = target();
         if (t != null) {
