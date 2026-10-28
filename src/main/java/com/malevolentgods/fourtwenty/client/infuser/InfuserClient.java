@@ -37,6 +37,7 @@ public final class InfuserClient {
     public static void setup(FMLClientSetupEvent event) {
         Infuser.clientSync = tag -> {
             state = InfuserState.load(tag, Tint.get().resins().size());
+            com.malevolentgods.fourtwenty.terpene.TerpeneKnowledge.caught(state.caught.keySet());
             if (Minecraft.getInstance().screen instanceof InfuserScreen s) s.synced();
         };
         Infuser.clientInspired = msg -> {

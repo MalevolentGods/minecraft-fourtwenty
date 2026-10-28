@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rugs in the 64 terpene colours and Natural Hemp: rugs that join into larger rugs, each colour with
+"""Rugs in the 64 terpene colours, the 16 Minecraft colours and Natural Hemp: rugs that join into larger rugs, each colour with
 its own pattern.
 
 A rug (RugBlock) knows which of its eight neighbours are the same rug. Each quarter of its model is
@@ -206,7 +206,7 @@ def siblings(code):
 def palette_for(code, hexc):
     """(field, accent, deep, light) for a rug."""
     base = rgb(hexc)
-    if code == 'natural':
+    if code == 'natural' or code.startswith('mc_'):
         return base, shade(base, 0.78), shade(base, 0.55), mix(base, (250, 244, 228), 0.6)
     pale, bright, dusky, deep = siblings(code)
     others = [t for t in (pale, bright, dusky, deep) if t != base]
@@ -232,9 +232,9 @@ def colours_for(code, hexc):
     hexes = {c['code']: c['hex'] for c in TERP['colors']}
     base, accent, deep, light = palette_for(code, hexc)
     out = {'field': base, 'accent': accent, 'deep': deep, 'light': light, 'leaf': rgb(hexes['pin_lim_lav']), 'stem': rgb(hexes['pin_lim_myr'])}
-    tones = dict(zip(('pale', 'bright', 'dusky', 'deep'), siblings(code))) if code != 'natural' else {}
+    tones = dict(zip(('pale', 'bright', 'dusky', 'deep'), siblings(code))) if code != 'natural' and not code.startswith('mc_') else {}
     for role, ref in D.DESIGNS[code][4].items():
-        out[role] = base if ref == 'self' else tones[ref] if ref in tones else rgb(hexes[ref])
+        out[role] = base if ref == 'self' else tones[ref] if ref in tones else rgb(ref if ref.startswith('#') else hexes[ref])
     out.setdefault('extra', out['accent'])
     out.setdefault('band', out['deep'] if lum(base) > 0.35 else mix(out['deep'], out['accent'], 0.35))
     out['rim'] = shade(out['band'], 0.85)
@@ -353,7 +353,8 @@ def generate():
     for case in CASES:
         write(ASSETS / f'models/block/rug_{case}.json', {'parent': 'minecraft:block/block',   # ambient occlusion on: soft contact
                                                         'textures': {'particle': '#rug'}, 'elements': quarter(case)})
-    rugs = [(c['code'], c['name'], c['hex']) for c in TERP['colors']] + [('natural', TERP['natural']['name'], TERP['natural']['hex'])]
+    rugs = [(c['code'], c['name'], c['hex']) for c in TERP['colors']] + [('natural', TERP['natural']['name'], TERP['natural']['hex'])] + \
+           [(c['code'], c['name'], c['hex']) for c in TERP['minecraft']]      # after Natural: the grain is seeded by position
     names, seen = collections.OrderedDict(), {}
     with multiprocessing.Pool() as pool:
         images = pool.starmap(render, [(i, code, hexc) for i, (code, _, hexc) in enumerate(rugs)])

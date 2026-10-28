@@ -31,7 +31,17 @@ public final class TerpeneKnowledge {
         onLearn = toast;
     }
 
-    public static boolean knows(String key) { return !client || KNOWN.contains(key); }
+    /** Terpenes whose colour the player has caught in the Inspiration Infuser (mc_white, myr_pin_lim...). */
+    private static volatile Set<String> caught = Set.of();
+
+    public static boolean knows(String key) { return !client || KNOWN.contains(key) || caught.contains(key); }
+
+    /** From the client's Infuser state: every caught colour, by target id ("white" is the terpene mc_white). */
+    public static void caught(java.util.Collection<String> targets) {
+        Set<String> out = new LinkedHashSet<>();
+        for (String id : targets) out.add(Terpenes.Code.parse(id).isPresent() ? id : "mc_" + id);
+        caught = Set.copyOf(out);
+    }
 
     public static boolean knows(Terpenes.Code code) { return knows(code.id()); }
 

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "fourtwenty:block/hemp/mc_white",
+    "top": "fourtwenty:block/hemp/mc_white",
+    "side": "fourtwenty:block/hemp/mc_white"
+  }
+}

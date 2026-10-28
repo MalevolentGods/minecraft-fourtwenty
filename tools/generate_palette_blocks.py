@@ -237,6 +237,7 @@ def generate():
     for sub in ('concrete', 'rug', 'lamp'):
         (tex / sub).mkdir(parents=True, exist_ok=True)
     colors = [(c['code'], c['name'], c['hex']) for c in TERP['colors']]
+    concretes = colors + [(c['code'], c['name'], c['hex']) for c in TERP['minecraft']]   # the Minecraft colours: concrete, not glass or lamps
     # Concrete (flat) and concrete powder (specked; sets into the concrete in water).
     for old in list(DATA.glob('recipe/concrete_*.json')):
         old.unlink()                                     # the old 8 concrete + terpene recipes
@@ -246,7 +247,7 @@ def generate():
     mixer = RES / 'data/minecolonies/crafterrecipes/concretemixer'
     for sub in ('concrete_powder', 'glass'):
         (tex / sub).mkdir(parents=True, exist_ok=True)
-    for i, (code, name, hexc) in enumerate(colors):
+    for i, (code, name, hexc) in enumerate(concretes):
         c = rgb(hexc)
         flat_texture(c).save(tex / f'concrete/{code}.png')
         concrete_texture(c, 5000 + i).save(tex / f'concrete_powder/{code}.png')
@@ -269,11 +270,11 @@ def generate():
         names[powder] = f'{name} Concrete Powder'
     pick = RES / 'data/minecraft/tags/block/mineable/pickaxe.json'
     current = json.loads(pick.read_text(encoding='utf-8')) if pick.exists() else {'replace': False, 'values': []}
-    current['values'] = sorted(set(current['values']) | {f'fourtwenty:concrete_{code}' for code, _, _ in colors})
+    current['values'] = sorted(set(current['values']) | {f'fourtwenty:concrete_{code}' for code, _, _ in concretes})
     write(pick, current)
     shovel = RES / 'data/minecraft/tags/block/mineable/shovel.json'
     current = json.loads(shovel.read_text(encoding='utf-8')) if shovel.exists() else {'replace': False, 'values': []}
-    current['values'] = sorted(set(current['values']) | {f'fourtwenty:concrete_powder_{code}' for code, _, _ in colors})
+    current['values'] = sorted(set(current['values']) | {f'fourtwenty:concrete_powder_{code}' for code, _, _ in concretes})
     write(shovel, current)
     # Glass and glass panes (translucent).
     pane_parts = {'post': 'template_glass_pane_post', 'side': 'template_glass_pane_side', 'side_alt': 'template_glass_pane_side_alt',
@@ -325,9 +326,9 @@ def generate():
     # Domum Ornamentum takes its materials from block tags: glass comes in through c:glass_blocks (in its
     # default tag); concrete and hemp need adding. Its concrete tag lists vanilla's by name; hemp joins
     # the default tag (the general materials, like wool and planks). Unused if Domum isn't installed.
-    write(RES / 'data/domum_ornamentum/tags/block/concrete.json', {'replace': False, 'values': [f'fourtwenty:concrete_{c}' for c, _, _ in colors]})
+    write(RES / 'data/domum_ornamentum/tags/block/concrete.json', {'replace': False, 'values': [f'fourtwenty:concrete_{c}' for c, _, _ in concretes]})
     write(RES / 'data/domum_ornamentum/tags/block/default.json', {'replace': False, 'values':
-          ['fourtwenty:natural_hemp'] + [f'fourtwenty:hemp_{c}' for c, _, _ in colors]})
+          ['fourtwenty:natural_hemp'] + [f'fourtwenty:hemp_{c}' for c, _, _ in concretes]})
     # Lamps.
     for i, (code, name, hexc) in enumerate(colors):
         c = rgb(hexc)
@@ -364,7 +365,7 @@ def generate():
     for block, label in names.items():
         data[f'block.fourtwenty.{block}'] = label
     lang.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
-    print(f'{len(colors)} concrete + powder, {len(colors)} glass + panes, {len(colors) * 3} lamps (rugs: tools/generate_rugs.py)')
+    print(f'{len(concretes)} concrete + powder, {len(colors)} glass + panes, {len(colors) * 3} lamps (rugs: tools/generate_rugs.py)')
 
 
 if __name__ == '__main__':

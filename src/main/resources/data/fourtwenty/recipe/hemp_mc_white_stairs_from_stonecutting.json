@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "fourtwenty:hemp_mc_white"
+  },
+  "result": {
+    "id": "fourtwenty:hemp_mc_white_stairs",
+    "count": 1
+  }
+}

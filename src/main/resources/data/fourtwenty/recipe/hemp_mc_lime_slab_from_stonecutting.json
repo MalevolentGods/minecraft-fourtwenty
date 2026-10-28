@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "fourtwenty:hemp_mc_lime"
+  },
+  "result": {
+    "id": "fourtwenty:hemp_mc_lime_slab",
+    "count": 2
+  }
+}

@@ -86,11 +86,11 @@ def generate():
             f'facing={d}': {'model': f'fourtwenty:block/{trim}', **r} for d, r in trim_rotation.items()}})
         write(ASSETS / f'models/item/{trim}.json', BUILTIN_ITEM(f'fourtwenty:block/{color}_lamp_on'))
         write(DATA / f'loot_table/blocks/{trim}.json', loot(trim))
-        # Recipes, cheap on purpose: 3 glass, a weed bud and the dye (anywhere) -> 4 lamps;
+        # Recipes, cheap on purpose: 3 glass, a weed bud and the colour's Minecraft terpene (anywhere) -> 4 lamps;
         # inverted = lamp + joint; 1 lamp (either kind) -> 4 trims.
         write(DATA / f'recipe/{color}_lamp.json', {'type': 'minecraft:crafting_shapeless', 'ingredients': [
             {'item': 'minecraft:glass'}, {'item': 'minecraft:glass'}, {'item': 'minecraft:glass'},
-            {'item': 'fourtwenty:weed_bud'}, {'item': f'minecraft:{color}_dye'}],
+            {'item': 'fourtwenty:weed_bud'}, {'item': f'fourtwenty:terpene_mc_{color}'}],
             'result': {'id': f'fourtwenty:{color}_lamp', 'count': 4}})
         write(DATA / f'recipe/{color}_inverted_lamp.json', {'type': 'minecraft:crafting_shapeless', 'ingredients': [
             {'item': f'fourtwenty:{color}_lamp'}, {'item': 'fourtwenty:weed_joint'}],

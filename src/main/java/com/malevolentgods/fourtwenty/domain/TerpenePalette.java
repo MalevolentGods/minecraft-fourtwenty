@@ -29,6 +29,15 @@ public final class TerpenePalette {
             0xC5D9F5, 0x2F6BE0, 0x5A7095, 0x1A2A6B, 0xCFEFFA, 0x2BB5E8, 0x6A9AAE, 0x12506E,
     };
 
+    /** The Minecraft-colour terpenes, in DyeColor order. */
+    private static final int[] MINECRAFT = {
+            0xFDFDFD, 0xFF7D00, 0xD652DB, 0x31B9F3, 0xFFE700, 0x87C03C, 0xED889F, 0x525252,
+            0x9E9F9E, 0x00A7AC, 0x8036CB, 0x293FCB, 0x7C5337, 0x61811A, 0xB02522, 0x1E1C1D,
+    };
+
+    /** A Minecraft-colour terpene's colour (the colour caught in the Infuser). */
+    public static int minecraft(net.minecraft.world.item.DyeColor dye) { return MINECRAFT[dye.getId()]; }
+
     /** A terpene's colour (a final terpene's is its hemp colour). */
     public static int color(Terpenes.Code code) {
         return switch (code.tier()) {

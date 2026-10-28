@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:block/rug_edge_w",
+  "textures": {
+    "rug": "fourtwenty:block/rug/mc_pink_edge_w"
+  }
+}

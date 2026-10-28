@@ -201,7 +201,7 @@ def resin(seed):
 def generate(preview=None):
     BLOCKS.mkdir(parents=True, exist_ok=True)
     ITEMS.mkdir(parents=True, exist_ok=True)
-    blocks = [('natural', DATA['natural']['hex'])] + [(c['code'], c['hex']) for c in DATA['colors']]
+    blocks = [('natural', DATA['natural']['hex'])] + [(c['code'], c['hex']) for c in DATA['colors'] + DATA['minecraft']]
     for i, (code, hex_) in enumerate(blocks):
         hemp(hex_, 7000 + i).save(BLOCKS / f'{code}.png')
     finals = {c['code']: c['hex'] for c in DATA['colors']}
@@ -210,10 +210,10 @@ def generate(preview=None):
     for i, a in enumerate(DATA['accords']):
         # An accord shows its row's bright tone (port 3 = Pinewise).
         item('flask', finals[a['code'] + '_pin'], 200 + i).save(ITEMS / f'{a["code"]}.png')
-    for i, c in enumerate(DATA['colors']):
+    for i, c in enumerate(DATA['colors'] + DATA['minecraft']):
         item('bottle', c['hex'], 300 + i).save(ITEMS / f'{c["code"]}.png')
     resin(9).save(ITEMS / 'resin.png')
-    print(f'{len(blocks)} hemp textures, {4 + 16 + 64 + 1} item textures')
+    print(f'{len(blocks)} hemp textures, {4 + 16 + 64 + 16 + 1} item textures')
     if preview:
         write_previews(Path(preview), blocks)
 
@@ -233,7 +233,7 @@ def write_previews(out, blocks):
             for i in range(12):
                 mid.paste(tiles[code], (i * S, j * S))
         mid.resize((S * 6, S * 6), Image.BOX).save(out / f'mid_{code}.png')   # 12 blocks, 32 px each
-    far = Image.new('RGB', (16 * 8 * 8, 16 * 8 * 8))
+    far = Image.new('RGB', (16 * 8 * 8, 16 * 8 * 10))
     for n, (code, _) in enumerate(blocks[1:]):
         gx, gy = n % 8, n // 8
         patch = Image.new('RGB', (S * 8, S * 8))
