@@ -76,8 +76,8 @@ def model(state):
         el(5.6, 13, 5.6, 10.4, 13.3, 10.4, 'brass'),
         # the clay bowl, wider at the top, coals in it (all of it inside the block)
         el(6.9, 13.3, 6.9, 9.1, 14.1, 9.1, 'clay', faces=SIDES),
-        el(6.4, 14.1, 6.4, 9.6, 15.6, 9.6, 'clay', faces=SIDES + ('down',)),
-        el(6.7, 15.3, 6.7, 9.3, 15.65, 9.3, 'coals_lit' if lit else 'coals', glow=lit, faces=('up',)),
+        el(6.4, 14.1, 6.4, 9.6, 15.5, 9.6, 'clay'),                       # its top is the clay rim round the coals
+        el(6.75, 15.5, 6.75, 9.25, 15.7, 9.25, 'coals_lit' if lit else 'coals', glow=lit, faces=SIDES + ('up',)),
         # the hose: a port off the stem, down at 45 degrees past the cabinet's edge, then straight down to the mouthpiece
         el(8.5, 11.6, 7.6, 9.5, 12.4, 8.4, 'brass', faces=('north', 'south', 'east', 'up', 'down')),
         el(9.3, 11.6, 7.65, 14.5, 12.4, 8.35, 'hose', faces=('north', 'south', 'up', 'down'),
