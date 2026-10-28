@@ -17,7 +17,7 @@ public class ModItems {
 
     public static final DeferredHolder<Item, ItemNameBlockItem> WEED_SEEDS =
         ITEMS.register("weed_seeds", () ->
-            new ItemNameBlockItem(com.malevolentgods.fourtwenty.registry.ModBlocks.WEED_CROP.get(),
+            new com.malevolentgods.fourtwenty.item.StrainItems.Seeds(com.malevolentgods.fourtwenty.registry.ModBlocks.WEED_CROP.get(),
                 new Item.Properties()));
 
     /** Lamps, inverted lamps and lamp trims in all 16 dye colours (block ids as in {@link ModBlocks}). */
@@ -48,7 +48,7 @@ public class ModItems {
 
     public static final DeferredHolder<Item, Item> WEED_BUD =
         ITEMS.register("weed_bud", () ->
-            new Item(new Item.Properties()));
+            new com.malevolentgods.fourtwenty.item.StrainItems.Bud(new Item.Properties()));
 
     public static final DeferredHolder<Item, WeedJointItem> WEED_JOINT =
         ITEMS.register("weed_joint", () ->
