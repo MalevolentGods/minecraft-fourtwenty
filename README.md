@@ -4,21 +4,23 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
-## What's new in 0.12.0
+## What's new in 0.13.0
 
-*Pot it, light it, roll out the rug.*
+*Smoke it, see it, mix it.*
 
-- **Pot Pots.** Plant pots of terpene concrete in all 64 colours, each its own design. Three of a terpene concrete in a V round a block of dirt make one. Plant a weed seed in it and it becomes a Potted Pot Pot: the plant grows in the light (bone meal works) and is harvested with a right-click, like the field crop, then starts again.
-- **Roads light the way.** Cobble Path gives off a little light, Paved Road more, Yellow Brick Road as much as glowstone, all without a visible glow, and lit roads still blend smoothly into one another.
-- **New rugs.** Every rug colour has its own design, drawn at four times the resolution: florals, leaves, waves, night skies, plaids and more.
-- **A Sensi Heights Town Hall,** level 1: an oak apse round the hut with a weed garden and fountain under a pagoda.
+- **Strains.** Seeds, buds, crops and joints now carry a strain: plain Landrace, or one of 16 bred strains in four families (Neutrals, Warm, Green, Cool), each with its own quiet effect, coloured smoke and icon.
+- **The Inspiration Infuser** (Steel or Lab). Smoking inspires colours. At the Infuser, drop beads of resin into a pool of liquid weed magic until it matches a colour you're inspired by, and you catch that colour's terpene. Nothing is timed and nothing can fail. Its Infuse tab breeds strain seeds.
+- **16 Minecraft-colour terpenes** with names to discover (Bone Meal Haze, Creeper Kush, Obsidian Couchlock...), and their hemp, concrete and Minecraft-themed rugs.
+- **The Terpinator, rebuilt** in Steel or Lab: pick a colour you've caught, feed it weed, get vials.
+- **A colour drift instead of nausea**, a reworked hookah with a stem, bowl and hose, and a joint you actually raise to your lips.
 
-## Changes from 0.11.0
+## Changes from 0.12.0
 
-- **Furniture on roads:** rugs, couches, pots and the rest sit down onto a road instead of hovering a pixel above it.
-- **Builders and Pot Pots:** builders pay a plain Pot Pot of the same colour for a Potted Pot Pot (the seed is free), and leave a grown or harvested one standing.
-- **Sensi Heights:** Pot Pots replace the potted plants across the pack; Dispensary levels are redecorated so no upgrade drops a rack; the Tavern has Paved Road at level 2 and Yellow Brick Road at level 3; Restaurant and Tavern decorating touches.
-- See the [CHANGELOG](CHANGELOG.md) for 0.11.0 and earlier.
+- **No vanilla dye:** dye lamps, inverted lamps and trims are made with the Minecraft-colour terpenes.
+- **Terpinator:** production only. The old press/refine/blend stages are gone; an existing Terpinator keeps its buds and drops its resin, bases and accords. Base terpenes, accords and resin stay in the game for old worlds but are no longer made.
+- **Hookah:** the weed bong is called the Hookah (its id is unchanged).
+- **Sensi Heights v75:** Dispensary 5 in FourTwenty whites, re-textured Dispensary and Tavern panels, and a `wip` folder holding draft Town Halls 2-5.
+- See the [CHANGELOG](CHANGELOG.md) for 0.12.0 and earlier.
 
 ## Grow and harvest
 
@@ -143,31 +145,29 @@ FourTwenty ships the **Sensi Heights** MineColonies style: "A hillside town that
 
 More huts are added as they're built. The pack lives in its own repository and is bundled with `python3 tools/import_sensi_heights.py <pack>/sensiheights`, which validates it (huts link to their own files, no ProjectRed/CB blocks). A few blueprints use a Farmer's Delight cutting board, which is simply left out without that mod. The Tavern's beds and side tables are FourTwenty's own hemp beds (level 3 has a king) and side tables.
 
-## Hemp and the Terpinator
+## Strains, the Inspiration Infuser and the Terpinator
 
-**Hemp blocks** are a building block in 64 colours, plus Natural Hemp, each with stairs and slabs: a fine woven-hemp texture up close (64x64) that reads as one even colour from a distance. 4 weed buds make 2 Natural Hemp; a final terpene in the middle of 8 hemp blocks (any colours) dyes them its colour. Stairs and slabs craft the usual way or in a stonecutter.
+**Strains.** Every seed, bud, crop and joint carries a strain. Wild plants and starting seeds are **Landrace**; the 16 bred strains (Couchlock Hum, Wake & Bake, Cherry Pie, Blue Dream...) belong to four families, Neutrals, Warm, Green and Cool, shown in their tooltip. A crop keeps its strain through growth and harvest, joints are rolled from one strain, and the **pipe** loads buds like ammo (put buds on it in your inventory; one bud per hit). Each strain has its own quiet effect (no potion swirls), coloured smoke and a faint screen tint.
 
-The colours come from **terpenes**, made in the **Terpinator** (3 glass over copper either side of a brewing stand, over copper either side of a weed bud). It works on its own, no fuel:
+**Inspiration.** Smoking inspires you with colours: plain weed with the 16 Minecraft colours, a strain with its four hemp colours as well. Each colour's inspiration rises from 1 to 5 and never fades. A hit brings a gentle colour drift: the view sways a little and the colours ripple across the screen.
 
-Each stage has a **Start/Stop** button and says what it's doing (running, needs buds, output full...). Stopping a stage keeps its progress. The refiner only starts with its output slot empty, and its method dial is locked while it runs, so one run never mixes two bases.
+**The Inspiration Infuser** (Steel: 3 glass over iron, a weed bud and iron, over polished blackstone, glowstone dust and polished blackstone; Lab: quartz and white concrete instead). Pick a colour you're inspired by on your mind's map, then drop beads of resin (globs, drops, drips, specks; drops fall 1, 4 or 8 at a time) into the pool until it matches. Fully inspired, the pool's edge glows green while you're still on track to a working recipe and red when you're not. Catching a colour unlocks its terpene; near-identical colours unlock together. The **Infuse** tab turns a Landrace seed and a Minecraft-colour terpene into a seed of that hue's strain (olive takes green and brown). Your pool and catches are your own and persist.
 
-- **Press:** 2 weed buds make 1 Sticky Situation (resin), 4 seconds.
-- **Refine:** 1 resin makes 2 of a base terpene, 3 seconds. The method dial picks which: heat makes Myrcenary, cold Limonade, pressure Pinewise, time Lavendaze.
-- **Blend:** two bases in ports 1 and 2 make one of 16 accords; an accord in port 1 and a base in port 3 make one of 64 final terpenes, 2 seconds each.
+**The Terpinator** (Steel or Lab, crafted like the Infuser round a brewing stand): pick a colour you've caught, feed it weed and press Start. Two buds make a vial. The 16 Minecraft colours take any weed; a hemp colour needs weed of its family.
 
-Each port has a job: port 1 sets the family (neutrals, warm, green, cool), port 2 the hue, port 3 the tone (pale, bright, dusky, deep), so once you've learned one row you can predict the rest. The full codex (all 84 names, colours and flavour lines) is `tools/terpenes.json`.
+**Hemp blocks** come in the 64 hemp colours, the 16 Minecraft colours and Natural Hemp, each with stairs and slabs. 4 weed buds make 2 Natural Hemp; a terpene in the middle of 8 hemp blocks (any colours) dyes them its colour. Stairs and slabs craft the usual way or in a stonecutter.
 
 The coloured glass and pane textures are recoloured from [Classic Faithful 64x](https://faithfulpack.net/) (via the Malevolent Gods resource pack), used under the Faithful License; see `licenses/Faithful-LICENSE.txt` and `tools/source_textures/faithful/README.md`.
 
-The Terpinator's screens use [Atkinson Hyperlegible](https://brailleinstitute.org/freefont) (Braille Institute, SIL Open Font License 1.1; see `licenses/AtkinsonHyperlegible-OFL.txt`), rendered from TrueType so the text stays crisp at any GUI scale. Its model and 256x256 textures come from `tools/generate_terpinator.py`; `tools/render_block_model.py` renders any block model with headless Blender for checking.
+The Terpinator's screens use [Atkinson Hyperlegible](https://brailleinstitute.org/freefont) (Braille Institute, SIL Open Font License 1.1; see `licenses/AtkinsonHyperlegible-OFL.txt`), rendered from TrueType so the text stays crisp at any GUI scale. Its models come from `tools/generate_terpinator_model.py` and the Infuser's from `tools/generate_infuser_model.py`; `tools/render_block_model.py` renders any block model with headless Blender for checking.
 
-The same 64 colours come as **concrete** (one flat colour, like vanilla's) and **concrete powder** (3 sand, 3 gravel, 2 weed buds and the final terpene make 4; it sets into concrete in water, and MineColonies' Concrete Mixer makes both), **stained glass** and **glass panes** (a terpene in the middle of 8 glass or panes dyes them; 6 glass make 16 panes), **rugs** (2 hemp blocks make 3; rugs of the same colour side by side join into one larger rug, with a border only round its outside, inset a pixel with rounded corners so the floor shows, and the pattern flowing across the inside; every colour has its own pattern; a terpene in the middle of 8 rugs recolours them; Natural Hemp rugs too) and **lamps** (3 glass, a weed bud and the final terpene make 4; inverted lamps and trims as for the dye colours, with a halo in their own colour).
+The 64 hemp colours (and, for concrete, powder and rugs, the 16 Minecraft colours too) come as **concrete** (one flat colour, like vanilla's) and **concrete powder** (3 sand, 3 gravel, 2 weed buds and the terpene make 4; it sets into concrete in water, and MineColonies' Concrete Mixer makes both), **stained glass** and **glass panes** (a terpene in the middle of 8 glass or panes dyes them; 6 glass make 16 panes), **rugs** (2 hemp blocks make 3; rugs of the same colour side by side join into one larger rug, with a border only round its outside, inset a pixel with rounded corners so the floor shows, and the pattern flowing across the inside; every colour has its own pattern; a terpene in the middle of 8 rugs recolours them; Natural Hemp rugs too) and **lamps** (3 glass, a weed bud and the terpene make 4; inverted lamps and trims as for the dye colours, with a halo in their own colour).
 
 **Couches** come in every colour and Natural Hemp: a hemp cushion and back with softened edges, arm rests and dark oak legs. Craft 3 hemp stairs of a colour over 2 sticks for **3 couches**. They join like stairs: place them side by side for a sofa (the arms move to the ends), round a corner for a sectional, or in any arrangement stairs would make, and colours mix. Fences, walls and panes don't join them. Right-click one with an empty hand to sit (one to a couch), and sneak to stand up. **`/sit`** sits you down wherever you stand: on a couch, or on the floor, a step or a slab. With MineColonies, colonists sit on couches tagged as seats (taverns, restaurants, the Dispensary) at the cushion and facing out, and a couch a player is sitting on counts as taken.
 
 **Roads** come in three tiers, each faster to walk on: a **Cobble Path** (5% faster), a **Paved Road** (10%) and a **Yellow Brick Road** (15%), for players, animals and colonists alike. Like the rugs, roads join into whole roads, with a border only round the outside and the paving running on unbroken across the inside: rounded fieldstones edged with bigger stones, pale flagstones inside a granite kerb, and soft golden bricks with an amber border, gold scrollwork and rosettes at the corners. Their sides are a cut through the road (the surface's edge, what it's laid on, the footing) with corner quoins where the road turns, and their undersides are structural, for bridges and raised roads. They stand a pixel lower than a full block, like dirt paths, so a lamp or glowstone set flush beside a road shows as a strip of light along it. Each tier has **slabs** and **stairs** sized to the road: a top or double slab is flush with a road and joins it, and a ramp of stairs runs from one road to the next with the border down its sides and no line across the top. Craft 2 cobblestone, 2 gravel and a weed bud for 4 Cobble Path; 8 Cobble Path round smooth stone for 8 Paved Road; 8 Paved Road round a gold ingot for 8 Yellow Brick Road. Slabs (3 make 6) and stairs (6 make 4) craft like any other, or come from a stonecutter.
 
-Names are discovered: a terpene shows as undiscovered until you make it, or someone hands you one. Colours and rules are never hidden: the Terpinator previews what its ports will make, a hint line walks you through your first session, and its **Guide** maps all 64 colours as you find them. Each discovery gets a toast with its line. Discoveries are per player and survive death.
+Terpene names are discovered: a terpene shows as an unnamed vision until you catch its colour in the Infuser.
 
 ## Side tables
 

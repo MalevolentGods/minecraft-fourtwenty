@@ -4,6 +4,25 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+## [0.13.0] - Strains and Inspiration
+
+### Added
+- **Strains:** a `fourtwenty:strain` component on seeds, buds and joints (Landrace = none) and a crop STRAIN state kept through growth and harvest; 16 bred strains in four families with per-strain effects (quiet, plus auras for Mossy Philosopher and Third-Eye Tonic), coloured smoke and screen tint; hue-shifted bud/joint icons; tooltips name the family. The pipe loads up to 16 buds of one strain like ammo.
+- **Inspiration Infuser** (Steel and Lab): a Kubelka-Munk colour-matching game over 80 colours (16 Minecraft + 64 hemp) with server-checked catches, per-player persistent pool, inspiration map, twins, an Infuse tab for breeding strain seeds, and Drops x1/x4/x8.
+- **16 Minecraft-colour terpenes** (`terpene_mc_<dye>`, named once caught) with hemp, concrete, concrete powder and Minecraft-themed rugs.
+- **Colour drift** in place of nausea; every weed inspires the Minecraft colours; a hotbar hint when a strain has nothing left to show.
+- **Hookah model:** stem, charcoal tray, clay bowl with glowing coals and smoke, and a hose, on the painted cabinet, inside the block.
+- **Joint in first person:** raised to your lips while you smoke.
+
+### Changed
+- **Terpinator:** production only (pick a caught colour, feed it weed: 2 buds a vial), new Steel and Lab models; old machines keep their buds and drop their contents. The codex guide screen is gone.
+- **Lamps:** the 16 dye lamps, inverted lamps and trims use the Minecraft-colour terpenes instead of vanilla dye.
+- **Hookah:** the weed bong is named the Hookah (id unchanged).
+- **Sensi Heights pack v72-v75:** Dispensary 5 in FourTwenty whites; Dispensary 3-5 and Tavern 3 re-textured panels; a `wip` folder with draft Town Halls 2-5.
+
+### Fixed
+- Strain icons have solid edges (no see-through sides in the hand); your own smoke no longer fills the top of your view.
+
 ## [0.12.0] - Pot Pots and Lit Roads
 
 ### Added
