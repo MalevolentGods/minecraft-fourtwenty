@@ -16,6 +16,16 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
       DeferredRegister.create(Registries.BLOCK, "fourtwenty");
 
+    /** The Inspiration Infuser, Steel and Lab (the same machine in two finishes). */
+    public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.infuser.InspirationInfuserBlock> INFUSER = infuser("inspiration_infuser", net.minecraft.world.level.material.MapColor.COLOR_GRAY);
+    public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.infuser.InspirationInfuserBlock> INFUSER_LAB = infuser("inspiration_infuser_lab", net.minecraft.world.level.material.MapColor.SNOW);
+
+    private static DeferredHolder<Block, com.malevolentgods.fourtwenty.infuser.InspirationInfuserBlock> infuser(String id, net.minecraft.world.level.material.MapColor color) {
+        return BLOCKS.register(id, () -> new com.malevolentgods.fourtwenty.infuser.InspirationInfuserBlock(BlockBehaviour.Properties.of()
+                .mapColor(color).strength(2.5f, 6f).sound(net.minecraft.world.level.block.SoundType.METAL).requiresCorrectToolForDrops()
+                .noOcclusion().lightLevel(s -> 6)));
+    }
+
     public static final DeferredHolder<Block, WeedCropBlock> WEED_CROP = BLOCKS.register("weed_crop",
       () -> new WeedCropBlock(
         BlockBehaviour.Properties.of()

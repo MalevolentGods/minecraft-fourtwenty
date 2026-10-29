@@ -38,7 +38,9 @@ public class WeedBongBlock extends BaseEntityBlock {
         net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
     
     // Bong shape - roughly 3x3x5 blocks in size but as a single block
-    private static final VoxelShape SHAPE = Block.box(4.0, 0.0, 4.0, 12.0, 16.0, 12.0);
+    /** The cabinet (9 x 9 x 9) and the stem, tray and bowl above it (tools/generate_hookah_model.py). */
+    private static final VoxelShape SHAPE = net.minecraft.world.phys.shapes.Shapes.or(Block.box(3.5, 0.0, 3.5, 12.5, 9.0, 12.5),
+            Block.box(5.6, 9.0, 5.6, 10.4, 15.7, 10.4));
     
     public WeedBongBlock(Properties properties) {
         super(properties);
@@ -125,5 +127,14 @@ public class WeedBongBlock extends BaseEntityBlock {
             }
         }
         super.onRemove(state, level, pos, newState, isMoving);
+    }
+
+    /** While it burns, smoke puffs off the bowl, now and then a wisp of white. */
+    @Override
+    public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull net.minecraft.util.RandomSource random) {
+        if (!state.getValue(LIT) || random.nextInt(2) != 0) return;
+        double x = pos.getX() + 0.5 + random.nextGaussian() * 0.04, y = pos.getY() + 15.9 / 16, z = pos.getZ() + 0.5 + random.nextGaussian() * 0.04;
+        level.addParticle(random.nextInt(4) == 0 ? net.minecraft.core.particles.ParticleTypes.WHITE_SMOKE : net.minecraft.core.particles.ParticleTypes.SMOKE,
+                x, y, z, 0, 0.03, 0);
     }
 }

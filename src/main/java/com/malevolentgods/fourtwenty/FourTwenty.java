@@ -29,6 +29,11 @@ public class FourTwenty {
         ModBlocks.BLOCKS.register(bus);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.util.BongBuffs::tick);
         ModItems.ITEMS.register(bus);
+        com.malevolentgods.fourtwenty.registry.ModDataComponents.COMPONENTS.register(bus);
+        com.malevolentgods.fourtwenty.registry.ModStrainData.LOOT_FUNCTIONS.register(bus);
+        com.malevolentgods.fourtwenty.registry.ModStrainData.RECIPE_SERIALIZERS.register(bus);
+        com.malevolentgods.fourtwenty.util.StrainEffects.register(bus);
+        com.malevolentgods.fourtwenty.infuser.Infuser.register(bus);
         
         // Register block entities
         ModBlockEntities.BLOCK_ENTITIES.register(bus);

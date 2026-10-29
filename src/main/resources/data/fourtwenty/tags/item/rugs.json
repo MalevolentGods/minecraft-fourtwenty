@@ -65,6 +65,22 @@
     "fourtwenty:rug_lav_lav_pin",
     "fourtwenty:rug_lav_lav_lav",
     "fourtwenty:rug_lav_lav_myr",
-    "fourtwenty:rug_natural"
+    "fourtwenty:rug_natural",
+    "fourtwenty:rug_mc_white",
+    "fourtwenty:rug_mc_orange",
+    "fourtwenty:rug_mc_magenta",
+    "fourtwenty:rug_mc_light_blue",
+    "fourtwenty:rug_mc_yellow",
+    "fourtwenty:rug_mc_lime",
+    "fourtwenty:rug_mc_pink",
+    "fourtwenty:rug_mc_gray",
+    "fourtwenty:rug_mc_light_gray",
+    "fourtwenty:rug_mc_cyan",
+    "fourtwenty:rug_mc_purple",
+    "fourtwenty:rug_mc_blue",
+    "fourtwenty:rug_mc_brown",
+    "fourtwenty:rug_mc_green",
+    "fourtwenty:rug_mc_red",
+    "fourtwenty:rug_mc_black"
   ]
 }

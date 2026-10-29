@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:block/rug_full",
+  "textures": {
+    "rug": "fourtwenty:block/rug/mc_white_full"
+  }
+}

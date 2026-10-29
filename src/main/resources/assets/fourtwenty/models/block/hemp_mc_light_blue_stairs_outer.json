@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "fourtwenty:block/hemp/mc_light_blue",
+    "top": "fourtwenty:block/hemp/mc_light_blue",
+    "side": "fourtwenty:block/hemp/mc_light_blue"
+  }
+}

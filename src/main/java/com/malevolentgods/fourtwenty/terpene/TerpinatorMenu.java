@@ -1,7 +1,7 @@
 package com.malevolentgods.fourtwenty.terpene;
 
+import com.malevolentgods.fourtwenty.infuser.Infuser;
 import com.malevolentgods.fourtwenty.registry.ModTerpenes;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,20 +13,18 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 import static com.malevolentgods.fourtwenty.terpene.TerpinatorBlockEntity.*;
 
 /**
- * The Terpinator's menu. Slots are laid out for {@code TerpinatorScreen}; buttons 0..3 set the
- * refining method, 10 + stage starts or stops a stage. Taking from an output records the discovery straight away (the inventory scan
- * would catch it within a second anyway).
+ * The Terpinator's menu. Slots are laid out for {@code TerpinatorScreen}; button 0 starts or stops it, 100 + product
+ * picks what to make, which the server allows only for colours the player has caught in the Inspiration Infuser.
  */
 public class TerpinatorMenu extends AbstractContainerMenu {
-    /** Slot positions, shared with the screen. */
-    public static final int WIDTH = 232, HEIGHT = 266, ROW_PRESS = 62, ROW_BLEND = 130, X_BUDS = 18, X_RESIN = 76, X_BASE_OUT = 196,
-            X_P1 = 18, X_P2 = 40, X_P3 = 62, X_BLEND_OUT = 196, INV_X = 35, INV_Y = 182;
-    public static final int BUTTON_TOGGLE = 10;
+    /** Layout, shared with the screen: the colour grid on the left, the machine on the right, the inventory below. */
+    public static final int WIDTH = 256, HEIGHT = 256, GRID_X = 12, GRID_Y = 24, CELL = 14, GRID_GAP = 5,
+            X_BUDS = 146, X_OUT = 214, ROW = 92, INV_X = 48, INV_Y = 174;
+    public static final int BUTTON_TOGGLE = 0, BUTTON_PICK = 100;
 
     private final Container container;
     private final ContainerData data;
@@ -37,13 +35,12 @@ public class TerpinatorMenu extends AbstractContainerMenu {
         checkContainerDataCount(data, DATA_COUNT);
         this.container = container;
         this.data = data;
-        addSlot(new Input(container, BUDS, X_BUDS, ROW_PRESS));
-        addSlot(new Input(container, RESIN, X_RESIN, ROW_PRESS));
-        addSlot(new Output(container, BASE_OUT, X_BASE_OUT, ROW_PRESS, inventory.player));
-        addSlot(new Input(container, PORT1, X_P1, ROW_BLEND));
-        addSlot(new Input(container, PORT2, X_P2, ROW_BLEND));
-        addSlot(new Input(container, PORT3, X_P3, ROW_BLEND));
-        addSlot(new Output(container, BLEND_OUT, X_BLEND_OUT, ROW_BLEND, inventory.player));
+        addSlot(new Slot(container, BUDS, X_BUDS, ROW) {
+            @Override public boolean mayPlace(@Nonnull ItemStack stack) { return container.canPlaceItem(BUDS, stack); }
+        });
+        addSlot(new Slot(container, OUT, X_OUT, ROW) {
+            @Override public boolean mayPlace(@Nonnull ItemStack stack) { return false; }
+        });
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col + row * 9 + 9, INV_X + col * 18, INV_Y + row * 18));
         }
@@ -55,26 +52,28 @@ public class TerpinatorMenu extends AbstractContainerMenu {
         this(id, inventory, new SimpleContainer(SIZE), new SimpleContainerData(DATA_COUNT));
     }
 
-    public int progress(int index) { return data.get(index); }
+    public int progress() { return data.get(DATA_PROGRESS); }
 
-    public int method() { return data.get(DATA_METHOD); }
+    public int product() { return data.get(DATA_PRODUCT); }
 
-    public boolean running(int stage) { return (data.get(DATA_RUNNING) & (1 << stage)) != 0; }
+    public boolean running() { return data.get(DATA_RUNNING) != 0; }
 
     public Container container() { return container; }
 
     @Override public boolean clickMenuButton(@Nonnull Player player, int id) {
-        if (id >= BUTTON_TOGGLE && id <= BUTTON_TOGGLE + 2) {
-            int stage = id - BUTTON_TOGGLE;
-            if (container instanceof TerpinatorBlockEntity t) return t.toggle(stage);
-            // Client side: predict, so the button answers at once (the server's data follows).
-            if (!running(stage) && cannotStart(stage, container.getItem(BASE_OUT)) != null) return false;
-            data.set(DATA_RUNNING, data.get(DATA_RUNNING) ^ (1 << stage));
+        if (id == BUTTON_TOGGLE) {
+            if (container instanceof TerpinatorBlockEntity t) t.toggle();
+            else data.set(DATA_RUNNING, running() ? 0 : 1);         // client side: predict, the server's data follows
             return true;
         }
-        if (id < 0 || id > 3 || running(STAGE_REFINE)) return false;
-        if (container instanceof TerpinatorBlockEntity t) t.setMethod(id);
-        else data.set(DATA_METHOD, id);
+        int product = id - BUTTON_PICK;
+        if (!valid(product)) return false;
+        if (container instanceof TerpinatorBlockEntity t) {
+            if (!Infuser.caught(player, target(product))) return false;
+            t.setProduct(product);
+        } else {
+            data.set(DATA_PRODUCT, product);
+        }
         return true;
     }
 
@@ -88,7 +87,8 @@ public class TerpinatorMenu extends AbstractContainerMenu {
         if (index < SIZE) {
             if (!moveItemStackTo(stack, SIZE, SIZE + 36, true)) return ItemStack.EMPTY;
             slot.onQuickCraft(stack, copy);
-        } else if (!moveIn(stack) && !moveWithinInventory(stack, index)) {
+        } else if (!(container.canPlaceItem(BUDS, stack) && moveItemStackTo(stack, BUDS, BUDS + 1, false))
+                && !(index < SIZE + 27 ? moveItemStackTo(stack, SIZE + 27, SIZE + 36, false) : moveItemStackTo(stack, SIZE, SIZE + 27, false))) {
             return ItemStack.EMPTY;
         }
         if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);
@@ -96,49 +96,5 @@ public class TerpinatorMenu extends AbstractContainerMenu {
         if (stack.getCount() == copy.getCount()) return ItemStack.EMPTY;
         slot.onTake(player, stack);
         return copy;
-    }
-
-    /** Buds to the press, resin to the refiner, an accord to port 1, a base to the first port that takes it. */
-    private boolean moveIn(ItemStack stack) {
-        for (int target : List.of(BUDS, RESIN, PORT1, PORT2, PORT3)) {
-            if (!accepts(target, stack)) continue;
-            ItemStack there = slots.get(target).getItem();
-            if (!there.isEmpty() && !ItemStack.isSameItemSameComponents(there, stack)) continue;
-            if (moveItemStackTo(stack, target, target + 1, false)) return true;
-        }
-        return false;
-    }
-
-    private boolean moveWithinInventory(ItemStack stack, int index) {
-        return index < SIZE + 27 ? moveItemStackTo(stack, SIZE + 27, SIZE + 36, false) : moveItemStackTo(stack, SIZE, SIZE + 27, false);
-    }
-
-    private static class Input extends Slot {
-        Input(Container container, int index, int x, int y) { super(container, index, x, y); }
-
-        @Override public boolean mayPlace(@Nonnull ItemStack stack) { return accepts(getContainerSlot(), stack); }
-    }
-
-    private static class Output extends Slot {
-        private final Player player;
-
-        Output(Container container, int index, int x, int y, Player player) {
-            super(container, index, x, y);
-            this.player = player;
-        }
-
-        @Override public boolean mayPlace(@Nonnull ItemStack stack) { return false; }
-
-        @Override public void onTake(@Nonnull Player taker, @Nonnull ItemStack stack) {
-            learn(stack);
-            super.onTake(taker, stack);
-        }
-
-        @Override protected void onQuickCraft(@Nonnull ItemStack stack, int amount) { learn(stack); }
-
-        private void learn(ItemStack stack) {
-            String key = TerpeneDiscovery.key(stack);
-            if (key != null && player instanceof ServerPlayer sp) TerpeneDiscovery.learn(sp, List.of(key));
-        }
     }
 }

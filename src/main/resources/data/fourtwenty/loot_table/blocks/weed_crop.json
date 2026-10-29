@@ -6,7 +6,12 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "fourtwenty:weed_seeds"
+          "name": "fourtwenty:weed_seeds",
+          "functions": [
+            {
+              "function": "fourtwenty:copy_strain"
+            }
+          ]
         }
       ]
     },
@@ -24,6 +29,9 @@
                 "min": 1,
                 "max": 3
               }
+            },
+            {
+              "function": "fourtwenty:copy_strain"
             }
           ]
         }
@@ -52,6 +60,9 @@
                 "min": 1,
                 "max": 4
               }
+            },
+            {
+              "function": "fourtwenty:copy_strain"
             }
           ]
         }

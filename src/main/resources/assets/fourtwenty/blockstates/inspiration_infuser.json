@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "fourtwenty:block/inspiration_infuser"
+    },
+    "facing=east": {
+      "model": "fourtwenty:block/inspiration_infuser",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "fourtwenty:block/inspiration_infuser",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "fourtwenty:block/inspiration_infuser",
+      "y": 270
+    }
+  }
+}

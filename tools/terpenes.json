@@ -555,5 +555,119 @@
   "natural": {
     "name": "Natural Hemp",
     "hex": "#C9B98F"
-  }
+  },
+  "minecraft": [
+    {
+      "code": "mc_white",
+      "dye": "white",
+      "name": "Bone Meal Haze",
+      "hex": "#FDFDFD",
+      "line": "Sprinkle it on anything and watch it grow. Ideas included."
+    },
+    {
+      "code": "mc_orange",
+      "dye": "orange",
+      "name": "Blaze Rod Glow",
+      "hex": "#FF7D00",
+      "line": "Warm all the way down. Mind the fireballs."
+    },
+    {
+      "code": "mc_magenta",
+      "dye": "magenta",
+      "name": "Allium Afterglow",
+      "hex": "#D652DB",
+      "line": "Pom-poms on a stick, cheering you on."
+    },
+    {
+      "code": "mc_light_blue",
+      "dye": "light_blue",
+      "name": "Sky Block Sesh",
+      "hex": "#31B9F3",
+      "line": "One tree, one block, endless sky."
+    },
+    {
+      "code": "mc_yellow",
+      "dye": "yellow",
+      "name": "Gold Nugget Giggles",
+      "hex": "#FFE700",
+      "line": "Nine of these make an ingot. None of these make sense."
+    },
+    {
+      "code": "mc_lime",
+      "dye": "lime",
+      "name": "Slime Time",
+      "hex": "#87C03C",
+      "line": "Bouncy, sticky, and it splits into smaller thoughts."
+    },
+    {
+      "code": "mc_pink",
+      "dye": "pink",
+      "name": "Pink Sheep Shuffle",
+      "hex": "#ED889F",
+      "line": "A one in six hundred chance. You beat the odds today."
+    },
+    {
+      "code": "mc_gray",
+      "dye": "gray",
+      "name": "Cobble Thoughts",
+      "hex": "#525252",
+      "line": "Every great build starts with a pile of these."
+    },
+    {
+      "code": "mc_light_gray",
+      "dye": "light_gray",
+      "name": "Gravel Gaze",
+      "hex": "#9E9F9E",
+      "line": "Falls the moment nothing holds it up. Relatable."
+    },
+    {
+      "code": "mc_cyan",
+      "dye": "cyan",
+      "name": "Diamond Hands",
+      "hex": "#00A7AC",
+      "line": "Never dig straight down for this one. / (You will anyway.)"
+    },
+    {
+      "code": "mc_purple",
+      "dye": "purple",
+      "name": "Portal Daze",
+      "hex": "#8036CB",
+      "line": "Stand still long enough and it takes you somewhere."
+    },
+    {
+      "code": "mc_blue",
+      "dye": "blue",
+      "name": "Lapis Lounge",
+      "hex": "#293FCB",
+      "line": "Enchanting company."
+    },
+    {
+      "code": "mc_brown",
+      "dye": "brown",
+      "name": "Dirt Block Daydream",
+      "hex": "#7C5337",
+      "line": "The first block you ever punched still thinks about you."
+    },
+    {
+      "code": "mc_green",
+      "dye": "green",
+      "name": "Creeper Kush",
+      "hex": "#61811A",
+      "line": "That's a very nice house you've built. / Ssssss..."
+    },
+    {
+      "code": "mc_red",
+      "dye": "red",
+      "name": "Redstone Rush",
+      "hex": "#B02522",
+      "line": "Every wire in your head lights up at once."
+    },
+    {
+      "code": "mc_black",
+      "dye": "black",
+      "name": "Obsidian Couchlock",
+      "hex": "#1E1C1D",
+      "line": "Takes forever to get up. Worth it."
+    }
+  ]
 }

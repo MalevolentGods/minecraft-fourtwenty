@@ -31,17 +31,18 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/** The Terpinator: a brass-and-glass still on a cabinet. LIT while any of its processes runs. */
+/** The Terpinator (Steel or Lab: the same machine in two finishes). LIT while it's making terpenes. */
 public class TerpinatorBlock extends HorizontalDirectionalBlock implements EntityBlock {
     public static final MapCodec<TerpinatorBlock> CODEC = simpleCodec(TerpinatorBlock::new);
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
-    /** Built for a north-facing machine (tools/generate_terpinator.py): cabinet and deck, then the still, condenser and tank. */
+    /** Built for a north-facing machine (tools/generate_terpinator_model.py): plinth, tower and hopper, vial tray, condenser, panel. */
     private static final java.util.Map<Direction, VoxelShape> SHAPES = new java.util.EnumMap<>(Direction.class);
 
     static {
         for (Direction facing : Direction.Plane.HORIZONTAL) {
-            SHAPES.put(facing, Shapes.or(rotate(0.5, 0, 0.5, 15.5, 9, 15.5, facing), rotate(1, 9, 5, 15, 15.5, 15, facing),
-                    rotate(10.5, 9, 1.5, 14.5, 12, 5.5, facing)));
+            SHAPES.put(facing, Shapes.or(rotate(0, 0, 0, 16, 3, 16, facing), rotate(1.5, 3, 5, 10.5, 16, 14, facing),
+                    rotate(1.5, 3, 1, 10.5, 8, 5, facing), rotate(11.8, 3, 9.5, 14.8, 13.3, 12.5, facing),
+                    rotate(11.3, 3, 2, 15.2, 9.6, 7.8, facing)));
         }
     }
 
@@ -90,19 +91,16 @@ public class TerpinatorBlock extends HorizontalDirectionalBlock implements Entit
     @Override protected void onRemove(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState newState,
                                       boolean moved) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof TerpinatorBlockEntity t) {
-            Containers.dropContents(level, pos, t);
+            Containers.dropContents(level, pos, t.contents());
             level.updateNeighbourForOutputSignal(pos, this);
         }
         super.onRemove(state, level, pos, newState, moved);
     }
 
-    /** Where the valve wheel sits on a north-facing machine (tools/generate_terpinator.py), in pixels. */
-    private static final double VALVE_X = 7.25, VALVE_Z = 8.5, VALVE_TOP = 19.5;   // the hub tops out at 16.85; smoke is a few pixels across
+    /** The top of the condenser on a north-facing machine (tools/generate_terpinator_model.py), in pixels: the cap ends at 13.3. */
+    private static final double VALVE_X = 13.3, VALVE_Z = 11, VALVE_TOP = 14.5;
 
-    /**
-     * A wisp of vapour from the still's valve while it works. It starts above the valve wheel: born
-     * inside the wheel, the smoke flickered through its rim (that was the "flashing" on the knob).
-     */
+    /** A wisp of vapour off the condenser while it works. */
     @Override public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
         if (!state.getValue(LIT) || random.nextInt(3) != 0) return;
         double x = VALVE_X, z = VALVE_Z;

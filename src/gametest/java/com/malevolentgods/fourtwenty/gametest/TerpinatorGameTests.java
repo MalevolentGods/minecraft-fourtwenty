@@ -1,17 +1,27 @@
 package com.malevolentgods.fourtwenty.gametest;
 
+import com.malevolentgods.fourtwenty.domain.Strain;
 import com.malevolentgods.fourtwenty.domain.Terpenes;
 import com.malevolentgods.fourtwenty.domain.Terpenes.Base;
 import com.malevolentgods.fourtwenty.domain.Terpenes.Code;
+import com.malevolentgods.fourtwenty.infuser.Infuser;
+import com.malevolentgods.fourtwenty.infuser.InfuserState;
+import com.malevolentgods.fourtwenty.registry.ModDataComponents;
 import com.malevolentgods.fourtwenty.registry.ModItems;
 import com.malevolentgods.fourtwenty.registry.ModTerpenes;
 import com.malevolentgods.fourtwenty.terpene.TerpinatorBlockEntity;
+import com.malevolentgods.fourtwenty.terpene.TerpinatorMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -26,10 +36,11 @@ import static com.malevolentgods.fourtwenty.terpene.TerpinatorBlockEntity.*;
 public final class TerpinatorGameTests {
     private static final BlockPos POS = new BlockPos(2, 2, 2);
 
-    private static TerpinatorBlockEntity place(GameTestHelper h) {
+    private static TerpinatorBlockEntity place(GameTestHelper h, int product) {
         h.setBlock(POS, ModTerpenes.TERPINATOR.get());
         var t = (TerpinatorBlockEntity) h.getBlockEntity(POS);
-        for (int stage = 0; stage < 3; stage++) t.toggle(stage);   // every stage on
+        t.setProduct(product);
+        t.toggle();
         return t;
     }
 
@@ -39,70 +50,99 @@ public final class TerpinatorGameTests {
 
     private static ItemStack terp(Code code, int count) { return new ItemStack(ModTerpenes.terpene(code), count); }
 
+    private static ItemStack buds(Strain strain, int count) {
+        return ModDataComponents.withStrain(new ItemStack(ModItems.WEED_BUD.get(), count), strain);
+    }
+
+    private static final int WHITE = PRODUCTS - 16 + DyeColor.WHITE.getId();
+
     @GameTest(template = "empty")
-    public static void budsPressIntoResinThatRefinesIntoTheDialledBase(GameTestHelper h) {
-        var t = place(h);
-        t.toggle(STAGE_REFINE);
-        t.setMethod(Base.LIM.ordinal());
-        t.toggle(STAGE_REFINE);
-        t.setItem(BUDS, new ItemStack(ModItems.WEED_BUD.get(), 4));
-        run(h, t, PRESS_TIME - 1);
-        h.assertTrue(t.getItem(RESIN).isEmpty(), "Pressing takes " + PRESS_TIME + " ticks");
+    public static void anyWeedMakesAMinecraftColour(GameTestHelper h) {
+        var t = place(h, WHITE);
+        t.setItem(BUDS, buds(Strain.LANDRACE, 4));
+        run(h, t, TIME - 1);
+        h.assertTrue(t.getItem(OUT).isEmpty(), "A vial takes " + TIME + " ticks");
         run(h, t, 1);
-        h.assertTrue(t.getItem(RESIN).getCount() == 1 && t.getItem(BUDS).getCount() == 2, "Two buds make one resin");
-        run(h, t, PRESS_TIME + 2 * REFINE_TIME);
-        h.assertTrue(t.getItem(BUDS).isEmpty() && t.getItem(RESIN).isEmpty(), "Everything is used");
-        h.assertTrue(t.getItem(BASE_OUT).is(ModTerpenes.terpene(Code.of(Base.LIM))) && t.getItem(BASE_OUT).getCount() == 4,
-                "Each resin refines into two Limonade, got " + t.getItem(BASE_OUT));
+        h.assertTrue(t.getItem(OUT).is(ModTerpenes.MINECRAFT_TERPENES.get("mc_white").get()) && t.getItem(BUDS).getCount() == 2,
+                "Two buds make one Bone Meal Haze, got " + t.getItem(OUT));
+        t.setItem(BUDS, buds(Strain.BLUE_DREAM, 2));
+        run(h, t, TIME);
+        h.assertTrue(t.getItem(OUT).getCount() == 2 && t.getItem(BUDS).isEmpty(), "A strain's buds work too");
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void twoBasesBlendAnAccordAndABaseFinishesIt(GameTestHelper h) {
-        var t = place(h);
-        t.setItem(PORT1, terp(Code.of(Base.MYR), 1));
-        t.setItem(PORT2, terp(Code.of(Base.PIN), 1));
-        run(h, t, BLEND_TIME);
-        h.assertTrue(t.getItem(BLEND_OUT).is(ModTerpenes.terpene(Code.of(Base.MYR, Base.PIN))), "Myr then Pin make the Spacebar Static accord");
-        h.assertTrue(t.getItem(PORT1).isEmpty() && t.getItem(PORT2).isEmpty(), "Both bases used");
-        t.setItem(PORT1, t.removeItemNoUpdate(BLEND_OUT));
-        t.setItem(PORT3, terp(Code.of(Base.PIN), 1));
-        run(h, t, BLEND_TIME);
-        h.assertTrue(t.getItem(BLEND_OUT).is(ModTerpenes.terpene(Code.of(Base.MYR, Base.PIN, Base.PIN))), "The accord + Pin finish Touch of Grey");
+    public static void aHempColourTakesItsFamilysWeed(GameTestHelper h) {
+        Code teal = Code.of(Base.PIN, Base.LAV, Base.PIN);   // Hippie Hot Tub: the Green family
+        var t = place(h, teal.index());
+        t.setItem(BUDS, buds(Strain.LANDRACE, 2));
+        run(h, t, TIME * 2);
+        h.assertTrue(t.getItem(OUT).isEmpty() && t.getItem(BUDS).getCount() == 2, "Landrace can't make a hemp colour");
+        h.assertTrue("wrong_family".equals(status(true, teal.index(), t.getItem(BUDS), t.getItem(OUT))), "... and says so");
+        t.setItem(BUDS, buds(Strain.STICKY_ICKY, 2));
+        run(h, t, TIME);
+        h.assertTrue(t.getItem(OUT).is(ModTerpenes.terpene(teal)), "Any Green strain makes it, got " + t.getItem(OUT));
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void threeBasesMakeNothing(GameTestHelper h) {
-        var t = place(h);
-        t.setItem(PORT1, terp(Code.of(Base.MYR), 1));
-        t.setItem(PORT2, terp(Code.of(Base.PIN), 1));
-        t.setItem(PORT3, terp(Code.of(Base.LIM), 1));
-        run(h, t, BLEND_TIME * 3);
-        h.assertTrue(t.getItem(BLEND_OUT).isEmpty() && t.getItem(PORT1).getCount() == 1, "The accord comes first; nothing is used");
+    public static void aStoppedTerpinatorWaitsAndKeepsItsProgress(GameTestHelper h) {
+        var t = place(h, WHITE);
+        t.setItem(BUDS, buds(Strain.LANDRACE, 2));
+        run(h, t, TIME / 2);
+        t.toggle();
+        run(h, t, TIME * 2);
+        h.assertTrue(t.getItem(OUT).isEmpty() && t.getItem(BUDS).getCount() == 2, "Nothing happens while stopped");
+        t.toggle();
+        run(h, t, TIME / 2);
+        h.assertTrue(t.getItem(OUT).getCount() == 1, "It picks up where it stopped");
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void changingThePortsRestartsTheBlend(GameTestHelper h) {
-        var t = place(h);
-        t.setItem(PORT1, terp(Code.of(Base.LAV), 2));
-        t.setItem(PORT2, terp(Code.of(Base.LIM), 1));
-        run(h, t, BLEND_TIME - 5);
-        t.setItem(PORT2, terp(Code.of(Base.PIN), 1));
+    public static void pickingAnotherColourRestartsTheVial(GameTestHelper h) {
+        var t = place(h, WHITE);
+        t.setItem(BUDS, buds(Strain.LANDRACE, 2));
+        run(h, t, TIME - 5);
+        t.setProduct(WHITE + 1);
         run(h, t, 10);
-        h.assertTrue(t.getItem(BLEND_OUT).isEmpty(), "A new blend starts from zero");
-        run(h, t, BLEND_TIME);
-        h.assertTrue(t.getItem(BLEND_OUT).is(ModTerpenes.terpene(Code.of(Base.LAV, Base.PIN))), "Blue Dream, from the new ports");
+        h.assertTrue(t.getItem(OUT).isEmpty(), "A new colour starts from zero");
+        run(h, t, TIME);
+        h.assertTrue(t.getItem(OUT).is(ModTerpenes.MINECRAFT_TERPENES.get("mc_orange").get()), "Blaze Rod Glow, the new pick");
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void portsOnlyTakeWhatTheyCanBlend(GameTestHelper h) {
-        Code base = Code.of(Base.MYR), accord = Code.of(Base.MYR, Base.LIM), fin = Code.of(Base.MYR, Base.LIM, Base.LIM);
-        h.assertTrue(accepts(PORT1, terp(base, 1)) && accepts(PORT1, terp(accord, 1)) && !accepts(PORT1, terp(fin, 1)), "Port 1: a base or an accord");
-        h.assertTrue(accepts(PORT3, terp(base, 1)) && !accepts(PORT3, terp(accord, 1)), "Port 3: a base");
-        h.assertTrue(!accepts(BLEND_OUT, terp(base, 1)) && accepts(BUDS, new ItemStack(ModItems.WEED_BUD.get())), "Outputs take nothing");
+    public static void onlyCaughtColoursCanBePicked(GameTestHelper h) {
+        h.setBlock(POS, ModTerpenes.TERPINATOR.get());
+        var t = (TerpinatorBlockEntity) h.getBlockEntity(POS);
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        var menu = new TerpinatorMenu(0, player.getInventory(), t, t.data());
+        h.assertTrue(!menu.clickMenuButton(player, TerpinatorMenu.BUTTON_PICK + WHITE) && t.product() == NONE, "White isn't caught yet");
+        InfuserState s = Infuser.get(player);
+        s.caught.put("white", 1);
+        player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).put("fourtwenty_infuser", s.save());
+        h.assertTrue(menu.clickMenuButton(player, TerpinatorMenu.BUTTON_PICK + WHITE) && t.product() == WHITE, "Caught, it can be made");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void anOldTerpinatorKeepsItsBudsAndPopsOutTheRest(GameTestHelper h) {
+        h.setBlock(POS, ModTerpenes.TERPINATOR.get());
+        var t = (TerpinatorBlockEntity) h.getBlockEntity(POS);
+        var old = net.minecraft.core.NonNullList.withSize(7, ItemStack.EMPTY);
+        old.set(0, new ItemStack(ModItems.WEED_BUD.get(), 5));
+        old.set(1, new ItemStack(ModTerpenes.RESIN.get(), 3));
+        old.set(6, terp(Code.of(Base.MYR, Base.PIN), 1));
+        var tag = new CompoundTag();
+        ContainerHelper.saveAllItems(tag, old, h.getLevel().registryAccess());
+        tag.putInt("method", 2);
+        t.loadWithComponents(tag, h.getLevel().registryAccess());
+        h.assertTrue(t.getItem(BUDS).getCount() == 5 && t.getItem(OUT).isEmpty() && t.contents().size() == SIZE + 2, "Buds kept, two stacks waiting");
+        run(h, t, 1);
+        h.assertTrue(t.contents().size() == SIZE, "The leftovers are out");
+        h.assertItemEntityPresent(ModTerpenes.RESIN.get(), POS, 2);
+        h.assertItemEntityPresent(ModTerpenes.terpene(Code.of(Base.MYR, Base.PIN)), POS, 2);
         h.succeed();
     }
 
@@ -123,34 +163,6 @@ public final class TerpinatorGameTests {
         h.assertTrue(dye.isPresent(), "A terpene recolours 8 hemp of any colour");
         var dyed = dye.get().value().assemble(input, level.registryAccess());
         h.assertTrue(dyed.is(ModTerpenes.HEMP.get(grey.id()).items().get(0).get()) && dyed.getCount() == 8, "... 8 Touch of Grey Hemp, got " + dyed);
-        h.succeed();
-    }
-
-    @GameTest(template = "empty")
-    public static void aStoppedStageWaitsAndKeepsItsProgress(GameTestHelper h) {
-        var t = place(h);
-        t.setItem(BUDS, new ItemStack(ModItems.WEED_BUD.get(), 2));
-        run(h, t, PRESS_TIME / 2);
-        t.toggle(STAGE_PRESS);
-        run(h, t, PRESS_TIME * 2);
-        h.assertTrue(t.getItem(RESIN).isEmpty() && t.getItem(BUDS).getCount() == 2, "Nothing happens while stopped");
-        t.toggle(STAGE_PRESS);
-        run(h, t, PRESS_TIME / 2);
-        h.assertTrue(t.getItem(RESIN).getCount() == 1, "It picks up where it stopped");
-        h.succeed();
-    }
-
-    @GameTest(template = "empty")
-    public static void refiningOnlyStartsWithAnEmptyOutputAndLocksTheDial(GameTestHelper h) {
-        var t = place(h);
-        t.toggle(STAGE_REFINE);
-        t.setItem(BASE_OUT, terp(Code.of(Base.PIN), 3));
-        h.assertTrue(!t.toggle(STAGE_REFINE) && !t.isRunning(STAGE_REFINE), "A full output refuses to start");
-        t.setItem(BASE_OUT, ItemStack.EMPTY);
-        h.assertTrue(t.toggle(STAGE_REFINE) && t.isRunning(STAGE_REFINE), "An empty one starts");
-        int before = t.data().get(DATA_METHOD);
-        t.setMethod((before + 1) % 4);
-        h.assertTrue(t.data().get(DATA_METHOD) == before, "The dial is locked while refining");
         h.succeed();
     }
 

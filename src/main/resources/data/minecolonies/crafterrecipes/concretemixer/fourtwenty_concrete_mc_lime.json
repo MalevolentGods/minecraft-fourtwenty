@@ -1,0 +1,13 @@
+{
+  "type": "recipe",
+  "crafter": "concretemixer_custom",
+  "inputs": [
+    {
+      "id": "fourtwenty:concrete_powder_mc_lime"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "result": {
+    "id": "fourtwenty:concrete_mc_lime"
+  }
+}

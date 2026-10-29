@@ -1,0 +1,781 @@
+<title>Inspiration Infuser</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gluten:wght@500;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Shippori+Mincho:wght@600&display=swap">
+<style>
+/* Layout: a design brief that opens on the playable infuser; the systems follow in reading order.
+   Deliberately single-theme: a late-night aubergine haze where the resin colours are the only bright things. */
+:root {
+  color-scheme: dark;
+  --bg: #15111f;          /* smoky aubergine night */
+  --panel: #1d1830;
+  --panel-2: #241e3b;
+  --line: #352d52;
+  --fg: #efe9f7;
+  --muted: #a99fc2;
+  --glow: #b8f06a;        /* weed-magic glow, used sparingly */
+  --amber: #ffc76b;       /* warm resin highlight */
+  --good: #6be38a;
+  --bad: #ff6f7d;
+  --display: "Gluten", "Comic Sans MS", "Trebuchet MS", cursive;
+  --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --kanji: "Shippori Mincho", "Yu Mincho", "Hiragino Mincho ProN", serif;
+}
+html { background: var(--bg); }
+body { background: var(--bg); color: var(--fg); font: 16px/1.6 var(--body); margin: 0; }
+.wrap { max-width: 1160px; margin: 0 auto; padding-block: 28px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.3rem, 6vw, 3.8rem); line-height: 1; color: var(--glow); text-shadow: 0 0 24px color-mix(in srgb, var(--glow) 35%, transparent); }
+h2 { font-size: clamp(1.5rem, 3.2vw, 2.1rem); color: var(--amber); margin-bottom: 10px; }
+h3 { font-size: 1.15rem; margin-bottom: 6px; }
+p { margin: 0 0 12px; max-width: 68ch; }
+.lede { color: var(--muted); font-size: 1.1rem; max-width: 70ch; margin-top: 10px; }
+.eyebrow { font: 600 .74rem/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+section { padding-top: 56px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.note { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: var(--panel); min-width: 0; }
+.note p:last-child { margin-bottom: 0; }
+ul { margin: 0 0 12px; padding-left: 1.2em; } li { margin: 3px 0; max-width: 66ch; }
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; }
+table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 .72rem/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: var(--panel); }
+tr:last-child td { border-bottom: 0; }
+.chip { display: inline-block; font: 600 .7rem/1 var(--mono); padding: 4px 7px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.chip.glow { color: var(--glow); border-color: color-mix(in srgb, var(--glow) 45%, transparent); }
+.chip.amber { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 45%, transparent); }
+.sw { display: inline-block; width: 18px; height: 18px; border-radius: 50%; vertical-align: -4px; border: 1px solid #0006; }
+.fine { color: var(--muted); font-size: .84rem; }
+
+/* ---------- the infuser ---------- */
+.rig { margin-top: 26px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1.1fr); gap: 18px;
+  background: radial-gradient(120% 90% at 50% 0%, var(--panel-2), var(--panel) 70%); border: 1px solid var(--line); border-radius: 22px; padding: 18px; }
+@media (max-width: 940px) { .rig { grid-template-columns: 1fr; } }
+.jars { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; align-content: start; }
+.jar { display: grid; grid-template-columns: 36px 1fr; gap: 8px; align-items: center; text-align: left; cursor: pointer;
+  background: color-mix(in srgb, var(--bg) 70%, transparent); color: var(--fg); border: 1px solid var(--line); border-radius: 14px; padding: 7px 8px; font: 13px/1.2 var(--body);
+  transition: transform .12s, border-color .12s; }
+.jar:hover:not(:disabled) { border-color: var(--amber); transform: translateY(-1px); }
+.jar:active:not(:disabled) { transform: translateY(1px) scale(.98); }
+.jar:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--glow); outline-offset: 2px; }
+.jar:disabled { opacity: .35; cursor: not-allowed; }
+.jar .bead { width: 36px; height: 36px; border-radius: 46% 54% 50% 50% / 58% 58% 42% 42%; box-shadow: inset -5px -7px 10px #0006, inset 4px 4px 7px #fff5, 0 2px 6px #0007; }
+.jar b { display: block; font-weight: 700; } .jar small { color: var(--muted); font-size: 11px; }
+.sizes { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.sizes button, .act { font: 700 13px/1 var(--body); padding: 8px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+.sizes button[aria-pressed="true"] { background: var(--amber); color: #2a1a04; border-color: var(--amber); }
+.sizes button i { font-style: normal; display: inline-block; border-radius: 50%; background: currentColor; vertical-align: middle; margin-right: 5px; }
+.act:disabled { opacity: .4; cursor: not-allowed; }
+.poolbox { display: grid; justify-items: center; gap: 8px; align-content: start; }
+canvas#pool { width: 100%; max-width: 340px; aspect-ratio: 1; display: block; }
+.de { font-family: var(--kanji); font-size: 2.2rem; line-height: 1; letter-spacing: .06em; }
+.delbl { font: 600 .7rem/1 var(--mono); letter-spacing: .14em; color: var(--muted); }
+.status { min-height: 1.4em; font: 700 .95rem/1.3 var(--body); text-align: center; }
+.row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.side { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.box { background: color-mix(in srgb, var(--bg) 70%, transparent); border: 1px solid var(--line); border-radius: 14px; padding: 10px; display: grid; gap: 8px; }
+.box label, .lbl { font: 600 .72rem/1.2 var(--mono); letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
+.box select { width: 100%; background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 10px; padding: 7px; font: 14px var(--body); }
+canvas#map { width: 100%; aspect-ratio: 3 / 1.25; border-radius: 10px; display: block; }
+.leaves { display: flex; gap: 4px; }
+.leaves span { flex: 1; height: 8px; border-radius: 4px; background: var(--line); }
+.leaves span.on { background: var(--glow); box-shadow: 0 0 8px color-mix(in srgb, var(--glow) 60%, transparent); }
+.recipe { font: 12.5px/1.45 var(--mono); }
+.recipe table { font-size: 12px; } .recipe th, .recipe td { padding: 2px 4px; border: 0; background: transparent; text-align: right; }
+.recipe th:first-child, .recipe td:first-child { text-align: left; }
+.fill { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.fill i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--glow), var(--amber)); transition: width .25s; }
+.found { display: grid; grid-template-columns: repeat(16, 1fr); gap: 3px; }
+.found div { aspect-ratio: 1; border-radius: 50%; border: 1px dashed var(--line); position: relative; }
+.found div.got { border: 0; box-shadow: inset -2px -3px 4px #0005, inset 2px 2px 3px #fff4; }
+.found div.perfect::after { content: "★"; position: absolute; right: -2px; top: -5px; font-size: 11px; color: #fff; text-shadow: 0 0 3px #000; }
+#flash { position: fixed; inset: 0; pointer-events: none; opacity: 0; display: grid; place-items: center; z-index: 50; }
+#flash span { font: 700 clamp(1.4rem, 4vw, 2.4rem)/1.1 var(--display); color: #fff; text-shadow: 0 2px 12px #0009; padding: 0 20px; text-align: center; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+.loop { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; counter-reset: s; }
+.loop div { counter-increment: s; border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: var(--panel); min-width: 0; }
+.loop div::before { content: counter(s); font: 700 1.5rem/1 var(--display); color: var(--amber); display: block; margin-bottom: 4px; }
+.loop b { display: block; } .loop span { color: var(--muted); font-size: .9rem; }
+.machines { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.machine { border: 1px solid color-mix(in srgb, var(--glow) 35%, var(--line)); border-radius: 18px; padding: 16px; background: var(--panel); min-width: 0; }
+.machine h3 { font-size: 1.4rem; color: var(--glow); }
+.phase { display: grid; grid-template-columns: 120px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.phase:last-child { border-bottom: 0; }
+@media (max-width: 560px) { .phase { grid-template-columns: 1fr; gap: 2px; } }
+</style>
+
+<div id="flash" aria-hidden="true"><span id="flashtext"></span></div>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">FourTwenty · design brief · draft 2</div>
+    <h1>Inspiration Infuser</h1>
+    <p class="lede">Smoke, see a colour, chase it. You drop beads of coloured resin into a shimmering pool of liquid weed magic until the pool matches the colour you were inspired by. Get it right and the terpene is yours for good. The infuser below runs the real mixing maths, so play with it.</p>
+  </header>
+
+  <!-- ===== playable infuser ===== -->
+  <div class="rig" id="rig">
+    <div>
+      <div class="lbl" style="margin-bottom:8px">Bead size</div>
+      <div class="sizes" id="sizes" role="group" aria-label="Bead size">
+        <button type="button" data-u="128" aria-pressed="false"><i style="width:12px;height:12px"></i>Glob</button>
+        <button type="button" data-u="4" aria-pressed="true"><i style="width:9px;height:9px"></i>Drop</button>
+        <button type="button" data-u="2" aria-pressed="false"><i style="width:6px;height:6px"></i>Drip</button>
+        <button type="button" data-u="1" aria-pressed="false"><i style="width:4px;height:4px"></i>Speck</button>
+      </div>
+      <div class="lbl" style="margin-bottom:8px">Resins · tap to drop one in</div>
+      <div class="jars" id="jars"></div>
+      <label class="fine" style="display:flex;gap:6px;align-items:center;margin-top:10px">
+        <input type="checkbox" id="unlockall"> Unlock the four family resins (preview)
+      </label>
+    </div>
+
+    <div class="poolbox">
+      <canvas id="pool" width="680" height="680" aria-label="The pool. The colour you were inspired by rings it, touching the pool's edge."></canvas>
+      <div class="delbl">Δ</div>
+      <div class="de" id="de" aria-live="polite">—</div>
+      <div class="status" id="status"></div>
+      <div class="row">
+        <button type="button" class="act" id="swell" title="Double everything in the pool: same colour, finer control">Swell ×2</button>
+        <button type="button" class="act" id="undo">Take it back (3)</button>
+        <button type="button" class="act" id="reset">Drain the pool</button>
+        <button type="button" class="act" id="sound" aria-pressed="false">Sound off</button>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="box">
+        <label for="strain">Strain you're smoking</label>
+        <select id="strain"></select>
+        <div class="row" style="justify-content:flex-start">
+          <button type="button" class="act" id="hit">Take a hit</button>
+          <button type="button" class="act" id="sober">Start over (test)</button>
+        </div>
+        <div class="lbl">Where your mind went · tap a glow to chase it</div>
+        <canvas id="map" width="720" height="300" aria-label="Colour map, washed in green. Colours you're inspired by show through in their true colour; tap one to chase it. The white ring is your pool."></canvas>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <span id="chasing" style="font-weight:700"></span>
+          <div class="leaves" id="leaves" style="width:110px"><span></span><span></span><span></span><span></span><span></span></div>
+        </div>
+        <div class="fine" id="insphelp"></div>
+      </div>
+      <div class="box recipe" aria-label="Recipe">
+        <div class="lbl">Recipe</div>
+        <table><thead><tr><th>Resin</th><th>Glob</th><th>Drop</th><th>Drip</th><th>Speck</th></tr></thead><tbody id="recipe"></tbody></table>
+        <div style="display:flex;justify-content:space-between"><span>Pool</span><span id="total">0 of 12 globs</span></div>
+        <div class="fill"><i id="fillbar"></i></div>
+      </div>
+      <div>
+        <div class="lbl" style="margin-bottom:6px">Discovered · <span id="foundn">0</span>/80</div>
+        <div class="found" id="found"></div>
+      </div>
+    </div>
+  </div>
+  <p class="fine" style="margin-top:8px">A match is Δ 1.0 or less (一・〇〇); 0.5 or less is Spot On ★. Glob = 32 drops = 64 drips = 128 specks; the pool holds 12 globs. Resin names are placeholders. Progress stays on this page only.</p>
+
+  <!-- ===== loop ===== -->
+  <section>
+    <h2>The loop</h2>
+    <p>Each machine has one job. You discover at the Infuser and produce at the Terpinator.</p>
+    <div class="loop">
+      <div><b>Smoke</b><span>A strain flashes a colour across your screen.</span></div>
+      <div><b>Chase it</b><span>Inspiration Infuser: drop resin into the pool until it matches.</span></div>
+      <div><b>Unlock</b><span>A match unlocks that terpene for good.</span></div>
+      <div><b>Produce</b><span>Terpinator: feed it weed of the right family, pick the terpene, collect vials.</span></div>
+      <div><b>Infuse</b><span>Inspiration Infuser: seed + terpene makes a new strain.</span></div>
+      <div><b>Grow</b><span>Plant it, harvest, smoke it, see new colours.</span></div>
+    </div>
+  </section>
+
+  <!-- ===== why you chase ===== -->
+  <section>
+    <h2>Why you'll want to chase it</h2>
+    <div class="grid2">
+      <div class="note">
+        <h3>The vision</h3>
+        <ul>
+          <li><b>When you smoke, the colour floods your screen</b> in Minecraft: a soft full-screen wash of the inspired colour that blooms and fades, with a whispered line ("…something like this").</li>
+          <li>It doesn't fully leave. Until you've matched it, a faint wash of that colour lingers at the screen's edges when you're near the Infuser, an itch you'll want to scratch.</li>
+          <li>Each hit inspires you with one or two of the strain's colours, so visions pile up, and more hits make each one truer. <b>Inspiration never fades.</b></li><li>Everyone starts <b>fully inspired by Green</b>, the colour of the plant, so the first visit to the Infuser has the whole experience: solid colour and green/red feedback.</li>
+        </ul>
+      </div>
+      <div class="note">
+        <h3>The payoff</h3>
+        <ul>
+          <li>The bead that catches it settles the pool on the exact colour, so it melts into the ring around it, and a rainbow swirls up around both. It names the colour and its terpene and adds it to your collection. The pool is then sealed: no more beads until you drain it.</li>
+          <li>Unmatched visions sit in the collection as glowing blanks with no name: you've seen them, but you haven't caught them yet.</li>
+          <li>Every match unlocks blocks to build with (hemp, concrete, lamps, rugs), and every new terpene can become a new strain, which means new visions.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== infuser ===== -->
+  <section>
+    <h2>The pool</h2>
+    <div class="grid2">
+      <div class="note">
+        <h3>Drops and the pool</h3>
+        <ul>
+          <li>A pool of liquid weed magic, clear and shimmering. Each tap drops a bead of resin in: it falls, ripples and swirls through.</li>
+          <li>Four bead sizes: <b>glob, drop, drip, speck</b>. A glob is 32 drops; a speck is half a drip. The recipe card counts them.</li>
+          <li>The pool holds 12 globs of resin. Past that it won't take more.</li>
+          <li><b>It's all about ratios.</b> The pool's colour depends on the proportions of resin, not the amount: 1 Moonmilk to 1 Void Tar is the same grey at two specks or two globs.</li>
+          <li><b>Swell ×2</b> doubles everything in the pool. The colour doesn't change, but every bead after it is a finer adjustment. Close but overshooting? Swell, then fine-tune.</li>
+          <li><b>Take it back</b> undoes the last three moves; <b>Drain the pool</b> starts over. It's all free: experimenting never costs anything.</li>
+        </ul>
+      </div>
+      <div class="note">
+        <h3>Reading the pool</h3>
+        <ul>
+          <li>The inspired colour rings the pool and <b>touches its edge exactly</b>, so you compare them side by side, pixel against pixel.</li>
+          <li>At low inspiration the ring <b>breathes</b> in and out on a slow cycle, staying on a little longer with each level, until at full inspiration it stays. Then its outer edge answers one question after every bead: <i>can this pool still become a proper recipe for this colour?</i> <b style="color:var(--good)">Green</b> means yes, whatever order you go in. A proper recipe is one of the colour's real routes (1 to 3 resins that make it on their own), with a little wiggle room (up to 4% of anything else). <b style="color:var(--bad)">Red</b> means no: something's in there that a proper recipe can't absorb in the space left, so take it back. It never says no to a real route, and it doesn't reward drowning a mistake.</li>
+          <li><b>The map is where you choose.</b> A full colour map, washed in green. Every colour you're inspired by shows through the green in its true colour, faintly at first and truer with each hit. Once you're fully inspired by a colour, its exact spot is marked with a swatch and crosshairs. You can be inspired by many colours at once: tap one to chase it. Your pool is the little ring on the map.</li>
+          <li>The Δ (how far off you are) is always shown, in Japanese numerals. Match at Δ 1.0 or less; Spot On ★ at 0.5 or less. Most people stop seeing a difference around 1.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The resins</h2>
+    <p>Twelve resins, built as a warm and a cool version of each primary. The wrong-leaning blue makes a muddy purple, opposites cancel to grey, and the dark ones take over fast. Under the hood the pool follows real pigment physics (light absorbed and scattered across the spectrum), so it behaves the way your eye expects colour to mix.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Resin</th><th>Neat · with white</th><th>Personality</th><th>Unlocked by</th></tr></thead>
+      <tbody id="ctable"></tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Difficulty and the recipe audit</h2>
+    <p>All 80 colours (the 16 Minecraft colours and the 64 hemp colours) have a target that is a real recipe: a few resins in small whole-number parts, using the resins you have at that stage (the 8 starters, plus the family's own resin for hemp colours). Recipes are chosen for colour accuracy and simplicity, and each one has to pass a test player who starts with a glob of one of the recipe's resins and then only ever takes the single bead that the green/red feedback says helps most (plus Swell). All 80 pass. The Minecraft colours all take 10 moves or fewer; the median across all 80 is 5 or 6, and the hardest takes 14.</p>
+    <div class="grid3" style="margin-bottom:14px">
+      <div class="note"><h3>White</h3><p>White chased Minecraft's exact white, which needed a full pool plus specks of strong blue. Now white is just Moonmilk, the pool liquid is clearer, and Moonmilk is stronger.</p></div>
+      <div class="note"><h3>Purple and simple ratios</h3><p>Purple is now 1 Moonmilk : 2 Berry Bliss : 1 Ocean Couch, found in 4 moves. Every simple recipe (all parts 1 to 4) is considered for every colour, so a friendly ratio wins whenever it's close enough.</p></div>
+      <div class="note"><h3>Pastels and twins</h3><p>Pastels need lopsided ratios (up to 32 parts white to 1), so the big part may go to 32 while the others stay small. Every target is kept at least Δ 4 from every other.</p></div>
+      <div class="note"><h3>Twins unlock together</h3><p>Nine groups of colours are near-copies of each other in the original palette (White, Rolling Paper White and First Exhale; Black and Dave's Not Here; Orange and Up in Smoke; and so on). Each group shares one target and one recipe, and catching it unlocks every twin at once. That leaves 70 colours to chase for 80 terpenes.</p></div>
+    </div>
+    <details class="note">
+      <summary style="cursor:pointer;font-weight:700">Show every recipe (spoilers)</summary>
+      <p class="fine" style="margin-top:8px">Minecraft colour → target colour. Drift = how far the target sits from Minecraft's colour (Δ). Match zone = how far each resin's share can be off and still match. Moves = what the simulated player needed from its best start.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Colour</th><th>Stage</th><th>Recipe (parts)</th><th>Drift</th><th>Moves</th><th>Good first resin</th><th>Gap to nearest earlier colour (Δ)</th></tr></thead>
+        <tbody id="audit"></tbody>
+      </table></div>
+    </details>
+  </section>
+
+  <!-- ===== strains ===== -->
+  <section>
+    <h2>Strains and families</h2>
+    <p>Landrace (regular weed) inspires the 16 Minecraft colours. Infusing a seed with one of those terpenes breeds the strain for its hue row, and smoking that strain inspires the row's four tones (pale, bright, dusky, deep). That makes 16 strains × 4 tones = all 64 hemp colours, each reached exactly once. The strains fall into four families, and the Terpinator needs weed of the right family to make that family's terpenes.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Family</th><th>Strains (hue rows)</th><th>Infused with</th></tr></thead>
+      <tbody>
+        <tr><td><b>Landrace</b></td><td>Regular weed</td><td>Where everyone starts; inspires the 16 Minecraft colours</td></tr>
+        <tr><td><b>Neutrals</b></td><td>Taupe · Cream · True grey · Cool grey</td><td>Black · White · Gray · Light gray</td></tr>
+        <tr><td><b>Warm</b></td><td>Brown · Yellow · Red · Orange</td><td>Brown · Yellow · Red · Orange</td></tr>
+        <tr><td><b>Green</b></td><td>Olive · Lime · Green · Teal</td><td>Green + Brown together · Lime · Green · Cyan</td></tr>
+        <tr><td><b>Cool</b></td><td>Purple · Pink · Blue · Sky</td><td>Purple · Pink or Magenta · Blue · Light blue</td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid2" style="margin-top:14px">
+      <div class="note"><h3>Resins grow with families</h3><p>Landrace gives you 8 resins. Each family's first strain adds the resin its colours need: honey, mud, emerald or grape. Breeding widens what you can mix.</p></div>
+      <div class="note"><h3>Strain identity</h3><p>A strain is data on one seed and one bud item, not a block per strain. The planted crop remembers its strain. Each strain gets a name and a place in your strain book.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The machines</h2>
+    <div class="machines">
+      <div class="machine">
+        <div class="eyebrow">new block</div>
+        <h3>Inspiration Infuser</h3>
+        <ul>
+          <li><b>Pool:</b> chase the colours you've seen; a match unlocks the terpene.</li>
+          <li><b>Infuse:</b> seed + one or two terpenes makes a new strain's seed.</li>
+          <li>Hand-made textures, falling beads, ripples, swirls, bubbles, the map's glow and sound for all of it. Nothing is timed and you can't fail.</li>
+        </ul>
+      </div>
+      <div class="machine">
+        <div class="eyebrow">reworked block</div>
+        <h3>Terpinator</h3>
+        <ul>
+          <li>The factory: feed it weed, pick any terpene you've unlocked in that weed's family, collect vials.</li>
+          <li>The method dial, three blend ports and codon blending all go away.</li>
+          <li>Landrace weed makes the 16 Minecraft colours.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What the new terpenes make</h2>
+    <div class="grid3">
+      <div class="note"><h3>Hemp and concrete</h3><p>Each of the 16 Minecraft-colour terpenes gets hemp blocks (with stairs and slabs) and FourTwenty concrete and powder. Vanilla concrete is untouched.</p></div>
+      <div class="note"><h3>Lamps and trim</h3><p>FourTwenty's 16 dye-colour lamps, inverted lamps and trims become the Minecraft-colour lamps; their recipes take the terpene instead of dye.</p></div>
+      <div class="note"><h3>Rugs</h3><p>Sixteen new rug designs in a Minecraft theme, one per colour.</p></div>
+    </div>
+    <p class="fine" style="margin-top:10px">No vanilla dye anywhere in the terpene system.</p>
+  </section>
+
+  <section>
+    <h2>Mentor and soundtrack</h2>
+    <div class="grid2">
+      <div class="note"><h3>Mentor</h3><p>A character in the corner of both machines who notices where you are and nudges you with riddles ("opposites have a way of cancelling out…"). Stay stuck and the hint narrows, but it never hands over a recipe. Toggle it in the machine or the config.</p></div>
+      <div class="note"><h3>Soundtrack</h3><p>Seven Crawler Tunes play while a machine is open (toggle on or off): <i>For Mead &amp; Melancholy, La Campagnola, Lunar Midnight, New World Tavern, Pints of Folly, Serenade for Thirteen Flagons, Suite for a Lone Bard</i>. Plus sounds for drops, ripples, bubbles, the map's glow and the match.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Decisions so far</h2>
+    <div class="tbl"><table><tbody>
+      <tr><td>Play</td><td>Colour matching. Nothing timed, nothing to fail, experimenting is free.</td></tr>
+      <tr><td>Pool</td><td>Holds 12 globs; beads come as glob, drop, drip, speck; take back three, or drain.</td></tr>
+      <tr><td>Δ readout</td><td>Always visible, in Japanese numerals. Match ≤ 1.0, Spot On ≤ 0.5.</td></tr>
+      <tr><td>Inspiration</td><td>Flashes on screen when you smoke; never fades; glows on the colour map.</td></tr>
+      <tr><td>Where</td><td>Mixing and infusing at the Inspiration Infuser; production at the Terpinator.</td></tr>
+      <tr><td>Lamps</td><td>Existing dye lamps and trims switch to terpenes.</td></tr>
+      <tr><td>Concrete</td><td>New FourTwenty concrete in the 16 colours; vanilla untouched.</td></tr>
+      <tr><td>Names</td><td>Whimsical names and lines, drafted for review.</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section>
+    <h2>Still open</h2>
+    <ul>
+      <li>Do existing saves keep their terpenes, discoveries and hemp blocks?</li>
+      <li>Strain traits beyond terpenes: yield, growth speed, smoke effects?</li>
+      <li>How many hits fill inspiration, and does one hit show one colour or a little of several?</li>
+      <li>Resin and terpene names.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Build order</h2>
+    <div class="phase"><div class="eyebrow">Phase 1</div><div>Mixing maths in Java (shared with this prototype), the Inspiration Infuser with the pool and map, the smoke flash, the 16 Minecraft-colour terpenes and their blocks, the lamp recipe switch, discovery storage, mentor v1.</div></div>
+    <div class="phase"><div class="eyebrow">Phase 2</div><div>Terpinator rework to production-only; strains on seeds and buds; the Infuse side; the 16 strains and families; resin unlocks.</div></div>
+    <div class="phase"><div class="eyebrow">Phase 3</div><div>Art and audio: hand-made textures, animation, sound effects, the soundtrack; Minecraft-theme rugs.</div></div>
+    <div class="phase"><div class="eyebrow">Phase 4</div><div>Migration of old terpenes and saves, balancing, the mentor's full script.</div></div>
+  </section>
+</div>
+
+<script>
+const D = __DATA__;
+const N = D.names.length, BANDS = D.W.length;
+const LABELS = { white: 'Moonmilk', black: 'Void Tar', lemon: 'Sour Sunbeam', gold: 'Honey Oil', orange: 'Creamsicle', scarlet: 'Dragon Breath', crimson: 'Berry Bliss', violet: 'Grape Goo', ultramarine: 'Ocean Couch', phthalo_blue: 'Bottomless Blue', phthalo_green: 'Emerald Ooze', oxide_brown: 'Mud Butter' };
+const CHAR = {
+  white: ['White. Gentle: it takes a lot to lighten anything. Makes pastels.', 'Landrace'],
+  black: ['Black. Brutal: a single speck shows.', 'Landrace'],
+  lemon: ['Cool, green-leaning yellow. Clean greens.', 'Landrace'],
+  gold: ['Warm, red-leaning yellow, a little dull. Olives and browns.', 'Warm family'],
+  orange: ['Clean orange; runs red when it\'s thick.', 'Landrace'],
+  scarlet: ['Warm, yellow-leaning red. Strong.', 'Landrace'],
+  crimson: ['Cool, blue-leaning red: the purple-maker.', 'Landrace'],
+  violet: ['Very strong and a little dull.', 'Cool family'],
+  ultramarine: ['Warm, red-leaning blue. Clean purples.', 'Landrace'],
+  phthalo_blue: ['Cool, green-leaning blue. Treat with respect.', 'Landrace'],
+  phthalo_green: ['Strong, blue-leaning green.', 'Green family'],
+  oxide_brown: ['Earthy brown that greys everything fast. Great for neutrals.', 'Neutrals family'],
+};
+const NICE = { white: 'White', orange: 'Orange', magenta: 'Magenta', light_blue: 'Light Blue', yellow: 'Yellow', lime: 'Lime', pink: 'Pink', gray: 'Gray', light_gray: 'Light Gray', cyan: 'Cyan', purple: 'Purple', blue: 'Blue', brown: 'Brown', green: 'Green', red: 'Red', black: 'Black' };
+
+/* ---- colour maths (same model as the Python design tools) ---- */
+function mixXyz(q) {
+  const xyz = [0, 0, 0];
+  for (let b = 0; b < BANDS; b++) {
+    let K = D.baseK[b], S = D.baseS[b];
+    for (let i = 0; i < N; i++) if (q[i]) { const c = q[i] / 128; K += c * D.K[i][b]; S += c * D.S[i][b]; }
+    const ks = K / S, R = 1 + ks - Math.sqrt(ks * ks + 2 * ks);
+    xyz[0] += R * D.W[b][0]; xyz[1] += R * D.W[b][1]; xyz[2] += R * D.W[b][2];
+  }
+  return xyz;
+}
+function toLab(xyz) {
+  const f = t => t > 216 / 24389 ? Math.cbrt(t) : (24389 / 27 * t + 16) / 116;
+  const fx = f(xyz[0] / D.white[0]), fy = f(xyz[1] / D.white[1]), fz = f(xyz[2] / D.white[2]);
+  return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
+}
+function labToXyz([L, a, b]) {
+  const fy = (L + 16) / 116, fx = fy + a / 500, fz = fy - b / 200;
+  const inv = t => t ** 3 > 216 / 24389 ? t ** 3 : (116 * t - 16) / (24389 / 27);
+  return [inv(fx) * D.white[0], inv(fy) * D.white[1], inv(fz) * D.white[2]];
+}
+function toLinear(xyz) { const [X, Y, Z] = xyz; return [3.2404542 * X - 1.5371385 * Y - 0.4985314 * Z, -0.9692660 * X + 1.8760108 * Y + 0.0415560 * Z, 0.0556434 * X - 0.2040259 * Y + 1.0572252 * Z]; }
+const gam = v => { v = Math.min(1, Math.max(0, v)); return Math.round(255 * (v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055)); };
+const toRgb = xyz => toLinear(xyz).map(gam);
+function de2000(a, b) {
+  const [L1, a1, b1] = a, [L2, a2, b2] = b, rad = Math.PI / 180;
+  const C1 = Math.hypot(a1, b1), C2 = Math.hypot(a2, b2), Cb = (C1 + C2) / 2;
+  const G = 0.5 * (1 - Math.sqrt(Cb ** 7 / (Cb ** 7 + 25 ** 7)));
+  const a1p = (1 + G) * a1, a2p = (1 + G) * a2, C1p = Math.hypot(a1p, b1), C2p = Math.hypot(a2p, b2);
+  const h = (x, y) => { if (x === 0 && y === 0) return 0; const t = Math.atan2(y, x) / rad; return t < 0 ? t + 360 : t; };
+  const h1p = h(a1p, b1), h2p = h(a2p, b2), dLp = L2 - L1, dCp = C2p - C1p;
+  let dhp = 0;
+  if (C1p * C2p !== 0) { dhp = h2p - h1p; if (dhp > 180) dhp -= 360; else if (dhp < -180) dhp += 360; }
+  const dHp = 2 * Math.sqrt(C1p * C2p) * Math.sin(dhp / 2 * rad), Lbp = (L1 + L2) / 2, Cbp = (C1p + C2p) / 2;
+  let hbp = h1p + h2p;
+  if (C1p * C2p !== 0) { if (Math.abs(h1p - h2p) > 180) hbp += h1p + h2p < 360 ? 360 : -360; hbp /= 2; }
+  const T = 1 - 0.17 * Math.cos((hbp - 30) * rad) + 0.24 * Math.cos(2 * hbp * rad) + 0.32 * Math.cos((3 * hbp + 6) * rad) - 0.20 * Math.cos((4 * hbp - 63) * rad);
+  const dTh = 30 * Math.exp(-(((hbp - 275) / 25) ** 2)), Rc = 2 * Math.sqrt(Cbp ** 7 / (Cbp ** 7 + 25 ** 7));
+  const Sl = 1 + 0.015 * (Lbp - 50) ** 2 / Math.sqrt(20 + (Lbp - 50) ** 2), Sc = 1 + 0.045 * Cbp, Sh = 1 + 0.015 * Cbp * T, Rt = -Math.sin(2 * dTh * rad) * Rc;
+  return Math.sqrt((dLp / Sl) ** 2 + (dCp / Sc) ** 2 + (dHp / Sh) ** 2 + Rt * (dCp / Sc) * (dHp / Sh));
+}
+const KANJI = '〇一二三四五六七八九';
+const kanji = x => [...Math.min(x, 99.99).toFixed(2)].map(c => c === '.' ? '・' : KANJI[+c]).join('');
+const hex = rgb => '#' + rgb.map(v => v.toString(16).padStart(2, '0')).join('');
+const rgbOfHex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+
+/* ---- state ---- */
+// Everyone starts fully inspired by Green, the colour of the plant: the first session has the whole experience.
+const START = { green: 5 };
+let q = new Array(N).fill(0), history = [], unit = 4, found = {}, insp = { ...START }, sel = 'green', edge = null, edgeUntil = 0;
+let beads = [], ripples = [], bubbles = [], soundOn = false, actx = null;
+let shown = rgbOfHex(D.empty), aim = shown.slice(), swellT = -1e9, pulseT0 = performance.now(), matched = false, matchT = -1e9, sealed = null, sealedMsg = '';
+const $ = id => document.getElementById(id);
+const byId = Object.fromEntries(D.targets.map(t => [t.id, t]));
+const target = () => sel ? byId[sel] : null;
+const level = () => sel ? insp[sel] || 0 : 0;
+const unlocked = i => $('unlockall').checked || D.starter.includes(D.names[i]) || (target() && target().extra === D.names[i]);
+const total = () => q.reduce((a, b) => a + b, 0);
+const curLab = () => toLab(mixXyz(q));
+const MC = ['white', 'orange', 'magenta', 'light_blue', 'yellow', 'lime', 'pink', 'gray', 'light_gray', 'cyan', 'purple', 'blue', 'brown', 'green', 'red', 'black'];
+const STRAINS = [{ name: 'Landrace (regular weed)', ids: MC }].concat(D.accords.map(a => ({ name: `${a.name} (${a.hue})`, ids: D.targets.filter(t => t.id.startsWith(a.code + '_')).map(t => t.id) })));
+STRAINS.forEach((st, i) => { const o = document.createElement('option'); o.textContent = st.name; o.value = i; $('strain').appendChild(o); });
+const shownName = t => found[t.id] || t.id === 'green' ? t.name : `an unnamed vision (${t.family === 'Minecraft' ? 'Landrace' : t.family})`;
+
+D.names.forEach((n, i) => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'jar'; b.id = 'jar-' + n;
+  b.innerHTML = `<span class="bead" style="background:radial-gradient(circle at 35% 30%, ${D.swatch[n][1]}, ${D.swatch[n][0]} 72%)"></span><span><b>${LABELS[n]}</b><small>${CHAR[n][1]}</small></span>`;
+  b.addEventListener('click', () => drop(i));
+  $('jars').appendChild(b);
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><b>${LABELS[n]}</b></td><td><span class="sw" style="background:${D.swatch[n][0]}"></span> <span class="sw" style="background:${D.swatch[n][1]}"></span></td><td>${CHAR[n][0]}</td><td><span class="chip ${CHAR[n][1] === 'Landrace' ? 'glow' : 'amber'}">${CHAR[n][1]}</span></td>`;
+  $('ctable').appendChild(tr);
+});
+const tier = m => m <= 2 ? 'easy' : m <= 5 ? 'medium' : m <= 9 ? 'tricky' : 'hard';
+const rname = n => LABELS[n];
+D.targets.forEach(t => {
+  const tr = document.createElement('tr');
+  const parts = Object.entries(t.parts).map(([n, p]) => `${p} ${rname(n)}`).join(' : ');
+  tr.innerHTML = `<td><span class="sw" style="background:${t.vanilla}"></span> → <span class="sw" style="background:${t.hex}"></span> <b>${t.name}</b></td><td>${t.family}${t.twin_of ? `<br><span class="chip amber">twin of ${byId[t.twin_of].name}</span>` : ''}</td><td>${parts}</td><td>${t.drift.toFixed(1)}</td><td>${t.moves} <span class="chip">${tier(t.moves)}</span></td><td>${t.starts.map(rname).join(', ')}</td><td>${t.sep >= 99 ? '—' : t.sep}</td>`;
+  $('audit').appendChild(tr);
+});
+D.targets.forEach(t => { const d = document.createElement('div'); d.id = 'f-' + t.id; $('found').appendChild(d); });
+const refreshJars = () => D.names.forEach((n, i) => { $('jar-' + n).disabled = !!sealed || !unlocked(i); });
+
+/* The green/red indicator: can this pool still become a REASONABLE match? Reasonable = one of the colour's valid resin
+   sets (1-3 resins that make it on their own), with a little wiggle room for anything else (WIGGLE of the pool),
+   finished by adding only that set's resins within the space left. Resin can't be taken out, only added. */
+const WIGGLE = 0.04;
+function finishWith(q, lab0, idx, w, free) {
+  const ev = add => de2000(toLab(mixXyz(q.map((v, i) => v + (add[i] || 0)))), lab0);
+  const sumW = w.reduce((a, b) => a + b, 0);
+  let s = 0; idx.forEach((i, k) => { s = Math.max(s, q[i] / w[k]); });
+  const starts = [];
+  for (const scale of [s, s * 1.3 + 2, s * 2 + 8, (free + idx.reduce((a, i) => a + q[i], 0)) / sumW]) {
+    const add = new Array(N).fill(0); let used = 0;
+    idx.forEach((i, k) => { add[i] = Math.max(0, scale * w[k] - q[i]); used += add[i]; });
+    if (used > free) { const f = free / used; idx.forEach(i => { add[i] *= f; }); }
+    starts.push(add);
+  }
+  let best = Infinity;
+  for (const st of starts) {
+    let add = st.slice(), cur = ev(add), step = Math.max(1, free / 2);
+    while (step >= 0.25 && cur > 0.6) {
+      let improved = false;
+      const moves = [];
+      for (const i of idx) for (const d of [1, -1]) moves.push([[i, d]]);
+      for (const i of idx) for (const j of idx) if (i < j) for (const [di, dj] of [[1, 1], [1, -1], [-1, 1]]) moves.push([[i, di], [j, dj]]);
+      for (const mv of moves) {
+        const a2 = add.slice(); for (const [i, d] of mv) a2[i] = Math.max(0, a2[i] + d * step);
+        if (a2.reduce((x, y) => x + y, 0) > free + 1e-9) continue;
+        const v = ev(a2);
+        if (v < cur - 1e-6) { add = a2; cur = v; improved = true; }
+      }
+      if (!improved) step /= 2;
+    }
+    best = Math.min(best, cur);
+    if (best <= 1.0) break;
+  }
+  return best;
+}
+function canFinish(q, t, capSpecks) {
+  const tot = q.reduce((a, b) => a + b, 0), free = capSpecks - tot;
+  for (const c of t.combos) {
+    const idx = c.r.map(n => D.names.indexOf(n));
+    const stray = q.reduce((a, v, i) => a + (idx.includes(i) ? 0 : v), 0);
+    if (stray > WIGGLE * tot + 1e-9) continue;
+    if (finishWith(q, t.lab, idx, c.w, free) <= 1.0) return true;
+  }
+  return false;
+}
+
+/* ---- actions ---- */
+function drop(i) {
+  if (sealed) { status('This pool is finished. Drain it to mix again.', ''); return; }
+  if (!unlocked(i)) return;
+  const add = Math.min(unit, D.cap * 128 - total());
+  if (add <= 0) { status('The pool is full: 12 globs of resin.', 'bad'); return; }
+  const t = target(), before = t ? de2000(curLab(), t.lab) : 0;
+  history.push(q.slice()); if (history.length > 3) history.shift();
+  q[i] += add;
+  const after = t ? de2000(curLab(), t.lab) : 0;
+  beads.push({ t: performance.now(), col: D.swatch[D.names[i]][0], x: (Math.random() - 0.5) * 0.5, size: 3 + Math.log2(add) * 1.6, done: false });
+  if (t && level() >= 5) { edge = canFinish(q, t, D.cap * 128) ? 'good' : 'bad'; edgeUntil = performance.now() + 900; }
+  plip(i, add);
+  update();
+}
+function update() {
+  const t = target();
+  const d = t && total() ? de2000(curLab(), t.lab) : null;
+  if (!sealed && t && d !== null && d <= 1.0) {
+    // caught: the pool seals until it's drained
+    sealed = t.id; matchT = performance.now();
+    const spot = d <= 0.5, was = found[t.id];
+    found[t.id] = Math.max(was || 0, spot ? 2 : 1);
+    const twins = t.twins.filter(id => !found[id]);
+    t.twins.forEach(id => { found[id] = Math.max(found[id] || 0, spot ? 2 : 1); });   // twins unlock together
+    const also = twins.length ? `, and its twin${twins.length > 1 ? 's' : ''} ${twins.map(id => byId[id].name).join(' and ')}` : '';
+    sealedMsg = spot ? `Spot On ★  You caught ${t.name}${also}` : `You caught ${t.name}${also}!`;
+    if (!was) chime();
+  }
+  matched = !!sealed;
+  // a caught pool settles on the exact colour, so it melts into the ring around it
+  aim = sealed ? rgbOfHex(byId[sealed].hex) : total() ? toRgb(mixXyz(q)) : rgbOfHex(D.empty);
+  if (sealed) shown = aim.slice();
+  $('de').textContent = sealed ? kanji(Math.min(d ?? 0, de2000(curLab(), byId[sealed].lab))) : d === null ? '—' : kanji(d);
+  if (sealed) status(sealedMsg + '  Drain the pool to mix again.', 'good');
+  else status(t ? '' : 'Smoke to get inspired, then tap a glow on the map.', '');
+  const cell = v => v || '·';
+  $('recipe').innerHTML = D.names.map((n, i) => q[i] ? `<tr><td>${LABELS[n]}</td><td>${cell(Math.floor(q[i] / 128))}</td><td>${cell(Math.floor(q[i] % 128 / 4))}</td><td>${cell(Math.floor(q[i] % 4 / 2))}</td><td>${cell(q[i] % 2)}</td></tr>` : '').join('')
+    || '<tr><td colspan="5" style="text-align:left;opacity:.6">The pool is clear.</td></tr>';
+  $('total').textContent = `${(total() / 128).toFixed(2).replace(/\.?0+$/, '')} of 12 globs`;
+  $('fillbar').style.width = (total() / (D.cap * 128) * 100) + '%';
+  $('undo').disabled = !!sealed || !history.length; $('undo').textContent = `Take it back (${history.length})`;
+  $('swell').disabled = !!sealed || !total() || total() * 2 > D.cap * 128;
+  D.targets.forEach(t => { const e = $('f-' + t.id); e.className = found[t.id] ? (found[t.id] === 2 ? 'got perfect' : 'got') : ''; e.style.background = found[t.id] ? t.hex : 'transparent'; e.title = found[t.id] ? t.name : '?'; });
+  $('foundn').textContent = Object.keys(found).length;
+  $('chasing').textContent = t ? `Chasing ${shownName(t)}` : 'Nothing yet. Take a hit.';
+  [...$('leaves').children].forEach((s, i) => s.classList.toggle('on', i < level()));
+  const L = level();
+  $('insphelp').textContent = !t ? '' : L >= 5 ? 'Fully inspired: the colour stays around the pool. Its edge glows green while the pool can still become a proper recipe for it, in any order, and red when it cannot (take it back).'
+    : `Inspiration ${L} of 5: the colour breathes in around the pool and stays a little longer with every hit. On the map it shows through the green a little truer each time.`;
+  refreshJars();
+}
+function status(s, kind) { const e = $('status'); e.textContent = s; e.style.color = kind === 'good' ? 'var(--good)' : kind === 'bad' ? 'var(--bad)' : 'var(--muted)'; }
+function smokeFlash(cols, line) {
+  const f = $('flash');
+  f.style.background = cols.length > 1
+    ? `linear-gradient(115deg, ${cols.map((c, i) => `${c} ${Math.round(i / (cols.length - 1) * 100)}%`).join(', ')})`
+    : `radial-gradient(circle at 50% 50%, ${cols[0]} 0%, ${cols[0]} 45%, ${cols[0]}00 100%)`;
+  $('flashtext').textContent = line;
+  f.animate([{ opacity: 0 }, { opacity: 0.6, offset: 0.25 }, { opacity: 0 }], { duration: 1900, easing: 'ease-out' });
+}
+function hit() {
+  const st = STRAINS[+$('strain').value];
+  const open = st.ids.filter(id => (insp[id] || 0) < 5);
+  if (!open.length) { status('This strain has nothing new to show you.', ''); return; }
+  const n = Math.min(open.length, Math.random() < 0.35 ? 2 : 1), picked = [];
+  while (picked.length < n) { const id = open[Math.floor(Math.random() * open.length)]; if (!picked.includes(id)) picked.push(id); }
+  picked.forEach(id => { insp[id] = (insp[id] || 0) + 1; });
+  if (!sel) sel = picked[0];
+  const lines = ['…something like this.', '…oh. That colour.', '…you can almost taste it.', '…closer now.', '…you see it perfectly.'];
+  smokeFlash(picked.map(id => byId[id].hex), lines[Math.min(4, Math.max(...picked.map(id => insp[id])) - 1)]);
+  puff(); update();
+}
+$('sizes').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; unit = +b.dataset.u; [...$('sizes').children].forEach(x => x.setAttribute('aria-pressed', x === b)); });
+$('undo').addEventListener('click', () => { if (!sealed && history.length) { q = history.pop(); update(); } });
+$('swell').addEventListener('click', () => {
+  if (sealed || !total() || total() * 2 > D.cap * 128) return;
+  history.push(q.slice()); if (history.length > 3) history.shift();
+  q = q.map(v => v * 2); swellT = performance.now(); tone(220, 0.5, 'sine', 0.07, 0, 1.6);
+  const t = target(); if (t && level() >= 5) { edge = canFinish(q, t, D.cap * 128) ? 'good' : 'bad'; edgeUntil = performance.now() + 900; }
+  update();
+});
+$('reset').addEventListener('click', () => { history = sealed ? [] : history.concat([q.slice()]).slice(-3); sealed = null; q = new Array(N).fill(0); update(); drain(); });
+$('hit').addEventListener('click', hit);
+$('sober').addEventListener('click', () => { insp = { ...START }; sel = 'green'; found = {}; sealed = null; q = new Array(N).fill(0); history = []; update(); });
+$('unlockall').addEventListener('change', refreshJars);
+$('sound').addEventListener('click', () => { soundOn = !soundOn; $('sound').setAttribute('aria-pressed', soundOn); $('sound').textContent = soundOn ? 'Sound on' : 'Sound off'; if (soundOn && !actx) { try { actx = new AudioContext(); } catch (e) {} } });
+
+/* ---- sound (generated) ---- */
+function tone(freq, dur, type, gain, when = 0, slide = 0) {
+  if (!soundOn || !actx) return;
+  const t0 = actx.currentTime + when, o = actx.createOscillator(), g = actx.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, t0); if (slide) o.frequency.exponentialRampToValueAtTime(freq * slide, t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g).connect(actx.destination); o.start(t0); o.stop(t0 + dur + 0.02);
+}
+function plip(i, add) { const f = 700 + i * 41 - Math.log2(add) * 40; tone(f, 0.16, 'sine', 0.11, 0.32, 0.4); tone(f * 1.5, 0.08, 'sine', 0.04, 0.33, 0.6); }
+function chime() { [0, 4, 7, 11, 14].forEach((s, k) => tone(523.25 * 2 ** (s / 12), 0.9, 'triangle', 0.08, k * 0.08)); }
+function puff() { [0, 7].forEach((s, k) => tone(196 * 2 ** (s / 12), 1.2, 'sine', 0.05, k * 0.05, 1.5)); }
+function drain() { tone(300, 0.5, 'sine', 0.06, 0, 0.3); }
+
+/* ---- the inspired colour breathes: a slow cycle whose "on" share grows with inspiration ---- */
+const PERIOD = 4800;
+function breath(now, L) {
+  if (L <= 0) return 0;
+  if (L >= 5) return 1;
+  const duty = L / 5, ph = ((now - pulseT0) % PERIOD) / PERIOD, fade = 0.14;
+  if (ph > duty + fade) return 0;
+  const v = Math.min(1, ph / fade, (duty + fade - ph) / fade);
+  return v * v * (3 - 2 * v);   // smoothstep: soft in, soft out
+}
+
+/* ---- the pool ---- */
+const cv = $('pool'), cx = cv.getContext('2d');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+for (let i = 0; i < 14; i++) bubbles.push({ a: Math.random() * 6.28, r: Math.random(), s: 0.3 + Math.random() * 0.7, ph: Math.random() * 6.28 });
+function drawPool(now) {
+  const W = cv.width, c = W / 2, r = W * 0.30, ring = W * 0.085;
+  cx.clearRect(0, 0, W, W);
+  shown = shown.map((v, k) => v + (aim[k] - v) * 0.08);
+  if (shown.every((v, k) => Math.abs(v - aim[k]) < 0.6)) shown = aim.slice();
+  const t = target(), L = level();
+  const haze = cx.createRadialGradient(c, c, r, c, c, W * 0.5);
+  haze.addColorStop(0, 'rgba(184,240,106,0.10)'); haze.addColorStop(1, 'rgba(184,240,106,0)');
+  cx.fillStyle = haze; cx.fillRect(0, 0, W, W);
+  // the inspired colour: a disc under the pool, so the two meet at one exact edge
+  const a = t ? breath(now, L) : 0;
+  if (a > 0.01) { cx.save(); cx.globalAlpha = a; cx.beginPath(); cx.arc(c, c, r + ring, 0, Math.PI * 2); cx.fillStyle = t.hex; cx.fill(); cx.restore(); }
+  if (t && L >= 5 && edge && now < edgeUntil) {
+    cx.save(); cx.globalAlpha = Math.min(1, (edgeUntil - now) / 400); cx.lineWidth = W * 0.02;
+    cx.strokeStyle = edge === 'good' ? '#6be38a' : '#ff6f7d'; cx.shadowColor = cx.strokeStyle; cx.shadowBlur = 24;
+    cx.beginPath(); cx.arc(c, c, r + ring + W * 0.012, 0, Math.PI * 2); cx.stroke(); cx.restore();
+  }
+  cx.beginPath(); cx.arc(c, c, r, 0, Math.PI * 2); cx.fillStyle = `rgb(${shown.map(Math.round).join(',')})`; cx.fill();
+  cx.save(); cx.beginPath(); cx.arc(c, c, r - 2, 0, Math.PI * 2); cx.clip();
+  for (const b of beads) if ((now - b.t) / 320 >= 1 && !b.done) { b.done = true; ripples.push({ t: now, x: b.x, col: b.col, size: b.size }); }
+  beads = beads.filter(b => now - b.t < 320);
+  ripples = ripples.filter(p => now - p.t < 2400);
+  for (const p of ripples) {
+    const k = (now - p.t) / 2400, px = c + p.x * r;
+    cx.globalAlpha = (1 - k) * 0.8; cx.strokeStyle = p.col; cx.lineCap = 'round'; cx.lineWidth = p.size * 3 * (1 - k * 0.7);
+    cx.beginPath(); cx.arc(px, c, r * 0.1 + r * 0.6 * k, k * 7, k * 7 + 1.4 + p.size * 0.12); cx.stroke();
+    cx.globalAlpha = (1 - k) * 0.35; cx.strokeStyle = '#fff'; cx.lineWidth = 2;
+    cx.beginPath(); cx.arc(px, c, r * 0.05 + r * 0.9 * k, 0, Math.PI * 2); cx.stroke();
+  }
+  for (const b of bubbles) {
+    const rr = r * 0.55 * b.r, yy = ((now / 9000 * b.s + b.ph) % 1);
+    cx.globalAlpha = 0.18 * Math.sin(yy * Math.PI);
+    cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(c + Math.cos(b.a) * rr, c + r * 0.5 - yy * r, 2 + b.s * 3, 0, Math.PI * 2); cx.fill();
+  }
+  const sk = (now - swellT) / 700;
+  if (sk >= 0 && sk < 1) { cx.globalAlpha = (1 - sk) * 0.5; cx.strokeStyle = '#fff'; cx.lineWidth = W * 0.008; cx.beginPath(); cx.arc(c, c, r * (0.2 + 0.75 * sk), 0, Math.PI * 2); cx.stroke(); }
+  cx.restore(); cx.globalAlpha = 1;
+  for (const b of beads) {
+    const k = (now - b.t) / 320, px = c + b.x * r, py = c - r - ring - W * 0.05 + (r + ring + W * 0.05) * k * k;
+    cx.fillStyle = b.col; cx.beginPath(); cx.ellipse(px, py, b.size * 1.6, b.size * 2.1, 0, 0, Math.PI * 2); cx.fill();
+  }
+  // caught: a swirling rainbow round the pool and its ring, bigger for the first moments
+  if (matched) {
+    const k = Math.min(1, (now - matchT) / 2200), flourish = 1 - k;
+    const r0 = r + ring + W * 0.006, band = W * (0.035 + 0.03 * flourish);
+    cx.save();
+    const spin = now / 900;
+    const g = cx.createConicGradient ? cx.createConicGradient(spin, c, c) : null;
+    if (g) {
+      ['#ff5f6d', '#ffb347', '#fff275', '#7cf28d', '#5fd3ff', '#7d7cff', '#ff7ce5', '#ff5f6d'].forEach((col, i, arr) => g.addColorStop(i / (arr.length - 1), col));
+      cx.strokeStyle = g;
+    } else cx.strokeStyle = `hsl(${(now / 8) % 360} 90% 65%)`;
+    cx.lineWidth = band; cx.shadowColor = '#fff'; cx.shadowBlur = 18 + 30 * flourish;
+    cx.beginPath(); cx.arc(c, c, r0 + band / 2, 0, Math.PI * 2); cx.stroke();
+    cx.shadowBlur = 0;
+    // sparkles riding the swirl
+    for (let s = 0; s < 18; s++) {
+      const ang = spin * (s % 2 ? 1.6 : -1.1) + s / 18 * Math.PI * 2, rr = r0 + band / 2 + Math.sin(now / 300 + s) * band * 0.7 + flourish * W * 0.08 * ((s * 37) % 10) / 10;
+      const sz = W * (0.004 + 0.004 * ((s * 13) % 3)) * (0.6 + 0.4 * Math.sin(now / 200 + s * 2));
+      cx.fillStyle = `hsl(${(s * 40 + now / 10) % 360} 100% 80%)`;
+      cx.beginPath(); cx.arc(c + Math.cos(ang) * rr, c + Math.sin(ang) * rr, Math.max(0.5, sz), 0, Math.PI * 2); cx.fill();
+    }
+    cx.restore();
+  }
+}
+
+/* ---- the colour map: hue across, light to dark down, greys on the right; washed in green until inspiration shows the truth ---- */
+const mv = $('map'), mx = mv.getContext('2d'), MW = mv.width, MH = mv.height, GREY = 60;
+const mapTrue = document.createElement('canvas'), mapGreen = document.createElement('canvas');
+mapTrue.width = mapGreen.width = MW; mapTrue.height = mapGreen.height = MH;
+(function paintMaps() {
+  const g = mapTrue.getContext('2d'), img = g.createImageData(MW, MH);
+  const h = mapGreen.getContext('2d'), gimg = h.createImageData(MW, MH);
+  for (let y = 0; y < MH; y++) {
+    const L = 96 - y / (MH - 1) * 88;
+    const gr = toLinear(labToXyz([L * 0.9 + 4, -26, 22])).map(gam);   // weed-magic green at this lightness
+    for (let x = 0; x < MW; x++) {
+      let lin;
+      if (x >= MW - GREY) lin = toLinear(labToXyz([L, 0, 0]));
+      else {
+        const hr = x / (MW - GREY) * 2 * Math.PI;
+        for (let C = 90; C > 0; C -= 3) { lin = toLinear(labToXyz([L, C * Math.cos(hr), C * Math.sin(hr)])); if (lin.every(v => v >= -0.001 && v <= 1.001)) break; }
+      }
+      const rgb = lin.map(gam), o = (y * MW + x) * 4;
+      img.data[o] = rgb[0]; img.data[o + 1] = rgb[1]; img.data[o + 2] = rgb[2]; img.data[o + 3] = 255;
+      for (let k = 0; k < 3; k++) gimg.data[o + k] = Math.round(gr[k] * 0.86 + rgb[k] * 0.14);
+      gimg.data[o + 3] = 255;
+    }
+  }
+  g.putImageData(img, 0, 0); h.putImageData(gimg, 0, 0);
+})();
+function mapPos(lab) {
+  const [L, a, b] = lab, C = Math.hypot(a, b), y = (96 - Math.max(8, Math.min(96, L))) / 88 * (MH - 1);
+  if (C < 10) return [MW - GREY / 2, y];
+  let hd = Math.atan2(b, a) * 180 / Math.PI; if (hd < 0) hd += 360;
+  return [hd / 360 * (MW - GREY), y];
+}
+const glowR = L => 26 + L * 9;
+const reveal = document.createElement('canvas'); reveal.width = MW; reveal.height = MH;
+const rx = reveal.getContext('2d');
+function drawMap(now) {
+  mx.drawImage(mapGreen, 0, 0);
+  for (const id in insp) {
+    const t = byId[id], L = insp[id], [tx, ty] = mapPos(t.lab), R = glowR(L);
+    rx.globalCompositeOperation = 'source-over'; rx.clearRect(0, 0, MW, MH); rx.drawImage(mapTrue, 0, 0);
+    const strength = L / 5, br = id === sel ? 1 : 0.85 + 0.15 * Math.sin(now / 700 + tx);
+    const g = rx.createRadialGradient(tx, ty, 0, tx, ty, R);
+    g.addColorStop(0, `rgba(0,0,0,${strength * br})`); g.addColorStop(0.55, `rgba(0,0,0,${strength * 0.7 * br})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+    rx.globalCompositeOperation = 'destination-in'; rx.fillStyle = g; rx.fillRect(0, 0, MW, MH);
+    mx.drawImage(reveal, 0, 0);
+    if (found[id] && L < 5) { mx.fillStyle = '#fff'; mx.beginPath(); mx.arc(tx, ty, 4, 0, Math.PI * 2); mx.fill(); }
+  }
+  // fully inspired: mark the exact spot, a swatch of the true colour with crosshair ticks
+  for (const id in insp) {
+    if (insp[id] < 5) continue;
+    const t = byId[id], [tx, ty] = mapPos(t.lab);
+    mx.save();
+    mx.lineWidth = 2; mx.strokeStyle = 'rgba(255,255,255,0.95)'; mx.lineCap = 'round';
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { mx.beginPath(); mx.moveTo(tx + dx * 12, ty + dy * 12); mx.lineTo(tx + dx * 19, ty + dy * 19); mx.stroke(); }
+    mx.beginPath(); mx.arc(tx, ty, 8, 0, Math.PI * 2); mx.fillStyle = t.hex; mx.fill();
+    mx.lineWidth = 2.5; mx.strokeStyle = '#fff'; mx.stroke();
+    mx.lineWidth = 1.5; mx.strokeStyle = '#15111f'; mx.beginPath(); mx.arc(tx, ty, 10, 0, Math.PI * 2); mx.stroke();
+    if (found[id]) { mx.fillStyle = '#fff'; mx.font = 'bold 12px sans-serif'; mx.textAlign = 'center'; mx.fillText('★', tx, ty - 22); }
+    mx.restore();
+  }
+  mx.fillStyle = 'rgba(21,17,31,0.9)'; mx.fillRect(MW - GREY - 2, 0, 2, MH);
+  if (sel) {
+    const [tx, ty] = mapPos(byId[sel].lab), R = glowR(insp[sel] || 0);
+    mx.save(); mx.setLineDash([10, 8]); mx.lineDashOffset = -now / 60; mx.lineWidth = 3; mx.strokeStyle = 'rgba(255,255,255,0.9)';
+    mx.beginPath(); mx.arc(tx, ty, R, 0, Math.PI * 2); mx.stroke(); mx.restore();
+  }
+  if (total()) {
+    const [px, py] = mapPos(curLab());
+    mx.lineWidth = 4; mx.strokeStyle = '#fff'; mx.beginPath(); mx.arc(px, py, 11, 0, Math.PI * 2); mx.stroke();
+    mx.lineWidth = 2; mx.strokeStyle = '#15111f'; mx.beginPath(); mx.arc(px, py, 15, 0, Math.PI * 2); mx.stroke();
+  }
+}
+mv.addEventListener('click', e => {
+  const b = mv.getBoundingClientRect(), x = (e.clientX - b.left) / b.width * MW, y = (e.clientY - b.top) / b.height * MH;
+  let best = null;
+  for (const id in insp) { const [tx, ty] = mapPos(byId[id].lab), d = Math.hypot(tx - x, ty - y); if (d <= glowR(insp[id]) + 8 && (!best || d < best[0])) best = [d, id]; }
+  if (best) { sel = best[1]; pulseT0 = performance.now(); edge = null; update(); tone(660, 0.25, 'sine', 0.05); }
+});
+mv.style.cursor = 'pointer';
+function frame(now) { drawPool(now); drawMap(now); if (!reduce) requestAnimationFrame(frame); }
+if (reduce) setInterval(() => frame(performance.now()), 150);
+update(); requestAnimationFrame(frame);
+</script>

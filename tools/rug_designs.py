@@ -640,6 +640,237 @@ def f_minimal(X, Z, P):
     return out
 
 
+# ---- the Minecraft colours: blocky things from the game -----------------------------------------------
+
+def rbox(X, Z, cx, cz, w, h, ang=0.0, r=0.35):
+    """A box w x h centred on (cx, cz), turned ang, its corners rounded by r."""
+    s, t = local(X, Z, cx, cz, ang)
+    qx, qz = np.abs(s) - w / 2 + r, np.abs(t) - h / 2 + r
+    return np.hypot(np.maximum(qx, 0), np.maximum(qz, 0)) + np.minimum(np.maximum(qx, qz), 0) < r
+
+
+def pixels(X, Z, cx, cz, size, rows, ang=0.0):
+    """A pixel-art sprite centred on (cx, cz), size across, turned ang: {char: mask} for each character in rows."""
+    s, t = local(X, Z, cx, cz, ang)
+    n = len(rows)
+    i, j = np.floor((t / size + 0.5) * n).astype(int), np.floor((s / size + 0.5) * n).astype(int)
+    inside = (i >= 0) & (i < n) & (j >= 0) & (j < n)
+    grid = np.array([list(r) for r in rows])
+    ch = np.where(inside, grid[np.clip(i, 0, n - 1), np.clip(j, 0, n - 1)], '.')
+    return {c: ch == c for c in set(''.join(rows)) if c != '.'}
+
+
+def gem(X, Z, cx, cz, R, ang=0.0):
+    """A cut gem from above: a rhombus. Returns (stone, facets)."""
+    s, t = local(X, Z, cx, cz, ang)
+    stone = np.abs(s) / R + np.abs(t) / (R * 0.8) < 1
+    table = np.abs(s) / (R * 0.45) + np.abs(t) / (R * 0.36) < 1
+    return stone, stone & ~table & ((s > 0) ^ (t > 0))
+
+
+def f_bones(X, Z, P):
+    """Bones tossed about, bone meal sprinkled between."""
+    out = []
+    for (x0, z0, a, L) in ((3.6, 2.2, 0.5, 4.2), (6.2, 6.4, 2.0, 2.6)):
+        c, si = np.cos(a), np.sin(a)
+        ax, az, bx, bz = x0 - c * L / 2, z0 - si * L / 2, x0 + c * L / 2, z0 + si * L / 2
+        knob = L * 0.12
+        out.append((capsule(X, Z, ax, az, bx, bz, L * 0.16), ACCENT))
+        for ex, ez in ((ax, az), (bx, bz)):
+            for side in (-1, 1):
+                out.append((disc(X, Z, ex - si * side * knob, ez + c * side * knob, knob * 1.15), ACCENT))
+        out.append((capsule(X, Z, ax + c * 0.4, az + si * 0.4, bx - c * 0.4, bz - si * 0.4, L * 0.05), LIGHT))
+    for (cx, cz) in ((0, 0), (1.2, 5.6), (6.8, 2.0), (4.8, 0.2), (2.6, 7.2)):
+        out.append((rbox(X, Z, cx, cz, 0.5, 0.5, 0.4, 0.1), DEEP))
+    return out
+
+
+def f_gravel(X, Z, P):
+    """Gravel: a scatter of rounded pebbles in three greys."""
+    rng = np.random.default_rng(P.get('seed', 7))
+    out = []
+    for _ in range(26):
+        cx, cz = rng.uniform(0.3, 7.7, 2)
+        R = rng.uniform(0.35, 0.9)
+        out.append((ellipse(X, Z, cx, cz, R, R * rng.uniform(0.6, 0.9), rng.uniform(0, np.pi)), (ACCENT, DEEP, LIGHT)[rng.integers(3)]))
+    return out
+
+
+def f_cobble(X, Z, P):
+    """Cobblestone: chunky stones with mortar between, a little moss on one."""
+    stones = ((1.9, 1.7, 3.2, 2.8, 0.1), (5.9, 1.5, 3.6, 2.4, -0.08), (1.4, 5.3, 2.2, 3.6, 0.05), (4.6, 4.9, 3.4, 2.6, 0.12),
+              (7.0, 4.5, 1.2, 3.0, 0), (3.7, 7.2, 2.6, 1.0, 0), (6.6, 7.1, 2.2, 1.0, 0))
+    out = []
+    for k, (cx, cz, w, h, a) in enumerate(stones):
+        out.append((rbox(X, Z, cx, cz, w, h, a, 0.6), LIGHT if k % 2 else ACCENT))
+        out.append((rbox(X, Z, cx - 0.25, cz - 0.25, w * 0.45, h * 0.35, a, 0.3), ACCENT if k % 2 else EXTRA))
+    out.append((rbox(X, Z, 4.6, 4.9, 3.4, 2.6, 0.12, 0.6) & (smooth_noise(X, Z, [(3, 2, 1.0, 0.4)]) > 0.6), LEAF))
+    return out
+
+
+def f_obsidian(X, Z, P):
+    """Obsidian: dark glassy facets, purple glints along the cracks."""
+    out = []
+    for (cx, cz, w, h, a, c) in ((2.4, 2.0, 3.4, 1.6, 0.6, ACCENT), (5.8, 5.6, 2.6, 1.4, -0.7, ACCENT), (6.4, 1.6, 1.6, 0.9, 0.2, DEEP),
+                                 (1.6, 6.0, 1.8, 1.0, 1.2, DEEP)):
+        out.append((rbox(X, Z, cx, cz, w, h, a, 0.15), c))
+    for (ax, az, bx, bz) in ((0.0, 4.0, 3.6, 3.6), (3.6, 3.6, 4.6, 7.4), (3.6, 3.6, 7.6, 3.2)):
+        out.append((capsule(X, Z, ax, az, bx, bz, 0.16), EXTRA))
+    out += [(sparkle(X, Z, 0, 0, 0.9), LIGHT), (sparkle(X, Z, 6.6, 7.0, 0.6, 0.4), LIGHT), (disc(X, Z, 4.6, 1.0, 0.18), LIGHT)]
+    return out
+
+
+def f_dirt(X, Z, P):
+    """A dirt block's specks with grass tufts poking up."""
+    out = []
+    rng = np.random.default_rng(3)
+    for _ in range(22):
+        cx, cz = rng.uniform(0.3, 7.7, 2)
+        out.append((rbox(X, Z, cx, cz, 0.6, 0.6, 0, 0.12), (DEEP, LIGHT)[rng.integers(2)]))
+    for (x0, z0, a) in ((3.4, 2.6, -1.9), (6.4, 6.2, -1.3)):
+        for k, rel in enumerate((-0.5, 0, 0.5)):
+            b, v = leaf(X, Z, x0, z0, a + rel, (1.9, 2.4, 1.7)[k], 0.55, bend=0.1 * (k - 1))
+            out.append((b, LEAF))
+    return out
+
+
+def f_redstone(X, Z, P):
+    """Redstone dust wired across the rug, bright where it meets, a torch at the junctions."""
+    out = [(capsule(X, Z, -8, 0, 8, 0, 0.7) | capsule(X, Z, 0, -8, 0, 8, 0.7), DEEP),
+           (capsule(X, Z, -8, 0, 8, 0, 0.3) | capsule(X, Z, 0, -8, 0, 8, 0.3), ACCENT)]
+    out += [(rbox(X, Z, 0, 0, 2.0, 2.0, np.pi / 4, 0.3), ACCENT), (disc(X, Z, 0, 0, 0.6), LIGHT)]
+    out += [(capsule(X, Z, 8, 4.4, 4.4, 4.4, 0.7) | capsule(X, Z, 4.4, 4.4, 4.4, 8, 0.7), DEEP),
+            (capsule(X, Z, 8, 4.4, 4.4, 4.4, 0.3) | capsule(X, Z, 4.4, 4.4, 4.4, 8, 0.3), ACCENT)]
+    out += [(rbox(X, Z, 4.4, 4.4, 1.0, 1.0), STEM), (disc(X, Z, 4.4, 4.4, 0.42), LIGHT)]
+    for (cx, cz) in ((2.4, 1.4), (6.6, 2.0), (1.6, 6.2)):
+        out.append((disc(X, Z, cx, cz, 0.22), ACCENT))
+    return out
+
+
+def f_blaze(X, Z, P):
+    """Blaze rods tossed round a fire, sparks flying."""
+    out = []
+    for (x0, z0, a, L) in ((3.2, 2.4, 0.4, 4.6), (6.4, 6.0, 2.1, 2.8)):
+        c, si = np.cos(a) * L / 2, np.sin(a) * L / 2
+        out += [(capsule(X, Z, x0 - c, z0 - si, x0 + c, z0 + si, 0.9), DEEP), (capsule(X, Z, x0 - c, z0 - si, x0 + c, z0 + si, 0.55), LIGHT)]
+    for k in range(4):
+        a = k * TAU / 4 + np.pi / 4
+        out += flame(X, Z, np.cos(a) * 0.4, np.sin(a) * 0.4, a, 1.6, 1.1, ACCENT, LIGHT)
+    for (cx, cz, R) in ((5.6, 2.2, 0.35), (1.6, 5.4, 0.3), (7.2, 3.8, 0.22)):
+        out.append((rbox(X, Z, cx, cz, R * 2, R * 2, np.pi / 4, 0.05), EXTRA))
+    return out
+
+
+def f_nuggets(X, Z, P):
+    """Gold nuggets, chunky and lumpy, with a glint."""
+    out = []
+    for (cx, cz, R, a) in ((3.4, 2.2, 1.3, 0.3), (6.2, 6.2, 0.9, 1.1), (1.4, 5.8, 0.7, -0.4), (6.8, 1.2, 0.55, 0.7)):
+        lump = rbox(X, Z, cx, cz, R * 1.6, R * 1.2, a, R * 0.3) | rbox(X, Z, cx + R * 0.35, cz - R * 0.35, R * 1.0, R * 1.0, a, R * 0.25)
+        out += [(lump, DEEP), (rbox(X, Z, cx - R * 0.05, cz - R * 0.05, R * 1.3, R * 0.9, a, R * 0.25), ACCENT),
+                (rbox(X, Z, cx - R * 0.3, cz - R * 0.25, R * 0.4, R * 0.3, a, 0.05), LIGHT)]
+    out += [(sparkle(X, Z, 0, 0, 1.4), LIGHT), (sparkle(X, Z, 4.8, 4.4, 0.6, 0.4), LIGHT)]
+    return out
+
+
+SLIME = ('........', '.bb..bb.', '.bb..bb.', '........', '........', '....m...', '........', '........')
+CREEPER = ('........', '.ee..ee.', '.ee..ee.', '...mm...', '..mmmm..', '..mmmm..', '..m..m..', '........')
+
+
+def f_slime(X, Z, P):
+    """Slime cubes: jelly outside, a smaller cube and a face inside."""
+    out = []
+    for (cx, cz, sz, a) in ((3.6, 2.4, 3.6, 0.2), (6.4, 6.4, 2.0, -0.5), (0, 0, 1.2, 0)):
+        out += [(rbox(X, Z, cx, cz, sz, sz, a, sz * 0.12), ACCENT), (rbox(X, Z, cx, cz, sz * 0.7, sz * 0.7, a, sz * 0.08), LIGHT)]
+        if sz > 1.5:
+            px = pixels(X, Z, cx, cz, sz * 0.7, SLIME, a)
+            out += [(px['b'], DEEP), (px['m'], DEEP)]
+    return out
+
+
+def f_creeper(X, Z, P):
+    """Creeper faces, pixel for pixel, mottled like the skin."""
+    out = []
+    for (cx, cz, sz, a) in ((3.6, 2.4, 4.0, 0.15), (6.6, 6.6, 2.2, -0.4)):
+        head = rbox(X, Z, cx, cz, sz, sz, a, 0.1)
+        px = pixels(X, Z, cx, cz, sz, CREEPER, a)
+        mottle = head & (smooth_noise(X, Z, [(5, 3, 1.0, 0.2), (2, 7, 0.6, 1.0)]) > 0.7)
+        out += [(head, LEAF), (mottle, LIGHT), (px['e'], DEEP), (px['m'], DEEP)]
+    out.append((rbox(X, Z, 0, 0, 1.0, 1.0, np.pi / 4, 0.1), LEAF))
+    return out
+
+
+def f_diamonds(X, Z, P):
+    """Diamonds tossed about, facets catching the light."""
+    out = []
+    for (cx, cz, R, a) in ((3.6, 2.2, 2.0, 0.3), (6.4, 6.4, 1.2, 1.2), (1.4, 5.8, 0.9, -0.6), (0, 0, 1.0, np.pi / 4)):
+        stone, facets = gem(X, Z, cx, cz, R, a)
+        out += [(stone, LIGHT), (facets, ACCENT), (gem(X, Z, cx, cz, R * 0.3, a)[0], EXTRA)]
+    out += [(sparkle(X, Z, 6.8, 1.6, 0.6), EXTRA), (sparkle(X, Z, 4.4, 6.0, 0.45, 0.5), EXTRA)]
+    return out
+
+
+def f_skyblock(X, Z, P):
+    """Square clouds drifting by a lone floating grass block."""
+    out = []
+    for (cx, cz, w, h) in ((3.8, 2.0, 4.0, 1.6), (4.6, 1.0, 2.0, 1.2), (6.6, 6.2, 2.4, 1.2), (6.2, 5.4, 1.2, 1.0)):
+        out.append((rbox(X, Z, cx, cz, w, h, 0, 0.2), LIGHT))
+    out += [(rbox(X, Z, 0, 0, 2.4, 2.4, 0, 0.1), STEM), (rbox(X, Z, 0, 0, 1.9, 1.9, 0, 0.1), LEAF), (rbox(X, Z, 0.3, -0.3, 0.4, 0.4, 0, 0.05), EXTRA)]
+    out += [(rbox(X, Z, 1.6, 5.8, 0.8, 0.8, 0, 0.1), LIGHT)]
+    return out
+
+
+def f_lapis(X, Z, P):
+    """Lapis: clusters of blue flecks set with gold, like the ore."""
+    out = []
+    for (cx, cz) in ((3.4, 2.4), (6.2, 6.2), (0, 0)):
+        for (dx, dz, s) in ((0, 0, 1.0), (0.9, 0.5, 0.7), (-0.7, 0.8, 0.6), (0.4, -0.9, 0.6), (-0.9, -0.5, 0.5)):
+            out.append((rbox(X, Z, cx + dx, cz + dz, s, s, 0, 0.1), ACCENT))
+        out.append((rbox(X, Z, cx + 0.15, cz + 0.15, 0.4, 0.4, 0, 0.05), LIGHT))
+        out.append((rbox(X, Z, cx - 0.45, cz + 0.85, 0.25, 0.25, 0, 0.03), EXTRA))
+    out += [(rbox(X, Z, 6.8, 1.6, 0.3, 0.3, 0, 0.05), EXTRA), (rbox(X, Z, 1.6, 6.6, 0.3, 0.3, 0, 0.05), EXTRA)]
+    return out
+
+
+def f_portal(X, Z, P):
+    """A nether portal's swirl, its sparks drifting out."""
+    out = [(spiral(X, Z, 0, 0, 5.4, 2.2, 0.9), ACCENT), (spiral(X, Z, 0, 0, 5.4, 2.2, 0.35), LIGHT), (disc(X, Z, 0, 0, 0.8), LIGHT)]
+    out += [(spiral(X, Z, 8, 8, 2.6, 1.3, 0.5, 1.0), ACCENT)]
+    for (cx, cz, R) in ((5.8, 2.4, 0.3), (2.4, 6.4, 0.25), (6.8, 5.0, 0.2)):
+        out.append((rbox(X, Z, cx, cz, R * 2, R * 2, 0, 0.05), EXTRA))
+    return out
+
+
+def f_alliums(X, Z, P):
+    """Alliums: round heads of tiny stars on tall stems."""
+    out = []
+    for (x0, z0, a, L, R) in ((1.0, 5.8, -1.0, 4.0, 1.5), (5.0, 7.6, -2.2, 2.6, 1.0)):
+        hx, hz = x0 + np.cos(a) * L, z0 + np.sin(a) * L
+        out.append((capsule(X, Z, x0, z0, hx, hz, 0.22), STEM))
+        out += toss_leaf(X, Z, x0, z0, a - 0.6, L * 0.5, 0.5)
+        out.append((disc(X, Z, hx, hz, R), ACCENT))
+        for k in range(7):
+            th = k * TAU / 7
+            out.append((pointed(X, Z, hx + np.cos(th) * R * 0.55, hz + np.sin(th) * R * 0.55, 6, R * 0.32, th, 0.3), LIGHT))
+        out.append((pointed(X, Z, hx, hz, 6, R * 0.32, 0, 0.3), LIGHT))
+    out.append((pointed(X, Z, 0, 0, 8, 0.9, 0, 0.3), ACCENT))
+    return out
+
+
+def f_sheep(X, Z, P):
+    """Fluffy pink sheep grazing, seen from above."""
+    out = []
+    for (cx, cz, R, a) in ((3.4, 2.6, 2.0, 0.3), (6.4, 6.6, 1.2, 2.0)):
+        c, si = np.cos(a), np.sin(a)
+        out += cloud(X, Z, cx, cz, R * 1.1, LIGHT, ACCENT, a)
+        hx, hz = cx + c * R * 1.15, cz + si * R * 1.15
+        out += [(rbox(X, Z, hx, hz, R * 0.55, R * 0.5, a, R * 0.1), EXTRA)]
+        for side in (-1, 1):
+            out.append((disc(X, Z, hx + c * R * 0.12 - si * side * R * 0.14, hz + si * R * 0.12 + c * side * R * 0.14, R * 0.06), DEEP))
+    for (cx, cz) in ((0, 0), (1.4, 6.6), (7.0, 2.6)):
+        out.append((pointed(X, Z, cx, cz, 5, 0.6, 0.3, 0.3), ACCENT))
+    return out
+
+
 FIELDS = {name[2:]: fn for name, fn in globals().items() if name.startswith('f_')}
 
 
@@ -721,6 +952,14 @@ def b_tassels(d, s, P):
     """Fringe-like stripes, short, with a band over (a woven kilim edge)."""
     stripes = (np.mod(s, 1) < 0.45) & (d > 0.9) & (d < 1.7)
     return [(stripes, LIGHT), (np.abs(d - 2.1) < 0.25, P.get('band', DEEP))]
+
+
+def b_blocks(d, s, P):
+    """A row of little blocks along the edge in two shades, pixel-crisp (the Minecraft colours)."""
+    x = np.mod(s, 2)
+    blk = (x > 0.3) & (x < 1.7) & (d > 1.0) & (d < 2.4)
+    alt = np.mod(np.floor(s / 2), 2) == 1
+    return [(blk & ~alt, LIGHT), (blk & alt, P.get('second', ACCENT))]
 
 
 BORDERS = {name[2:]: fn for name, fn in globals().items() if name.startswith('b_')}
@@ -813,6 +1052,23 @@ DESIGNS = {
     'lav_lav_pin': ('rings', {}, 'braid', {}, {'accent': 'lav_lav_myr', 'light': 'lav_lav_lim', 'extra': 'lim_lim_pin'}),   # Everything Is Connected, Man
     'lav_lav_lav': ('clouds', {'rain': True, 'line': DEEP}, 'dots', {}, {'light': 'myr_lav_lim', 'accent': 'lav_lav_lim'}),   # Overcast Overthinking
     'lav_lav_myr': ('night', {'moon': True}, 'dots', {}, {'light': 'lim_lim_lim', 'accent': 'lav_lav_pin', 'extra': 'lim_lim_lim'}),   # 3 A.M. Deep Thoughts
+    # the Minecraft colours (overrides may be hex colours)
+    'mc_white': ('bones', {}, 'blocks', {}, {'accent': '#E4DFD0', 'light': '#FFFFFF', 'deep': '#B9B4A8', 'band': '#D8D4C8'}),   # Bone Meal Haze
+    'mc_orange': ('blaze', {}, 'blocks', {'second': DEEP}, {'accent': '#FFB43A', 'light': '#FFE45C', 'deep': '#9A4A06', 'extra': '#FFF2A0'}),   # Blaze Rod Glow
+    'mc_magenta': ('alliums', {}, 'blocks', {}, {'accent': '#A93AB0', 'light': '#F2A6F4', 'extra': '#F2A6F4', **GREEN_LEAF}),   # Allium Afterglow
+    'mc_light_blue': ('skyblock', {}, 'blocks', {}, {'light': '#F4FBFF', 'accent': '#1F8FC8', 'leaf': '#61A83C', 'stem': '#7A5232', 'extra': '#8CD05A'}),   # Sky Block Sesh
+    'mc_yellow': ('nuggets', {}, 'blocks', {}, {'accent': '#F2B712', 'deep': '#B07A08', 'light': '#FFFBD0'}),   # Gold Nugget Giggles
+    'mc_lime': ('slime', {}, 'blocks', {}, {'accent': '#A6DC6A', 'light': '#6FA531', 'deep': '#355A16'}),   # Slime Time
+    'mc_pink': ('sheep', {}, 'blocks', {}, {'light': '#FFC8D6', 'accent': '#D7738B', 'extra': '#E8C9A8', 'deep': '#3A2A2A'}),   # Pink Sheep Shuffle
+    'mc_gray': ('cobble', {}, 'blocks', {'second': EXTRA}, {'accent': '#6E6E6E', 'light': '#8A8A8A', 'extra': '#5E5E5E', 'leaf': '#5C7A34'}),   # Cobble Thoughts
+    'mc_light_gray': ('gravel', {}, 'blocks', {}, {'accent': '#86827E', 'deep': '#6E6A66', 'light': '#C6C4C0'}),   # Gravel Gaze
+    'mc_cyan': ('diamonds', {}, 'blocks', {}, {'light': '#B9F6F2', 'accent': '#4ED8D2', 'extra': '#FFFFFF'}),   # Diamond Hands
+    'mc_purple': ('portal', {}, 'blocks', {}, {'accent': '#A65AF0', 'light': '#E2B8FF', 'extra': '#E2B8FF', 'deep': '#3E1670'}),   # Portal Daze
+    'mc_blue': ('lapis', {}, 'blocks', {}, {'accent': '#4F66E8', 'light': '#9AAAF8', 'extra': '#F4C430'}),   # Lapis Lounge
+    'mc_brown': ('dirt', {}, 'blocks', {'second': LEAF}, {'deep': '#5A3B26', 'light': '#9A7050', 'leaf': '#61A83C'}),   # Dirt Block Daydream
+    'mc_green': ('creeper', {}, 'blocks', {'second': LEAF}, {'leaf': '#7FB238', 'light': '#A7D069', 'deep': '#101010'}),   # Creeper Kush
+    'mc_red': ('redstone', {}, 'blocks', {}, {'accent': '#FF2A1E', 'light': '#FFB0A0', 'deep': '#5E0F0C', 'stem': '#8A8A8A'}),   # Redstone Rush
+    'mc_black': ('obsidian', {}, 'blocks', {'second': EXTRA}, {'accent': '#2C2240', 'deep': '#0E0C14', 'extra': '#7A3FC0', 'light': '#C8A8FF'}),   # Obsidian Couchlock
     # Natural Hemp
     'natural': ('fanleaf', {}, 'tassels', {}, {'accent': 'pin_lim_lav', 'deep': 'pin_lim_myr', 'light': 'myr_lim_lim', 'extra': 'lim_myr_pin', **GREEN_LEAF}),
 }

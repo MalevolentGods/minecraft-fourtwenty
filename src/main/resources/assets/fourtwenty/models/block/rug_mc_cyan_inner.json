@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:block/rug_inner",
+  "textures": {
+    "rug": "fourtwenty:block/rug/mc_cyan_inner"
+  }
+}

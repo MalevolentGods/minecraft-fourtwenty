@@ -64,6 +64,22 @@
     "fourtwenty:concrete_lav_lav_lim",
     "fourtwenty:concrete_lav_lav_pin",
     "fourtwenty:concrete_lav_lav_lav",
-    "fourtwenty:concrete_lav_lav_myr"
+    "fourtwenty:concrete_lav_lav_myr",
+    "fourtwenty:concrete_mc_white",
+    "fourtwenty:concrete_mc_orange",
+    "fourtwenty:concrete_mc_magenta",
+    "fourtwenty:concrete_mc_light_blue",
+    "fourtwenty:concrete_mc_yellow",
+    "fourtwenty:concrete_mc_lime",
+    "fourtwenty:concrete_mc_pink",
+    "fourtwenty:concrete_mc_gray",
+    "fourtwenty:concrete_mc_light_gray",
+    "fourtwenty:concrete_mc_cyan",
+    "fourtwenty:concrete_mc_purple",
+    "fourtwenty:concrete_mc_blue",
+    "fourtwenty:concrete_mc_brown",
+    "fourtwenty:concrete_mc_green",
+    "fourtwenty:concrete_mc_red",
+    "fourtwenty:concrete_mc_black"
   ]
 }

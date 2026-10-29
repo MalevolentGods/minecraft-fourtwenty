@@ -25,9 +25,9 @@ def write(path, obj):
 
 
 def hemp_blocks():
-    """(block id, texture, display name) for Natural Hemp and the 64 colours."""
+    """(block id, texture, display name) for Natural Hemp, the 64 colours and the 16 Minecraft colours."""
     out = [('natural_hemp', 'fourtwenty:block/hemp/natural', DATA['natural']['name'])]
-    out += [(f'hemp_{c["code"]}', f'fourtwenty:block/hemp/{c["code"]}', f'{c["name"]} Hemp') for c in DATA['colors']]
+    out += [(f'hemp_{c["code"]}', f'fourtwenty:block/hemp/{c["code"]}', f'{c["name"]} Hemp') for c in DATA['colors'] + DATA['minecraft']]
     return out
 
 
@@ -100,6 +100,7 @@ def palette_java():
     by_code = {c['code']: c['hex'] for c in DATA['colors']}
     accords = [by_code[a['code'] + '_pin'] for a in DATA['accords']]
     bases = [b['hex'] for b in DATA['bases']]
+    minecraft = [c['hex'] for c in DATA['minecraft']]
     rows = lambda xs: '\n            '.join(ints(xs[i:i + 8]) + ',' for i in range(0, len(xs), 8))
     JAVA.write_text(f'''package com.malevolentgods.fourtwenty.domain;
 
@@ -123,6 +124,14 @@ public final class TerpenePalette {{
     private static final int[] FINALS = {{
             {rows(finals)}
     }};
+
+    /** The Minecraft-colour terpenes, in DyeColor order. */
+    private static final int[] MINECRAFT = {{
+            {rows(minecraft)}
+    }};
+
+    /** A Minecraft-colour terpene's colour (the colour caught in the Infuser). */
+    public static int minecraft(net.minecraft.world.item.DyeColor dye) {{ return MINECRAFT[dye.getId()]; }}
 
     /** A terpene's colour (a final terpene's is its hemp colour). */
     public static int color(Terpenes.Code code) {{
@@ -153,8 +162,8 @@ def generate():
     # 4 weed buds -> 2 Natural Hemp.
     write(DATA_DIR / 'recipe/natural_hemp.json', {'type': 'minecraft:crafting_shaped', 'category': 'building',
         'pattern': ['BB', 'BB'], 'key': {'B': {'item': 'fourtwenty:weed_bud'}}, 'result': {'id': 'fourtwenty:natural_hemp', 'count': 2}})
-    # A final terpene + 8 hemp blocks of any colour -> 8 of its colour.
-    for c in DATA['colors']:
+    # A final (or Minecraft-colour) terpene + 8 hemp blocks of any colour -> 8 of its colour.
+    for c in DATA['colors'] + DATA['minecraft']:
         write(DATA_DIR / f'recipe/hemp_{c["code"]}.json', {'type': 'minecraft:crafting_shaped', 'category': 'building',
             'group': 'fourtwenty_hemp_dye', 'pattern': ['HHH', 'HTH', 'HHH'],
             'key': {'H': {'tag': 'fourtwenty:hemp_blocks'}, 'T': {'item': f'fourtwenty:terpene_{c["code"]}'}},
@@ -166,7 +175,7 @@ def generate():
     names['terpene.fourtwenty.resin.line'] = DATA['resin']['line']
     entries = [(b['code'], b['name'], b.get('line')) for b in DATA['bases']] + \
               [(a['code'], a['name'], None) for a in DATA['accords']] + \
-              [(c['code'], c['name'], c['line']) for c in DATA['colors']]
+              [(c['code'], c['name'], c['line']) for c in DATA['colors'] + DATA['minecraft']]
     for code, name, line in entries:
         write(ASSETS / f'models/item/terpene_{code}.json', {'parent': 'minecraft:item/generated',
                                                            'textures': {'layer0': f'fourtwenty:item/terpene/{code}'}})

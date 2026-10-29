@@ -17,10 +17,17 @@ public class ModCreativeTabs {
             .icon(() -> new ItemStack(ModItems.WEED_SEEDS.get()))
             .displayItems((parameters, output) -> {
                 // Add all mod items here
+                output.accept(ModItems.INFUSER.get());
+                output.accept(ModItems.INFUSER_LAB.get());
                 output.accept(ModItems.WEED_SEEDS.get());
                 output.accept(ModItems.WEED_BUD.get());
                 output.accept(ModItems.WEED_JOINT.get());
                 output.accept(ModItems.WEED_PIPE.get());
+                for (var strain : com.malevolentgods.fourtwenty.domain.Strain.values()) {
+                    if (strain == com.malevolentgods.fourtwenty.domain.Strain.LANDRACE) continue;
+                    for (var item : java.util.List.of(ModItems.WEED_SEEDS.get(), ModItems.WEED_BUD.get(), ModItems.WEED_JOINT.get()))
+                        output.accept(ModDataComponents.withStrain(new ItemStack(item), strain));
+                }
                 output.accept(ModItems.WEED_COOKIE.get());
                 output.accept(ModItems.WEED_BROWNIE.get());
                 output.accept(ModItems.WEED_BONG.get());

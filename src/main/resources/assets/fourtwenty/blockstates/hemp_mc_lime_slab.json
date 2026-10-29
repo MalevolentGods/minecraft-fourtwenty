@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "fourtwenty:block/hemp_mc_lime_slab"
+    },
+    "type=top": {
+      "model": "fourtwenty:block/hemp_mc_lime_slab_top"
+    },
+    "type=double": {
+      "model": "fourtwenty:block/hemp_mc_lime"
+    }
+  }
+}

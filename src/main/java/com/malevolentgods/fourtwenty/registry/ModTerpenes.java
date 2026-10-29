@@ -32,9 +32,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The terpene system: hemp blocks (Natural Hemp and the 64 colours, each with stairs and a slab),
- * the 84 terpene items and the resin, and the Terpinator. Ids come from terpene codes
- * (hemp_myr_pin_lim, terpene_myr_pin_lim); names and colours from tools/terpenes.json.
+ * The terpene system: hemp blocks (Natural Hemp, the 64 colours and the 16 Minecraft colours, each with
+ * stairs and a slab), the 84 terpene items, the 16 Minecraft-colour terpenes and the resin, and the
+ * Terpinator. Ids come from terpene codes (hemp_myr_pin_lim, terpene_myr_pin_lim, hemp_mc_white,
+ * terpene_mc_white); names and colours from tools/terpenes.json.
  */
 public final class ModTerpenes {
     private ModTerpenes() {}
@@ -45,12 +46,17 @@ public final class ModTerpenes {
 
     public static final Hemp NATURAL_HEMP = hemp("natural_hemp");
 
-    /** The 64 colours, by final terpene code, in codex order. */
+    /** The Minecraft colours' codes, in DyeColor order: mc_white ... mc_black. */
+    public static final List<String> MINECRAFT = java.util.Arrays.stream(net.minecraft.world.item.DyeColor.values())
+            .map(d -> "mc_" + d.getSerializedName()).toList();
+
+    /** The 64 colours by final terpene code, in codex order, then the 16 Minecraft colours. */
     public static final Map<String, Hemp> HEMP = coloured();
 
     private static Map<String, Hemp> coloured() {
         Map<String, Hemp> out = new LinkedHashMap<>();
         for (Terpenes.Code code : Terpenes.finals()) out.put(code.id(), hemp("hemp_" + code.id()));
+        for (String code : MINECRAFT) out.put(code, hemp("hemp_" + code));
         return Collections.unmodifiableMap(out);
     }
 
@@ -68,15 +74,15 @@ public final class ModTerpenes {
         return new Hemp(block, stairs, slab, items);
     }
 
-    /** Concrete in the 64 colours, by code (one flat colour, like vanilla's). */
-    public static final Map<String, DeferredHolder<Block, Block>> CONCRETE = palette("concrete_",
+    /** Concrete in the 64 colours and the 16 Minecraft colours, by code (one flat colour, like vanilla's). */
+    public static final Map<String, DeferredHolder<Block, Block>> CONCRETE = paletteAndMinecraft("concrete_",
             code -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(1.8f).requiresCorrectToolForDrops()));
 
     /**
      * Concrete powder: vanilla's ConcretePowderBlock, so it falls and sets into its concrete in water,
      * and MineColonies' Concrete Mixer (which looks for a ConcretePowderBlock) can set it in its pond.
      */
-    public static final Map<String, DeferredHolder<Block, Block>> CONCRETE_POWDER = palette("concrete_powder_",
+    public static final Map<String, DeferredHolder<Block, Block>> CONCRETE_POWDER = paletteAndMinecraft("concrete_powder_",
             code -> new net.minecraft.world.level.block.ConcretePowderBlock(CONCRETE.get(code).get(),
                     BlockBehaviour.Properties.of().mapColor(MapColor.SAND).strength(0.5f).sound(SoundType.SAND)));
 
@@ -93,7 +99,7 @@ public final class ModTerpenes {
     }
 
     /**
-     * Rugs in the 64 colours and Natural Hemp ("natural"): one pixel thick, inset a pixel round the
+     * Rugs in the 64 colours, Natural Hemp ("natural") and the 16 Minecraft colours: one pixel thick, inset a pixel round the
      * outside with rounded corners, joining the same rug around them into one larger rug
      * ({@link com.malevolentgods.fourtwenty.block.RugBlock}); carpets in every other way.
      */
@@ -102,6 +108,7 @@ public final class ModTerpenes {
     private static Map<String, DeferredHolder<Block, Block>> rugs() {
         Map<String, DeferredHolder<Block, Block>> out = new LinkedHashMap<>(palette("rug_", code -> rug()));
         out.put("natural", register("rug_natural", ModTerpenes::rug));
+        for (String code : MINECRAFT) out.put(code, register("rug_" + code, ModTerpenes::rug));
         return Collections.unmodifiableMap(out);
     }
 
@@ -188,6 +195,13 @@ public final class ModTerpenes {
         return Collections.unmodifiableMap(out);
     }
 
+    /** {@link #palette} and then the 16 Minecraft colours (mc_white ...). */
+    private static Map<String, DeferredHolder<Block, Block>> paletteAndMinecraft(String prefix, java.util.function.Function<String, Block> make) {
+        Map<String, DeferredHolder<Block, Block>> out = new LinkedHashMap<>(palette(prefix, make));
+        for (String code : MINECRAFT) out.put(code, register(prefix + code, () -> make.apply(code)));
+        return Collections.unmodifiableMap(out);
+    }
+
     private static DeferredHolder<Block, Block> register(String id, java.util.function.Supplier<Block> block) {
         DeferredHolder<Block, Block> holder = ModBlocks.BLOCKS.register(id, block);
         ModItems.ITEMS.register(id, () -> new BlockItem(holder.get(), new Item.Properties()));
@@ -219,17 +233,37 @@ public final class ModTerpenes {
 
     public static TerpeneItem terpene(Terpenes.Code code) { return TERPENES.get(code.id()).get(); }
 
-    public static final DeferredHolder<Block, TerpinatorBlock> TERPINATOR = ModBlocks.BLOCKS.register("terpinator",
-            () -> new TerpinatorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.5f, 6f).sound(SoundType.COPPER)
-                    .noOcclusion().requiresCorrectToolForDrops().lightLevel(state -> state.getValue(TerpinatorBlock.LIT) ? 7 : 2)));
+    /** The 16 Minecraft-colour terpenes by code (mc_white ...), in DyeColor order. */
+    public static final Map<String, DeferredHolder<Item, com.malevolentgods.fourtwenty.terpene.MinecraftTerpeneItem>> MINECRAFT_TERPENES = minecraftTerpenes();
+
+    private static Map<String, DeferredHolder<Item, com.malevolentgods.fourtwenty.terpene.MinecraftTerpeneItem>> minecraftTerpenes() {
+        Map<String, DeferredHolder<Item, com.malevolentgods.fourtwenty.terpene.MinecraftTerpeneItem>> out = new LinkedHashMap<>();
+        for (net.minecraft.world.item.DyeColor dye : net.minecraft.world.item.DyeColor.values()) {
+            String code = "mc_" + dye.getSerializedName();
+            out.put(code, ModItems.ITEMS.register("terpene_" + code,
+                    () -> new com.malevolentgods.fourtwenty.terpene.MinecraftTerpeneItem(dye, new Item.Properties())));
+        }
+        return Collections.unmodifiableMap(out);
+    }
+
+    /** The Terpinator in two finishes, Steel and Lab: the same machine (one block entity type, one menu). */
+    public static final DeferredHolder<Block, TerpinatorBlock> TERPINATOR = ModBlocks.BLOCKS.register("terpinator", ModTerpenes::terpinator);
+    public static final DeferredHolder<Block, TerpinatorBlock> TERPINATOR_LAB = ModBlocks.BLOCKS.register("terpinator_lab", ModTerpenes::terpinator);
+
+    private static TerpinatorBlock terpinator() {
+        return new TerpinatorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.5f, 6f).sound(SoundType.METAL)
+                .noOcclusion().requiresCorrectToolForDrops().lightLevel(state -> state.getValue(TerpinatorBlock.LIT) ? 9 : 4));
+    }
 
     public static final DeferredHolder<Item, BlockItem> TERPINATOR_ITEM = ModItems.ITEMS.register("terpinator",
             () -> new BlockItem(TERPINATOR.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> TERPINATOR_LAB_ITEM = ModItems.ITEMS.register("terpinator_lab",
+            () -> new BlockItem(TERPINATOR_LAB.get(), new Item.Properties()));
 
     @SuppressWarnings("null")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TerpinatorBlockEntity>> TERPINATOR_ENTITY =
             ModBlockEntities.BLOCK_ENTITIES.register("terpinator",
-                    () -> BlockEntityType.Builder.of(TerpinatorBlockEntity::new, TERPINATOR.get()).build(null));
+                    () -> BlockEntityType.Builder.of(TerpinatorBlockEntity::new, TERPINATOR.get(), TERPINATOR_LAB.get()).build(null));
 
     public static final DeferredHolder<MenuType<?>, MenuType<TerpinatorMenu>> TERPINATOR_MENU = ModMenuTypes.MENU_TYPES.register("terpinator",
             () -> IMenuTypeExtension.create((id, inventory, data) -> new TerpinatorMenu(id, inventory)));
@@ -241,8 +275,10 @@ public final class ModTerpenes {
                     .withTabsBefore(ModCreativeTabs.FOUR_TWENTY_TAB.getKey())
                     .displayItems((parameters, output) -> {
                         output.accept(TERPINATOR_ITEM.get());
-                        output.accept(RESIN.get());
-                        TERPENES.values().forEach(t -> output.accept(t.get()));
+                        output.accept(TERPINATOR_LAB_ITEM.get());
+                        // Resin, bases and accords stay registered for old worlds; the Terpinator makes only finals now.
+                        TERPENES.values().stream().filter(t -> t.get().code().isFinal()).forEach(t -> output.accept(t.get()));
+                        MINECRAFT_TERPENES.values().forEach(t -> output.accept(t.get()));
                         List<Hemp> all = new ArrayList<>();
                         all.add(NATURAL_HEMP);
                         all.addAll(HEMP.values());
