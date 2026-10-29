@@ -4,6 +4,10 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.13.1
+
+- **The Sensi Heights Town Hall is complete:** all five levels, from the oak apse and weed garden of level 1 to a three-storey rotunda and garden atrium at level 5, double-glazed in green terpene glass.
+
 ## What's new in 0.13.0
 
 *Smoke it, see it, mix it.*
