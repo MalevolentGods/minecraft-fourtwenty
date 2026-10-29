@@ -4,6 +4,11 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+## [0.13.1] - The Town Hall
+
+### Changed
+- **Sensi Heights pack v76-v81:** Town Hall levels 2-5 (the user's builds from generated drafts that grow level 1's apse and garden into a rotunda and atrium); every level shares a 25x18x15 footprint with the hut at (6,2,7); the temporary `wip` folder is gone.
+
 ## [0.13.0] - Strains and Inspiration
 
 ### Added
