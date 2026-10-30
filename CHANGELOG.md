@@ -4,6 +4,11 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+## [0.13.2] - The Courtyard
+
+### Changed
+- **Sensi Heights pack v82-v83:** every Town Hall level grows to a 31x18x15 footprint (hut at (6,2,7)); level 5 gains its courtyard (two couch circles in Yellow Brick Road and grass, 16 outdoor seats); levels 1-4 get the space as cleared ground; Town Hall 4 reworked (paved road floors and stairs, Forest for the Trees concrete, Cloud Watching Blue glass, panels, Key Lime lamps).
+
 ## [0.13.1] - The Town Hall
 
 ### Changed
