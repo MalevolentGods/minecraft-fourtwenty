@@ -27,9 +27,9 @@ public final class CropGameTests {
                 var drops = Block.getDrops(ModBlocks.WEED_CROP.get().getStateForAge(age), h.getLevel(), pos,
                     null, player, ItemStack.EMPTY);
                 int seeds = drops.stream().filter(s -> s.is(ModItems.WEED_SEEDS.get())).mapToInt(ItemStack::getCount).sum();
-                int buds = drops.stream().filter(s -> s.is(ModItems.WEED_BUD.get())).mapToInt(ItemStack::getCount).sum();
-                h.assertTrue(drops.stream().allMatch(s -> s.is(ModItems.WEED_SEEDS.get()) || s.is(ModItems.WEED_BUD.get())), "Only intended crop loot");
-                h.assertTrue(age == 7 ? seeds >= 1 && seeds <= 5 && buds >= 1 && buds <= 3 : seeds == 1 && buds == 0,
+                int buds = drops.stream().filter(s -> s.is(ModItems.ROUGH_BUD.get())).mapToInt(ItemStack::getCount).sum();
+                h.assertTrue(drops.stream().allMatch(s -> s.is(ModItems.WEED_SEEDS.get()) || s.is(ModItems.ROUGH_BUD.get())), "Only intended crop loot");
+                h.assertTrue(age == 7 ? seeds == 1 && buds >= 1 && buds <= 3 : seeds == 1 && buds == 0,
                     "Growth stage " + age + " has valid renewable harvest");
             }
             var wild = Block.getDrops(ModBlocks.WILD_WEED.get().getStateForAge(age), h.getLevel(), pos, null, player, ItemStack.EMPTY);
@@ -48,7 +48,7 @@ public final class CropGameTests {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         h.useBlock(pos, player);
         h.assertTrue(ModBlocks.WEED_CROP.get().getAge(h.getBlockState(pos)) == 0, "Harvest replants at zero");
-        h.assertItemEntityPresent(ModItems.WEED_BUD.get(), pos, 3);
+        h.assertItemEntityPresent(ModItems.ROUGH_BUD.get(), pos, 3);
         int before = h.getLevel().getEntitiesOfClass(ItemEntity.class, new net.minecraft.world.phys.AABB(h.absolutePos(pos)).inflate(3))
             .stream().mapToInt(e -> e.getItem().getCount()).sum();
         h.useBlock(pos, player);
@@ -71,7 +71,7 @@ public final class CropGameTests {
             h.setBlock(pos, current);
             mature.useWithoutItem(h.getLevel(), player, hit);
             h.assertTrue(h.getBlockState(pos).equals(current), "Pre-event crop snapshot cannot rewrite a harvested position");
-            h.assertItemEntityNotPresent(ModItems.WEED_BUD.get(), pos, 3);
+            h.assertItemEntityNotPresent(ModItems.ROUGH_BUD.get(), pos, 3);
         }
         h.succeed();
     }
@@ -86,7 +86,7 @@ public final class CropGameTests {
             h.setBlock(pos.below(), Blocks.FARMLAND);
             h.setBlock(pos, ModBlocks.WEED_CROP.get().getStateForAge(7));
             h.useBlock(pos, h.makeMockPlayer(GameType.SURVIVAL));
-            h.assertItemEntityNotPresent(ModItems.WEED_BUD.get(), pos, 3);
+            h.assertItemEntityNotPresent(ModItems.ROUGH_BUD.get(), pos, 3);
             h.assertItemEntityNotPresent(ModItems.WEED_SEEDS.get(), pos, 3);
         } finally {
             rule.set(previous, h.getLevel().getServer());

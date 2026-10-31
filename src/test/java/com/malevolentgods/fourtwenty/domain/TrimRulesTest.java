@@ -1,0 +1,32 @@
+package com.malevolentgods.fourtwenty.domain;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+
+class TrimRulesTest {
+    private static final TrimRules.Chances C = TrimRules.Chances.DEFAULT;
+
+    @Test
+    void familiesGetRarer() {
+        assertEquals(50, TrimRules.percent(C, Strain.LANDRACE));
+        assertEquals(25, TrimRules.percent(C, Strain.COUCHLOCK_HUM));
+        assertEquals(15, TrimRules.percent(C, Strain.CHERRY_PIE));
+        assertEquals(10, TrimRules.percent(C, Strain.STICKY_ICKY));
+        assertEquals(5, TrimRules.percent(C, Strain.BLUE_DREAM));
+    }
+
+    @Test
+    void everyStrainHasAChance() {
+        for (Strain s : Strain.values()) assertTrue(C.of(s.family()) > 0, s.name());
+    }
+
+    @Test
+    void rollIsBelowTheChance() {
+        assertTrue(TrimRules.seeded(C, Strain.LANDRACE, 0.49));
+        assertFalse(TrimRules.seeded(C, Strain.LANDRACE, 0.50));
+        assertFalse(TrimRules.seeded(C, Strain.BLUE_DREAM, 0.05));
+    }
+}

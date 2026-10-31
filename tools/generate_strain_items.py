@@ -17,7 +17,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / 'src/main/resources/assets/fourtwenty'
-ITEMS = ('weed_bud', 'weed_joint')
+ITEMS = ('rough_bud', 'trimmed_bud', 'weed_bud', 'weed_joint')
 SIZE = 256
 SHIFT = 0.6      # how far the green's saturation moves toward the strain's
 PAPER = 0.22     # how much colour a joint's paper takes

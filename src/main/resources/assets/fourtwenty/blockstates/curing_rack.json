@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "fourtwenty:block/curing_rack"
+    },
+    "facing=east": {
+      "model": "fourtwenty:block/curing_rack",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "fourtwenty:block/curing_rack",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "fourtwenty:block/curing_rack",
+      "y": 270
+    }
+  }
+}

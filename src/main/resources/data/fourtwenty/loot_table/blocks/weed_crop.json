@@ -20,7 +20,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "fourtwenty:weed_bud",
+          "name": "fourtwenty:rough_bud",
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -43,41 +43,6 @@
           "properties": {
             "age": "7"
           }
-        }
-      ]
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "fourtwenty:weed_seeds",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1,
-                "max": 4
-              }
-            },
-            {
-              "function": "fourtwenty:copy_strain"
-            }
-          ]
-        }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:block_state_property",
-          "block": "fourtwenty:weed_crop",
-          "properties": {
-            "age": "7"
-          }
-        },
-        {
-          "condition": "minecraft:random_chance",
-          "chance": 0.05
         }
       ]
     }

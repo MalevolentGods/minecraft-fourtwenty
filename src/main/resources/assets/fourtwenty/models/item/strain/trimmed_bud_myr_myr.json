@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:item/trimmed_bud",
+  "textures": {
+    "layer0": "fourtwenty:item/strain/trimmed_bud_myr_myr"
+  }
+}

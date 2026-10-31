@@ -8,15 +8,15 @@ Paths are relative to the repo root. `J` = `src/main/java/com/malevolentgods/fou
 
 ## Phase 1: Setup
 
-- [ ] T001 Add server config for trim, cure, seed and power numbers with `overrideTuning` in J/processing/ProcessingConfig.java and register it in J/FourTwenty.java
+- [X] T001 Add server config for trim, cure, seed and power numbers with `overrideTuning` in J/processing/ProcessingConfig.java and register it in J/FourTwenty.java
 
 ## Phase 2: Foundational
 
-- [ ] T002 [P] Add seed chance by family in J/domain/TrimRules.java with tests in src/test/java/com/malevolentgods/fourtwenty/domain/TrimRulesTest.java
-- [ ] T003 [P] Add per-tier cure time and batch in J/domain/CureRules.java with tests in src/test/java/com/malevolentgods/fourtwenty/domain/CureRulesTest.java
-- [ ] T004 Register `rough_bud` and `trimmed_bud` as strain items in J/registry/ModItems.java and J/registry/ModCreativeTabs.java
-- [ ] T005 [P] Extend tools/generate_strain_items.py for rough and trimmed bud art, models and client tint in J/client/StrainTint.java
-- [ ] T006 Add names to src/main/resources/assets/fourtwenty/lang/en_us.json, showing `weed_bud` as "Cured Bud", and update player text that says "Weed Bud"
+- [X] T002 [P] Add seed chance by family in J/domain/TrimRules.java with tests in src/test/java/com/malevolentgods/fourtwenty/domain/TrimRulesTest.java
+- [X] T003 [P] Add per-tier cure time and batch in J/domain/CureRules.java with tests in src/test/java/com/malevolentgods/fourtwenty/domain/CureRulesTest.java
+- [X] T004 Register `rough_bud` and `trimmed_bud` as strain items in J/registry/ModItems.java and J/registry/ModCreativeTabs.java
+- [X] T005 [P] Extend tools/generate_strain_items.py for rough and trimmed bud art, models and client tint in J/client/StrainTint.java
+- [X] T006 Add names to src/main/resources/assets/fourtwenty/lang/en_us.json, showing `weed_bud` as "Cured Bud", and update player text that says "Weed Bud"
 
 **Checkpoint**: The new items exist and carry strains.
 
@@ -25,14 +25,14 @@ Paths are relative to the repo root. `J` = `src/main/java/com/malevolentgods/fou
 **Goal**: Seed to smoked joint with T1 machines only.
 **Independent Test**: quickstart.md Stage 1.
 
-- [ ] T007 [US1] Change mature crop loot to 1-3 rough buds + one seed in src/main/resources/data/fourtwenty/loot_table/blocks/weed_crop.json
-- [ ] T008 [US1] Update crop and Pot Pot expectations in src/gametest/java/com/malevolentgods/fourtwenty/gametest/CropGameTests.java and PotPotGameTests.java
-- [ ] T009 [US1] Add Trim Tray block (right-click snips one, no block entity) in J/processing/TrimTrayBlock.java
-- [ ] T010 [US1] Add Curing Rack block and entity with 8 timed slots in J/processing/CuringRackBlock.java and J/processing/CuringRackBlockEntity.java
-- [ ] T011 [P] [US1] Draw hanging buds in J/client/CuringRackRenderer.java
-- [ ] T012 [P] [US1] Generate Tray and Rack models in tools/generate_processing.py
-- [ ] T013 [US1] Add survival recipes in src/main/resources/data/fourtwenty/recipe/trim_tray.json and curing_rack.json
-- [ ] T014 [US1] Game tests for snip, strain, rack timing and drops in src/gametest/java/com/malevolentgods/fourtwenty/gametest/ProcessingGameTests.java
+- [X] T007 [US1] Change mature crop loot to 1-3 rough buds + one seed in src/main/resources/data/fourtwenty/loot_table/blocks/weed_crop.json
+- [X] T008 [US1] Update crop and Pot Pot expectations in src/gametest/java/com/malevolentgods/fourtwenty/gametest/CropGameTests.java and PotPotGameTests.java
+- [X] T009 [US1] Add Trim Tray block (right-click snips one, no block entity) in J/processing/TrimTrayBlock.java
+- [X] T010 [US1] Add Curing Rack block and entity with 8 timed slots in J/processing/CuringRackBlock.java and J/processing/CuringRackBlockEntity.java
+- [X] T011 [P] [US1] Draw hanging buds in J/client/CuringRackRenderer.java
+- [X] T012 [P] [US1] Generate Tray and Rack models in tools/generate_processing.py
+- [X] T013 [US1] Add survival recipes in src/main/resources/data/fourtwenty/recipe/trim_tray.json and curing_rack.json
+- [X] T014 [US1] Game tests for snip, strain, rack timing and drops in src/gametest/java/com/malevolentgods/fourtwenty/gametest/ProcessingGameTests.java
 - [ ] T015 [US1] Test quickstart Stage 1 in game, then commit
 
 ## Phase 4: User Story 2 - Seeds get rarer (P1)
@@ -40,8 +40,8 @@ Paths are relative to the repo root. `J` = `src/main/java/com/malevolentgods/fou
 **Goal**: Family seed rates hold in play.
 **Independent Test**: 1,000 trims per family within 3 points.
 
-- [ ] T016 [US2] Rate game test over 1,000 rolls per family in src/gametest/java/com/malevolentgods/fourtwenty/gametest/ProcessingGameTests.java
-- [ ] T017 [US2] Show a strain's seed chance on the Trim Tray tooltip in J/processing/TrimTrayBlock.java
+- [X] T016 [US2] Rate game test over 1,000 rolls per family in src/gametest/java/com/malevolentgods/fourtwenty/gametest/ProcessingGameTests.java
+- [X] T017 [US2] Show a strain's seed chance on the rough bud tooltip in J/item/StrainItems.java
 
 ## Phase 5: User Story 3 - Power a machine while sober (P2)
 

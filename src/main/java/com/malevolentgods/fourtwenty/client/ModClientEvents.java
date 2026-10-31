@@ -33,6 +33,7 @@ public class ModClientEvents {
 
     @SubscribeEvent
     public static void registerRenderers(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModBlockEntities.CURING_RACK.get(), CuringRackRenderer::new);
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModBlockEntities.LAMP.get(), LampHaloRenderer::new);
         event.registerEntityRenderer(com.malevolentgods.fourtwenty.registry.ModEntities.SEAT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
     }

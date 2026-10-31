@@ -60,6 +60,18 @@ public final class StrainItems {
         }
     }
 
+    /** Fresh from the plant: trim it, and the tooltip says the strain's seed chance. */
+    public static class RoughBud extends Bud {
+        public RoughBud(Properties properties) { super(properties); }
+
+        @Override
+        public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull List<Component> lines, @Nonnull TooltipFlag flag) {
+            super.appendHoverText(stack, context, lines, flag);
+            int chance = com.malevolentgods.fourtwenty.domain.TrimRules.percent(com.malevolentgods.fourtwenty.processing.ProcessingConfig.chances(), ModDataComponents.strain(stack));
+            lines.add(Component.translatable("item.fourtwenty.rough_bud.seed_chance", chance).withStyle(net.minecraft.ChatFormatting.GRAY));
+        }
+    }
+
     /** Weed buds. */
     public static class Bud extends Item {
         public Bud(Properties properties) { super(properties); }
