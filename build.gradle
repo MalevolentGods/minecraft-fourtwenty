@@ -140,7 +140,8 @@ dependencies {
     // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
     implementation "net.neoforged:neoforge:${neo_version}"
     // Optional APIs are compiled against the checksum-pinned installed artifacts only.
-    compileOnly files(new groovy.json.JsonSlurper().parse(file('validation/compatibility-lock.json')).core.collect {
+    def compatLock = new groovy.json.JsonSlurper().parse(file('validation/compatibility-lock.json'))
+    compileOnly files((compatLock.core + compatLock.compileApis).collect {
         file(".compat/dependencies/${it.file}")
     })
     testImplementation platform('org.junit:junit-bom:5.11.4')

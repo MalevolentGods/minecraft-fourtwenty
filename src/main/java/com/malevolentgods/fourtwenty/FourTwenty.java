@@ -20,6 +20,10 @@ public class FourTwenty {
             event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
                 ModBlockEntities.WEED_BONG.get(), (entity, side) -> entity.itemHandler()));
 
+        com.malevolentgods.fourtwenty.util.HotboxNetwork.register(bus);
+        bus.addListener((net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent event) ->
+            event.register(com.malevolentgods.fourtwenty.blockentity.HotboxBlockEntity.TICKETS));
+
         // Initialize delayed effect system
         DelayedEffectManager.init();
         

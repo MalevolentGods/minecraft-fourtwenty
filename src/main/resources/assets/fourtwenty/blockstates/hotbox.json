@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "fourtwenty:block/hotbox"
+    },
+    "lit=true": {
+      "model": "fourtwenty:block/hotbox_lit"
+    }
+  }
+}
