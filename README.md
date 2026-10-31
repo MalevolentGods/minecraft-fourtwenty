@@ -4,6 +4,10 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.14.0
+
+- **The Hotbox:** a creative-only block that keeps the 3x3 chunks around it running for an hour after you leave, and never while the server is empty. Walk into the area and it starts by itself. Hold the Build Tool or a Hotbox to see the green outline; JourneyMap shows it too.
+
 ## What's new in 0.13.2
 
 - **The Town Hall gets a courtyard:** level 5 has two couch circles in Yellow Brick Road and grass, and every level has room for it. Town Hall 4 is reworked with paved floors, green concrete and blue glass.

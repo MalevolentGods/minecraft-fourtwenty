@@ -4,6 +4,14 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+## [0.14.0] - The Hotbox
+
+### Added
+- **Hotbox:** a creative-only block that keeps the 3x3 chunks around it running for an hour after the last player leaves them. It starts by itself when a player enters the area, lets go at once if nobody is online, and holds nothing across a restart. Light level 15, with a green area outline while holding the Build Tool or a Hotbox, and a green area on JourneyMap.
+
+### Fixed
+- Infuser and terpene sync packets are sent only to connections that have the channel.
+
 ## [0.13.2] - The Courtyard
 
 ### Changed
