@@ -34,6 +34,6 @@ public final class TerpeneNetwork {
     }
 
     static void send(ServerPlayer player, List<String> keys, boolean replace) {
-        PacketDistributor.sendToPlayer(player, new Discoveries(keys, replace));
+        if (player.connection.hasChannel(Discoveries.TYPE)) PacketDistributor.sendToPlayer(player, new Discoveries(keys, replace));
     }
 }

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "fourtwenty:block/hotbox/top_lit",
+    "bottom": "fourtwenty:block/hotbox/bottom",
+    "side": "fourtwenty:block/hotbox/side_lit"
+  }
+}

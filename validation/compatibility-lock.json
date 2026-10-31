@@ -5991,5 +5991,13 @@
       },
       "nested": []
     }
+  ],
+  "compileApis": [
+    {
+      "modId": "journeymap_api",
+      "version": "2.0.0-1.21.1-20260529.024614-31",
+      "file": "journeymap-api-neoforge-2.0.0-1.21.1-20260529.024614-31.jar",
+      "sha256": "a4c2c19f319e9e8e95bb1e6844f38ce0a2c4599ae51e79a88ceb8e3b1914f20b"
+    }
   ]
 }

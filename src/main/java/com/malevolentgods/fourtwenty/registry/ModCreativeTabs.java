@@ -31,6 +31,7 @@ public class ModCreativeTabs {
                 output.accept(ModItems.WEED_COOKIE.get());
                 output.accept(ModItems.WEED_BROWNIE.get());
                 output.accept(ModItems.WEED_BONG.get());
+                output.accept(ModItems.HOTBOX.get());
                 ModItems.BONGS.values().forEach(bong -> output.accept(bong.get()));
                 ModItems.LAMPS.forEach(lamp -> output.accept(lamp.get()));
                 ModItems.SIDE_TABLES.forEach(table -> output.accept(table.get()));

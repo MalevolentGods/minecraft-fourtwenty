@@ -131,6 +131,16 @@ public class ModBlocks {
             BlockBehaviour.Properties.of().strength(0.2f).sound(SoundType.WOOD).noOcclusion().noLootTable()
                 .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK)));
 
+    /** Creative only: no recipe, no drops, and it can't be mined. */
+    public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.block.HotboxBlock> HOTBOX = BLOCKS.register("hotbox",
+      () -> new com.malevolentgods.fourtwenty.block.HotboxBlock(
+        BlockBehaviour.Properties.of()
+          .strength(-1.0f, 3600000.0f)
+          .sound(SoundType.WOOD)
+          .noLootTable()
+          .lightLevel(state -> 15)
+      ));
+
     public static final DeferredHolder<Block, WeedBongBlock> WEED_BONG = BLOCKS.register("weed_bong",
       () -> new WeedBongBlock(
         BlockBehaviour.Properties.of()

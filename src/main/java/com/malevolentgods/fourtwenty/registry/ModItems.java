@@ -82,6 +82,9 @@ public class ModItems {
         return java.util.Collections.unmodifiableMap(bongs);
     }
 
+    public static final DeferredHolder<Item, BlockItem> HOTBOX =
+        ITEMS.register("hotbox", () -> new BlockItem(ModBlocks.HOTBOX.get(), new Item.Properties()));
+
     public static final DeferredHolder<Item, BlockItem> WEED_BONG =
         ITEMS.register("weed_bong", () ->
             new BlockItem(ModBlocks.WEED_BONG.get(), new Item.Properties().stacksTo(1))); // Single block item

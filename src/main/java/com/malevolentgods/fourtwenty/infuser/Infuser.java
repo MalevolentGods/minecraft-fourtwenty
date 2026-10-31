@@ -196,7 +196,7 @@ public final class Infuser {
             r.playToServer(Infusion.Infuse.TYPE, Infusion.Infuse.CODEC, (m, ctx) -> ctx.enqueueWork(() -> Infusion.onInfuse(m, ctx)));
         });
         NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedInEvent e) -> {
-            if (e.getEntity() instanceof ServerPlayer p) PacketDistributor.sendToPlayer(p, new Sync(get(p).save()));
+            if (e.getEntity() instanceof ServerPlayer p && p.connection.hasChannel(Sync.TYPE)) PacketDistributor.sendToPlayer(p, new Sync(get(p).save()));
         });
     }
 }

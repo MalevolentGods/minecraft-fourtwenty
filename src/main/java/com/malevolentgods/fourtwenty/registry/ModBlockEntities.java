@@ -16,6 +16,10 @@ public class ModBlockEntities {
             BlockEntityType.Builder.of(WeedBongBlockEntity::new, ModBlocks.WEED_BONG.get())
                 .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.malevolentgods.fourtwenty.blockentity.HotboxBlockEntity>> HOTBOX =
+        BLOCK_ENTITIES.register("hotbox", () -> BlockEntityType.Builder.of(com.malevolentgods.fourtwenty.blockentity.HotboxBlockEntity::new,
+                ModBlocks.HOTBOX.get()).build(null));
+
     /** Every lamp, inverted lamp and lamp trim (for the client-side halo). */
     @SuppressWarnings("null")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.malevolentgods.fourtwenty.blockentity.LampBlockEntity>> LAMP =

@@ -36,7 +36,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--destination', type=Path, default=ROOT / '.compat/dependencies')
     args = parser.parse_args()
-    artifacts = json.loads((ROOT / 'validation/compatibility-lock.json').read_text())['core']
+    lock = json.loads((ROOT / 'validation/compatibility-lock.json').read_text())
+    artifacts = lock['core'] + lock.get('compileApis', [])
     urls = json.loads((ROOT / 'tools/compile-dependency-downloads.json').read_text())
     download_dependencies(artifacts, urls, args.destination)
 
