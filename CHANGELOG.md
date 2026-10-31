@@ -4,6 +4,14 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+## [0.14.1] - The Warehouse
+
+### Added
+- **Sensi Heights pack v84-v85:** Warehouse 1-5 (21x13x35) and Warehouse Courier 1-5. Racks grow 10, 18, 30, 42, 102 and no upgrade replaces one. Each Warehouse holds 2, 3, 4, 6, 8 Courier's Huts, unbuilt until a builder is sent. The crafting table and architect's cutter stay in the same spots on levels 3-5.
+
+### Changed
+- The Sensi Heights importer accepts a nested hut's link to its level 0 blueprint.
+
 ## [0.14.0] - The Hotbox
 
 ### Added
