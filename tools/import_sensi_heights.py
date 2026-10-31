@@ -62,6 +62,10 @@ def validate(root=BUNDLED):
                 continue   # a tag anchor: tags only, no link
             if LINK_EXCEPTIONS.get(rel) == linked and pack == 'Sensi Heights':
                 continue
+            # A hut nested in another stands unbuilt at level 0: no such file, it builds its level 1 beside the parent.
+            if (pack == 'Sensi Heights' and linked.rsplit('/', 1)[0] == rel.rsplit('/', 1)[0] and linked.endswith('0.blueprint')
+                    and (root / linked.replace('0.blueprint', '1.blueprint')).exists()):
+                continue
             is_hut = te.get('id', (0, ''))[1] != 'minecolonies:decorationcontroller'
             if pack != 'Sensi Heights' or linked != rel:
                 problems.append(f'{rel}: linked to {pack!r} / {linked!r}')
