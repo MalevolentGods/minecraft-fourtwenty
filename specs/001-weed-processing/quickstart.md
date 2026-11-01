@@ -15,7 +15,7 @@ Run on the local test server (`C:\Users\Ignus\mc-local-server`) with the same ja
 2. Unplug it and smoke within 21 blocks: it runs free.
 3. Wait for the high to end: it pauses at the same progress.
 4. Repeat free running after a bong hit and after an edible.
-5. Overload a Hemp Wick from a Double Hose: smoke and ash, no explosion.
+5. Run a Big Bertha through a Hemp Wick into a Rip block: smoke and ash. Feed a Puff machine from a Stash Box: it overloads, screen green and smoky, nothing breaks.
 6. Catch a colour at an Infuser sober with no power: refused, pool kept.
 
 ## Stage 5

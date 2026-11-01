@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report
-Version change: template → 1.0.0
+Version change: 1.0.0 → 2.0.0 (Principle IV redefined at the user's request: blocks overload, only wire breaks)
 Modified principles: all template placeholders replaced
 Added sections: Core Principles I-VII, Technical Constraints, Development Workflow, Governance
 Removed sections: none
@@ -33,7 +33,9 @@ Power MUST NOT be reimplemented per machine.
 
 ### IV. Failure Is Safe
 
-Overloads MUST burn out a wick or machine in a cloud of smoke and leave ash; they MUST NOT explode.
+Only wire breaks: a Wick carrying more than twice a Hookah of its tier MUST burn out in a cloud of smoke
+and leave ash. A block fed from a tier above its own MUST NOT break: it overloads, stops, and its screen
+turns green and smoky until the higher tier is gone. Nothing explodes.
 Flying MUST NOT kill the wearer: a Puff Plate wearer who sobers up or runs out of BI mid-flight is
 lowered gently to the ground. Moon Boots get no such rule. Gear works only while the wearer is high
 AND has stored BI.
@@ -80,4 +82,4 @@ versioning: MAJOR for a removed or redefined principle, MINOR for a new principl
 for wording. Every plan MUST pass its Constitution Check, and any accepted violation MUST be recorded
 with its reason in that plan.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-31 | **Last Amended**: 2026-10-31
+**Version**: 2.0.0 | **Ratified**: 2026-10-31 | **Last Amended**: 2026-10-31

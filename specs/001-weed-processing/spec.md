@@ -11,6 +11,7 @@
 
 - Q: How fast does a machine run free for a high player compared with on BI? → A: The same speed, as a config value.
 - Q: Are the machine names and "Cured Bud" approved? → A: Yes, all of them, exactly as written.
+- Q: What does one burn give, and how do blocks fail? → A: One coal and one bud run four same-tier machines for a minute, at 4,200, 8,400 and 16,800. Batteries match Hookahs, Wicks carry two Hookahs, only Wicks break, and overloaded blocks stop with a green, smoky screen.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -61,7 +62,7 @@ A player lights a Hookah, runs Wicks to a machine and feeds it weed. The machine
 1. **Given** a fuelled Hookah wired to a machine, **When** nobody high is near, **Then** the machine runs on BI.
 2. **Given** a high player within 21 blocks, **When** there is no power at all, **Then** the machine runs free.
 3. **Given** no high player and no BI, **When** a machine has work, **Then** it pauses and keeps its progress, and resumes from there.
-4. **Given** too much power for a Wick or machine, **When** it arrives, **Then** that part burns out in smoke and leaves ash, with no explosion.
+4. **Given** too much power for a Wick, **When** it arrives, **Then** the Wick burns out in smoke and leaves ash. **Given** a block fed from a higher tier, **When** the power arrives, **Then** it overloads and stops without breaking.
 5. **Given** a Stash block, **When** power is spare, **Then** it stores it and gives it back when needed.
 6. **Given** a Hit Box, **When** wired between tiers, **Then** power can step between tiers without burnout.
 
@@ -136,11 +137,11 @@ A colony's farmers bring in rough weed. Until the Bud Barn exists, players suppl
 
 **Boundless Inspiration**
 
-- **FR-013**: The power system MUST have three tiers in this release: Puff 32, Toke 128 and Rip 512 BI/t, shown to players as "Inspo".
-- **FR-014**: The generator MUST be the existing Hookah, making Puff power while it burns, with the Double Hose (Toke) and Big Bertha (Rip) as upgrades of that same block: same session, same inputs, same look with more hoses.
-- **FR-015**: Storage MUST be the Stash Jar (40k), Stash Box (400k) and Mother Stash (4M).
-- **FR-016**: Wiring MUST be the Hemp, Rolled and Glass Wicks, which glow while carrying power. The Hit Box MUST step power between tiers.
-- **FR-017**: A part given more power than its tier MUST burn out in smoke and leave ash, with no explosion and no other damage.
+- **FR-013**: The power system MUST have three tiers in this release, shown to players as "Inspo": Puff, Toke and Rip. One coal and one cured bud MUST give 4,200, 8,400 and 16,800 Inspo at those tiers, burning for one minute on all of them, and MUST run four machines of that tier for that minute.
+- **FR-014**: The generator MUST be the existing Hookah, making Puff power while it burns, with the Double Hose (Toke) and Big Bertha (Rip) as upgrades of that same block: same session, same inputs, same look with more hoses. Coal is the only fuel.
+- **FR-015**: Storage MUST be the Stash Jar (40k), Stash Box (400k) and Mother Stash (4M), each outputting at the rate of a Hookah of its tier.
+- **FR-016**: Wiring MUST be the Hemp, Rolled and Glass Wicks, which glow while carrying power and carry twice the output of a Hookah of their tier. The Hit Box MUST step power between tiers.
+- **FR-017**: A Wick carrying more than its limit MUST burn out in smoke and leave ash. A block fed from a tier above its own MUST NOT break: it overloads and stops, smoking, with its screen green and smoky, until the higher tier is gone. Nothing explodes.
 - **FR-018**: Every powered machine MUST follow one rule: free while a high player is within 21 blocks, otherwise draw BI, otherwise pause and keep its progress.
 - **FR-019**: The Terpinator and Inspiration Infuser MUST move onto that rule, with their recipes, outputs and gameplay unchanged.
 
@@ -149,6 +150,8 @@ A colony's farmers bring in rough weed. Until the Bud Barn exists, players suppl
 - **FR-020**: Everything MUST work without MineColonies.
 - **FR-021**: With MineColonies, the Budtender's menu MUST keep working from supplied cured buds, and a Dispensary without them MUST report what's missing.
 - **FR-022**: Clients without the channel MUST NOT be sent power or machine updates.
+- **FR-023**: A Budtender MUST load at most one Hookah session per 10 minutes.
+- **FR-024**: Every tech block's screen MUST share one custom style with an animated Inspo gauge, and tech blocks MUST have animated textures and their own sound effects.
 
 ### Key Entities
 
@@ -177,7 +180,7 @@ A colony's farmers bring in rough weed. Until the Bud Barn exists, players suppl
 - A release ships everything in one version, 0.15.0, built up in tested phases.
 - Trimming tiers give speed only; the seed chance doesn't change by tier.
 - T1 machines don't accept hoppers.
-- Higher tiers accept lower-tier power at a slower rate, if they have enough input; a part only burns out when given more than its tier.
+- Higher tiers accept lower-tier power at a slower rate, if they have enough input.
 - A Hookah burns cured buds with its usual lighter fuel, as it always has; rough and trimmed buds don't burn. Extracts arrive with the Rosin Rig.
 - Blaze tier, Grow Ops, Think Tank, Rosin Rig, Pheno Chamber, Kush Suit, Blazer and the Bud Barn are out of scope.
 - The existing block shown as "Hookah" keeps its name and job, and also generates. Changed on 2026-10-31 at the user's request; the plan's separate Single Hose Hookah is gone.

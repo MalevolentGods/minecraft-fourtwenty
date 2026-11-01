@@ -15,7 +15,8 @@ interface BINode {
 ```
 
 - Sources push through Wicks; sinks don't pull.
-- A push is capped by the source's tier rate and by the lowest Wick on its route.
-- A Wick or sink below the source's tier burns out instead of receiving power.
+- A push is capped by the source's tier rate.
+- A Wick burns out when the power through it in one second passes twice a Hookah of its tier, across all sources.
+- A sink below the source's tier overloads instead of receiving power: it stops and smokes, and never breaks.
 - Every powered machine MUST ask `MachinePower` whether it may run. Machines MUST NOT test highness themselves.
 - `MachinePower.spendOnce(level, pos, cost)` serves machines with no block entity.
