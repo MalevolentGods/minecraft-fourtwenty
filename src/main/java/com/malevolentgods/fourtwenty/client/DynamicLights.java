@@ -86,6 +86,7 @@ public final class DynamicLights {
     /** A lit lamp was drawn: it casts its colour from now on. */
     public static void placed(BlockPos pos, int rgb) {
         if (!ClientConfig.COLOURED_LIGHT.get() || PLACED.containsKey(pos)) return;
+        if (!pos.getCenter().closerThan(Minecraft.getInstance().gameRenderer.getMainCamera().getPosition(), PLACED_WITHIN)) return;
         BlockPos at = pos.immutable();
         PLACED.put(at, new Placed(rgb, List.of()));
         TO_CHECK.addFirst(at);
