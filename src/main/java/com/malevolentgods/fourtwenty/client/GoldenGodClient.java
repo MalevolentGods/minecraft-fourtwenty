@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,19 +16,18 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.AABB;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RenderPlayerEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /** A shining golden god: their whole body glows gold, with a halo of gold sparks turning over their head and more falling off them. */
@@ -38,8 +38,9 @@ public final class GoldenGodClient {
     private static final Set<Integer> SHINING = new HashSet<>();
     private static final DustParticleOptions SPARK = new DustParticleOptions(new Vector3f(1, 0.82f, 0.15f), 1);
     private static final int HALO = 10;
-    private static final int[] GLOW = {0xFFC8305A, 0xFFB42838, 0xFF9C2020};
-    private static final double GLOW_STEP = 0.1;
+    /** A lamp's glow, shaped to the body: its colour for each layer, by how far out the layer sits. */
+    private static final int[] GLOW = {0x58FFC830, 0x38FFB428, 0x20FF9C20};
+    private static final float GLOW_STEP = 0.1f;
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
@@ -48,17 +49,6 @@ public final class GoldenGodClient {
             else SHINING.remove(shine.entity());
         };
         NeoForge.EVENT_BUS.addListener(GoldenGodClient::tick);
-        NeoForge.EVENT_BUS.addListener(GoldenGodClient::halo);
-    }
-
-    /** A lamp's glow, but gold and god-sized: the same additive film, in layers that soften outward. */
-    private static void halo(RenderPlayerEvent.Post event) {
-        var player = event.getEntity();
-        if (!SHINING.contains(player.getId())) return;
-        var size = new AABB(-player.getBbWidth() / 2, 0, -player.getBbWidth() / 2, player.getBbWidth() / 2, player.getBbHeight(), player.getBbWidth() / 2);
-        for (int i = 0; i < GLOW.length; i++) {
-            LampHaloRenderer.halo(event.getPoseStack(), event.getMultiBufferSource(), size.inflate(GLOW_STEP * (i + 1)), GLOW[i]);
-        }
     }
 
     @SubscribeEvent
@@ -95,6 +85,20 @@ public final class GoldenGodClient {
             int alpha = 190 + (int) (40 * Mth.sin(age * 0.15f));
             VertexConsumer gold = buffers.getBuffer(RenderType.entityTranslucentEmissive(player.getSkin().texture()));
             getParentModel().renderToBuffer(pose, gold, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, alpha << 24 | 0xFFD230);
+            VertexConsumer glow = buffers.getBuffer(LampHaloRenderer.HaloRenderType.HALO);
+            var model = getParentModel();
+            for (ModelPart part : List.of(model.head, model.body, model.leftArm, model.rightArm, model.leftLeg, model.rightLeg)) {
+                for (int i = 0; i < GLOW.length; i++) {
+                    float size = 1 + GLOW_STEP * (i + 1);
+                    part.xScale *= size;
+                    part.yScale *= size;
+                    part.zScale *= size;
+                    part.render(pose, glow, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, GLOW[i]);
+                    part.xScale /= size;
+                    part.yScale /= size;
+                    part.zScale /= size;
+                }
+            }
         }
     }
 }
