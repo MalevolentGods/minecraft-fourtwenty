@@ -7,10 +7,10 @@ The cabinet keeps the original paintings (weed_bong_<state>.png sides, weed_bong
 on its face, but stands a little inside the block (9 x 9 x 9, square so nothing stretches) instead of filling it; the whole hookah
 fits in the block. On the brass socket in the top
 painting stands the hookah proper: a brass collar, a stem, a charcoal tray, a clay bowl with coals (glowing while
-lit), and a hose that loops off the stem to a brass mouthpiece resting on the cabinet top, clear of the sides where Wicks arrive. Smoke puffs off the bowl while
+lit), and a hose that loops off the stem and hangs down the side to a brass mouthpiece. Smoke puffs off the bowl while
 it's lit (WeedBongBlock#animateTick). Writes models/block/weed_bong_<state>.json and textures/block/hookah/*.png.
 
-Double Hose and Big Bertha are this same hookah upgraded, the same cabinet paintings and state set, with the hose repeated round the stem
+Double Hose, Big Bertha and the Grand Hookah are this same hookah upgraded, the same cabinet paintings and state set, with the hose repeated round the stem
 (2 and 4 of them) and its brass swapped for copper, steel or gold: models/block/double_hose_<state>.json and so on for big_bertha and grand_hookah, and their
 blockstates, which follow weed_bong.json.
 """
@@ -65,6 +65,18 @@ def el(x0, y0, z0, x1, y1, z1, tex, faces=SIDES + ('up', 'down'), glow=False, ro
     return INF.el(x0, y0, z0, x1, y1, z1, tex, glow=glow, rot=rot, faces=faces, uv=[0, 0, 16, 16])
 
 
+def hose():
+    """A port off the stem, down at 45 degrees past the cabinet's edge, then straight down to the mouthpiece. It's its own piece: the game leaves it off
+    any side with a Wick on it (client/PortModel), and it's back when the Wick goes."""
+    return [
+        el(8.5, 11.6, 7.6, 9.5, 12.4, 8.4, 'brass', faces=('north', 'south', 'up', 'down')),
+        el(9.3, 11.6, 7.65, 14.5, 12.4, 8.35, 'hose',
+           rot={'origin': [9.5, 12.0, 8], 'axis': 'z', 'angle': -45}),
+        el(12.75, 3.0, 7.6, 13.55, 8.75, 8.4, 'hose', faces=SIDES + ('up',)),
+        el(12.6, 1.4, 7.45, 13.7, 3.0, 8.55, 'brass'),
+    ]
+
+
 def model(state):
     lit = state.startswith('lit')
     full = [0, 0, 16, 16]
@@ -82,12 +94,6 @@ def model(state):
         el(6.9, 13.3, 6.9, 9.1, 14.1, 9.1, 'clay', faces=SIDES),
         el(6.4, 14.1, 6.4, 9.6, 15.5, 9.6, 'clay'),                       # its top is the clay rim round the coals
         el(6.75, 15.5, 6.75, 9.25, 15.7, 9.25, 'coals_lit' if lit else 'coals', glow=lit, faces=SIDES + ('up',)),
-        # the hose: a port off the stem, down at 45 degrees, to a mouthpiece resting on the cabinet top, clear of the sides Wicks arrive on
-        el(8.5, 11.6, 7.6, 9.5, 12.4, 8.4, 'brass', faces=('north', 'south', 'up', 'down')),
-        el(9.3, 11.6, 7.65, 12.4, 12.4, 8.35, 'hose',
-           rot={'origin': [9.5, 12.0, 8], 'axis': 'z', 'angle': -45}),
-        el(10.5, 9.0, 7.6, 11.3, 9.8, 8.4, 'hose', faces=SIDES + ('up',)),
-        el(11.3, 9.0, 7.5, 12.3, 9.9, 8.5, 'brass'),
     ]
     tex = {'particle': 'fourtwenty:block/weed_bong_top', 'side': f'fourtwenty:block/weed_bong_{state}',
            'top': 'fourtwenty:block/weed_bong_top', 'bottom': 'fourtwenty:block/weed_bong_bottom'}
@@ -101,7 +107,6 @@ def model(state):
                         'firstperson_righthand': {'rotation': [0, 45, 0], 'translation': [0, -1, 0], 'scale': [0.32, 0.32, 0.32]}}}
 
 
-HOSE_PARTS = 4                                  # the last elements of model(): port, slope, drop, mouthpiece
 FACE_TURN = {'north': 'east', 'east': 'south', 'south': 'west', 'west': 'north', 'up': 'up', 'down': 'down'}
 
 
@@ -121,11 +126,18 @@ def turned(element, quarter):
     return e
 
 
-def upgraded(state, turns, metal):
+def upgraded(state, metal):
     m = model(state)
-    m['elements'] += [turned(e, q) for q in turns for e in m['elements'][-HOSE_PARTS:]]
     m['textures']['brass'] = f'fourtwenty:block/hookah/{metal}'
     return m
+
+
+def hose_part(metal, quarter):
+    m = model('empty')
+    tex = {k: v for k, v in m['textures'].items() if k in ('brass', 'hose')}
+    tex['brass'] = f'fourtwenty:block/hookah/{metal}'
+    return {'parent': 'minecraft:block/block', 'ambientocclusion': False, 'render_type': 'minecraft:cutout_mipped',
+            'textures': {'particle': tex['brass'], **tex}, 'elements': [turned(e, quarter) for e in hose()]}
 
 
 def recoloured(name, tint):
@@ -143,9 +155,18 @@ if __name__ == '__main__':
     for st in STATES:
         (ASSETS / f'models/block/weed_bong_{st}.json').write_text(json.dumps(model(st), indent=1) + '\n')
     states = (ASSETS / 'blockstates/weed_bong.json').read_text()
-    for name, turns, metal in (('double_hose', [2], 'copper'), ('big_bertha', [1, 2, 3], 'steel'), ('grand_hookah', [1, 2, 3], 'gold')):
+    (ASSETS / 'models/block/port').mkdir(exist_ok=True)
+    for name, turns, metal in (('weed_bong', [0], 'brass'), ('double_hose', [0, 2], 'copper'), ('big_bertha', [0, 1, 2, 3], 'steel'), ('grand_hookah', [0, 1, 2, 3], 'gold')):
+        for q in turns:
+            side = ('east', 'south', 'west', 'north')[q]
+            (ASSETS / f'models/block/port/{name}_hose_{side}.json').write_text(json.dumps(hose_part(metal, q), indent=1) + '\n')
+        held = upgraded('empty', metal)
+        held['elements'] += [turned(e, q) for q in turns for e in hose()]
+        (ASSETS / f'models/block/{name}_item.json').write_text(json.dumps(held, indent=1) + '\n')
+        (ASSETS / f'models/item/{name}.json').write_text(json.dumps({'parent': f'fourtwenty:block/{name}_item'}, indent=2) + '\n')
+        if name == 'weed_bong':
+            continue
         for st in STATES:
-            (ASSETS / f'models/block/{name}_{st}.json').write_text(json.dumps(upgraded(st, turns, metal), indent=1) + '\n')
+            (ASSETS / f'models/block/{name}_{st}.json').write_text(json.dumps(upgraded(st, metal), indent=1) + '\n')
         (ASSETS / f'blockstates/{name}.json').write_text(states.replace('block/weed_bong_', f'block/{name}_'))
-        (ASSETS / f'models/item/{name}.json').write_text(json.dumps({'parent': f'fourtwenty:block/{name}_empty'}, indent=2) + '\n')
     print(len(STATES), 'hookah models, three tiers')

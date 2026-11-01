@@ -67,6 +67,10 @@ def main():
         for side in ('north', 'east', 'south', 'west', 'up', 'down'):
             for lit in ('', '_lit'):
                 problems += model_problems(f'fourtwenty:block/port/{name}_{side}{lit}', set())
+    for name, sides in (('weed_bong', ('east',)), ('double_hose', ('east', 'west')), ('big_bertha', ('north', 'east', 'south', 'west')), ('grand_hookah', ('north', 'east', 'south', 'west'))):
+        for side in sides:
+            problems += model_problems(f'fourtwenty:block/port/{name}_hose_{side}', set())
+        problems += model_problems(f'fourtwenty:block/{name}_item', set())
     print('\n'.join(problems) if problems else f'{len(BLOCKS)} blocks and {len(ports)} sets of fittings complete')
     sys.exit(1 if problems else 0)
 

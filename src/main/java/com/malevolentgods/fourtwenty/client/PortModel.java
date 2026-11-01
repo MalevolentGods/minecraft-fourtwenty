@@ -45,6 +45,9 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
             "snip_station", "bud_barber", "trim_reaper", "dry_box", "cure_closet", "the_humidor", "grow_tent", "hydro_bed", "aero_pod", "cosmic_kush_pod", "think_tank",
             "terpinator", "terpinator_lab", "inspiration_infuser", "inspiration_infuser_lab", "hit_box_toke", "hit_box_rip", "hit_box_blaze");
     private static final Direction[] AROUND = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
+    /** The sides each Hookah has a hose on, for one facing north. A hose is its own piece, drawn unless a Wick has that side. */
+    private static final Map<String, List<Direction>> HOSES = Map.of("weed_bong", List.of(Direction.EAST), "double_hose", List.of(Direction.EAST, Direction.WEST),
+            "big_bertha", List.of(AROUND), "grand_hookah", List.of(AROUND));
     private static final Map<String, List<BakedQuad>> TURNED = new ConcurrentHashMap<>();
     private static Map<ModelResourceLocation, BakedModel> parts = Map.of();
 
@@ -66,6 +69,7 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
                 event.register(part(name, side, true));
             }
         }
+        HOSES.forEach((name, sides) -> sides.forEach(side -> event.register(part(name + "_hose", side, false))));
     }
 
     private static int turns(BlockState state) {
@@ -80,6 +84,12 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
         return side;
     }
 
+    /** The world side of a side of a block facing north. */
+    private static Direction world(Direction side, int turns) {
+        for (int i = 0; i < 4; i++) if (AROUND[i] == side) return AROUND[(i + turns) % 4];
+        return side;
+    }
+
     private static boolean lit(BlockState state) {
         if (state.hasProperty(BIBlock.LIT)) return state.getValue(BIBlock.LIT);
         return state.hasProperty(WeedBongBlock.LIT) && state.getValue(WeedBongBlock.LIT);
@@ -91,11 +101,14 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
         for (Direction side : Direction.values()) {
             if (level.getBlockState(pos.relative(side)).getBlock() instanceof WickBlock) mask |= 1 << side.ordinal();
         }
-        return mask == 0 ? d : d.derive().with(MASK, mask).build();
+        return d.derive().with(MASK, mask).build();
     }
 
     private List<BakedQuad> fitting(BlockState state, Direction relative, int turns, RandomSource rand) {
-        boolean lit = lit(state);
+        return turned(name, relative, lit(state), turns, rand);
+    }
+
+    private static List<BakedQuad> turned(String name, Direction relative, boolean lit, int turns, RandomSource rand) {
         return TURNED.computeIfAbsent(name + relative + lit + turns, key -> {
             BakedModel model = parts.get(part(name, relative, lit));
             List<BakedQuad> out = new ArrayList<>();
@@ -118,6 +131,9 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
         int turns = turns(state);
         for (Direction world : Direction.values()) {
             if ((mask & 1 << world.ordinal()) != 0) out.addAll(fitting(state, relative(world, turns), turns, rand));
+        }
+        for (Direction hose : HOSES.getOrDefault(name, List.of())) {
+            if ((mask & 1 << world(hose, turns).ordinal()) == 0) out.addAll(turned(name + "_hose", hose, false, turns, rand));
         }
         return out;
     }
