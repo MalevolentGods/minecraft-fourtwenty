@@ -11,10 +11,10 @@ import java.util.Optional;
  */
 public final class BongTendingRules {
     public static final int MAX_BUDS = 4;
-    /** Coal is topped up to this many lightings. */
-    public static final int MAX_COAL = 4;
+    /** Charcoal is topped up to this many lightings. */
+    public static final int MAX_CHARCOAL = 4;
     public static final String EMPTY = "minecraft:air";
-    public static final List<String> FUEL_PREFERENCE = List.of(BongFuel.COAL);
+    public static final List<String> FUEL_PREFERENCE = List.of(BongFuel.CHARCOAL);
     /** The budtender loads one bud, one session, per this many ticks: 10 minutes. */
     public static final int SESSION_EVERY = 12_000;
 
@@ -39,7 +39,7 @@ public final class BongTendingRules {
 
     /** How many of {@code fuelId} to put in one visit. */
     public static int fuelAmount(String fuelId) {
-        return MAX_COAL;
+        return MAX_CHARCOAL;
     }
 
     /**

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 class BIRulesTest {
     @Test
-    void oneCoalAndOneBudGiveTheUsersTotals() {
+    void oneCharcoalAndOneBudGiveTheUsersTotals() {
         assertEquals(4_200, Tier.PUFF.total());
         assertEquals(8_400, Tier.TOKE.total());
         assertEquals(16_800, Tier.RIP.total());

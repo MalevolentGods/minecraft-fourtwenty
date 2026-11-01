@@ -3,12 +3,12 @@ package com.malevolentgods.fourtwenty.domain;
 import java.util.OptionalInt;
 
 /**
- * What lights a Hookah: one coal burns for a minute, on every tier.
+ * What lights a Hookah: one charcoal burns for a minute, on every tier.
  *
  * <p>Pure registry-id rules so they can be unit tested without a game.
  */
 public final class BongFuel {
-    public static final String COAL = "minecraft:coal";
+    public static final String CHARCOAL = "minecraft:charcoal";
 
     /** Burn length in ticks for one lighting with {@code itemId}, or empty when it is not a Hookah fuel. */
     public static OptionalInt burnTicks(String itemId) {
@@ -16,7 +16,7 @@ public final class BongFuel {
     }
 
     public static boolean isFuel(String itemId) {
-        return COAL.equals(itemId);
+        return CHARCOAL.equals(itemId);
     }
 
     private BongFuel() {}

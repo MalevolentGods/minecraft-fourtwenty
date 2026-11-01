@@ -11,7 +11,7 @@
 
 - Q: How fast does a machine run free for a high player compared with on BI? → A: The same speed, as a config value.
 - Q: Are the machine names and "Cured Bud" approved? → A: Yes, all of them, exactly as written.
-- Q: What does one burn give, and how do blocks fail? → A: One coal and one bud run four same-tier machines for a minute, at 4,200, 8,400 and 16,800. Batteries match Hookahs, Wicks carry two Hookahs, only Wicks break, and overloaded blocks stop with a green, smoky screen.
+- Q: What does one burn give, and how do blocks fail? → A: One charcoal and one bud run four same-tier machines for a minute, at 4,200, 8,400 and 16,800. Batteries match Hookahs, Wicks carry two Hookahs, only Wicks break, and overloaded blocks stop with a green, smoky screen.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -137,8 +137,8 @@ A colony's farmers bring in rough weed. Until the Bud Barn exists, players suppl
 
 **Boundless Inspiration**
 
-- **FR-013**: The power system MUST have three tiers in this release, shown to players as "Inspo": Puff, Toke and Rip. One coal and one cured bud MUST give 4,200, 8,400 and 16,800 Inspo at those tiers, burning for one minute on all of them, and MUST run four machines of that tier for that minute.
-- **FR-014**: The generator MUST be the existing Hookah, making Puff power while it burns, with the Double Hose (Toke) and Big Bertha (Rip) as upgrades of that same block: same session, same inputs, same look with more hoses. Coal is the only fuel.
+- **FR-013**: The power system MUST have three tiers in this release, shown to players as "Inspo": Puff, Toke and Rip. One charcoal and one cured bud MUST give 4,200, 8,400 and 16,800 Inspo at those tiers, burning for one minute on all of them, and MUST run four machines of that tier for that minute.
+- **FR-014**: The generator MUST be the existing Hookah, making Puff power while it burns, with the Double Hose (Toke) and Big Bertha (Rip) as upgrades of that same block: same session, same inputs, same look with more hoses. Charcoal is the only fuel; regular coal does not work.
 - **FR-015**: Storage MUST be the Stash Jar (40k), Stash Box (400k) and Mother Stash (4M), each outputting at the rate of a Hookah of its tier.
 - **FR-016**: Wiring MUST be the Hemp, Rolled and Glass Wicks, which glow while carrying power and carry twice the output of a Hookah of their tier. The Hit Box MUST step power between tiers.
 - **FR-017**: A Wick carrying more than its limit MUST burn out in smoke and leave ash. A block fed from a tier above its own MUST NOT break: it overloads and stops, smoking, with its screen green and smoky, until the higher tier is gone. Nothing explodes.

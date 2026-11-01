@@ -36,7 +36,7 @@ public final class PersistenceGameTests {
             var bong = (WeedBongBlockEntity) level.getBlockEntity(CHECKPOINT);
             bong.setItem(0, new ItemStack(ModItems.WEED_BUD.get(), 3));
             bong.setItem(1, new ItemStack(Items.WATER_BUCKET));
-            bong.setItem(2, new ItemStack(Items.COAL, 5));
+            bong.setItem(2, new ItemStack(Items.CHARCOAL, 5));
             for (int i = 0; i < 37; i++) WeedBongBlockEntity.tick(level, CHECKPOINT, bong.getBlockState(), bong);
             level.getChunkSource().save(true);
         } else {

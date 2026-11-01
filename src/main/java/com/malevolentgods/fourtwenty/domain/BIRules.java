@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import java.util.Locale;
 
 /**
- * Boundless Inspiration, shown as "Inspo". Everything is sized from a Hookah: one coal and one cured bud burn for a minute on every tier, and
+ * Boundless Inspiration, shown as "Inspo". Everything is sized from a Hookah: one charcoal and one cured bud burn for a minute on every tier, and
  * run four machines of that tier. A battery gives what a Hookah gives. A wire carries two Hookahs' worth; more than that burns it out. A block
  * fed from a higher tier than its own never breaks: it overloads and stops until the higher tier is gone.
  */
@@ -22,7 +22,7 @@ public final class BIRules {
 
         Tier(int total) { this.total = total; }
 
-        /** What one coal and one bud make. */
+        /** What one charcoal and one bud make. */
         public int total() { return total; }
 
         /** BI per tick from a Hookah, or a battery, of this tier. */

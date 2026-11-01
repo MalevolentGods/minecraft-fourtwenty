@@ -36,11 +36,11 @@ import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 /** One inventory backs menus, hoppers and every capability side. */
 public class WeedBongBlockEntity extends BlockEntity implements Container, MenuProvider {
-    /** One coal's burn, and the length assumed for older saves. */
+    /** One charcoal's burn, and the length assumed for older saves. */
     public static final int BURN_DURATION = 1200;
     public static final int WEED_SLOT = 0;
     public static final int WATER_SLOT = 1;
-    /** Takes coal, the {@link BongFuel}. */
+    /** Takes charcoal, the {@link BongFuel}. */
     public static final int FUEL_SLOT = 2;
     /** Older name for {@link #FUEL_SLOT}. */
     public static final int BLAZE_POWDER_SLOT = FUEL_SLOT;

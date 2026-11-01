@@ -3,8 +3,8 @@
 
     python3 tools/generate_tech_ui.py [--sheet out.png]
 
-textures/gui/tech_<tier>.png is a 176x166 panel: brushed dark metal, the tier's colour along a beaded edge, a faint leaf, and the player's
-inventory slots. textures/gui/tech_atlas.png holds what client/TechScreen.java draws; the layout constants there and here must match:
+textures/gui/tech_<tier>.png is a 1024x1024 backplate: brushed dark metal and a faint leaf, nothing that has to line up with anything, so hand-made
+art can replace it directly. TechScreen draws every frame and slot on top. textures/gui/tech_atlas.png holds what client/TechScreen.java draws; the layout constants there and here must match:
 
     gauge frame        0,0    14x54      gauge fill frames   16,0   12x54 each, 4 of them, bubbles rising
     arrow frame        0,56   24x16      arrow fill frames   24,56  24x8 blades + 24x8 waves, 4 of them
@@ -20,6 +20,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = Path(__file__).resolve().parents[1]
 GUI = ROOT / 'src/main/resources/assets/fourtwenty/textures/gui'
+ART = 1024
 TIERS = {'puff': (96, 196, 72), 'toke': (60, 196, 180), 'rip': (168, 100, 232)}
 
 
@@ -56,26 +57,9 @@ def leaf(img, cx, cy, size, colour):
 
 
 def panel(name, colour):
-    w, h = 176, 166
-    img = brushed(w, h, sum(colour))
-    d = ImageDraw.Draw(img)
-    dark = tuple(int(c * 0.45) for c in colour) + (255,)
-    d.rectangle([0, 0, w - 1, h - 1], outline=dark)
-    d.rectangle([1, 1, w - 2, h - 2], outline=colour + (255,))
-    d.rectangle([2, 2, w - 3, h - 3], outline=(20, 22, 25, 255))
-    d.rectangle([3, 15, w - 4, 15], fill=dark)
-    leaf(img, 88, 62, 42, colour)
-    d = ImageDraw.Draw(img)
-    for x, y in ((4, 4), (w - 7, 4), (4, h - 7), (w - 7, h - 7)):
-        d.ellipse([x, y, x + 3, y + 3], fill=tuple(min(255, c + 70) for c in colour) + (255,))
-    d.rectangle([7, 80, w - 8, 80], fill=dark)
-    for row in range(3):
-        for col in range(9):
-            slot(d, 7 + col * 18, 83 + row * 18)
-    for col in range(9):
-        slot(d, 7 + col * 18, 141)
-    img.save(GUI / f'tech_{name}.png')
-    # the small panel for screens with no inventory uses this art's top, so it needs a closing edge there too
+    img = brushed(ART, ART, sum(colour))
+    leaf(img, ART // 2, ART * 3 // 8, ART // 4, colour)
+    img.convert('RGB').save(GUI / f'tech_{name}.png', optimize=True)
     return img
 
 
@@ -148,7 +132,7 @@ def main():
         out = sys.argv[sys.argv.index('--sheet') + 1]
         sheet = Image.new('RGBA', (3 * 176 + 256, 256), (60, 60, 66, 255))
         for i, p in enumerate(panels):
-            sheet.alpha_composite(p, (i * 176, 0))
+            sheet.alpha_composite(p.resize((176, 176)), (i * 176, 0))
         sheet.alpha_composite(a, (3 * 176, 0))
         sheet.save(out)
     print('ok')

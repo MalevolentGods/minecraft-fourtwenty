@@ -8,14 +8,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BongTendingRulesTest {
     @Test void fullBongNeedsNothing() {
-        assertFalse(BongTendingRules.need(2, true, BongFuel.COAL, true).any());
-        assertFalse(BongTendingRules.need(1, true, BongFuel.COAL, false).any());
+        assertFalse(BongTendingRules.need(2, true, BongFuel.CHARCOAL, true).any());
+        assertFalse(BongTendingRules.need(1, true, BongFuel.CHARCOAL, false).any());
     }
     @Test void budsAreOnlyAddedWhileServing() {
         // Set-up (no customers): water and fuel only, so the bong does not burn to an empty room.
         var setup = BongTendingRules.need(0, false, "minecraft:air", false);
         assertTrue(setup.water() && setup.fuel() && !setup.buds());
-        var serving = BongTendingRules.need(0, true, BongFuel.COAL, true);
+        var serving = BongTendingRules.need(0, true, BongFuel.CHARCOAL, true);
         assertTrue(serving.buds() && !serving.water() && !serving.fuel());
     }
     @Test void oldFuelsMustBeClearedAndReplaced() {
@@ -23,10 +23,10 @@ class BongTendingRulesTest {
         assertTrue(need.fuel() && need.clearBucket() && !need.buds() && !need.water());
         assertFalse(BongTendingRules.need(3, true, "minecraft:air", true).clearBucket());
     }
-    @Test void coalIsTheFuel() {
-        assertEquals(Optional.of(BongFuel.COAL), BongTendingRules.bestFuel(Map.of(BongFuel.COAL, 5)));
+    @Test void charcoalIsTheFuel() {
+        assertEquals(Optional.of(BongFuel.CHARCOAL), BongTendingRules.bestFuel(Map.of(BongFuel.CHARCOAL, 5)));
         assertEquals(Optional.empty(), BongTendingRules.bestFuel(Map.of("minecraft:blaze_powder", 64)));
-        assertEquals(4, BongTendingRules.fuelAmount(BongFuel.COAL));
+        assertEquals(4, BongTendingRules.fuelAmount(BongFuel.CHARCOAL));
     }
     @Test void oneSessionPerTenMinutes() {
         assertTrue(BongTendingRules.sessionDue(5, -1));
@@ -39,10 +39,10 @@ class BongTendingRulesTest {
     @Test void missingFuelOrBudsNeedStockOtherwiseTheyAreRequested() {
         var noFuel = BongTendingRules.need(2, true, "minecraft:air", true);
         assertFalse(BongTendingRules.canFix(noFuel, 10, Optional.empty()));
-        assertTrue(BongTendingRules.canFix(noFuel, 0, Optional.of(BongFuel.COAL)));
-        var noBuds = BongTendingRules.need(0, true, BongFuel.COAL, true);
+        assertTrue(BongTendingRules.canFix(noFuel, 0, Optional.of(BongFuel.CHARCOAL)));
+        var noBuds = BongTendingRules.need(0, true, BongFuel.CHARCOAL, true);
         assertFalse(BongTendingRules.canFix(noBuds, 0, Optional.empty()));
         assertTrue(BongTendingRules.canFix(noBuds, 4, Optional.empty()));
-        assertFalse(BongTendingRules.canFix(BongTendingRules.need(1, true, BongFuel.COAL, true), 4, Optional.empty()));
+        assertFalse(BongTendingRules.canFix(BongTendingRules.need(1, true, BongFuel.CHARCOAL, true), 4, Optional.empty()));
     }
 }

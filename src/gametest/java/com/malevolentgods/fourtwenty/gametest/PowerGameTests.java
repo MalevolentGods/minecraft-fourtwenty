@@ -37,12 +37,12 @@ public final class PowerGameTests {
         return ModDataComponents.withStrain(new ItemStack(item, count), strain);
     }
 
-    /** Water, a bud and coal: a Hookah lights itself. */
+    /** Water, a bud and charcoal: a Hookah lights itself. */
     private static void light(GameTestHelper h, BlockPos pos) {
         var hookah = (WeedBongBlockEntity) h.getBlockEntity(pos);
         hookah.setItem(WeedBongBlockEntity.WEED_SLOT, new ItemStack(ModItems.WEED_BUD.get(), 2));
         hookah.setItem(WeedBongBlockEntity.WATER_SLOT, new ItemStack(net.minecraft.world.item.Items.WATER_BUCKET));
-        hookah.setItem(WeedBongBlockEntity.FUEL_SLOT, new ItemStack(net.minecraft.world.item.Items.COAL));
+        hookah.setItem(WeedBongBlockEntity.FUEL_SLOT, new ItemStack(net.minecraft.world.item.Items.CHARCOAL));
     }
 
     private static void charge(MachineBlockEntity machine) {

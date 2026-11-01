@@ -11,7 +11,7 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - **Boundless Inspiration, up to Rip:** the Hookah now makes Inspo while it burns, and upgrades to the Double Hose and Big Bertha; Stash Jar, Stash Box and Mother Stash; Hemp, Rolled and Glass Wicks; the Hit Box. Too much power burns a Wick out into ash; a block on too high a tier overloads and stops, and never breaks.
 
 ### Changed
-- Hookahs burn coal instead of flint and steel, lava or blaze powder, for one minute a burn.
+- Hookahs burn charcoal instead of flint and steel, lava or blaze powder, for one minute a burn.
 - A Budtender loads one Hookah session per 10 minutes, one bud at a time.
 - The Terpinator and Inspiration Infuser now need Inspo, or a high player within 21 blocks. Their recipes and outputs are unchanged.
 - Rough buds can't feed a Dispensary: colonies need cured buds supplied by a player until the Bud Barn.

@@ -12,15 +12,18 @@ import net.minecraft.world.inventory.Slot;
 import javax.annotation.Nonnull;
 
 /**
- * The look of everything on Boundless Inspiration: a panel in the tier's colours, an Inspo gauge that bubbles, and an overload that turns the
- * whole screen green and smoky. Art comes from tools/generate_tech_ui.py; the atlas layout is shared with it.
+ * The look of everything on Boundless Inspiration: a 1024x1024 backplate per tier, an Inspo gauge that bubbles, and an overload that turns the
+ * whole screen green and smoky. The backplate is only decoration: every slot, frame and gauge is drawn here on top of it, so any art can go
+ * in without lining anything up. The atlas layout is shared with tools/generate_tech_ui.py.
  */
 public abstract class TechScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
     private static final String[] PANELS = {"puff", "toke", "rip"};
     protected static final ResourceLocation ATLAS = ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/tech_atlas.png");
-    private static final int GAUGE_W = 14, GAUGE_H = 54, FILL_U = 16, FILL_FRAMES = 4, ARROW_V = 56, ARROW_W = 24, ARROW_H = 16, ARROW_FRAMES = 4, SLOT_V = 76,
+    private static final int GAUGE_W = 14, GAUGE_H = 54, FILL_U = 16, FILL_FRAMES = 4, ARROW_V = 56, ARROW_W = 24, ARROW_H = 16, ARROW_FILL = 8, ARROW_FRAMES = 4, SLOT_V = 76,
             SMOKE_V = 96, SMOKE_FRAMES = 4, PUFFS = 9;
     private static final long FRAME_MS = 140;
+    private static final int ART = 1024, TITLE_RULE = 15;
+    private static final int[] EDGES = {0xFF60C448, 0xFF3CC4B4, 0xFFA864E8};
     protected static final int TEXT = 0xFFE3E6DF, WARN = 0xFFE8B04A, GREEN = 0xFF7BFF5A;
 
     protected TechScreen(T menu, Inventory inventory, Component title) {
@@ -35,8 +38,10 @@ public abstract class TechScreen<T extends AbstractContainerMenu> extends Abstra
         return (int) (System.currentTimeMillis() / FRAME_MS % frames);
     }
 
+    private int tierIndex() { return Math.max(0, Math.min(tier(), 2)); }
+
     protected ResourceLocation panel() {
-        return ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/tech_" + PANELS[Math.max(0, Math.min(tier(), 2))] + ".png");
+        return ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/tech_" + PANELS[tierIndex()] + ".png");
     }
 
     @Override public void render(@Nonnull GuiGraphics g, int mouseX, int mouseY, float partial) {
@@ -49,15 +54,14 @@ public abstract class TechScreen<T extends AbstractContainerMenu> extends Abstra
     @Override protected void renderBg(@Nonnull GuiGraphics g, float partial, int mouseX, int mouseY) {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        g.blit(panel(), leftPos, topPos, 0, 0, imageWidth, imageHeight);
-        for (Slot slot : menu.slots) {
-            if (slot.y < topSlotsEnd()) g.blit(ATLAS, leftPos + slot.x - 1, topPos + slot.y - 1, 0, SLOT_V, 18, 18);
-        }
+        // The art's top left, scaled to the screen's shape: a short screen shows less of it, never a squashed version.
+        g.blit(panel(), leftPos, topPos, imageWidth, imageHeight, 0, 0, ART, ART * imageHeight / imageWidth, ART, ART);
+        int edge = EDGES[tierIndex()];
+        g.renderOutline(leftPos, topPos, imageWidth, imageHeight, edge);
+        g.fill(leftPos + 3, topPos + TITLE_RULE, leftPos + imageWidth - 3, topPos + TITLE_RULE + 1, edge);
+        for (Slot slot : menu.slots) g.blit(ATLAS, leftPos + slot.x - 1, topPos + slot.y - 1, 0, SLOT_V, 18, 18);
         details(g);
     }
-
-    /** Slots above this row get a frame drawn; the player's inventory is in the panel art. */
-    protected int topSlotsEnd() { return 80; }
 
     protected void details(GuiGraphics g) {}
 
@@ -74,8 +78,8 @@ public abstract class TechScreen<T extends AbstractContainerMenu> extends Abstra
     /** The work arrow: {@code row} 0 is blades, 1 is a drying wave. */
     protected void arrow(GuiGraphics g, int x, int y, int row, int progress, int total) {
         g.blit(ATLAS, x, y, 0, ARROW_V, ARROW_W, ARROW_H);
-        int width = total <= 0 ? 0 : ARROW_W * Math.min(progress, total) / total;
-        if (width > 0) g.blit(ATLAS, x, y, ARROW_W * (1 + frame(ARROW_FRAMES)), ARROW_V + row * ARROW_H / 2, width, ARROW_H);
+        int width = total <= 0 ? 0 : (ARROW_W - 4) * Math.min(progress, total) / total;
+        if (width > 0) g.blit(ATLAS, x + 2, y + (ARROW_H - ARROW_FILL) / 2, ARROW_W * (1 + frame(ARROW_FRAMES)), ARROW_V + row * ARROW_FILL, width, ARROW_FILL);
     }
 
     /** Overloaded: the screen goes green, smoke rolls up it, and the word pulses. */
