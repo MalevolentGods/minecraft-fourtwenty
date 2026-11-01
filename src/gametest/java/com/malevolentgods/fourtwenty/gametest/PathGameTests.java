@@ -60,6 +60,24 @@ public final class PathGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void aRoadShowsThroughGlass(GameTestHelper h) {
+        BlockPos road = new BlockPos(1, 3, 1), above = road.above(), below = road.below();
+        h.setBlock(road, ModTerpenes.PATHS.get(1).get());
+        BlockState state = h.getBlockState(road);
+        for (Block glass : new Block[]{Blocks.GLASS, ModTerpenes.GLASS.values().iterator().next().get()}) {
+            h.setBlock(above, glass);
+            h.setBlock(below, glass);
+            h.assertTrue(!RoadShape.covered(h.getLevel(), h.absolutePos(road), state, -1, -1), glass + " on a road hides its top");
+            h.assertTrue(!RoadShape.supported(h.getLevel(), h.absolutePos(road), state, -1, -1), glass + " under a road hides its underside");
+        }
+        h.setBlock(above, Blocks.STONE);
+        h.setBlock(below, Blocks.STONE);
+        h.assertTrue(RoadShape.covered(h.getLevel(), h.absolutePos(road), state, -1, -1), "stone on a road doesn't cover it");
+        h.assertTrue(RoadShape.supported(h.getLevel(), h.absolutePos(road), state, -1, -1), "stone under a road doesn't support it");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void aLampBesideARoadStillShowsItsTopStrip(GameTestHelper h) {
         BlockPos lamp = new BlockPos(1, 2, 1), road = new BlockPos(2, 2, 1), stone = new BlockPos(1, 2, 2);
         h.setBlock(lamp, Blocks.GLOWSTONE);
