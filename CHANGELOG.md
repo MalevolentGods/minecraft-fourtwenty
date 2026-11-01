@@ -4,6 +4,9 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Residence Fancy:** a second Residence for Sensi Heights, five levels on the same hut.
+
 ### Fixed
 - Roads stay visible under and on top of glass, leaves and other see-through blocks.
 
