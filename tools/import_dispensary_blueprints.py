@@ -28,8 +28,8 @@ from collections import deque
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BUNDLED = ROOT / 'src/main/resources/blueprints/fourtwenty/dispensary/dispensary'
-PACK, HUT = 'FourTwenty', 'fourtwenty:dispensary'
+BUNDLED = ROOT / 'src/main/resources/blueprints/fourtwenty/sensiheights/craftsmanship/luxury'
+PACK, HUT = 'Sensi Heights', 'fourtwenty:dispensary'
 # Mods every FourTwenty Dispensary may rely on: MineColonies and its own dependencies.
 ALLOWED = {'minecraft', 'minecolonies', 'structurize', 'domum_ornamentum', 'fourtwenty'}
 ILLUMAR = re.compile(r'projectred_illumination:(?P<color>[a-z_]+?)_(?P<inverted>inverted_)?illumar_lamp')
@@ -199,7 +199,7 @@ def convert(root, level):
     replace_lighting(root)
     provider = hut_tile(root)['blueprintDataProvider'][1]
     provider['pack'] = (STRING, PACK)
-    provider['path'] = (STRING, f'dispensary/dispensary{level}.blueprint')
+    provider['path'] = (STRING, f'craftsmanship/luxury/dispensary{level}.blueprint')
     provider['schematicName'] = (STRING, f'dispensary{level}')
     root['name'] = (STRING, f'dispensary{level}')
     mods = sorted({n.split(':')[0] for n in names(root)} - {'minecraft'})
@@ -236,7 +236,7 @@ def validate(root, level):
     foreign = sorted({n.split(':')[0] for n in pal} - ALLOWED)
     if foreign: problems.append(f'blocks from optional mods: {foreign}')
     provider = hut_tile(root)['blueprintDataProvider'][1]
-    if provider['pack'][1] != PACK or provider['path'][1] != f'dispensary/dispensary{level}.blueprint':
+    if provider['pack'][1] != PACK or provider['path'][1] != f'craftsmanship/luxury/dispensary{level}.blueprint':
         problems.append(f"hut points at {provider['pack'][1]}/{provider['path'][1]}")
 
     # Walkable: two blocks of air over something to stand on; steps of one block up or down.
@@ -263,7 +263,7 @@ def validate(root, level):
         for tag in (t['tagName'][1] for t in entry['tagNameList'][1][1]):
             if tag == 'sit_in':
                 seats += 1
-                if 'stairs' not in at(*pos): problems.append(f'sit_in at {pos} is not a stair')
+                if 'stairs' not in at(*pos) and 'couch' not in at(*pos): problems.append(f'sit_in at {pos} is not a seat')
                 if not air(pos[0], pos[1] + 1, pos[2]): problems.append(f'sit_in at {pos} has no headroom')
                 if not any(not air(pos[0], y, pos[2]) for y in range(pos[1] + 2, sy)): problems.append(f'sit_in at {pos} has no roof')
                 if not beside(*pos): problems.append(f'sit_in at {pos} not reachable')
