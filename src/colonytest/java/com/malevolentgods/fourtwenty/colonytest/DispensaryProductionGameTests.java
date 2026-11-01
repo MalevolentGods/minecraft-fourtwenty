@@ -28,7 +28,7 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 public final class DispensaryProductionGameTests {
     private static IColony colony(GameTestHelper h) {
         return IColonyManager.getInstance().createColony(h.getLevel(), h.absolutePos(new BlockPos(1,1,1)),
-                FakePlayerFactory.getMinecraft(h.getLevel()), "Dispensary production", "FourTwenty");
+                FakePlayerFactory.getMinecraft(h.getLevel()), "Dispensary production", "Sensi Heights");
     }
     static DispensaryBuilding hut(GameTestHelper h, IColony colony, BlockPos pos) {
         h.getLevel().setBlockAndUpdate(pos, DispensaryRegistry.HUT.get().defaultBlockState());
@@ -184,7 +184,7 @@ public final class DispensaryProductionGameTests {
     }
     @GameTest(template="empty", batch="dispensary_blueprint")
     public static void blueprintLoadsWithHutStorageAndSeating(GameTestHelper h) throws Exception {
-        try(var input=DispensaryBlock.class.getResourceAsStream("/blueprints/fourtwenty/dispensary/dispensary/dispensary1.blueprint")) {
+        try(var input=DispensaryBlock.class.getResourceAsStream("/blueprints/fourtwenty/sensiheights/craftsmanship/luxury/dispensary1.blueprint")) {
             var nbt=net.minecraft.nbt.NbtIo.readCompressed(input,net.minecraft.nbt.NbtAccounter.unlimitedHeap());
             var blueprint=com.ldtteam.structurize.blueprints.v1.BlueprintUtil.readBlueprintFromNBT(nbt,h.getLevel().registryAccess());
             h.assertTrue(blueprint.getSizeX()==9 && blueprint.getSizeZ()==11,"Prototype footprint");

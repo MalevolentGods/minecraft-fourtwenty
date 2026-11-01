@@ -5,6 +5,8 @@ import com.malevolentgods.fourtwenty.domain.Strain;
 import com.malevolentgods.fourtwenty.domain.Traits;
 import com.malevolentgods.fourtwenty.item.WeedPipeItem;
 import com.malevolentgods.fourtwenty.power.BIBuffer;
+import com.malevolentgods.fourtwenty.domain.ConstructionRules;
+import com.malevolentgods.fourtwenty.processing.ConstructionBlockEntity;
 import com.malevolentgods.fourtwenty.processing.ConstructionMenu;
 import com.malevolentgods.fourtwenty.processing.RigBlockEntity;
 import com.malevolentgods.fourtwenty.registry.ModBlocks;
@@ -91,12 +93,32 @@ public final class ExtractGameTests {
         h.succeed();
     }
 
+    private static ItemStack named(String name, int count) {
+        return new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("fourtwenty", name)), count);
+    }
+
     @GameTest(template = "empty")
-    public static void theConstructionJointDoublesBuildingBlocks(GameTestHelper h) {
-        ItemStack road = new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("fourtwenty", "paved_road")), 3);
-        h.assertTrue(ConstructionMenu.doubled(road).getCount() == 6, "roads come in twos: " + ConstructionMenu.doubled(road));
-        ItemStack hookah = new ItemStack(ModItems.WEED_BONG.get());
-        h.assertTrue(ConstructionMenu.doubled(hookah).getCount() == 1, "machines don't");
+    public static void benchesMultiplyBuildingBlocks(GameTestHelper h) {
+        var tier = com.malevolentgods.fourtwenty.domain.BIRules.Tier.RIP;
+        h.assertTrue(ConstructionMenu.multiplied(named("paved_road", 3), tier).getCount() == 12, "roads");
+        h.assertTrue(ConstructionMenu.multiplied(named("concrete_lav_lav_lav", 2), tier).getCount() == 8, "our concrete");
+        h.assertTrue(ConstructionMenu.multiplied(named("glass_lav_lav_lav", 2), tier).getCount() == 8, "our glass");
+        h.assertTrue(ConstructionMenu.multiplied(new ItemStack(Items.BLUE_WOOL, 2), tier).getCount() == 8, "vanilla colours");
+        h.assertTrue(ConstructionMenu.multiplied(new ItemStack(ModItems.WEED_BONG.get()), tier).getCount() == 1, "machines don't");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aBenchNeedsPowerAndPaysForABatch(GameTestHelper h) {
+        h.setBlock(AT, ModPower.CONSTRUCTION_JOINT.get());
+        var bench = (ConstructionBlockEntity) h.getLevel().getBlockEntity(h.absolutePos(AT));
+        h.assertFalse(bench.ready(), "no power, no work");
+        ((BIBuffer) bench.node()).set(1_000_000);
+        h.assertTrue(bench.ready(), "powered, it works");
+        long before = bench.node().stored();
+        bench.pay();
+        h.assertTrue(bench.node().stored() == before - ConstructionRules.cost(bench.tier()), "and a batch costs BI");
+        h.assertFalse(ModPower.CONSTRUCTION_JOINT.get().defaultBlockState().canOcclude(), "it doesn't hide the block under it");
         h.succeed();
     }
 }

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DWD",
+    "RTR"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "W": {
+      "item": "fourtwenty:glass_wick"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "fourtwenty:construction_blunt"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:construction_spliff",
+    "count": 1
+  },
+  "show_notification": true
+}

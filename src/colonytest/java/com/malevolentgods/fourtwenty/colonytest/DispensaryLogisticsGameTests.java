@@ -35,8 +35,8 @@ public final class DispensaryLogisticsGameTests {
             if(!world.getForcedChunks().contains(chunk.toLong())) {world.setChunkForced(x,z,true);forced.add(chunk);}
         }
         var pos=origin.offset(7,0,6);
-        var colony=IColonyManager.getInstance().createColony(world,pos,FakePlayerFactory.getMinecraft(world),"Dispensary logistics","FourTwenty");
-        try(var input=DispensaryBlock.class.getResourceAsStream("/blueprints/fourtwenty/dispensary/dispensary/dispensary1.blueprint")) {
+        var colony=IColonyManager.getInstance().createColony(world,pos,FakePlayerFactory.getMinecraft(world),"Dispensary logistics","Sensi Heights");
+        try(var input=DispensaryBlock.class.getResourceAsStream("/blueprints/fourtwenty/sensiheights/craftsmanship/luxury/dispensary1.blueprint")) {
             var blueprint=com.ldtteam.structurize.blueprints.v1.BlueprintUtil.readBlueprintFromNBT(
                     net.minecraft.nbt.NbtIo.readCompressed(input,net.minecraft.nbt.NbtAccounter.unlimitedHeap()),world.registryAccess());
             var start=pos.subtract(blueprint.getPrimaryBlockOffset());

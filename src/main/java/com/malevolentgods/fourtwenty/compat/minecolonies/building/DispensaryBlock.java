@@ -16,8 +16,8 @@ public final class DispensaryBlock extends AbstractBlockHut<DispensaryBlock> {
     @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         var tile = new TileEntityColonyBuilding(DispensaryRegistry.ENTITY.get(), pos, state);
         tile.registryName = getRegistryName();
-        tile.setPackName("FourTwenty");
-        tile.setBlueprintPath("dispensary/dispensary1.blueprint");
+        tile.setPackName(DispensaryBuilding.PACK);
+        tile.setBlueprintPath(DispensaryBuilding.PATH + "1.blueprint");
         return tile;
     }
 }

@@ -13,7 +13,7 @@ ASSETS = ROOT / 'src/main/resources/assets/fourtwenty'
 DATA = ROOT / 'src/main/resources/data'
 BLOCKS = ('trim_tray', 'curing_rack', 'hemp_wick', 'rolled_wick', 'glass_wick', 'gold_wick', 'double_hose', 'big_bertha', 'grand_hookah', 'the_vault', 'closet_grow', 'grow_tent', 'hydro_bed', 'aero_pod',
           'cosmic_kush_pod', 'think_tank', 'stash_jar', 'stash_box',
-          'mother_stash', 'hit_box', 'snip_station', 'bud_barber', 'trim_reaper', 'dry_box', 'cure_closet', 'the_humidor', 'pheno_chamber', 'pheno_lab', 'pheno_cathedral', 'transport_tube', 'rosin_rig', 'construction_joint')
+          'mother_stash', 'hit_box', 'snip_station', 'bud_barber', 'trim_reaper', 'dry_box', 'cure_closet', 'the_humidor', 'pheno_chamber', 'pheno_lab', 'pheno_cathedral', 'transport_tube', 'rosin_rig', 'construction_joint', 'construction_blunt', 'construction_spliff', 'construction_cannon')
 
 
 def model_problems(ref, seen):
@@ -60,7 +60,7 @@ def main():
             problems.append(f'{name}: no name')
         if not (DATA / f'fourtwenty/loot_table/blocks/{name}.json').exists():
             problems.append(f'{name}: no loot table')
-    ports = ('rosin_rig', 'pheno_chamber', 'pheno_lab', 'pheno_cathedral', 'weed_bong', 'double_hose', 'big_bertha', 'grand_hookah', 'stash_jar', 'stash_box', 'mother_stash', 'the_vault', 'snip_station', 'bud_barber', 'trim_reaper',
+    ports = ('construction_joint', 'construction_blunt', 'construction_spliff', 'construction_cannon', 'rosin_rig', 'pheno_chamber', 'pheno_lab', 'pheno_cathedral', 'weed_bong', 'double_hose', 'big_bertha', 'grand_hookah', 'stash_jar', 'stash_box', 'mother_stash', 'the_vault', 'snip_station', 'bud_barber', 'trim_reaper',
              'dry_box', 'cure_closet', 'the_humidor', 'grow_tent', 'hydro_bed', 'aero_pod', 'cosmic_kush_pod', 'think_tank', 'terpinator', 'terpinator_lab',
              'inspiration_infuser', 'inspiration_infuser_lab', 'hit_box_toke', 'hit_box_rip', 'hit_box_blaze')
     for name in ports:

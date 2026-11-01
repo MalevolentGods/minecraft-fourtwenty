@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BWB",
+    "RTR"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:diamond_block"
+    },
+    "W": {
+      "item": "fourtwenty:gold_wick"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "T": {
+      "item": "fourtwenty:construction_spliff"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:construction_cannon",
+    "count": 1
+  },
+  "show_notification": true
+}

@@ -16,7 +16,7 @@ class BlueprintTests(unittest.TestCase):
             with self.subTest(level=level):
                 root = g.bundled(level)
                 self.assertEqual(g.validate(root, level), [])
-                self.assertEqual(g.size(root), (11, 11, 24), 'levels share one footprint so upgrades line up')
+                self.assertEqual(g.size(root), (15, 12, 28), 'levels share one footprint so upgrades line up')
                 self.assertTrue(any(n == 'minecolonies:blockminecoloniesrack' or 'rack' in n for n in g.names(root)))
 
     def test_bundled_files_round_trip_exactly(self):
@@ -30,10 +30,10 @@ class BlueprintTests(unittest.TestCase):
         root = g.bundled(5)
         root['palette'][1][1].append({'Name': (g.STRING, 'projectred_illumination:white_inverted_illumar_lamp')})
         hut = g.hut_tile(root)['blueprintDataProvider'][1]
-        hut['pack'] = (g.STRING, 'Sensi Heights')
+        hut['pack'] = (g.STRING, 'Elsewhere')
         converted = g.convert(root, 5)
         self.assertNotIn('projectred_illumination:white_inverted_illumar_lamp', g.names(converted))
-        self.assertEqual(g.hut_tile(converted)['blueprintDataProvider'][1]['pack'][1], 'FourTwenty')
+        self.assertEqual(g.hut_tile(converted)['blueprintDataProvider'][1]['pack'][1], 'Sensi Heights')
         self.assertNotIn('projectred_illumination', converted['required_mods'][1][1])
 
     def test_validation_catches_broken_designs(self):

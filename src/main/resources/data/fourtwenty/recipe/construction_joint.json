@@ -2,16 +2,22 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "JJ",
-    "PP",
-    "PP"
+    "JWJ",
+    "PRP",
+    "PPP"
   ],
   "key": {
     "J": {
       "item": "fourtwenty:weed_joint"
     },
+    "W": {
+      "item": "fourtwenty:hemp_wick"
+    },
     "P": {
       "item": "minecraft:oak_planks"
+    },
+    "R": {
+      "item": "minecraft:redstone"
     }
   },
   "result": {

@@ -27,7 +27,10 @@ WICKS = {'hemp_wick': 'puff', 'rolled_wick': 'toke', 'glass_wick': 'rip', 'gold_
 PLOTS = {'closet_grow': 'puff', 'grow_tent': 'puff', 'hydro_bed': 'toke', 'aero_pod': 'rip', 'cosmic_kush_pod': 'blaze'}
 HOOKAHS = ('double_hose', 'big_bertha', 'grand_hookah')       # the Hookah upgraded: their models come from tools/generate_hookah_model.py
 MACHINES = {'snip_station': 'puff', 'bud_barber': 'toke', 'trim_reaper': 'rip', 'dry_box': 'puff', 'cure_closet': 'toke', 'the_humidor': 'rip',
-            'pheno_chamber': 'toke', 'pheno_lab': 'rip', 'pheno_cathedral': 'blaze', 'rosin_rig': 'toke'}
+            'pheno_chamber': 'toke', 'pheno_lab': 'rip', 'pheno_cathedral': 'blaze', 'rosin_rig': 'toke',
+            'construction_joint': 'puff', 'construction_blunt': 'toke', 'construction_spliff': 'rip', 'construction_cannon': 'blaze'}
+BUILDING = ('hemp_', 'concrete_', 'glass_', 'couch_', 'rug_', 'pot_pot_', 'potted_pot_pot_')
+BENCHES = ('construction_joint', 'construction_blunt', 'construction_spliff', 'construction_cannon')
 FACINGS = (('north', 0), ('east', 90), ('south', 180), ('west', 270))
 SIZE = 32
 
@@ -103,6 +106,12 @@ def front(name, lit, frame=0):
             spread = 3 + frame if lit else 3
             d.line([(8, y), (23, y + spread)], fill=(214, 220, 226, 255), width=2)
             d.line([(8, y + spread), (23, y)], fill=a, width=1)
+    elif name in BENCHES:                                          # a joint, fatter with each tier, smoking while it works
+        h = 1 + BENCHES.index(name)
+        d.rectangle([8, 15 - h, 23, 15 + h], fill=(232, 226, 208, 255))
+        d.rectangle([20, 15 - h, 23, 15 + h], fill=a)
+        if lit:
+            d.point([(24 + frame % 2, 13 - frame), (25, 11 - frame)], fill=(180, 180, 180, 255))
     elif name == 'rosin_rig':                                      # the press, closing while it works
         gap = 4 - frame if lit else 4
         d.rectangle([9, 8, 22, 12], fill=(214, 220, 226, 255))
@@ -245,6 +254,7 @@ def machines():
         'dry_box': [full(16)],
         'cure_closet': [box([1, 0, 1], [15, 16, 15], 'body', north='front'), box([12, 6, 0.5], [13, 10, 1], 'glow')],
         'the_humidor': [box([0, 2, 0], [16, 16, 16], 'body', north='front'), *[box([x, 0, z], [x + 2, 2, z + 2], 'glow') for x in (1, 13) for z in (1, 13)]],
+        **{name: [full(14), box([2, 14, 7], [14, 15 + BENCHES.index(name) // 2, 9], 'glow')] for name in BENCHES},
         'rosin_rig': [full(13), box([2, 13, 2], [5, 16, 5], 'glow'), box([11, 13, 2], [14, 16, 5], 'glow'), box([2, 13, 11], [14, 16, 14], 'glow')],
         'pheno_chamber': [full(14), *[box([x, 14, z], [x + 3, 16, z + 3], 'glow') for x in (2, 11) for z in (2, 11)]],
         'pheno_lab': [full(13), box([2, 13, 2], [14, 16, 5], 'glow'), box([2, 13, 11], [14, 16, 14], 'glow')],
@@ -303,17 +313,11 @@ def extracts():
         write(ASSETS / f'models/item/{name}.json', {'parent': 'item/generated', 'textures': {'layer0': f'fourtwenty:item/{name}'}})
 
 
-def construction_joint():
-    tex = {'wood': 'fourtwenty:block/processing/wood_dark', 'mat': 'fourtwenty:block/processing/mat', 'light': 'fourtwenty:block/processing/wood_light'}
-    model('construction_joint', [box([0, 10, 0], [16, 14, 16], 'wood'), box([1, 0, 1], [4, 10, 4], 'light'), box([12, 0, 1], [15, 10, 4], 'light'), box([1, 0, 12], [4, 10, 15], 'light'),
-                                 box([12, 0, 12], [15, 10, 15], 'light'), box([2, 14, 7], [14, 16, 9], 'mat')], tex, '#wood')
-    write(ASSETS / 'blockstates/construction_joint.json', {'variants': {'': {'model': 'fourtwenty:block/construction_joint'}}})
-    item_model('construction_joint')
-    write(DATA / 'fourtwenty/loot_table/blocks/construction_joint.json', {
-        'type': 'minecraft:block',
-        'pools': [{'rolls': 1, 'entries': [{'type': 'minecraft:item', 'name': 'fourtwenty:construction_joint'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
-    lamps = sorted(p.stem for p in (ASSETS / 'models/item').glob('*.json') if 'lamp' in p.stem and 'strain' not in p.stem)
-    write(DATA / 'fourtwenty/tags/item/construction.json', {'replace': False, 'values': ['#fourtwenty:hemp_blocks', '#fourtwenty:paths', '#fourtwenty:rugs'] + [f'fourtwenty:{n}' for n in lamps]})
+def construction_tag():
+    """What the Construction benches multiply: the mod's building blocks, every colour of them, and anything dyed."""
+    ours = sorted(p.stem for p in (ASSETS / 'models/item').glob('*.json') if p.stem.startswith(BUILDING) or 'lamp' in p.stem)
+    optional = [{'id': tag, 'required': False} for tag in ('#c:dyed', '#minecraft:wool', '#minecraft:wool_carpets', '#minecraft:terracotta')]
+    write(DATA / 'fourtwenty/tags/item/construction.json', {'replace': False, 'values': ['#fourtwenty:hemp_blocks', '#fourtwenty:paths', '#fourtwenty:rugs', *[f'fourtwenty:{n}' for n in ours], *optional]})
 
 
 def plots():
@@ -361,7 +365,10 @@ def recipes():
         'buzz_bot': (1, ['WHW', 'ICI'], {'W': 'fourtwenty:glass_wick', 'H': 'honeycomb', 'I': 'iron_ingot', 'C': 'copper_block'}),
         'transport_tube': (8, ['GCG', 'GWG', 'GCG'], {'G': 'glass_pane', 'C': 'copper_ingot', 'W': 'fourtwenty:hemp_wick'}),
         'rosin_rig': (1, ['IPI', 'RCR', 'IWI'], {'I': 'iron_ingot', 'P': 'piston', 'R': 'redstone', 'C': 'copper_block', 'W': 'fourtwenty:rolled_wick'}),
-        'construction_joint': (1, ['JJ', 'PP', 'PP'], {'J': 'fourtwenty:weed_joint', 'P': 'oak_planks'}),
+        'construction_joint': (1, ['JWJ', 'PRP', 'PPP'], {'J': 'fourtwenty:weed_joint', 'W': 'fourtwenty:hemp_wick', 'P': 'oak_planks', 'R': 'redstone'}),
+        'construction_blunt': (1, ['CWC', 'RTR'], {'C': 'copper_ingot', 'W': 'fourtwenty:rolled_wick', 'R': 'redstone', 'T': 'fourtwenty:construction_joint'}),
+        'construction_spliff': (1, ['DWD', 'RTR'], {'D': 'diamond', 'W': 'fourtwenty:glass_wick', 'R': 'redstone', 'T': 'fourtwenty:construction_blunt'}),
+        'construction_cannon': (1, ['BWB', 'RTR'], {'B': 'diamond_block', 'W': 'fourtwenty:gold_wick', 'R': 'redstone_block', 'T': 'fourtwenty:construction_spliff'}),
         'pheno_chamber': (1, ['CGC', 'RTR', 'CWC'], {'C': 'copper_ingot', 'G': 'glass', 'R': 'redstone', 'T': 'flower_pot', 'W': 'fourtwenty:rolled_wick'}),
         'pheno_lab': (1, ['DGD', 'RTR', 'DWD'], {'D': 'diamond', 'G': 'glass', 'R': 'redstone', 'T': 'fourtwenty:pheno_chamber', 'W': 'fourtwenty:glass_wick'}),
         'pheno_cathedral': (1, ['BGB', 'RTR', 'BWB'], {'B': 'diamond_block', 'G': 'gold_block', 'R': 'redstone_block', 'T': 'fourtwenty:pheno_lab', 'W': 'fourtwenty:gold_wick'}),
@@ -381,7 +388,7 @@ def data():
     write(DATA / 'fourtwenty/loot_table/blocks/transport_tube.json', {
         'type': 'minecraft:block',
         'pools': [{'rolls': 1, 'entries': [{'type': 'minecraft:item', 'name': 'fourtwenty:transport_tube'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
-    write(DATA / 'fourtwenty/tags/block/tube_blocks.json', {'replace': False, 'values': [f'fourtwenty:{n}' for n in list(MACHINES) + ['weed_bong', 'double_hose', 'big_bertha', 'grand_hookah', 'terpinator', 'terpinator_lab']]})
+    write(DATA / 'fourtwenty/tags/block/tube_blocks.json', {'replace': False, 'values': [f'fourtwenty:{n}' for n in [m for m in MACHINES if m not in BENCHES] + ['weed_bong', 'double_hose', 'big_bertha', 'grand_hookah', 'terpinator', 'terpinator_lab']]})
     joined = [n for n in blocks if n not in WICKS and n != 'closet_grow'] + ['weed_bong', 'terpinator', 'terpinator_lab', 'inspiration_infuser', 'inspiration_infuser_lab']
     write(DATA / 'fourtwenty/tags/block/bi_blocks.json', {'replace': False, 'values': [f'fourtwenty:{n}' for n in joined]})
     path = DATA / 'minecraft/tags/block/mineable/pickaxe.json'
@@ -401,7 +408,7 @@ if __name__ == '__main__':
     machines()
     tube()
     extracts()
-    construction_joint()
+    construction_tag()
     recipes()
     data()
     print('ok')

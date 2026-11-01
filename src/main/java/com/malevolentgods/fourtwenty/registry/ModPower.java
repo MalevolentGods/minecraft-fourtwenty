@@ -13,6 +13,7 @@ import com.malevolentgods.fourtwenty.processing.MachineBlock;
 import com.malevolentgods.fourtwenty.processing.MachineBlock.Job;
 import com.malevolentgods.fourtwenty.processing.MachineBlockEntity;
 import com.malevolentgods.fourtwenty.processing.MachineMenu;
+import com.malevolentgods.fourtwenty.processing.ConstructionBlockEntity;
 import com.malevolentgods.fourtwenty.processing.ConstructionJointBlock;
 import com.malevolentgods.fourtwenty.processing.ConstructionMenu;
 import com.malevolentgods.fourtwenty.processing.PhenoBlock;
@@ -90,6 +91,10 @@ public final class ModPower {
         return block(name, () -> new WickBlock(tier, wick()));
     }
 
+    private static DeferredHolder<Block, ConstructionJointBlock> bench(String name, Tier tier) {
+        return block(name, () -> new ConstructionJointBlock(tier, metal().noOcclusion()));
+    }
+
     private static DeferredHolder<Block, MachineBlock> machine(String name, Job job, Tier tier) {
         return block(name, () -> new MachineBlock(job, tier, metal()));
     }
@@ -134,8 +139,11 @@ public final class ModPower {
             () -> new com.malevolentgods.fourtwenty.power.TubeBlock(BlockBehaviour.Properties.of().strength(0.3f).sound(net.minecraft.world.level.block.SoundType.COPPER).noOcclusion()));
 
     public static final DeferredHolder<Block, RigBlock> ROSIN_RIG = block("rosin_rig", () -> new RigBlock(metal()));
-    public static final DeferredHolder<Block, ConstructionJointBlock> CONSTRUCTION_JOINT = block("construction_joint",
-            () -> new ConstructionJointBlock(BlockBehaviour.Properties.of().strength(2).sound(net.minecraft.world.level.block.SoundType.WOOD)));
+    public static final DeferredHolder<Block, ConstructionJointBlock> CONSTRUCTION_JOINT = bench("construction_joint", Tier.PUFF);
+    public static final DeferredHolder<Block, ConstructionJointBlock> CONSTRUCTION_BLUNT = bench("construction_blunt", Tier.TOKE);
+    public static final DeferredHolder<Block, ConstructionJointBlock> CONSTRUCTION_SPLIFF = bench("construction_spliff", Tier.RIP);
+    public static final DeferredHolder<Block, ConstructionJointBlock> CONSTRUCTION_CANNON = bench("construction_cannon", Tier.BLAZE);
+    public static final java.util.List<DeferredHolder<Block, ConstructionJointBlock>> CONSTRUCTION_BENCHES = java.util.List.of(CONSTRUCTION_JOINT, CONSTRUCTION_BLUNT, CONSTRUCTION_SPLIFF, CONSTRUCTION_CANNON);
     /** Kief, Hash, Resin, Rosin, Oil, in that order. */
     public static final java.util.List<DeferredHolder<Item, Item>> EXTRACTS = java.util.stream.Stream.of("kief", "hash", "resin", "rosin", "oil")
             .map(name -> ModItems.ITEMS.register(name, () -> (Item) new com.malevolentgods.fourtwenty.item.StrainItems.Bud(new Item.Properties()))).toList();
@@ -176,6 +184,9 @@ public final class ModPower {
     public static final DeferredHolder<MenuType<?>, MenuType<RigMenu>> RIG_MENU = ModMenuTypes.MENU_TYPES.register("rosin_rig",
             () -> IMenuTypeExtension.create((id, inventory, data) -> new RigMenu(id, inventory)));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ConstructionBlockEntity>> CONSTRUCTION_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("construction",
+            () -> BlockEntityType.Builder.of(ConstructionBlockEntity::new, CONSTRUCTION_JOINT.get(), CONSTRUCTION_BLUNT.get(), CONSTRUCTION_SPLIFF.get(), CONSTRUCTION_CANNON.get()).build(null));
+
     public static final DeferredHolder<MenuType<?>, MenuType<ConstructionMenu>> CONSTRUCTION_MENU = ModMenuTypes.MENU_TYPES.register("construction_joint",
             () -> IMenuTypeExtension.create((id, inventory, data) -> new ConstructionMenu(id, inventory)));
 
@@ -211,6 +222,7 @@ public final class ModPower {
         event.registerBlockEntity(BINode.CAPABILITY, MACHINE_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, PHENO_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, RIG_ENTITY.get(), (entity, side) -> entity.node());
+        event.registerBlockEntity(BINode.CAPABILITY, CONSTRUCTION_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, GROW_OP_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, THINK_TANK_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, ModTerpenes.TERPINATOR_ENTITY.get(), (TerpinatorBlockEntity entity, Direction side) -> entity.node());

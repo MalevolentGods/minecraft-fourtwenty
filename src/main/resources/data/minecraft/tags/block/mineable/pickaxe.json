@@ -245,6 +245,10 @@
     "fourtwenty:pheno_chamber",
     "fourtwenty:pheno_lab",
     "fourtwenty:pheno_cathedral",
-    "fourtwenty:rosin_rig"
+    "fourtwenty:rosin_rig",
+    "fourtwenty:construction_joint",
+    "fourtwenty:construction_blunt",
+    "fourtwenty:construction_spliff",
+    "fourtwenty:construction_cannon"
   ]
 }
