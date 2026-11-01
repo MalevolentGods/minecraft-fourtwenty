@@ -60,7 +60,14 @@ def main():
             problems.append(f'{name}: no name')
         if not (DATA / f'fourtwenty/loot_table/blocks/{name}.json').exists():
             problems.append(f'{name}: no loot table')
-    print('\n'.join(problems) if problems else f'{len(BLOCKS)} blocks complete')
+    ports = ('weed_bong', 'double_hose', 'big_bertha', 'grand_hookah', 'stash_jar', 'stash_box', 'mother_stash', 'the_vault', 'snip_station', 'bud_barber', 'trim_reaper',
+             'dry_box', 'cure_closet', 'the_humidor', 'grow_tent', 'hydro_bed', 'aero_pod', 'cosmic_kush_pod', 'think_tank', 'terpinator', 'terpinator_lab',
+             'inspiration_infuser', 'inspiration_infuser_lab', 'hit_box_toke', 'hit_box_rip', 'hit_box_blaze')
+    for name in ports:
+        for side in ('north', 'east', 'south', 'west', 'up', 'down'):
+            for lit in ('', '_lit'):
+                problems += model_problems(f'fourtwenty:block/port/{name}_{side}{lit}', set())
+    print('\n'.join(problems) if problems else f'{len(BLOCKS)} blocks and {len(ports)} sets of fittings complete')
     sys.exit(1 if problems else 0)
 
 

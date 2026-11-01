@@ -6,6 +6,7 @@ import com.malevolentgods.fourtwenty.processing.ProcessingConfig;
 import com.malevolentgods.fourtwenty.registry.ModPower;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -28,13 +29,14 @@ public class GrowOpBlockEntity extends BIBlockEntity implements MenuProvider {
     private final MachinePower.Meter meter = new MachinePower.Meter();
     private final ContainerData data;
     private boolean running;
+    private int state;
 
     public GrowOpBlockEntity(BlockPos pos, BlockState state) {
         super(ModPower.GROW_OP_ENTITY.get(), pos, state);
         block = (GrowOpBlock) state.getBlock();
         BIRules.Tier tier = block.tier();
         buffer = new BIBuffer(tier == null ? BIRules.Tier.BLAZE : tier, tier == null ? 0 : (long) Math.ceil(tier.machine() * BUFFER_TICKS), tier != null, false, this::setChanged);
-        data = BIBlockEntity.data(buffer, () -> level == null ? 0 : level.getGameTime(), () -> tier == null ? 0 : tier.ordinal(), BIBlockEntity.KIND_PLOT, block.plotLevel());
+        data = BIBlockEntity.data(buffer, () -> level == null ? 0 : level.getGameTime(), () -> tier == null ? 0 : tier.ordinal(), BIBlockEntity.KIND_PLOT, block.plotLevel(), () -> state);
     }
 
     public BINode node() { return buffer; }
@@ -52,9 +54,13 @@ public class GrowOpBlockEntity extends BIBlockEntity implements MenuProvider {
         BIRules.Tier tier = block.tier();
         running = hasCrop && !overloaded && (tier == null || MachinePower.steps(level, worldPosition, buffer, tier.machine(), meter) > 0);
         lit(running && tier != null);
+        state = !hasCrop ? STATE_NO_CROP : tier == null ? STATE_NATURAL : !running ? STATE_WAITING : MachinePower.highNear(level, worldPosition) ? STATE_FREE : STATE_PAID;
         if (running && level instanceof ServerLevel server) {
             double chance = GrowRules.extraTickChance(speed(), server.getGameRules().getInt(GameRules.RULE_RANDOMTICKING));
-            if (server.random.nextDouble() < chance) crop.randomTick(server, above, server.random);
+            if (server.random.nextDouble() < chance) {
+                crop.randomTick(server, above, server.random);
+                server.sendParticles(ParticleTypes.HAPPY_VILLAGER, above.getX() + 0.5, above.getY() + 0.4, above.getZ() + 0.5, 4, 0.25, 0.2, 0.25, 0);
+            }
         }
     }
 

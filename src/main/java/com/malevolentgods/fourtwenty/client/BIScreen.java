@@ -49,6 +49,7 @@ public class BIScreen extends TechScreen<BIMenu> {
         if (menu.plot()) {
             g.drawString(font, Component.translatable("gui.fourtwenty.plot.speed", com.malevolentgods.fourtwenty.processing.ProcessingConfig.plotSpeed(menu.plotLevel())), TEXT_X, 24, TEXT, false);
             g.drawString(font, Component.translatable(menu.plotLevel() == 1 ? "gui.fourtwenty.plot.unpowered" : "gui.fourtwenty.plot.powered"), TEXT_X, 36, TEXT, false);
+            g.drawString(font, Component.translatable("gui.fourtwenty.plot.state." + menu.state()), TEXT_X, 48, menu.state() == 3 ? WARN : GREEN, false);
         } else if (menu.hitBox()) {
             g.drawString(font, Component.translatable("gui.fourtwenty.hit_box.front", tierName(tier)), TEXT_X, 24, TEXT, false);
             g.drawString(font, Component.translatable("gui.fourtwenty.hit_box.sides", tierName(tier.below())), TEXT_X, 36, TEXT, false);

@@ -1,0 +1,156 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/hookah/steel",
+  "plate": "fourtwenty:block/hookah/steel",
+  "collar": "fourtwenty:block/power/rip_glow_lit",
+  "lead": "fourtwenty:block/power/rip_wick_lit"
+ },
+ "elements": [
+  {
+   "from": [
+    7,
+    7,
+    12.2
+   ],
+   "to": [
+    9,
+    9,
+    16
+   ],
+   "faces": {
+    "south": {
+     "uv": [
+      7,
+      7,
+      9,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "north": {
+     "uv": [
+      7,
+      7,
+      9,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "west": {
+     "uv": [
+      0,
+      7,
+      3.8,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "east": {
+     "uv": [
+      0,
+      7,
+      3.8,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "up": {
+     "uv": [
+      7,
+      0,
+      9,
+      3.8
+     ],
+     "texture": "#lead"
+    },
+    "down": {
+     "uv": [
+      7,
+      0,
+      9,
+      3.8
+     ],
+     "texture": "#lead"
+    }
+   },
+   "rotation": {
+    "origin": [
+     8,
+     8,
+     16
+    ],
+    "axis": "x",
+    "angle": 22.5
+   }
+  },
+  {
+   "from": [
+    6,
+    5,
+    12.25
+   ],
+   "to": [
+    10,
+    8,
+    12.75
+   ],
+   "faces": {
+    "south": {
+     "uv": [
+      6,
+      8,
+      10,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "north": {
+     "uv": [
+      6,
+      8,
+      10,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "west": {
+     "uv": [
+      3.25,
+      8,
+      3.75,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "east": {
+     "uv": [
+      3.25,
+      8,
+      3.75,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "up": {
+     "uv": [
+      6,
+      3.25,
+      10,
+      3.75
+     ],
+     "texture": "#plate"
+    },
+    "down": {
+     "uv": [
+      6,
+      3.25,
+      10,
+      3.75
+     ],
+     "texture": "#plate"
+    }
+   }
+  }
+ ]
+}

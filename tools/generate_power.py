@@ -184,20 +184,8 @@ def wicks():
             tex = {'wick': t(tier, 'wick', lit)}
             model(f'{name}_core{suffix}', [box([6, 6, 6], [10, 10, 10], 'wick')], tex, '#wick')
             model(f'{name}_arm{suffix}', [box([6, 6, 0], [10, 10, 6], 'wick')], tex, '#wick')
-            # A plug: the wire, a glowing collar, a flange on the block's edge, and a tail in to a plate that meets a block inset up to 4 pixels.
-            model(f'{name}_plug{suffix}', [box([6, 6, 2.5], [10, 10, 6], 'wick'),
-                                           box([5.5, 5.5, 1], [10.5, 10.5, 2.5], 'collar'),
-                                           box([4.5, 4.5, 0], [11.5, 11.5, 1], 'plate'),
-                                           box([6.5, 6.5, -3.5], [9.5, 9.5, 0], 'collar'),
-                                           box([5, 5, -4.25], [11, 11, -3.25], 'plate')],
-                  {**tex, 'collar': t(tier, 'glow', lit), 'plate': t(tier, 'body')}, '#wick')
-            # For a short block: the same collar, then an elbow down to a plate on its body, below the top of a Hookah's cabinet or a Stash Jar.
-            model(f'{name}_low{suffix}', [box([6, 6, 2.5], [10, 10, 6], 'wick'),
-                                          box([5.5, 5.5, 1], [10.5, 10.5, 2.5], 'collar'),
-                                          box([6.5, 3, 0], [9.5, 7, 1], 'plate'),
-                                          box([6.5, 3.5, -3.25], [9.5, 6.5, 0], 'collar'),
-                                          box([5.5, 2.5, -4.25], [10.5, 7.5, -3.25], 'plate')],
-                  {**tex, 'collar': t(tier, 'glow', lit), 'plate': t(tier, 'body')}, '#wick')
+            # The wire tapers as it arrives; the block draws the rest (tools/generate_ports.py).
+            model(f'{name}_plug{suffix}', [box([6, 6, 3], [10, 10, 6], 'wick'), box([6.75, 6.75, 0], [9.25, 9.25, 3], 'wick')], tex, '#wick')
         parts = []
         for lit in (False, True):
             suffix = '_lit' if lit else ''
@@ -206,8 +194,6 @@ def wicks():
             for side, rot in (('north', {}), ('east', {'y': 90}), ('south', {'y': 180}), ('west', {'y': 270}), ('up', {'x': 270}), ('down', {'x': 90})):
                 parts.append({'when': {side: 'wire', 'lit': flag}, 'apply': {'model': f'fourtwenty:block/{name}_arm{suffix}', **rot}})
                 parts.append({'when': {side: 'plug', 'lit': flag}, 'apply': {'model': f'fourtwenty:block/{name}_plug{suffix}', **rot}})
-                if side not in ('up', 'down'):
-                    parts.append({'when': {side: 'low', 'lit': flag}, 'apply': {'model': f'fourtwenty:block/{name}_low{suffix}', **rot}})
         write(ASSETS / f'blockstates/{name}.json', {'multipart': parts})
         model(name + '_item', [box([2, 6, 6], [14, 10, 10], 'wick')], {'wick': t(tier, 'wick')}, '#wick')
         item_model(name, f'fourtwenty:block/{name}_item')
@@ -225,7 +211,7 @@ def stashes():
     for tier in ('toke', 'rip', 'blaze'):
         for lit in (False, True):
             suffix = '_lit' if lit else ''
-            model(f'hit_box_{tier}{suffix}', [box([0, 0, 0], [16, 16, 16], 'body'), box([4, 4, -0.5], [12, 12, 0], 'plug')],
+            model(f'hit_box_{tier}{suffix}', [box([0, 0, 0], [16, 16, 16], 'body', north='plug')],
                   {'body': t(tier, 'body'), 'plug': t(tier, 'glow', lit)}, '#body')
             for f, y in FACINGS:
                 states[f'facing={f},lit={str(lit).lower()},tier={tier}'] = {'model': f'fourtwenty:block/hit_box_{tier}{suffix}', **({'y': y} if y else {})}

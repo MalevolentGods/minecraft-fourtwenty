@@ -43,6 +43,8 @@ public class BIMenu extends AbstractContainerMenu {
 
     public int plotLevel() { return data.get(BIBlockEntity.DATA_PLOT); }
 
+    public int state() { return data.get(BIBlockEntity.DATA_STATE); }
+
     @Override public boolean clickMenuButton(@Nonnull Player player, int id) {
         if (id == BUTTON_TOGGLE && entity instanceof HitBoxBlockEntity box) {
             box.toggle();

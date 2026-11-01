@@ -29,13 +29,12 @@ import java.util.Map;
 
 /**
  * Wiring: Hemp, Rolled and Glass Wick. It glows while it carries power and burns out past two Hookahs' worth of its tier. Each side is open,
- * joined to another Wick, or plugged into a BI block: a plug's flange sits on the block's edge and its tail reaches into the block's space, so
- * a Wick meets a narrow block instead of stopping short of it. A LOW plug drops down first, into the body of a short block like a Hookah or Stash Jar,
- * whose side doesn't reach wire height.
+ * joined to another Wick, or plugged into a BI block: a plug tapers to the block's edge, and the block draws the rest of the fitting for that side
+ * (client/PortModel).
  */
 public class WickBlock extends Block {
     public enum Link implements StringRepresentable {
-        NONE, WIRE, PLUG, LOW;
+        NONE, WIRE, PLUG;
 
         @Override public @Nonnull String getSerializedName() { return name().toLowerCase(Locale.ROOT); }
     }
@@ -84,22 +83,20 @@ public class WickBlock extends Block {
         return shapes.get(state);
     }
 
-    private static Link link(BlockState neighbour, Direction side) {
+    private static Link link(BlockState neighbour) {
         if (neighbour.getBlock() instanceof WickBlock) return Link.WIRE;
-        if (!neighbour.is(ModPower.BI_BLOCKS)) return Link.NONE;
-        boolean low = neighbour.getBlock() instanceof com.malevolentgods.fourtwenty.block.WeedBongBlock || neighbour.is(ModPower.STASH_JAR.get());
-        return low && side.getAxis().isHorizontal() ? Link.LOW : Link.PLUG;
+        return neighbour.is(ModPower.BI_BLOCKS) ? Link.PLUG : Link.NONE;
     }
 
     @Override public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
         BlockState state = defaultBlockState();
-        for (Direction d : Direction.values()) state = state.setValue(SIDES.get(d), link(context.getLevel().getBlockState(context.getClickedPos().relative(d)), d));
+        for (Direction d : Direction.values()) state = state.setValue(SIDES.get(d), link(context.getLevel().getBlockState(context.getClickedPos().relative(d))));
         return state;
     }
 
     @Override protected @Nonnull BlockState updateShape(@Nonnull BlockState state, @Nonnull Direction direction, @Nonnull BlockState neighbour, @Nonnull LevelAccessor level,
                                                         @Nonnull BlockPos pos, @Nonnull BlockPos neighbourPos) {
-        return state.setValue(SIDES.get(direction), link(neighbour, direction));
+        return state.setValue(SIDES.get(direction), link(neighbour));
     }
 
     @Override protected void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState old, boolean moved) {

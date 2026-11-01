@@ -1,0 +1,79 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/power/puff_body",
+  "plate": "fourtwenty:block/power/puff_body",
+  "collar": "fourtwenty:block/power/puff_glow",
+  "lead": "fourtwenty:block/power/puff_wick"
+ },
+ "elements": [
+  {
+   "from": [
+    7,
+    7,
+    0
+   ],
+   "to": [
+    9,
+    9,
+    1
+   ],
+   "faces": {
+    "south": {
+     "uv": [
+      7,
+      7,
+      9,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "north": {
+     "uv": [
+      7,
+      7,
+      9,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "west": {
+     "uv": [
+      15,
+      7,
+      16,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "east": {
+     "uv": [
+      15,
+      7,
+      16,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "up": {
+     "uv": [
+      7,
+      15,
+      9,
+      16
+     ],
+     "texture": "#lead"
+    },
+    "down": {
+     "uv": [
+      7,
+      15,
+      9,
+      16
+     ],
+     "texture": "#lead"
+    }
+   }
+  }
+ ]
+}

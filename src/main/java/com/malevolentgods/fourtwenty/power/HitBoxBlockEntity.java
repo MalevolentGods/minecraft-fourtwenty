@@ -47,7 +47,7 @@ public class HitBoxBlockEntity extends BIBlockEntity implements MenuProvider {
     private final BIBuffer up = new BIBuffer(BIRules.Tier.RIP, BUFFER, true, true, this::setChanged);
     private final Face highFace = new Face(true), lowFace = new Face(false);
     private final BIPush pushDown = new BIPush(), pushUp = new BIPush();
-    private final ContainerData data = BIBlockEntity.data(down, this::gameTime, () -> highTier().ordinal(), BIBlockEntity.KIND_HIT_BOX, 0);
+    private final ContainerData data = BIBlockEntity.data(down, this::gameTime, () -> highTier().ordinal(), BIBlockEntity.KIND_HIT_BOX, 0, () -> 0);
 
     public HitBoxBlockEntity(BlockPos pos, BlockState state) {
         super(ModPower.HIT_BOX_ENTITY.get(), pos, state);

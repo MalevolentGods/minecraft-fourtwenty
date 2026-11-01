@@ -50,6 +50,7 @@ public class MachineScreen extends TechScreen<MachineMenu> {
 
     @Override protected void renderLabels(@Nonnull GuiGraphics g, int mouseX, int mouseY) {
         g.drawString(font, title, 8, 6, TEXT, false);
-        if (menu.paused() && !menu.overloaded()) g.drawString(font, Component.translatable("gui.fourtwenty.machine.waiting"), 8, 72, WARN, false);
+        if (menu.free()) g.drawString(font, Component.translatable("gui.fourtwenty.machine.free"), 8, 72, GREEN, false);
+        else if (menu.paused() && !menu.overloaded()) g.drawString(font, Component.translatable("gui.fourtwenty.machine.waiting"), 8, 72, WARN, false);
     }
 }

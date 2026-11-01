@@ -1,0 +1,156 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/hookah/gold",
+  "plate": "fourtwenty:block/hookah/gold",
+  "collar": "fourtwenty:block/power/blaze_glow_lit",
+  "lead": "fourtwenty:block/power/blaze_wick_lit"
+ },
+ "elements": [
+  {
+   "from": [
+    0,
+    7,
+    7
+   ],
+   "to": [
+    3.8000000000000007,
+    9,
+    9
+   ],
+   "faces": {
+    "west": {
+     "uv": [
+      7,
+      7,
+      9,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "east": {
+     "uv": [
+      7,
+      7,
+      9,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "north": {
+     "uv": [
+      0,
+      7,
+      3.8,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "south": {
+     "uv": [
+      0,
+      7,
+      3.8,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "up": {
+     "uv": [
+      7,
+      0,
+      9,
+      3.8
+     ],
+     "texture": "#lead"
+    },
+    "down": {
+     "uv": [
+      7,
+      0,
+      9,
+      3.8
+     ],
+     "texture": "#lead"
+    }
+   },
+   "rotation": {
+    "origin": [
+     0,
+     8,
+     8
+    ],
+    "axis": "z",
+    "angle": 22.5
+   }
+  },
+  {
+   "from": [
+    3.25,
+    5,
+    6
+   ],
+   "to": [
+    3.75,
+    8,
+    10
+   ],
+   "faces": {
+    "west": {
+     "uv": [
+      6,
+      8,
+      10,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "east": {
+     "uv": [
+      6,
+      8,
+      10,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "north": {
+     "uv": [
+      3.25,
+      8,
+      3.75,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "south": {
+     "uv": [
+      3.25,
+      8,
+      3.75,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "up": {
+     "uv": [
+      6,
+      3.25,
+      10,
+      3.75
+     ],
+     "texture": "#plate"
+    },
+    "down": {
+     "uv": [
+      6,
+      3.25,
+      10,
+      3.75
+     ],
+     "texture": "#plate"
+    }
+   }
+  }
+ ]
+}

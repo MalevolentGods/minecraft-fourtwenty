@@ -65,9 +65,15 @@ public class ModClientEvents {
 
     /** Roads, road slabs and road stairs join quarter by quarter as the chunk is drawn (RoadModel); our other blocks sit down onto them (SunkModel). */
     @SubscribeEvent
+    public static void registerPorts(net.neoforged.neoforge.client.event.ModelEvent.RegisterAdditional event) {
+        PortModel.register(event);
+    }
+
+    @SubscribeEvent
     public static void replaceRoadModels(net.neoforged.neoforge.client.event.ModelEvent.ModifyBakingResult event) {
         RoadModel.replace(event);
         SunkModel.wrap(event);
+        PortModel.wrap(event);
     }
 
     @SubscribeEvent

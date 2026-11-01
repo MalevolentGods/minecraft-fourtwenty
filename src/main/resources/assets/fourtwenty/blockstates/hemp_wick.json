@@ -28,15 +28,6 @@
     },
     {
       "when": {
-        "north": "low",
-        "lit": "false"
-      },
-      "apply": {
-        "model": "fourtwenty:block/hemp_wick_low"
-      }
-    },
-    {
-      "when": {
         "east": "wire",
         "lit": "false"
       },
@@ -52,16 +43,6 @@
       },
       "apply": {
         "model": "fourtwenty:block/hemp_wick_plug",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "east": "low",
-        "lit": "false"
-      },
-      "apply": {
-        "model": "fourtwenty:block/hemp_wick_low",
         "y": 90
       }
     },
@@ -87,16 +68,6 @@
     },
     {
       "when": {
-        "south": "low",
-        "lit": "false"
-      },
-      "apply": {
-        "model": "fourtwenty:block/hemp_wick_low",
-        "y": 180
-      }
-    },
-    {
-      "when": {
         "west": "wire",
         "lit": "false"
       },
@@ -112,16 +83,6 @@
       },
       "apply": {
         "model": "fourtwenty:block/hemp_wick_plug",
-        "y": 270
-      }
-    },
-    {
-      "when": {
-        "west": "low",
-        "lit": "false"
-      },
-      "apply": {
-        "model": "fourtwenty:block/hemp_wick_low",
         "y": 270
       }
     },
@@ -193,15 +154,6 @@
     },
     {
       "when": {
-        "north": "low",
-        "lit": "true"
-      },
-      "apply": {
-        "model": "fourtwenty:block/hemp_wick_low_lit"
-      }
-    },
-    {
-      "when": {
         "east": "wire",
         "lit": "true"
       },
@@ -217,16 +169,6 @@
       },
       "apply": {
         "model": "fourtwenty:block/hemp_wick_plug_lit",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "east": "low",
-        "lit": "true"
-      },
-      "apply": {
-        "model": "fourtwenty:block/hemp_wick_low_lit",
         "y": 90
       }
     },
@@ -252,16 +194,6 @@
     },
     {
       "when": {
-        "south": "low",
-        "lit": "true"
-      },
-      "apply": {
-        "model": "fourtwenty:block/hemp_wick_low_lit",
-        "y": 180
-      }
-    },
-    {
-      "when": {
         "west": "wire",
         "lit": "true"
       },
@@ -277,16 +209,6 @@
       },
       "apply": {
         "model": "fourtwenty:block/hemp_wick_plug_lit",
-        "y": 270
-      }
-    },
-    {
-      "when": {
-        "west": "low",
-        "lit": "true"
-      },
-      "apply": {
-        "model": "fourtwenty:block/hemp_wick_low_lit",
         "y": 270
       }
     },

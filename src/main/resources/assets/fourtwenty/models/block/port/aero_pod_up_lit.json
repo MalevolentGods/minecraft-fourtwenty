@@ -1,0 +1,10 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/power/rip_body",
+  "plate": "fourtwenty:block/power/rip_body",
+  "collar": "fourtwenty:block/power/rip_glow_lit",
+  "lead": "fourtwenty:block/power/rip_wick_lit"
+ },
+ "elements": []
+}

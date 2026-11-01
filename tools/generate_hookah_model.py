@@ -7,7 +7,7 @@ The cabinet keeps the original paintings (weed_bong_<state>.png sides, weed_bong
 on its face, but stands a little inside the block (9 x 9 x 9, square so nothing stretches) instead of filling it; the whole hookah
 fits in the block. On the brass socket in the top
 painting stands the hookah proper: a brass collar, a stem, a charcoal tray, a clay bowl with coals (glowing while
-lit), and a hose that loops off the stem and hangs down the side to a brass mouthpiece. Smoke puffs off the bowl while
+lit), and a hose that loops off the stem to a brass mouthpiece resting on the cabinet top, clear of the sides where Wicks arrive. Smoke puffs off the bowl while
 it's lit (WeedBongBlock#animateTick). Writes models/block/weed_bong_<state>.json and textures/block/hookah/*.png.
 
 Double Hose and Big Bertha are this same hookah upgraded, the same cabinet paintings and state set, with the hose repeated round the stem
@@ -82,12 +82,12 @@ def model(state):
         el(6.9, 13.3, 6.9, 9.1, 14.1, 9.1, 'clay', faces=SIDES),
         el(6.4, 14.1, 6.4, 9.6, 15.5, 9.6, 'clay'),                       # its top is the clay rim round the coals
         el(6.75, 15.5, 6.75, 9.25, 15.7, 9.25, 'coals_lit' if lit else 'coals', glow=lit, faces=SIDES + ('up',)),
-        # the hose: a port off the stem, down at 45 degrees past the cabinet's edge, then straight down to the mouthpiece
+        # the hose: a port off the stem, down at 45 degrees, to a mouthpiece resting on the cabinet top, clear of the sides Wicks arrive on
         el(8.5, 11.6, 7.6, 9.5, 12.4, 8.4, 'brass', faces=('north', 'south', 'up', 'down')),
-        el(9.3, 11.6, 7.65, 14.5, 12.4, 8.35, 'hose',
+        el(9.3, 11.6, 7.65, 12.4, 12.4, 8.35, 'hose',
            rot={'origin': [9.5, 12.0, 8], 'axis': 'z', 'angle': -45}),
-        el(12.75, 3.0, 7.6, 13.55, 8.75, 8.4, 'hose', faces=SIDES + ('up',)),
-        el(12.6, 1.4, 7.45, 13.7, 3.0, 8.55, 'brass'),
+        el(10.5, 9.0, 7.6, 11.3, 9.8, 8.4, 'hose', faces=SIDES + ('up',)),
+        el(11.3, 9.0, 7.5, 12.3, 9.9, 8.5, 'brass'),
     ]
     tex = {'particle': 'fourtwenty:block/weed_bong_top', 'side': f'fourtwenty:block/weed_bong_{state}',
            'top': 'fourtwenty:block/weed_bong_top', 'bottom': 'fourtwenty:block/weed_bong_bottom'}
