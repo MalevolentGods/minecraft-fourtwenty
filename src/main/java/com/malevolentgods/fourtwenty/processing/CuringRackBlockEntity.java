@@ -36,7 +36,7 @@ public class CuringRackBlockEntity extends BlockEntity {
             ItemStack bud = rack.buds.get(i);
             if (!bud.is(ModItems.TRIMMED_BUD.get())) continue;
             if (CureRules.cured(++rack.ticks[i], tier)) {
-                rack.buds.set(i, ModDataComponents.withStrain(new ItemStack(ModItems.WEED_BUD.get()), ModDataComponents.strain(bud)));
+                rack.buds.set(i, ModDataComponents.bredFrom(new ItemStack(ModItems.WEED_BUD.get()), bud));
                 changed = true;
             }
         }

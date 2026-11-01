@@ -47,7 +47,13 @@ public class ModClientEvents {
     public static void registerRenderers(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModBlockEntities.CURING_RACK.get(), CuringRackRenderer::new);
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModBlockEntities.LAMP.get(), LampHaloRenderer::new);
+        event.registerEntityRenderer(com.malevolentgods.fourtwenty.registry.ModEntities.BUZZ_BOT.get(), BuzzBotRenderer::new);
         event.registerEntityRenderer(com.malevolentgods.fourtwenty.registry.ModEntities.SEAT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void registerLayers(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(BuzzBotRenderer.LAYER, BuzzBotRenderer::layer);
     }
 
     /** Lit lamp items get their halo in the inventory and hands, like ProjectRed's. */
@@ -80,6 +86,9 @@ public class ModClientEvents {
     public static void registerScreens(RegisterMenuScreensEvent event) {
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(ModClientEvents::tooltips);
         event.register(com.malevolentgods.fourtwenty.registry.ModPower.MACHINE_MENU.get(), MachineScreen::new);
+        event.register(com.malevolentgods.fourtwenty.registry.ModPower.PHENO_MENU.get(), PhenoScreen::new);
+        event.register(com.malevolentgods.fourtwenty.registry.ModPower.RIG_MENU.get(), RigScreen::new);
+        event.register(com.malevolentgods.fourtwenty.registry.ModPower.CONSTRUCTION_MENU.get(), net.minecraft.client.gui.screens.inventory.CraftingScreen::new);
         event.register(com.malevolentgods.fourtwenty.registry.ModPower.BI_MENU.get(), BIScreen::new);
         event.register(com.malevolentgods.fourtwenty.registry.ModPower.THINK_TANK_MENU.get(), ThinkTankScreen::new);
         event.register(ModMenuTypes.WEED_BONG.get(), WeedBongScreen::new);

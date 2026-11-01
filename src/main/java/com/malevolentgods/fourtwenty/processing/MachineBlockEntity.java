@@ -2,7 +2,6 @@ package com.malevolentgods.fourtwenty.processing;
 
 import com.malevolentgods.fourtwenty.domain.BIRules;
 import com.malevolentgods.fourtwenty.domain.CureRules;
-import com.malevolentgods.fourtwenty.domain.Strain;
 import com.malevolentgods.fourtwenty.domain.TrimRules;
 import com.malevolentgods.fourtwenty.power.BIBlockEntity;
 import com.malevolentgods.fourtwenty.power.BIBuffer;
@@ -40,7 +39,7 @@ import java.util.List;
  */
 public class MachineBlockEntity extends BIBlockEntity implements WorldlyContainer, MenuProvider {
     public static final int INPUTS = 4, OUTPUTS = 6, SIZE = INPUTS + OUTPUTS;
-    public static final int DATA_PROGRESS = 0, DATA_TOTAL = 1, DATA_PAUSED = 2, DATA_STORED = 3, DATA_CAPACITY = 4, DATA_OVERLOADED = 5, DATA_TIER = 6, DATA_JOB = 7, DATA_FREE = 8, DATA_COUNT = 9;
+    public static final int DATA_PROGRESS = 0, DATA_TOTAL = 1, DATA_PAUSED = 2, DATA_STORED = 3, DATA_CAPACITY = 4, DATA_OVERLOADED = 5, DATA_TIER = 6, DATA_JOB = 7, DATA_FREE = 8, DATA_TUBE_BLOCKED = 9, DATA_COUNT = 10;
     private static final int[] IN = {0, 1, 2, 3}, OUT = {4, 5, 6, 7, 8, 9};
     private static final int BUFFER_TICKS = 400;
 
@@ -50,6 +49,7 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
     private final MachinePower.Meter meter = new MachinePower.Meter();
     private int progress;
     private boolean paused, overloaded, free;
+    private final com.malevolentgods.fourtwenty.power.TubeOutput tube = new com.malevolentgods.fourtwenty.power.TubeOutput();
 
     private final ContainerData data = new ContainerData() {
         @Override public int get(int index) {
@@ -63,6 +63,7 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
                 case DATA_TIER -> block.tier().ordinal();
                 case DATA_JOB -> block.job().ordinal();
                 case DATA_FREE -> free ? 1 : 0;
+                case DATA_TUBE_BLOCKED -> tube.blocked() ? 1 : 0;
                 default -> 0;
             };
         }
@@ -106,10 +107,9 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
         for (int i = 0; i < INPUTS; i++) {
             ItemStack in = items.get(i);
             if (in.isEmpty()) continue;
-            Strain strain = ModDataComponents.strain(in);
             List<ItemStack> out = new ArrayList<>();
-            out.add(strained(output(), batch(in), strain));
-            if (trims()) out.add(strained(ModItems.WEED_SEEDS.get(), 1, strain));
+            out.add(strained(output(), batch(in), in));
+            if (trims()) out.add(strained(ModItems.WEED_SEEDS.get(), 1, in));
             if (fits(out)) return i;
         }
         return -1;
@@ -119,8 +119,8 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
         return trims() ? 1 : Math.min(in.getCount(), cure().batch());
     }
 
-    private static ItemStack strained(Item item, int count, Strain strain) {
-        return ModDataComponents.withStrain(new ItemStack(item, count), strain);
+    private static ItemStack strained(Item item, int count, ItemStack parent) {
+        return ModDataComponents.bredFrom(new ItemStack(item, count), parent);
     }
 
     /** Whether all of these would go into the outputs at once. */
@@ -157,6 +157,13 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
             lit(false);
             return;
         }
+        tube.tick(level, worldPosition, this, INPUTS);
+        if (tube.blocked()) {
+            paused = true;
+            free = false;
+            lit(false);
+            return;
+        }
         int slot = job();
         if (slot < 0) {
             paused = false;
@@ -174,12 +181,12 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
         if (progress < ticks()) return;
         progress = 0;
         ItemStack in = items.get(slot);
-        Strain strain = ModDataComponents.strain(in);
+        ItemStack parent = in.copy();
         int count = batch(in);
         in.shrink(count);
-        insert(items, INPUTS, strained(output(), count, strain));
-        if (trims() && TrimRules.seeded(ProcessingConfig.chances(), strain, level.random.nextDouble())) {
-            insert(items, INPUTS, strained(ModItems.WEED_SEEDS.get(), 1, strain));
+        insert(items, INPUTS, strained(output(), count, parent));
+        if (trims() && TrimRules.seeded(ProcessingConfig.chances(), ModDataComponents.strain(parent), level.random.nextDouble())) {
+            insert(items, INPUTS, strained(ModItems.WEED_SEEDS.get(), 1, parent));
         }
     }
 

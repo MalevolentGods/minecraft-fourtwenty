@@ -5,6 +5,7 @@ import com.malevolentgods.fourtwenty.domain.BongFuel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import com.malevolentgods.fourtwenty.menu.WeedBongMenu;
 import com.malevolentgods.fourtwenty.registry.ModBlockEntities;
+import com.malevolentgods.fourtwenty.registry.ModDataComponents;
 import com.malevolentgods.fourtwenty.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -72,6 +73,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
                 case 5 -> (int) buffer.stored();
                 case 6 -> (int) buffer.capacity();
                 case 7 -> buffer.tier().ordinal();
+                case 8 -> canLight() ? 1 : 0;
                 default -> 0;
             };
         }
@@ -79,7 +81,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
             if (index == 0) isLit = value != 0;
             if (index == 1) burnTime = value;
         }
-        public int getCount() { return 8; }
+        public int getCount() { return 9; }
     };
 
     // A caller retaining an old handler after movement must not mutate the old inventory.
@@ -122,7 +124,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
 
     public static int slotLimit(int slot) {
         return switch (slot) {
-            case WEED_SLOT -> 4;
+            case WEED_SLOT -> 64;
             case WATER_SLOT -> 1;
             case BLAZE_POWDER_SLOT -> 64;
             default -> throw new IndexOutOfBoundsException(slot);
@@ -132,12 +134,17 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     /** Type validation is independent of incoming stack size so partial insertions work. */
     public static boolean accepts(int slot, ItemStack stack) {
         return switch (slot) {
-            case WEED_SLOT -> stack.is(ModItems.WEED_BUD.get());
+            case WEED_SLOT -> burnable(stack);
             case WATER_SLOT -> stack.is(Items.WATER_BUCKET);
             case FUEL_SLOT -> BongFuel.isFuel(id(stack));
             default -> false;
         };
     }
+    /** A Cured Bud, or any extract. */
+    private static boolean burnable(ItemStack stack) {
+        return stack.is(ModItems.WEED_BUD.get()) || com.malevolentgods.fourtwenty.domain.Extracts.byId(id(stack)).isPresent();
+    }
+
     private static String id(ItemStack stack) { return BuiltInRegistries.ITEM.getKey(stack.getItem()).toString(); }
 
     @Override public int getContainerSize() { return 3; }
@@ -196,7 +203,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     }
 
     private boolean hasWater() { return getItem(WATER_SLOT).is(Items.WATER_BUCKET); }
-    private int queuedBuds() { return getItem(WEED_SLOT).is(ModItems.WEED_BUD.get()) ? getItem(WEED_SLOT).getCount() : 0; }
+    private int queuedBuds() { return burnable(getItem(WEED_SLOT)) ? getItem(WEED_SLOT).getCount() : 0; }
     private int visualWeedLevel() { return Math.min(4, queuedBuds() + (isLit && chargePaid ? 1 : 0)); }
     public boolean isLit() { return isLit; }
     public int burnTime() { return burnTime; }
@@ -236,7 +243,8 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
 
     private void serverTick() {
         migrateLegacyBurn();
-        if (!isLit && canLight()) lightBong(null);
+        // It only starts itself for something that needs the power. Anyone can start a session with the Light button.
+        if (!isLit && push.wanted() && canLight()) lightBong(null);
         var tier = buffer.tier();
         if (isLit && hasWater()) {
             made += tier.rate();
@@ -263,8 +271,9 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     public void lightBong(ServerPlayer player) {
         if (!canLight() || level.isClientSide()) return;
         var fuel = getItem(FUEL_SLOT);
-        int duration = BongFuel.burnTicks(id(fuel)).orElseThrow();
-        getItem(WEED_SLOT).shrink(1);
+        var burning = getItem(WEED_SLOT);
+        int duration = com.malevolentgods.fourtwenty.domain.Extracts.burnTicks(id(burning), ModDataComponents.strain(burning));
+        burning.shrink(1);
         fuel.shrink(1);
         isLit = true;
         chargePaid = true;
@@ -279,6 +288,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
 
     private void applyBongEffects(ServerPlayer player) {
         com.malevolentgods.fourtwenty.util.StrainEffects.markHigh(player, 1200);
+        com.malevolentgods.fourtwenty.util.StrainEffects.hookahHit(player);
         player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.REGENERATION, 400, 1));
         player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.NIGHT_VISION, 1200, 0));
         player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.LUCK, 600, 0));
@@ -307,7 +317,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
         chargePaid = tag.getBoolean("ChargePaid");
         // Saves from before per-fuel burn lengths were always blaze powder sessions.
         burnDuration = tag.contains("BurnDuration") ? tag.getInt("BurnDuration") : BURN_DURATION;
-        if (burnDuration <= 0 || burnDuration > BURN_DURATION) burnDuration = BURN_DURATION;
+        if (burnDuration <= 0 || burnDuration > com.malevolentgods.fourtwenty.domain.Extracts.LONGEST_BURN) burnDuration = BURN_DURATION;
         if (!isLit || burnTime < 0 || burnTime >= burnDuration) extinguish();
     }
     @Override public ClientboundBlockEntityDataPacket getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }

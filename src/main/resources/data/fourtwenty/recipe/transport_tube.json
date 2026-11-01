@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GCG",
+    "GWG",
+    "GCG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "W": {
+      "item": "fourtwenty:hemp_wick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:transport_tube",
+    "count": 8
+  },
+  "show_notification": true
+}

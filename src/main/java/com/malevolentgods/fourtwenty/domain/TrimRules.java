@@ -11,8 +11,13 @@ public final class TrimRules {
             new Tier(20, BIRules.Tier.TOKE.machine()), new Tier(10, BIRules.Tier.RIP.machine()));
 
     /** A seed's chance per trimmed bud, by family. */
-    public record Chances(double landrace, double neutrals, double warm, double green, double cool) {
-        public static final Chances DEFAULT = new Chances(0.50, 0.25, 0.15, 0.10, 0.05);
+    public record Chances(double landrace, double neutrals, double warm, double green, double cool,
+                          double biome, double cross, double doubleCross, double ultra, double golden) {
+        public static final Chances DEFAULT = new Chances(0.50, 0.25, 0.15, 0.10, 0.05, 0.20, 0.04, 0.02, 0.01, 0.005);
+
+        public Chances(double landrace, double neutrals, double warm, double green, double cool) {
+            this(landrace, neutrals, warm, green, cool, DEFAULT.biome, DEFAULT.cross, DEFAULT.doubleCross, DEFAULT.ultra, DEFAULT.golden);
+        }
 
         public double of(Strain.Family family) {
             return switch (family) {
@@ -21,6 +26,11 @@ public final class TrimRules {
                 case WARM -> warm;
                 case GREEN -> green;
                 case COOL -> cool;
+                case BIOME -> biome;
+                case CROSS -> cross;
+                case DOUBLE_CROSS -> doubleCross;
+                case ULTRA -> ultra;
+                case GOLDEN -> golden;
             };
         }
     }

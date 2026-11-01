@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IPI",
+    "RCR",
+    "IWI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "C": {
+      "item": "minecraft:copper_block"
+    },
+    "W": {
+      "item": "fourtwenty:rolled_wick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:rosin_rig",
+    "count": 1
+  },
+  "show_notification": true
+}

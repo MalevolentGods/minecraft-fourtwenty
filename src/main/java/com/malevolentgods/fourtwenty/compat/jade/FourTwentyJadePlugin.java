@@ -1,7 +1,9 @@
 package com.malevolentgods.fourtwenty.compat.jade;
 
 import com.malevolentgods.fourtwenty.block.WeedCropBlock;
-import com.malevolentgods.fourtwenty.domain.Strain;
+import com.malevolentgods.fourtwenty.block.WeedCropBlockEntity;
+import com.malevolentgods.fourtwenty.domain.Traits;
+import com.malevolentgods.fourtwenty.item.StrainItems;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import snownee.jade.api.BlockAccessor;
@@ -25,8 +27,12 @@ public class FourTwentyJadePlugin implements IWailaPlugin {
         INSTANCE;
 
         @Override public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
-            Strain strain = accessor.getBlockState().getValue(WeedCropBlock.STRAIN);
-            tooltip.add(Component.literal(strain.displayName()).withColor(strain.color()));
+            tooltip.add(StrainItems.strainName(accessor.getBlockState().getValue(WeedCropBlock.STRAIN)));
+            Traits t = accessor.getBlockEntity() instanceof WeedCropBlockEntity crop ? crop.traits() : Traits.DEFAULT;
+            tooltip.add(Component.translatable("tooltip.fourtwenty.traits", t.potency(), t.yield(), t.length()));
+            if (accessor.getBlockEntity() instanceof WeedCropBlockEntity crop && crop.pollen() != null) {
+                tooltip.add(Component.translatable("tooltip.fourtwenty.pollinated", StrainItems.strainName(crop.pollen().strain())));
+            }
         }
 
         @Override public ResourceLocation getUid() { return CROP_STRAIN; }

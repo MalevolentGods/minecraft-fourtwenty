@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:item/rough_bud",
+  "textures": {
+    "layer0": "fourtwenty:item/strain/rough_bud_old_growth"
+  }
+}

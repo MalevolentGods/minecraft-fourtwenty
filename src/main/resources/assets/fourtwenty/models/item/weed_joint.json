@@ -169,6 +169,138 @@
         "fourtwenty:strain": 1.0
       },
       "model": "fourtwenty:item/strain/weed_joint_lav_lav"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.0625
+      },
+      "model": "fourtwenty:item/strain/weed_joint_dust_devil"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.125
+      },
+      "model": "fourtwenty:item/strain/weed_joint_snowblind"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.1875
+      },
+      "model": "fourtwenty:item/strain/weed_joint_bog_butter"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.25
+      },
+      "model": "fourtwenty:item/strain/weed_joint_canopy_creeper"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.3125
+      },
+      "model": "fourtwenty:item/strain/weed_joint_tropical_thunder"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.375
+      },
+      "model": "fourtwenty:item/strain/weed_joint_razzle_dazzle"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.4375
+      },
+      "model": "fourtwenty:item/strain/weed_joint_alarm_clock_assassin"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.5
+      },
+      "model": "fourtwenty:item/strain/weed_joint_couch_fort"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.5625
+      },
+      "model": "fourtwenty:item/strain/weed_joint_moss_boss"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.625
+      },
+      "model": "fourtwenty:item/strain/weed_joint_deep_thoughts"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.6875
+      },
+      "model": "fourtwenty:item/strain/weed_joint_lucid_lagoon"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.75
+      },
+      "model": "fourtwenty:item/strain/weed_joint_rocket_lime"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.8125
+      },
+      "model": "fourtwenty:item/strain/weed_joint_hurricane_haze"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.875
+      },
+      "model": "fourtwenty:item/strain/weed_joint_sledgehammer_serenade"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 1.9375
+      },
+      "model": "fourtwenty:item/strain/weed_joint_caffeine_comet"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 2.0
+      },
+      "model": "fourtwenty:item/strain/weed_joint_old_growth"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 2.0625
+      },
+      "model": "fourtwenty:item/strain/weed_joint_oracle_of_snacks"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 2.125
+      },
+      "model": "fourtwenty:item/strain/weed_joint_polar_vortex"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 2.1875
+      },
+      "model": "fourtwenty:item/strain/weed_joint_cosmic_couch"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 2.25
+      },
+      "model": "fourtwenty:item/strain/weed_joint_storm_shepherd"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 2.3125
+      },
+      "model": "fourtwenty:item/strain/weed_joint_the_elder_bud"
+    },
+    {
+      "predicate": {
+        "fourtwenty:strain": 2.375
+      },
+      "model": "fourtwenty:item/strain/weed_joint_golden_god"
     }
   ]
 }

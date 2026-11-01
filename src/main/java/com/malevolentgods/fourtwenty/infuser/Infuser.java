@@ -67,11 +67,14 @@ public final class Infuser {
 
     // ------------------------------------------------------------------ inspiration
 
-    /** The colours a strain can inspire: Landrace the 16 Minecraft colours; a bred strain its hue row's four tones. */
+    /** The colours a strain can inspire: Landraces the 16 Minecraft colours; a bred strain its hue row's four tones; a hybrid all of its parents'. */
     public static List<String> colours(Strain strain) {
+        var parents = com.malevolentgods.fourtwenty.domain.Crosses.parents(strain);
+        if (!parents.isEmpty()) return parents.stream().flatMap(p -> colours(p).stream()).distinct().toList();
+        boolean landrace = strain == Strain.LANDRACE || strain.family() == Strain.Family.BIOME;
         List<String> out = new ArrayList<>();
         for (Tint.Target t : Tint.get().targets())
-            if (strain == Strain.LANDRACE ? t.minecraft() : t.id().startsWith(strain.id() + "_")) out.add(t.id());
+            if (landrace ? t.minecraft() : t.id().startsWith(strain.id() + "_")) out.add(t.id());
         return out;
     }
 

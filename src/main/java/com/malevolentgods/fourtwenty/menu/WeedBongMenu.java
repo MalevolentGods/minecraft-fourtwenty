@@ -20,7 +20,9 @@ public class WeedBongMenu extends AbstractContainerMenu {
     private static final int WEED_SLOT = 0;
     private static final int WATER_SLOT = 1;
     private static final int BLAZE_POWDER_SLOT = 2;
-    private static final int DATA_COUNT = 8; // lit, burn time, water, weed level, burn length, stored, capacity, tier
+    /** The Light button's id, for clickMenuButton. */
+    public static final int LIGHT = 0;
+    private static final int DATA_COUNT = 9; // lit, burn time, water, weed level, burn length, stored, capacity, tier, can light
     
     private final Container container;
     private final ContainerData data;
@@ -81,6 +83,14 @@ public class WeedBongMenu extends AbstractContainerMenu {
 
     public int tier() { return data.get(7); }
 
+    public boolean canLight() { return data.get(8) != 0; }
+
+    @Override public boolean clickMenuButton(@Nonnull Player player, int id) {
+        if (id != LIGHT || !(container instanceof com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity bong) || !bong.canLight()) return false;
+        bong.lightBong(null);
+        return true;
+    }
+
     public Container getContainer() {
         return this.container;
     }
@@ -103,7 +113,7 @@ public class WeedBongMenu extends AbstractContainerMenu {
                 }
             } else {
                 // Moving from player inventory to bong slots
-                if (slotStack.is(ModItems.WEED_BUD.get())) {
+                if (com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.accepts(WEED_SLOT, slotStack)) {
                     if (!this.moveItemStackTo(slotStack, WEED_SLOT, WEED_SLOT + 1, false)) {
                         return ItemStack.EMPTY;
                     }

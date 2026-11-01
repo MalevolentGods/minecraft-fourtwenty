@@ -4,5 +4,6 @@
   "package": "com.malevolentgods.fourtwenty.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": ["ActuallyHarvestPermissionMixin"],
+  "client": ["EffectListMixin"],
   "injectors": {"defaultRequire": 1}
 }

@@ -34,6 +34,7 @@ public class ModBlocks {
           .randomTicks()
           .instabreak()
           .sound(SoundType.CROP)
+          .lightLevel(WeedCropBlock::light)
       ));
 
     public static final DeferredHolder<Block, WildWeedBlock> WILD_WEED = BLOCKS.register("wild_weed",

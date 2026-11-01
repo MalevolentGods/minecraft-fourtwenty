@@ -3,6 +3,7 @@ package com.malevolentgods.fourtwenty.client;
 import com.malevolentgods.fourtwenty.block.WeedBongBlock;
 import com.malevolentgods.fourtwenty.power.BIBlock;
 import com.malevolentgods.fourtwenty.power.HitBoxBlock;
+import com.malevolentgods.fourtwenty.power.TubeBlock;
 import com.malevolentgods.fourtwenty.power.WickBlock;
 import com.mojang.math.Axis;
 import com.mojang.math.Transformation;
@@ -43,11 +44,16 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
     private static final ModelProperty<Integer> MASK = new ModelProperty<>();
     private static final Set<String> BLOCKS = Set.of("weed_bong", "double_hose", "big_bertha", "grand_hookah", "stash_jar", "stash_box", "mother_stash", "the_vault",
             "snip_station", "bud_barber", "trim_reaper", "dry_box", "cure_closet", "the_humidor", "grow_tent", "hydro_bed", "aero_pod", "cosmic_kush_pod", "think_tank",
-            "terpinator", "terpinator_lab", "inspiration_infuser", "inspiration_infuser_lab", "hit_box_toke", "hit_box_rip", "hit_box_blaze");
+            "terpinator", "terpinator_lab", "inspiration_infuser", "inspiration_infuser_lab", "hit_box_toke", "hit_box_rip", "hit_box_blaze",
+            "pheno_chamber", "pheno_lab", "pheno_cathedral", "rosin_rig");
     private static final Direction[] AROUND = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
     /** The sides each Hookah has a hose on, for one facing north. A hose is its own piece, drawn unless a Wick has that side. */
     private static final Map<String, List<Direction>> HOSES = Map.of("weed_bong", List.of(Direction.EAST), "double_hose", List.of(Direction.EAST, Direction.WEST),
             "big_bertha", List.of(AROUND), "grand_hookah", List.of(AROUND));
+    /** Blocks a Transport Tube plugs into. Each has its fittings again in tube parts, as <name>_tube_<side>: bits 6 to 11 of MASK. */
+    private static final Set<String> TUBED = Set.of("weed_bong", "double_hose", "big_bertha", "grand_hookah", "snip_station", "bud_barber", "trim_reaper", "dry_box",
+            "cure_closet", "the_humidor", "terpinator", "terpinator_lab", "pheno_chamber", "pheno_lab", "pheno_cathedral", "rosin_rig");
+    private static final int TUBE_BITS = 6;
     private static final Map<String, List<BakedQuad>> TURNED = new ConcurrentHashMap<>();
     private static Map<ModelResourceLocation, BakedModel> parts = Map.of();
 
@@ -70,6 +76,7 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
             }
         }
         HOSES.forEach((name, sides) -> sides.forEach(side -> event.register(part(name + "_hose", side, false))));
+        for (String name : TUBED) for (Direction side : Direction.values()) event.register(part(name + "_tube", side, false));
     }
 
     private static int turns(BlockState state) {
@@ -99,7 +106,9 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
         ModelData d = super.getModelData(level, pos, state, data);
         int mask = 0;
         for (Direction side : Direction.values()) {
-            if (level.getBlockState(pos.relative(side)).getBlock() instanceof WickBlock) mask |= 1 << side.ordinal();
+            var neighbour = level.getBlockState(pos.relative(side)).getBlock();
+            if (neighbour instanceof WickBlock) mask |= 1 << side.ordinal();
+            else if (neighbour instanceof TubeBlock) mask |= 1 << TUBE_BITS + side.ordinal();
         }
         return d.derive().with(MASK, mask).build();
     }
@@ -130,9 +139,11 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
         int mask = data.has(MASK) ? data.get(MASK) : 0, turns = turns(state);
         for (Direction world : Direction.values()) {
             if ((mask & 1 << world.ordinal()) != 0) out.addAll(fitting(state, relative(world, turns), turns, rand));
+            if (TUBED.contains(name) && (mask & 1 << TUBE_BITS + world.ordinal()) != 0) out.addAll(turned(name + "_tube", relative(world, turns), false, turns, rand));
         }
         for (Direction hose : HOSES.getOrDefault(name, List.of())) {
-            if ((mask & 1 << world(hose, turns).ordinal()) == 0) out.addAll(turned(name + "_hose", hose, false, turns, rand));
+            int at = world(hose, turns).ordinal();
+            if ((mask & (1 << at | 1 << TUBE_BITS + at)) == 0) out.addAll(turned(name + "_hose", hose, false, turns, rand));
         }
         return out;
     }

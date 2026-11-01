@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "WHW",
+    "ICI"
+  ],
+  "key": {
+    "W": {
+      "item": "fourtwenty:glass_wick"
+    },
+    "H": {
+      "item": "minecraft:honeycomb"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:copper_block"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:buzz_bot",
+    "count": 1
+  },
+  "show_notification": true
+}

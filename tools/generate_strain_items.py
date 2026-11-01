@@ -26,7 +26,15 @@ PAPER = 0.22     # how much colour a joint's paper takes
 STRAINS = [('landrace', '#7DAA3C'), ('myr_myr', '#B8A897'), ('myr_lim', '#E8D7B0'), ('myr_pin', '#C9C9C7'), ('myr_lav', '#B7C0C8'),
            ('lim_myr', '#A0673A'), ('lim_lim', '#F2C80F'), ('lim_pin', '#D7262E'), ('lim_lav', '#F07F1A'),
            ('pin_myr', '#8C8C2E'), ('pin_lim', '#9BD42A'), ('pin_pin', '#2EAA4A'), ('pin_lav', '#17A398'),
-           ('lav_myr', '#8A3FD1'), ('lav_lim', '#F05AA0'), ('lav_pin', '#2F6BE0'), ('lav_lav', '#2BB5E8')]
+           ('lav_myr', '#8A3FD1'), ('lav_lim', '#F05AA0'), ('lav_pin', '#2F6BE0'), ('lav_lav', '#2BB5E8'),
+           ('dust_devil', '#D9B36A'), ('snowblind', '#BFE6F5'), ('bog_butter', '#5C7A3A'),
+           ('canopy_creeper', '#1F9E4B'), ('tropical_thunder', '#00C2A8'), ('razzle_dazzle', '#FF3D81'),
+           ('alarm_clock_assassin', '#FFB000'), ('couch_fort', '#7A5230'), ('moss_boss', '#4F7F1F'),
+           ('deep_thoughts', '#3D5AFE'), ('lucid_lagoon', '#6FA8FF'), ('rocket_lime', '#C6FF00'),
+           ('hurricane_haze', '#5E8CA8'), ('sledgehammer_serenade', '#B0122B'), ('caffeine_comet', '#FF6A00'),
+           ('old_growth', '#2E5B2E'), ('oracle_of_snacks', '#B388FF'), ('polar_vortex', '#8FE3FF'),
+           ('cosmic_couch', '#5B2A9D'), ('storm_shepherd', '#00E5FF'), ('the_elder_bud', '#9E7C3C'),
+           ('golden_god', '#FFD700')]
 
 
 def hsv(hexc):

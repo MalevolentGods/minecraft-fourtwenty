@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "JJ",
+    "PP",
+    "PP"
+  ],
+  "key": {
+    "J": {
+      "item": "fourtwenty:weed_joint"
+    },
+    "P": {
+      "item": "minecraft:oak_planks"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:construction_joint",
+    "count": 1
+  },
+  "show_notification": true
+}

@@ -1,5 +1,7 @@
 package com.malevolentgods.fourtwenty.processing;
 
+import com.malevolentgods.fourtwenty.domain.GrowRules;
+import com.malevolentgods.fourtwenty.domain.Strain;
 import com.malevolentgods.fourtwenty.domain.CureRules;
 import com.malevolentgods.fourtwenty.domain.TrimRules;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -15,6 +17,18 @@ public final class ProcessingConfig {
     private static final ModConfigSpec.DoubleValue WARM = chance("seedChanceWarm", D.warm());
     private static final ModConfigSpec.DoubleValue GREEN = chance("seedChanceGreen", D.green());
     private static final ModConfigSpec.DoubleValue COOL = chance("seedChanceCool", D.cool());
+    private static final ModConfigSpec.DoubleValue BIOME = chance("seedChanceBiome", D.biome());
+    private static final ModConfigSpec.DoubleValue CROSS = chance("seedChanceCross", D.cross());
+    private static final ModConfigSpec.DoubleValue DOUBLE_CROSS = chance("seedChanceDoubleCross", D.doubleCross());
+    private static final ModConfigSpec.DoubleValue ULTRA = chance("seedChanceUltra", D.ultra());
+    private static final ModConfigSpec.DoubleValue GOLDEN = chance("seedChanceGolden", D.golden());
+    private static final ModConfigSpec.DoubleValue POLLEN_CHANCE = BUILDER.comment("Chance per harvest that Double Cross parents side by side give their hybrid's seed.").defineInRange("pollenChance", 0.05, 0, 1);
+    private static final ModConfigSpec.IntValue BOT_BUD_MINUTES = BUILDER.comment("How many minutes one Cured Bud runs a Buzz Bot.").defineInRange("botBudMinutes", 60, 1, 1440);
+    private static final ModConfigSpec.IntValue BOT_CROSS_MINUTES = BUILDER.comment("How many minutes a Buzz Bot waits after one cross before the next.").defineInRange("botCrossMinutes", 5, 0, 1440);
+    private static final ModConfigSpec.IntValue BOT_CHARGE_BI = BUILDER.comment("The BI a Buzz Bot takes from a Stash for one bud's worth of power.").defineInRange("botChargeBI", 4200, 1, 1_000_000);
+    private static final ModConfigSpec.DoubleValue CLIMATE_CHANCE = BUILDER.comment("Chance per Landrace harvest in a climate biome of a climate-touched seed. A Cosmic Kush Pod's copy gives half.").defineInRange("climateChance", com.malevolentgods.fourtwenty.domain.Climate.CHANCE, 0, 1);
+    private static final ModConfigSpec.DoubleValue CROSS_TIME = BUILDER.comment("Multiplies how long a Pheno Chamber's cross takes.").defineInRange("crossTime", 1.0, 0.01, 100);
+    private static final ModConfigSpec.DoubleValue[] GRADE_SPEEDS = {null, null, gradeSpeed(2), gradeSpeed(3), gradeSpeed(4), gradeSpeed(5)};
     private static final ModConfigSpec.IntValue RACK_TICKS = BUILDER
             .comment("Ticks a bud hangs on a Curing Rack.")
             .defineInRange("curingRackTicks", CureRules.DEFAULTS.get(0).ticks(), 1, 1_728_000);
@@ -44,6 +58,10 @@ public final class ProcessingConfig {
     private static volatile TrimRules.Chances chancesOverride;
     private static volatile CureRules.Tier rackOverride;
     private static volatile Integer unitTicksOverride;
+    private static volatile Integer crossTicksOverride;
+    private static volatile Double pollenChanceOverride;
+    private static volatile Double climateChanceOverride;
+    private static volatile Integer botChargeOverride;
 
     private ProcessingConfig() {}
 
@@ -65,6 +83,10 @@ public final class ProcessingConfig {
         return out;
     }
 
+    private static ModConfigSpec.DoubleValue gradeSpeed(int grade) {
+        return BUILDER.comment("How fast grade " + grade + " strains grow.").defineInRange("gradeSpeed" + grade, GrowRules.gradeSpeed(grade), 0, 1);
+    }
+
     private static ModConfigSpec.DoubleValue chance(String name, double value) {
         return BUILDER.comment("Chance per trimmed bud of a seed.").defineInRange(name, value, 0, 1);
     }
@@ -73,11 +95,54 @@ public final class ProcessingConfig {
     public static void overrideChances(TrimRules.Chances chances) { chancesOverride = chances; }
     public static void overrideRack(CureRules.Tier tier) { rackOverride = tier; }
     public static void overrideUnitTicks(Integer ticks) { unitTicksOverride = ticks; }
+    public static void overrideCrossTicks(Integer ticks) { crossTicksOverride = ticks; }
+    public static void overridePollenChance(Double chance) { pollenChanceOverride = chance; }
+
+    /** How long one Cured Bud runs a Buzz Bot. */
+    public static int botBudTicks() { return (SPEC.isLoaded() ? BOT_BUD_MINUTES.get() : 60) * 1200; }
+
+    public static int botCrossTicks() { return (SPEC.isLoaded() ? BOT_CROSS_MINUTES.get() : 5) * 1200; }
+
+    public static void overrideBotCharge(Integer bi) { botChargeOverride = bi; }
+
+    public static int botChargeBI() {
+        var override = botChargeOverride;
+        if (override != null) return override;
+        return SPEC.isLoaded() ? BOT_CHARGE_BI.get() : 4200;
+    }
+
+    public static void overrideClimateChance(Double chance) { climateChanceOverride = chance; }
+
+    public static double climateChance() {
+        var override = climateChanceOverride;
+        if (override != null) return override;
+        return SPEC.isLoaded() ? CLIMATE_CHANCE.get() : com.malevolentgods.fourtwenty.domain.Climate.CHANCE;
+    }
+
+    public static double pollenChance() {
+        var override = pollenChanceOverride;
+        if (override != null) return override;
+        return SPEC.isLoaded() ? POLLEN_CHANCE.get() : 0.05;
+    }
+
+    /** How long a cross of this grade takes. */
+    public static int crossTicks(int grade) {
+        var override = crossTicksOverride;
+        if (override != null) return override;
+        return (int) Math.ceil(com.malevolentgods.fourtwenty.domain.Crosses.ticks(grade) * (SPEC.isLoaded() ? CROSS_TIME.get() : 1));
+    }
 
     public static TrimRules.Chances chances() {
         var override = chancesOverride;
         if (override != null) return override;
-        return SPEC.isLoaded() ? new TrimRules.Chances(LANDRACE.get(), NEUTRALS.get(), WARM.get(), GREEN.get(), COOL.get()) : D;
+        return SPEC.isLoaded() ? new TrimRules.Chances(LANDRACE.get(), NEUTRALS.get(), WARM.get(), GREEN.get(), COOL.get(),
+                BIOME.get(), CROSS.get(), DOUBLE_CROSS.get(), ULTRA.get(), GOLDEN.get()) : D;
+    }
+
+    /** How fast a strain of this grade grows; grades 0 and 1 aren't slowed. */
+    public static double gradeSpeed(Strain strain) {
+        int grade = strain.grade();
+        return GRADE_SPEEDS[grade] != null && SPEC.isLoaded() ? GRADE_SPEEDS[grade].get() : GrowRules.gradeSpeed(grade);
     }
 
     /** A powered curing tier, by index: 1 to 3 for tiers 2 to 4. */

@@ -1,8 +1,11 @@
 package com.malevolentgods.fourtwenty.power;
 
 import com.malevolentgods.fourtwenty.domain.BIRules;
+import com.malevolentgods.fourtwenty.domain.Climate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -28,6 +31,9 @@ import java.util.function.Supplier;
  * crop and runs by the shared power rule. Using the next tier's plot on one upgrades it in place, crop and all. A seed used on any face plants on top; an empty hand opens its screen.
  */
 public class GrowOpBlock extends BIBlock {
+    /** The Cosmic Kush Pod: used with a block of a climate, it copies that climate. */
+    private static final int COPIES_CLIMATE = 5;
+
     private final int level;
     private final @Nullable BIRules.Tier tier;
     private final Supplier<? extends Block> next;
@@ -67,6 +73,14 @@ public class GrowOpBlock extends BIBlock {
             var top = new BlockHitResult(pos.getCenter().add(0, 0.5, 0), Direction.UP, pos, false);
             InteractionResult planted = stack.useOn(new net.minecraft.world.item.context.UseOnContext(player, hand, top));
             return planted.consumesAction() ? ItemInteractionResult.sidedSuccess(world.isClientSide) : ItemInteractionResult.CONSUME;
+        }
+        Climate climate = level == COPIES_CLIMATE ? Climate.bySample(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()) : null;
+        if (climate != null) {
+            if (!world.isClientSide && world.getBlockEntity(pos) instanceof GrowOpBlockEntity plot) {
+                plot.copy(climate);
+                player.displayClientMessage(Component.translatable("block.fourtwenty.cosmic_kush_pod.climate", Component.translatable(climate.translationKey())), true);
+            }
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         }
         if (next == null || !stack.is(next.get().asItem())) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!world.isClientSide) {

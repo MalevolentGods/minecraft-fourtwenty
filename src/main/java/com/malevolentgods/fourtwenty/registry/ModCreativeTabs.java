@@ -27,6 +27,8 @@ public class ModCreativeTabs {
                 output.accept(ModItems.CURING_RACK.get());
                 com.malevolentgods.fourtwenty.registry.ModPower.ITEMS.forEach(item -> output.accept(item.get()));
                 output.accept(com.malevolentgods.fourtwenty.registry.ModPower.ASH.get());
+                output.accept(com.malevolentgods.fourtwenty.registry.ModPower.BUZZ_BOT_ITEM.get());
+                com.malevolentgods.fourtwenty.registry.ModPower.EXTRACTS.forEach(item -> output.accept(item.get()));
                 output.accept(ModItems.WEED_JOINT.get());
                 output.accept(ModItems.WEED_PIPE.get());
                 for (var strain : com.malevolentgods.fourtwenty.domain.Strain.values()) {

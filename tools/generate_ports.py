@@ -156,6 +156,10 @@ def write(name, side, elements, textures, lit):
     (ASSETS / f'models/block/port/{name}_{side}{"_lit" if lit else ""}.json').write_text(json.dumps(model, indent=1) + '\n')
 
 
+TUBED = ('weed_bong', 'double_hose', 'big_bertha', 'grand_hookah', 'snip_station', 'bud_barber', 'trim_reaper', 'dry_box', 'cure_closet', 'the_humidor',
+         'terpinator', 'terpinator_lab', 'pheno_chamber', 'pheno_lab', 'pheno_cathedral', 'rosin_rig')
+
+
 def block(name, tier, sides, plate=None, extra=None):
     for lit in (False, True):
         tex = {'plate': plate or f'fourtwenty:block/power/{tier}_body',
@@ -163,6 +167,8 @@ def block(name, tier, sides, plate=None, extra=None):
                'lead': f'fourtwenty:block/power/{tier}_wick{"_lit" if lit else ""}', **(extra(lit) if extra else {})}
         for side in ('north', 'east', 'south', 'west', 'up', 'down'):
             write(name, side, sides.get(side, []), tex, lit)
+            if name in TUBED and not lit:
+                write(f'{name}_tube', side, sides.get(side, []), {**tex, 'lead': 'fourtwenty:block/power/tube', 'collar': 'fourtwenty:block/power/tube_band'}, False)
 
 
 def main():
@@ -181,6 +187,10 @@ def main():
     for name, tier in (('grow_tent', 'puff'), ('hydro_bed', 'toke'), ('aero_pod', 'rip'), ('cosmic_kush_pod', 'blaze')):
         block(name, tier, plot())
     block('think_tank', 'puff', think_tank())
+    block('rosin_rig', 'toke', full(up=stem_up(13)))
+    block('pheno_chamber', 'toke', full(up=stem_up(14)))
+    block('pheno_lab', 'rip', full(up=stem_up(13)))
+    block('pheno_cathedral', 'blaze', full(up=stem_up(12)))
     block('terpinator', 'rip', generic())
     block('terpinator_lab', 'rip', generic())
     block('inspiration_infuser', 'puff', generic())

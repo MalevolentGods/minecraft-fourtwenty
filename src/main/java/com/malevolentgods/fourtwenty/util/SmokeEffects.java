@@ -24,9 +24,14 @@ public final class SmokeEffects {
         exhale(level, player, 5);
     }
 
-    /** An effect without swirl particles (they get tiresome on long buffs); the HUD icon still shows. */
+    /** An effect from smoking: no swirl particles and no icon of its own, because they all share one badge (client/SmokeBadge). */
     public static MobEffectInstance quiet(net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect> effect, int ticks, int amplifier) {
-        return new MobEffectInstance(effect, ticks, amplifier, false, false, true);
+        return new MobEffectInstance(effect, ticks, amplifier, true, false, false);
+    }
+
+    /** Whether this came from {@link #quiet}. Ambient with no icon is a mix nothing else in the game uses. */
+    public static boolean isSmoke(MobEffectInstance effect) {
+        return effect.isAmbient() && !effect.isVisible() && !effect.showIcon();
     }
 
     /** Smoke puffs above the player's head. */

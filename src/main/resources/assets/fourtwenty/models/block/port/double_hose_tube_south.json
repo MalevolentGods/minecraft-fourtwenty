@@ -1,0 +1,156 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/hookah/copper",
+  "plate": "fourtwenty:block/hookah/copper",
+  "collar": "fourtwenty:block/power/tube_band",
+  "lead": "fourtwenty:block/power/tube"
+ },
+ "elements": [
+  {
+   "from": [
+    7.25,
+    7.25,
+    12.1
+   ],
+   "to": [
+    8.75,
+    8.75,
+    16
+   ],
+   "faces": {
+    "south": {
+     "uv": [
+      7.25,
+      7.25,
+      8.75,
+      8.75
+     ],
+     "texture": "#lead"
+    },
+    "north": {
+     "uv": [
+      7.25,
+      7.25,
+      8.75,
+      8.75
+     ],
+     "texture": "#lead"
+    },
+    "west": {
+     "uv": [
+      0,
+      7.25,
+      3.9,
+      8.75
+     ],
+     "texture": "#lead"
+    },
+    "east": {
+     "uv": [
+      0,
+      7.25,
+      3.9,
+      8.75
+     ],
+     "texture": "#lead"
+    },
+    "up": {
+     "uv": [
+      7.25,
+      0,
+      8.75,
+      3.9
+     ],
+     "texture": "#lead"
+    },
+    "down": {
+     "uv": [
+      7.25,
+      0,
+      8.75,
+      3.9
+     ],
+     "texture": "#lead"
+    }
+   },
+   "rotation": {
+    "origin": [
+     8,
+     8,
+     16
+    ],
+    "axis": "x",
+    "angle": -22.5
+   }
+  },
+  {
+   "from": [
+    6.25,
+    5,
+    12.25
+   ],
+   "to": [
+    9.75,
+    8,
+    12.75
+   ],
+   "faces": {
+    "south": {
+     "uv": [
+      6.25,
+      8,
+      9.75,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "north": {
+     "uv": [
+      6.25,
+      8,
+      9.75,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "west": {
+     "uv": [
+      3.25,
+      8,
+      3.75,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "east": {
+     "uv": [
+      3.25,
+      8,
+      3.75,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "up": {
+     "uv": [
+      6.25,
+      3.25,
+      9.75,
+      3.75
+     ],
+     "texture": "#plate"
+    },
+    "down": {
+     "uv": [
+      6.25,
+      3.25,
+      9.75,
+      3.75
+     ],
+     "texture": "#plate"
+    }
+   }
+  }
+ ]
+}

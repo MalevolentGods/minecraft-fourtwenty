@@ -4,6 +4,8 @@ import com.malevolentgods.fourtwenty.client.TechScreen;
 import com.malevolentgods.fourtwenty.menu.WeedBongMenu;
 import com.malevolentgods.fourtwenty.registry.ModItems;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -13,10 +15,26 @@ import javax.annotation.Nonnull;
 
 /** The Hookah and its upgrades: buds, water and coal, the burn, and the BI it's holding. */
 public class WeedBongScreen extends TechScreen<WeedBongMenu> {
-    private static final int GAUGE_X = 158, GAUGE_Y = 16, ARROW_X = 104, ARROW_Y = 40;
+    private static final int GAUGE_X = 158, GAUGE_Y = 16, ARROW_X = 104, ARROW_Y = 40, LIGHT_X = 104, LIGHT_Y = 58, LIGHT_W = 44, LIGHT_H = 16;
+
+    private Button light;
 
     public WeedBongScreen(WeedBongMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
+    }
+
+    @Override protected void init() {
+        super.init();
+        light = addRenderableWidget(Button.builder(Component.translatable("gui.fourtwenty.hookah.light"),
+                        button -> minecraft.gameMode.handleInventoryButtonClick(menu.containerId, WeedBongMenu.LIGHT))
+                .bounds(leftPos + LIGHT_X, topPos + LIGHT_Y, LIGHT_W, LIGHT_H)
+                .tooltip(Tooltip.create(Component.translatable("gui.fourtwenty.hookah.light.tip"))).build());
+    }
+
+    @Override protected void containerTick() {
+        super.containerTick();
+        light.visible = !menu.lit();
+        light.active = menu.canLight();
     }
 
     @Override protected int tier() { return menu.tier(); }

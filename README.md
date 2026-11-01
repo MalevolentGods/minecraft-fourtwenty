@@ -13,6 +13,12 @@ This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and 
 
 Five tiers of indoor plot grow any crop faster: the Closet Grow, Grow Tent, Hydro Bed, Aero Pod and Cosmic Kush Pod. Upgrade one in place by using the next tier on it, and the crop stays. The Think Tank runs research with no colony: pick a study, load it, and keep a crop growing on a plot within 8 blocks. The Blaze tier adds the Grand Hookah, The Vault and Gold Wick.
 
+## Hybrids, extracts and tubes
+
+Every seed now has Potency, Yield and Length, rated 1 to 5. Above the 16 bred strains is a ladder of 22 more: biome landraces, Crosses from the Pheno Chamber, then Double Crosses, Ultras and Golden God, which come from pollinating. Grown side by side, Double Cross parents sometimes cross on their own, and a Buzz Bot, a robot bee that runs on Cured Buds, makes it certain. Better strains need better Grow Ops, and grow slower.
+
+The Rosin Rig refines Cured Buds into extracts that burn longer in a Hookah and hit harder in a pipe. Transport Tubes link machines, Hookahs and Terpinators into one network that carries items both ways. The Construction Joint makes twice as many building blocks. Hookahs hold 64 buds, and light themselves only when something needs the power, or with the Light button. Everything you've smoked shows as one badge.
+
 ## What's new in 0.14.1
 
 - **The Sensi Heights Warehouse:** five levels from an open oak pavilion over a sunken rack room to a full concrete and glass depot, with up to 102 racks and room for 8 Courier's Huts inside it. Racks stay put through every upgrade.
@@ -183,6 +189,8 @@ More huts are added as they're built. The pack lives in its own repository and i
 **Hemp blocks** come in the 64 hemp colours, the 16 Minecraft colours and Natural Hemp, each with stairs and slabs. 4 weed buds make 2 Natural Hemp; a terpene in the middle of 8 hemp blocks (any colours) dyes them its colour. Stairs and slabs craft the usual way or in a stonecutter.
 
 The coloured glass and pane textures are recoloured from [Classic Faithful 64x](https://faithfulpack.net/) (via the Malevolent Gods resource pack), used under the Faithful License; see `licenses/Faithful-LICENSE.txt` and `tools/source_textures/faithful/README.md`.
+
+The models in `assets/domum_ornamentum` are [Domum Ornamentum](https://github.com/ldtteam/domum-ornamentum)'s shingle models with overlapping faces pulled apart, and stay under its GPL-3.0 licence (`licenses/DomumOrnamentum-GPL-3.0.txt`).
 
 The Terpinator's screens use [Atkinson Hyperlegible](https://brailleinstitute.org/freefont) (Braille Institute, SIL Open Font License 1.1; see `licenses/AtkinsonHyperlegible-OFL.txt`), rendered from TrueType so the text stays crisp at any GUI scale. Its models come from `tools/generate_terpinator_model.py` and the Infuser's from `tools/generate_infuser_model.py`; `tools/render_block_model.py` renders any block model with headless Blender for checking.
 
