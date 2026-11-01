@@ -149,12 +149,16 @@ def coplanar(elements):
     return out
 
 
-def block(name, textures, elements, particle):
+def block_model(name, textures, elements, particle):
     clash = coplanar(elements)
     assert not clash, f'{name} z-fights: {clash}'
     model = {'parent': 'block/block', 'textures': {'particle': f'fourtwenty:block/processing/{particle}', **{k: f'fourtwenty:block/processing/{v}' for k, v in textures.items()}},
              'elements': elements}
     (ASSETS / f'models/block/{name}.json').write_text(json.dumps(model, indent=1) + '\n')
+
+
+def block(name, textures, elements, particle):
+    block_model(name, textures, elements, particle)
     (ASSETS / f'models/item/{name}.json').write_text(json.dumps({'parent': f'fourtwenty:block/{name}'}, indent=2) + '\n')
     variants = {f'facing={f}': {'model': f'fourtwenty:block/{name}', **({'y': y} if y else {})}
                 for f, y in (('north', 0), ('east', 90), ('south', 180), ('west', 270))}
@@ -175,12 +179,17 @@ def main():
     wood((176, 132, 84), 2).save(tex / 'wood_light.png')
     mat().save(tex / 'mat.png')
     twine().save(tex / 'twine.png')
-    block('trim_tray', {'wood': 'wood_dark', 'mat': 'mat'}, [
-        box([0, 0, 0], [16, 1, 16], 'wood'),
-        box([1, 1, 1], [15, 2, 15], 'mat'),
-        box([0, 1, 0], [16, 4, 1], 'wood'), box([0, 1, 15], [16, 4, 16], 'wood'),
-        box([0, 1, 1], [1, 4, 15], 'wood'), box([15, 1, 1], [16, 4, 15], 'wood'),
-    ], 'wood_dark')
+    def tray(y):
+        return [box([0, y, 0], [16, y + 1, 16], 'wood'),
+                box([1, y + 1, 1], [15, y + 2, 15], 'mat'),
+                box([0, y + 1, 0], [16, y + 4, 1], 'wood'), box([0, y + 1, 15], [16, y + 4, 16], 'wood'),
+                box([0, y + 1, 1], [1, y + 4, 15], 'wood'), box([15, y + 1, 1], [16, y + 4, 15], 'wood')]
+
+    block('trim_tray', {'wood': 'wood_dark', 'mat': 'mat'}, tray(0), 'wood_dark')
+    block_model('trim_tray_top', {'wood': 'wood_dark', 'mat': 'mat'}, [box([0, 8, 0], [16, 12, 16], 'wood')] + tray(12), 'wood_dark')
+    variants = {f'facing={f},half={half}': {'model': f'fourtwenty:block/{m}', **({'y': y} if y else {})}
+                for f, y in (('north', 0), ('east', 90), ('south', 180), ('west', 270)) for half, m in (('bottom', 'trim_tray'), ('top', 'trim_tray_top'))}
+    (ASSETS / 'blockstates/trim_tray.json').write_text(json.dumps({'variants': variants}, indent=2) + '\n')
     block('curing_rack', {'post': 'wood_dark', 'rail': 'wood_light', 'twine': 'twine'}, [
         box([1, 1, 7], [3, 16, 9], 'post'), box([13, 1, 7], [15, 16, 9], 'post'),
         box([1, 0, 3], [3, 1, 13], 'post'), box([13, 0, 3], [15, 1, 13], 'post'),

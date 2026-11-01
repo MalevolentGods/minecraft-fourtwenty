@@ -8,13 +8,16 @@ import com.malevolentgods.fourtwenty.processing.ProcessingConfig;
 import com.malevolentgods.fourtwenty.registry.ModBlocks;
 import com.malevolentgods.fourtwenty.registry.ModDataComponents;
 import com.malevolentgods.fourtwenty.registry.ModItems;
+import com.malevolentgods.fourtwenty.processing.TrimTrayBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.state.properties.Half;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -46,6 +49,19 @@ public final class ProcessingGameTests {
         h.assertTrue(player.getMainHandItem().getCount() == 2, "one bud per click, left " + player.getMainHandItem().getCount());
         h.assertTrue(count(player, ModItems.TRIMMED_BUD.get(), Strain.BLUE_DREAM) == 1, "a Blue Dream trimmed bud");
         h.assertTrue(count(player, ModItems.WEED_SEEDS.get(), Strain.BLUE_DREAM) == 1, "a Blue Dream seed at chance 1");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void trayWorksInTheTopHalf(GameTestHelper h) {
+        var pos = new BlockPos(2, 2, 2);
+        h.setBlock(pos, ModBlocks.TRIM_TRAY.get().defaultBlockState().setValue(TrimTrayBlock.HALF, Half.TOP));
+        var shape = h.getBlockState(pos).getShape(h.getLevel(), h.absolutePos(pos));
+        h.assertTrue(shape.min(Direction.Axis.Y) == 0.5 && shape.max(Direction.Axis.Y) == 1, "a top slab's shape, got " + shape.bounds());
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        player.setItemInHand(InteractionHand.MAIN_HAND, of(ModItems.ROUGH_BUD.get(), 1, Strain.LANDRACE));
+        h.useBlock(pos, player);
+        h.assertTrue(count(player, ModItems.TRIMMED_BUD.get(), Strain.LANDRACE) == 1, "it still trims");
         h.succeed();
     }
 
