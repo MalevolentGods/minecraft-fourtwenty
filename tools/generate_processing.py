@@ -133,7 +133,25 @@ def box(a, b, tex, **faces):
     return {'from': a, 'to': b, 'faces': all_faces}
 
 
+def coplanar(elements):
+    """Faces of two boxes that lie in one plane and overlap, which z-fight: [(i, j, axis, plane)]."""
+    out = []
+    for i, a in enumerate(elements):
+        for j, b in enumerate(elements[:i]):
+            for axis in range(3):
+                others = [k for k in range(3) if k != axis]
+                touch = all(min(a['to'][k], b['to'][k]) > max(a['from'][k], b['from'][k]) for k in others)
+                planes = {a['from'][axis], a['to'][axis]} & {b['from'][axis], b['to'][axis]}
+                # same-facing faces only: boxes meeting end to end hide each other
+                same = [p for p in planes if (p == a['from'][axis]) == (p == b['from'][axis])]
+                if touch and same:
+                    out.append((j, i, 'xyz'[axis], same))
+    return out
+
+
 def block(name, textures, elements, particle):
+    clash = coplanar(elements)
+    assert not clash, f'{name} z-fights: {clash}'
     model = {'parent': 'block/block', 'textures': {'particle': f'fourtwenty:block/processing/{particle}', **{k: f'fourtwenty:block/processing/{v}' for k, v in textures.items()}},
              'elements': elements}
     (ASSETS / f'models/block/{name}.json').write_text(json.dumps(model, indent=1) + '\n')
@@ -164,10 +182,10 @@ def main():
         box([0, 1, 1], [1, 4, 15], 'wood'), box([15, 1, 1], [16, 4, 15], 'wood'),
     ], 'wood_dark')
     block('curing_rack', {'post': 'wood_dark', 'rail': 'wood_light', 'twine': 'twine'}, [
-        box([1, 0, 7], [3, 16, 9], 'post'), box([13, 0, 7], [15, 16, 9], 'post'),
+        box([1, 1, 7], [3, 16, 9], 'post'), box([13, 1, 7], [15, 16, 9], 'post'),
         box([1, 0, 3], [3, 1, 13], 'post'), box([13, 0, 3], [15, 1, 13], 'post'),
-        box([1, 14, 7], [15, 16, 9], 'rail'),
-        box([1, 7, 7], [15, 9, 9], 'rail'),
+        box([3, 14, 7], [13, 16, 9], 'rail'),
+        box([3, 7, 7], [13, 9, 9], 'rail'),
         box([3, 12, 7.75], [13, 13, 8.25], 'twine'), box([3, 5, 7.75], [13, 6, 8.25], 'twine'),
     ], 'wood_dark')
     if '--sheet' in sys.argv:
