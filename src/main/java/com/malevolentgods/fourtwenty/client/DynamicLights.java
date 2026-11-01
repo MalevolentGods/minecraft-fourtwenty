@@ -24,9 +24,11 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import org.joml.Matrix4f;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,8 +53,14 @@ public final class DynamicLights {
 
     private record Lit(BlockPos pos, int level) {}
 
+    /** A placed lamp's film. It doesn't move, so it's only looked at again now and then. */
+    private record Placed(int rgb, List<Face> faces) {}
+
     private static final int TICK_EVERY = 2, FILM_EVERY = 4, FILM_REACH = 9, MAX_FACES = 1200, GOD_RGB = 0xFFC830, ITEMS_WITHIN = 32;
     private static final float FILM_STRENGTH = 0.42f;
+    /** Placed lamps come in rows, and film adds up, so each is softer and shorter than a moving light, and only the nearest few show. */
+    private static final float PLACED_STRENGTH = 0.24f;
+    private static final int PLACED_REACH = 7, PLACED_FACES = 500, PLACED_MOST = 32, PLACED_WITHIN = 48, PLACED_CHECKS = 4;
     private static final double HOLD_HEIGHT = 1.2, ITEM_HEIGHT = 0.3, SKIN = 0.004;
     private static final Direction[] SIDES = Direction.values();
     /** A block's faces from outside, by Direction ordinal: as LampHaloRenderer.cube. */
@@ -64,11 +72,43 @@ public final class DynamicLights {
     private static volatile List<Source> sources = List.of();
     private static final Map<Integer, Lit> LIT = new HashMap<>();
     private static final Map<Integer, List<Face>> FILMS = new HashMap<>();
+    private static final Map<BlockPos, Placed> PLACED = new HashMap<>();
+    private static final ArrayDeque<BlockPos> TO_CHECK = new ArrayDeque<>();
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
         NeoForge.EVENT_BUS.addListener(DynamicLights::tick);
         NeoForge.EVENT_BUS.addListener(DynamicLights::render);
+    }
+
+    /** A lit lamp was drawn: it casts its colour from now on. */
+    public static void placed(BlockPos pos, int rgb) {
+        if (!ClientConfig.COLOURED_LIGHT.get() || PLACED.containsKey(pos)) return;
+        BlockPos at = pos.immutable();
+        PLACED.put(at, new Placed(rgb, List.of()));
+        TO_CHECK.addFirst(at);
+    }
+
+    /** A few lamps a tick: drops any that are gone or far away, and redoes the film of the rest. */
+    private static void checkPlaced(ClientLevel level, Vec3 camera) {
+        if (!ClientConfig.COLOURED_LIGHT.get()) {
+            PLACED.clear();
+            TO_CHECK.clear();
+            return;
+        }
+        for (int i = 0; i < PLACED_CHECKS && !TO_CHECK.isEmpty(); i++) {
+            BlockPos pos = TO_CHECK.poll();
+            Placed lamp = PLACED.get(pos);
+            if (lamp == null) continue;
+            var state = level.getBlockState(pos);
+            boolean lit = state.getBlock() instanceof LampBlock ? state.getValue(LampBlock.LIT) : state.getBlock() instanceof LampTrimBlock;
+            if (!lit || !pos.getCenter().closerThan(camera, PLACED_WITHIN)) {
+                PLACED.remove(pos);
+                continue;
+            }
+            PLACED.put(pos, new Placed(lamp.rgb, spread(level, pos, PLACED_REACH, PLACED_FACES)));
+            TO_CHECK.addLast(pos);
+        }
     }
 
     /** The block light moving sources give at {@code pos}. */
@@ -117,6 +157,8 @@ public final class DynamicLights {
             sources = List.of();
             LIT.clear();
             FILMS.clear();
+            PLACED.clear();
+            TO_CHECK.clear();
             return;
         }
         if (mc.level.getGameTime() % TICK_EVERY != 0) return;
@@ -134,6 +176,7 @@ public final class DynamicLights {
         }
         before.values().forEach(DynamicLights::rebuild);
         if (mc.level.getGameTime() % FILM_EVERY == 0) films(mc.level, now);
+        checkPlaced(mc.level, mc.gameRenderer.getMainCamera().getPosition());
     }
 
     /** Has every chunk section the light reaches built again. */
@@ -153,20 +196,19 @@ public final class DynamicLights {
     private static void films(ClientLevel level, List<Source> now) {
         FILMS.clear();
         if (!ClientConfig.COLOURED_LIGHT.get()) return;
-        for (Source s : now) if (s.rgb != 0) FILMS.put(s.id, spread(level, s));
+        for (Source s : now) if (s.rgb != 0) FILMS.put(s.id, spread(level, BlockPos.containing(s.at), FILM_REACH, MAX_FACES));
     }
 
     /** Spreads out through open space from the source; every solid face it meets is lit. */
-    private static List<Face> spread(ClientLevel level, Source source) {
-        BlockPos start = BlockPos.containing(source.at);
+    private static List<Face> spread(ClientLevel level, BlockPos start, int reach, int most) {
         List<Face> faces = new ArrayList<>();
         Set<BlockPos> seen = new HashSet<>(Set.of(start));
         var open = new ArrayDeque<BlockPos>(List.of(start));
-        while (!open.isEmpty() && faces.size() < MAX_FACES) {
+        while (!open.isEmpty() && faces.size() < most) {
             BlockPos cell = open.poll();
             for (Direction side : SIDES) {
                 BlockPos next = cell.relative(side);
-                if (!next.closerThan(start, FILM_REACH) || !seen.add(next) && !level.getBlockState(next).isSolidRender(level, next)) continue;
+                if (!next.closerThan(start, reach) || !seen.add(next) && !level.getBlockState(next).isSolidRender(level, next)) continue;
                 if (level.getBlockState(next).isSolidRender(level, next)) faces.add(new Face(next, side.getOpposite()));
                 else open.add(next);
             }
@@ -174,8 +216,22 @@ public final class DynamicLights {
         return faces;
     }
 
+    private static void film(VertexConsumer out, Matrix4f matrix, List<Face> faces, Vec3 at, int rgb, double reach, float strength) {
+        int r = rgb >> 16 & 0xFF, g = rgb >> 8 & 0xFF, b = rgb & 0xFF;
+        for (Face face : faces) {
+            int[] corners = CORNERS[face.side.ordinal()];
+            for (int i = 0; i < corners.length; i += 3) {
+                double x = face.pos.getX() + corners[i] + (corners[i] == 0 ? -SKIN : SKIN);
+                double y = face.pos.getY() + corners[i + 1] + (corners[i + 1] == 0 ? -SKIN : SKIN);
+                double z = face.pos.getZ() + corners[i + 2] + (corners[i + 2] == 0 ? -SKIN : SKIN);
+                int alpha = (int) (255 * strength * LightFalloff.film(Math.sqrt(at.distanceToSqr(x, y, z)), reach));
+                out.addVertex(matrix, (float) x, (float) y, (float) z).setColor(r, g, b, alpha);
+            }
+        }
+    }
+
     private static void render(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES || FILMS.isEmpty()) return;
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES || FILMS.isEmpty() && PLACED.isEmpty()) return;
         var buffers = Minecraft.getInstance().renderBuffers().bufferSource();
         Vec3 camera = event.getCamera().getPosition();
         PoseStack pose = event.getPoseStack();
@@ -186,19 +242,12 @@ public final class DynamicLights {
         for (Source source : sources) {
             List<Face> faces = FILMS.get(source.id);
             if (faces == null) continue;
-            int r = source.rgb >> 16 & 0xFF, g = source.rgb >> 8 & 0xFF, b = source.rgb & 0xFF;
-            for (Face face : faces) {
-                int[] corners = CORNERS[face.side.ordinal()];
-                for (int i = 0; i < corners.length; i += 3) {
-                    double x = face.pos.getX() + corners[i] + (corners[i] == 0 ? -SKIN : SKIN);
-                    double y = face.pos.getY() + corners[i + 1] + (corners[i + 1] == 0 ? -SKIN : SKIN);
-                    double z = face.pos.getZ() + corners[i + 2] + (corners[i + 2] == 0 ? -SKIN : SKIN);
-                    double distance = Math.sqrt(source.at.distanceToSqr(x, y, z));
-                    int alpha = (int) (255 * FILM_STRENGTH * LightFalloff.film(distance, FILM_REACH));
-                    out.addVertex(matrix, (float) x, (float) y, (float) z).setColor(r, g, b, alpha);
-                }
-            }
+            film(out, matrix, faces, source.at, source.rgb, FILM_REACH, FILM_STRENGTH);
         }
+        PLACED.entrySet().stream().filter(e -> !e.getValue().faces.isEmpty())
+                .sorted(Comparator.comparingDouble(e -> e.getKey().distToCenterSqr(camera)))
+                .limit(PLACED_MOST)
+                .forEach(e -> film(out, matrix, e.getValue().faces, e.getKey().getCenter(), e.getValue().rgb, PLACED_REACH, PLACED_STRENGTH));
         pose.popPose();
         buffers.endBatch(LampHaloRenderer.HaloRenderType.HALO);
     }

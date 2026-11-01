@@ -60,6 +60,7 @@ public class LampHaloRenderer implements BlockEntityRenderer<LampBlockEntity> {
             }
         } else return;
         halo(pose, buffers, box, rgba, joined);
+        DynamicLights.placed(pos, rgba >>> 8);
     }
 
     private static boolean isLadder(net.minecraft.world.level.block.state.BlockState state) {
