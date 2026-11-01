@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,21 +22,18 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/** A shining golden god: their whole body glows gold, with a halo of gold sparks turning over their head and more falling off them. */
+/** A shining golden god: their whole body glows gold, with a soft glow in the shape of their body around it. */
 @EventBusSubscriber(modid = "fourtwenty", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class GoldenGodClient {
     private GoldenGodClient() {}
 
     private static final Set<Integer> SHINING = new HashSet<>();
-    private static final DustParticleOptions SPARK = new DustParticleOptions(new Vector3f(1, 0.82f, 0.15f), 1);
-    private static final int HALO = 10;
     /** A lamp's glow, shaped to the body: its colour for each layer, by how far out the layer sits. */
     private static final int[] GLOW = {0x58FFC830, 0x38FFB428, 0x20FF9C20};
     private static final float GLOW_STEP = 0.1f;
@@ -59,21 +55,7 @@ public final class GoldenGodClient {
     }
 
     private static void tick(ClientTickEvent.Post event) {
-        var level = Minecraft.getInstance().level;
-        if (level == null) {
-            SHINING.clear();
-            return;
-        }
-        if (SHINING.isEmpty()) return;
-        for (var player : level.players()) {
-            if (!SHINING.contains(player.getId())) continue;
-            double turn = level.getGameTime() * 0.12, top = player.getBbHeight() + 0.25;
-            for (int i = 0; i < HALO; i++) {
-                double angle = turn + i * Mth.TWO_PI / HALO;
-                level.addParticle(SPARK, player.getX() + Math.cos(angle) * 0.4, player.getY() + top, player.getZ() + Math.sin(angle) * 0.4, 0, 0, 0);
-            }
-            level.addParticle(SPARK, player.getRandomX(0.6), player.getRandomY(), player.getRandomZ(0.6), 0, -0.05, 0);
-        }
+        if (Minecraft.getInstance().level == null) SHINING.clear();
     }
 
     private static final class Shine extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {

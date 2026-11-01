@@ -146,7 +146,7 @@ Smoking Golden God turns the player into a shining golden god for its length.
 
 **Acceptance Scenarios**:
 
-1. **Given** a player smokes Golden God, **Then** everyone nearby sees them shining gold with a halo of gold sparks, and they have Resistance IV, Strength III, Regeneration III, Speed III, Haste III, Fire Resistance and creative-style flight.
+1. **Given** a player smokes Golden God, **Then** everyone nearby sees them shining gold with a glow in the shape of their body, and they give off bright light, and they have Resistance IV, Strength III, Regeneration III, Speed III, Haste III, Fire Resistance and creative-style flight.
 2. **Given** the flight ends mid-air, **Then** they float down unharmed (flying can never kill you).
 3. **Given** the player logs out or dies, **Then** the shine stops for everyone.
 
