@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "WWW",
+    "PCP",
+    "WWW"
+  ],
+  "key": {
+    "W": {
+      "item": "fourtwenty:hemp_wick"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:rolled_wick",
+    "count": 6
+  },
+  "show_notification": true
+}

@@ -43,7 +43,7 @@ public final class PotPotGameTests {
         // Harvest: buds drop, and the plant starts again from a sprout.
         h.useBlock(pos, player);
         h.assertTrue(h.getBlockState(pos).getValue(PottedPotPotBlock.AGE) == 0, "not reset after the harvest");
-        h.assertItemEntityPresent(ModItems.WEED_BUD.get(), pos, 2.0);
+        h.assertItemEntityPresent(ModItems.ROUGH_BUD.get(), pos, 2.0);
         h.succeed();
     }
 

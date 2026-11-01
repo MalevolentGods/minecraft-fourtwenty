@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 public final class SmokeEffects {
     public static void apply(ServerLevel level, Player player) {
         SmokeEvents.smoked(player);
+        StrainEffects.markHigh(player, 2400);
         // Smoking inspires colours (a colour drift on screen); with nothing new to inspire, sometimes just the drift.
         if (player instanceof net.minecraft.server.level.ServerPlayer sp
                 && !com.malevolentgods.fourtwenty.infuser.Infuser.inspire(sp, com.malevolentgods.fourtwenty.domain.Strain.LANDRACE)

@@ -36,6 +36,7 @@ public final class BongTending {
     private boolean targetServing;
     private long giveUpAt;
     private long checkAt;
+    private long lastSession = -1;
 
     /** How the budtender asks the colony for supplies (backed by the native request system). */
     public interface Supplies {
@@ -58,7 +59,8 @@ public final class BongTending {
             // The worker AI only ticks every few ticks, so pace by timestamp, never by now % N.
             if (now < checkAt || building.waitingCustomers(now) > 0) return false;
             checkAt = now + CHECK_EVERY;
-            boolean serving = building.hasCustomers(now) || visitorsInside(worker, building);
+            boolean customers = building.hasCustomers(now) || visitorsInside(worker, building);
+            boolean serving = customers && BongTendingRules.sessionDue(now, lastSession);
             if (now >= scanAt) {
                 bongs = scan(worker, building);
                 scanAt = now + SCAN_EVERY;
@@ -74,7 +76,7 @@ public final class BongTending {
             return false;
         }
         if (!EntityNavigationUtils.walkToPos(worker, target, 2, true)) return true;
-        refill(worker, building, bong, targetServing);
+        if (refill(worker, building, bong, targetServing)) lastSession = now;
         target = null;
         return true;
     }
@@ -137,13 +139,14 @@ public final class BongTending {
                 bong.getItem(WeedBongBlockEntity.WATER_SLOT).is(Items.WATER_BUCKET), id(bong.getItem(WeedBongBlockEntity.FUEL_SLOT)), serving);
     }
 
-    private void refill(EntityCitizen worker, DispensaryBuilding building, WeedBongBlockEntity bong, boolean serving) {
+    /** Returns whether it loaded a session. */
+    private boolean refill(EntityCitizen worker, DispensaryBuilding building, WeedBongBlockEntity bong, boolean serving) {
         var sources = sources(worker, building);
         var into = bong.itemHandler();
         var need = need(bong, serving);
         if (need.clearBucket()) {
-            var bucket = into.extractItem(WeedBongBlockEntity.FUEL_SLOT, 1, true);
-            if (!bucket.isEmpty() && store(sources, bucket)) into.extractItem(WeedBongBlockEntity.FUEL_SLOT, 1, false);
+            var old = into.extractItem(WeedBongBlockEntity.FUEL_SLOT, 64, true);
+            if (!old.isEmpty() && store(sources, old)) into.extractItem(WeedBongBlockEntity.FUEL_SLOT, old.getCount(), false);
         }
         // Water is free: the budtender fills it from the tap, no bucket needed from storage.
         if (need.water()) into.insertItem(WeedBongBlockEntity.WATER_SLOT, new ItemStack(Items.WATER_BUCKET), false);
@@ -154,11 +157,13 @@ public final class BongTending {
             });
         }
         // Buds last, and only with customers around: the bong lights as soon as it has all three.
-        if (serving) {
-            int buds = into.getStackInSlot(WeedBongBlockEntity.WEED_SLOT).getCount();
-            move(sources, s -> s.is(ModItems.WEED_BUD.get()), BongTendingRules.MAX_BUDS - buds, into, WeedBongBlockEntity.WEED_SLOT);
+        boolean loaded = false;
+        if (serving && into.getStackInSlot(WeedBongBlockEntity.WEED_SLOT).isEmpty()) {
+            move(sources, s -> s.is(ModItems.WEED_BUD.get()), 1, into, WeedBongBlockEntity.WEED_SLOT);
+            loaded = !into.getStackInSlot(WeedBongBlockEntity.WEED_SLOT).isEmpty();
         }
         worker.swing(InteractionHand.MAIN_HAND);
+        return loaded;
     }
 
     /** The worker's own inventory first, then the hut's storage. */

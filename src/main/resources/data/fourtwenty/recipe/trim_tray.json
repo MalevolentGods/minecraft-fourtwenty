@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    "PPP"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:shears"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:trim_tray",
+    "count": 1
+  },
+  "show_notification": true
+}

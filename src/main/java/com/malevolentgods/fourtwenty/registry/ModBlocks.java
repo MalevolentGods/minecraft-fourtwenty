@@ -131,6 +131,14 @@ public class ModBlocks {
             BlockBehaviour.Properties.of().strength(0.2f).sound(SoundType.WOOD).noOcclusion().noLootTable()
                 .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK)));
 
+    public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.processing.TrimTrayBlock> TRIM_TRAY = BLOCKS.register("trim_tray",
+      () -> new com.malevolentgods.fourtwenty.processing.TrimTrayBlock(
+        BlockBehaviour.Properties.of().strength(1.0f).sound(SoundType.WOOD).noOcclusion()));
+
+    public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.processing.CuringRackBlock> CURING_RACK = BLOCKS.register("curing_rack",
+      () -> new com.malevolentgods.fourtwenty.processing.CuringRackBlock(
+        BlockBehaviour.Properties.of().strength(1.0f).sound(SoundType.WOOD).noOcclusion()));
+
     /** Creative only: no recipe, no drops, and it can't be mined. */
     public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.block.HotboxBlock> HOTBOX = BLOCKS.register("hotbox",
       () -> new com.malevolentgods.fourtwenty.block.HotboxBlock(

@@ -20,12 +20,18 @@ public class ModCreativeTabs {
                 output.accept(ModItems.INFUSER.get());
                 output.accept(ModItems.INFUSER_LAB.get());
                 output.accept(ModItems.WEED_SEEDS.get());
+                output.accept(ModItems.ROUGH_BUD.get());
+                output.accept(ModItems.TRIMMED_BUD.get());
                 output.accept(ModItems.WEED_BUD.get());
+                output.accept(ModItems.TRIM_TRAY.get());
+                output.accept(ModItems.CURING_RACK.get());
+                com.malevolentgods.fourtwenty.registry.ModPower.ITEMS.forEach(item -> output.accept(item.get()));
+                output.accept(com.malevolentgods.fourtwenty.registry.ModPower.ASH.get());
                 output.accept(ModItems.WEED_JOINT.get());
                 output.accept(ModItems.WEED_PIPE.get());
                 for (var strain : com.malevolentgods.fourtwenty.domain.Strain.values()) {
                     if (strain == com.malevolentgods.fourtwenty.domain.Strain.LANDRACE) continue;
-                    for (var item : java.util.List.of(ModItems.WEED_SEEDS.get(), ModItems.WEED_BUD.get(), ModItems.WEED_JOINT.get()))
+                    for (var item : java.util.List.of(ModItems.WEED_SEEDS.get(), ModItems.ROUGH_BUD.get(), ModItems.TRIMMED_BUD.get(), ModItems.WEED_BUD.get(), ModItems.WEED_JOINT.get()))
                         output.accept(ModDataComponents.withStrain(new ItemStack(item), strain));
                 }
                 output.accept(ModItems.WEED_COOKIE.get());

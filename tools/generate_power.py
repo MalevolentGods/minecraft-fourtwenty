@@ -1,0 +1,287 @@
+#!/usr/bin/env python3
+"""Everything data for Boundless Inspiration and the powered machines: models, blockstates, textures, recipes, loot and tags.
+
+    python3 tools/generate_power.py
+
+A tier reads the same on every block: Puff is hemp-brown and green, Toke copper and teal, Rip steel and violet. Models are boxes from
+tools/generate_processing.py, which refuses overlapping coplanar faces.
+"""
+import json
+import math
+import random
+from pathlib import Path
+
+from PIL import Image, ImageDraw
+
+from generate_processing import ASSETS, ROOT, block_model, box
+
+DATA = ROOT / 'src/main/resources/data'
+TEX = ASSETS / 'textures/block/power'
+TIERS = {
+    'puff': {'body': (138, 100, 62), 'accent': (96, 196, 72)},
+    'toke': {'body': (172, 104, 60), 'accent': (60, 196, 180)},
+    'rip': {'body': (118, 124, 138), 'accent': (168, 100, 232)},
+}
+WICKS = {'hemp_wick': 'puff', 'rolled_wick': 'toke', 'glass_wick': 'rip'}
+HOOKAHS = ('double_hose', 'big_bertha')       # the Hookah upgraded: their models come from tools/generate_hookah_model.py
+MACHINES = {'snip_station': 'puff', 'bud_barber': 'toke', 'trim_reaper': 'rip', 'dry_box': 'puff', 'cure_closet': 'toke', 'the_humidor': 'rip'}
+FACINGS = (('north', 0), ('east', 90), ('south', 180), ('west', 270))
+SIZE = 32
+
+
+def shade(colour, seed, spread=6):
+    rng = random.Random(seed)
+    img = Image.new('RGBA', (SIZE, SIZE))
+    px = img.load()
+    for y in range(SIZE):
+        for x in range(SIZE):
+            d = rng.randint(-spread, spread)
+            px[x, y] = tuple(max(0, min(255, c + d)) for c in colour) + (255,)
+    return img
+
+
+def plate(tier):
+    """A body panel: riveted edges."""
+    t = TIERS[tier]
+    img = shade(t['body'], tier)
+    d = ImageDraw.Draw(img)
+    dark = tuple(int(c * 0.6) for c in t['body']) + (255,)
+    d.rectangle([0, 0, SIZE - 1, SIZE - 1], outline=dark)
+    for x, y in ((2, 2), (29, 2), (2, 29), (29, 29)):
+        d.rectangle([x, y, x + 1, y + 1], fill=tuple(min(255, c + 60) for c in t['body']) + (255,))
+    return img
+
+
+def tinted(tier, lit):
+    t = TIERS[tier]
+    return t['accent'] if lit else tuple(int(c * 0.45) for c in t['accent'])
+
+
+def glow(tier, lit):
+    """A plain panel of the accent colour: tanks, bowls and lit trim."""
+    return shade(tinted(tier, lit), tier + str(lit), 12)
+
+
+def wick(tier, lit, offset=0):
+    base = {'puff': (176, 150, 104), 'toke': (214, 200, 170), 'rip': (190, 214, 222)}[tier]
+    img = shade(base, 'w' + tier)
+    d = ImageDraw.Draw(img)
+    for i in range(-SIZE - 6, SIZE + 6, 6):
+        d.line([(i + offset, 0), (i + offset + SIZE, SIZE)], fill=(tinted(tier, lit) if lit else tuple(int(c * 0.72) for c in base)) + (255,), width=2)
+    return img
+
+
+def strip(frames, path, frametime):
+    """A vertical sheet of frames and its .mcmeta: Minecraft animates it by itself."""
+    sheet = Image.new('RGBA', (SIZE, SIZE * len(frames)))
+    for i, frame in enumerate(frames):
+        sheet.paste(frame, (0, i * SIZE))
+    sheet.save(path)
+    Path(str(path) + '.mcmeta').write_text(json.dumps({'animation': {'frametime': frametime, 'interpolate': True}}) + '\n')
+
+
+def pulse(tier, frame, frames):
+    """The accent colour breathing brighter and dimmer."""
+    k = 0.72 + 0.28 * (0.5 + 0.5 * math.cos(2 * math.pi * frame / frames))
+    return shade(tuple(min(255, int(c * k)) for c in tinted(tier, True)), tier + 'lit', 12)
+
+
+def front(name, lit, frame=0):
+    tier = MACHINES[name]
+    img = plate(tier)
+    d = ImageDraw.Draw(img)
+    a = tinted(tier, lit) + (255,)
+    ink = (24, 26, 30, 255)
+    d.rectangle([5, 5, 26, 26], fill=(34, 36, 42, 255), outline=ink)
+    if name in ('snip_station', 'bud_barber', 'trim_reaper'):     # blades
+        n = {'snip_station': 1, 'bud_barber': 2, 'trim_reaper': 3}[name]
+        for i in range(n):
+            y = (9 + i * 7 if n > 1 else 15) + (frame % 2 if lit else 0)
+            spread = 3 + frame if lit else 3
+            d.line([(8, y), (23, y + spread)], fill=(214, 220, 226, 255), width=2)
+            d.line([(8, y + spread), (23, y)], fill=a, width=1)
+    else:                                                          # slats and hanging buds
+        n = {'dry_box': 3, 'cure_closet': 4, 'the_humidor': 5}[name]
+        for i in range(n):
+            x = 8 + i * (16 // n)
+            d.line([(x + 1, 7), (x + 1, 24)], fill=(90, 76, 58, 255))
+            sway = (frame + i) % 4 // 2 if lit else 0
+            d.ellipse([x - 1 + sway, 12 + i % 2 * 5, x + 3 + sway, 16 + i % 2 * 5], fill=a)
+    return img
+
+
+def variants(name, models):
+    """models(lit) -> model name; a block with FACING and LIT."""
+    return {'variants': {f'facing={f},lit={str(lit).lower()}': {'model': f'fourtwenty:block/{models(lit)}', **({'y': y} if y else {})}
+                         for f, y in FACINGS for lit in (False, True)}}
+
+
+def write(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value, indent=2) + '\n')
+
+
+def item_model(name, parent=None):
+    write(ASSETS / f'models/item/{name}.json', {'parent': parent or f'fourtwenty:block/{name}'})
+
+
+def model(name, elements, textures, particle):
+    block_model(name, textures, elements, particle)
+
+
+def lit_pair(name, elements, textures):
+    """A block's model, off and on: `glow` is the texture that lights up."""
+    for lit in (False, True):
+        tex = {k: (v[lit] if isinstance(v, dict) else v) for k, v in textures.items()}
+        model(f'{name}_lit' if lit else name, elements, tex, '#body')
+    write(ASSETS / f'blockstates/{name}.json', variants(name, lambda lit: f'{name}_lit' if lit else name))
+    item_model(name)
+
+
+def textures():
+    TEX.mkdir(parents=True, exist_ok=True)
+    for tier in TIERS:
+        plate(tier).save(TEX / f'{tier}_body.png')
+        for lit in (False, True):
+            suffix = '_lit' if lit else ''
+            if lit:
+                strip([pulse(tier, i, 8) for i in range(8)], TEX / f'{tier}_glow_lit.png', 3)
+                strip([wick(tier, True, i) for i in range(6)], TEX / f'{tier}_wick_lit.png', 2)
+            else:
+                glow(tier, False).save(TEX / f'{tier}_glow.png')
+                wick(tier, False).save(TEX / f'{tier}_wick.png')
+    for name in MACHINES:
+        front(name, False).save(TEX / f'{name}_front.png')
+        strip([front(name, True, i) for i in range(4)], TEX / f'{name}_front_lit.png', 3)
+    glass = shade((176, 214, 196), 'glass', 8)
+    ImageDraw.Draw(glass).line([(6, 3), (6, 28)], fill=(232, 244, 238, 255), width=2)
+    glass.save(TEX / 'glass.png')
+    ash = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+    d = ImageDraw.Draw(ash)
+    rng = random.Random(420)
+    d.ellipse([2, 7, 13, 14], fill=(84, 84, 88, 255))
+    for _ in range(26):
+        ash.putpixel((rng.randint(3, 12), rng.randint(8, 13)), (rng.choice((64, 120, 150)),) * 3 + (255,))
+    (ASSETS / 'textures/item').mkdir(exist_ok=True)
+    ash.save(ASSETS / 'textures/item/ash.png')
+    write(ASSETS / 'models/item/ash.json', {'parent': 'item/generated', 'textures': {'layer0': 'fourtwenty:item/ash'}})
+
+
+def t(tier, what, lit=False):
+    return f'fourtwenty:block/power/{tier}_{what}{"_lit" if lit else ""}'
+
+
+def both(tier, what):
+    return {False: t(tier, what), True: t(tier, what, True)}
+
+
+def wicks():
+    for name, tier in WICKS.items():
+        for lit in (False, True):
+            suffix = '_lit' if lit else ''
+            tex = {'wick': t(tier, 'wick', lit)}
+            model(f'{name}_core{suffix}', [box([6, 6, 6], [10, 10, 10], 'wick')], tex, '#wick')
+            model(f'{name}_arm{suffix}', [box([6, 6, 0], [10, 10, 6], 'wick')], tex, '#wick')
+            # A plug: the wire, a glowing collar, a flange on the block's edge, and a tail in to a plate that meets a block inset up to 4 pixels.
+            model(f'{name}_plug{suffix}', [box([6, 6, 2.5], [10, 10, 6], 'wick'),
+                                           box([5.5, 5.5, 1], [10.5, 10.5, 2.5], 'collar'),
+                                           box([4.5, 4.5, 0], [11.5, 11.5, 1], 'plate'),
+                                           box([6.5, 6.5, -3.5], [9.5, 9.5, 0], 'collar'),
+                                           box([5, 5, -4.5], [11, 11, -3.5], 'plate')],
+                  {**tex, 'collar': t(tier, 'glow', lit), 'plate': t(tier, 'body')}, '#wick')
+        parts = []
+        for lit in (False, True):
+            suffix = '_lit' if lit else ''
+            flag = str(lit).lower()
+            parts.append({'when': {'lit': flag}, 'apply': {'model': f'fourtwenty:block/{name}_core{suffix}'}})
+            for side, rot in (('north', {}), ('east', {'y': 90}), ('south', {'y': 180}), ('west', {'y': 270}), ('up', {'x': 270}), ('down', {'x': 90})):
+                parts.append({'when': {side: 'wire', 'lit': flag}, 'apply': {'model': f'fourtwenty:block/{name}_arm{suffix}', **rot}})
+                parts.append({'when': {side: 'plug', 'lit': flag}, 'apply': {'model': f'fourtwenty:block/{name}_plug{suffix}', **rot}})
+        write(ASSETS / f'blockstates/{name}.json', {'multipart': parts})
+        model(name + '_item', [box([2, 6, 6], [14, 10, 10], 'wick')], {'wick': t(tier, 'wick')}, '#wick')
+        item_model(name, f'fourtwenty:block/{name}_item')
+
+
+def stashes():
+    lit_pair('stash_jar', [box([4, 0, 4], [12, 10, 12], 'tank'), box([5, 10, 5], [11, 12, 11], 'body')], {'body': t('puff', 'body'), 'tank': both('puff', 'glow')})
+    lit_pair('stash_box', [box([1, 0, 1], [15, 11, 15], 'body'), box([1, 11, 1], [15, 14, 15], 'tank'), box([7, 8, 0.5], [9, 12, 1], 'body')],
+             {'body': t('toke', 'body'), 'tank': both('toke', 'glow')})
+    lit_pair('mother_stash', [box([0, 0, 0], [16, 4, 16], 'body'), box([0, 4, 0], [16, 12, 16], 'tank'), box([0, 12, 0], [16, 16, 16], 'body')],
+             {'body': t('rip', 'body'), 'tank': both('rip', 'glow')})
+    states = {}
+    for tier in ('toke', 'rip'):
+        for lit in (False, True):
+            suffix = '_lit' if lit else ''
+            model(f'hit_box_{tier}{suffix}', [box([0, 0, 0], [16, 16, 16], 'body'), box([4, 4, -0.5], [12, 12, 0], 'plug')],
+                  {'body': t(tier, 'body'), 'plug': t(tier, 'glow', lit)}, '#body')
+            for f, y in FACINGS:
+                states[f'facing={f},lit={str(lit).lower()},tier={tier}'] = {'model': f'fourtwenty:block/hit_box_{tier}{suffix}', **({'y': y} if y else {})}
+    write(ASSETS / 'blockstates/hit_box.json', {'variants': states})
+    item_model('hit_box', 'fourtwenty:block/hit_box_toke')
+
+
+def machines():
+    common = lambda tier, name: {'body': t(tier, 'body'), 'front': {False: f'fourtwenty:block/power/{name}_front', True: f'fourtwenty:block/power/{name}_front_lit'}, 'glow': both(tier, 'glow')}
+    full = lambda top: box([0, 0, 0], [16, top, 16], 'body', north='front')
+    features = {
+        'snip_station': [full(12), box([12, 12, 6], [15, 16, 10], 'body'), box([4, 13, 7], [12, 14, 9], 'glow')],
+        'bud_barber': [full(14), box([2, 14, 3], [14, 16, 6], 'glow'), box([2, 14, 10], [14, 16, 13], 'glow')],
+        'trim_reaper': [full(13), box([2, 13, 2], [14, 16, 14], 'glow')],
+        'dry_box': [full(16)],
+        'cure_closet': [box([1, 0, 1], [15, 16, 15], 'body', north='front'), box([12, 6, 0.5], [13, 10, 1], 'glow')],
+        'the_humidor': [box([0, 2, 0], [16, 16, 16], 'body', north='front'), *[box([x, 0, z], [x + 2, 2, z + 2], 'glow') for x in (1, 13) for z in (1, 13)]],
+    }
+    for name, tier in MACHINES.items():
+        lit_pair(name, features[name], common(tier, name))
+
+
+def recipes():
+    item = lambda i: {'item': i if ':' in i else f'minecraft:{i}'}
+    book = {
+        'hemp_wick': (6, ['SRS'], {'S': 'string', 'R': 'fourtwenty:rough_bud'}),
+        'rolled_wick': (6, ['WWW', 'PCP', 'WWW'], {'W': 'fourtwenty:hemp_wick', 'P': 'paper', 'C': 'copper_ingot'}),
+        'glass_wick': (4, ['WGW', 'GDG', 'WGW'], {'W': 'fourtwenty:rolled_wick', 'G': 'glass_pane', 'D': 'glowstone_dust'}),
+        'double_hose': (1, ['GHG', 'WWW'], {'G': 'gold_ingot', 'H': 'fourtwenty:weed_bong', 'W': 'fourtwenty:rolled_wick'}),
+        'big_bertha': (1, ['DHD', 'WHW'], {'D': 'diamond', 'H': 'fourtwenty:double_hose', 'W': 'fourtwenty:glass_wick'}),
+        'stash_jar': (1, ['GIG', 'GBG', 'GGG'], {'G': 'glass', 'I': 'iron_ingot', 'B': 'fourtwenty:weed_bud'}),
+        'stash_box': (1, ['IJI', 'JCJ', 'IJI'], {'I': 'iron_ingot', 'J': 'fourtwenty:stash_jar', 'C': 'copper_block'}),
+        'mother_stash': (1, ['GBG', 'BDB', 'GBG'], {'G': 'gold_block', 'B': 'fourtwenty:stash_box', 'D': 'diamond_block'}),
+        'hit_box': (1, ['IWI', 'RCR', 'IWI'], {'I': 'iron_ingot', 'W': 'fourtwenty:rolled_wick', 'R': 'redstone', 'C': 'copper_block'}),
+        'snip_station': (1, ['ISI', 'RTR', 'IWI'], {'I': 'iron_ingot', 'S': 'shears', 'R': 'redstone', 'T': 'fourtwenty:trim_tray', 'W': 'fourtwenty:hemp_wick'}),
+        'bud_barber': (1, ['CSC', 'RTR', 'CWC'], {'C': 'copper_ingot', 'S': 'shears', 'R': 'redstone', 'T': 'fourtwenty:snip_station', 'W': 'fourtwenty:rolled_wick'}),
+        'trim_reaper': (1, ['DSD', 'RTR', 'DWD'], {'D': 'diamond', 'S': 'shears', 'R': 'redstone', 'T': 'fourtwenty:bud_barber', 'W': 'fourtwenty:glass_wick'}),
+        'dry_box': (1, ['IVI', 'RTR', 'IWI'], {'I': 'iron_ingot', 'V': 'iron_bars', 'R': 'redstone', 'T': 'fourtwenty:curing_rack', 'W': 'fourtwenty:hemp_wick'}),
+        'cure_closet': (1, ['CVC', 'RTR', 'CWC'], {'C': 'copper_ingot', 'V': 'iron_bars', 'R': 'redstone', 'T': 'fourtwenty:dry_box', 'W': 'fourtwenty:rolled_wick'}),
+        'the_humidor': (1, ['DVD', 'RTR', 'DWD'], {'D': 'diamond', 'V': 'glass', 'R': 'redstone', 'T': 'fourtwenty:cure_closet', 'W': 'fourtwenty:glass_wick'}),
+    }
+    for name, (count, pattern, key) in book.items():
+        write(DATA / f'fourtwenty/recipe/{name}.json', {'type': 'minecraft:crafting_shaped', 'category': 'misc', 'pattern': pattern,
+                                                       'key': {k: item(v) for k, v in key.items()},
+                                                       'result': {'id': f'fourtwenty:{name}', 'count': count}, 'show_notification': True})
+
+
+def data():
+    blocks = list(WICKS) + list(HOOKAHS) + ['stash_jar', 'stash_box', 'mother_stash', 'hit_box'] + list(MACHINES)
+    for name in blocks:
+        write(DATA / f'fourtwenty/loot_table/blocks/{name}.json', {
+            'type': 'minecraft:block',
+            'pools': [{'rolls': 1, 'entries': [{'type': 'minecraft:item', 'name': f'fourtwenty:{name}'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
+    joined = [n for n in blocks if n not in WICKS] + ['weed_bong', 'terpinator', 'terpinator_lab', 'inspiration_infuser', 'inspiration_infuser_lab']
+    write(DATA / 'fourtwenty/tags/block/bi_blocks.json', {'replace': False, 'values': [f'fourtwenty:{n}' for n in joined]})
+    path = DATA / 'minecraft/tags/block/mineable/pickaxe.json'
+    tag = json.loads(path.read_text()) if path.exists() else {'replace': False, 'values': []}
+    tag['values'] = [v for v in tag['values'] if v != 'fourtwenty:single_hose_hookah']
+    for n in blocks:
+        if n not in WICKS and f'fourtwenty:{n}' not in tag['values']:
+            tag['values'].append(f'fourtwenty:{n}')
+    write(path, tag)
+
+
+if __name__ == '__main__':
+    textures()
+    wicks()
+    stashes()
+    machines()
+    recipes()
+    data()
+    print('ok')

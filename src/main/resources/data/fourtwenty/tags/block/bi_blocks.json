@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+    "fourtwenty:double_hose",
+    "fourtwenty:big_bertha",
+    "fourtwenty:stash_jar",
+    "fourtwenty:stash_box",
+    "fourtwenty:mother_stash",
+    "fourtwenty:hit_box",
+    "fourtwenty:snip_station",
+    "fourtwenty:bud_barber",
+    "fourtwenty:trim_reaper",
+    "fourtwenty:dry_box",
+    "fourtwenty:cure_closet",
+    "fourtwenty:the_humidor",
+    "fourtwenty:weed_bong",
+    "fourtwenty:terpinator",
+    "fourtwenty:terpinator_lab",
+    "fourtwenty:inspiration_infuser",
+    "fourtwenty:inspiration_infuser_lab"
+  ]
+}

@@ -45,7 +45,10 @@ public final class TerpinatorGameTests {
     }
 
     private static void run(GameTestHelper h, TerpinatorBlockEntity t, int ticks) {
-        for (int i = 0; i < ticks; i++) TerpinatorBlockEntity.tick(h.getLevel(), t.getBlockPos(), h.getLevel().getBlockState(t.getBlockPos()), t);
+        for (int i = 0; i < ticks; i++) {
+            t.node().receive(t.node().capacity());
+            TerpinatorBlockEntity.tick(h.getLevel(), t.getBlockPos(), h.getLevel().getBlockState(t.getBlockPos()), t);
+        }
     }
 
     private static ItemStack terp(Code code, int count) { return new ItemStack(ModTerpenes.terpene(code), count); }
@@ -55,6 +58,19 @@ public final class TerpinatorGameTests {
     }
 
     private static final int WHITE = PRODUCTS - 16 + DyeColor.WHITE.getId();
+
+    @GameTest(template = "empty")
+    public static void withNoPowerItPausesAndKeepsItsProgress(GameTestHelper h) {
+        var t = place(h, WHITE);
+        t.setItem(BUDS, buds(Strain.LANDRACE, 2));
+        run(h, t, 10);
+        t.node().extract(t.node().capacity());
+        for (int i = 0; i < 20; i++) TerpinatorBlockEntity.tick(h.getLevel(), t.getBlockPos(), h.getLevel().getBlockState(t.getBlockPos()), t);
+        h.assertTrue(t.data().get(DATA_PROGRESS) >= 10 && t.data().get(DATA_PROGRESS) < 20, "held its progress, at " + t.data().get(DATA_PROGRESS));
+        h.assertTrue(t.data().get(DATA_PAUSED) == 1, "says it's paused");
+        h.assertTrue(t.getItem(BUDS).getCount() == 2, "kept its buds");
+        h.succeed();
+    }
 
     @GameTest(template = "empty")
     public static void anyWeedMakesAMinecraftColour(GameTestHelper h) {

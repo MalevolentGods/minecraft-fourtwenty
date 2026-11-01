@@ -53,6 +53,18 @@ public class ModItems {
         ITEMS.register("weed_bud", () ->
             new com.malevolentgods.fourtwenty.item.StrainItems.Bud(new Item.Properties()));
 
+    public static final DeferredHolder<Item, Item> ROUGH_BUD =
+        ITEMS.register("rough_bud", () -> new com.malevolentgods.fourtwenty.item.StrainItems.RoughBud(new Item.Properties()));
+
+    public static final DeferredHolder<Item, Item> TRIMMED_BUD =
+        ITEMS.register("trimmed_bud", () -> new com.malevolentgods.fourtwenty.item.StrainItems.Bud(new Item.Properties()));
+
+    public static final DeferredHolder<Item, BlockItem> TRIM_TRAY =
+        ITEMS.register("trim_tray", () -> new BlockItem(ModBlocks.TRIM_TRAY.get(), new Item.Properties()));
+
+    public static final DeferredHolder<Item, BlockItem> CURING_RACK =
+        ITEMS.register("curing_rack", () -> new BlockItem(ModBlocks.CURING_RACK.get(), new Item.Properties()));
+
     public static final DeferredHolder<Item, WeedJointItem> WEED_JOINT =
         ITEMS.register("weed_joint", () ->
             new WeedJointItem(new Item.Properties().stacksTo(16))); // Limited stack size for balance

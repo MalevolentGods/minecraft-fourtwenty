@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IJI",
+    "JCJ",
+    "IJI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "J": {
+      "item": "fourtwenty:stash_jar"
+    },
+    "C": {
+      "item": "minecraft:copper_block"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:stash_box",
+    "count": 1
+  },
+  "show_notification": true
+}

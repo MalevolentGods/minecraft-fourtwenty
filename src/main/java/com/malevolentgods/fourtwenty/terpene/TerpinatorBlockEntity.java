@@ -38,13 +38,17 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
     public static final int BUDS = 0, OUT = 1, SIZE = 2;
     /** Ticks per vial, and buds per vial. */
     public static final int TIME = 100, BUDS_PER = 2;
-    public static final int DATA_PROGRESS = 0, DATA_PRODUCT = 1, DATA_RUNNING = 2, DATA_COUNT = 3;
+    public static final int DATA_PROGRESS = 0, DATA_PRODUCT = 1, DATA_RUNNING = 2, DATA_PAUSED = 3, DATA_COUNT = 4;
     /** Products: 0..63 the hemp colours in codex order, 64..79 the Minecraft colours in DyeColor order; -1 none. */
     public static final int PRODUCTS = 80, NONE = -1;
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
     private int progress, product = NONE;
-    private boolean running;
+    private boolean running, paused;
+    /** Top tier, so no wiring mistake can overload a Terpinator. */
+    private final com.malevolentgods.fourtwenty.power.MachinePower.Meter meter = new com.malevolentgods.fourtwenty.power.MachinePower.Meter();
+    private final com.malevolentgods.fourtwenty.power.BIBuffer buffer = new com.malevolentgods.fourtwenty.power.BIBuffer(
+            com.malevolentgods.fourtwenty.domain.BIRules.Tier.RIP, 2_000, true, false, this::setChanged);
     /** A pre-production Terpinator's resin, bases and accords: popped out on the first tick. */
     private final NonNullList<ItemStack> legacy = NonNullList.create();
 
@@ -54,6 +58,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
                 case DATA_PROGRESS -> progress;
                 case DATA_PRODUCT -> product;
                 case DATA_RUNNING -> running ? 1 : 0;
+                case DATA_PAUSED -> paused ? 1 : 0;
                 default -> 0;
             };
         }
@@ -63,6 +68,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
                 case DATA_PROGRESS -> progress = value;
                 case DATA_PRODUCT -> product = value;
                 case DATA_RUNNING -> running = value != 0;
+                case DATA_PAUSED -> paused = value != 0;
                 default -> {}
             }
         }
@@ -75,6 +81,8 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
     }
 
     public ContainerData data() { return data; }
+
+    public com.malevolentgods.fourtwenty.power.BINode node() { return buffer; }
 
     // ---- products ---------------------------------------------------------------------------------
 
@@ -135,8 +143,13 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
             t.setChanged();
         }
         boolean working = status(t.running, t.product, t.items.get(BUDS), t.items.get(OUT)) == null;
-        if (working) {
-            if (++t.progress >= TIME) {
+        int steps = working ? com.malevolentgods.fourtwenty.power.MachinePower.steps(level, pos, t.buffer,
+                com.malevolentgods.fourtwenty.processing.ProcessingConfig.terpinatorCost(), t.meter) : 0;
+        t.paused = working && steps == 0;
+        if (working && !t.paused) {
+            t.progress += steps;
+            t.setChanged();
+            if (t.progress >= TIME) {
                 t.progress = 0;
                 t.items.get(BUDS).shrink(BUDS_PER);
                 ItemStack out = t.items.get(OUT);
@@ -144,10 +157,11 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
                 else out.grow(1);
                 t.setChanged();
             }
-        } else if (t.running && t.progress != 0) {
+        } else if (!working && t.running && t.progress != 0) {
             t.progress = 0;                    // ran out of buds (a stopped machine keeps its progress)
         }
-        if (state.getValue(TerpinatorBlock.LIT) != working) level.setBlock(pos, state.setValue(TerpinatorBlock.LIT, working), 3);
+        boolean lit = working && !t.paused;
+        if (state.getValue(TerpinatorBlock.LIT) != lit) level.setBlock(pos, state.setValue(TerpinatorBlock.LIT, lit), 3);
     }
 
     public boolean isRunning() { return running; }
@@ -219,6 +233,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
         tag.putInt("progress", progress);
         tag.putInt("product", product);
         tag.putBoolean("running", running);
+        tag.putLong("bi", buffer.stored());
         if (!legacy.isEmpty()) {
             CompoundTag old = new CompoundTag();
             ContainerHelper.saveAllItems(old, legacy, registries);
@@ -243,6 +258,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
         product = tag.contains("product") ? tag.getInt("product") : NONE;
         if (!valid(product)) product = NONE;
         running = tag.getBoolean("running");
+        buffer.set(tag.getLong("bi"));
         if (tag.contains("legacy")) {
             NonNullList<ItemStack> old = NonNullList.withSize(6, ItemStack.EMPTY);
             ContainerHelper.loadAllItems(tag.getCompound("legacy"), old, registries);

@@ -11,9 +11,12 @@ public class ModBlockEntities {
         DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, "fourtwenty");
 
     @SuppressWarnings("null")
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.malevolentgods.fourtwenty.processing.CuringRackBlockEntity>> CURING_RACK =
+        BLOCK_ENTITIES.register("curing_rack", () -> BlockEntityType.Builder.of(com.malevolentgods.fourtwenty.processing.CuringRackBlockEntity::new, ModBlocks.CURING_RACK.get()).build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WeedBongBlockEntity>> WEED_BONG = 
         BLOCK_ENTITIES.register("weed_bong", () -> 
-            BlockEntityType.Builder.of(WeedBongBlockEntity::new, ModBlocks.WEED_BONG.get())
+            BlockEntityType.Builder.of(WeedBongBlockEntity::new, ModBlocks.WEED_BONG.get(), ModPower.DOUBLE_HOSE.get(), ModPower.BIG_BERTHA.get())
                 .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.malevolentgods.fourtwenty.blockentity.HotboxBlockEntity>> HOTBOX =

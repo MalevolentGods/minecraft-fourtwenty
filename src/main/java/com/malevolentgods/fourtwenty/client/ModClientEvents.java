@@ -9,6 +9,18 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 @EventBusSubscriber(modid = "fourtwenty", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModClientEvents {
+    /** Every Four Twenty tech item explains itself in its tooltip: the text is tooltip.fourtwenty.item.<id> in the lang file. */
+    public static void tooltips(net.neoforged.neoforge.event.entity.player.ItemTooltipEvent event) {
+        var id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(event.getItemStack().getItem());
+        if (!"fourtwenty".equals(id.getNamespace())) return;
+        String key = "tooltip.fourtwenty.item." + id.getPath();
+        if (!net.minecraft.client.resources.language.I18n.exists(key)) return;
+        var font = net.minecraft.client.Minecraft.getInstance().font;
+        for (var line : font.getSplitter().splitLines(net.minecraft.network.chat.Component.translatable(key), 200, net.minecraft.network.chat.Style.EMPTY.withColor(net.minecraft.ChatFormatting.GRAY))) {
+            event.getToolTip().add(net.minecraft.network.chat.Component.literal(line.getString()).withStyle(net.minecraft.ChatFormatting.GRAY));
+        }
+    }
+
     
     @SubscribeEvent
     public static void setup(net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) {
@@ -33,6 +45,7 @@ public class ModClientEvents {
 
     @SubscribeEvent
     public static void registerRenderers(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModBlockEntities.CURING_RACK.get(), CuringRackRenderer::new);
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModBlockEntities.LAMP.get(), LampHaloRenderer::new);
         event.registerEntityRenderer(com.malevolentgods.fourtwenty.registry.ModEntities.SEAT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
     }
@@ -59,6 +72,9 @@ public class ModClientEvents {
 
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(ModClientEvents::tooltips);
+        event.register(com.malevolentgods.fourtwenty.registry.ModPower.MACHINE_MENU.get(), MachineScreen::new);
+        event.register(com.malevolentgods.fourtwenty.registry.ModPower.BI_MENU.get(), BIScreen::new);
         event.register(ModMenuTypes.WEED_BONG.get(), WeedBongScreen::new);
         event.register(com.malevolentgods.fourtwenty.registry.ModTerpenes.TERPINATOR_MENU.get(),
                 com.malevolentgods.fourtwenty.client.terpene.TerpinatorScreen::new);

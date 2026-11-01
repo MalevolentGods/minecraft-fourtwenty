@@ -5,16 +5,12 @@ import java.util.OptionalInt;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BongFuelTest {
-    @Test void fuelsBurnLongerFromFlintAndSteelToLavaToBlazePowder() {
-        int flint = BongFuel.burnTicks(BongFuel.FLINT_AND_STEEL).orElseThrow();
-        int lava = BongFuel.burnTicks(BongFuel.LAVA_BUCKET).orElseThrow();
-        int blaze = BongFuel.burnTicks(BongFuel.BLAZE_POWDER).orElseThrow();
-        assertTrue(flint < lava && lava < blaze);
-        // Blaze powder keeps the original 60 second session.
-        assertEquals(1200, blaze);
+    @Test void charcoalBurnsForAMinute() {
+        assertEquals(1200, BongFuel.burnTicks(BongFuel.CHARCOAL).orElseThrow());
     }
-    @Test void otherItemsAreNotFuel() {
-        for (String id : new String[] {"minecraft:bucket", "minecraft:water_bucket", "minecraft:coal", "fourtwenty:weed_bud"}) {
+
+    @Test void nothingElseIsFuel() {
+        for (String id : new String[] {"minecraft:blaze_powder", "minecraft:flint_and_steel", "minecraft:lava_bucket", "minecraft:coal", "fourtwenty:weed_bud"}) {
             assertFalse(BongFuel.isFuel(id), id);
             assertEquals(OptionalInt.empty(), BongFuel.burnTicks(id), id);
         }

@@ -1,0 +1,256 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_core"
+      }
+    },
+    {
+      "when": {
+        "north": "wire",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_arm"
+      }
+    },
+    {
+      "when": {
+        "north": "plug",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug"
+      }
+    },
+    {
+      "when": {
+        "east": "wire",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_arm",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "east": "plug",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "wire",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_arm",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "south": "plug",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "wire",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_arm",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "west": "plug",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "wire",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_arm",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "up": "plug",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": "wire",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_arm",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "down": "plug",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_core_lit"
+      }
+    },
+    {
+      "when": {
+        "north": "wire",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_arm_lit"
+      }
+    },
+    {
+      "when": {
+        "north": "plug",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug_lit"
+      }
+    },
+    {
+      "when": {
+        "east": "wire",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_arm_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "east": "plug",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "wire",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_arm_lit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "south": "plug",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug_lit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "wire",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_arm_lit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "west": "plug",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug_lit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "wire",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_arm_lit",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "up": "plug",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug_lit",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": "wire",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_arm_lit",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "down": "plug",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug_lit",
+        "x": 90
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "snip": {
+    "subtitle": "subtitles.fourtwenty.snip",
+    "sounds": [
+      "fourtwenty:snip1",
+      "fourtwenty:snip2",
+      "fourtwenty:snip3"
+    ]
+  },
+  "cure": {
+    "subtitle": "subtitles.fourtwenty.cure",
+    "sounds": [
+      "fourtwenty:cure1",
+      "fourtwenty:cure2"
+    ]
+  },
+  "bubble": {
+    "subtitle": "subtitles.fourtwenty.bubble",
+    "sounds": [
+      "fourtwenty:bubble1",
+      "fourtwenty:bubble2",
+      "fourtwenty:bubble3"
+    ]
+  },
+  "burn_out": {
+    "subtitle": "subtitles.fourtwenty.burn_out",
+    "sounds": [
+      "fourtwenty:burn_out1",
+      "fourtwenty:burn_out2"
+    ]
+  },
+  "overload": {
+    "subtitle": "subtitles.fourtwenty.overload",
+    "sounds": [
+      "fourtwenty:overload1",
+      "fourtwenty:overload2"
+    ]
+  },
+  "switch": {
+    "subtitle": "subtitles.fourtwenty.switch",
+    "sounds": [
+      "fourtwenty:switch1",
+      "fourtwenty:switch2"
+    ]
+  }
+}

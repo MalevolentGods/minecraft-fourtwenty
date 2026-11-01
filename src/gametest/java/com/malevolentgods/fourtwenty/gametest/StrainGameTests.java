@@ -42,7 +42,7 @@ public final class StrainGameTests {
         h.assertTrue(crop.isMaxAge(grown), "bone meal grew it to full age");
         h.assertTrue(grown.getValue(WeedCropBlock.STRAIN) == Strain.BLUE_DREAM, "growth kept the strain, got " + grown.getValue(WeedCropBlock.STRAIN));
         List<ItemStack> drops = Block.getDrops(grown, h.getLevel(), abs, null);
-        h.assertTrue(drops.stream().anyMatch(s -> s.is(ModItems.WEED_BUD.get())), "a ripe crop drops buds");
+        h.assertTrue(drops.stream().anyMatch(s -> s.is(ModItems.ROUGH_BUD.get())), "a ripe crop drops rough buds");
         for (ItemStack s : drops) h.assertTrue(ModDataComponents.strain(s) == Strain.BLUE_DREAM, "every drop is Blue Dream: " + s);
         h.assertTrue(crop.getCloneItemStack(h.getLevel(), abs, grown).get(ModDataComponents.STRAIN.get()) == Strain.BLUE_DREAM, "pick-block gives Blue Dream seeds");
         h.succeed();

@@ -36,13 +36,13 @@ import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 /** One inventory backs menus, hoppers and every capability side. */
 public class WeedBongBlockEntity extends BlockEntity implements Container, MenuProvider {
-    /** Blaze powder's burn, and the length assumed for saves from before per-fuel durations. */
+    /** One charcoal's burn, and the length assumed for older saves. */
     public static final int BURN_DURATION = 1200;
     public static final int WEED_SLOT = 0;
     public static final int WATER_SLOT = 1;
-    /** Takes any {@link BongFuel}: flint and steel, a lava bucket or blaze powder. */
+    /** Takes charcoal, the {@link BongFuel}. */
     public static final int FUEL_SLOT = 2;
-    /** Older name for {@link #FUEL_SLOT}, from when only blaze powder could light the bong. */
+    /** Older name for {@link #FUEL_SLOT}. */
     public static final int BLAZE_POWDER_SLOT = FUEL_SLOT;
     /**
      * Told once a second while a bong burns. Set by the MineColonies integration (bong session
@@ -55,6 +55,12 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     private boolean isLit;
     private boolean chargePaid;
     private boolean removing;
+    private double made;
+    /** BI it has made and not yet sent down the Wicks: output only, and a Hookah can't be overloaded by what it makes. */
+    private final com.malevolentgods.fourtwenty.power.BIBuffer buffer;
+    private final com.malevolentgods.fourtwenty.power.BIPush push = new com.malevolentgods.fourtwenty.power.BIPush();
+    private static final int BUBBLE_EVERY = 40;
+    private static final java.util.List<net.minecraft.core.Direction> ALL = java.util.List.of(net.minecraft.core.Direction.values());
 
     private final ContainerData dataAccess = new ContainerData() {
         public int get(int index) {
@@ -63,6 +69,10 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
                 case 1 -> burnTime;
                 case 2 -> hasWater() ? 1 : 0;
                 case 3 -> visualWeedLevel();
+                case 4 -> burnDuration;
+                case 5 -> (int) buffer.stored();
+                case 6 -> (int) buffer.capacity();
+                case 7 -> buffer.tier().ordinal();
                 default -> 0;
             };
         }
@@ -70,7 +80,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
             if (index == 0) isLit = value != 0;
             if (index == 1) burnTime = value;
         }
-        public int getCount() { return 4; }
+        public int getCount() { return 8; }
     };
 
     // A caller retaining an old handler after movement must not mutate the old inventory.
@@ -99,7 +109,11 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
 
     public WeedBongBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.WEED_BONG.get(), pos, state);
+        var tier = ((WeedBongBlock) state.getBlock()).tier();
+        buffer = new com.malevolentgods.fourtwenty.power.BIBuffer(tier, tier.total(), false, true, () -> {});
     }
+
+    public com.malevolentgods.fourtwenty.power.BINode node() { return buffer; }
 
     public IItemHandler itemHandler() { return handler; }
 
@@ -177,7 +191,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
         super.setRemoved();
         if (level != null) level.invalidateCapabilities(worldPosition);
     }
-    @Override public Component getDisplayName() { return Component.translatable("container.fourtwenty.weed_bong"); }
+    @Override public Component getDisplayName() { return getBlockState().getBlock().getName(); }
     @Override public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
         return new WeedBongMenu(id, inventory, this, dataAccess);
     }
@@ -194,7 +208,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
 
     private void updateBlockState() {
         var state = getBlockState();
-        if (!state.is(com.malevolentgods.fourtwenty.registry.ModBlocks.WEED_BONG.get())) return;
+        if (!(state.getBlock() instanceof WeedBongBlock)) return;
         var updated = state.setValue(WeedBongBlock.HAS_WATER, hasWater())
             .setValue(WeedBongBlock.WEED_LEVEL, visualWeedLevel()).setValue(WeedBongBlock.LIT, isLit);
         if (!updated.equals(state)) level.setBlock(worldPosition, updated, 3);
@@ -224,6 +238,14 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     private void serverTick() {
         migrateLegacyBurn();
         if (!isLit && canLight()) lightBong(null);
+        var tier = buffer.tier();
+        if (isLit && hasWater()) {
+            made += tier.rate();
+            buffer.set(buffer.stored() + (long) made);
+            made -= (long) made;
+            if (burnTime % BUBBLE_EVERY == 0) level.playSound(null, worldPosition, com.malevolentgods.fourtwenty.registry.ModPower.BUBBLE.get(), SoundSource.BLOCKS, 0.6f, 0.9f + level.random.nextFloat() * 0.2f);
+        }
+        push.push(level, worldPosition, ALL, tier, tier.rate(), buffer, node -> true);
         if (!isLit) return;
         if (!hasWater()) { extinguish(); setChanged(); return; }
         burnTime++;
@@ -245,13 +267,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
         var fuel = getItem(FUEL_SLOT);
         int duration = BongFuel.burnTicks(id(fuel)).orElseThrow();
         getItem(WEED_SLOT).shrink(1);
-        if (fuel.is(Items.LAVA_BUCKET)) {
-            items.set(FUEL_SLOT, new ItemStack(Items.BUCKET));   // the lava is used; the bucket stays for pickup
-        } else if (fuel.isDamageableItem()) {
-            fuel.hurtAndBreak(1, (net.minecraft.server.level.ServerLevel) level, player, item -> {});
-        } else {
-            fuel.shrink(1);
-        }
+        fuel.shrink(1);
         isLit = true;
         chargePaid = true;
         burnTime = 0;
@@ -264,6 +280,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     public int burnDuration() { return burnDuration; }
 
     private void applyBongEffects(ServerPlayer player) {
+        com.malevolentgods.fourtwenty.util.StrainEffects.markHigh(player, 1200);
         player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.REGENERATION, 400, 1));
         player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.NIGHT_VISION, 1200, 0));
         player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.LUCK, 600, 0));
@@ -278,10 +295,12 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
         tag.putInt("BurnDuration", burnDuration);
         tag.putBoolean("IsLit", isLit);
         tag.putBoolean("ChargePaid", chargePaid);
+        tag.putLong("bi", buffer.stored());
         ContainerHelper.saveAllItems(tag, items, registries);
     }
     @Override protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        buffer.set(tag.getLong("bi"));
         items = NonNullList.withSize(3, ItemStack.EMPTY);
         // Loading bypasses insertion validation so old invalid contents remain recoverable.
         ContainerHelper.loadAllItems(tag, items, registries);

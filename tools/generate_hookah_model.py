@@ -9,6 +9,10 @@ fits in the block. On the brass socket in the top
 painting stands the hookah proper: a brass collar, a stem, a charcoal tray, a clay bowl with coals (glowing while
 lit), and a hose that loops off the stem and hangs down the side to a brass mouthpiece. Smoke puffs off the bowl while
 it's lit (WeedBongBlock#animateTick). Writes models/block/weed_bong_<state>.json and textures/block/hookah/*.png.
+
+Double Hose and Big Bertha are this same hookah upgraded, the same cabinet paintings and state set, with the hose repeated round the stem
+(2 and 4 of them) and its brass swapped for copper or steel: models/block/double_hose_<state>.json, big_bertha_<state>.json, and their
+blockstates, which follow weed_bong.json.
 """
 import json
 from pathlib import Path
@@ -97,8 +101,50 @@ def model(state):
                         'firstperson_righthand': {'rotation': [0, 45, 0], 'translation': [0, -1, 0], 'scale': [0.32, 0.32, 0.32]}}}
 
 
+HOSE_PARTS = 4                                  # the last elements of model(): port, slope, drop, mouthpiece
+FACE_TURN = {'north': 'east', 'east': 'south', 'south': 'west', 'west': 'north', 'up': 'up', 'down': 'down'}
+
+
+def turned(element, quarter):
+    """An element turned clockwise (from above) by quarter turns round the block's centre."""
+    e = json.loads(json.dumps(element))
+    for _ in range(quarter):
+        (x0, y0, z0), (x1, y1, z1) = e['from'], e['to']
+        e['from'], e['to'] = [16 - z1, y0, x0], [16 - z0, y1, x1]
+        e['faces'] = {FACE_TURN[f]: v for f, v in e['faces'].items()}
+        r = e.get('rotation')
+        if r:
+            ox, oy, oz = r['origin']
+            r['origin'] = [16 - oz, oy, ox]
+            # turning the scene sends the x axis to z and the z axis to minus x
+            r['axis'], r['angle'] = ('x', -r['angle']) if r['axis'] == 'z' else ('z', r['angle'])
+    return e
+
+
+def upgraded(state, turns, metal):
+    m = model(state)
+    m['elements'] += [turned(e, q) for q in turns for e in m['elements'][-HOSE_PARTS:]]
+    m['textures']['brass'] = f'fourtwenty:block/hookah/{metal}'
+    return m
+
+
+def recoloured(name, tint):
+    """The brass, retinted, keeping its polish."""
+    a = np.asarray(Image.open(ASSETS / 'textures/block/hookah/brass.png').convert('RGB')).astype(np.float32)
+    grey = a.mean(-1, keepdims=True) / 255
+    save(Image.fromarray(np.clip(grey * np.array(tint, dtype=np.float32), 0, 255).astype(np.uint8)), name)
+
+
 if __name__ == '__main__':
     textures()
+    recoloured('copper', (235, 140, 84))
+    recoloured('steel', (205, 214, 232))
     for st in STATES:
         (ASSETS / f'models/block/weed_bong_{st}.json').write_text(json.dumps(model(st), indent=1) + '\n')
-    print(len(STATES), 'hookah models')
+    states = (ASSETS / 'blockstates/weed_bong.json').read_text()
+    for name, turns, metal in (('double_hose', [2], 'copper'), ('big_bertha', [1, 2, 3], 'steel')):
+        for st in STATES:
+            (ASSETS / f'models/block/{name}_{st}.json').write_text(json.dumps(upgraded(st, turns, metal), indent=1) + '\n')
+        (ASSETS / f'blockstates/{name}.json').write_text(states.replace('block/weed_bong_', f'block/{name}_'))
+        (ASSETS / f'models/item/{name}.json').write_text(json.dumps({'parent': f'fourtwenty:block/{name}_empty'}, indent=2) + '\n')
+    print(len(STATES), 'hookah models, three tiers')

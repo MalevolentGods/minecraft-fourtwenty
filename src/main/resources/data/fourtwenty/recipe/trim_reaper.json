@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DSD",
+    "RTR",
+    "DWD"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "S": {
+      "item": "minecraft:shears"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "fourtwenty:bud_barber"
+    },
+    "W": {
+      "item": "fourtwenty:glass_wick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:trim_reaper",
+    "count": 1
+  },
+  "show_notification": true
+}

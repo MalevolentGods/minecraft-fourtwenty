@@ -177,7 +177,7 @@ public final class Infuser {
         InfuserState s = get(player);
         if (t == null || q == null || s.level(t.id()) <= 0) return;
         double d = tint.distance(Tint.specks(q), t);
-        if (d > Tint.MATCH) return;
+        if (d > Tint.MATCH || !Infusion.paid(player)) return;
         int grade = d <= Tint.SPOT_ON ? 2 : 1;
         s.caught.merge(t.id(), grade, Math::max);
         for (String twin : t.twins()) s.caught.merge(twin, grade, Math::max);

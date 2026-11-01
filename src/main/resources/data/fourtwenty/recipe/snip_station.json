@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ISI",
+    "RTR",
+    "IWI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "S": {
+      "item": "minecraft:shears"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "fourtwenty:trim_tray"
+    },
+    "W": {
+      "item": "fourtwenty:hemp_wick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:snip_station",
+    "count": 1
+  },
+  "show_notification": true
+}
