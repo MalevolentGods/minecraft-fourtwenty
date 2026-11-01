@@ -22,7 +22,7 @@ TIERS = {
     'rip': {'body': (118, 124, 138), 'accent': (168, 100, 232)},
 }
 WICKS = {'hemp_wick': 'puff', 'rolled_wick': 'toke', 'glass_wick': 'rip'}
-HOOKAHS = {'single_hose_hookah': ('puff', 1), 'double_hose': ('toke', 2), 'big_bertha': ('rip', 4)}
+HOOKAHS = ('double_hose', 'big_bertha')       # the Hookah upgraded: their models come from tools/generate_hookah_model.py
 MACHINES = {'snip_station': 'puff', 'bud_barber': 'toke', 'trim_reaper': 'rip', 'dry_box': 'puff', 'cure_closet': 'toke', 'the_humidor': 'rip'}
 FACINGS = (('north', 0), ('east', 90), ('south', 180), ('west', 270))
 SIZE = 32
@@ -173,14 +173,6 @@ def wicks():
         item_model(name, f'fourtwenty:block/{name}_item')
 
 
-def hookahs():
-    for name, (tier, hoses) in HOOKAHS.items():
-        arms = [([9, 5, 7.5], [14, 6, 8.5]), ([2, 5, 7.5], [7, 6, 8.5]), ([7.5, 5, 9], [8.5, 6, 14]), ([7.5, 5, 2], [8.5, 6, 7])][:hoses]
-        elements = [box([4, 0, 4], [12, 2, 12], 'body'), box([5, 2, 5], [11, 9, 11], 'tank'), box([7, 9, 7], [9, 13, 9], 'body'), box([5, 13, 5], [11, 15, 11], 'tank')]
-        elements += [box(a, b, 'body') for a, b in arms]
-        lit_pair(name, elements, {'body': t(tier, 'body'), 'tank': both(tier, 'glow')})
-
-
 def stashes():
     lit_pair('stash_jar', [box([4, 0, 4], [12, 10, 12], 'tank'), box([5, 10, 5], [11, 12, 11], 'body')], {'body': t('puff', 'body'), 'tank': both('puff', 'glow')})
     lit_pair('stash_box', [box([1, 0, 1], [15, 11, 15], 'body'), box([1, 11, 1], [15, 14, 15], 'tank'), box([7, 8, 0.5], [9, 12, 1], 'body')],
@@ -220,8 +212,7 @@ def recipes():
         'hemp_wick': (6, ['SRS'], {'S': 'string', 'R': 'fourtwenty:rough_bud'}),
         'rolled_wick': (6, ['WWW', 'PCP', 'WWW'], {'W': 'fourtwenty:hemp_wick', 'P': 'paper', 'C': 'copper_ingot'}),
         'glass_wick': (4, ['WGW', 'GDG', 'WGW'], {'W': 'fourtwenty:rolled_wick', 'G': 'glass_pane', 'D': 'glowstone_dust'}),
-        'single_hose_hookah': (1, [' G ', 'IWI', ' F '], {'G': 'glass', 'I': 'iron_ingot', 'W': 'fourtwenty:hemp_wick', 'F': 'furnace'}),
-        'double_hose': (1, ['GHG', 'WWW'], {'G': 'gold_ingot', 'H': 'fourtwenty:single_hose_hookah', 'W': 'fourtwenty:rolled_wick'}),
+        'double_hose': (1, ['GHG', 'WWW'], {'G': 'gold_ingot', 'H': 'fourtwenty:weed_bong', 'W': 'fourtwenty:rolled_wick'}),
         'big_bertha': (1, ['DHD', 'WHW'], {'D': 'diamond', 'H': 'fourtwenty:double_hose', 'W': 'fourtwenty:glass_wick'}),
         'stash_jar': (1, ['GIG', 'GBG', 'GGG'], {'G': 'glass', 'I': 'iron_ingot', 'B': 'fourtwenty:weed_bud'}),
         'stash_box': (1, ['IJI', 'JCJ', 'IJI'], {'I': 'iron_ingot', 'J': 'fourtwenty:stash_jar', 'C': 'copper_block'}),
@@ -246,10 +237,11 @@ def data():
         write(DATA / f'fourtwenty/loot_table/blocks/{name}.json', {
             'type': 'minecraft:block',
             'pools': [{'rolls': 1, 'entries': [{'type': 'minecraft:item', 'name': f'fourtwenty:{name}'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
-    joined = [n for n in blocks if n not in WICKS] + ['terpinator', 'terpinator_lab', 'inspiration_infuser', 'inspiration_infuser_lab']
+    joined = [n for n in blocks if n not in WICKS] + ['weed_bong', 'terpinator', 'terpinator_lab', 'inspiration_infuser', 'inspiration_infuser_lab']
     write(DATA / 'fourtwenty/tags/block/bi_blocks.json', {'replace': False, 'values': [f'fourtwenty:{n}' for n in joined]})
     path = DATA / 'minecraft/tags/block/mineable/pickaxe.json'
     tag = json.loads(path.read_text()) if path.exists() else {'replace': False, 'values': []}
+    tag['values'] = [v for v in tag['values'] if v != 'fourtwenty:single_hose_hookah']
     for n in blocks:
         if n not in WICKS and f'fourtwenty:{n}' not in tag['values']:
             tag['values'].append(f'fourtwenty:{n}')
@@ -259,7 +251,6 @@ def data():
 if __name__ == '__main__':
     textures()
     wicks()
-    hookahs()
     stashes()
     machines()
     recipes()

@@ -50,7 +50,7 @@ A player trims many buds and sees seeds come often from Landrace and rarely from
 
 ### User Story 3 - Power a machine while sober (Priority: P2)
 
-A player builds a Hookah, runs Wicks to a machine and feeds it weed. The machine runs while they're sober. If they get high nearby it runs for free. With neither it waits, without losing its place.
+A player lights a Hookah, runs Wicks to a machine and feeds it weed. The machine runs while they're sober. If they get high nearby it runs for free. With neither it waits, without losing its place.
 
 **Why this priority**: Everything automated depends on this, and it's the plan's foundation for all later tech.
 
@@ -137,7 +137,7 @@ A colony's farmers bring in rough weed. Until the Bud Barn exists, players suppl
 **Boundless Inspiration**
 
 - **FR-013**: The power system MUST have three tiers in this release: Puff 32, Toke 128 and Rip 512 BI/t, shown to players as "Inspo".
-- **FR-014**: Generators MUST be the Single Hose Hookah, Double Hose and Big Bertha, each burning weed with output by tier. Fuel starts at cured 800, trimmed 600, rough 400 BI and is configurable.
+- **FR-014**: The generator MUST be the existing Hookah, making Puff power while it burns, with the Double Hose (Toke) and Big Bertha (Rip) as upgrades of that same block: same session, same inputs, same look with more hoses.
 - **FR-015**: Storage MUST be the Stash Jar (40k), Stash Box (400k) and Mother Stash (4M).
 - **FR-016**: Wiring MUST be the Hemp, Rolled and Glass Wicks, which glow while carrying power. The Hit Box MUST step power between tiers.
 - **FR-017**: A part given more power than its tier MUST burn out in smoke and leave ash, with no explosion and no other damage.
@@ -178,6 +178,6 @@ A colony's farmers bring in rough weed. Until the Bud Barn exists, players suppl
 - Trimming tiers give speed only; the seed chance doesn't change by tier.
 - T1 machines don't accept hoppers.
 - Higher tiers accept lower-tier power at a slower rate, if they have enough input; a part only burns out when given more than its tier.
-- Fuel is the three weed stages only; extracts arrive with the Rosin Rig.
+- A Hookah burns cured buds with its usual lighter fuel, as it always has; rough and trimmed buds don't burn. Extracts arrive with the Rosin Rig.
 - Blaze tier, Grow Ops, Think Tank, Rosin Rig, Pheno Chamber, Kush Suit, Blazer and the Bud Barn are out of scope.
-- The existing block shown as "Hookah" keeps its name and job; the BI Hookahs are new blocks.
+- The existing block shown as "Hookah" keeps its name and job, and also generates. Changed on 2026-10-31 at the user's request; the plan's separate Single Hose Hookah is gone.

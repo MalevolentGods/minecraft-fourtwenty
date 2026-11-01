@@ -22,9 +22,6 @@ public final class ProcessingConfig {
     private static final ModConfigSpec.IntValue[] CURE_TICKS = tiers("cureTicks", "Ticks per batch.", i -> CureRules.DEFAULTS.get(i).ticks());
     private static final ModConfigSpec.IntValue[] CURE_BATCH = tiers("cureBatch", "Buds per batch.", i -> CureRules.DEFAULTS.get(i).batch());
     private static final ModConfigSpec.IntValue[] CURE_COST = tiers("cureCost", "BI per tick.", i -> CureRules.DEFAULTS.get(i).cost());
-    private static final ModConfigSpec.IntValue FUEL_CURED = fuel("fuelCured", 800);
-    private static final ModConfigSpec.IntValue FUEL_TRIMMED = fuel("fuelTrimmed", 600);
-    private static final ModConfigSpec.IntValue FUEL_ROUGH = fuel("fuelRough", 400);
     private static final ModConfigSpec.IntValue HIGH_SPEED = BUILDER
             .comment("How fast a machine runs free for a high player, in percent of its speed on BI.")
             .defineInRange("highSpeedPercent", 100, 1, 1000);
@@ -45,10 +42,6 @@ public final class ProcessingConfig {
         var out = new ModConfigSpec.IntValue[TIERS];
         for (int i = FIRST_POWERED; i < TIERS; i++) out[i] = BUILDER.comment("Tier " + (i + 1) + ": " + comment).defineInRange(name + (i + 1), value.applyAsInt(i), 1, 1_728_000);
         return out;
-    }
-
-    private static ModConfigSpec.IntValue fuel(String name, int value) {
-        return BUILDER.comment("BI from burning one bud in a Hookah.").defineInRange(name, value, 0, 1_000_000);
     }
 
     private static ModConfigSpec.DoubleValue chance(String name, double value) {
@@ -73,15 +66,6 @@ public final class ProcessingConfig {
     /** A powered trimming tier, by index: 1 to 3 for tiers 2 to 4. */
     public static TrimRules.Tier trim(int index) {
         return SPEC.isLoaded() ? new TrimRules.Tier(TRIM_TICKS[index].get(), TRIM_COST[index].get()) : TrimRules.DEFAULTS.get(index);
-    }
-
-    /** BI from burning this stack's item, or 0 if it won't burn. */
-    public static long fuel(net.minecraft.world.item.ItemStack stack) {
-        if (stack.isEmpty() || !SPEC.isLoaded()) return 0;
-        if (stack.is(com.malevolentgods.fourtwenty.registry.ModItems.WEED_BUD.get())) return FUEL_CURED.get();
-        if (stack.is(com.malevolentgods.fourtwenty.registry.ModItems.TRIMMED_BUD.get())) return FUEL_TRIMMED.get();
-        if (stack.is(com.malevolentgods.fourtwenty.registry.ModItems.ROUGH_BUD.get())) return FUEL_ROUGH.get();
-        return 0;
     }
 
     public static int highSpeedPercent() { return SPEC.isLoaded() ? HIGH_SPEED.get() : 100; }

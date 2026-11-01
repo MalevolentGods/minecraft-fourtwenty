@@ -55,6 +55,11 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     private boolean isLit;
     private boolean chargePaid;
     private boolean removing;
+    /** Inspo it has made and not yet sent down the Wicks: output only, and a Hookah can't be overloaded by what it makes. */
+    private final com.malevolentgods.fourtwenty.power.BIBuffer buffer;
+    private final com.malevolentgods.fourtwenty.power.BIPush push = new com.malevolentgods.fourtwenty.power.BIPush();
+    private static final int BUFFER_TICKS = 125;
+    private static final java.util.List<net.minecraft.core.Direction> ALL = java.util.List.of(net.minecraft.core.Direction.values());
 
     private final ContainerData dataAccess = new ContainerData() {
         public int get(int index) {
@@ -99,7 +104,11 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
 
     public WeedBongBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.WEED_BONG.get(), pos, state);
+        var tier = ((WeedBongBlock) state.getBlock()).tier();
+        buffer = new com.malevolentgods.fourtwenty.power.BIBuffer(tier, (long) tier.rate() * BUFFER_TICKS, false, true, () -> {});
     }
+
+    public com.malevolentgods.fourtwenty.power.BINode node() { return buffer; }
 
     public IItemHandler itemHandler() { return handler; }
 
@@ -177,7 +186,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
         super.setRemoved();
         if (level != null) level.invalidateCapabilities(worldPosition);
     }
-    @Override public Component getDisplayName() { return Component.translatable("container.fourtwenty.weed_bong"); }
+    @Override public Component getDisplayName() { return getBlockState().getBlock().getName(); }
     @Override public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
         return new WeedBongMenu(id, inventory, this, dataAccess);
     }
@@ -194,7 +203,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
 
     private void updateBlockState() {
         var state = getBlockState();
-        if (!state.is(com.malevolentgods.fourtwenty.registry.ModBlocks.WEED_BONG.get())) return;
+        if (!(state.getBlock() instanceof WeedBongBlock)) return;
         var updated = state.setValue(WeedBongBlock.HAS_WATER, hasWater())
             .setValue(WeedBongBlock.WEED_LEVEL, visualWeedLevel()).setValue(WeedBongBlock.LIT, isLit);
         if (!updated.equals(state)) level.setBlock(worldPosition, updated, 3);
@@ -224,6 +233,9 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     private void serverTick() {
         migrateLegacyBurn();
         if (!isLit && canLight()) lightBong(null);
+        var tier = buffer.tier();
+        if (isLit && hasWater()) buffer.set(buffer.stored() + tier.rate());
+        push.push(level, worldPosition, ALL, tier, buffer, node -> true);
         if (!isLit) return;
         if (!hasWater()) { extinguish(); setChanged(); return; }
         burnTime++;
@@ -279,10 +291,12 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
         tag.putInt("BurnDuration", burnDuration);
         tag.putBoolean("IsLit", isLit);
         tag.putBoolean("ChargePaid", chargePaid);
+        tag.putLong("bi", buffer.stored());
         ContainerHelper.saveAllItems(tag, items, registries);
     }
     @Override protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        buffer.set(tag.getLong("bi"));
         items = NonNullList.withSize(3, ItemStack.EMPTY);
         // Loading bypasses insertion validation so old invalid contents remain recoverable.
         ContainerHelper.loadAllItems(tag, items, registries);

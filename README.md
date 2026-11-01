@@ -7,7 +7,7 @@ This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and 
 ## What's new in 0.15.0
 
 - **Weed processing:** harvest Rough Buds, trim them for Trimmed Buds and seeds, cure them into smokeable Cured Buds. A Trim Tray and Curing Rack need no power; six powered machines do it faster and take hoppers.
-- **Boundless Inspiration:** Hookahs burn weed into Inspo, Stash blocks hold it, Wicks carry it, and the Hit Box steps it between tiers. Machines run on Inspo, or free while a high player is within 21 blocks.
+- **Boundless Inspiration:** a burning Hookah makes Inspo, with the Double Hose and Big Bertha as its upgrades, Stash blocks hold it, Wicks carry it, and the Hit Box steps it between tiers. Machines run on Inspo, or free while a high player is within 21 blocks.
 
 ## What's new in 0.14.1
 

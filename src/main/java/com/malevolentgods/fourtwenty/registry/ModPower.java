@@ -4,8 +4,6 @@ import com.malevolentgods.fourtwenty.domain.BIRules.Tier;
 import com.malevolentgods.fourtwenty.power.BINode;
 import com.malevolentgods.fourtwenty.power.HitBoxBlock;
 import com.malevolentgods.fourtwenty.power.HitBoxBlockEntity;
-import com.malevolentgods.fourtwenty.power.HookahBlock;
-import com.malevolentgods.fourtwenty.power.HookahBlockEntity;
 import com.malevolentgods.fourtwenty.power.StashBlock;
 import com.malevolentgods.fourtwenty.power.StashBlockEntity;
 import com.malevolentgods.fourtwenty.power.WickBlock;
@@ -13,6 +11,8 @@ import com.malevolentgods.fourtwenty.processing.MachineBlock;
 import com.malevolentgods.fourtwenty.processing.MachineBlock.Job;
 import com.malevolentgods.fourtwenty.processing.MachineBlockEntity;
 import com.malevolentgods.fourtwenty.processing.MachineMenu;
+import com.malevolentgods.fourtwenty.block.WeedBongBlock;
+import com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity;
 import com.malevolentgods.fourtwenty.terpene.TerpinatorBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -60,8 +60,9 @@ public final class ModPower {
         return holder;
     }
 
-    private static DeferredHolder<Block, HookahBlock> hookah(String name, Tier tier) {
-        return block(name, () -> new HookahBlock(tier, metal()));
+    /** The Hookah upgraded: the same block at a higher tier. The Hookah itself, tier 1, is ModBlocks.WEED_BONG. */
+    private static DeferredHolder<Block, WeedBongBlock> hookah(String name, Tier tier) {
+        return block(name, () -> new WeedBongBlock(tier, BlockBehaviour.Properties.of().strength(2.0f, 6.0f).sound(SoundType.GLASS).noOcclusion()));
     }
 
     private static DeferredHolder<Block, StashBlock> stash(String name, Tier tier, long capacity, double inset, double height) {
@@ -82,9 +83,8 @@ public final class ModPower {
     public static final DeferredHolder<Block, WickBlock> ROLLED_WICK = wick("rolled_wick", Tier.TOKE);
     public static final DeferredHolder<Block, WickBlock> GLASS_WICK = wick("glass_wick", Tier.RIP);
 
-    public static final DeferredHolder<Block, HookahBlock> SINGLE_HOSE = hookah("single_hose_hookah", Tier.PUFF);
-    public static final DeferredHolder<Block, HookahBlock> DOUBLE_HOSE = hookah("double_hose", Tier.TOKE);
-    public static final DeferredHolder<Block, HookahBlock> BIG_BERTHA = hookah("big_bertha", Tier.RIP);
+    public static final DeferredHolder<Block, WeedBongBlock> DOUBLE_HOSE = hookah("double_hose", Tier.TOKE);
+    public static final DeferredHolder<Block, WeedBongBlock> BIG_BERTHA = hookah("big_bertha", Tier.RIP);
 
     public static final DeferredHolder<Block, StashBlock> STASH_JAR = stash("stash_jar", Tier.PUFF, 40_000, 4, 12);
     public static final DeferredHolder<Block, StashBlock> STASH_BOX = stash("stash_box", Tier.TOKE, 400_000, 1, 14);
@@ -99,8 +99,6 @@ public final class ModPower {
     public static final DeferredHolder<Block, MachineBlock> CURE_CLOSET = machine("cure_closet", Job.CURE, Tier.TOKE);
     public static final DeferredHolder<Block, MachineBlock> THE_HUMIDOR = machine("the_humidor", Job.CURE, Tier.RIP);
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HookahBlockEntity>> HOOKAH_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("hookah",
-            () -> BlockEntityType.Builder.of(HookahBlockEntity::new, SINGLE_HOSE.get(), DOUBLE_HOSE.get(), BIG_BERTHA.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StashBlockEntity>> STASH_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("stash",
             () -> BlockEntityType.Builder.of(StashBlockEntity::new, STASH_JAR.get(), STASH_BOX.get(), MOTHER_STASH.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HitBoxBlockEntity>> HIT_BOX_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("hit_box",
@@ -119,12 +117,11 @@ public final class ModPower {
     }
 
     private static void capabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(BINode.CAPABILITY, HOOKAH_ENTITY.get(), (entity, side) -> entity.node());
+        event.registerBlockEntity(BINode.CAPABILITY, ModBlockEntities.WEED_BONG.get(), (WeedBongBlockEntity entity, Direction side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, STASH_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, HIT_BOX_ENTITY.get(), HitBoxBlockEntity::node);
         event.registerBlockEntity(BINode.CAPABILITY, MACHINE_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, ModTerpenes.TERPINATOR_ENTITY.get(), (TerpinatorBlockEntity entity, Direction side) -> entity.node());
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, HOOKAH_ENTITY.get(), (entity, side) -> side == null ? null : new SidedInvWrapper(entity, side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MACHINE_ENTITY.get(), (entity, side) -> side == null ? null : new SidedInvWrapper(entity, side));
     }
 }

@@ -8,7 +8,7 @@ Applies to T2-T4 machines, the Hookahs' fuel slot, and any hopper or pipe mod us
 | Bottom | Nothing | Anything in output slots |
 
 - TRIM machines accept `rough_bud` only. CURE machines accept `trimmed_bud` only.
-- Hookahs accept `rough_bud`, `trimmed_bud` and `weed_bud` from top and sides, and give nothing.
+- Hookahs keep their existing inventory rules: buds, water and lighter fuel on any side.
 - Different strains never stack, and a machine processes each slot's strain separately.
 - A machine with no output room stops and loses nothing.
 - Breaking a machine drops all its contents.

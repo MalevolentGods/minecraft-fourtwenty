@@ -11,7 +11,7 @@ Run on the local test server (`C:\Users\Ignus\mc-local-server`) with the same ja
 
 ## Stages 2-4
 
-1. Hookah → Hemp Wick → Stash Jar → Terpinator, sober: it runs.
+1. Lit Hookah → Hemp Wick → Stash Jar → Terpinator, sober: it runs.
 2. Unplug it and smoke within 21 blocks: it runs free.
 3. Wait for the high to end: it pauses at the same progress.
 4. Repeat free running after a bong hit and after an edible.

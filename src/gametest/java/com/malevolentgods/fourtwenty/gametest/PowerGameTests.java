@@ -3,7 +3,7 @@ package com.malevolentgods.fourtwenty.gametest;
 import com.malevolentgods.fourtwenty.domain.Strain;
 import com.malevolentgods.fourtwenty.power.BIBuffer;
 import com.malevolentgods.fourtwenty.power.BIGrid;
-import com.malevolentgods.fourtwenty.power.HookahBlockEntity;
+import com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity;
 import com.malevolentgods.fourtwenty.power.MachinePower;
 import com.malevolentgods.fourtwenty.power.StashBlockEntity;
 import com.malevolentgods.fourtwenty.processing.MachineBlockEntity;
@@ -37,17 +37,24 @@ public final class PowerGameTests {
         return ModDataComponents.withStrain(new ItemStack(item, count), strain);
     }
 
+    /** Water, a bud and blaze powder: a Hookah lights itself. */
+    private static void light(GameTestHelper h, BlockPos pos) {
+        var hookah = (WeedBongBlockEntity) h.getBlockEntity(pos);
+        hookah.setItem(WeedBongBlockEntity.WEED_SLOT, new ItemStack(ModItems.WEED_BUD.get(), 2));
+        hookah.setItem(WeedBongBlockEntity.WATER_SLOT, new ItemStack(net.minecraft.world.item.Items.WATER_BUCKET));
+        hookah.setItem(WeedBongBlockEntity.FUEL_SLOT, new ItemStack(net.minecraft.world.item.Items.BLAZE_POWDER));
+    }
+
     private static void charge(MachineBlockEntity machine) {
         machine.node().receive(machine.node().capacity());
     }
 
     @GameTest(template = "empty", timeoutTicks = 120)
     public static void aHookahPowersAMachineThroughAWick(GameTestHelper h) {
-        h.setBlock(A, ModPower.SINGLE_HOSE.get());
+        h.setBlock(A, com.malevolentgods.fourtwenty.registry.ModBlocks.WEED_BONG.get());
         h.setBlock(B, ModPower.HEMP_WICK.get());
         h.setBlock(C, ModPower.SNIP_STATION.get());
-        var hookah = (HookahBlockEntity) h.getBlockEntity(A);
-        hookah.fuel(new ItemStack(ModItems.WEED_BUD.get(), 4));
+        light(h, A);
         var machine = (MachineBlockEntity) h.getBlockEntity(C);
         machine.setItem(0, of(ModItems.ROUGH_BUD.get(), 2, Strain.BLUE_DREAM));
         h.succeedWhen(() -> {
@@ -92,12 +99,46 @@ public final class PowerGameTests {
         h.setBlock(A, ModPower.DOUBLE_HOSE.get());
         h.setBlock(B, ModPower.HEMP_WICK.get());
         h.setBlock(C, ModPower.STASH_JAR.get());
-        ((HookahBlockEntity) h.getBlockEntity(A)).fuel(new ItemStack(ModItems.WEED_BUD.get(), 1));
+        light(h, A);
         h.succeedWhen(() -> {
             h.assertBlockPresent(Blocks.AIR, B);
             h.assertItemEntityPresent(ModPower.ASH.get(), B, 2);
             h.assertBlockPresent(ModPower.STASH_JAR.get(), C);
             h.assertBlockPresent(ModPower.DOUBLE_HOSE.get(), A);
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void aStashBurnsOutOnlyWhatsBelowItsTier(GameTestHelper h) {
+        var jar = new BlockPos(1, 2, 4);
+        var hemp = new BlockPos(2, 2, 4);
+        var machine = new BlockPos(3, 2, 4);
+        h.setBlock(A, ModPower.STASH_BOX.get());
+        h.setBlock(B, ModPower.HEMP_WICK.get());
+        h.setBlock(C, ModPower.ROLLED_WICK.get());
+        h.setBlock(jar, ModPower.STASH_JAR.get());
+        h.setBlock(hemp, ModPower.HEMP_WICK.get());
+        h.setBlock(machine, ModPower.SNIP_STATION.get());
+        ((StashBlockEntity) h.getBlockEntity(A)).node().receive(1_000);
+        ((StashBlockEntity) h.getBlockEntity(jar)).node().receive(1_000);
+        h.runAfterDelay(20, () -> {
+            h.assertBlockPresent(Blocks.AIR, B);
+            h.assertBlockPresent(ModPower.HEMP_WICK.get(), hemp);
+            h.assertBlockPresent(ModPower.SNIP_STATION.get(), machine);
+            h.assertTrue(((MachineBlockEntity) h.getBlockEntity(machine)).node().stored() > 0, "a Puff battery feeds a Puff machine");
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 60)
+    public static void upgradedHookahsAreStillHookahs(GameTestHelper h) {
+        h.setBlock(B, ModPower.BIG_BERTHA.get());
+        light(h, B);
+        var hookah = (WeedBongBlockEntity) h.getBlockEntity(B);
+        h.succeedWhen(() -> {
+            h.assertTrue(hookah.isLit(), "it lights like a Hookah");
+            h.assertTrue(hookah.node().stored() >= 512, "and makes Rip power, at " + hookah.node().stored());
+            h.assertTrue(hookah.node().tier() == com.malevolentgods.fourtwenty.domain.BIRules.Tier.RIP, "Big Bertha is Rip");
         });
     }
 
@@ -107,7 +148,7 @@ public final class PowerGameTests {
         h.setBlock(A, ModPower.DOUBLE_HOSE.get());
         h.setBlock(B, ModPower.HIT_BOX.get().defaultBlockState().setValue(com.malevolentgods.fourtwenty.power.HitBoxBlock.FACING, west));
         h.setBlock(C, ModPower.STASH_JAR.get());
-        ((HookahBlockEntity) h.getBlockEntity(A)).fuel(new ItemStack(ModItems.WEED_BUD.get(), 1));
+        light(h, A);
         var stash = (StashBlockEntity) h.getBlockEntity(C);
         h.succeedWhen(() -> {
             h.assertTrue(stash.node().stored() > 0, "power reached the Puff Stash");

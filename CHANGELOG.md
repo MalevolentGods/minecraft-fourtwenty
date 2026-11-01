@@ -8,7 +8,7 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - **Weed processing:** mature crops give Rough Buds. Trimming makes Trimmed Buds and is where seeds come from, at a chance by strain family (Landrace 50%, Neutrals 25%, Warm 15%, Green 10%, Cool 5%). Curing makes Cured Buds, the existing Weed Bud under a new name. All chances, times and costs are in `fourtwenty-processing-server.toml`.
 - **Trim Tray and Curing Rack:** tier 1, by hand, with no power. The tray places on the floor or as a top slab.
 - **Powered machines:** Snip Station, Bud Barber and Trim Reaper; Dry Box, Cure Closet and The Humidor. Hoppers and pipes feed the top and sides and empty the bottom.
-- **Boundless Inspiration, up to Rip:** Single Hose Hookah, Double Hose and Big Bertha; Stash Jar, Stash Box and Mother Stash; Hemp, Rolled and Glass Wicks; the Hit Box. Overloads burn parts out into ash.
+- **Boundless Inspiration, up to Rip:** the Hookah now makes Inspo while it burns, and upgrades to the Double Hose and Big Bertha; Stash Jar, Stash Box and Mother Stash; Hemp, Rolled and Glass Wicks; the Hit Box. Overloads burn parts out into ash.
 
 ### Changed
 - The Terpinator and Inspiration Infuser now need Inspo, or a high player within 21 blocks. Their recipes and outputs are unchanged.

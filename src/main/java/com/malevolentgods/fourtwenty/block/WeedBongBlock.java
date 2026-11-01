@@ -26,8 +26,12 @@ import com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * The Hookah: a shared session for anyone nearby and, while it burns, a generator of Inspo at its tier. Double Hose and Big Bertha are the
+ * same block, upgraded: more hoses, more power.
+ */
 public class WeedBongBlock extends BaseEntityBlock {
-    public static final MapCodec<WeedBongBlock> CODEC = simpleCodec(WeedBongBlock::new);
+    private final com.malevolentgods.fourtwenty.domain.BIRules.Tier tier;
     
     // Properties for the bong state
     public static final BooleanProperty HAS_WATER = BooleanProperty.create("has_water");
@@ -43,7 +47,12 @@ public class WeedBongBlock extends BaseEntityBlock {
             Block.box(5.6, 9.0, 5.6, 10.4, 15.7, 10.4));
     
     public WeedBongBlock(Properties properties) {
+        this(com.malevolentgods.fourtwenty.domain.BIRules.Tier.PUFF, properties);
+    }
+
+    public WeedBongBlock(com.malevolentgods.fourtwenty.domain.BIRules.Tier tier, Properties properties) {
         super(properties);
+        this.tier = tier;
         this.registerDefaultState(this.stateDefinition.any()
             .setValue(HAS_WATER, false)
             .setValue(WEED_LEVEL, 0)
@@ -54,7 +63,14 @@ public class WeedBongBlock extends BaseEntityBlock {
     @Override
     @Nonnull
     public MapCodec<WeedBongBlock> codec() {
-        return CODEC;
+        return MapCodec.unit(this);
+    }
+
+    public com.malevolentgods.fourtwenty.domain.BIRules.Tier tier() { return tier; }
+
+    @Override
+    protected void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState old, boolean moved) {
+        if (!old.is(this)) com.malevolentgods.fourtwenty.power.BIGrid.changed(level);
     }
 
     @Override
@@ -120,6 +136,7 @@ public class WeedBongBlock extends BaseEntityBlock {
     @Override
     public void onRemove(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock())) {
+            com.malevolentgods.fourtwenty.power.BIGrid.changed(level);
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof WeedBongBlockEntity bongEntity) {
                 bongEntity.beginRemoval();

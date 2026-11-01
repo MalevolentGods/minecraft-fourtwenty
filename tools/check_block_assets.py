@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / 'src/main/resources/assets/fourtwenty'
 DATA = ROOT / 'src/main/resources/data'
-BLOCKS = ('trim_tray', 'curing_rack', 'hemp_wick', 'rolled_wick', 'glass_wick', 'single_hose_hookah', 'double_hose', 'big_bertha', 'stash_jar', 'stash_box',
+BLOCKS = ('trim_tray', 'curing_rack', 'hemp_wick', 'rolled_wick', 'glass_wick', 'double_hose', 'big_bertha', 'stash_jar', 'stash_box',
           'mother_stash', 'hit_box', 'snip_station', 'bud_barber', 'trim_reaper', 'dry_box', 'cure_closet', 'the_humidor')
 
 

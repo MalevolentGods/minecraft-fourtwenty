@@ -28,7 +28,7 @@ Curing Rack: 8 slots, each with a stack of one bud and `ticks` cured. Trim Tray:
 
 | Node | Tier | Stores | Role |
 |---|---|---|---|
-| Single Hose Hookah | Puff | 4k buffer | Source |
+| Hookah (`weed_bong`) | Puff | 4k buffer | Source |
 | Double Hose | Toke | 16k | Source |
 | Big Bertha | Rip | 64k | Source |
 | Stash Jar | Puff | 40k | Sink + source |
