@@ -50,7 +50,7 @@ public final class Infuser {
 
     public static void put(ServerPlayer player, InfuserState s) {
         persisted(player).put(KEY, s.save());
-        PacketDistributor.sendToPlayer(player, new Sync(s.save()));
+        if (player.connection.hasChannel(Sync.TYPE)) PacketDistributor.sendToPlayer(player, new Sync(s.save()));
     }
 
     /** A Think Tank study's reward: the colour counts as caught, the plainer of the two grades. */

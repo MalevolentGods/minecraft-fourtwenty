@@ -30,7 +30,7 @@
 
 - [X] T016 Lang, guide text, README and CHANGELOG
 - [ ] T017 Check the look and timing in game
-- [ ] T018 Open a PR on top of #31
+- [X] T018 Open a PR on top of #31
 
 ## Dependencies
 
