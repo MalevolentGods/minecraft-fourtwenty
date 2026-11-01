@@ -29,6 +29,7 @@ import javax.annotation.Nonnull;
 public class WeedCropBlock extends CropBlock implements EntityBlock {
     /** The planted strain; growth and harvest keep it (vanilla's getStateForAge would reset it). */
     public static final EnumProperty<Strain> STRAIN = EnumProperty.create("strain", Strain.class);
+    private static final int FLOWERING = 6, FLOWERING_LIGHT = 12;
 
     public WeedCropBlock(Properties properties) {
         super(properties);
@@ -39,6 +40,11 @@ public class WeedCropBlock extends CropBlock implements EntityBlock {
     protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(STRAIN);
+    }
+
+    /** Golden God glows once it flowers. */
+    public static int light(BlockState state) {
+        return state.getValue(STRAIN) == Strain.GOLDEN_GOD && state.getValue(AGE) >= FLOWERING ? FLOWERING_LIGHT : 0;
     }
 
     /** This state at another age, same strain. */

@@ -1,12 +1,16 @@
 package com.malevolentgods.fourtwenty.util;
 
+import com.malevolentgods.fourtwenty.registry.ModPower;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -28,7 +32,7 @@ public final class GoldenGod {
     private GoldenGod() {}
 
     private static final String LENT = "fourtwenty.god_flight";
-    private static final int LANDING = 1200;
+    private static final int LANDING = 1200, LIGHT_EVERY = 3, LIGHT_LASTS = 8;
     private static final Map<UUID, Long> GODS = new HashMap<>();
 
     public static boolean shining(ServerPlayer player) { return GODS.containsKey(player.getUUID()); }
@@ -69,7 +73,21 @@ public final class GoldenGod {
     private static void tick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         Long until = GODS.get(player.getUUID());
-        if (until != null && player.level().getGameTime() > until) descend(player);
+        if (until == null) return;
+        if (player.level().getGameTime() > until) descend(player);
+        else if (player.level().getGameTime() % LIGHT_EVERY == 0) shed(player);
+    }
+
+    /** Keeps a block of bright light at their head. Only ever in air, and it clears itself. */
+    public static void shed(ServerPlayer player) {
+        BlockPos at = BlockPos.containing(player.getEyePosition());
+        var level = player.serverLevel();
+        var block = ModPower.GOD_LIGHT.get();
+        if (!level.getBlockState(at).is(block)) {
+            if (!level.getBlockState(at).is(Blocks.AIR)) return;
+            level.setBlock(at, block.defaultBlockState(), Block.UPDATE_CLIENTS);
+        }
+        level.scheduleTick(at, block, LIGHT_LASTS);
     }
 
     private static void loggedIn(PlayerEvent.PlayerLoggedInEvent event) {

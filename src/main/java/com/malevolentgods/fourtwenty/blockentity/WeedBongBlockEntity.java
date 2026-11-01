@@ -281,8 +281,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
 
     private void applyBongEffects(ServerPlayer player) {
         com.malevolentgods.fourtwenty.util.StrainEffects.markHigh(player, 1200);
-        var tint = new com.malevolentgods.fourtwenty.util.StrainEffects.Tint(com.malevolentgods.fourtwenty.domain.Strain.LANDRACE, 0);
-        if (player.connection.hasChannel(tint.type())) player.connection.send(tint);
+        com.malevolentgods.fourtwenty.util.StrainEffects.hookahHit(player);
         player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.REGENERATION, 400, 1));
         player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.NIGHT_VISION, 1200, 0));
         player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.LUCK, 600, 0));

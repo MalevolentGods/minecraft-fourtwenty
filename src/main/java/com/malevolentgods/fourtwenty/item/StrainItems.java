@@ -46,6 +46,11 @@ public final class StrainItems {
         lines.add(Component.translatable("tooltip.fourtwenty.traits", t.potency(), t.yield(), t.length()).withStyle(net.minecraft.ChatFormatting.GRAY));
     }
 
+    /** Golden God shines in the hand. */
+    public static boolean shines(ItemStack stack) {
+        return ModDataComponents.strain(stack) == Strain.GOLDEN_GOD;
+    }
+
     /** The plot a strain needs, or null if it grows anywhere. */
     public static @Nullable Component plotName(Strain strain) {
         return switch (GrowRules.gradePlot(strain.grade())) {
@@ -60,6 +65,8 @@ public final class StrainItems {
     /** Weed seeds: plant the strain they carry. */
     public static class Seeds extends ItemNameBlockItem {
         public Seeds(Block crop, Properties properties) { super(crop, properties); }
+
+        @Override public boolean isFoil(@Nonnull ItemStack stack) { return shines(stack) || super.isFoil(stack); }
 
         @Override
         protected @Nullable BlockState getPlacementState(@Nonnull BlockPlaceContext context) {
@@ -99,6 +106,8 @@ public final class StrainItems {
     /** Weed buds. */
     public static class Bud extends Item {
         public Bud(Properties properties) { super(properties); }
+
+        @Override public boolean isFoil(@Nonnull ItemStack stack) { return shines(stack) || super.isFoil(stack); }
 
         @Override
         public @Nonnull Component getName(@Nonnull ItemStack stack) { return name(stack, super.getName(stack), getDescriptionId()); }

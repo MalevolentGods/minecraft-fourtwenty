@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -42,6 +43,7 @@ public final class StrainEffects {
     private StrainEffects() {}
 
     private static final int MIN = 1200;
+    private static final String SMOKED = "fourtwenty.smoked";
 
     /** How long the screen tint (and the auras) last, per strain. */
     public static int duration(Strain s) {
@@ -206,6 +208,7 @@ public final class StrainEffects {
         markHigh(player, length);
         if (player instanceof ServerPlayer sp) {
             if (strain == Strain.GOLDEN_GOD) GoldenGod.ascend(sp, length);
+            sp.getPersistentData().putString(SMOKED, strain.id());
             PacketDistributor.sendToPlayer(sp, new Tint(strain, length));
             // smoking inspires colours (a colour drift on screen); with nothing new to inspire, sometimes just the drift
             if (!com.malevolentgods.fourtwenty.infuser.Infuser.inspire(sp, strain) && level.random.nextFloat() < 0.3f) {
@@ -297,6 +300,25 @@ public final class StrainEffects {
         event.getEntity().hurt(level.damageSources().lightningBolt(), BOLT_DAMAGE);
     }
 
+    /** A breath of a Hookah's plain smoke: it only names the badge if no strain's high is on. */
+    public static void hookahHit(ServerPlayer player) {
+        High h = HIGHS.get(player.getUUID());
+        if (h != null && player.level().getGameTime() <= h.until) return;
+        player.getPersistentData().putString(SMOKED, Strain.LANDRACE.id());
+        tell(player, Strain.LANDRACE);
+    }
+
+    /** Tells a client what was smoked, with no screen tint: effects outlast a logout, and a client forgets. */
+    private static void tell(ServerPlayer player, Strain strain) {
+        if (player.connection.hasChannel(Tint.TYPE)) player.connection.send(new Tint(strain, 0));
+    }
+
+    private static void loggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player && player.getPersistentData().contains(SMOKED)) {
+            tell(player, Strain.byId(player.getPersistentData().getString(SMOKED)));
+        }
+    }
+
     // ---- the client's screen tint
 
     /** Tells the smoker's client to tint the screen edges in the strain's colour for {@code ticks}. */
@@ -314,6 +336,7 @@ public final class StrainEffects {
     public static void register(IEventBus modBus) {
         NeoForge.EVENT_BUS.addListener(StrainEffects::tick);
         NeoForge.EVENT_BUS.addListener(StrainEffects::onHit);
+        NeoForge.EVENT_BUS.addListener(StrainEffects::loggedIn);
         modBus.addListener((RegisterPayloadHandlersEvent event) -> event.registrar("1").playToClient(Tint.TYPE, Tint.CODEC,
                 (payload, context) -> context.enqueueWork(() -> clientTint.accept(payload))));
     }

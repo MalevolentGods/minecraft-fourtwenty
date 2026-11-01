@@ -25,6 +25,8 @@ public class WeedJointItem extends Item {
         super(properties);
     }
 
+    @Override public boolean isFoil(@Nonnull ItemStack stack) { return StrainItems.shines(stack) || super.isFoil(stack); }
+
     @Override
     public @Nonnull ItemStack finishUsingItem(@Nonnull ItemStack stack, @Nonnull Level level, @Nonnull LivingEntity entity) {
         Strain strain = ModDataComponents.strain(stack);

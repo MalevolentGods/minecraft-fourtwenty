@@ -263,6 +263,26 @@ public final class PhenoGameTests {
         h.succeed();
     }
 
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void aGodsLightClearsItself(GameTestHelper h) {
+        var god = h.makeMockServerPlayerInLevel();
+        god.moveTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(2.5, 3, 2.5)));
+        GoldenGod.shed(god);
+        var at = BlockPos.containing(god.getEyePosition());
+        h.assertTrue(h.getLevel().getBlockState(at).is(ModPower.GOD_LIGHT.get()), "it shines");
+        h.assertTrue(h.getLevel().getBlockState(at).getLightEmission() == 15, "brightly");
+        h.succeedWhen(() -> h.assertTrue(h.getLevel().getBlockState(at).isAir() && !h.getLevel().getBlockState(at).is(ModPower.GOD_LIGHT.get()), "and leaves nothing behind"));
+    }
+
+    @GameTest(template = "empty")
+    public static void floweringGoldenGodGlows(GameTestHelper h) {
+        var crop = ModBlocks.WEED_CROP.get().defaultBlockState().setValue(WeedCropBlock.STRAIN, Strain.GOLDEN_GOD);
+        h.assertTrue(crop.setValue(CropBlock.AGE, 7).getLightEmission() > 0, "a ripe one glows");
+        h.assertTrue(crop.setValue(CropBlock.AGE, 2).getLightEmission() == 0, "a young one doesn't");
+        h.assertTrue(ModBlocks.WEED_CROP.get().defaultBlockState().setValue(CropBlock.AGE, 7).getLightEmission() == 0, "and nor does anything else");
+        h.succeed();
+    }
+
     @GameTest(template = "empty")
     public static void aCreativePlayerKeepsTheirFlight(GameTestHelper h) {
         var god = h.makeMockServerPlayerInLevel();

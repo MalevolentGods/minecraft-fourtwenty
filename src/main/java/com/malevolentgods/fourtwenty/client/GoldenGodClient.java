@@ -15,12 +15,14 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RenderPlayerEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import org.joml.Vector3f;
 
@@ -36,6 +38,8 @@ public final class GoldenGodClient {
     private static final Set<Integer> SHINING = new HashSet<>();
     private static final DustParticleOptions SPARK = new DustParticleOptions(new Vector3f(1, 0.82f, 0.15f), 1);
     private static final int HALO = 10;
+    private static final int[] GLOW = {0xFFC8305A, 0xFFB42838, 0xFF9C2020};
+    private static final double GLOW_STEP = 0.1;
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
@@ -44,6 +48,17 @@ public final class GoldenGodClient {
             else SHINING.remove(shine.entity());
         };
         NeoForge.EVENT_BUS.addListener(GoldenGodClient::tick);
+        NeoForge.EVENT_BUS.addListener(GoldenGodClient::halo);
+    }
+
+    /** A lamp's glow, but gold and god-sized: the same additive film, in layers that soften outward. */
+    private static void halo(RenderPlayerEvent.Post event) {
+        var player = event.getEntity();
+        if (!SHINING.contains(player.getId())) return;
+        var size = new AABB(-player.getBbWidth() / 2, 0, -player.getBbWidth() / 2, player.getBbWidth() / 2, player.getBbHeight(), player.getBbWidth() / 2);
+        for (int i = 0; i < GLOW.length; i++) {
+            LampHaloRenderer.halo(event.getPoseStack(), event.getMultiBufferSource(), size.inflate(GLOW_STEP * (i + 1)), GLOW[i]);
+        }
     }
 
     @SubscribeEvent
