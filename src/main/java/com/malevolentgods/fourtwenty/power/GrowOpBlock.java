@@ -8,6 +8,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -24,7 +25,7 @@ import java.util.function.Supplier;
 
 /**
  * A Grow Op: a plot a crop sits on, like farmland, that grows it faster. Tier 1 needs no power and outside light; from tier 2 it lights its own
- * crop and runs by the shared power rule. Using the next tier's plot on one upgrades it in place, crop and all.
+ * crop and runs by the shared power rule. Using the next tier's plot on one upgrades it in place, crop and all. A seed used on any face plants on top; shift-clicking with an empty hand opens its screen.
  */
 public class GrowOpBlock extends BIBlock {
     private final int level;
@@ -61,6 +62,12 @@ public class GrowOpBlock extends BIBlock {
 
     @Override protected @Nonnull ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level world, @Nonnull BlockPos pos,
                                                                  @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
+        if (stack.getItem() instanceof BlockItem seed && isCrop(seed.getBlock().defaultBlockState())) {
+            // Any face plants it, as if the top had been clicked; the screen only opens on a shift-click.
+            var top = new BlockHitResult(pos.getCenter().add(0, 0.5, 0), Direction.UP, pos, false);
+            InteractionResult planted = stack.useOn(new net.minecraft.world.item.context.UseOnContext(player, hand, top));
+            return planted.consumesAction() ? ItemInteractionResult.sidedSuccess(world.isClientSide) : ItemInteractionResult.CONSUME;
+        }
         if (next == null || !stack.is(next.get().asItem())) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!world.isClientSide) {
             world.setBlock(pos, next.get().defaultBlockState().setValue(FACING, state.getValue(FACING)), 3);
@@ -71,6 +78,7 @@ public class GrowOpBlock extends BIBlock {
 
     @Override protected @Nonnull InteractionResult useWithoutItem(@Nonnull BlockState state, @Nonnull Level world, @Nonnull BlockPos pos,
                                                                   @Nonnull Player player, @Nonnull BlockHitResult hit) {
+        if (!player.isSecondaryUseActive()) return InteractionResult.PASS;
         if (!world.isClientSide && world.getBlockEntity(pos) instanceof GrowOpBlockEntity plot) player.openMenu(plot);
         return InteractionResult.sidedSuccess(world.isClientSide);
     }

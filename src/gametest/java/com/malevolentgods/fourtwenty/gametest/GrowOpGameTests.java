@@ -39,6 +39,19 @@ public final class GrowOpGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void clickingAPlotWithASeedPlantsIt(GameTestHelper h) {
+        h.setBlock(PLOT, ModPower.CLOSET_GROW.get());
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.WEED_SEEDS.get(), 2));
+        h.useBlock(PLOT, player);
+        h.assertBlockPresent(ModBlocks.WEED_CROP.get(), CROP);
+        h.assertTrue(player.getMainHandItem().getCount() == 1, "one seed used");
+        h.useBlock(PLOT, player);
+        h.assertTrue(player.getMainHandItem().getCount() == 1, "a plot with a crop on it takes no more");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void upgradingKeepsTheCrop(GameTestHelper h) {
         h.setBlock(PLOT, ModPower.CLOSET_GROW.get());
         h.setBlock(CROP, ModBlocks.WEED_CROP.get().getStateForAge(3));
