@@ -35,6 +35,12 @@ import java.util.Map;
  * A catch seals the pool until it's drained. Nothing is timed and nothing can fail; mixing is free.
  */
 public class InfuserScreen extends Screen {
+    @Override protected void init() {
+        super.init();
+        addRenderableWidget(com.malevolentgods.fourtwenty.client.HelpScreen.button(width - 16, 4, title,
+                Component.translatable("gui.fourtwenty.help.infuser")));
+    }
+
     private static final String[] LABELS = {"Moonmilk", "Void Tar", "Sour Sunbeam", "Honey Oil", "Creamsicle", "Dragon Breath", "Berry Bliss",
             "Grape Goo", "Ocean Couch", "Bottomless Blue", "Emerald Ooze", "Mud Butter"};
     private static final String[] SIZE_NAMES = {"Glob", "Drop", "Drip", "Speck"};

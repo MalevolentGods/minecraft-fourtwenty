@@ -137,7 +137,7 @@ A colony's farmers bring in rough weed. Until the Bud Barn exists, players suppl
 
 **Boundless Inspiration**
 
-- **FR-013**: The power system MUST have three tiers in this release, shown to players as "Inspo": Puff, Toke and Rip. One charcoal and one cured bud MUST give 4,200, 8,400 and 16,800 Inspo at those tiers, burning for one minute on all of them, and MUST run four machines of that tier for that minute.
+- **FR-013**: The power system MUST have three tiers in this release, shown to players as BI: Puff, Toke and Rip. One charcoal and one cured bud MUST give 4,200, 8,400 and 16,800 BI at those tiers, burning for one minute on all of them, and MUST run four machines of that tier for that minute.
 - **FR-014**: The generator MUST be the existing Hookah, making Puff power while it burns, with the Double Hose (Toke) and Big Bertha (Rip) as upgrades of that same block: same session, same inputs, same look with more hoses. Charcoal is the only fuel; regular coal does not work.
 - **FR-015**: Storage MUST be the Stash Jar (40k), Stash Box (400k) and Mother Stash (4M), each outputting at the rate of a Hookah of its tier.
 - **FR-016**: Wiring MUST be the Hemp, Rolled and Glass Wicks, which glow while carrying power and carry twice the output of a Hookah of their tier. The Hit Box MUST step power between tiers.
@@ -151,7 +151,7 @@ A colony's farmers bring in rough weed. Until the Bud Barn exists, players suppl
 - **FR-021**: With MineColonies, the Budtender's menu MUST keep working from supplied cured buds, and a Dispensary without them MUST report what's missing.
 - **FR-022**: Clients without the channel MUST NOT be sent power or machine updates.
 - **FR-023**: A Budtender MUST load at most one Hookah session per 10 minutes.
-- **FR-024**: Every tech block's screen MUST share one custom style with an animated Inspo gauge, and tech blocks MUST have animated textures and their own sound effects.
+- **FR-024**: Every tech block's screen MUST share one custom style with an animated BI gauge, and tech blocks MUST have animated textures and their own sound effects.
 
 ### Key Entities
 

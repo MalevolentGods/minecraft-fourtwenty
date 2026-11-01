@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * The Hookah: a shared session for anyone nearby and, while it burns, a generator of Inspo at its tier. Double Hose and Big Bertha are the
+ * The Hookah: a shared session for anyone nearby and, while it burns, a generator of BI at its tier. Double Hose and Big Bertha are the
  * same block, upgraded: more hoses, more power.
  */
 public class WeedBongBlock extends BaseEntityBlock {

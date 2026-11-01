@@ -35,6 +35,12 @@ public class TerpinatorScreen extends AbstractContainerScreen<TerpinatorMenu> {
         inventoryLabelY = INV_Y - 10;
     }
 
+    @Override protected void init() {
+        super.init();
+        addRenderableWidget(com.malevolentgods.fourtwenty.client.HelpScreen.button(leftPos + imageWidth - 15, topPos + 4, title,
+                Component.translatable("gui.fourtwenty.help.terpinator")));
+    }
+
     @Override public void render(@Nonnull GuiGraphics g, int mouseX, int mouseY, float partial) {
         super.render(g, mouseX, mouseY, partial);
         renderTooltip(g, mouseX, mouseY);

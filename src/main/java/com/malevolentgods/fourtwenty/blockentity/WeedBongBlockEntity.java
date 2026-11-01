@@ -56,7 +56,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     private boolean chargePaid;
     private boolean removing;
     private double made;
-    /** Inspo it has made and not yet sent down the Wicks: output only, and a Hookah can't be overloaded by what it makes. */
+    /** BI it has made and not yet sent down the Wicks: output only, and a Hookah can't be overloaded by what it makes. */
     private final com.malevolentgods.fourtwenty.power.BIBuffer buffer;
     private final com.malevolentgods.fourtwenty.power.BIPush push = new com.malevolentgods.fourtwenty.power.BIPush();
     private static final int BUBBLE_EVERY = 40;
