@@ -24,6 +24,8 @@ import javax.annotation.Nonnull;
 public class BuzzBotRenderer extends MobRenderer<BuzzBot, BuzzBotRenderer.Model> {
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("fourtwenty", "buzz_bot"), "main");
     private static final float SIZE = 0.5f;
+    /** A wing's two faces show through each other, so they can't share a plane. */
+    private static final float WING_THICKNESS = 0.3f;
     private static final int SNORES = 3;
     private static final float SNORE_TICKS = 60;
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/entity/buzz_bot.png");
@@ -70,8 +72,8 @@ public class BuzzBotRenderer extends MobRenderer<BuzzBot, BuzzBotRenderer.Model>
                 .texOffs(0, 12).addBox(-3.5F, -3, -3, 7, 6, 6)
                 .texOffs(0, 26).addBox(-2.5F, -2.5F, 3, 5, 5, 8)
                 .texOffs(28, 0).addBox(-0.5F, -0.5F, 11, 1, 1, 2), PartPose.offset(0, 19, 0));
-        body.addOrReplaceChild("left_wing", CubeListBuilder.create().texOffs(32, 0).addBox(0, 0, -3, 10, 0, 7), PartPose.offset(2, -3, 0));
-        body.addOrReplaceChild("right_wing", CubeListBuilder.create().texOffs(32, 8).addBox(-10, 0, -3, 10, 0, 7), PartPose.offset(-2, -3, 0));
+        body.addOrReplaceChild("left_wing", CubeListBuilder.create().texOffs(32, 0).addBox(0, 0, -3, 10, WING_THICKNESS, 7), PartPose.offset(2, -3, 0));
+        body.addOrReplaceChild("right_wing", CubeListBuilder.create().texOffs(32, 8).addBox(-10, 0, -3, 10, WING_THICKNESS, 7), PartPose.offset(-2, -3, 0));
         for (int side = -1; side <= 1; side += 2) {
             String name = side < 0 ? "right" : "left";
             body.addOrReplaceChild(name + "_antenna", CubeListBuilder.create().texOffs(28, 4).addBox(-0.5F, -3, -0.5F, 1, 3, 1),
