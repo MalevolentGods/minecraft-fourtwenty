@@ -62,6 +62,8 @@ public final class DynamicLights {
     private static final float PLACED_STRENGTH = 0.24f;
     private static final int PLACED_REACH = 7, PLACED_FACES = 500, PLACED_MOST = 32, PLACED_WITHIN = 48, PLACED_CHECKS = 4;
     private static final double HOLD_HEIGHT = 1.2, ITEM_HEIGHT = 0.3, SKIN = 0.004;
+    /** How far each film quad overlaps its neighbours. Film adds up, so anything above 0 (try 0.004) lights a glowing grid along the block edges: a good look for something else. */
+    private static final double SEAM = 0;
     private static final Direction[] SIDES = Direction.values();
     /** A block's faces from outside, by Direction ordinal: as LampHaloRenderer.cube. */
     private static final int[][] CORNERS = {
@@ -221,9 +223,9 @@ public final class DynamicLights {
         for (Face face : faces) {
             int[] corners = CORNERS[face.side.ordinal()];
             for (int i = 0; i < corners.length; i += 3) {
-                double x = face.pos.getX() + corners[i] + (corners[i] == 0 ? -SKIN : SKIN);
-                double y = face.pos.getY() + corners[i + 1] + (corners[i + 1] == 0 ? -SKIN : SKIN);
-                double z = face.pos.getZ() + corners[i + 2] + (corners[i + 2] == 0 ? -SKIN : SKIN);
+                double x = face.pos.getX() + corners[i] + face.side.getStepX() * SKIN + (corners[i] == 0 ? -SEAM : SEAM);
+                double y = face.pos.getY() + corners[i + 1] + face.side.getStepY() * SKIN + (corners[i + 1] == 0 ? -SEAM : SEAM);
+                double z = face.pos.getZ() + corners[i + 2] + face.side.getStepZ() * SKIN + (corners[i + 2] == 0 ? -SEAM : SEAM);
                 int alpha = (int) (255 * strength * LightFalloff.film(Math.sqrt(at.distanceToSqr(x, y, z)), reach));
                 out.addVertex(matrix, (float) x, (float) y, (float) z).setColor(r, g, b, alpha);
             }
