@@ -2,7 +2,6 @@ package com.malevolentgods.fourtwenty.power;
 
 import com.malevolentgods.fourtwenty.domain.BIRules;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -14,7 +13,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/** Batteries: Stash Jar, Stash Box and Mother Stash. Right-click to read what's stored. */
+/** Batteries: Stash Jar, Stash Box and Mother Stash. Right-click for the gauge. */
 public class StashBlock extends BIBlock {
     private final BIRules.Tier tier;
     private final long capacity;
@@ -35,9 +34,7 @@ public class StashBlock extends BIBlock {
 
     @Override protected @Nonnull InteractionResult useWithoutItem(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos,
                                                                   @Nonnull Player player, @Nonnull BlockHitResult hit) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof StashBlockEntity stash) {
-            player.displayClientMessage(Component.translatable("block.fourtwenty.power.stored", stash.node().stored(), stash.node().capacity()), true);
-        }
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof StashBlockEntity stash) player.openMenu(stash);
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 }

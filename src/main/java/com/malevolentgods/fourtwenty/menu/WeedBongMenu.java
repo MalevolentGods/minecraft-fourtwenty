@@ -20,7 +20,7 @@ public class WeedBongMenu extends AbstractContainerMenu {
     private static final int WEED_SLOT = 0;
     private static final int WATER_SLOT = 1;
     private static final int BLAZE_POWDER_SLOT = 2;
-    private static final int DATA_COUNT = 4; // lit status, burn time, water filled, weed level
+    private static final int DATA_COUNT = 8; // lit, burn time, water, weed level, burn length, stored, capacity, tier
     
     private final Container container;
     private final ContainerData data;
@@ -69,6 +69,18 @@ public class WeedBongMenu extends AbstractContainerMenu {
         return this.container.stillValid(player);
     }
     
+    public boolean lit() { return data.get(0) != 0; }
+
+    public int burnTime() { return data.get(1); }
+
+    public int burnLength() { return Math.max(1, data.get(4)); }
+
+    public int stored() { return data.get(5); }
+
+    public int capacity() { return data.get(6); }
+
+    public int tier() { return data.get(7); }
+
     public Container getContainer() {
         return this.container;
     }

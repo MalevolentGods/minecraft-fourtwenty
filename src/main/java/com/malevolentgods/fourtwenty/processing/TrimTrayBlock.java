@@ -7,7 +7,6 @@ import com.malevolentgods.fourtwenty.registry.ModItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -68,7 +67,7 @@ public class TrimTrayBlock extends HorizontalDirectionalBlock {
             if (TrimRules.seeded(ProcessingConfig.chances(), strain, level.random.nextDouble())) {
                 give(player, ModDataComponents.withStrain(new ItemStack(ModItems.WEED_SEEDS.get()), strain));
             }
-            level.playSound(null, pos, SoundEvents.SHEEP_SHEAR, SoundSource.BLOCKS, 0.5f, 1.2f + level.random.nextFloat() * 0.3f);
+            level.playSound(null, pos, com.malevolentgods.fourtwenty.registry.ModPower.SNIP.get(), SoundSource.BLOCKS, 0.7f, 0.9f + level.random.nextFloat() * 0.3f);
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }

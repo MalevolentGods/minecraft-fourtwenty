@@ -5,9 +5,10 @@ public final class TrimRules {
     private TrimRules() {}
 
     /** A powered trimmer: ticks per bud and BI per tick. Tier 1, the Trim Tray, is by hand. */
-    public record Tier(int ticks, int cost) {}
+    public record Tier(int ticks, double cost) {}
 
-    public static final java.util.List<Tier> DEFAULTS = java.util.List.of(new Tier(0, 0), new Tier(40, 16), new Tier(20, 64), new Tier(10, 256));
+    public static final java.util.List<Tier> DEFAULTS = java.util.List.of(new Tier(0, 0), new Tier(40, BIRules.Tier.PUFF.machine()),
+            new Tier(20, BIRules.Tier.TOKE.machine()), new Tier(10, BIRules.Tier.RIP.machine()));
 
     /** A seed's chance per trimmed bud, by family. */
     public record Chances(double landrace, double neutrals, double warm, double green, double cool) {

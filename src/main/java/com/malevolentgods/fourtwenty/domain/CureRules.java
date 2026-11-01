@@ -6,10 +6,10 @@ import java.util.List;
 public final class CureRules {
     private CureRules() {}
 
-    public record Tier(int ticks, int batch, int cost) {}
+    public record Tier(int ticks, int batch, double cost) {}
 
-    public static final List<Tier> DEFAULTS = List.of(
-            new Tier(6_000, 8, 0), new Tier(3_000, 16, 16), new Tier(1_200, 32, 64), new Tier(400, 64, 256));
+    public static final List<Tier> DEFAULTS = List.of(new Tier(6_000, 8, 0), new Tier(3_000, 16, BIRules.Tier.PUFF.machine()),
+            new Tier(1_200, 32, BIRules.Tier.TOKE.machine()), new Tier(400, 64, BIRules.Tier.RIP.machine()));
 
     public static boolean cured(int ticks, Tier tier) {
         return ticks >= tier.ticks();

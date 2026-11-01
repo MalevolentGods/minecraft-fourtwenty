@@ -9,10 +9,29 @@ import org.junit.jupiter.api.Test;
 
 class BIRulesTest {
     @Test
-    void tierRates() {
-        assertEquals(32, Tier.PUFF.rate());
-        assertEquals(128, Tier.TOKE.rate());
-        assertEquals(512, Tier.RIP.rate());
+    void oneCoalAndOneBudGiveTheUsersTotals() {
+        assertEquals(4_200, Tier.PUFF.total());
+        assertEquals(8_400, Tier.TOKE.total());
+        assertEquals(16_800, Tier.RIP.total());
+        for (Tier t : Tier.values()) assertEquals(t.total(), t.rate() * BIRules.BURN_TICKS, 1e-9);
+    }
+
+    @Test
+    void everyTierBurnsForAMinute() {
+        assertEquals(1200, BIRules.BURN_TICKS);
+    }
+
+    @Test
+    void aHookahRunsFourMachinesOfItsTierForTheWholeBurn() {
+        for (Tier t : Tier.values()) assertEquals(t.total(), t.machine() * 4 * BIRules.BURN_TICKS, 1e-9);
+    }
+
+    @Test
+    void aWireCarriesTwoHookahs() {
+        for (Tier t : Tier.values()) {
+            assertFalse(BIRules.wireBurns(t, (long) (t.rate() * 2 * 20)), t.name());
+            assertTrue(BIRules.wireBurns(t, (long) (t.rate() * 3 * 20)), t.name());
+        }
     }
 
     @Test

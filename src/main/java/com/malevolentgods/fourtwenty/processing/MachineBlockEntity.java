@@ -40,15 +40,16 @@ import java.util.List;
  */
 public class MachineBlockEntity extends BIBlockEntity implements WorldlyContainer, MenuProvider {
     public static final int INPUTS = 4, OUTPUTS = 6, SIZE = INPUTS + OUTPUTS;
-    public static final int DATA_PROGRESS = 0, DATA_TOTAL = 1, DATA_PAUSED = 2, DATA_COUNT = 3;
+    public static final int DATA_PROGRESS = 0, DATA_TOTAL = 1, DATA_PAUSED = 2, DATA_STORED = 3, DATA_CAPACITY = 4, DATA_OVERLOADED = 5, DATA_TIER = 6, DATA_JOB = 7, DATA_COUNT = 8;
     private static final int[] IN = {0, 1, 2, 3}, OUT = {4, 5, 6, 7, 8, 9};
-    private static final int BUFFER_TICKS = 200;
+    private static final int BUFFER_TICKS = 400, SOUND_EVERY = 30;
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
     private final MachineBlock block;
     private final BIBuffer buffer;
+    private final MachinePower.Meter meter = new MachinePower.Meter();
     private int progress;
-    private boolean paused;
+    private boolean paused, overloaded;
 
     private final ContainerData data = new ContainerData() {
         @Override public int get(int index) {
@@ -56,6 +57,11 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
                 case DATA_PROGRESS -> progress;
                 case DATA_TOTAL -> ticks();
                 case DATA_PAUSED -> paused ? 1 : 0;
+                case DATA_STORED -> (int) buffer.stored();
+                case DATA_CAPACITY -> (int) buffer.capacity();
+                case DATA_OVERLOADED -> overloaded ? 1 : 0;
+                case DATA_TIER -> block.tier().ordinal();
+                case DATA_JOB -> block.job().ordinal();
                 default -> 0;
             };
         }
@@ -68,7 +74,7 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
     public MachineBlockEntity(BlockPos pos, BlockState state) {
         super(ModPower.MACHINE_ENTITY.get(), pos, state);
         block = (MachineBlock) state.getBlock();
-        buffer = new BIBuffer(block.tier(), (long) block.tier().rate() * BUFFER_TICKS, true, false, this::setChanged);
+        buffer = new BIBuffer(block.tier(), Math.max(1, (long) Math.ceil(block.tier().machine() * BUFFER_TICKS)), true, false, this::setChanged);
     }
 
     public BINode node() { return buffer; }
@@ -76,6 +82,9 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
     public MachineBlock block() { return block; }
 
     public int progress() { return progress; }
+
+    /** For tests: 1 while overloaded. */
+    public int createDataForTest() { return data.get(DATA_OVERLOADED); }
 
     private boolean trims() { return block.job() == MachineBlock.Job.TRIM; }
 
@@ -85,7 +94,7 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
 
     private int ticks() { return trims() ? trim().ticks() : cure().ticks(); }
 
-    private int cost() { return trims() ? trim().cost() : cure().cost(); }
+    private double cost() { return trims() ? trim().cost() : cure().cost(); }
 
     private Item input() { return trims() ? ModItems.ROUGH_BUD.get() : ModItems.TRIMMED_BUD.get(); }
 
@@ -141,18 +150,27 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
     }
 
     @Override public void serverTick() {
+        overloaded = overloadTick(buffer);
+        if (overloaded) {
+            paused = true;
+            lit(false);
+            return;
+        }
         int slot = job();
         if (slot < 0) {
             paused = false;
             lit(false);
             return;
         }
-        int steps = MachinePower.steps(level, worldPosition, buffer, cost());
+        int steps = MachinePower.steps(level, worldPosition, buffer, cost(), meter);
         paused = steps == 0;
         lit(!paused);
         if (paused) return;
         progress += steps;
         setChanged();
+        if (level.getGameTime() % SOUND_EVERY == 0) {
+            level.playSound(null, worldPosition, trims() ? ModPower.SNIP.get() : ModPower.CURE.get(), net.minecraft.sounds.SoundSource.BLOCKS, 0.35f, 0.9f + level.random.nextFloat() * 0.2f);
+        }
         if (progress < ticks()) return;
         progress = 0;
         ItemStack in = items.get(slot);

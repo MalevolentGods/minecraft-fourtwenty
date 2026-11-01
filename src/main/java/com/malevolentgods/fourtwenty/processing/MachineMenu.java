@@ -55,6 +55,16 @@ public class MachineMenu extends AbstractContainerMenu {
 
     public boolean paused() { return data.get(DATA_PAUSED) != 0; }
 
+    public boolean overloaded() { return data.get(DATA_OVERLOADED) != 0; }
+
+    public int stored() { return data.get(DATA_STORED); }
+
+    public int capacity() { return data.get(DATA_CAPACITY); }
+
+    public int tier() { return data.get(DATA_TIER); }
+
+    public boolean trims() { return data.get(DATA_JOB) == 0; }
+
     @Override public boolean stillValid(@Nonnull Player player) { return container.stillValid(player); }
 
     @Override public @Nonnull ItemStack quickMoveStack(@Nonnull Player player, int index) {

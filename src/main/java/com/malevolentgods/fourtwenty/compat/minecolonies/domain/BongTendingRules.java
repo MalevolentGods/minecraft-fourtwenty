@@ -11,11 +11,12 @@ import java.util.Optional;
  */
 public final class BongTendingRules {
     public static final int MAX_BUDS = 4;
-    /** Blaze powder is topped up to this many lightings; flint and steel and lava buckets go in one at a time. */
-    public static final int MAX_BLAZE_POWDER = 4;
-    public static final String EMPTY_BUCKET = "minecraft:bucket";
-    /** Best fuel first, so the bong burns as long as possible per visit. */
-    public static final List<String> FUEL_PREFERENCE = List.of(BongFuel.BLAZE_POWDER, BongFuel.LAVA_BUCKET, BongFuel.FLINT_AND_STEEL);
+    /** Coal is topped up to this many lightings. */
+    public static final int MAX_COAL = 4;
+    public static final String EMPTY = "minecraft:air";
+    public static final List<String> FUEL_PREFERENCE = List.of(BongFuel.COAL);
+    /** The budtender loads one bud, one session, per this many ticks: 10 minutes. */
+    public static final int SESSION_EVERY = 12_000;
 
     /** What the bong is missing. {@code fuelId} is whatever sits in the fuel slot ("minecraft:air" when empty). */
     public record Need(boolean buds, boolean water, boolean fuel, boolean clearBucket) {
@@ -28,7 +29,7 @@ public final class BongTendingRules {
      */
     public static Need need(int buds, boolean hasWater, String fuelId, boolean serving) {
         boolean usableFuel = BongFuel.isFuel(fuelId);
-        return new Need(serving && buds <= 0, !hasWater, !usableFuel, EMPTY_BUCKET.equals(fuelId));
+        return new Need(serving && buds <= 0, !hasWater, !usableFuel, !usableFuel && !EMPTY.equals(fuelId));
     }
 
     /** The best fuel the budtender can get, given counts available by item id. */
@@ -38,7 +39,7 @@ public final class BongTendingRules {
 
     /** How many of {@code fuelId} to put in one visit. */
     public static int fuelAmount(String fuelId) {
-        return BongFuel.BLAZE_POWDER.equals(fuelId) ? MAX_BLAZE_POWDER : 1;
+        return MAX_COAL;
     }
 
     /**
@@ -48,6 +49,11 @@ public final class BongTendingRules {
     public static boolean canFix(Need need, int budsAvailable, Optional<String> fuelAvailable) {
         return (need.buds() && budsAvailable > 0) || need.water() || need.clearBucket()
                 || (need.fuel() && fuelAvailable.isPresent());
+    }
+
+    /** Whether a new session may be loaded, given when the last one was (or a negative number if there's been none). */
+    public static boolean sessionDue(long now, long lastLoaded) {
+        return lastLoaded < 0 || now - lastLoaded >= SESSION_EVERY;
     }
 
     private BongTendingRules() {}

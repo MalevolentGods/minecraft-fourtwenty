@@ -27,7 +27,7 @@ public final class BongGameTests {
     private static void stock(WeedBongBlockEntity b, int buds, int fuel) {
         b.setItem(0, new ItemStack(ModItems.WEED_BUD.get(), buds));
         b.setItem(1, new ItemStack(Items.WATER_BUCKET));
-        b.setItem(2, new ItemStack(Items.BLAZE_POWDER, fuel));
+        b.setItem(2, new ItemStack(Items.COAL, fuel));
     }
     private static void tick(GameTestHelper h, WeedBongBlockEntity b) {
         WeedBongBlockEntity.tick(h.getLevel(), b.getBlockPos(), b.getBlockState(), b);
@@ -124,7 +124,7 @@ public final class BongGameTests {
         h.getLevel().destroyBlock(b.getBlockPos(), true);
         h.assertItemEntityCountIs(ModItems.WEED_BONG.get(), POS, 3, 1);
         h.assertItemEntityCountIs(ModItems.WEED_BUD.get(), POS, 3, 3);
-        h.assertItemEntityCountIs(Items.BLAZE_POWDER, POS, 3, 3);
+        h.assertItemEntityCountIs(Items.COAL, POS, 3, 3);
         h.assertItemEntityCountIs(Items.WATER_BUCKET, POS, 3, 1);
         h.assertTrue(stale.extractItem(0, 64, false).isEmpty(), "Removed handler cannot extract");
         h.assertTrue(stale.insertItem(0, new ItemStack(ModItems.WEED_BUD.get()), false).getCount() == 1, "Removed handler rejects insertion");

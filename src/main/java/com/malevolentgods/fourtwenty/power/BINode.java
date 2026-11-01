@@ -26,6 +26,9 @@ public interface BINode {
 
     boolean canExtract();
 
+    /** Fed from a tier above its own: it stops and smokes until that stops. It never breaks. */
+    default void overload(long now) {}
+
     default double fill() {
         return capacity() <= 0 ? 0 : (double) stored() / capacity();
     }

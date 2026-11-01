@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 import javax.annotation.Nonnull;
 
-/** Wiring: Hemp, Rolled and Glass Wick. It joins to Wicks and BI blocks on all six sides, and glows faintly while it carries power. */
+/** Wiring: Hemp, Rolled and Glass Wick. It joins to Wicks and BI blocks on all six sides, glows while it carries power, and burns out past two Hookahs' worth of its tier. */
 public class WickBlock extends PipeBlock {
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     private static final int GLOW_TICKS = 30;

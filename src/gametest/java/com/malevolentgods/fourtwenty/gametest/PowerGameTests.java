@@ -37,12 +37,12 @@ public final class PowerGameTests {
         return ModDataComponents.withStrain(new ItemStack(item, count), strain);
     }
 
-    /** Water, a bud and blaze powder: a Hookah lights itself. */
+    /** Water, a bud and coal: a Hookah lights itself. */
     private static void light(GameTestHelper h, BlockPos pos) {
         var hookah = (WeedBongBlockEntity) h.getBlockEntity(pos);
         hookah.setItem(WeedBongBlockEntity.WEED_SLOT, new ItemStack(ModItems.WEED_BUD.get(), 2));
         hookah.setItem(WeedBongBlockEntity.WATER_SLOT, new ItemStack(net.minecraft.world.item.Items.WATER_BUCKET));
-        hookah.setItem(WeedBongBlockEntity.FUEL_SLOT, new ItemStack(net.minecraft.world.item.Items.BLAZE_POWDER));
+        hookah.setItem(WeedBongBlockEntity.FUEL_SLOT, new ItemStack(net.minecraft.world.item.Items.COAL));
     }
 
     private static void charge(MachineBlockEntity machine) {
@@ -69,11 +69,12 @@ public final class PowerGameTests {
         h.setBlock(B, ModPower.SNIP_STATION.get());
         var machine = (MachineBlockEntity) h.getBlockEntity(B);
         machine.setItem(0, of(ModItems.ROUGH_BUD.get(), 1, Strain.LANDRACE));
-        machine.node().receive(16 * 5);     // five ticks' worth
+        machine.node().receive(5);          // a few ticks' worth at 0.875 a tick
         h.runAfterDelay(30, () -> {
-            h.assertTrue(machine.progress() == 5, "stopped at 5 of 40, at " + machine.progress());
+            int held = machine.progress();
+            h.assertTrue(held >= 4 && held <= 6, "stopped early, at " + held);
             h.assertTrue(machine.getItem(0).getCount() == 1, "nothing lost");
-            machine.node().receive(16 * 40);
+            machine.node().receive(40);
             h.runAfterDelay(25, () -> {
                 h.assertTrue(machine.progress() >= 25, "picked up where it left off, at " + machine.progress());
                 h.succeed();
@@ -94,40 +95,72 @@ public final class PowerGameTests {
         h.succeedWhen(() -> h.assertTrue(machine.getItem(0).isEmpty(), "trimmed with no BI at all"));
     }
 
-    @GameTest(template = "empty", timeoutTicks = 40)
-    public static void tooMuchPowerBurnsAWickOutAndLeavesAsh(GameTestHelper h) {
-        h.setBlock(A, ModPower.DOUBLE_HOSE.get());
+    @GameTest(template = "empty", timeoutTicks = 60)
+    public static void aWireCarryingTooMuchBurnsOutAndLeavesAsh(GameTestHelper h) {
+        h.setBlock(A, ModPower.BIG_BERTHA.get());
         h.setBlock(B, ModPower.HEMP_WICK.get());
-        h.setBlock(C, ModPower.STASH_JAR.get());
+        h.setBlock(C, ModPower.MOTHER_STASH.get());
         light(h, A);
         h.succeedWhen(() -> {
             h.assertBlockPresent(Blocks.AIR, B);
             h.assertItemEntityPresent(ModPower.ASH.get(), B, 2);
-            h.assertBlockPresent(ModPower.STASH_JAR.get(), C);
-            h.assertBlockPresent(ModPower.DOUBLE_HOSE.get(), A);
+            h.assertBlockPresent(ModPower.MOTHER_STASH.get(), C);
+            h.assertBlockPresent(ModPower.BIG_BERTHA.get(), A);
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 80)
+    public static void aWireCarriesTwoBatteriesButNotThree(GameTestHelper h) {
+        var wick = new BlockPos(2, 2, 2);
+        var sink = new BlockPos(3, 2, 2);
+        h.setBlock(wick, ModPower.HEMP_WICK.get());
+        h.setBlock(sink, ModPower.TRIM_REAPER.get());
+        for (BlockPos jar : List.of(new BlockPos(1, 2, 2), new BlockPos(2, 3, 2), new BlockPos(2, 1, 2))) {
+            h.setBlock(jar, ModPower.STASH_JAR.get());
+            ((StashBlockEntity) h.getBlockEntity(jar)).node().receive(5_000);
+        }
+        var okWick = new BlockPos(2, 2, 5);
+        var okSink = new BlockPos(3, 2, 5);
+        h.setBlock(okWick, ModPower.HEMP_WICK.get());
+        h.setBlock(okSink, ModPower.TRIM_REAPER.get());
+        for (BlockPos jar : List.of(new BlockPos(1, 2, 5), new BlockPos(2, 3, 5))) {
+            h.setBlock(jar, ModPower.STASH_JAR.get());
+            ((StashBlockEntity) h.getBlockEntity(jar)).node().receive(5_000);
+        }
+        h.runAfterDelay(60, () -> {
+            h.assertBlockPresent(Blocks.AIR, wick);
+            h.assertBlockPresent(ModPower.HEMP_WICK.get(), okWick);
+            h.assertTrue(((MachineBlockEntity) h.getBlockEntity(okSink)).node().stored() > 0, "two batteries got through");
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 60)
+    public static void aBlockOverloadsButNeverBreaks(GameTestHelper h) {
+        h.setBlock(A, ModPower.STASH_BOX.get());
+        h.setBlock(B, ModPower.ROLLED_WICK.get());
+        h.setBlock(C, ModPower.SNIP_STATION.get());
+        ((StashBlockEntity) h.getBlockEntity(A)).node().receive(1_000);
+        var machine = (MachineBlockEntity) h.getBlockEntity(C);
+        machine.setItem(0, of(ModItems.ROUGH_BUD.get(), 1, Strain.LANDRACE));
+        machine.node().receive(100);
+        h.runAfterDelay(30, () -> {
+            h.assertBlockPresent(ModPower.SNIP_STATION.get(), C);
+            h.assertBlockPresent(ModPower.ROLLED_WICK.get(), B);
+            h.assertTrue(machine.createDataForTest() == 1, "it says it's overloaded");
+            h.assertTrue(machine.progress() == 0, "it stopped working");
+            h.succeed();
         });
     }
 
     @GameTest(template = "empty", timeoutTicks = 40)
-    public static void aStashBurnsOutOnlyWhatsBelowItsTier(GameTestHelper h) {
-        var jar = new BlockPos(1, 2, 4);
-        var hemp = new BlockPos(2, 2, 4);
-        var machine = new BlockPos(3, 2, 4);
-        h.setBlock(A, ModPower.STASH_BOX.get());
+    public static void aBatteryOfItsTierFeedsAMachine(GameTestHelper h) {
+        h.setBlock(A, ModPower.STASH_JAR.get());
         h.setBlock(B, ModPower.HEMP_WICK.get());
-        h.setBlock(C, ModPower.ROLLED_WICK.get());
-        h.setBlock(jar, ModPower.STASH_JAR.get());
-        h.setBlock(hemp, ModPower.HEMP_WICK.get());
-        h.setBlock(machine, ModPower.SNIP_STATION.get());
+        h.setBlock(C, ModPower.SNIP_STATION.get());
         ((StashBlockEntity) h.getBlockEntity(A)).node().receive(1_000);
-        ((StashBlockEntity) h.getBlockEntity(jar)).node().receive(1_000);
-        h.runAfterDelay(20, () -> {
-            h.assertBlockPresent(Blocks.AIR, B);
-            h.assertBlockPresent(ModPower.HEMP_WICK.get(), hemp);
-            h.assertBlockPresent(ModPower.SNIP_STATION.get(), machine);
-            h.assertTrue(((MachineBlockEntity) h.getBlockEntity(machine)).node().stored() > 0, "a Puff battery feeds a Puff machine");
-            h.succeed();
-        });
+        var machine = (MachineBlockEntity) h.getBlockEntity(C);
+        h.succeedWhen(() -> h.assertTrue(machine.node().stored() > 0, "power arrived"));
     }
 
     @GameTest(template = "empty", timeoutTicks = 60)
@@ -137,7 +170,7 @@ public final class PowerGameTests {
         var hookah = (WeedBongBlockEntity) h.getBlockEntity(B);
         h.succeedWhen(() -> {
             h.assertTrue(hookah.isLit(), "it lights like a Hookah");
-            h.assertTrue(hookah.node().stored() >= 512, "and makes Rip power, at " + hookah.node().stored());
+            h.assertTrue(hookah.node().stored() >= 100, "and makes Rip power, at " + hookah.node().stored());
             h.assertTrue(hookah.node().tier() == com.malevolentgods.fourtwenty.domain.BIRules.Tier.RIP, "Big Bertha is Rip");
         });
     }
@@ -156,7 +189,7 @@ public final class PowerGameTests {
         });
     }
 
-    @GameTest(template = "empty")
+    @GameTest(template = "empty", timeoutTicks = 400)
     public static void twoStashesSettleLevel(GameTestHelper h) {
         h.setBlock(A, ModPower.STASH_JAR.get());
         h.setBlock(B, ModPower.HEMP_WICK.get());
@@ -164,7 +197,7 @@ public final class PowerGameTests {
         var full = (StashBlockEntity) h.getBlockEntity(A);
         var empty = (StashBlockEntity) h.getBlockEntity(C);
         ((BIBuffer) full.node()).receive(1_000);
-        h.succeedWhen(() -> h.assertTrue(Math.abs(full.node().stored() - empty.node().stored()) <= 64, "settled, " + full.node().stored() + " and " + empty.node().stored()));
+        h.succeedWhen(() -> h.assertTrue(Math.abs(full.node().stored() - empty.node().stored()) <= 8, "settled, " + full.node().stored() + " and " + empty.node().stored()));
     }
 
     @GameTest(template = "empty")

@@ -1,44 +1,32 @@
 package com.malevolentgods.fourtwenty.screen;
 
+import com.malevolentgods.fourtwenty.client.TechScreen;
 import com.malevolentgods.fourtwenty.menu.WeedBongMenu;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 import javax.annotation.Nonnull;
 
-public class WeedBongScreen extends AbstractContainerScreen<WeedBongMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/bong_menu.png");
+/** The Hookah and its upgrades: buds, water and coal, the burn, and the Inspo it's holding. */
+public class WeedBongScreen extends TechScreen<WeedBongMenu> {
+    private static final int GAUGE_X = 158, GAUGE_Y = 16, ARROW_X = 104, ARROW_Y = 40;
 
-    public WeedBongScreen(WeedBongMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title);
+    public WeedBongScreen(WeedBongMenu menu, Inventory inventory, Component title) {
+        super(menu, inventory, title);
     }
 
-    @Override
-    protected void init() {
-        super.init();
-        // Remove title positioning since we're not rendering it
+    @Override protected int tier() { return menu.tier(); }
+
+    @Override protected boolean overloaded() { return false; }
+
+    @Override protected void details(GuiGraphics g) {
+        arrow(g, leftPos + ARROW_X, topPos + ARROW_Y, 1, menu.lit() ? menu.burnLength() - menu.burnTime() : 0, menu.burnLength());
+        gauge(g, leftPos + GAUGE_X, topPos + GAUGE_Y, menu.stored(), menu.capacity(), 0, 0);
     }
 
-    @Override
-    protected void renderLabels(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        // Don't render the title or inventory label since they're included in the texture
-        // This overrides the default behavior that would draw the title and "Inventory" text
-    }
-
-    @Override
-    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
-    }
-
-    @Override
-    protected void renderBg(@Nonnull GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        int x = (this.width - this.imageWidth) / 2;
-        int y = (this.height - this.imageHeight) / 2;
-        guiGraphics.blit(TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight);
+    @Override protected void renderLabels(@Nonnull GuiGraphics g, int mouseX, int mouseY) {
+        g.drawString(font, title, 8, 6, TEXT, false);
+        if (menu.lit()) g.drawString(font, Component.translatable("gui.fourtwenty.hookah.burning"), 104, 60, GREEN, false);
     }
 }

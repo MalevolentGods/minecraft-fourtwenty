@@ -1,8 +1,4 @@
 {
   "replace": false,
-  "values": [
-    "minecraft:flint_and_steel",
-    "minecraft:lava_bucket",
-    "minecraft:blaze_powder"
-  ]
+  "values": ["minecraft:coal"]
 }

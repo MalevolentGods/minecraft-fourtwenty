@@ -61,6 +61,7 @@ public class ModClientEvents {
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(com.malevolentgods.fourtwenty.registry.ModPower.MACHINE_MENU.get(), MachineScreen::new);
+        event.register(com.malevolentgods.fourtwenty.registry.ModPower.BI_MENU.get(), BIScreen::new);
         event.register(ModMenuTypes.WEED_BONG.get(), WeedBongScreen::new);
         event.register(com.malevolentgods.fourtwenty.registry.ModTerpenes.TERPINATOR_MENU.get(),
                 com.malevolentgods.fourtwenty.client.terpene.TerpinatorScreen::new);

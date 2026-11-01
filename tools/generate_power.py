@@ -7,6 +7,7 @@ A tier reads the same on every block: Puff is hemp-brown and green, Toke copper 
 tools/generate_processing.py, which refuses overlapping coplanar faces.
 """
 import json
+import math
 import random
 from pathlib import Path
 
@@ -61,17 +62,31 @@ def glow(tier, lit):
     return shade(tinted(tier, lit), tier + str(lit), 12)
 
 
-def wick(tier, lit):
-    t = TIERS[tier]
+def wick(tier, lit, offset=0):
     base = {'puff': (176, 150, 104), 'toke': (214, 200, 170), 'rip': (190, 214, 222)}[tier]
     img = shade(base, 'w' + tier)
     d = ImageDraw.Draw(img)
-    for i in range(-SIZE, SIZE, 6):
-        d.line([(i, 0), (i + SIZE, SIZE)], fill=(tinted(tier, lit) if lit else tuple(int(c * 0.72) for c in base)) + (255,), width=2)
+    for i in range(-SIZE - 6, SIZE + 6, 6):
+        d.line([(i + offset, 0), (i + offset + SIZE, SIZE)], fill=(tinted(tier, lit) if lit else tuple(int(c * 0.72) for c in base)) + (255,), width=2)
     return img
 
 
-def front(name, lit):
+def strip(frames, path, frametime):
+    """A vertical sheet of frames and its .mcmeta: Minecraft animates it by itself."""
+    sheet = Image.new('RGBA', (SIZE, SIZE * len(frames)))
+    for i, frame in enumerate(frames):
+        sheet.paste(frame, (0, i * SIZE))
+    sheet.save(path)
+    Path(str(path) + '.mcmeta').write_text(json.dumps({'animation': {'frametime': frametime, 'interpolate': True}}) + '\n')
+
+
+def pulse(tier, frame, frames):
+    """The accent colour breathing brighter and dimmer."""
+    k = 0.72 + 0.28 * (0.5 + 0.5 * math.cos(2 * math.pi * frame / frames))
+    return shade(tuple(min(255, int(c * k)) for c in tinted(tier, True)), tier + 'lit', 12)
+
+
+def front(name, lit, frame=0):
     tier = MACHINES[name]
     img = plate(tier)
     d = ImageDraw.Draw(img)
@@ -81,15 +96,17 @@ def front(name, lit):
     if name in ('snip_station', 'bud_barber', 'trim_reaper'):     # blades
         n = {'snip_station': 1, 'bud_barber': 2, 'trim_reaper': 3}[name]
         for i in range(n):
-            y = 9 + i * 7 if n > 1 else 15
-            d.line([(8, y), (23, y + 3)], fill=(214, 220, 226, 255), width=2)
-            d.line([(8, y + 3), (23, y)], fill=a, width=1)
+            y = (9 + i * 7 if n > 1 else 15) + (frame % 2 if lit else 0)
+            spread = 3 + frame if lit else 3
+            d.line([(8, y), (23, y + spread)], fill=(214, 220, 226, 255), width=2)
+            d.line([(8, y + spread), (23, y)], fill=a, width=1)
     else:                                                          # slats and hanging buds
         n = {'dry_box': 3, 'cure_closet': 4, 'the_humidor': 5}[name]
         for i in range(n):
             x = 8 + i * (16 // n)
             d.line([(x + 1, 7), (x + 1, 24)], fill=(90, 76, 58, 255))
-            d.ellipse([x - 1, 12 + i % 2 * 5, x + 3, 16 + i % 2 * 5], fill=a)
+            sway = (frame + i) % 4 // 2 if lit else 0
+            d.ellipse([x - 1 + sway, 12 + i % 2 * 5, x + 3 + sway, 16 + i % 2 * 5], fill=a)
     return img
 
 
@@ -127,11 +144,15 @@ def textures():
         plate(tier).save(TEX / f'{tier}_body.png')
         for lit in (False, True):
             suffix = '_lit' if lit else ''
-            glow(tier, lit).save(TEX / f'{tier}_glow{suffix}.png')
-            wick(tier, lit).save(TEX / f'{tier}_wick{suffix}.png')
+            if lit:
+                strip([pulse(tier, i, 8) for i in range(8)], TEX / f'{tier}_glow_lit.png', 3)
+                strip([wick(tier, True, i) for i in range(6)], TEX / f'{tier}_wick_lit.png', 2)
+            else:
+                glow(tier, False).save(TEX / f'{tier}_glow.png')
+                wick(tier, False).save(TEX / f'{tier}_wick.png')
     for name in MACHINES:
-        for lit in (False, True):
-            front(name, lit).save(TEX / f'{name}_front{"_lit" if lit else ""}.png')
+        front(name, False).save(TEX / f'{name}_front.png')
+        strip([front(name, True, i) for i in range(4)], TEX / f'{name}_front_lit.png', 3)
     glass = shade((176, 214, 196), 'glass', 8)
     ImageDraw.Draw(glass).line([(6, 3), (6, 28)], fill=(232, 244, 238, 255), width=2)
     glass.save(TEX / 'glass.png')

@@ -7,7 +7,8 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 /** Server settings for trimming and curing. Before a world has loaded them (a tooltip on the title screen), the defaults apply. */
 public final class ProcessingConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
-    private static final int TERPINATOR_DEFAULT = 8, INFUSER_DEFAULT = 500, FIRST_POWERED = 1, TIERS = 4;
+    private static final double TERPINATOR_DEFAULT = com.malevolentgods.fourtwenty.domain.BIRules.Tier.PUFF.machine();
+    private static final int INFUSER_DEFAULT = 500, FIRST_POWERED = 1, TIERS = 4;
     private static final TrimRules.Chances D = TrimRules.Chances.DEFAULT;
     private static final ModConfigSpec.DoubleValue LANDRACE = chance("seedChanceLandrace", D.landrace());
     private static final ModConfigSpec.DoubleValue NEUTRALS = chance("seedChanceNeutrals", D.neutrals());
@@ -18,14 +19,14 @@ public final class ProcessingConfig {
             .comment("Ticks a bud hangs on a Curing Rack.")
             .defineInRange("curingRackTicks", CureRules.DEFAULTS.get(0).ticks(), 1, 1_728_000);
     private static final ModConfigSpec.IntValue[] TRIM_TICKS = tiers("trimTicks", "Ticks per bud.", i -> TrimRules.DEFAULTS.get(i).ticks());
-    private static final ModConfigSpec.IntValue[] TRIM_COST = tiers("trimCost", "BI per tick.", i -> TrimRules.DEFAULTS.get(i).cost());
+    private static final ModConfigSpec.DoubleValue[] TRIM_COST = costs("trimCost", i -> TrimRules.DEFAULTS.get(i).cost());
     private static final ModConfigSpec.IntValue[] CURE_TICKS = tiers("cureTicks", "Ticks per batch.", i -> CureRules.DEFAULTS.get(i).ticks());
     private static final ModConfigSpec.IntValue[] CURE_BATCH = tiers("cureBatch", "Buds per batch.", i -> CureRules.DEFAULTS.get(i).batch());
-    private static final ModConfigSpec.IntValue[] CURE_COST = tiers("cureCost", "BI per tick.", i -> CureRules.DEFAULTS.get(i).cost());
+    private static final ModConfigSpec.DoubleValue[] CURE_COST = costs("cureCost", i -> CureRules.DEFAULTS.get(i).cost());
     private static final ModConfigSpec.IntValue HIGH_SPEED = BUILDER
             .comment("How fast a machine runs free for a high player, in percent of its speed on BI.")
             .defineInRange("highSpeedPercent", 100, 1, 1000);
-    private static final ModConfigSpec.IntValue TERPINATOR_COST = BUILDER
+    private static final ModConfigSpec.DoubleValue TERPINATOR_COST = BUILDER
             .comment("Terpinator: BI per tick while sober.")
             .defineInRange("terpinatorCost", TERPINATOR_DEFAULT, 0, 512);
     private static final ModConfigSpec.IntValue INFUSER_COST = BUILDER
@@ -41,6 +42,12 @@ public final class ProcessingConfig {
     private static ModConfigSpec.IntValue[] tiers(String name, String comment, java.util.function.IntUnaryOperator value) {
         var out = new ModConfigSpec.IntValue[TIERS];
         for (int i = FIRST_POWERED; i < TIERS; i++) out[i] = BUILDER.comment("Tier " + (i + 1) + ": " + comment).defineInRange(name + (i + 1), value.applyAsInt(i), 1, 1_728_000);
+        return out;
+    }
+
+    private static ModConfigSpec.DoubleValue[] costs(String name, java.util.function.IntToDoubleFunction value) {
+        var out = new ModConfigSpec.DoubleValue[TIERS];
+        for (int i = FIRST_POWERED; i < TIERS; i++) out[i] = BUILDER.comment("Tier " + (i + 1) + ": BI per tick.").defineInRange(name + (i + 1), value.applyAsDouble(i), 0, 512);
         return out;
     }
 
@@ -70,7 +77,7 @@ public final class ProcessingConfig {
 
     public static int highSpeedPercent() { return SPEC.isLoaded() ? HIGH_SPEED.get() : 100; }
 
-    public static int terpinatorCost() { return SPEC.isLoaded() ? TERPINATOR_COST.get() : TERPINATOR_DEFAULT; }
+    public static double terpinatorCost() { return SPEC.isLoaded() ? TERPINATOR_COST.get() : TERPINATOR_DEFAULT; }
 
     public static int infuserCost() { return SPEC.isLoaded() ? INFUSER_COST.get() : INFUSER_DEFAULT; }
 

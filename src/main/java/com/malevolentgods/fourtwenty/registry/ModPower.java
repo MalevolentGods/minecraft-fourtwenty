@@ -17,6 +17,7 @@ import com.malevolentgods.fourtwenty.terpene.TerpinatorBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
@@ -31,6 +32,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +79,15 @@ public final class ModPower {
         return block(name, () -> new MachineBlock(job, tier, metal()));
     }
 
+    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, "fourtwenty");
+
+    private static DeferredHolder<SoundEvent, SoundEvent> sound(String name) {
+        return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("fourtwenty", name)));
+    }
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> SNIP = sound("snip"), CURE = sound("cure"), BUBBLE = sound("bubble"), BURN_OUT = sound("burn_out"),
+            OVERLOAD = sound("overload"), SWITCH = sound("switch");
+
     public static final DeferredHolder<Item, Item> ASH = ModItems.ITEMS.register("ash", () -> new Item(new Item.Properties()));
 
     public static final DeferredHolder<Block, WickBlock> HEMP_WICK = wick("hemp_wick", Tier.PUFF);
@@ -106,6 +117,9 @@ public final class ModPower {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MachineBlockEntity>> MACHINE_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("machine",
             () -> BlockEntityType.Builder.of(MachineBlockEntity::new, SNIP_STATION.get(), BUD_BARBER.get(), TRIM_REAPER.get(), DRY_BOX.get(), CURE_CLOSET.get(), THE_HUMIDOR.get()).build(null));
 
+    public static final DeferredHolder<MenuType<?>, MenuType<com.malevolentgods.fourtwenty.power.BIMenu>> BI_MENU = ModMenuTypes.MENU_TYPES.register("bi",
+            () -> IMenuTypeExtension.create((id, inventory, data) -> new com.malevolentgods.fourtwenty.power.BIMenu(id)));
+
     public static final DeferredHolder<MenuType<?>, MenuType<MachineMenu>> MACHINE_MENU = ModMenuTypes.MENU_TYPES.register("machine",
             () -> IMenuTypeExtension.create((id, inventory, data) -> new MachineMenu(id, inventory)));
 
@@ -114,6 +128,7 @@ public final class ModPower {
 
     public static void register(IEventBus bus) {
         bus.addListener(ModPower::capabilities);
+        SOUNDS.register(bus);
     }
 
     private static void capabilities(RegisterCapabilitiesEvent event) {

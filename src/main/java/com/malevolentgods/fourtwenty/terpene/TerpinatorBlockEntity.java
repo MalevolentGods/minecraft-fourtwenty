@@ -45,9 +45,10 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
     private final NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
     private int progress, product = NONE;
     private boolean running, paused;
-    /** Top tier, so no wiring mistake can burn out a Terpinator and what's in it. */
+    /** Top tier, so no wiring mistake can overload a Terpinator. */
+    private final com.malevolentgods.fourtwenty.power.MachinePower.Meter meter = new com.malevolentgods.fourtwenty.power.MachinePower.Meter();
     private final com.malevolentgods.fourtwenty.power.BIBuffer buffer = new com.malevolentgods.fourtwenty.power.BIBuffer(
-            com.malevolentgods.fourtwenty.domain.BIRules.Tier.RIP, 4_000, true, false, this::setChanged);
+            com.malevolentgods.fourtwenty.domain.BIRules.Tier.RIP, 2_000, true, false, this::setChanged);
     /** A pre-production Terpinator's resin, bases and accords: popped out on the first tick. */
     private final NonNullList<ItemStack> legacy = NonNullList.create();
 
@@ -143,7 +144,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
         }
         boolean working = status(t.running, t.product, t.items.get(BUDS), t.items.get(OUT)) == null;
         int steps = working ? com.malevolentgods.fourtwenty.power.MachinePower.steps(level, pos, t.buffer,
-                com.malevolentgods.fourtwenty.processing.ProcessingConfig.terpinatorCost()) : 0;
+                com.malevolentgods.fourtwenty.processing.ProcessingConfig.terpinatorCost(), t.meter) : 0;
         t.paused = working && steps == 0;
         if (working && !t.paused) {
             t.progress += steps;

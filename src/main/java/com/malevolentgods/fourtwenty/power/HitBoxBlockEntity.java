@@ -6,6 +6,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
@@ -16,7 +23,7 @@ import java.util.List;
  * Two banks, one for each way power can go through it, so what came in on one side can't bounce straight back. A face only takes power
  * when something past the other side can use it: otherwise a Stash would empty itself into the box with nowhere for the power to go.
  */
-public class HitBoxBlockEntity extends BIBlockEntity {
+public class HitBoxBlockEntity extends BIBlockEntity implements MenuProvider {
     private static final long BUFFER = 4_096;
 
     /** A face of the box: takes power into one bank at that face's tier. */
@@ -34,16 +41,20 @@ public class HitBoxBlockEntity extends BIBlockEntity {
         @Override public long extract(long amount) { return 0; }
         @Override public boolean canReceive() { return true; }
         @Override public boolean canExtract() { return false; }
+        @Override public void overload(long now) { down.overload(now); }
     }
 
     private final BIBuffer down = new BIBuffer(BIRules.Tier.RIP, BUFFER, true, true, this::setChanged);
     private final BIBuffer up = new BIBuffer(BIRules.Tier.RIP, BUFFER, true, true, this::setChanged);
     private final Face highFace = new Face(true), lowFace = new Face(false);
     private final BIPush pushDown = new BIPush(), pushUp = new BIPush();
+    private final ContainerData data = BIBlockEntity.data(down, this::gameTime, () -> highTier().ordinal(), 1);
 
     public HitBoxBlockEntity(BlockPos pos, BlockState state) {
         super(ModPower.HIT_BOX_ENTITY.get(), pos, state);
     }
+
+    private long gameTime() { return level == null ? 0 : level.getGameTime(); }
 
     private BIRules.Tier highTier() { return getBlockState().getValue(HitBoxBlock.TIER); }
 
@@ -54,12 +65,30 @@ public class HitBoxBlockEntity extends BIBlockEntity {
         return side == front() ? highFace : lowFace;
     }
 
+    public void toggle() {
+        BIRules.Tier next = highTier() == BIRules.Tier.TOKE ? BIRules.Tier.RIP : BIRules.Tier.TOKE;
+        level.setBlock(worldPosition, getBlockState().setValue(HitBoxBlock.TIER, next), 3);
+        BIGrid.changed(level);
+        level.playSound(null, worldPosition, ModPower.SWITCH.get(), SoundSource.BLOCKS, 0.8f, 1);
+    }
+
     @Override public void serverTick() {
+        if (overloadTick(down)) {
+            lit(false);
+            return;
+        }
         Direction front = front();
         List<Direction> low = Arrays.stream(Direction.values()).filter(d -> d != front).toList();
-        pushDown.push(level, worldPosition, low, highTier().below(), down, sink -> true);
-        pushUp.push(level, worldPosition, List.of(front), highTier(), up, sink -> true);
+        BIRules.Tier high = highTier();
+        pushDown.push(level, worldPosition, low, high.below(), high.rate(), down, sink -> true);
+        pushUp.push(level, worldPosition, List.of(front), high, high.rate(), up, sink -> true);
         lit(down.stored() > 0 || up.stored() > 0);
+    }
+
+    @Override public @Nonnull Component getDisplayName() { return getBlockState().getBlock().getName(); }
+
+    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inventory, @Nonnull Player player) {
+        return new com.malevolentgods.fourtwenty.power.BIMenu(id, this, data);
     }
 
     @Override protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {

@@ -4,11 +4,12 @@ import com.malevolentgods.fourtwenty.domain.BIRules;
 
 /** A plain store of BI. */
 public class BIBuffer implements BINode {
+    private static final int OVERLOAD_TICKS = 60;
     private final BIRules.Tier tier;
     private final long capacity;
     private final boolean in, out;
     private final Runnable changed;
-    private long stored;
+    private long stored, overloadedUntil;
 
     public BIBuffer(BIRules.Tier tier, long capacity, boolean in, boolean out, Runnable changed) {
         this.tier = tier;
@@ -45,6 +46,10 @@ public class BIBuffer implements BINode {
     @Override public boolean canReceive() { return in; }
 
     @Override public boolean canExtract() { return out; }
+
+    @Override public void overload(long now) { overloadedUntil = now + OVERLOAD_TICKS; }
+
+    public boolean overloaded(long now) { return now < overloadedUntil; }
 
     /** On load: what was saved, trimmed to fit. */
     public void set(long value) {
