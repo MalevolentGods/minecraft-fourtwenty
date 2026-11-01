@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.16.1] - Old Huts Welcome
 
 ### Fixed
 - Dispensaries built from the old FourTwenty pack no longer fail to load.
