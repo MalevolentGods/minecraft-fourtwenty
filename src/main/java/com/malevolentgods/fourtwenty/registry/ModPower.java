@@ -13,7 +13,12 @@ import com.malevolentgods.fourtwenty.processing.MachineBlock;
 import com.malevolentgods.fourtwenty.processing.MachineBlock.Job;
 import com.malevolentgods.fourtwenty.processing.MachineBlockEntity;
 import com.malevolentgods.fourtwenty.processing.MachineMenu;
+import com.malevolentgods.fourtwenty.processing.ConstructionJointBlock;
+import com.malevolentgods.fourtwenty.processing.ConstructionMenu;
 import com.malevolentgods.fourtwenty.processing.PhenoBlock;
+import com.malevolentgods.fourtwenty.processing.RigBlock;
+import com.malevolentgods.fourtwenty.processing.RigBlockEntity;
+import com.malevolentgods.fourtwenty.processing.RigMenu;
 import com.malevolentgods.fourtwenty.processing.PhenoBlockEntity;
 import com.malevolentgods.fourtwenty.processing.PhenoMenu;
 import com.malevolentgods.fourtwenty.processing.ThinkTankBlock;
@@ -52,6 +57,7 @@ public final class ModPower {
 
     /** Blocks a Wick joins to. */
     public static final TagKey<Block> BI_BLOCKS = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("fourtwenty", "bi_blocks"));
+    public static final TagKey<Item> CONSTRUCTION = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("fourtwenty", "construction"));
     public static final net.minecraft.tags.TagKey<Block> TUBE_BLOCKS = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("fourtwenty", "tube_blocks"));
 
     /** For the creative tab. */
@@ -127,6 +133,13 @@ public final class ModPower {
     public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.power.TubeBlock> TRANSPORT_TUBE = block("transport_tube",
             () -> new com.malevolentgods.fourtwenty.power.TubeBlock(BlockBehaviour.Properties.of().strength(0.3f).sound(net.minecraft.world.level.block.SoundType.COPPER).noOcclusion()));
 
+    public static final DeferredHolder<Block, RigBlock> ROSIN_RIG = block("rosin_rig", () -> new RigBlock(metal()));
+    public static final DeferredHolder<Block, ConstructionJointBlock> CONSTRUCTION_JOINT = block("construction_joint",
+            () -> new ConstructionJointBlock(BlockBehaviour.Properties.of().strength(2).sound(net.minecraft.world.level.block.SoundType.WOOD)));
+    /** Kief, Hash, Resin, Rosin, Oil, in that order. */
+    public static final java.util.List<DeferredHolder<Item, Item>> EXTRACTS = java.util.stream.Stream.of("kief", "hash", "resin", "rosin", "oil")
+            .map(name -> ModItems.ITEMS.register(name, () -> (Item) new com.malevolentgods.fourtwenty.item.StrainItems.Bud(new Item.Properties()))).toList();
+
     public static final DeferredHolder<Block, PhenoBlock> PHENO_CHAMBER = block("pheno_chamber", () -> new PhenoBlock(Tier.TOKE, metal()));
     public static final DeferredHolder<Block, PhenoBlock> PHENO_LAB = block("pheno_lab", () -> new PhenoBlock(Tier.RIP, metal()));
     public static final DeferredHolder<Block, PhenoBlock> PHENO_CATHEDRAL = block("pheno_cathedral", () -> new PhenoBlock(Tier.BLAZE, metal()));
@@ -156,6 +169,15 @@ public final class ModPower {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PhenoBlockEntity>> PHENO_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("pheno",
             () -> BlockEntityType.Builder.of(PhenoBlockEntity::new, PHENO_CHAMBER.get(), PHENO_LAB.get(), PHENO_CATHEDRAL.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RigBlockEntity>> RIG_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("rosin_rig",
+            () -> BlockEntityType.Builder.of(RigBlockEntity::new, ROSIN_RIG.get()).build(null));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<RigMenu>> RIG_MENU = ModMenuTypes.MENU_TYPES.register("rosin_rig",
+            () -> IMenuTypeExtension.create((id, inventory, data) -> new RigMenu(id, inventory)));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<ConstructionMenu>> CONSTRUCTION_MENU = ModMenuTypes.MENU_TYPES.register("construction_joint",
+            () -> IMenuTypeExtension.create((id, inventory, data) -> new ConstructionMenu(id, inventory)));
 
     public static final DeferredHolder<MenuType<?>, MenuType<PhenoMenu>> PHENO_MENU = ModMenuTypes.MENU_TYPES.register("pheno",
             () -> IMenuTypeExtension.create((id, inventory, data) -> new PhenoMenu(id, inventory)));
@@ -188,10 +210,12 @@ public final class ModPower {
         event.registerBlockEntity(BINode.CAPABILITY, HIT_BOX_ENTITY.get(), HitBoxBlockEntity::node);
         event.registerBlockEntity(BINode.CAPABILITY, MACHINE_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, PHENO_ENTITY.get(), (entity, side) -> entity.node());
+        event.registerBlockEntity(BINode.CAPABILITY, RIG_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, GROW_OP_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, THINK_TANK_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, ModTerpenes.TERPINATOR_ENTITY.get(), (TerpinatorBlockEntity entity, Direction side) -> entity.node());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MACHINE_ENTITY.get(), (entity, side) -> side == null ? null : new SidedInvWrapper(entity, side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PHENO_ENTITY.get(), (entity, side) -> side == null ? null : new SidedInvWrapper(entity, side));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, RIG_ENTITY.get(), (entity, side) -> side == null ? null : new SidedInvWrapper(entity, side));
     }
 }

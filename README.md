@@ -13,6 +13,12 @@ This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and 
 
 Five tiers of indoor plot grow any crop faster: the Closet Grow, Grow Tent, Hydro Bed, Aero Pod and Cosmic Kush Pod. Upgrade one in place by using the next tier on it, and the crop stays. The Think Tank runs research with no colony: pick a study, load it, and keep a crop growing on a plot within 8 blocks. The Blaze tier adds the Grand Hookah, The Vault and Gold Wick.
 
+## Hybrids, extracts and tubes
+
+Every seed now has Potency, Yield and Length, rated 1 to 5. Above the 16 bred strains is a ladder of 22 more: biome landraces, Crosses from the Pheno Chamber, then Double Crosses, Ultras and Golden God, which come from pollinating. Grown side by side, Double Cross parents sometimes cross on their own, and a Buzz Bot, a robot bee that runs on Cured Buds, makes it certain. Better strains need better Grow Ops, and grow slower.
+
+The Rosin Rig refines Cured Buds into extracts that burn longer in a Hookah and hit harder in a pipe. Transport Tubes link machines, Hookahs and Terpinators into one network that carries items both ways. The Construction Joint makes twice as many building blocks. Hookahs hold 64 buds, and light themselves only when something needs the power, or with the Light button. Everything you've smoked shows as one badge.
+
 ## What's new in 0.14.1
 
 - **The Sensi Heights Warehouse:** five levels from an open oak pavilion over a sunken rack room to a full concrete and glass depot, with up to 102 racks and room for 8 Courier's Huts inside it. Racks stay put through every upgrade.

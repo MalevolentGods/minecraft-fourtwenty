@@ -53,18 +53,18 @@
 
 ## Phase 5: Rosin Rig (US6)
 
-- [ ] T040 [P] [US6] Extract steps and burn lengths in J/domain/Extracts.java with tests
-- [ ] T041 [US6] Items, art and strain and trait carry
-- [ ] T042 [US6] Rig block, entity, screen and help, with models and ports
-- [ ] T043 [US6] Hookah and pipe take extracts
-- [ ] T044 [US6] Game tests
+- [X] T040 [P] [US6] Extract steps and burn lengths in J/domain/Extracts.java with tests
+- [X] T041 [US6] Items, art and strain and trait carry
+- [X] T042 [US6] Rig block, entity, screen and help, with models and ports
+- [X] T043 [US6] Hookah and pipe take extracts
+- [X] T044 [US6] Game tests
 
 ## Phase 6: Construction Joint (US7)
 
-- [ ] T050 [US7] Block, menu, recipes list and art
-- [ ] T051 [US7] Game test
+- [X] T050 [US7] Block, menu, recipes list and art
+- [X] T051 [US7] Game test
 
 ## Phase 7: Finish
 
-- [ ] T060 README, CHANGELOG and help text
-- [ ] T061 Update PLAN.md and HANDOFF.md in IgnusVM/claude-misc
+- [X] T060 README, CHANGELOG and help text
+- [X] T061 Update PLAN.md and HANDOFF.md in IgnusVM/claude-misc

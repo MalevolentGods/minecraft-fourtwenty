@@ -20,7 +20,6 @@ public class FourTwenty {
             event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
                 ModBlockEntities.WEED_BONG.get(), (entity, side) -> entity.itemHandler()));
 
-        container.registerConfig(net.neoforged.fml.config.ModConfig.Type.CLIENT, com.malevolentgods.fourtwenty.util.ClientConfig.SPEC, "fourtwenty-client.toml");
         container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, com.malevolentgods.fourtwenty.processing.ProcessingConfig.SPEC, "fourtwenty-processing-server.toml");
         com.malevolentgods.fourtwenty.util.HotboxNetwork.register(bus);
         bus.addListener((net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent event) ->

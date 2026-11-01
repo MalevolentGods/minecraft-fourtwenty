@@ -181,23 +181,13 @@ The mod's own automation, in place of chests and hoppers. One tube with no tiers
 3. **Given** a tube line running into an unloaded chunk, **Then** the machine stops, keeps its progress, and its screen says why, until the chunk is back.
 4. **Given** a chest beside a tube, **Then** the tube ignores it.
 
-### User Story 6c - Coloured lamp light (Priority: P2)
-
-Lit lamps tint what's around them. Tried with moving lights too, and dropped: rebuilding chunks as a light moved was too slow.
-
-**Acceptance Scenarios**:
-
-1. **Given** a lit lamp, **Then** the solid surfaces it can reach take its colour, fading with distance, and solid walls stop it.
-2. **Given** a lamp that's broken or switched off, **Then** its colour goes at once.
-3. **Given** a player who doesn't want it, **Then** it turns off in their client config.
-
 ### User Story 7 - Construction Joint (Priority: P3)
 
-A player uses one bench to craft the mod's building blocks in bulk from hemp and materials, under the shared power rule.
+A player uses one bench to craft the mod's building blocks in bulk. It's a plain bench: no power.
 
 **Acceptance Scenarios**:
 
-1. **Given** the Construction Joint, **When** opened, **Then** it lists hemp blocks, lamps and roads, and crafts the chosen one from the inputs, in twice the batch of the crafting grid.
+1. **Given** the Construction Joint, **When** a recipe for hemp blocks, lamps, rugs or roads is laid out, **Then** it makes twice the batch of a crafting table. Other recipes come out as usual.
 
 ### Edge Cases
 
@@ -237,3 +227,4 @@ A player uses one bench to craft the mod's building blocks in bulk from hemp and
 
 - Research gating of hybrids waits for the research tree in Milestone 6.
 - Strain names here are proposals and change only in `domain/Strain` and the generators.
+- Moving dynamic lights and coloured lamp light were tried and removed on 2026-11-01. Both are future R&D.

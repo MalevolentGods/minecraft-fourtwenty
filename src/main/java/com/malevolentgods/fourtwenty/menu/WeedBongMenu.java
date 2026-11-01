@@ -113,7 +113,7 @@ public class WeedBongMenu extends AbstractContainerMenu {
                 }
             } else {
                 // Moving from player inventory to bong slots
-                if (slotStack.is(ModItems.WEED_BUD.get())) {
+                if (com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.accepts(WEED_SLOT, slotStack)) {
                     if (!this.moveItemStackTo(slotStack, WEED_SLOT, WEED_SLOT + 1, false)) {
                         return ItemStack.EMPTY;
                     }

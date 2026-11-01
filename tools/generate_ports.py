@@ -157,7 +157,7 @@ def write(name, side, elements, textures, lit):
 
 
 TUBED = ('weed_bong', 'double_hose', 'big_bertha', 'grand_hookah', 'snip_station', 'bud_barber', 'trim_reaper', 'dry_box', 'cure_closet', 'the_humidor',
-         'terpinator', 'terpinator_lab', 'pheno_chamber', 'pheno_lab', 'pheno_cathedral')
+         'terpinator', 'terpinator_lab', 'pheno_chamber', 'pheno_lab', 'pheno_cathedral', 'rosin_rig')
 
 
 def block(name, tier, sides, plate=None, extra=None):
@@ -187,6 +187,7 @@ def main():
     for name, tier in (('grow_tent', 'puff'), ('hydro_bed', 'toke'), ('aero_pod', 'rip'), ('cosmic_kush_pod', 'blaze')):
         block(name, tier, plot())
     block('think_tank', 'puff', think_tank())
+    block('rosin_rig', 'toke', full(up=stem_up(13)))
     block('pheno_chamber', 'toke', full(up=stem_up(14)))
     block('pheno_lab', 'rip', full(up=stem_up(13)))
     block('pheno_cathedral', 'blaze', full(up=stem_up(12)))

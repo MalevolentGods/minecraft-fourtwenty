@@ -13,9 +13,10 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - **Grow Ops:** Closet Grow, Grow Tent, Hydro Bed, Aero Pod and Cosmic Kush Pod, 1.5 to 8 times as fast, upgraded in place. The top two give bigger harvests and replant.
 - **Think Tank:** research with no colony, using Grow Ops as test plots. Sixteen tier 1 studies teach the Minecraft colours.
 - **Blaze tier:** the Grand Hookah, The Vault and Gold Wick.
+- **Rosin Rig:** refines Cured Buds into Kief, Hash, Resin, Rosin and Oil, which burn longer in a Hookah and hit harder in a pipe.
+- **Construction Joint:** a bench that makes twice as many hemp blocks, lamps, rugs and roads.
 - **Transport Tubes:** one tube, no tiers. Any number of machines share a network and items run both ways. A network into an unloaded chunk stops its machines.
 - **Pollination and the Buzz Bot**, biome strains, and the Golden God.
-- **Coloured lamp light:** lit lamps tint the surfaces around them. It can be turned off in `fourtwenty-client.toml`.
 - A flowering crop grows buds in its strain's colour, and Jade names the strain.
 - **Guard Tower 1-5** in the Sensi Heights pack.
 - **Hybrids:** Pheno Chambers, 22 new strains, and seed traits.

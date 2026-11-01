@@ -136,7 +136,7 @@ public final class BongTending {
 
     private static BongTendingRules.Need need(WeedBongBlockEntity bong, boolean serving) {
         var buds = bong.getItem(WeedBongBlockEntity.WEED_SLOT);
-        return BongTendingRules.need(buds.is(ModItems.WEED_BUD.get()) ? buds.getCount() : 0,
+        return BongTendingRules.need(WeedBongBlockEntity.accepts(WeedBongBlockEntity.WEED_SLOT, buds) ? buds.getCount() : 0,
                 bong.getItem(WeedBongBlockEntity.WATER_SLOT).is(Items.WATER_BUCKET), id(bong.getItem(WeedBongBlockEntity.FUEL_SLOT)), serving, bong.isLit());
     }
 

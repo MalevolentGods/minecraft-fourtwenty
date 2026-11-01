@@ -1,5 +1,6 @@
 package com.malevolentgods.fourtwenty.item;
 
+import com.malevolentgods.fourtwenty.domain.Extracts;
 import com.malevolentgods.fourtwenty.domain.Strain;
 import com.malevolentgods.fourtwenty.domain.Traits;
 import com.malevolentgods.fourtwenty.registry.ModDataComponents;
@@ -7,6 +8,7 @@ import com.malevolentgods.fourtwenty.registry.ModDataComponents.PipeLoad;
 import com.malevolentgods.fourtwenty.registry.ModItems;
 import com.malevolentgods.fourtwenty.util.JointSmoke;
 import com.malevolentgods.fourtwenty.util.StrainEffects;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -43,12 +45,16 @@ public class WeedPipeItem extends Item {
         return l == null ? new PipeLoad(Strain.LANDRACE, 0, Traits.DEFAULT) : l;
     }
 
-    /** Load buds from {@code buds} into the pipe; returns how many went in. */
+    private static boolean smokable(ItemStack stack) {
+        return stack.is(ModItems.WEED_BUD.get()) || Extracts.byId(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()).isPresent();
+    }
+
+    /** Load buds or extracts from {@code buds} into the pipe; returns how many went in. */
     public static int fill(ItemStack pipe, ItemStack buds) {
-        if (!buds.is(ModItems.WEED_BUD.get())) return 0;
+        if (!smokable(buds)) return 0;
         PipeLoad l = load(pipe);
         Strain s = ModDataComponents.strain(buds);
-        Traits t = ModDataComponents.traits(buds);
+        Traits t = Extracts.boosted(BuiltInRegistries.ITEM.getKey(buds.getItem()).toString(), ModDataComponents.traits(buds));
         if (l.buds() > 0 && (l.strain() != s || !l.traits().equals(t))) return 0;
         int n = Math.min(buds.getCount(), PipeLoad.CAPACITY - l.buds());
         if (n <= 0) return 0;
@@ -62,7 +68,7 @@ public class WeedPipeItem extends Item {
     public boolean overrideStackedOnOther(@Nonnull ItemStack pipe, @Nonnull Slot slot, @Nonnull ClickAction action, @Nonnull Player player) {
         if (action != ClickAction.SECONDARY) return false;
         ItemStack buds = slot.getItem();
-        if (!buds.is(ModItems.WEED_BUD.get())) return false;
+        if (!smokable(buds)) return false;
         ItemStack taken = buds.copy();
         int n = fill(pipe, taken);
         if (n > 0) { slot.set(taken); loadSound(player); }
@@ -73,7 +79,7 @@ public class WeedPipeItem extends Item {
     @Override
     public boolean overrideOtherStackedOnMe(@Nonnull ItemStack pipe, @Nonnull ItemStack other, @Nonnull Slot slot, @Nonnull ClickAction action,
                                             @Nonnull Player player, @Nonnull SlotAccess access) {
-        if (action != ClickAction.SECONDARY || !other.is(ModItems.WEED_BUD.get())) return false;
+        if (action != ClickAction.SECONDARY || !smokable(other)) return false;
         if (fill(pipe, other) > 0) loadSound(player);
         return true;
     }

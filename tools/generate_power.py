@@ -27,7 +27,7 @@ WICKS = {'hemp_wick': 'puff', 'rolled_wick': 'toke', 'glass_wick': 'rip', 'gold_
 PLOTS = {'closet_grow': 'puff', 'grow_tent': 'puff', 'hydro_bed': 'toke', 'aero_pod': 'rip', 'cosmic_kush_pod': 'blaze'}
 HOOKAHS = ('double_hose', 'big_bertha', 'grand_hookah')       # the Hookah upgraded: their models come from tools/generate_hookah_model.py
 MACHINES = {'snip_station': 'puff', 'bud_barber': 'toke', 'trim_reaper': 'rip', 'dry_box': 'puff', 'cure_closet': 'toke', 'the_humidor': 'rip',
-            'pheno_chamber': 'toke', 'pheno_lab': 'rip', 'pheno_cathedral': 'blaze'}
+            'pheno_chamber': 'toke', 'pheno_lab': 'rip', 'pheno_cathedral': 'blaze', 'rosin_rig': 'toke'}
 FACINGS = (('north', 0), ('east', 90), ('south', 180), ('west', 270))
 SIZE = 32
 
@@ -103,6 +103,12 @@ def front(name, lit, frame=0):
             spread = 3 + frame if lit else 3
             d.line([(8, y), (23, y + spread)], fill=(214, 220, 226, 255), width=2)
             d.line([(8, y + spread), (23, y)], fill=a, width=1)
+    elif name == 'rosin_rig':                                      # the press, closing while it works
+        gap = 4 - frame if lit else 4
+        d.rectangle([9, 8, 22, 12], fill=(214, 220, 226, 255))
+        d.rectangle([9, 12 + gap, 22, 16 + gap], fill=(214, 220, 226, 255))
+        d.rectangle([11, 13, 20, 12 + gap], fill=a)
+        d.line([(15, 22), (15, 25)], fill=a, width=2)
     elif name.startswith('pheno'):                                 # a double helix, turning while it works
         for y in range(7, 25):
             wave = math.sin((y + frame * 2) / 3)
@@ -239,6 +245,7 @@ def machines():
         'dry_box': [full(16)],
         'cure_closet': [box([1, 0, 1], [15, 16, 15], 'body', north='front'), box([12, 6, 0.5], [13, 10, 1], 'glow')],
         'the_humidor': [box([0, 2, 0], [16, 16, 16], 'body', north='front'), *[box([x, 0, z], [x + 2, 2, z + 2], 'glow') for x in (1, 13) for z in (1, 13)]],
+        'rosin_rig': [full(13), box([2, 13, 2], [5, 16, 5], 'glow'), box([11, 13, 2], [14, 16, 5], 'glow'), box([2, 13, 11], [14, 16, 14], 'glow')],
         'pheno_chamber': [full(14), *[box([x, 14, z], [x + 3, 16, z + 3], 'glow') for x in (2, 11) for z in (2, 11)]],
         'pheno_lab': [full(13), box([2, 13, 2], [14, 16, 5], 'glow'), box([2, 13, 11], [14, 16, 14], 'glow')],
         'pheno_cathedral': [full(12), *[box([x, 12, z], [x + 2, 16, z + 2], 'glow') for x in (1, 13) for z in (1, 13)], box([1, 12, 7], [3, 15, 9], 'glow'), box([13, 12, 7], [15, 15, 9], 'glow')],
@@ -277,6 +284,36 @@ def tube():
             parts.append({'when': {side: link}, 'apply': {'model': f'fourtwenty:block/transport_tube_{part}', 'uvlock': False, **rot}})
     write(ASSETS / 'blockstates/transport_tube.json', {'multipart': parts})
     item_model('transport_tube', 'fourtwenty:block/transport_tube_core')
+
+
+def extracts():
+    """Plain icons: a strain shows in the name."""
+    shapes = {
+        'kief': lambda d: [d.point((x, y), fill=(196, 214, 132, 255)) for x, y in ((4, 11), (6, 10), (8, 11), (10, 10), (12, 11), (5, 12), (7, 12), (9, 12), (11, 12), (6, 13), (8, 13), (10, 13), (7, 9), (9, 9), (8, 8))],
+        'hash': lambda d: d.rounded_rectangle([3, 6, 12, 11], 1, fill=(92, 62, 34, 255), outline=(54, 34, 18, 255)),
+        'resin': lambda d: d.ellipse([3, 5, 12, 12], fill=(170, 112, 36, 255), outline=(104, 62, 16, 255)),
+        'rosin': lambda d: d.polygon([(3, 10), (6, 5), (12, 6), (13, 10), (8, 12)], fill=(238, 190, 74, 255), outline=(160, 112, 28, 255)),
+        'oil': lambda d: (d.rectangle([6, 2, 9, 4], fill=(150, 112, 70, 255)), d.rounded_rectangle([4, 5, 11, 13], 2, fill=(210, 150, 40, 200), outline=(232, 240, 240, 255))),
+    }
+    (ASSETS / 'textures/item').mkdir(exist_ok=True)
+    for name, draw in shapes.items():
+        icon = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+        draw(ImageDraw.Draw(icon))
+        icon.save(ASSETS / f'textures/item/{name}.png')
+        write(ASSETS / f'models/item/{name}.json', {'parent': 'item/generated', 'textures': {'layer0': f'fourtwenty:item/{name}'}})
+
+
+def construction_joint():
+    tex = {'wood': 'fourtwenty:block/processing/wood_dark', 'mat': 'fourtwenty:block/processing/mat', 'light': 'fourtwenty:block/processing/wood_light'}
+    model('construction_joint', [box([0, 10, 0], [16, 14, 16], 'wood'), box([1, 0, 1], [4, 10, 4], 'light'), box([12, 0, 1], [15, 10, 4], 'light'), box([1, 0, 12], [4, 10, 15], 'light'),
+                                 box([12, 0, 12], [15, 10, 15], 'light'), box([2, 14, 7], [14, 16, 9], 'mat')], tex, '#wood')
+    write(ASSETS / 'blockstates/construction_joint.json', {'variants': {'': {'model': 'fourtwenty:block/construction_joint'}}})
+    item_model('construction_joint')
+    write(DATA / 'fourtwenty/loot_table/blocks/construction_joint.json', {
+        'type': 'minecraft:block',
+        'pools': [{'rolls': 1, 'entries': [{'type': 'minecraft:item', 'name': 'fourtwenty:construction_joint'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
+    lamps = sorted(p.stem for p in (ASSETS / 'models/item').glob('*.json') if 'lamp' in p.stem and 'strain' not in p.stem)
+    write(DATA / 'fourtwenty/tags/item/construction.json', {'replace': False, 'values': ['#fourtwenty:hemp_blocks', '#fourtwenty:paths', '#fourtwenty:rugs'] + [f'fourtwenty:{n}' for n in lamps]})
 
 
 def plots():
@@ -323,6 +360,8 @@ def recipes():
         'the_humidor': (1, ['DVD', 'RTR', 'DWD'], {'D': 'diamond', 'V': 'glass', 'R': 'redstone', 'T': 'fourtwenty:cure_closet', 'W': 'fourtwenty:glass_wick'}),
         'buzz_bot': (1, ['WHW', 'ICI'], {'W': 'fourtwenty:glass_wick', 'H': 'honeycomb', 'I': 'iron_ingot', 'C': 'copper_block'}),
         'transport_tube': (8, ['GCG', 'GWG', 'GCG'], {'G': 'glass_pane', 'C': 'copper_ingot', 'W': 'fourtwenty:hemp_wick'}),
+        'rosin_rig': (1, ['IPI', 'RCR', 'IWI'], {'I': 'iron_ingot', 'P': 'piston', 'R': 'redstone', 'C': 'copper_block', 'W': 'fourtwenty:rolled_wick'}),
+        'construction_joint': (1, ['JJ', 'PP', 'PP'], {'J': 'fourtwenty:weed_joint', 'P': 'oak_planks'}),
         'pheno_chamber': (1, ['CGC', 'RTR', 'CWC'], {'C': 'copper_ingot', 'G': 'glass', 'R': 'redstone', 'T': 'flower_pot', 'W': 'fourtwenty:rolled_wick'}),
         'pheno_lab': (1, ['DGD', 'RTR', 'DWD'], {'D': 'diamond', 'G': 'glass', 'R': 'redstone', 'T': 'fourtwenty:pheno_chamber', 'W': 'fourtwenty:glass_wick'}),
         'pheno_cathedral': (1, ['BGB', 'RTR', 'BWB'], {'B': 'diamond_block', 'G': 'gold_block', 'R': 'redstone_block', 'T': 'fourtwenty:pheno_lab', 'W': 'fourtwenty:gold_wick'}),
@@ -361,6 +400,8 @@ if __name__ == '__main__':
     plots()
     machines()
     tube()
+    extracts()
+    construction_joint()
     recipes()
     data()
     print('ok')
