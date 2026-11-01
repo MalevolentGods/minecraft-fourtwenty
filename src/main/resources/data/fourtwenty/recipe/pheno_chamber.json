@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CGC",
+    "RTR",
+    "CWC"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "minecraft:flower_pot"
+    },
+    "W": {
+      "item": "fourtwenty:rolled_wick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:pheno_chamber",
+    "count": 1
+  },
+  "show_notification": true
+}

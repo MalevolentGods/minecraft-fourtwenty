@@ -26,7 +26,8 @@ TIERS = {
 WICKS = {'hemp_wick': 'puff', 'rolled_wick': 'toke', 'glass_wick': 'rip', 'gold_wick': 'blaze'}
 PLOTS = {'closet_grow': 'puff', 'grow_tent': 'puff', 'hydro_bed': 'toke', 'aero_pod': 'rip', 'cosmic_kush_pod': 'blaze'}
 HOOKAHS = ('double_hose', 'big_bertha', 'grand_hookah')       # the Hookah upgraded: their models come from tools/generate_hookah_model.py
-MACHINES = {'snip_station': 'puff', 'bud_barber': 'toke', 'trim_reaper': 'rip', 'dry_box': 'puff', 'cure_closet': 'toke', 'the_humidor': 'rip'}
+MACHINES = {'snip_station': 'puff', 'bud_barber': 'toke', 'trim_reaper': 'rip', 'dry_box': 'puff', 'cure_closet': 'toke', 'the_humidor': 'rip',
+            'pheno_chamber': 'toke', 'pheno_lab': 'rip', 'pheno_cathedral': 'blaze'}
 FACINGS = (('north', 0), ('east', 90), ('south', 180), ('west', 270))
 SIZE = 32
 
@@ -102,6 +103,14 @@ def front(name, lit, frame=0):
             spread = 3 + frame if lit else 3
             d.line([(8, y), (23, y + spread)], fill=(214, 220, 226, 255), width=2)
             d.line([(8, y + spread), (23, y)], fill=a, width=1)
+    elif name.startswith('pheno'):                                 # a double helix, turning while it works
+        for y in range(7, 25):
+            wave = math.sin((y + frame * 2) / 3)
+            left, right = int(15.5 + wave * 6), int(15.5 - wave * 6)
+            d.point([(left, y), (left + 1, y)], fill=a)
+            d.point([(right, y), (right + 1, y)], fill=(214, 220, 226, 255))
+            if y % 3 == 0:
+                d.line([(min(left, right) + 2, y), (max(left, right) - 1, y)], fill=(90, 96, 104, 255))
     else:                                                          # slats and hanging buds
         n = {'dry_box': 3, 'cure_closet': 4, 'the_humidor': 5}[name]
         for i in range(n):
@@ -229,6 +238,9 @@ def machines():
         'dry_box': [full(16)],
         'cure_closet': [box([1, 0, 1], [15, 16, 15], 'body', north='front'), box([12, 6, 0.5], [13, 10, 1], 'glow')],
         'the_humidor': [box([0, 2, 0], [16, 16, 16], 'body', north='front'), *[box([x, 0, z], [x + 2, 2, z + 2], 'glow') for x in (1, 13) for z in (1, 13)]],
+        'pheno_chamber': [full(14), *[box([x, 14, z], [x + 3, 16, z + 3], 'glow') for x in (2, 11) for z in (2, 11)]],
+        'pheno_lab': [full(13), box([2, 13, 2], [14, 16, 5], 'glow'), box([2, 13, 11], [14, 16, 14], 'glow')],
+        'pheno_cathedral': [full(12), *[box([x, 12, z], [x + 2, 16, z + 2], 'glow') for x in (1, 13) for z in (1, 13)], box([1, 12, 7], [3, 15, 9], 'glow'), box([13, 12, 7], [15, 15, 9], 'glow')],
     }
     for name, tier in MACHINES.items():
         lit_pair(name, features[name], common(tier, name))
@@ -285,6 +297,9 @@ def recipes():
         'dry_box': (1, ['IVI', 'RTR', 'IWI'], {'I': 'iron_ingot', 'V': 'iron_bars', 'R': 'redstone', 'T': 'fourtwenty:curing_rack', 'W': 'fourtwenty:hemp_wick'}),
         'cure_closet': (1, ['CVC', 'RTR', 'CWC'], {'C': 'copper_ingot', 'V': 'iron_bars', 'R': 'redstone', 'T': 'fourtwenty:dry_box', 'W': 'fourtwenty:rolled_wick'}),
         'the_humidor': (1, ['DVD', 'RTR', 'DWD'], {'D': 'diamond', 'V': 'glass', 'R': 'redstone', 'T': 'fourtwenty:cure_closet', 'W': 'fourtwenty:glass_wick'}),
+        'pheno_chamber': (1, ['CGC', 'RTR', 'CWC'], {'C': 'copper_ingot', 'G': 'glass', 'R': 'redstone', 'T': 'flower_pot', 'W': 'fourtwenty:rolled_wick'}),
+        'pheno_lab': (1, ['DGD', 'RTR', 'DWD'], {'D': 'diamond', 'G': 'glass', 'R': 'redstone', 'T': 'fourtwenty:pheno_chamber', 'W': 'fourtwenty:glass_wick'}),
+        'pheno_cathedral': (1, ['BGB', 'RTR', 'BWB'], {'B': 'diamond_block', 'G': 'gold_block', 'R': 'redstone_block', 'T': 'fourtwenty:pheno_lab', 'W': 'fourtwenty:gold_wick'}),
     }
     for name, (count, pattern, key) in book.items():
         write(DATA / f'fourtwenty/recipe/{name}.json', {'type': 'minecraft:crafting_shaped', 'category': 'misc', 'pattern': pattern,

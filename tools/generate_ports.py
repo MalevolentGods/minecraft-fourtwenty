@@ -181,6 +181,9 @@ def main():
     for name, tier in (('grow_tent', 'puff'), ('hydro_bed', 'toke'), ('aero_pod', 'rip'), ('cosmic_kush_pod', 'blaze')):
         block(name, tier, plot())
     block('think_tank', 'puff', think_tank())
+    block('pheno_chamber', 'toke', full(up=stem_up(14)))
+    block('pheno_lab', 'rip', full(up=stem_up(13)))
+    block('pheno_cathedral', 'blaze', full(up=stem_up(12)))
     block('terpinator', 'rip', generic())
     block('terpinator_lab', 'rip', generic())
     block('inspiration_infuser', 'puff', generic())

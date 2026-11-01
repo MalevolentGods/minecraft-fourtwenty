@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DGD",
+    "RTR",
+    "DWD"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "fourtwenty:pheno_chamber"
+    },
+    "W": {
+      "item": "fourtwenty:glass_wick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:pheno_lab",
+    "count": 1
+  },
+  "show_notification": true
+}

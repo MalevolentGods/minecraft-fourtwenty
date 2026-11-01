@@ -80,6 +80,7 @@ public class ModClientEvents {
     public static void registerScreens(RegisterMenuScreensEvent event) {
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(ModClientEvents::tooltips);
         event.register(com.malevolentgods.fourtwenty.registry.ModPower.MACHINE_MENU.get(), MachineScreen::new);
+        event.register(com.malevolentgods.fourtwenty.registry.ModPower.PHENO_MENU.get(), PhenoScreen::new);
         event.register(com.malevolentgods.fourtwenty.registry.ModPower.BI_MENU.get(), BIScreen::new);
         event.register(com.malevolentgods.fourtwenty.registry.ModPower.THINK_TANK_MENU.get(), ThinkTankScreen::new);
         event.register(ModMenuTypes.WEED_BONG.get(), WeedBongScreen::new);

@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BGB",
+    "RTR",
+    "BWB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:diamond_block"
+    },
+    "G": {
+      "item": "minecraft:gold_block"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "T": {
+      "item": "fourtwenty:pheno_lab"
+    },
+    "W": {
+      "item": "fourtwenty:gold_wick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:pheno_cathedral",
+    "count": 1
+  },
+  "show_notification": true
+}

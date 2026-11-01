@@ -17,12 +17,12 @@
 
 ## Phase 2: Breeding (US2)
 
-- [ ] T011 [P] [US2] Cross table in J/domain/Crosses.java with tests, including that every strain is reachable
-- [ ] T012 [US2] Pheno Chamber, Lab and Cathedral blocks and entities in J/processing/
-- [ ] T013 [US2] Screen, ghosts, popups and ? help in J/client/
-- [ ] T014 [P] [US2] Models, recipes, ports and loot in tools/generate_processing.py and tools/generate_ports.py
-- [ ] T015 [US2] Hybrids inspire parents' colours in J/infuser/Infuser.java
-- [ ] T016 [US2] Game tests
+- [X] T011 [P] [US2] Cross table in J/domain/Crosses.java with tests, including that every strain is reachable
+- [X] T012 [US2] Pheno Chamber, Lab and Cathedral blocks and entities in J/processing/
+- [X] T013 [US2] Screen, ghosts, popups and ? help in J/client/
+- [X] T014 [P] [US2] Models, recipes, ports and loot in tools/generate_processing.py and tools/generate_ports.py
+- [X] T015 [US2] Hybrids inspire parents' colours in J/infuser/Infuser.java
+- [X] T016 [US2] Game tests
 
 ## Phase 3: Biome strains (US4)
 

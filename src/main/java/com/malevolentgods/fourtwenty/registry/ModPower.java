@@ -13,6 +13,9 @@ import com.malevolentgods.fourtwenty.processing.MachineBlock;
 import com.malevolentgods.fourtwenty.processing.MachineBlock.Job;
 import com.malevolentgods.fourtwenty.processing.MachineBlockEntity;
 import com.malevolentgods.fourtwenty.processing.MachineMenu;
+import com.malevolentgods.fourtwenty.processing.PhenoBlock;
+import com.malevolentgods.fourtwenty.processing.PhenoBlockEntity;
+import com.malevolentgods.fourtwenty.processing.PhenoMenu;
 import com.malevolentgods.fourtwenty.processing.ThinkTankBlock;
 import com.malevolentgods.fourtwenty.processing.ThinkTankBlockEntity;
 import com.malevolentgods.fourtwenty.processing.ThinkTankMenu;
@@ -118,6 +121,10 @@ public final class ModPower {
     public static final DeferredHolder<Block, MachineBlock> CURE_CLOSET = machine("cure_closet", Job.CURE, Tier.TOKE);
     public static final DeferredHolder<Block, MachineBlock> THE_HUMIDOR = machine("the_humidor", Job.CURE, Tier.RIP);
 
+    public static final DeferredHolder<Block, PhenoBlock> PHENO_CHAMBER = block("pheno_chamber", () -> new PhenoBlock(Tier.TOKE, metal()));
+    public static final DeferredHolder<Block, PhenoBlock> PHENO_LAB = block("pheno_lab", () -> new PhenoBlock(Tier.RIP, metal()));
+    public static final DeferredHolder<Block, PhenoBlock> PHENO_CATHEDRAL = block("pheno_cathedral", () -> new PhenoBlock(Tier.BLAZE, metal()));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StashBlockEntity>> STASH_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("stash",
             () -> BlockEntityType.Builder.of(StashBlockEntity::new, STASH_JAR.get(), STASH_BOX.get(), MOTHER_STASH.get(), THE_VAULT.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HitBoxBlockEntity>> HIT_BOX_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("hit_box",
@@ -140,6 +147,12 @@ public final class ModPower {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MachineBlockEntity>> MACHINE_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("machine",
             () -> BlockEntityType.Builder.of(MachineBlockEntity::new, SNIP_STATION.get(), BUD_BARBER.get(), TRIM_REAPER.get(), DRY_BOX.get(), CURE_CLOSET.get(), THE_HUMIDOR.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PhenoBlockEntity>> PHENO_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("pheno",
+            () -> BlockEntityType.Builder.of(PhenoBlockEntity::new, PHENO_CHAMBER.get(), PHENO_LAB.get(), PHENO_CATHEDRAL.get()).build(null));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<PhenoMenu>> PHENO_MENU = ModMenuTypes.MENU_TYPES.register("pheno",
+            () -> IMenuTypeExtension.create((id, inventory, data) -> new PhenoMenu(id, inventory)));
 
     public static final DeferredHolder<MenuType<?>, MenuType<com.malevolentgods.fourtwenty.power.BIMenu>> BI_MENU = ModMenuTypes.MENU_TYPES.register("bi",
             () -> IMenuTypeExtension.create((id, inventory, data) -> new com.malevolentgods.fourtwenty.power.BIMenu(id)));
@@ -164,9 +177,11 @@ public final class ModPower {
         event.registerBlockEntity(BINode.CAPABILITY, STASH_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, HIT_BOX_ENTITY.get(), HitBoxBlockEntity::node);
         event.registerBlockEntity(BINode.CAPABILITY, MACHINE_ENTITY.get(), (entity, side) -> entity.node());
+        event.registerBlockEntity(BINode.CAPABILITY, PHENO_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, GROW_OP_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, THINK_TANK_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, ModTerpenes.TERPINATOR_ENTITY.get(), (TerpinatorBlockEntity entity, Direction side) -> entity.node());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MACHINE_ENTITY.get(), (entity, side) -> side == null ? null : new SidedInvWrapper(entity, side));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PHENO_ENTITY.get(), (entity, side) -> side == null ? null : new SidedInvWrapper(entity, side));
     }
 }

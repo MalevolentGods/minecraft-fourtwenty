@@ -43,7 +43,8 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
     private static final ModelProperty<Integer> MASK = new ModelProperty<>();
     private static final Set<String> BLOCKS = Set.of("weed_bong", "double_hose", "big_bertha", "grand_hookah", "stash_jar", "stash_box", "mother_stash", "the_vault",
             "snip_station", "bud_barber", "trim_reaper", "dry_box", "cure_closet", "the_humidor", "grow_tent", "hydro_bed", "aero_pod", "cosmic_kush_pod", "think_tank",
-            "terpinator", "terpinator_lab", "inspiration_infuser", "inspiration_infuser_lab", "hit_box_toke", "hit_box_rip", "hit_box_blaze");
+            "terpinator", "terpinator_lab", "inspiration_infuser", "inspiration_infuser_lab", "hit_box_toke", "hit_box_rip", "hit_box_blaze",
+            "pheno_chamber", "pheno_lab", "pheno_cathedral");
     private static final Direction[] AROUND = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
     /** The sides each Hookah has a hose on, for one facing north. A hose is its own piece, drawn unless a Wick has that side. */
     private static final Map<String, List<Direction>> HOSES = Map.of("weed_bong", List.of(Direction.EAST), "double_hose", List.of(Direction.EAST, Direction.WEST),

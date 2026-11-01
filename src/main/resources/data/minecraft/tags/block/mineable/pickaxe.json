@@ -241,6 +241,9 @@
     "fourtwenty:grow_tent",
     "fourtwenty:hydro_bed",
     "fourtwenty:aero_pod",
-    "fourtwenty:cosmic_kush_pod"
+    "fourtwenty:cosmic_kush_pod",
+    "fourtwenty:pheno_chamber",
+    "fourtwenty:pheno_lab",
+    "fourtwenty:pheno_cathedral"
   ]
 }
