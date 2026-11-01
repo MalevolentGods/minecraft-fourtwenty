@@ -1,0 +1,127 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "fourtwenty:block/transport_tube_core"
+      }
+    },
+    {
+      "when": {
+        "north": "wire"
+      },
+      "apply": {
+        "model": "fourtwenty:block/transport_tube_arm",
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "north": "plug"
+      },
+      "apply": {
+        "model": "fourtwenty:block/transport_tube_plug",
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "east": "wire"
+      },
+      "apply": {
+        "model": "fourtwenty:block/transport_tube_arm",
+        "uvlock": false,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "east": "plug"
+      },
+      "apply": {
+        "model": "fourtwenty:block/transport_tube_plug",
+        "uvlock": false,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "wire"
+      },
+      "apply": {
+        "model": "fourtwenty:block/transport_tube_arm",
+        "uvlock": false,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "south": "plug"
+      },
+      "apply": {
+        "model": "fourtwenty:block/transport_tube_plug",
+        "uvlock": false,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "wire"
+      },
+      "apply": {
+        "model": "fourtwenty:block/transport_tube_arm",
+        "uvlock": false,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "west": "plug"
+      },
+      "apply": {
+        "model": "fourtwenty:block/transport_tube_plug",
+        "uvlock": false,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "wire"
+      },
+      "apply": {
+        "model": "fourtwenty:block/transport_tube_arm",
+        "uvlock": false,
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "up": "plug"
+      },
+      "apply": {
+        "model": "fourtwenty:block/transport_tube_plug",
+        "uvlock": false,
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": "wire"
+      },
+      "apply": {
+        "model": "fourtwenty:block/transport_tube_arm",
+        "uvlock": false,
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "down": "plug"
+      },
+      "apply": {
+        "model": "fourtwenty:block/transport_tube_plug",
+        "uvlock": false,
+        "x": 90
+      }
+    }
+  ]
+}

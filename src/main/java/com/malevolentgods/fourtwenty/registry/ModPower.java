@@ -52,6 +52,7 @@ public final class ModPower {
 
     /** Blocks a Wick joins to. */
     public static final TagKey<Block> BI_BLOCKS = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("fourtwenty", "bi_blocks"));
+    public static final net.minecraft.tags.TagKey<Block> TUBE_BLOCKS = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("fourtwenty", "tube_blocks"));
 
     /** For the creative tab. */
     public static final List<DeferredHolder<Item, ? extends Item>> ITEMS = new ArrayList<>();
@@ -122,6 +123,9 @@ public final class ModPower {
     public static final DeferredHolder<Block, MachineBlock> DRY_BOX = machine("dry_box", Job.CURE, Tier.PUFF);
     public static final DeferredHolder<Block, MachineBlock> CURE_CLOSET = machine("cure_closet", Job.CURE, Tier.TOKE);
     public static final DeferredHolder<Block, MachineBlock> THE_HUMIDOR = machine("the_humidor", Job.CURE, Tier.RIP);
+
+    public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.power.TubeBlock> TRANSPORT_TUBE = block("transport_tube",
+            () -> new com.malevolentgods.fourtwenty.power.TubeBlock(BlockBehaviour.Properties.of().strength(0.3f).sound(net.minecraft.world.level.block.SoundType.COPPER).noOcclusion()));
 
     public static final DeferredHolder<Block, PhenoBlock> PHENO_CHAMBER = block("pheno_chamber", () -> new PhenoBlock(Tier.TOKE, metal()));
     public static final DeferredHolder<Block, PhenoBlock> PHENO_LAB = block("pheno_lab", () -> new PhenoBlock(Tier.RIP, metal()));

@@ -169,6 +169,18 @@ A player refines cured bud into stronger fuel on Toke power. No terpenes.
 2. **Given** a Hookah loaded with Hash and lit with one charcoal, **When** it burns, **Then** it makes BI for 5 minutes at its usual rate, and burns biome strains 1.5 times as long.
 3. **Given** a pipe, **When** loaded with an extract, **Then** it smokes at +1 Potency and +1 Length per step past Kief, up to +2.
 
+### User Story 6b - Transport Tubes (Priority: P1)
+
+The mod's own automation, in place of chests and hoppers. One tube with no tiers, connecting with fittings matched to each block as the Wicks do.
+
+**Acceptance Scenarios**:
+
+1. **Given** a machine and blocks that want its output joined by tubes, **Then** the output moves there at once, shared evenly among them, up to 1,024 tubes away.
+1a. **Given** any number of machines on one network, **Then** each can send to any other, with items running both ways through the same tube at once.
+2. **Given** a block on the line that doesn't want an item, **Then** the item stays in the machine.
+3. **Given** a tube line running into an unloaded chunk, **Then** the machine stops, keeps its progress, and its screen says why, until the chunk is back.
+4. **Given** a chest beside a tube, **Then** the tube ignores it.
+
 ### User Story 7 - Construction Joint (Priority: P3)
 
 A player uses one bench to craft the mod's building blocks in bulk from hemp and materials, under the shared power rule.

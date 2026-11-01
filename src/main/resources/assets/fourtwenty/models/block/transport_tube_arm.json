@@ -1,0 +1,77 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "#tube",
+  "tube": "fourtwenty:block/power/tube"
+ },
+ "elements": [
+  {
+   "from": [
+    5,
+    5,
+    0
+   ],
+   "to": [
+    11,
+    11,
+    5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5,
+      5,
+      11,
+      11
+     ],
+     "texture": "#tube"
+    },
+    "south": {
+     "uv": [
+      5,
+      5,
+      11,
+      11
+     ],
+     "texture": "#tube"
+    },
+    "east": {
+     "uv": [
+      0,
+      5,
+      5,
+      11
+     ],
+     "texture": "#tube"
+    },
+    "west": {
+     "uv": [
+      0,
+      5,
+      5,
+      11
+     ],
+     "texture": "#tube"
+    },
+    "up": {
+     "uv": [
+      5,
+      0,
+      11,
+      5
+     ],
+     "texture": "#tube"
+    },
+    "down": {
+     "uv": [
+      5,
+      0,
+      11,
+      5
+     ],
+     "texture": "#tube"
+    }
+   }
+  }
+ ]
+}

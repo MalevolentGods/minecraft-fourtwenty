@@ -39,7 +39,7 @@ import java.util.List;
  */
 public class MachineBlockEntity extends BIBlockEntity implements WorldlyContainer, MenuProvider {
     public static final int INPUTS = 4, OUTPUTS = 6, SIZE = INPUTS + OUTPUTS;
-    public static final int DATA_PROGRESS = 0, DATA_TOTAL = 1, DATA_PAUSED = 2, DATA_STORED = 3, DATA_CAPACITY = 4, DATA_OVERLOADED = 5, DATA_TIER = 6, DATA_JOB = 7, DATA_FREE = 8, DATA_COUNT = 9;
+    public static final int DATA_PROGRESS = 0, DATA_TOTAL = 1, DATA_PAUSED = 2, DATA_STORED = 3, DATA_CAPACITY = 4, DATA_OVERLOADED = 5, DATA_TIER = 6, DATA_JOB = 7, DATA_FREE = 8, DATA_TUBE_BLOCKED = 9, DATA_COUNT = 10;
     private static final int[] IN = {0, 1, 2, 3}, OUT = {4, 5, 6, 7, 8, 9};
     private static final int BUFFER_TICKS = 400;
 
@@ -49,6 +49,7 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
     private final MachinePower.Meter meter = new MachinePower.Meter();
     private int progress;
     private boolean paused, overloaded, free;
+    private final com.malevolentgods.fourtwenty.power.TubeOutput tube = new com.malevolentgods.fourtwenty.power.TubeOutput();
 
     private final ContainerData data = new ContainerData() {
         @Override public int get(int index) {
@@ -62,6 +63,7 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
                 case DATA_TIER -> block.tier().ordinal();
                 case DATA_JOB -> block.job().ordinal();
                 case DATA_FREE -> free ? 1 : 0;
+                case DATA_TUBE_BLOCKED -> tube.blocked() ? 1 : 0;
                 default -> 0;
             };
         }
@@ -152,6 +154,13 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
         overloaded = overloadTick(buffer);
         if (overloaded) {
             paused = true;
+            lit(false);
+            return;
+        }
+        tube.tick(level, worldPosition, this, INPUTS);
+        if (tube.blocked()) {
+            paused = true;
+            free = false;
             lit(false);
             return;
         }

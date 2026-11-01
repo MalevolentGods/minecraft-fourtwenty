@@ -65,6 +65,8 @@ public class PhenoMenu extends AbstractContainerMenu {
 
     public boolean free() { return data.get(DATA_FREE) != 0; }
 
+    public boolean tubeBlocked() { return data.get(DATA_TUBE_BLOCKED) != 0; }
+
     /** The power tier a stronger Chamber would need, or -1. */
     public int needs() { return data.get(DATA_NEEDS); }
 

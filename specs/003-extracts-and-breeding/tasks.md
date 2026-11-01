@@ -38,6 +38,13 @@
 - [X] T022 [US4] Cosmic Kush Pod copies a climate, in J/power/GrowOpBlock.java and J/power/GrowOpBlockEntity.java
 - [X] T023 [US4] Game tests
 
+## Phase 3b: Transport Tubes (US6b)
+
+- [X] T024 [US6b] Tube block in J/power/TubeBlock.java and delivery in J/power/TubeOutput.java
+- [X] T025 [US6b] Machines and Pheno Chambers send through tubes and stop on an unloaded line
+- [X] T026 [US6b] Fittings per block in tools/generate_ports.py and J/client/PortModel.java; art, recipe, tag
+- [X] T027 [US6b] Game tests in src/gametest/java/com/malevolentgods/fourtwenty/gametest/TubeGameTests.java
+
 ## Phase 4: Golden God (US5)
 
 - [ ] T030 [US5] Flight, effects and landing in J/util/GoldenGod.java

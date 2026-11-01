@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 public class PhenoBlockEntity extends BIBlockEntity implements WorldlyContainer, MenuProvider {
     public static final int PARENTS = 2, OUTPUTS = 2, SIZE = PARENTS + OUTPUTS;
     public static final int DATA_PROGRESS = 0, DATA_TOTAL = 1, DATA_PAUSED = 2, DATA_STORED = 3, DATA_CAPACITY = 4, DATA_OVERLOADED = 5, DATA_TIER = 6, DATA_FREE = 7,
-            DATA_NEEDS = 8, DATA_MAKES = 9, DATA_COUNT = 10;
+            DATA_NEEDS = 8, DATA_MAKES = 9, DATA_TUBE_BLOCKED = 10, DATA_COUNT = 11;
     /** The DATA_NEEDS value for parents that only pollinating can cross. */
     public static final int NEEDS_POLLINATING = 99;
     private static final int[] IN = {0, 1}, OUT = {2, 3};
@@ -50,6 +50,7 @@ public class PhenoBlockEntity extends BIBlockEntity implements WorldlyContainer,
     private final MachinePower.Meter meter = new MachinePower.Meter();
     private int progress;
     private boolean paused, overloaded, free;
+    private final com.malevolentgods.fourtwenty.power.TubeOutput tube = new com.malevolentgods.fourtwenty.power.TubeOutput();
 
     private final ContainerData data = new ContainerData() {
         @Override public int get(int index) {
@@ -62,6 +63,7 @@ public class PhenoBlockEntity extends BIBlockEntity implements WorldlyContainer,
                 case DATA_OVERLOADED -> overloaded ? 1 : 0;
                 case DATA_TIER -> block.tier().ordinal();
                 case DATA_FREE -> free ? 1 : 0;
+                case DATA_TUBE_BLOCKED -> tube.blocked() ? 1 : 0;
                 case DATA_NEEDS -> !loaded() ? -1 : pollinates() ? NEEDS_POLLINATING : !strongEnough() ? Crosses.chamber(grade()).ordinal() : -1;
                 case DATA_MAKES -> settling() != null ? settling().strain().ordinal()
                         : loaded() && !pollinates() ? Crosses.hybrid(first(), second()).map(Enum::ordinal).orElse(-1) : -1;
@@ -116,6 +118,13 @@ public class PhenoBlockEntity extends BIBlockEntity implements WorldlyContainer,
         overloaded = overloadTick(buffer);
         if (overloaded) {
             paused = true;
+            lit(false);
+            return;
+        }
+        tube.tick(level, worldPosition, this, PARENTS);
+        if (tube.blocked()) {
+            paused = true;
+            free = false;
             lit(false);
             return;
         }

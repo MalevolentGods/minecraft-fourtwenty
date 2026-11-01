@@ -156,6 +156,10 @@ def write(name, side, elements, textures, lit):
     (ASSETS / f'models/block/port/{name}_{side}{"_lit" if lit else ""}.json').write_text(json.dumps(model, indent=1) + '\n')
 
 
+TUBED = ('weed_bong', 'double_hose', 'big_bertha', 'grand_hookah', 'snip_station', 'bud_barber', 'trim_reaper', 'dry_box', 'cure_closet', 'the_humidor',
+         'terpinator', 'terpinator_lab', 'pheno_chamber', 'pheno_lab', 'pheno_cathedral')
+
+
 def block(name, tier, sides, plate=None, extra=None):
     for lit in (False, True):
         tex = {'plate': plate or f'fourtwenty:block/power/{tier}_body',
@@ -163,6 +167,8 @@ def block(name, tier, sides, plate=None, extra=None):
                'lead': f'fourtwenty:block/power/{tier}_wick{"_lit" if lit else ""}', **(extra(lit) if extra else {})}
         for side in ('north', 'east', 'south', 'west', 'up', 'down'):
             write(name, side, sides.get(side, []), tex, lit)
+            if name in TUBED and not lit:
+                write(f'{name}_tube', side, sides.get(side, []), {**tex, 'lead': 'fourtwenty:block/power/tube', 'collar': 'fourtwenty:block/power/tube_band'}, False)
 
 
 def main():

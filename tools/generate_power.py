@@ -256,6 +256,29 @@ def soil(name, colour, speck, seed):
     img.save(TEX / f'{name}.png')
 
 
+def tube():
+    """One tube for everything: glass with a copper band, and items are nobody's business but its own."""
+    glass = shade((176, 214, 196), 'tube', 8)
+    d = ImageDraw.Draw(glass)
+    d.line([(6, 3), (6, 28)], fill=(232, 244, 238, 255), width=2)
+    for y in (0, 24):
+        d.rectangle([0, y, 31, y + 7], fill=(190, 116, 70, 255), outline=(120, 70, 44, 255))
+    glass.save(TEX / 'tube.png')
+    band = shade((190, 116, 70), 'tube_band', 10)
+    ImageDraw.Draw(band).rectangle([0, 0, 31, 31], outline=(120, 70, 44, 255))
+    band.save(TEX / 'tube_band.png')
+    tex = {'tube': 'fourtwenty:block/power/tube'}
+    model('transport_tube_core', [box([5, 5, 5], [11, 11, 11], 'tube')], tex, '#tube')
+    model('transport_tube_arm', [box([5, 5, 0], [11, 11, 5], 'tube')], tex, '#tube')
+    model('transport_tube_plug', [box([5, 5, 2.5], [11, 11, 5], 'tube'), box([5.75, 5.75, 0], [10.25, 10.25, 2.5], 'tube')], tex, '#tube')
+    parts = [{'apply': {'model': 'fourtwenty:block/transport_tube_core'}}]
+    for side, rot in (('north', {}), ('east', {'y': 90}), ('south', {'y': 180}), ('west', {'y': 270}), ('up', {'x': 270}), ('down', {'x': 90})):
+        for link, part in (('wire', 'arm'), ('plug', 'plug')):
+            parts.append({'when': {side: link}, 'apply': {'model': f'fourtwenty:block/transport_tube_{part}', 'uvlock': False, **rot}})
+    write(ASSETS / 'blockstates/transport_tube.json', {'multipart': parts})
+    item_model('transport_tube', 'fourtwenty:block/transport_tube_core')
+
+
 def plots():
     soil('soil', (70, 48, 30), (104, 76, 46), 'soil')
     soil('rockwool', (196, 190, 170), (232, 228, 212), 'wool')
@@ -299,6 +322,7 @@ def recipes():
         'cure_closet': (1, ['CVC', 'RTR', 'CWC'], {'C': 'copper_ingot', 'V': 'iron_bars', 'R': 'redstone', 'T': 'fourtwenty:dry_box', 'W': 'fourtwenty:rolled_wick'}),
         'the_humidor': (1, ['DVD', 'RTR', 'DWD'], {'D': 'diamond', 'V': 'glass', 'R': 'redstone', 'T': 'fourtwenty:cure_closet', 'W': 'fourtwenty:glass_wick'}),
         'buzz_bot': (1, ['WHW', 'ICI'], {'W': 'fourtwenty:glass_wick', 'H': 'honeycomb', 'I': 'iron_ingot', 'C': 'copper_block'}),
+        'transport_tube': (8, ['GCG', 'GWG', 'GCG'], {'G': 'glass_pane', 'C': 'copper_ingot', 'W': 'fourtwenty:hemp_wick'}),
         'pheno_chamber': (1, ['CGC', 'RTR', 'CWC'], {'C': 'copper_ingot', 'G': 'glass', 'R': 'redstone', 'T': 'flower_pot', 'W': 'fourtwenty:rolled_wick'}),
         'pheno_lab': (1, ['DGD', 'RTR', 'DWD'], {'D': 'diamond', 'G': 'glass', 'R': 'redstone', 'T': 'fourtwenty:pheno_chamber', 'W': 'fourtwenty:glass_wick'}),
         'pheno_cathedral': (1, ['BGB', 'RTR', 'BWB'], {'B': 'diamond_block', 'G': 'gold_block', 'R': 'redstone_block', 'T': 'fourtwenty:pheno_lab', 'W': 'fourtwenty:gold_wick'}),
@@ -315,6 +339,10 @@ def data():
         write(DATA / f'fourtwenty/loot_table/blocks/{name}.json', {
             'type': 'minecraft:block',
             'pools': [{'rolls': 1, 'entries': [{'type': 'minecraft:item', 'name': f'fourtwenty:{name}'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
+    write(DATA / 'fourtwenty/loot_table/blocks/transport_tube.json', {
+        'type': 'minecraft:block',
+        'pools': [{'rolls': 1, 'entries': [{'type': 'minecraft:item', 'name': 'fourtwenty:transport_tube'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
+    write(DATA / 'fourtwenty/tags/block/tube_blocks.json', {'replace': False, 'values': [f'fourtwenty:{n}' for n in list(MACHINES) + ['weed_bong', 'double_hose', 'big_bertha', 'grand_hookah', 'terpinator', 'terpinator_lab']]})
     joined = [n for n in blocks if n not in WICKS and n != 'closet_grow'] + ['weed_bong', 'terpinator', 'terpinator_lab', 'inspiration_infuser', 'inspiration_infuser_lab']
     write(DATA / 'fourtwenty/tags/block/bi_blocks.json', {'replace': False, 'values': [f'fourtwenty:{n}' for n in joined]})
     path = DATA / 'minecraft/tags/block/mineable/pickaxe.json'
@@ -332,6 +360,7 @@ if __name__ == '__main__':
     stashes()
     plots()
     machines()
+    tube()
     recipes()
     data()
     print('ok')
