@@ -18,10 +18,10 @@ TIER_TEX = {'puff': 'puff', 'toke': 'toke', 'rip': 'rip', 'blaze': 'blaze'}
 METALS = {'weed_bong': ('brass', 'puff'), 'double_hose': ('copper', 'toke'), 'big_bertha': ('steel', 'rip'), 'grand_hookah': ('gold', 'blaze')}
 
 
-def angled(x, y, z, length, angle, axis='x', tex='lead', w=1):
+def angled(x, y, z, length, angle, axis='x', tex='lead', w=0.75):
     """A thin lead running in along +z from (x, y, z), tilted by angle (22.5 or 45) round axis: positive drops it."""
     e = box([x - w, y - w, z], [x + w, y + w, z + length], tex)
-    e['rotation'] = {'origin': [x, y, z], 'axis': axis, 'angle': -angle}
+    e['rotation'] = {'origin': [x, y, z], 'axis': axis, 'angle': angle}
     return e
 
 
@@ -58,17 +58,12 @@ def full(front=None, up=None, down=None):
 
 
 def hookah():
-    """A lead dips from wire height to a gland on the cabinet, below its top. On top, a yoke splits round the bowl to the tray."""
+    """A lead dips from wire height to a gland on the cabinet, below its top. On top, a hoop goes over the bowl and down to the tray."""
     sides = {}
-    side = [angled(8, 8, 0, 3.8, 22.5), box([6, 5, 3.25], [10, 8, 3.75], 'plate')]
+    side = [angled(8, 8, 0, 3.9, 22.5), box([6.25, 5, 3.25], [9.75, 8, 3.75], 'plate')]
     for s in SIDES:
         sides[s] = side
-    yoke = []
-    for x, angle in ((5.9, 45), (10.1, -45)):
-        e = box([x - 0.5, 13.3, 7.5], [x + 0.5, 16.4, 8.5], 'lead')
-        e['rotation'] = {'origin': [8, 16, 8], 'axis': 'z', 'angle': angle}
-        yoke.append(e)
-    sides['up'] = yoke + [box([7, 15.75, 7], [9, 16, 9], 'plate')]
+    sides['up'] = [box([5.55, 15.75, 7.5], [10.45, 16, 8.5], 'lead'), box([5.55, 13.3, 7.5], [6.15, 15.75, 8.5], 'lead'), box([9.85, 13.3, 7.5], [10.45, 15.75, 8.5], 'lead')]
     sides['down'] = [box([6, -0.25, 6], [10, 0, 10], 'plate')]
     return sides
 
@@ -94,15 +89,8 @@ def inset_one(front_note=None):
 
 
 def snip():
-    """Its bench stops at 12 and the blade runs across the middle, so the lead comes down behind the blade."""
-    return full(up=[box([7, 12.75, 10], [9, 14.5, 12], 'lead'), box([6, 12, 9.5], [10, 12.75, 12.5], 'plate'), rotated_top()])
-
-
-def rotated_top():
-    """From the top centre back to the lead behind the blade."""
-    e = box([7.25, 14.25, 8], [8.75, 15.75, 12], 'lead')
-    e['rotation'] = {'origin': [8, 16, 8], 'axis': 'x', 'angle': -45}
-    return e
+    """Its bench stops at 12 and the blade runs across the middle, so one lead slants from the top centre back behind the blade to a plate on the bench."""
+    return full(up=[angled(8, 16, 8, 4.5, 45), box([6.5, 12, 10], [9.5, 12.75, 12.5], 'plate')])
 
 
 def barber():

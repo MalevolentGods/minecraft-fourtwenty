@@ -194,11 +194,9 @@ def main():
                 box([0, y + 1, 0], [16, y + 4, 1], 'wood'), box([0, y + 1, 15], [16, y + 4, 16], 'wood'),
                 box([0, y + 1, 1], [1, y + 4, 15], 'wood'), box([15, y + 1, 1], [16, y + 4, 15], 'wood')]
 
-    block('trim_tray', {'wood': 'wood_dark', 'mat': 'mat'}, tray(0), 'wood_dark')
-    block_model('trim_tray_top', {'wood': 'wood_dark', 'mat': 'mat'}, [box([0, 8, 0], [16, 12, 16], 'wood')] + tray(12), 'wood_dark')
-    variants = {f'facing={f},half={half}': {'model': f'fourtwenty:block/{m}', **({'y': y} if y else {})}
-                for f, y in (('north', 0), ('east', 90), ('south', 180), ('west', 270)) for half, m in (('bottom', 'trim_tray'), ('top', 'trim_tray_top'))}
-    (ASSETS / 'blockstates/trim_tray.json').write_text(json.dumps({'variants': variants}, indent=2) + '\n')
+    # a waist-height stand: a foot, a post, and the tray on top
+    block('trim_tray', {'wood': 'wood_dark', 'mat': 'mat', 'light': 'wood_light'},
+          [box([3, 0, 3], [13, 2, 13], 'light'), box([6, 2, 6], [10, 10, 10], 'light')] + tray(10), 'wood_dark')
     block('curing_rack', {'post': 'wood_dark', 'rail': 'wood_light', 'twine': 'twine'}, [
         box([1, 1, 7], [3, 16, 9], 'post'), box([13, 1, 7], [15, 16, 9], 'post'),
         box([1, 0, 3], [3, 1, 13], 'post'), box([13, 0, 3], [15, 1, 13], 'post'),

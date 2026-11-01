@@ -1,33 +1,18 @@
 {
   "variants": {
-    "facing=north,half=bottom": {
+    "facing=north": {
       "model": "fourtwenty:block/trim_tray"
     },
-    "facing=north,half=top": {
-      "model": "fourtwenty:block/trim_tray_top"
-    },
-    "facing=east,half=bottom": {
+    "facing=east": {
       "model": "fourtwenty:block/trim_tray",
       "y": 90
     },
-    "facing=east,half=top": {
-      "model": "fourtwenty:block/trim_tray_top",
-      "y": 90
-    },
-    "facing=south,half=bottom": {
+    "facing=south": {
       "model": "fourtwenty:block/trim_tray",
       "y": 180
     },
-    "facing=south,half=top": {
-      "model": "fourtwenty:block/trim_tray_top",
-      "y": 180
-    },
-    "facing=west,half=bottom": {
+    "facing=west": {
       "model": "fourtwenty:block/trim_tray",
-      "y": 270
-    },
-    "facing=west,half=top": {
-      "model": "fourtwenty:block/trim_tray_top",
       "y": 270
     }
   }
