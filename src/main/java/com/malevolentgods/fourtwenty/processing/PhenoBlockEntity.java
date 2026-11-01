@@ -1,5 +1,6 @@
 package com.malevolentgods.fourtwenty.processing;
 
+import com.malevolentgods.fourtwenty.domain.Climate;
 import com.malevolentgods.fourtwenty.domain.Crosses;
 import com.malevolentgods.fourtwenty.domain.Strain;
 import com.malevolentgods.fourtwenty.domain.Traits;
@@ -62,7 +63,8 @@ public class PhenoBlockEntity extends BIBlockEntity implements WorldlyContainer,
                 case DATA_TIER -> block.tier().ordinal();
                 case DATA_FREE -> free ? 1 : 0;
                 case DATA_NEEDS -> !loaded() ? -1 : pollinates() ? NEEDS_POLLINATING : !strongEnough() ? Crosses.chamber(grade()).ordinal() : -1;
-                case DATA_MAKES -> loaded() && !pollinates() ? Crosses.hybrid(first(), second()).map(Enum::ordinal).orElse(-1) : -1;
+                case DATA_MAKES -> settling() != null ? settling().strain().ordinal()
+                        : loaded() && !pollinates() ? Crosses.hybrid(first(), second()).map(Enum::ordinal).orElse(-1) : -1;
                 default -> 0;
             };
         }
@@ -82,19 +84,25 @@ public class PhenoBlockEntity extends BIBlockEntity implements WorldlyContainer,
 
     public int progress() { return progress; }
 
-    private boolean loaded() { return !items.get(0).isEmpty() && !items.get(1).isEmpty(); }
+    private boolean loaded() { return !items.get(0).isEmpty() && !items.get(1).isEmpty() || settling() != null; }
+
+    /** One climate-touched seed alone: the climate it's settling into a biome strain, or null. */
+    private @Nullable Climate settling() {
+        ItemStack a = items.get(0), b = items.get(1);
+        return a.isEmpty() == b.isEmpty() ? null : (a.isEmpty() ? b : a).get(ModDataComponents.CLIMATE.get());
+    }
 
     private Strain first() { return ModDataComponents.strain(items.get(0)); }
 
     private Strain second() { return ModDataComponents.strain(items.get(1)); }
 
-    private int grade() { return Crosses.grade(first(), second()); }
+    private int grade() { return settling() != null ? settling().strain().grade() : Crosses.grade(first(), second()); }
 
     private int ticks() { return ProcessingConfig.crossTicks(grade()); }
 
     private boolean strongEnough() { return Crosses.chamber(grade()).ordinal() <= block.tier().ordinal(); }
 
-    private boolean pollinates() { return Crosses.needsPollinating(first(), second()); }
+    private boolean pollinates() { return settling() == null && Crosses.needsPollinating(first(), second()); }
 
     private boolean outputFree() { return items.get(PARENTS).isEmpty() || items.get(PARENTS + 1).isEmpty(); }
 
@@ -127,8 +135,11 @@ public class PhenoBlockEntity extends BIBlockEntity implements WorldlyContainer,
 
     private void finish() {
         progress = 0;
-        Strain strain = Crosses.child(first(), second(), level.random::nextDouble);
-        Traits traits = Traits.cross(ModDataComponents.traits(items.get(0)), ModDataComponents.traits(items.get(1)), level.random::nextDouble);
+        Climate climate = settling();
+        ItemStack only = climate == null ? null : items.get(items.get(0).isEmpty() ? 1 : 0);
+        Strain strain = climate != null ? climate.strain() : Crosses.child(first(), second(), level.random::nextDouble);
+        Traits traits = climate != null ? ModDataComponents.traits(only)
+                : Traits.cross(ModDataComponents.traits(items.get(0)), ModDataComponents.traits(items.get(1)), level.random::nextDouble);
         items.get(0).shrink(1);
         items.get(1).shrink(1);
         ItemStack seed = ModDataComponents.withTraits(ModDataComponents.withStrain(new ItemStack(ModItems.WEED_SEEDS.get()), strain), traits);

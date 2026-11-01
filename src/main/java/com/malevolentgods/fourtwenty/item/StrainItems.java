@@ -40,6 +40,8 @@ public final class StrainItems {
             lines.add(Component.translatable("strain.fourtwenty.family." + strain.family().name().toLowerCase(java.util.Locale.ROOT))
                     .withStyle(net.minecraft.ChatFormatting.GRAY));
         }
+        var climate = stack.get(ModDataComponents.CLIMATE.get());
+        if (climate != null) lines.add(Component.translatable("tooltip.fourtwenty.climate", Component.translatable(climate.translationKey())).withStyle(net.minecraft.ChatFormatting.GREEN));
         Traits t = ModDataComponents.traits(stack);
         lines.add(Component.translatable("tooltip.fourtwenty.traits", t.potency(), t.yield(), t.length()).withStyle(net.minecraft.ChatFormatting.GRAY));
     }

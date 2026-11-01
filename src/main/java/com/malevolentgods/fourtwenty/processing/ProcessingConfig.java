@@ -26,6 +26,7 @@ public final class ProcessingConfig {
     private static final ModConfigSpec.IntValue BOT_BUD_MINUTES = BUILDER.comment("How many minutes one Cured Bud runs a Buzz Bot.").defineInRange("botBudMinutes", 60, 1, 1440);
     private static final ModConfigSpec.IntValue BOT_CROSS_MINUTES = BUILDER.comment("How many minutes a Buzz Bot waits after one cross before the next.").defineInRange("botCrossMinutes", 5, 0, 1440);
     private static final ModConfigSpec.IntValue BOT_CHARGE_BI = BUILDER.comment("The BI a Buzz Bot takes from a Stash for one bud's worth of power.").defineInRange("botChargeBI", 4200, 1, 1_000_000);
+    private static final ModConfigSpec.DoubleValue CLIMATE_CHANCE = BUILDER.comment("Chance per Landrace harvest in a climate biome of a climate-touched seed. A Cosmic Kush Pod's copy gives half.").defineInRange("climateChance", com.malevolentgods.fourtwenty.domain.Climate.CHANCE, 0, 1);
     private static final ModConfigSpec.DoubleValue CROSS_TIME = BUILDER.comment("Multiplies how long a Pheno Chamber's cross takes.").defineInRange("crossTime", 1.0, 0.01, 100);
     private static final ModConfigSpec.DoubleValue[] GRADE_SPEEDS = {null, null, gradeSpeed(2), gradeSpeed(3), gradeSpeed(4), gradeSpeed(5)};
     private static final ModConfigSpec.IntValue RACK_TICKS = BUILDER
@@ -59,6 +60,7 @@ public final class ProcessingConfig {
     private static volatile Integer unitTicksOverride;
     private static volatile Integer crossTicksOverride;
     private static volatile Double pollenChanceOverride;
+    private static volatile Double climateChanceOverride;
     private static volatile Integer botChargeOverride;
 
     private ProcessingConfig() {}
@@ -107,6 +109,14 @@ public final class ProcessingConfig {
         var override = botChargeOverride;
         if (override != null) return override;
         return SPEC.isLoaded() ? BOT_CHARGE_BI.get() : 4200;
+    }
+
+    public static void overrideClimateChance(Double chance) { climateChanceOverride = chance; }
+
+    public static double climateChance() {
+        var override = climateChanceOverride;
+        if (override != null) return override;
+        return SPEC.isLoaded() ? CLIMATE_CHANCE.get() : com.malevolentgods.fourtwenty.domain.Climate.CHANCE;
     }
 
     public static double pollenChance() {

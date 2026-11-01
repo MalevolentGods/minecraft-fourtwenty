@@ -3,6 +3,7 @@ package com.malevolentgods.fourtwenty.gametest;
 import com.malevolentgods.fourtwenty.block.Pollination;
 import com.malevolentgods.fourtwenty.block.WeedCropBlock;
 import com.malevolentgods.fourtwenty.block.WeedCropBlockEntity;
+import com.malevolentgods.fourtwenty.domain.Climate;
 import com.malevolentgods.fourtwenty.domain.Strain;
 import com.malevolentgods.fourtwenty.domain.Traits;
 import com.malevolentgods.fourtwenty.entity.BuzzBot;
@@ -15,6 +16,7 @@ import com.malevolentgods.fourtwenty.registry.ModEntities;
 import com.malevolentgods.fourtwenty.registry.ModItems;
 import com.malevolentgods.fourtwenty.registry.ModPower;
 import com.malevolentgods.fourtwenty.power.BIBuffer;
+import com.malevolentgods.fourtwenty.power.GrowOpBlockEntity;
 import com.malevolentgods.fourtwenty.power.StashBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.AfterBatch;
@@ -89,6 +91,37 @@ public final class PhenoGameTests {
         });
     }
 
+    @GameTest(template = "empty", batch = BATCH)
+    public static void aClimateTouchedSeedSettlesAlone(GameTestHelper h) {
+        var pheno = chamber(h, ModPower.PHENO_CHAMBER.get());
+        var touched = seed(Strain.LANDRACE, new Traits(3, 4, 3));
+        touched.set(ModDataComponents.CLIMATE.get(), Climate.JUNGLE);
+        pheno.setItem(0, touched);
+        h.succeedWhen(() -> {
+            ItemStack out = pheno.getItem(PhenoBlockEntity.PARENTS);
+            h.assertTrue(ModDataComponents.strain(out) == Strain.CANOPY_CREEPER, "it settled, got " + out);
+            h.assertTrue(ModDataComponents.traits(out).equals(new Traits(3, 4, 3)), "keeping its traits");
+            h.assertTrue(out.get(ModDataComponents.CLIMATE.get()) == null, "and it's a plain seed now");
+        });
+    }
+
+    @GameTest(template = "empty", batch = "climate")
+    public static void aCosmicKushPodCopiesAClimate(GameTestHelper h) {
+        var crop = new BlockPos(1, 2, 1);
+        plant(h, crop, ModPower.COSMIC_KUSH_POD.get(), Strain.LANDRACE);
+        var pod = (GrowOpBlockEntity) h.getLevel().getBlockEntity(h.absolutePos(crop.below()));
+        var player = h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(net.minecraft.world.item.Items.LILY_PAD));
+        h.useBlock(crop.below(), player);
+        h.assertTrue(pod.climate() == Climate.SWAMP, "a lily pad is a swamp, got " + pod.climate());
+        ProcessingConfig.overrideClimateChance(1.0);
+        var seeds = java.util.stream.IntStream.range(0, 200).mapToObj(i -> Pollination.harvest(h.getBlockState(crop), h.getLevel(), h.absolutePos(crop), null)).filter(java.util.Objects::nonNull).toList();
+        ProcessingConfig.overrideClimateChance(null);
+        h.assertTrue(seeds.size() > 60 && seeds.size() < 140, "half the chance from a copy, got " + seeds.size());
+        h.assertTrue(seeds.stream().allMatch(s -> s.get(ModDataComponents.CLIMATE.get()) == Climate.SWAMP), "and the seeds are swamp-touched");
+        h.succeed();
+    }
+
     /** Double Crosses and up aren't for the Chamber, even a Cathedral. */
     @GameTest(template = "empty", batch = BATCH)
     public static void noChamberMakesWhatNeedsPollinating(GameTestHelper h) {
@@ -135,7 +168,7 @@ public final class PhenoGameTests {
         h.succeed();
     }
 
-    @GameTest(template = "empty", timeoutTicks = 400, batch = "bot_cross")
+    @GameTest(template = "empty", timeoutTicks = 900, batch = "bot_cross")
     public static void aBuzzBotMakesAnUltra(GameTestHelper h) {
         var a = new BlockPos(1, 2, 1);
         var b = new BlockPos(3, 2, 1);
@@ -155,7 +188,7 @@ public final class PhenoGameTests {
         });
     }
 
-    @GameTest(template = "empty", timeoutTicks = 300, batch = "bot_wander")
+    @GameTest(template = "empty", timeoutTicks = 900, batch = "bot_wander")
     public static void aBuzzBotStaysNearWeed(GameTestHelper h) {
         var plant = new BlockPos(3, 2, 3);
         plant(h, plant, ModPower.CLOSET_GROW.get(), Strain.LANDRACE);
@@ -168,7 +201,7 @@ public final class PhenoGameTests {
             h.assertTrue(bot.position().distanceTo(at) <= BuzzBot.REACH + 3, "it strayed to " + bot.position());
             moved[0] |= bot.position().distanceTo(start) > 1;
         });
-        h.runAfterDelay(250, () -> {
+        h.runAfterDelay(800, () -> {
             h.assertTrue(moved[0], "it wandered");
             bot.discard();
             h.succeed();

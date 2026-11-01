@@ -1,5 +1,6 @@
 package com.malevolentgods.fourtwenty.registry;
 
+import com.malevolentgods.fourtwenty.domain.Climate;
 import com.malevolentgods.fourtwenty.domain.Strain;
 import com.malevolentgods.fourtwenty.domain.Traits;
 import com.mojang.serialization.Codec;
@@ -26,6 +27,10 @@ public final class ModDataComponents {
     /** The traits of seeds, buds and joints. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Traits>> TRAITS = COMPONENTS.register("traits",
             () -> DataComponentType.<Traits>builder().persistent(Traits.CODEC).networkSynchronized(Traits.STREAM_CODEC).build());
+
+    /** On a Landrace seed: the climate it picked up, which a Pheno Chamber settles into a biome strain. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Climate>> CLIMATE = COMPONENTS.register("climate",
+            () -> DataComponentType.<Climate>builder().persistent(Climate.CODEC).networkSynchronized(Climate.STREAM_CODEC).build());
 
     /** What a pipe is loaded with: buds of one strain, used one per hit. */
     public record PipeLoad(Strain strain, int buds, Traits traits) {

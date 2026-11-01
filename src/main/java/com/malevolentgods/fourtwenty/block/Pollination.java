@@ -1,8 +1,10 @@
 package com.malevolentgods.fourtwenty.block;
 
+import com.malevolentgods.fourtwenty.domain.Climate;
 import com.malevolentgods.fourtwenty.domain.Crosses;
 import com.malevolentgods.fourtwenty.domain.Strain;
 import com.malevolentgods.fourtwenty.domain.Traits;
+import com.malevolentgods.fourtwenty.power.GrowOpBlockEntity;
 import com.malevolentgods.fourtwenty.processing.ProcessingConfig;
 import com.malevolentgods.fourtwenty.registry.ModDataComponents;
 import com.malevolentgods.fourtwenty.registry.ModItems;
@@ -10,10 +12,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 
 import javax.annotation.Nullable;
@@ -23,7 +27,8 @@ import java.util.Optional;
 
 /**
  * Double Crosses and up are made by pollinating, not in a Pheno Chamber. Grown side by side, Double Cross parents sometimes cross on their own, which shows at
- * harvest. A Buzz Bot does it for certain, and Ultras and Golden God only happen that way. Either way the hybrid needs a plot good enough to grow it.
+ * harvest. A Buzz Bot does it for certain, and Ultras and Golden God only happen that way. Either way the hybrid needs a plot good enough to grow it. Landrace
+ * has no partners, but sometimes picks up the climate it grew in instead.
  */
 public final class Pollination {
     /** How far up and down a Buzz Bot looks: a farm is flat, and its area is wide. */
@@ -74,6 +79,7 @@ public final class Pollination {
             crop.pollinate(null);
             return out;
         }
+        if (state.getValue(WeedCropBlock.STRAIN) == Strain.LANDRACE) return touched(level, pos, crop);
         Traits traits = crop == null ? Traits.DEFAULT : crop.traits();
         for (Direction side : Direction.Plane.HORIZONTAL) {
             BlockPos beside = pos.relative(side);
@@ -83,6 +89,27 @@ public final class Pollination {
             }
         }
         return null;
+    }
+
+    /** The climate a crop grows in: its Cosmic Kush Pod's copy, or the biome's. */
+    public static @Nullable Climate climate(ServerLevel level, BlockPos pos) {
+        if (level.getBlockEntity(pos.below()) instanceof GrowOpBlockEntity plot && plot.climate() != null) return plot.climate();
+        var biome = level.getBiome(pos);
+        if (biome.is(Tags.Biomes.IS_DESERT) || biome.is(BiomeTags.IS_BADLANDS)) return Climate.DESERT;
+        if (biome.is(Tags.Biomes.IS_SNOWY)) return Climate.SNOW;
+        if (biome.is(Tags.Biomes.IS_SWAMP)) return Climate.SWAMP;
+        return biome.is(BiomeTags.IS_JUNGLE) ? Climate.JUNGLE : null;
+    }
+
+    /** Landrace sometimes picks up the climate it grew in, half as often from a Pod's copy. */
+    private static @Nullable ItemStack touched(ServerLevel level, BlockPos pos, @Nullable WeedCropBlockEntity crop) {
+        Climate climate = climate(level, pos);
+        if (climate == null) return null;
+        boolean copied = level.getBlockEntity(pos.below()) instanceof GrowOpBlockEntity plot && plot.climate() != null;
+        if (level.random.nextDouble() >= ProcessingConfig.climateChance() * (copied ? Climate.COPIED : 1)) return null;
+        ItemStack seed = seed(Strain.LANDRACE, crop == null ? Traits.DEFAULT : crop.traits());
+        seed.set(ModDataComponents.CLIMATE.get(), climate);
+        return seed;
     }
 
     private static void onDrops(BlockDropsEvent event) {

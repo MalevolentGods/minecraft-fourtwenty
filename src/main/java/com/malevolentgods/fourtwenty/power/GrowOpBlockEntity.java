@@ -30,6 +30,7 @@ public class GrowOpBlockEntity extends BIBlockEntity implements MenuProvider {
     private final ContainerData data;
     private boolean running;
     private int plotState;
+    private @javax.annotation.Nullable com.malevolentgods.fourtwenty.domain.Climate climate;
 
     public GrowOpBlockEntity(BlockPos pos, BlockState state) {
         super(ModPower.GROW_OP_ENTITY.get(), pos, state);
@@ -70,13 +71,25 @@ public class GrowOpBlockEntity extends BIBlockEntity implements MenuProvider {
         return new BIMenu(id, this, data);
     }
 
+    /** The climate a Cosmic Kush Pod is copying, or null. */
+    public @javax.annotation.Nullable com.malevolentgods.fourtwenty.domain.Climate climate() { return climate; }
+
+    public void copy(com.malevolentgods.fourtwenty.domain.Climate climate) {
+        this.climate = climate;
+        setChanged();
+    }
+
     @Override protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putLong("bi", buffer.stored());
+        if (climate != null) tag.putInt("climate", climate.ordinal() + 1);
     }
 
     @Override protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         buffer.set(tag.getLong("bi"));
+        int saved = tag.getInt("climate");
+        var climates = com.malevolentgods.fourtwenty.domain.Climate.values();
+        climate = saved > 0 && saved <= climates.length ? climates[saved - 1] : null;
     }
 }

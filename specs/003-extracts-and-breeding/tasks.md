@@ -33,10 +33,10 @@
 
 ## Phase 3: Biome strains (US4)
 
-- [ ] T020 [P] [US4] Climates in J/domain/Climate.java with tests
-- [ ] T021 [US4] Climate-touched seeds from harvests, and settling in the Chamber
-- [ ] T022 [US4] Cosmic Kush Pod copies a climate, in J/power/GrowOpBlock.java and J/power/GrowOpBlockEntity.java
-- [ ] T023 [US4] Game tests
+- [X] T020 [P] [US4] Climates in J/domain/Climate.java with tests
+- [X] T021 [US4] Climate-touched seeds from harvests, and settling in the Chamber
+- [X] T022 [US4] Cosmic Kush Pod copies a climate, in J/power/GrowOpBlock.java and J/power/GrowOpBlockEntity.java
+- [X] T023 [US4] Game tests
 
 ## Phase 4: Golden God (US5)
 

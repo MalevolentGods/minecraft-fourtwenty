@@ -42,8 +42,8 @@ import java.util.List;
 public class BuzzBot extends Mob {
     public static final int REACH = 16, MAX_BUDS = 16;
     private static final EntityDataAccessor<Boolean> DORMANT = SynchedEntityData.defineId(BuzzBot.class, EntityDataSerializers.BOOLEAN);
-    private static final int LOOK_EVERY = 20, SURVEY_EVERY = 200, VISIT_TICKS = 30, DRIFT_TICKS = 8, LOW_POWER = 6000;
-    private static final double SPEED = 0.12, ARRIVED = 0.5;
+    private static final int LOOK_EVERY = 20, SURVEY_EVERY = 200, VISIT_TICKS = 80, DRIFT_TICKS = 40, LOW_POWER = 6000;
+    private static final double SPEED = 0.08, ARRIVED = 0.5;
 
     private BlockPos home;
     private BlockPos lastPlant;
