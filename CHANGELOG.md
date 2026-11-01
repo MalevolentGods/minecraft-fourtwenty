@@ -14,12 +14,17 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - **Think Tank:** research with no colony, using Grow Ops as test plots. Sixteen tier 1 studies teach the Minecraft colours.
 - **Blaze tier:** the Grand Hookah, The Vault and Gold Wick.
 - A flowering crop grows buds in its strain's colour, and Jade names the strain.
+- **Guard Tower 1-5** in the Sensi Heights pack.
+- **Hybrids:** Pheno Chambers, 22 new strains, and seed traits.
 
 ### Changed
 - Hookahs burn charcoal instead of flint and steel, lava or blaze powder, for one minute a burn.
 - A Budtender loads one Hookah session per 10 minutes, one bud at a time.
 - The Terpinator and Inspiration Infuser now need BI, or a high player within 21 blocks. Their recipes and outputs are unchanged.
 - Rough buds can't feed a Dispensary: colonies need cured buds supplied by a player until the Bud Barn.
+
+### Fixed
+- Domum roof tiles no longer flicker when made from glass.
 
 ### Removed
 - The 5% bonus seed roll on mature crops.
