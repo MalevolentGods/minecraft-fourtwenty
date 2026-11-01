@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
@@ -32,7 +33,9 @@ public final class GoldenGod {
     private GoldenGod() {}
 
     private static final String LENT = "fourtwenty.god_flight";
-    private static final int LANDING = 1200, LIGHT_EVERY = 3, LIGHT_LASTS = 8;
+    public static final int LIGHT_LASTS = 8;
+    private static final int LANDING = 1200, LIGHT_EVERY = 3;
+    private static final double LIGHT_REACH = 2.5;
     private static final Map<UUID, Long> GODS = new HashMap<>();
 
     public static boolean shining(ServerPlayer player) { return GODS.containsKey(player.getUUID()); }
@@ -82,12 +85,14 @@ public final class GoldenGod {
     public static void shed(ServerPlayer player) {
         BlockPos at = BlockPos.containing(player.getEyePosition());
         var level = player.serverLevel();
-        var block = ModPower.GOD_LIGHT.get();
-        if (!level.getBlockState(at).is(block)) {
-            if (!level.getBlockState(at).is(Blocks.AIR)) return;
-            level.setBlock(at, block.defaultBlockState(), Block.UPDATE_CLIENTS);
-        }
-        level.scheduleTick(at, block, LIGHT_LASTS);
+        if (!level.getBlockState(at).is(Blocks.AIR)) return;
+        level.setBlock(at, ModPower.GOD_LIGHT.get().defaultBlockState(), Block.UPDATE_CLIENTS);
+        level.scheduleTick(at, ModPower.GOD_LIGHT.get(), LIGHT_LASTS);
+    }
+
+    /** Whether a god is close enough to a block of their light to keep it on. It overlaps the next one as they walk, so the light never drops out. */
+    public static boolean lighting(Level level, BlockPos pos) {
+        return level.players().stream().anyMatch(p -> GODS.containsKey(p.getUUID()) && BlockPos.containing(p.getEyePosition()).closerThan(pos, LIGHT_REACH));
     }
 
     private static void loggedIn(PlayerEvent.PlayerLoggedInEvent event) {

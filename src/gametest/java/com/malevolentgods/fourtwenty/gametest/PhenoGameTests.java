@@ -274,6 +274,21 @@ public final class PhenoGameTests {
         h.succeedWhen(() -> h.assertTrue(h.getLevel().getBlockState(at).isAir() && !h.getLevel().getBlockState(at).is(ModPower.GOD_LIGHT.get()), "and leaves nothing behind"));
     }
 
+    /** It mustn't blink: a god standing still keeps the same light on, past when it would clear. */
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void aGodsLightStaysOnWhileTheyStay(GameTestHelper h) {
+        var god = h.makeMockServerPlayerInLevel();
+        god.moveTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(2.5, 3, 2.5)));
+        GoldenGod.ascend(god, 1000);
+        GoldenGod.shed(god);
+        var at = BlockPos.containing(god.getEyePosition());
+        h.onEachTick(() -> h.assertTrue(!GoldenGod.shining(god) || h.getLevel().getBlockState(at).is(ModPower.GOD_LIGHT.get()), "the light stays on"));
+        h.runAfterDelay(30, () -> {
+            GoldenGod.descend(god);
+            h.succeedWhen(() -> h.assertFalse(h.getLevel().getBlockState(at).is(ModPower.GOD_LIGHT.get()), "and goes when they do"));
+        });
+    }
+
     @GameTest(template = "empty")
     public static void floweringGoldenGodGlows(GameTestHelper h) {
         var crop = ModBlocks.WEED_CROP.get().defaultBlockState().setValue(WeedCropBlock.STRAIN, Strain.GOLDEN_GOD);
