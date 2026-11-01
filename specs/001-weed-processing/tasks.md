@@ -90,7 +90,7 @@ Paths are relative to the repo root. `J` = `src/main/java/com/malevolentgods/fou
 
 - [X] T043 [P] Update README.md, the in-game guide text and CHANGELOG.md
 - [ ] T044 Run the full quickstart regression on a copy of a 0.14.1 world
-- [ ] T045 Open the PR; release 0.15.0 only on the user's go
+- [X] T045 Open the PR; release 0.15.0 only on the user's go
 
 ## Dependencies
 
