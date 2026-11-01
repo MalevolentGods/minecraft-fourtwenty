@@ -135,7 +135,7 @@ public final class PhenoGameTests {
         h.succeed();
     }
 
-    @GameTest(template = "empty", timeoutTicks = 400)
+    @GameTest(template = "empty", timeoutTicks = 400, batch = "bot_cross")
     public static void aBuzzBotMakesAnUltra(GameTestHelper h) {
         var a = new BlockPos(1, 2, 1);
         var b = new BlockPos(3, 2, 1);
@@ -144,6 +144,7 @@ public final class PhenoGameTests {
         var bot = h.spawn(ModEntities.BUZZ_BOT.get(), new BlockPos(2, 3, 2));
         bot.addBuds(1);
         h.succeedWhen(() -> {
+            h.assertTrue(bot.cooldown() > 0, "it pollinated, and now it waits");
             BlockPos done = WeedCropBlockEntity.class.cast(h.getLevel().getBlockEntity(h.absolutePos(a))).pollen() != null ? a : b;
             var crop = (WeedCropBlockEntity) h.getLevel().getBlockEntity(h.absolutePos(done));
             h.assertTrue(crop.pollen() != null && crop.pollen().strain() == Strain.THE_ELDER_BUD, "it left the Ultra's pollen");
@@ -154,7 +155,7 @@ public final class PhenoGameTests {
         });
     }
 
-    @GameTest(template = "empty", timeoutTicks = 300)
+    @GameTest(template = "empty", timeoutTicks = 300, batch = "bot_wander")
     public static void aBuzzBotStaysNearWeed(GameTestHelper h) {
         var plant = new BlockPos(3, 2, 3);
         plant(h, plant, ModPower.CLOSET_GROW.get(), Strain.LANDRACE);
@@ -174,7 +175,15 @@ public final class PhenoGameTests {
         });
     }
 
-    @GameTest(template = "empty", timeoutTicks = 300)
+    /** Stashes left by other tests stay in the world within a Bot's 16 blocks: none of them holds enough to wake this one. */
+    @BeforeBatch(batch = "bot_sleep")
+    public static void stashesTooLow(ServerLevel level) { ProcessingConfig.overrideBotCharge(Integer.MAX_VALUE); }
+
+    @AfterBatch(batch = "bot_sleep")
+    public static void stashesAsNormal(ServerLevel level) { ProcessingConfig.overrideBotCharge(null); }
+
+    /** A Bot reaches 16 blocks, past the next test's structure, so each runs in a batch of its own. */
+    @GameTest(template = "empty", timeoutTicks = 300, batch = "bot_sleep")
     public static void aBuzzBotOutOfPowerGoesHomeAndSleeps(GameTestHelper h) {
         var home = new BlockPos(1, 2, 1);
         var bot = h.spawn(ModEntities.BUZZ_BOT.get(), new BlockPos(4, 4, 4));
@@ -189,7 +198,7 @@ public final class PhenoGameTests {
         });
     }
 
-    @GameTest(template = "empty", timeoutTicks = 300)
+    @GameTest(template = "empty", timeoutTicks = 300, batch = "bot_charge")
     public static void aBuzzBotRechargesAtAStash(GameTestHelper h) {
         var jar = new BlockPos(3, 2, 3);
         h.setBlock(jar, ModPower.STASH_JAR.get());

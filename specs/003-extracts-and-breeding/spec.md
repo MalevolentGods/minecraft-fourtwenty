@@ -112,11 +112,11 @@ Double Cross parents grown side by side sometimes cross at harvest. A Buzz Bot, 
 **Acceptance Scenarios**:
 
 1. **Given** two ripe parents of a Double Cross side by side on plots that can grow it, **When** one is harvested, **Then** there is a 5% chance of the hybrid's seed, with traits as a Chamber cross.
-2. **Given** a fuelled Buzz Bot within 7 blocks of two ripe parents, **When** it has carried pollen between them, **Then** the crop's next harvest gives the hybrid for certain, once.
+2. **Given** a fuelled Buzz Bot within 16 blocks of two ripe parents, past its 5 minute wait since its last cross, **When** it has carried pollen between them, **Then** the crop's next harvest gives the hybrid for certain, once.
 3. **Given** parents of an Ultra side by side and no Buzz Bot, **When** harvested, **Then** they never cross.
 4. **Given** a plot that can't grow the hybrid, **When** a Bot looks for work, **Then** it leaves those crops alone.
-5. **Given** a fuelled Buzz Bot, **When** it has nothing to cross, **Then** it wanders like a bee, visiting weed plants and never straying more than 7 blocks from one.
-6. **Given** a Buzz Bot low on power with a Stash within 7 blocks that holds 4,200 BI, **When** it next looks, **Then** it flies there and takes that BI for one bud's worth of power.
+5. **Given** a fuelled Buzz Bot, **When** it has nothing to cross, **Then** it wanders like a bee, visiting weed plants and never straying more than 16 blocks from one.
+6. **Given** a Buzz Bot low on power with a Stash within 16 blocks that holds 4,200 BI, **When** it next looks, **Then** it flies there and takes that BI for one bud's worth of power.
 7. **Given** a Buzz Bot out of power, **When** nothing can run it, **Then** it flies back to the block it was set down in and sleeps with Zzzs until it has power again.
 8. **Given** a Buzz Bot, **When** a player hits it, **Then** it packs up into its item and gives back its buds, and nothing else can hurt it.
 

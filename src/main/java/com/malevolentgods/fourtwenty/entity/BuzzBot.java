@@ -4,6 +4,7 @@ import com.malevolentgods.fourtwenty.block.Pollination;
 import com.malevolentgods.fourtwenty.power.MachinePower;
 import com.malevolentgods.fourtwenty.power.StashBlockEntity;
 import com.malevolentgods.fourtwenty.processing.ProcessingConfig;
+import com.malevolentgods.fourtwenty.registry.ModBlocks;
 import com.malevolentgods.fourtwenty.registry.ModItems;
 import com.malevolentgods.fourtwenty.registry.ModPower;
 import net.minecraft.core.BlockPos;
@@ -29,17 +30,19 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * A little robot bee. One Cured Bud runs it for about an hour, and it runs free while a high player is near. Running, it wanders like a bee from weed plant to
- * weed plant, never more than 7 blocks from one, and where two ripe crops can cross it carries pollen between them for a guaranteed hybrid at the next harvest.
+ * weed plant, never more than 16 blocks from one, and now and then, where two ripe crops can cross, it carries pollen between them for a guaranteed hybrid at
+ * the next harvest.
  * Running low, it tops itself up at any Stash in reach. Out of power, it flies back to the block it was set down in and sleeps until it has power again.
  * Hit it and it packs up, giving back its unspent buds. Nothing else can hurt it.
  */
 public class BuzzBot extends Mob {
-    public static final int REACH = 7, MAX_BUDS = 16;
+    public static final int REACH = 16, MAX_BUDS = 16;
     private static final EntityDataAccessor<Boolean> DORMANT = SynchedEntityData.defineId(BuzzBot.class, EntityDataSerializers.BOOLEAN);
-    private static final int LOOK_EVERY = 20, VISIT_TICKS = 30, DRIFT_TICKS = 8, LOW_POWER = 6000;
+    private static final int LOOK_EVERY = 20, SURVEY_EVERY = 200, VISIT_TICKS = 30, DRIFT_TICKS = 8, LOW_POWER = 6000;
     private static final double SPEED = 0.12, ARRIVED = 0.5;
 
     private BlockPos home;
@@ -50,6 +53,8 @@ public class BuzzBot extends Mob {
     private Vec3 wander;
     private int rest;
     private int power;
+    private int cooldown;
+    private List<BlockPos> plants = List.of();
 
     public BuzzBot(EntityType<? extends BuzzBot> type, Level level) {
         super(type, level);
@@ -73,6 +78,8 @@ public class BuzzBot extends Mob {
 
     public void setPower(int ticks) { power = ticks; }
 
+    public int cooldown() { return cooldown; }
+
     public void setHome(BlockPos pos) { home = pos.immutable(); }
 
     public void addBuds(int buds) { power = Math.min(MAX_BUDS * ProcessingConfig.botBudTicks(), power + buds * ProcessingConfig.botBudTicks()); }
@@ -89,6 +96,7 @@ public class BuzzBot extends Mob {
         boolean looking = tickCount % LOOK_EVERY == 0;
         if (looking) high = MachinePower.highNear(server, blockPosition());
         if (!high && power > 0) power--;
+        if (cooldown > 0) cooldown--;
         if (charge(server, looking)) return;
         if (!high && power <= 0) {
             from = to = null;
@@ -98,8 +106,9 @@ public class BuzzBot extends Mob {
         }
         entityData.set(DORMANT, false);
         if (from == null) {
-            if (looking) {
-                BlockPos[] pair = Pollination.findPair(server, blockPosition(), REACH);
+            if (tickCount % SURVEY_EVERY == 0 || plants.isEmpty() && looking) plants = Pollination.plants(server, blockPosition(), REACH);
+            if (tickCount % SURVEY_EVERY == 0 && cooldown <= 0) {
+                BlockPos[] pair = Pollination.findPair(server, plants);
                 if (pair != null) {
                     from = pair[0];
                     to = pair[1];
@@ -116,7 +125,7 @@ public class BuzzBot extends Mob {
             if (!carrying) {
                 carrying = true;
             } else {
-                Pollination.pollinate(server, from, to);
+                if (Pollination.pollinate(server, from, to)) cooldown = ProcessingConfig.botCrossTicks();
                 from = to = null;
             }
         }
@@ -144,7 +153,7 @@ public class BuzzBot extends Mob {
 
     private @Nullable BlockPos findStash(ServerLevel server) {
         BlockPos at = blockPosition();
-        for (BlockPos pos : BlockPos.betweenClosed(at.offset(-REACH, -REACH, -REACH), at.offset(REACH, REACH, REACH))) {
+        for (BlockPos pos : BlockPos.betweenClosed(at.offset(-REACH, -6, -REACH), at.offset(REACH, 6, REACH))) {
             if (pos.closerThan(at, REACH) && server.getBlockEntity(pos) instanceof StashBlockEntity stash && stash.node().stored() >= ProcessingConfig.botChargeBI()) {
                 return pos.immutable();
             }
@@ -170,7 +179,8 @@ public class BuzzBot extends Mob {
             rest--;
             return;
         }
-        BlockPos plant = Pollination.randomPlant(server, blockPosition(), REACH, random);
+        BlockPos plant = plants.isEmpty() ? null : plants.get(random.nextInt(plants.size()));
+        if (plant != null && !server.getBlockState(plant).is(ModBlocks.WEED_CROP.get())) plant = null;
         if (plant != null) lastPlant = plant;
         if (lastPlant == null) return;
         if (plant != null && random.nextBoolean()) {
@@ -226,6 +236,7 @@ public class BuzzBot extends Mob {
     @Override public void addAdditionalSaveData(@Nonnull CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("Power", power);
+        tag.putInt("Cooldown", cooldown);
         tag.putBoolean("Dormant", dormant());
         if (home != null) tag.put("Home", NbtUtils.writeBlockPos(home));
         if (lastPlant != null) tag.put("LastPlant", NbtUtils.writeBlockPos(lastPlant));
@@ -234,6 +245,7 @@ public class BuzzBot extends Mob {
     @Override public void readAdditionalSaveData(@Nonnull CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         power = tag.getInt("Power");
+        cooldown = tag.getInt("Cooldown");
         entityData.set(DORMANT, tag.getBoolean("Dormant"));
         home = NbtUtils.readBlockPos(tag, "Home").orElse(null);
         lastPlant = NbtUtils.readBlockPos(tag, "LastPlant").orElse(null);

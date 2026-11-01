@@ -10,7 +10,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,6 +26,9 @@ import java.util.Optional;
  * harvest. A Buzz Bot does it for certain, and Ultras and Golden God only happen that way. Either way the hybrid needs a plot good enough to grow it.
  */
 public final class Pollination {
+    /** How far up and down a Buzz Bot looks: a farm is flat, and its area is wide. */
+    private static final int HEIGHT = 6;
+
     private Pollination() {}
 
     public static void register() {
@@ -89,21 +91,19 @@ public final class Pollination {
         if (seed != null) event.getDrops().add(new ItemEntity(event.getLevel(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, seed));
     }
 
-    /** Any weed plant in reach of {@code around}, ripe or not. */
-    public static @Nullable BlockPos randomPlant(ServerLevel level, BlockPos around, int reach, RandomSource random) {
+    /** Every weed plant in reach of {@code around}, ripe or not. */
+    public static List<BlockPos> plants(ServerLevel level, BlockPos around, int reach) {
         List<BlockPos> plants = new ArrayList<>();
-        for (BlockPos pos : BlockPos.betweenClosed(around.offset(-reach, -reach, -reach), around.offset(reach, reach, reach))) {
+        for (BlockPos pos : BlockPos.betweenClosed(around.offset(-reach, -HEIGHT, -reach), around.offset(reach, HEIGHT, reach))) {
             if (level.getBlockState(pos).getBlock() instanceof WeedCropBlock && pos.closerThan(around, reach)) plants.add(pos.immutable());
         }
-        return plants.isEmpty() ? null : plants.get(random.nextInt(plants.size()));
+        return plants;
     }
 
-    /** Two ripe crops in reach of {@code around} that can cross: the source, then the target. */
-    public static @Nullable BlockPos[] findPair(ServerLevel level, BlockPos around, int reach) {
+    /** Two ripe crops out of {@code plants} that can cross: the source, then the target. */
+    public static @Nullable BlockPos[] findPair(ServerLevel level, List<BlockPos> plants) {
         List<BlockPos> ripe = new ArrayList<>();
-        for (BlockPos pos : BlockPos.betweenClosed(around.offset(-reach, -reach, -reach), around.offset(reach, reach, reach))) {
-            if (ripe(level.getBlockState(pos)) && pos.closerThan(around, reach)) ripe.add(pos.immutable());
-        }
+        for (BlockPos pos : plants) if (ripe(level.getBlockState(pos))) ripe.add(pos);
         for (BlockPos from : ripe) {
             for (BlockPos to : ripe) {
                 if (!from.equals(to) && canPollinate(level, from, to)) return new BlockPos[]{from, to};
