@@ -19,17 +19,22 @@ public final class BongTendingRules {
     public static final int SESSION_EVERY = 12_000;
 
     /** What the bong is missing. {@code fuelId} is whatever sits in the fuel slot ("minecraft:air" when empty). */
-    public record Need(boolean buds, boolean water, boolean fuel, boolean clearBucket) {
-        public boolean any() { return buds || water || fuel || clearBucket; }
+    public record Need(boolean buds, boolean water, boolean fuel, boolean clearBucket, boolean light) {
+        public boolean any() { return buds || water || fuel || clearBucket || light; }
     }
 
     /**
      * What a visit would add. Water and fuel are kept ready at all times (set-up); buds only while
-     * {@code serving} customers, since a bong with all three lights at once.
+     * {@code serving} customers. With everything in place and nothing burning, serving also means lighting it: a bong only lights itself when something needs its power.
      */
-    public static Need need(int buds, boolean hasWater, String fuelId, boolean serving) {
+    public static Need need(int buds, boolean hasWater, String fuelId, boolean serving, boolean lit) {
         boolean usableFuel = BongFuel.isFuel(fuelId);
-        return new Need(serving && buds <= 0, !hasWater, !usableFuel, !usableFuel && !EMPTY.equals(fuelId));
+        return new Need(serving && buds <= 0, !hasWater, !usableFuel, !usableFuel && !EMPTY.equals(fuelId), serving && !lit && buds > 0 && hasWater && usableFuel);
+    }
+
+    /** What a bong that's already burning is missing. */
+    public static Need need(int buds, boolean hasWater, String fuelId, boolean serving) {
+        return need(buds, hasWater, fuelId, serving, true);
     }
 
     /** The best fuel the budtender can get, given counts available by item id. */
@@ -47,7 +52,7 @@ public final class BongTendingRules {
      * missing buds or fuel must be in stock (otherwise they are requested instead).
      */
     public static boolean canFix(Need need, int budsAvailable, Optional<String> fuelAvailable) {
-        return (need.buds() && budsAvailable > 0) || need.water() || need.clearBucket()
+        return (need.buds() && budsAvailable > 0) || need.water() || need.clearBucket() || need.light()
                 || (need.fuel() && fuelAvailable.isPresent());
     }
 

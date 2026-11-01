@@ -72,6 +72,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
                 case 5 -> (int) buffer.stored();
                 case 6 -> (int) buffer.capacity();
                 case 7 -> buffer.tier().ordinal();
+                case 8 -> canLight() ? 1 : 0;
                 default -> 0;
             };
         }
@@ -79,7 +80,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
             if (index == 0) isLit = value != 0;
             if (index == 1) burnTime = value;
         }
-        public int getCount() { return 8; }
+        public int getCount() { return 9; }
     };
 
     // A caller retaining an old handler after movement must not mutate the old inventory.
@@ -122,7 +123,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
 
     public static int slotLimit(int slot) {
         return switch (slot) {
-            case WEED_SLOT -> 4;
+            case WEED_SLOT -> 64;
             case WATER_SLOT -> 1;
             case BLAZE_POWDER_SLOT -> 64;
             default -> throw new IndexOutOfBoundsException(slot);
@@ -236,7 +237,8 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
 
     private void serverTick() {
         migrateLegacyBurn();
-        if (!isLit && canLight()) lightBong(null);
+        // It only starts itself for something that needs the power. Anyone can start a session with the Light button.
+        if (!isLit && push.wanted() && canLight()) lightBong(null);
         var tier = buffer.tier();
         if (isLit && hasWater()) {
             made += tier.rate();
@@ -279,6 +281,8 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
 
     private void applyBongEffects(ServerPlayer player) {
         com.malevolentgods.fourtwenty.util.StrainEffects.markHigh(player, 1200);
+        var tint = new com.malevolentgods.fourtwenty.util.StrainEffects.Tint(com.malevolentgods.fourtwenty.domain.Strain.LANDRACE, 0);
+        if (player.connection.hasChannel(tint.type())) player.connection.send(tint);
         player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.REGENERATION, 400, 1));
         player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.NIGHT_VISION, 1200, 0));
         player.addEffect(com.malevolentgods.fourtwenty.util.SmokeEffects.quiet(MobEffects.LUCK, 600, 0));

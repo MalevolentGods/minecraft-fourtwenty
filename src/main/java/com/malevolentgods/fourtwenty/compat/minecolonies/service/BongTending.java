@@ -51,8 +51,8 @@ public final class BongTending {
      * caller skips the native work AI (otherwise both would steer the worker).
      *
      * <p>Without customers the budtender only sets bongs up (water and fuel), so they do not burn
-     * to an empty room; with customers around it adds buds and the bong lights itself. Queued
-     * customers are always served first.
+     * to an empty room; with customers around it adds a bud if there's none and lights the bong,
+     * one session per ten minutes. Queued customers are always served first.
      */
     public boolean tick(EntityCitizen worker, DispensaryBuilding building, long now, Supplies supplies) {
         if (target == null) {
@@ -94,7 +94,8 @@ public final class BongTending {
     /**
      * Raise native requests for what the bongs are missing and nobody has stocked (water is free).
      * Buds are stocked ahead of customers (needs are checked as if serving), so the bong can be
-     * lit the moment someone walks in; they are only put in the bong while serving.
+     * lit the moment someone walks in; they are only put in the bong while serving, and a bong
+     * already holding buds, from a player or a tube, just gets lit.
      */
     private void requestSupplies(EntityCitizen worker, DispensaryBuilding building, boolean serving, Supplies supplies) {
         int needFuel = 0, needBuds = 0;
@@ -136,10 +137,10 @@ public final class BongTending {
     private static BongTendingRules.Need need(WeedBongBlockEntity bong, boolean serving) {
         var buds = bong.getItem(WeedBongBlockEntity.WEED_SLOT);
         return BongTendingRules.need(buds.is(ModItems.WEED_BUD.get()) ? buds.getCount() : 0,
-                bong.getItem(WeedBongBlockEntity.WATER_SLOT).is(Items.WATER_BUCKET), id(bong.getItem(WeedBongBlockEntity.FUEL_SLOT)), serving);
+                bong.getItem(WeedBongBlockEntity.WATER_SLOT).is(Items.WATER_BUCKET), id(bong.getItem(WeedBongBlockEntity.FUEL_SLOT)), serving, bong.isLit());
     }
 
-    /** Returns whether it loaded a session. */
+    /** Returns whether it lit a session. */
     private boolean refill(EntityCitizen worker, DispensaryBuilding building, WeedBongBlockEntity bong, boolean serving) {
         var sources = sources(worker, building);
         var into = bong.itemHandler();
@@ -156,14 +157,14 @@ public final class BongTending {
                 move(sources, s -> s.is(fuel), BongTendingRules.fuelAmount(fuelId), into, WeedBongBlockEntity.FUEL_SLOT);
             });
         }
-        // Buds last, and only with customers around: the bong lights as soon as it has all three.
-        boolean loaded = false;
+        // Buds last, and only with customers around.
         if (serving && into.getStackInSlot(WeedBongBlockEntity.WEED_SLOT).isEmpty()) {
             move(sources, s -> s.is(ModItems.WEED_BUD.get()), 1, into, WeedBongBlockEntity.WEED_SLOT);
-            loaded = !into.getStackInSlot(WeedBongBlockEntity.WEED_SLOT).isEmpty();
         }
+        boolean lit = serving && bong.canLight();
+        if (lit) bong.lightBong(null);
         worker.swing(InteractionHand.MAIN_HAND);
-        return loaded;
+        return lit;
     }
 
     /** The worker's own inventory first, then the hut's storage. */

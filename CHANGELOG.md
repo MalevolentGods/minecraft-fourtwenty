@@ -13,11 +13,15 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - **Grow Ops:** Closet Grow, Grow Tent, Hydro Bed, Aero Pod and Cosmic Kush Pod, 1.5 to 8 times as fast, upgraded in place. The top two give bigger harvests and replant.
 - **Think Tank:** research with no colony, using Grow Ops as test plots. Sixteen tier 1 studies teach the Minecraft colours.
 - **Blaze tier:** the Grand Hookah, The Vault and Gold Wick.
+- **Transport Tubes:** one tube, no tiers. Any number of machines share a network and items run both ways. A network into an unloaded chunk stops its machines.
+- **Pollination and the Buzz Bot**, biome strains, and the Golden God.
 - A flowering crop grows buds in its strain's colour, and Jade names the strain.
 - **Guard Tower 1-5** in the Sensi Heights pack.
 - **Hybrids:** Pheno Chambers, 22 new strains, and seed traits.
 
 ### Changed
+- Hookahs hold 64 buds and only start themselves when something on their Wicks needs power. The Light button starts a session any time.
+- Smoking shows one badge of what was smoked instead of a row of effect icons. Hover over it in your inventory for the list.
 - Hookahs burn charcoal instead of flint and steel, lava or blaze powder, for one minute a burn.
 - A Budtender loads one Hookah session per 10 minutes, one bud at a time.
 - The Terpinator and Inspiration Infuser now need BI, or a high player within 21 blocks. Their recipes and outputs are unchanged.

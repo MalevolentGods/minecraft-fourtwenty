@@ -28,6 +28,7 @@ public final class BongGameTests {
         b.setItem(0, new ItemStack(ModItems.WEED_BUD.get(), buds));
         b.setItem(1, new ItemStack(Items.WATER_BUCKET));
         b.setItem(2, new ItemStack(Items.CHARCOAL, fuel));
+        b.lightBong(null);
     }
     private static void tick(GameTestHelper h, WeedBongBlockEntity b) {
         WeedBongBlockEntity.tick(h.getLevel(), b.getBlockPos(), b.getBlockState(), b);
@@ -40,10 +41,11 @@ public final class BongGameTests {
             var handler = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, b.getBlockPos(), side);
             h.assertTrue(handler != null, "Every side has a handler");
             var incoming = new ItemStack(ModItems.WEED_BUD.get(), 64);
-            h.assertTrue(handler.insertItem(0, incoming, true).getCount() == 60 && b.isEmpty(), "Simulation preserves inventory");
-            h.assertTrue(handler.insertItem(0, incoming, false).getCount() == 60 && incoming.getCount() == 64, "Partial insert returns remainder without mutating input");
-            h.assertTrue(handler.extractItem(0, 64, true).getCount() == 4 && b.getItem(0).getCount() == 4, "Extraction simulation is read-only");
-            h.assertTrue(handler.extractItem(0, 64, false).getCount() == 4 && b.isEmpty(), "Exactly four buds extracted");
+            h.assertTrue(handler.insertItem(0, incoming.copyWithCount(60), true).isEmpty() && b.isEmpty(), "Simulation preserves inventory");
+            b.setItem(0, new ItemStack(ModItems.WEED_BUD.get(), 60));
+            h.assertTrue(handler.insertItem(0, incoming, false).getCount() == 60 && incoming.getCount() == 64 && b.getItem(0).getCount() == 64, "Partial insert returns remainder without mutating input");
+            h.assertTrue(handler.extractItem(0, 64, true).getCount() == 64 && b.getItem(0).getCount() == 64, "Extraction simulation is read-only");
+            h.assertTrue(handler.extractItem(0, 64, false).getCount() == 64 && b.isEmpty(), "Every bud extracted");
             for (int slot = 0; slot < 3; slot++) h.assertTrue(handler.insertItem(slot, new ItemStack(Items.DIAMOND), false).is(Items.DIAMOND), "Wrong ingredients rejected");
         }
         h.assertTrue(!b.canLight(), "Invalid insertions cannot ignite");
@@ -61,6 +63,23 @@ public final class BongGameTests {
         h.assertTrue(b.isLit() && b.getItem(2).getCount() == 3, "Paid charge survives extraction of queued buds");
         b.itemHandler().extractItem(1, 1, false);
         h.assertTrue(!b.isLit() && b.getItem(0).isEmpty() && b.getItem(2).getCount() == 3, "Water removal extinguishes without refund");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void itWaitsToBeLitWithNothingToPower(GameTestHelper h) {
+        var b = place(h);
+        b.setItem(0, new ItemStack(ModItems.WEED_BUD.get(), 64));
+        b.setItem(1, new ItemStack(Items.WATER_BUCKET));
+        b.setItem(2, new ItemStack(Items.CHARCOAL, 4));
+        tick(h, b);
+        tick(h, b);
+        h.assertTrue(!b.isLit() && b.getItem(0).getCount() == 64, "Nothing needs the power, so it doesn't burn");
+        var player = h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        player.setPos(b.getBlockPos().getCenter());
+        var menu = b.createMenu(1, player.getInventory(), player);
+        h.assertTrue(menu.clickMenuButton(player, com.malevolentgods.fourtwenty.menu.WeedBongMenu.LIGHT), "The Light button works");
+        h.assertTrue(b.isLit() && b.getItem(0).getCount() == 63, "and starts a session");
         h.succeed();
     }
 
@@ -133,14 +152,14 @@ public final class BongGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 180)
-    public static void nativeHopperRespectsFourBudLimit(GameTestHelper h) {
+    public static void nativeHopperFillsTheBudSlot(GameTestHelper h) {
         var b = place(h);
         h.setBlock(POS.above(), Blocks.HOPPER.defaultBlockState().setValue(HopperBlock.FACING, Direction.DOWN));
         var hopper = (HopperBlockEntity) h.getBlockEntity(POS.above());
         hopper.setItem(0, new ItemStack(ModItems.WEED_BUD.get(), 64));
         h.runAfterDelay(100, () -> {
-            h.assertTrue(b.getItem(0).getCount() == 4, "Hopper stops at four buds");
-            h.assertTrue(hopper.getItem(0).getCount() == 60, "Hopper retains every remaining bud");
+            h.assertTrue(b.getItem(0).getCount() > 0, "Buds went in");
+            h.assertTrue(b.getItem(0).getCount() + hopper.getItem(0).getCount() == 64, "Every bud is accounted for");
             h.succeed();
         });
     }
@@ -154,12 +173,13 @@ public final class BongGameTests {
         second.setPos(first.position());
         var menu = b.createMenu(1, first.getInventory(), first);
         var viewer = b.createMenu(2, second.getInventory(), second);
+        b.setItem(0, new ItemStack(ModItems.WEED_BUD.get(), 60));
         first.getInventory().setItem(9, new ItemStack(ModItems.WEED_BUD.get(), 64));
         menu.quickMoveStack(first, 3);
-        h.assertTrue(first.getInventory().getItem(9).getCount() == 60 && viewer.getSlot(0).getItem().getCount() == 4,
+        h.assertTrue(first.getInventory().getItem(9).getCount() == 60 && viewer.getSlot(0).getItem().getCount() == 64,
             "Shift click inserts only capacity and both viewers share inventory");
         viewer.quickMoveStack(second, 0);
-        h.assertTrue(b.getItem(0).isEmpty() && second.getInventory().countItem(ModItems.WEED_BUD.get()) == 4,
+        h.assertTrue(b.getItem(0).isEmpty() && second.getInventory().countItem(ModItems.WEED_BUD.get()) == 64,
             "Other viewer extracts exactly the shared contents");
         h.succeed();
     }

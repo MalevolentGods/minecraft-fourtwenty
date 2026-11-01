@@ -23,6 +23,11 @@ public final class BIPush {
         return route != null && !route.sinks().isEmpty();
     }
 
+    /** Whether anything on this route has room for power, as of the last push. */
+    public boolean wanted() {
+        return route != null && route.sinks().stream().anyMatch(s -> s.node().stored() < s.node().capacity());
+    }
+
     /** Pushes {@code rate} BI per tick from {@code from}, as power of {@code tier}, shared between the sinks {@code accept} allows. Returns what moved. */
     public long push(Level level, BlockPos pos, Collection<Direction> faces, BIRules.Tier tier, double rate, BINode from, Predicate<BINode> accept) {
         long now = level.getGameTime();

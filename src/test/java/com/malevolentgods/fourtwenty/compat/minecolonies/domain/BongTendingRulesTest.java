@@ -7,6 +7,14 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BongTendingRulesTest {
+    @Test void aReadyBongNeedsLightingWhileServing() {
+        assertTrue(BongTendingRules.need(3, true, BongFuel.CHARCOAL, true, false).light());
+        assertFalse(BongTendingRules.need(3, true, BongFuel.CHARCOAL, true, true).light(), "already burning");
+        assertFalse(BongTendingRules.need(3, true, BongFuel.CHARCOAL, false, false).light(), "nobody to serve");
+        assertFalse(BongTendingRules.need(0, true, BongFuel.CHARCOAL, true, false).light(), "nothing to burn");
+        assertTrue(BongTendingRules.canFix(BongTendingRules.need(3, true, BongFuel.CHARCOAL, true, false), 0, Optional.empty()), "worth the walk");
+    }
+
     @Test void fullBongNeedsNothing() {
         assertFalse(BongTendingRules.need(2, true, BongFuel.CHARCOAL, true).any());
         assertFalse(BongTendingRules.need(1, true, BongFuel.CHARCOAL, false).any());

@@ -43,6 +43,7 @@ public final class PowerGameTests {
         hookah.setItem(WeedBongBlockEntity.WEED_SLOT, new ItemStack(ModItems.WEED_BUD.get(), 2));
         hookah.setItem(WeedBongBlockEntity.WATER_SLOT, new ItemStack(net.minecraft.world.item.Items.WATER_BUCKET));
         hookah.setItem(WeedBongBlockEntity.FUEL_SLOT, new ItemStack(net.minecraft.world.item.Items.CHARCOAL));
+        hookah.lightBong(null);
     }
 
     private static void charge(MachineBlockEntity machine) {
@@ -173,6 +174,18 @@ public final class PowerGameTests {
             h.assertTrue(hookah.node().stored() >= 100, "and makes Rip power, at " + hookah.node().stored());
             h.assertTrue(hookah.node().tier() == com.malevolentgods.fourtwenty.domain.BIRules.Tier.RIP, "Big Bertha is Rip");
         });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 60)
+    public static void aHookahLightsItselfForAStashWithRoom(GameTestHelper h) {
+        h.setBlock(A, com.malevolentgods.fourtwenty.registry.ModBlocks.WEED_BONG.get());
+        h.setBlock(B, ModPower.HEMP_WICK.get());
+        h.setBlock(C, ModPower.STASH_JAR.get());
+        var hookah = (WeedBongBlockEntity) h.getBlockEntity(A);
+        hookah.setItem(WeedBongBlockEntity.WEED_SLOT, new ItemStack(ModItems.WEED_BUD.get(), 2));
+        hookah.setItem(WeedBongBlockEntity.WATER_SLOT, new ItemStack(net.minecraft.world.item.Items.WATER_BUCKET));
+        hookah.setItem(WeedBongBlockEntity.FUEL_SLOT, new ItemStack(net.minecraft.world.item.Items.CHARCOAL));
+        h.succeedWhen(() -> h.assertTrue(hookah.isLit(), "something needs power, so it started"));
     }
 
     @GameTest(template = "empty", timeoutTicks = 60)

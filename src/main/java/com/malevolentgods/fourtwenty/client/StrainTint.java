@@ -28,6 +28,9 @@ public final class StrainTint {
     private static Strain strain = Strain.LANDRACE;
     private static long start, end;
 
+    /** The strain last smoked. */
+    public static Strain smoked() { return strain; }
+
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
         // Bud and joint icons per strain (models/item/<item>.json overrides on this property: ordinal / 16).
