@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.16.0] - The Construction Crew
 
 ### Added
 - **Construction Blunt, Spliff and Cannon:** bench upgrades that make 3, 4 and 6 times as many blocks.
