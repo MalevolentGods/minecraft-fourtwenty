@@ -129,10 +129,14 @@ def twine(size=32):
 def box(a, b, tex, **faces):
     x0, y0, z0 = a
     x1, y1, z1 = b
-    wrap = lambda v: max(0, min(16, v))
-    uvs = {'north': [x0, 16 - y1, x1, 16 - y0], 'south': [x0, 16 - y1, x1, 16 - y0], 'east': [z0, 16 - y1, z1, 16 - y0],
-           'west': [z0, 16 - y1, z1, 16 - y0], 'up': [x0, z0, x1, z1], 'down': [x0, z0, x1, z1]}
-    all_faces = {side: {'uv': [wrap(v) for v in uv], 'texture': f'#{tex}'} for side, uv in uvs.items()}
+    def span(lo, hi):                       # a part past the block's edge takes the same slice of the texture, one block over
+        return (lo + 16, hi + 16) if lo < 0 else (lo, hi)
+
+    ux0, ux1 = span(x0, x1)
+    uz0, uz1 = span(z0, z1)
+    uvs = {'north': [ux0, 16 - y1, ux1, 16 - y0], 'south': [ux0, 16 - y1, ux1, 16 - y0], 'east': [uz0, 16 - y1, uz1, 16 - y0],
+           'west': [uz0, 16 - y1, uz1, 16 - y0], 'up': [ux0, uz0, ux1, uz1], 'down': [ux0, uz0, ux1, uz1]}
+    all_faces = {side: {'uv': uv, 'texture': f'#{tex}'} for side, uv in uvs.items()}
     for side, t in faces.items():
         all_faces[side]['texture'] = f'#{t}'
     return {'from': a, 'to': b, 'faces': all_faces}

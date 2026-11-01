@@ -2,62 +2,100 @@ package com.malevolentgods.fourtwenty.power;
 
 import com.malevolentgods.fourtwenty.domain.BIRules;
 import com.malevolentgods.fourtwenty.registry.ModPower;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nonnull;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
-/** Wiring: Hemp, Rolled and Glass Wick. It joins to Wicks and BI blocks on all six sides, glows while it carries power, and burns out past two Hookahs' worth of its tier. */
-public class WickBlock extends PipeBlock {
+/**
+ * Wiring: Hemp, Rolled and Glass Wick. It glows while it carries power and burns out past two Hookahs' worth of its tier. Each side is open,
+ * joined to another Wick, or plugged into a BI block: a plug's flange sits on the block's edge and its tail reaches into the block's space, so
+ * a Wick meets a narrow block like a Stash Jar or a Hookah instead of stopping short of it.
+ */
+public class WickBlock extends Block {
+    public enum Link implements StringRepresentable {
+        NONE, WIRE, PLUG;
+
+        @Override public @Nonnull String getSerializedName() { return name().toLowerCase(Locale.ROOT); }
+    }
+
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
+    public static final Map<Direction, EnumProperty<Link>> SIDES = new EnumMap<>(Direction.class);
+    private static final Map<Direction, VoxelShape> ARMS = new EnumMap<>(Direction.class);
+    private static final VoxelShape CORE = Block.box(6, 6, 6, 10, 10, 10);
     private static final int GLOW_TICKS = 30;
+
+    static {
+        for (Direction d : Direction.values()) SIDES.put(d, EnumProperty.create(d.getName(), Link.class));
+        ARMS.put(Direction.NORTH, Block.box(6, 6, 0, 10, 10, 6));
+        ARMS.put(Direction.SOUTH, Block.box(6, 6, 10, 10, 10, 16));
+        ARMS.put(Direction.WEST, Block.box(0, 6, 6, 6, 10, 10));
+        ARMS.put(Direction.EAST, Block.box(10, 6, 6, 16, 10, 10));
+        ARMS.put(Direction.DOWN, Block.box(6, 0, 6, 10, 6, 10));
+        ARMS.put(Direction.UP, Block.box(6, 10, 6, 10, 16, 10));
+    }
+
     private final BIRules.Tier tier;
+    private final Map<BlockState, VoxelShape> shapes = new HashMap<>();
 
     public WickBlock(BIRules.Tier tier, Properties properties) {
-        super(0.125f, properties);
+        super(properties);
         this.tier = tier;
-        registerDefaultState(stateDefinition.any().setValue(NORTH, false).setValue(EAST, false).setValue(SOUTH, false)
-                .setValue(WEST, false).setValue(UP, false).setValue(DOWN, false).setValue(LIT, false));
+        BlockState state = stateDefinition.any().setValue(LIT, false);
+        for (var side : SIDES.values()) state = state.setValue(side, Link.NONE);
+        registerDefaultState(state);
+        for (BlockState s : stateDefinition.getPossibleStates()) {
+            VoxelShape shape = CORE;
+            for (Direction d : Direction.values()) if (s.getValue(SIDES.get(d)) != Link.NONE) shape = Shapes.or(shape, ARMS.get(d));
+            shapes.put(s, shape);
+        }
     }
 
     public BIRules.Tier tier() { return tier; }
 
-    @Override protected @Nonnull MapCodec<? extends PipeBlock> codec() { return MapCodec.unit(this); }
-
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN, LIT);
+        SIDES.values().forEach(builder::add);
+        builder.add(LIT);
     }
 
-    private static boolean joins(BlockState state) {
-        return state.getBlock() instanceof WickBlock || state.is(ModPower.BI_BLOCKS);
+    @Override protected @Nonnull VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
+        return shapes.get(state);
     }
 
-    private BlockState connected(BlockGetter level, BlockPos pos) {
-        BlockState state = defaultBlockState();
-        for (Direction d : Direction.values()) state = state.setValue(PROPERTY_BY_DIRECTION.get(d), joins(level.getBlockState(pos.relative(d))));
-        return state;
+    private static Link link(BlockState neighbour) {
+        if (neighbour.getBlock() instanceof WickBlock) return Link.WIRE;
+        return neighbour.is(ModPower.BI_BLOCKS) ? Link.PLUG : Link.NONE;
     }
 
     @Override public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
-        return connected(context.getLevel(), context.getClickedPos());
+        BlockState state = defaultBlockState();
+        for (Direction d : Direction.values()) state = state.setValue(SIDES.get(d), link(context.getLevel().getBlockState(context.getClickedPos().relative(d))));
+        return state;
     }
 
     @Override protected @Nonnull BlockState updateShape(@Nonnull BlockState state, @Nonnull Direction direction, @Nonnull BlockState neighbour, @Nonnull LevelAccessor level,
                                                         @Nonnull BlockPos pos, @Nonnull BlockPos neighbourPos) {
-        return state.setValue(PROPERTY_BY_DIRECTION.get(direction), joins(neighbour));
+        return state.setValue(SIDES.get(direction), link(neighbour));
     }
 
     @Override protected void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState old, boolean moved) {

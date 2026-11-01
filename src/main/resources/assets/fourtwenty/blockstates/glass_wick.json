@@ -10,7 +10,7 @@
     },
     {
       "when": {
-        "north": "true",
+        "north": "wire",
         "lit": "false"
       },
       "apply": {
@@ -19,7 +19,16 @@
     },
     {
       "when": {
-        "east": "true",
+        "north": "plug",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug"
+      }
+    },
+    {
+      "when": {
+        "east": "wire",
         "lit": "false"
       },
       "apply": {
@@ -29,7 +38,17 @@
     },
     {
       "when": {
-        "south": "true",
+        "east": "plug",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "wire",
         "lit": "false"
       },
       "apply": {
@@ -39,7 +58,17 @@
     },
     {
       "when": {
-        "west": "true",
+        "south": "plug",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "wire",
         "lit": "false"
       },
       "apply": {
@@ -49,7 +78,17 @@
     },
     {
       "when": {
-        "up": "true",
+        "west": "plug",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "wire",
         "lit": "false"
       },
       "apply": {
@@ -59,11 +98,31 @@
     },
     {
       "when": {
-        "down": "true",
+        "up": "plug",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": "wire",
         "lit": "false"
       },
       "apply": {
         "model": "fourtwenty:block/glass_wick_arm",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "down": "plug",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug",
         "x": 90
       }
     },
@@ -77,7 +136,7 @@
     },
     {
       "when": {
-        "north": "true",
+        "north": "wire",
         "lit": "true"
       },
       "apply": {
@@ -86,7 +145,16 @@
     },
     {
       "when": {
-        "east": "true",
+        "north": "plug",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug_lit"
+      }
+    },
+    {
+      "when": {
+        "east": "wire",
         "lit": "true"
       },
       "apply": {
@@ -96,7 +164,17 @@
     },
     {
       "when": {
-        "south": "true",
+        "east": "plug",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "wire",
         "lit": "true"
       },
       "apply": {
@@ -106,7 +184,17 @@
     },
     {
       "when": {
-        "west": "true",
+        "south": "plug",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug_lit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "wire",
         "lit": "true"
       },
       "apply": {
@@ -116,7 +204,17 @@
     },
     {
       "when": {
-        "up": "true",
+        "west": "plug",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug_lit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "wire",
         "lit": "true"
       },
       "apply": {
@@ -126,11 +224,31 @@
     },
     {
       "when": {
-        "down": "true",
+        "up": "plug",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug_lit",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": "wire",
         "lit": "true"
       },
       "apply": {
         "model": "fourtwenty:block/glass_wick_arm_lit",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "down": "plug",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/glass_wick_plug_lit",
         "x": 90
       }
     }

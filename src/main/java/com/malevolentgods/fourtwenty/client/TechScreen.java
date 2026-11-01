@@ -148,7 +148,10 @@ public abstract class TechScreen<T extends AbstractContainerMenu> extends Abstra
         }
         g.setColor(1, 1, 1, 1);
         Component word = Component.translatable("gui.fourtwenty.machine.overloaded");
-        g.drawCenteredString(font, word, leftPos + imageWidth / 2, topPos + imageHeight / 2 - 4, GREEN);
+        int width = font.width(word) + 12, centre = leftPos + imageWidth / 2, middle = topPos + imageHeight / 2;
+        g.fill(centre - width / 2, middle - 9, centre + width / 2, middle + 9, 0xE014161A);
+        g.renderOutline(centre - width / 2, middle - 9, width, 18, GREEN);
+        g.drawCenteredString(font, word, centre, middle - 4, GREEN);
         pose.popPose();
     }
 }
