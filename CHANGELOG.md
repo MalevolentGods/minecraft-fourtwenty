@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.15.0] - Boundless Inspiration
 
 ### Added
 - **Weed processing:** mature crops give Rough Buds. Trimming makes Trimmed Buds and is where seeds come from, at a chance by strain family (Landrace 50%, Neutrals 25%, Warm 15%, Green 10%, Cool 5%). Curing makes Cured Buds, the existing Weed Bud under a new name. All chances, times and costs are in `fourtwenty-processing-server.toml`.
