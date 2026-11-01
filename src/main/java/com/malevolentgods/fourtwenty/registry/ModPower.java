@@ -177,6 +177,7 @@ public final class ModPower {
         bus.addListener((net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent event) ->
                 event.put(ModEntities.BUZZ_BOT.get(), com.malevolentgods.fourtwenty.entity.BuzzBot.attributes().build()));
         com.malevolentgods.fourtwenty.block.Pollination.register();
+        com.malevolentgods.fourtwenty.util.GoldenGod.register(bus);
         com.malevolentgods.fourtwenty.power.GrowOps.register();
         SOUNDS.register(bus);
     }

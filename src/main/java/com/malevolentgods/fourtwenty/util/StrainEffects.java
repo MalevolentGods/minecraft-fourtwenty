@@ -205,6 +205,7 @@ public final class StrainEffects {
         HIGHS.put(player.getUUID(), new High(strain, until));
         markHigh(player, length);
         if (player instanceof ServerPlayer sp) {
+            if (strain == Strain.GOLDEN_GOD) GoldenGod.ascend(sp, length);
             PacketDistributor.sendToPlayer(sp, new Tint(strain, length));
             // smoking inspires colours (a colour drift on screen); with nothing new to inspire, sometimes just the drift
             if (!com.malevolentgods.fourtwenty.infuser.Infuser.inspire(sp, strain) && level.random.nextFloat() < 0.3f) {

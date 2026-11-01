@@ -47,9 +47,9 @@
 
 ## Phase 4: Golden God (US5)
 
-- [ ] T030 [US5] Flight, effects and landing in J/util/GoldenGod.java
-- [ ] T031 [US5] Shine and halo render layer in J/client/, payload to tracking players
-- [ ] T032 [US5] Game tests of flight ending, death and logout
+- [X] T030 [US5] Flight, effects and landing in J/util/GoldenGod.java
+- [X] T031 [US5] Shine and halo render layer in J/client/, payload to tracking players
+- [X] T032 [US5] Game tests of flight ending, death and logout
 
 ## Phase 5: Rosin Rig (US6)
 

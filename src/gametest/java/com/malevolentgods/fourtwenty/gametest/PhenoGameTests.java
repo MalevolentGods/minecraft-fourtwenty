@@ -15,6 +15,7 @@ import com.malevolentgods.fourtwenty.registry.ModDataComponents;
 import com.malevolentgods.fourtwenty.registry.ModEntities;
 import com.malevolentgods.fourtwenty.registry.ModItems;
 import com.malevolentgods.fourtwenty.registry.ModPower;
+import com.malevolentgods.fourtwenty.util.GoldenGod;
 import com.malevolentgods.fourtwenty.power.BIBuffer;
 import com.malevolentgods.fourtwenty.power.GrowOpBlockEntity;
 import com.malevolentgods.fourtwenty.power.StashBlockEntity;
@@ -244,6 +245,32 @@ public final class PhenoGameTests {
             h.assertTrue(bot.power() > ProcessingConfig.botBudTicks() / 2, "and has an hour's power");
             bot.discard();
         });
+    }
+
+    @GameTest(template = "empty")
+    public static void theGoldenGodLandsSoftly(GameTestHelper h) {
+        var god = h.makeMockServerPlayerInLevel();
+        god.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+        GoldenGod.ascend(god, 5);
+        h.assertTrue(god.getAbilities().mayfly && GoldenGod.shining(god), "the god flies and shines");
+        god.getAbilities().flying = true;
+        god.teleportTo(god.getX(), god.getY() + 10, god.getZ());
+        god.setOnGround(false);
+        GoldenGod.descend(god);
+        h.assertFalse(god.getAbilities().mayfly || god.getAbilities().flying, "flight is taken back");
+        h.assertFalse(GoldenGod.shining(god), "and the shine stops");
+        h.assertTrue(god.hasEffect(net.minecraft.world.effect.MobEffects.SLOW_FALLING), "and they float down");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aCreativePlayerKeepsTheirFlight(GameTestHelper h) {
+        var god = h.makeMockServerPlayerInLevel();
+        god.setGameMode(net.minecraft.world.level.GameType.CREATIVE);
+        GoldenGod.ascend(god, 5);
+        GoldenGod.descend(god);
+        h.assertTrue(god.getAbilities().mayfly, "their own flight isn't ours to take");
+        h.succeed();
     }
 
     @GameTest(template = "empty")

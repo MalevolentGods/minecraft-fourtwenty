@@ -54,6 +54,7 @@ public class BuzzBot extends Mob {
     private int rest;
     private int power;
     private int cooldown;
+    private int surveyIn = LOOK_EVERY;
     private List<BlockPos> plants = List.of();
 
     public BuzzBot(EntityType<? extends BuzzBot> type, Level level) {
@@ -106,8 +107,10 @@ public class BuzzBot extends Mob {
         }
         entityData.set(DORMANT, false);
         if (from == null) {
-            if (tickCount % SURVEY_EVERY == 0 || plants.isEmpty() && looking) plants = Pollination.plants(server, blockPosition(), REACH);
-            if (tickCount % SURVEY_EVERY == 0 && cooldown <= 0) {
+            boolean survey = --surveyIn <= 0;
+            if (survey) surveyIn = SURVEY_EVERY;
+            if (survey || plants.isEmpty() && looking) plants = Pollination.plants(server, blockPosition(), REACH);
+            if (survey && cooldown <= 0) {
                 BlockPos[] pair = Pollination.findPair(server, plants);
                 if (pair != null) {
                     from = pair[0];
