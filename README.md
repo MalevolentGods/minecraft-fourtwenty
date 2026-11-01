@@ -4,6 +4,11 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.16.0
+
+- **Construction benches:** the Joint, Blunt, Spliff and Cannon run on BI and make 2, 3, 4 and 6 times as many building and coloured blocks. JEI fills them like a crafting table.
+- **The Dispensary** now lives only in Sensi Heights, and huts from the old FourTwenty pack carry on from there.
+
 ## What's new in 0.15.0
 
 - **Weed processing:** harvest Rough Buds, trim them for Trimmed Buds and seeds, cure them into smokeable Cured Buds. A Trim Tray and Curing Rack need no power; six powered machines do it faster and take hoppers.
