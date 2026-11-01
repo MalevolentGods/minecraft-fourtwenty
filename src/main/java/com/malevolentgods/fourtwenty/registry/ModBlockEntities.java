@@ -14,6 +14,9 @@ public class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.malevolentgods.fourtwenty.processing.CuringRackBlockEntity>> CURING_RACK =
         BLOCK_ENTITIES.register("curing_rack", () -> BlockEntityType.Builder.of(com.malevolentgods.fourtwenty.processing.CuringRackBlockEntity::new, ModBlocks.CURING_RACK.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.malevolentgods.fourtwenty.block.WeedCropBlockEntity>> WEED_CROP =
+        BLOCK_ENTITIES.register("weed_crop", () -> BlockEntityType.Builder.of(com.malevolentgods.fourtwenty.block.WeedCropBlockEntity::new, ModBlocks.WEED_CROP.get()).build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WeedBongBlockEntity>> WEED_BONG = 
         BLOCK_ENTITIES.register("weed_bong", () -> 
             BlockEntityType.Builder.of(WeedBongBlockEntity::new, ModBlocks.WEED_BONG.get(), ModPower.DOUBLE_HOSE.get(), ModPower.BIG_BERTHA.get(), ModPower.GRAND_HOOKAH.get())

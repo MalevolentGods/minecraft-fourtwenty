@@ -1,6 +1,7 @@
 package com.malevolentgods.fourtwenty.item;
 
 import com.malevolentgods.fourtwenty.domain.Strain;
+import com.malevolentgods.fourtwenty.domain.Traits;
 import com.malevolentgods.fourtwenty.registry.ModDataComponents;
 import com.malevolentgods.fourtwenty.registry.ModDataComponents.PipeLoad;
 import com.malevolentgods.fourtwenty.registry.ModItems;
@@ -39,7 +40,7 @@ public class WeedPipeItem extends Item {
 
     public static PipeLoad load(ItemStack pipe) {
         PipeLoad l = pipe.get(ModDataComponents.PIPE_LOAD.get());
-        return l == null ? new PipeLoad(Strain.LANDRACE, 0) : l;
+        return l == null ? new PipeLoad(Strain.LANDRACE, 0, Traits.DEFAULT) : l;
     }
 
     /** Load buds from {@code buds} into the pipe; returns how many went in. */
@@ -47,10 +48,11 @@ public class WeedPipeItem extends Item {
         if (!buds.is(ModItems.WEED_BUD.get())) return 0;
         PipeLoad l = load(pipe);
         Strain s = ModDataComponents.strain(buds);
-        if (l.buds() > 0 && l.strain() != s) return 0;
+        Traits t = ModDataComponents.traits(buds);
+        if (l.buds() > 0 && (l.strain() != s || !l.traits().equals(t))) return 0;
         int n = Math.min(buds.getCount(), PipeLoad.CAPACITY - l.buds());
         if (n <= 0) return 0;
-        pipe.set(ModDataComponents.PIPE_LOAD.get(), new PipeLoad(s, l.buds() + n));
+        pipe.set(ModDataComponents.PIPE_LOAD.get(), new PipeLoad(s, l.buds() + n, t));
         buds.shrink(n);
         return n;
     }
@@ -102,10 +104,10 @@ public class WeedPipeItem extends Item {
         if (level instanceof ServerLevel server && entity instanceof Player player) {
             PipeLoad l = load(stack);
             if (l.buds() > 0 || player.getAbilities().instabuild) {
-                StrainEffects.apply(server, player, l.strain());
+                StrainEffects.apply(server, player, l.strain(), l.traits());
                 if (!player.getAbilities().instabuild) {
                     if (l.buds() <= 1) stack.remove(ModDataComponents.PIPE_LOAD.get());
-                    else stack.set(ModDataComponents.PIPE_LOAD.get(), new PipeLoad(l.strain(), l.buds() - 1));
+                    else stack.set(ModDataComponents.PIPE_LOAD.get(), new PipeLoad(l.strain(), l.buds() - 1, l.traits()));
                 }
                 player.getCooldowns().addCooldown(this, 60);
                 level.playSound(null, player, SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.15f, 1.6f);

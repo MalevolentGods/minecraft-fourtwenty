@@ -2,7 +2,6 @@ package com.malevolentgods.fourtwenty.processing;
 
 import com.malevolentgods.fourtwenty.domain.BIRules;
 import com.malevolentgods.fourtwenty.domain.CureRules;
-import com.malevolentgods.fourtwenty.domain.Strain;
 import com.malevolentgods.fourtwenty.domain.TrimRules;
 import com.malevolentgods.fourtwenty.power.BIBlockEntity;
 import com.malevolentgods.fourtwenty.power.BIBuffer;
@@ -106,10 +105,9 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
         for (int i = 0; i < INPUTS; i++) {
             ItemStack in = items.get(i);
             if (in.isEmpty()) continue;
-            Strain strain = ModDataComponents.strain(in);
             List<ItemStack> out = new ArrayList<>();
-            out.add(strained(output(), batch(in), strain));
-            if (trims()) out.add(strained(ModItems.WEED_SEEDS.get(), 1, strain));
+            out.add(strained(output(), batch(in), in));
+            if (trims()) out.add(strained(ModItems.WEED_SEEDS.get(), 1, in));
             if (fits(out)) return i;
         }
         return -1;
@@ -119,8 +117,8 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
         return trims() ? 1 : Math.min(in.getCount(), cure().batch());
     }
 
-    private static ItemStack strained(Item item, int count, Strain strain) {
-        return ModDataComponents.withStrain(new ItemStack(item, count), strain);
+    private static ItemStack strained(Item item, int count, ItemStack parent) {
+        return ModDataComponents.bredFrom(new ItemStack(item, count), parent);
     }
 
     /** Whether all of these would go into the outputs at once. */
@@ -174,12 +172,12 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
         if (progress < ticks()) return;
         progress = 0;
         ItemStack in = items.get(slot);
-        Strain strain = ModDataComponents.strain(in);
+        ItemStack parent = in.copy();
         int count = batch(in);
         in.shrink(count);
-        insert(items, INPUTS, strained(output(), count, strain));
-        if (trims() && TrimRules.seeded(ProcessingConfig.chances(), strain, level.random.nextDouble())) {
-            insert(items, INPUTS, strained(ModItems.WEED_SEEDS.get(), 1, strain));
+        insert(items, INPUTS, strained(output(), count, parent));
+        if (trims() && TrimRules.seeded(ProcessingConfig.chances(), ModDataComponents.strain(parent), level.random.nextDouble())) {
+            insert(items, INPUTS, strained(ModItems.WEED_SEEDS.get(), 1, parent));
         }
     }
 

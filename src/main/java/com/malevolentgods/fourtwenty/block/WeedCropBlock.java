@@ -1,6 +1,9 @@
 package com.malevolentgods.fourtwenty.block;
 
+import com.malevolentgods.fourtwenty.domain.GrowRules;
 import com.malevolentgods.fourtwenty.domain.Strain;
+import com.malevolentgods.fourtwenty.power.GrowOpBlock;
+import com.malevolentgods.fourtwenty.processing.ProcessingConfig;
 import com.malevolentgods.fourtwenty.registry.ModDataComponents;
 import com.malevolentgods.fourtwenty.registry.ModItems;
 import net.minecraft.core.BlockPos;
@@ -17,11 +20,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import javax.annotation.Nonnull;
 
-public class WeedCropBlock extends CropBlock {
+public class WeedCropBlock extends CropBlock implements EntityBlock {
     /** The planted strain; growth and harvest keep it (vanilla's getStateForAge would reset it). */
     public static final EnumProperty<Strain> STRAIN = EnumProperty.create("strain", Strain.class);
 
@@ -43,7 +48,8 @@ public class WeedCropBlock extends CropBlock {
 
     @Override
     protected void randomTick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
-        if (!level.isAreaLoaded(pos, 1)) return;
+        if (!level.isAreaLoaded(pos, 1) || !plotted(level, pos, state.getValue(STRAIN))) return;
+        if (state.getValue(STRAIN).grade() > 1 && random.nextDouble() >= ProcessingConfig.gradeSpeed(state.getValue(STRAIN))) return;
         if (level.getRawBrightness(pos, 0) >= 9) {
             int age = getAge(state);
             if (age < getMaxAge()) {
@@ -56,6 +62,21 @@ public class WeedCropBlock extends CropBlock {
         }
     }
 
+    /** Whether the strain's grade will grow on what's under {@code pos}. */
+    public static boolean plotted(LevelReader level, BlockPos pos, Strain strain) {
+        int need = GrowRules.gradePlot(strain.grade());
+        return need == 0 || level.getBlockState(pos.below()).getBlock() instanceof GrowOpBlock plot && plot.plotLevel() >= need;
+    }
+
+    /** Hybrids take their time: bone meal does nothing for them. */
+    @Override
+    public boolean isValidBonemealTarget(@Nonnull LevelReader level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
+        return state.getValue(STRAIN).grade() <= 1 && super.isValidBonemealTarget(level, pos, state);
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) { return new WeedCropBlockEntity(pos, state); }
+
     @Override
     public void growCrops(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
         level.setBlock(pos, atAge(state, getAge(state) + getBonemealAgeIncrease(level)), 2);
@@ -63,7 +84,8 @@ public class WeedCropBlock extends CropBlock {
 
     @Override
     public @Nonnull ItemStack getCloneItemStack(@Nonnull LevelReader level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
-        return ModDataComponents.withStrain(new ItemStack(ModItems.WEED_SEEDS.get()), state.getValue(STRAIN));
+        ItemStack seed = ModDataComponents.withStrain(new ItemStack(ModItems.WEED_SEEDS.get()), state.getValue(STRAIN));
+        return ModDataComponents.withTraits(seed, WeedCropBlockEntity.at(level, pos));
     }
 
     @Override
@@ -79,7 +101,7 @@ public class WeedCropBlock extends CropBlock {
         // caller can still hold the pre-event state (notably Actually Harvest with an empty hand).
         if (!isMaxAge(state) || !level.getBlockState(pos).equals(state)) return InteractionResult.PASS;
         if (level instanceof ServerLevel server) {
-            var drops = getDrops(state, server, pos, null, player, player.getMainHandItem());
+            var drops = getDrops(state, server, pos, level.getBlockEntity(pos), player, player.getMainHandItem());
             if (com.malevolentgods.fourtwenty.power.GrowOps.bigHarvest(level, pos)) com.malevolentgods.fourtwenty.power.GrowOps.raise(state, server, pos, drops);
             if (!level.setBlock(pos, atAge(state, 0), 3)) return InteractionResult.PASS;
             boolean retainedSeed = false;

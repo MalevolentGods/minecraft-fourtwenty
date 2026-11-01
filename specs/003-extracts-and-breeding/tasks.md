@@ -4,16 +4,16 @@
 
 ## Phase 1: Strains and traits (US1, US3)
 
-- [ ] T001 [P] [US1] Traits, averaging and drift in J/domain/Traits.java with tests
-- [ ] T002 [US3] Add grades, parents and 22 strains to J/domain/Strain.java; seed chances in J/domain/TrimRules.java with tests
-- [ ] T003 [US1] Traits data component in J/registry/ModDataComponents.java, carried through trimming, curing, joints and pipes
-- [ ] T004 [US1] Crop block entity in J/block/WeedCropBlock.java and loot in J/registry/ModStrainData.java
-- [ ] T005 [US1] Traits scale effects in J/util/StrainEffects.java; yield in crop drops
-- [ ] T006 [US3] Plot requirements and growth rates in J/block/WeedCropBlock.java and J/item/StrainItems.java
-- [ ] T007 [US1] Tooltips and Jade in J/item/StrainItems.java and J/compat/jade/FourTwentyJadePlugin.java
-- [ ] T008 [US1] New strain effects in J/util/StrainEffects.java
-- [ ] T009 [US1] Item art in tools/generate_strain_items.py
-- [ ] T010 Game tests in src/gametest/java/com/malevolentgods/fourtwenty/gametest/StrainGameTests.java
+- [X] T001 [P] [US1] Traits, averaging and drift in J/domain/Traits.java with tests
+- [X] T002 [US3] Add grades, parents and 22 strains to J/domain/Strain.java; seed chances in J/domain/TrimRules.java with tests
+- [X] T003 [US1] Traits data component in J/registry/ModDataComponents.java, carried through trimming, curing, joints and pipes
+- [X] T004 [US1] Crop block entity in J/block/WeedCropBlock.java and loot in J/registry/ModStrainData.java
+- [X] T005 [US1] Traits scale effects in J/util/StrainEffects.java; yield in crop drops
+- [X] T006 [US3] Plot requirements and growth rates in J/block/WeedCropBlock.java and J/item/StrainItems.java
+- [X] T007 [US1] Tooltips and Jade in J/item/StrainItems.java and J/compat/jade/FourTwentyJadePlugin.java
+- [X] T008 [US1] New strain effects in J/util/StrainEffects.java
+- [X] T009 [US1] Item art in tools/generate_strain_items.py
+- [X] T010 Game tests in src/gametest/java/com/malevolentgods/fourtwenty/gametest/StrainGameTests.java
 
 ## Phase 2: Breeding (US2)
 

@@ -55,10 +55,11 @@ public class TrimTrayBlock extends HorizontalDirectionalBlock {
         if (!stack.is(ModItems.ROUGH_BUD.get())) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!level.isClientSide) {
             Strain strain = ModDataComponents.strain(stack);
+            ItemStack parent = stack.copy();
             stack.consume(1, player);
-            give(player, ModDataComponents.withStrain(new ItemStack(ModItems.TRIMMED_BUD.get()), strain));
+            give(player, ModDataComponents.bredFrom(new ItemStack(ModItems.TRIMMED_BUD.get()), parent));
             if (TrimRules.seeded(ProcessingConfig.chances(), strain, level.random.nextDouble())) {
-                give(player, ModDataComponents.withStrain(new ItemStack(ModItems.WEED_SEEDS.get()), strain));
+                give(player, ModDataComponents.bredFrom(new ItemStack(ModItems.WEED_SEEDS.get()), parent));
             }
             level.playSound(null, pos, com.malevolentgods.fourtwenty.registry.ModPower.SNIP.get(), SoundSource.BLOCKS, 0.7f, 0.9f + level.random.nextFloat() * 0.3f);
         }

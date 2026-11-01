@@ -28,7 +28,7 @@ public class WeedJointItem extends Item {
     @Override
     public @Nonnull ItemStack finishUsingItem(@Nonnull ItemStack stack, @Nonnull Level level, @Nonnull LivingEntity entity) {
         Strain strain = ModDataComponents.strain(stack);
-        if (level instanceof ServerLevel server && entity instanceof Player player) StrainEffects.apply(server, player, strain);
+        if (level instanceof ServerLevel server && entity instanceof Player player) StrainEffects.apply(server, player, strain, ModDataComponents.traits(stack));
         JointSmoke.puff(entity, 5, strain);
         stack.shrink(1);
         return stack;

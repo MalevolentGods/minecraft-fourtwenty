@@ -1,6 +1,8 @@
 package com.malevolentgods.fourtwenty.registry;
 
 import com.malevolentgods.fourtwenty.block.WeedCropBlock;
+import com.malevolentgods.fourtwenty.block.WeedCropBlockEntity;
+import com.malevolentgods.fourtwenty.domain.Traits;
 import com.malevolentgods.fourtwenty.domain.Strain;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -45,8 +47,10 @@ public final class ModStrainData {
         @Override
         protected @Nonnull ItemStack run(@Nonnull ItemStack stack, @Nonnull LootContext context) {
             BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
-            if (state != null && state.hasProperty(WeedCropBlock.STRAIN)) ModDataComponents.withStrain(stack, state.getValue(WeedCropBlock.STRAIN));
-            return stack;
+            if (state == null || !state.hasProperty(WeedCropBlock.STRAIN)) return stack;
+            Traits traits = context.getParamOrNull(LootContextParams.BLOCK_ENTITY) instanceof WeedCropBlockEntity crop ? crop.traits() : Traits.DEFAULT;
+            if (stack.is(ModItems.ROUGH_BUD.get())) stack.setCount(Math.max(1, stack.getCount() + traits.yieldBonus()));
+            return ModDataComponents.withTraits(ModDataComponents.withStrain(stack, state.getValue(WeedCropBlock.STRAIN)), traits);
         }
 
         @Override
@@ -85,7 +89,7 @@ public final class ModStrainData {
             ItemStack out = inner.assemble(input, registries);
             for (int i = 0; i < input.size(); i++) {
                 ItemStack s = input.getItem(i);
-                if (s.is(ModItems.WEED_BUD.get())) return ModDataComponents.withStrain(out, ModDataComponents.strain(s));
+                if (s.is(ModItems.WEED_BUD.get())) return ModDataComponents.bredFrom(out, s);
             }
             return out;
         }

@@ -1,0 +1,6 @@
+{
+  "parent": "fourtwenty:item/weed_joint",
+  "textures": {
+    "layer0": "fourtwenty:item/strain/weed_joint_dust_devil"
+  }
+}
