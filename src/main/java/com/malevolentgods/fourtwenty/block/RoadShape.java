@@ -89,13 +89,15 @@ public final class RoadShape {
     /**
      * Whether something stands on quarter (sx, sz)'s full-height top: a road block's underside, or a
      * block solid over the whole quarter from bottom to top (a wall, not a rug or a couch: furniture
-     * stands on the road, which keeps its top and its border).
+     * stands on the road, which keeps its top and its border). Glass and the like don't count: the
+     * road shows through them.
      */
     public static boolean covered(BlockGetter level, BlockPos pos, BlockState s, int sx, int sz) {
         if (top(s, sx, sz) != 15) return false;
         BlockPos ap = pos.above();
         BlockState above = level.getBlockState(ap);
         if (tier(above) >= 0) return bottom(above, sx, sz) == 0;
+        if (!above.canOcclude()) return false;
         VoxelShape shape = above.getCollisionShape(level, ap);
         return fills(shape, sx, sz, 0) && fills(shape, sx, sz, 1 - PIXEL);
     }
@@ -114,13 +116,13 @@ public final class RoadShape {
         return tier(below) >= 0 && top(below, sx, sz) == 15;
     }
 
-    /** Whether quarter (sx, sz)'s underside rests on something: a road block's full-height top, or any block solid under it. */
+    /** Whether quarter (sx, sz)'s underside rests on something: a road block's full-height top, or any block solid under it that can't be seen through. */
     public static boolean supported(BlockGetter level, BlockPos pos, BlockState s, int sx, int sz) {
         if (bottom(s, sx, sz) != 0) return false;
         BlockPos bp = pos.below();
         BlockState below = level.getBlockState(bp);
         if (tier(below) >= 0) return top(below, sx, sz) == 15;
-        return fills(below.getCollisionShape(level, bp), sx, sz, 1 - PIXEL);
+        return below.canOcclude() && fills(below.getCollisionShape(level, bp), sx, sz, 1 - PIXEL);
     }
 
     // ---- tops and undersides ---------------------------------------------------------------------
