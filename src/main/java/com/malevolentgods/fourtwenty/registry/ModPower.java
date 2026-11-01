@@ -127,9 +127,6 @@ public final class ModPower {
     public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.power.TubeBlock> TRANSPORT_TUBE = block("transport_tube",
             () -> new com.malevolentgods.fourtwenty.power.TubeBlock(BlockBehaviour.Properties.of().strength(0.3f).sound(net.minecraft.world.level.block.SoundType.COPPER).noOcclusion()));
 
-    public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.block.GodLightBlock> GOD_LIGHT = ModBlocks.BLOCKS.register("god_light",
-            () -> new com.malevolentgods.fourtwenty.block.GodLightBlock(BlockBehaviour.Properties.of().air().replaceable().noCollission().noLootTable().lightLevel(state -> 15)));
-
     public static final DeferredHolder<Block, PhenoBlock> PHENO_CHAMBER = block("pheno_chamber", () -> new PhenoBlock(Tier.TOKE, metal()));
     public static final DeferredHolder<Block, PhenoBlock> PHENO_LAB = block("pheno_lab", () -> new PhenoBlock(Tier.RIP, metal()));
     public static final DeferredHolder<Block, PhenoBlock> PHENO_CATHEDRAL = block("pheno_cathedral", () -> new PhenoBlock(Tier.BLAZE, metal()));

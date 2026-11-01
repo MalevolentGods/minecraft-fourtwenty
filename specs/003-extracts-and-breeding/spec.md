@@ -181,6 +181,16 @@ The mod's own automation, in place of chests and hoppers. One tube with no tiers
 3. **Given** a tube line running into an unloaded chunk, **Then** the machine stops, keeps its progress, and its screen says why, until the chunk is back.
 4. **Given** a chest beside a tube, **Then** the tube ignores it.
 
+### User Story 6c - Dynamic lights (Priority: P2)
+
+Light moves with whatever carries it. Built into the mod, with nothing placed in the world.
+
+**Acceptance Scenarios**:
+
+1. **Given** a player holding a light source, a dropped light source, or a Golden God, **Then** blocks and mobs around them are lit as if by that source.
+2. **Given** a coloured source, **Then** the surfaces it can reach take its colour, fading with distance, and solid walls stop it.
+3. **Given** a player who doesn't want it, **Then** either part turns off in their client config.
+
 ### User Story 7 - Construction Joint (Priority: P3)
 
 A player uses one bench to craft the mod's building blocks in bulk from hemp and materials, under the shared power rule.
