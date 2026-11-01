@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.17.1] - Clear the Way
 
 ### Fixed
 - Town Hall level 1 no longer has a wall of placeholders across its front.
