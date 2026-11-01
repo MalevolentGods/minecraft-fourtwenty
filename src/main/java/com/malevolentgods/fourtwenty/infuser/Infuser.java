@@ -53,6 +53,15 @@ public final class Infuser {
         PacketDistributor.sendToPlayer(player, new Sync(s.save()));
     }
 
+    /** A Think Tank study's reward: the colour counts as caught, the plainer of the two grades. */
+    public static void research(ServerPlayer player, String id) {
+        InfuserState s = get(player);
+        s.caught.merge(id, 1, Math::max);
+        Tint.Target t = Tint.get().target(id);
+        if (t != null) for (String twin : t.twins()) s.caught.merge(twin, 1, Math::max);
+        put(player, s);
+    }
+
     /** Colours this player has caught (their terpenes are unlocked for the Terpinator). */
     public static boolean caught(Player player, String id) { return get(player).caught.containsKey(id); }
 

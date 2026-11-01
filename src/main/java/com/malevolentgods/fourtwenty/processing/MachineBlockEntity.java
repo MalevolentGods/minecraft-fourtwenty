@@ -42,7 +42,7 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
     public static final int INPUTS = 4, OUTPUTS = 6, SIZE = INPUTS + OUTPUTS;
     public static final int DATA_PROGRESS = 0, DATA_TOTAL = 1, DATA_PAUSED = 2, DATA_STORED = 3, DATA_CAPACITY = 4, DATA_OVERLOADED = 5, DATA_TIER = 6, DATA_JOB = 7, DATA_COUNT = 8;
     private static final int[] IN = {0, 1, 2, 3}, OUT = {4, 5, 6, 7, 8, 9};
-    private static final int BUFFER_TICKS = 400, SOUND_EVERY = 30;
+    private static final int BUFFER_TICKS = 400;
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
     private final MachineBlock block;
@@ -168,9 +168,6 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
         if (paused) return;
         progress += steps;
         setChanged();
-        if (level.getGameTime() % SOUND_EVERY == 0) {
-            level.playSound(null, worldPosition, trims() ? ModPower.SNIP.get() : ModPower.CURE.get(), net.minecraft.sounds.SoundSource.BLOCKS, 0.35f, 0.9f + level.random.nextFloat() * 0.2f);
-        }
         if (progress < ticks()) return;
         progress = 0;
         ItemStack in = items.get(slot);

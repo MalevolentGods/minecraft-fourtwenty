@@ -7,21 +7,6 @@
       "fourtwenty:snip3"
     ]
   },
-  "cure": {
-    "subtitle": "subtitles.fourtwenty.cure",
-    "sounds": [
-      "fourtwenty:cure1",
-      "fourtwenty:cure2"
-    ]
-  },
-  "bubble": {
-    "subtitle": "subtitles.fourtwenty.bubble",
-    "sounds": [
-      "fourtwenty:bubble1",
-      "fourtwenty:bubble2",
-      "fourtwenty:bubble3"
-    ]
-  },
   "burn_out": {
     "subtitle": "subtitles.fourtwenty.burn_out",
     "sounds": [

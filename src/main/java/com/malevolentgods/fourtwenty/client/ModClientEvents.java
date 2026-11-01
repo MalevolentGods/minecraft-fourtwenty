@@ -75,6 +75,7 @@ public class ModClientEvents {
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(ModClientEvents::tooltips);
         event.register(com.malevolentgods.fourtwenty.registry.ModPower.MACHINE_MENU.get(), MachineScreen::new);
         event.register(com.malevolentgods.fourtwenty.registry.ModPower.BI_MENU.get(), BIScreen::new);
+        event.register(com.malevolentgods.fourtwenty.registry.ModPower.THINK_TANK_MENU.get(), ThinkTankScreen::new);
         event.register(ModMenuTypes.WEED_BONG.get(), WeedBongScreen::new);
         event.register(com.malevolentgods.fourtwenty.registry.ModTerpenes.TERPINATOR_MENU.get(),
                 com.malevolentgods.fourtwenty.client.terpene.TerpinatorScreen::new);

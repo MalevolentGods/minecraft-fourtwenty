@@ -17,10 +17,10 @@ import javax.annotation.Nullable;
 
 /**
  * The transformer. Its front face carries the higher tier and its other faces the tier below, in either direction. Its screen switches it
- * between Toke/Puff and Rip/Toke. Wire it the wrong way round and it overloads, like any block.
+ * between Toke/Puff, Rip/Toke and Blaze/Rip. Wire it the wrong way round and it overloads, like any block.
  */
 public class HitBoxBlock extends BIBlock {
-    public static final EnumProperty<BIRules.Tier> TIER = EnumProperty.create("tier", BIRules.Tier.class, BIRules.Tier.TOKE, BIRules.Tier.RIP);
+    public static final EnumProperty<BIRules.Tier> TIER = EnumProperty.create("tier", BIRules.Tier.class, BIRules.Tier.TOKE, BIRules.Tier.RIP, BIRules.Tier.BLAZE);
 
     public HitBoxBlock(Properties properties) {
         super(Block.box(0, 0, 0, 16, 16, 16), properties);

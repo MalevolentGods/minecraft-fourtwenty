@@ -59,6 +59,36 @@
     "facing=west,lit=true,tier=rip": {
       "model": "fourtwenty:block/hit_box_rip_lit",
       "y": 270
+    },
+    "facing=north,lit=false,tier=blaze": {
+      "model": "fourtwenty:block/hit_box_blaze"
+    },
+    "facing=east,lit=false,tier=blaze": {
+      "model": "fourtwenty:block/hit_box_blaze",
+      "y": 90
+    },
+    "facing=south,lit=false,tier=blaze": {
+      "model": "fourtwenty:block/hit_box_blaze",
+      "y": 180
+    },
+    "facing=west,lit=false,tier=blaze": {
+      "model": "fourtwenty:block/hit_box_blaze",
+      "y": 270
+    },
+    "facing=north,lit=true,tier=blaze": {
+      "model": "fourtwenty:block/hit_box_blaze_lit"
+    },
+    "facing=east,lit=true,tier=blaze": {
+      "model": "fourtwenty:block/hit_box_blaze_lit",
+      "y": 90
+    },
+    "facing=south,lit=true,tier=blaze": {
+      "model": "fourtwenty:block/hit_box_blaze_lit",
+      "y": 180
+    },
+    "facing=west,lit=true,tier=blaze": {
+      "model": "fourtwenty:block/hit_box_blaze_lit",
+      "y": 270
     }
   }
 }

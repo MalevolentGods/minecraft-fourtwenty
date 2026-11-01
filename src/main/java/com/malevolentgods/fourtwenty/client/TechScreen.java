@@ -18,14 +18,16 @@ import javax.annotation.Nonnull;
  * in without lining anything up. The atlas layout is shared with tools/generate_tech_ui.py.
  */
 public abstract class TechScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
-    private static final String[] PANELS = {"puff", "toke", "rip"};
+    private static final String[] PANELS = {"puff", "toke", "rip", "blaze"};
     protected static final ResourceLocation ATLAS = ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/tech_atlas.png");
     private static final int GAUGE_W = 14, GAUGE_H = 54, FILL_U = 16, FILL_FRAMES = 4, ARROW_V = 56, ARROW_W = 24, ARROW_H = 16, ARROW_FILL = 8, ARROW_FRAMES = 4, SLOT_V = 76,
             SMOKE_V = 96, SMOKE_FRAMES = 4, PUFFS = 9;
     private static final long FRAME_MS = 140;
     private static final int ART = 1024, TITLE_RULE = 15, POPUP_WIDTH = 170, GHOST = 0xB014161A;
-    private static final int[] EDGES = {0xFF60C448, 0xFF3CC4B4, 0xFFA864E8};
+    private static final int[] EDGES = {0xFF60C448, 0xFF3CC4B4, 0xFFA864E8, 0xFFFF8C28};
     protected static final int TEXT = 0xFFE3E6DF, WARN = 0xFFE8B04A, GREEN = 0xFF7BFF5A;
+
+    private boolean wasOverloaded;
 
     protected TechScreen(T menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -39,7 +41,7 @@ public abstract class TechScreen<T extends AbstractContainerMenu> extends Abstra
         return (int) (System.currentTimeMillis() / FRAME_MS % frames);
     }
 
-    private int tierIndex() { return Math.max(0, Math.min(tier(), 2)); }
+    private int tierIndex() { return Math.max(0, Math.min(tier(), PANELS.length - 1)); }
 
     protected ResourceLocation panel() {
         return ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/tech_" + PANELS[tierIndex()] + ".png");
@@ -64,7 +66,10 @@ public abstract class TechScreen<T extends AbstractContainerMenu> extends Abstra
     @Override public void render(@Nonnull GuiGraphics g, int mouseX, int mouseY, float partial) {
         renderBackground(g, mouseX, mouseY, partial);
         super.render(g, mouseX, mouseY, partial);
-        if (overloaded()) overload(g);
+        boolean overloaded = overloaded();
+        if (overloaded && !wasOverloaded) minecraft.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(com.malevolentgods.fourtwenty.registry.ModPower.OVERLOAD.get(), 1));
+        wasOverloaded = overloaded;
+        if (overloaded) overload(g);
         renderTooltip(g, mouseX, mouseY);
         if (hoveredSlot == null) tips(g, mouseX, mouseY);
         else if (!hoveredSlot.hasItem() && hint(hoveredSlot.index) != null) popup(g, mouseX, mouseY, hint(hoveredSlot.index).tip());

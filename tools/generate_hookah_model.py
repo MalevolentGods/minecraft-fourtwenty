@@ -11,7 +11,7 @@ lit), and a hose that loops off the stem and hangs down the side to a brass mout
 it's lit (WeedBongBlock#animateTick). Writes models/block/weed_bong_<state>.json and textures/block/hookah/*.png.
 
 Double Hose and Big Bertha are this same hookah upgraded, the same cabinet paintings and state set, with the hose repeated round the stem
-(2 and 4 of them) and its brass swapped for copper or steel: models/block/double_hose_<state>.json, big_bertha_<state>.json, and their
+(2 and 4 of them) and its brass swapped for copper, steel or gold: models/block/double_hose_<state>.json and so on for big_bertha and grand_hookah, and their
 blockstates, which follow weed_bong.json.
 """
 import json
@@ -139,10 +139,11 @@ if __name__ == '__main__':
     textures()
     recoloured('copper', (235, 140, 84))
     recoloured('steel', (205, 214, 232))
+    recoloured('gold', (255, 214, 96))
     for st in STATES:
         (ASSETS / f'models/block/weed_bong_{st}.json').write_text(json.dumps(model(st), indent=1) + '\n')
     states = (ASSETS / 'blockstates/weed_bong.json').read_text()
-    for name, turns, metal in (('double_hose', [2], 'copper'), ('big_bertha', [1, 2, 3], 'steel')):
+    for name, turns, metal in (('double_hose', [2], 'copper'), ('big_bertha', [1, 2, 3], 'steel'), ('grand_hookah', [1, 2, 3], 'gold')):
         for st in STATES:
             (ASSETS / f'models/block/{name}_{st}.json').write_text(json.dumps(upgraded(st, turns, metal), indent=1) + '\n')
         (ASSETS / f'blockstates/{name}.json').write_text(states.replace('block/weed_bong_', f'block/{name}_'))

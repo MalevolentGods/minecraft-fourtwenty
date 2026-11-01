@@ -21,9 +21,11 @@ TIERS = {
     'puff': {'body': (138, 100, 62), 'accent': (96, 196, 72)},
     'toke': {'body': (172, 104, 60), 'accent': (60, 196, 180)},
     'rip': {'body': (118, 124, 138), 'accent': (168, 100, 232)},
+    'blaze': {'body': (150, 112, 44), 'accent': (255, 140, 40)},
 }
-WICKS = {'hemp_wick': 'puff', 'rolled_wick': 'toke', 'glass_wick': 'rip'}
-HOOKAHS = ('double_hose', 'big_bertha')       # the Hookah upgraded: their models come from tools/generate_hookah_model.py
+WICKS = {'hemp_wick': 'puff', 'rolled_wick': 'toke', 'glass_wick': 'rip', 'gold_wick': 'blaze'}
+PLOTS = {'closet_grow': 'puff', 'grow_tent': 'puff', 'hydro_bed': 'toke', 'aero_pod': 'rip', 'cosmic_kush_pod': 'blaze'}
+HOOKAHS = ('double_hose', 'big_bertha', 'grand_hookah')       # the Hookah upgraded: their models come from tools/generate_hookah_model.py
 MACHINES = {'snip_station': 'puff', 'bud_barber': 'toke', 'trim_reaper': 'rip', 'dry_box': 'puff', 'cure_closet': 'toke', 'the_humidor': 'rip'}
 FACINGS = (('north', 0), ('east', 90), ('south', 180), ('west', 270))
 SIZE = 32
@@ -63,7 +65,7 @@ def glow(tier, lit):
 
 
 def wick(tier, lit, offset=0):
-    base = {'puff': (176, 150, 104), 'toke': (214, 200, 170), 'rip': (190, 214, 222)}[tier]
+    base = {'puff': (176, 150, 104), 'toke': (214, 200, 170), 'rip': (190, 214, 222), 'blaze': (226, 184, 92)}[tier]
     img = shade(base, 'w' + tier)
     d = ImageDraw.Draw(img)
     for i in range(-SIZE - 6, SIZE + 6, 6):
@@ -209,7 +211,9 @@ def stashes():
     lit_pair('mother_stash', [box([0, 0, 0], [16, 4, 16], 'body'), box([0, 4, 0], [16, 12, 16], 'tank'), box([0, 12, 0], [16, 16, 16], 'body')],
              {'body': t('rip', 'body'), 'tank': both('rip', 'glow')})
     states = {}
-    for tier in ('toke', 'rip'):
+    lit_pair('the_vault', [box([0, 0, 0], [16, 16, 16], 'body', north='tank'), box([5, 5, -0.5], [11, 11, 0], 'plate')],
+             {'body': t('blaze', 'body'), 'tank': both('blaze', 'glow'), 'plate': t('rip', 'body')})
+    for tier in ('toke', 'rip', 'blaze'):
         for lit in (False, True):
             suffix = '_lit' if lit else ''
             model(f'hit_box_{tier}{suffix}', [box([0, 0, 0], [16, 16, 16], 'body'), box([4, 4, -0.5], [12, 12, 0], 'plug')],
@@ -235,12 +239,45 @@ def machines():
         lit_pair(name, features[name], common(tier, name))
 
 
+def soil(name, colour, speck, seed):
+    img = shade(colour, seed, 10)
+    px = img.load()
+    rng = random.Random(seed)
+    for _ in range(90):
+        px[rng.randint(0, SIZE - 1), rng.randint(0, SIZE - 1)] = speck + (255,)
+    img.save(TEX / f'{name}.png')
+
+
+def plots():
+    soil('soil', (70, 48, 30), (104, 76, 46), 'soil')
+    soil('rockwool', (196, 190, 170), (232, 228, 212), 'wool')
+    soil('mist', (170, 214, 226), (236, 248, 252), 'mist')
+    soil('stardust', (46, 24, 84), (255, 214, 96), 'stars')
+    soil('board', (24, 44, 34), (206, 226, 210), 'board')
+    tops = {'closet_grow': 'soil', 'grow_tent': 'soil', 'hydro_bed': 'rockwool', 'aero_pod': 'mist', 'cosmic_kush_pod': 'stardust'}
+    for name, tier in PLOTS.items():
+        rail = [box([0, 13, 0], [16, 15, 1], 'glow'), box([0, 13, 15], [16, 15, 16], 'glow'), box([0, 13, 1], [1, 15, 15], 'glow'), box([15, 13, 1], [16, 15, 15], 'glow')]
+        elements = [box([0, 0, 0], [16, 13, 16], 'body'), box([1, 13, 1], [15, 15, 15], 'top')] + rail
+        lit_pair(name, elements, {'body': t(tier, 'body'), 'glow': both(tier, 'glow'), 'top': f'fourtwenty:block/power/{tops[name]}'})
+    lit_pair('think_tank', [box([0, 0, 0], [16, 8, 16], 'body'), box([1, 8, 13], [15, 16, 15], 'board'), box([2, 8, 2], [8, 11, 8], 'glow')],
+             {'body': t('puff', 'body'), 'glow': both('puff', 'glow'), 'board': 'fourtwenty:block/power/board'})
+
+
 def recipes():
     item = lambda i: {'item': i if ':' in i else f'minecraft:{i}'}
     book = {
         'hemp_wick': (6, ['SRS'], {'S': 'string', 'R': 'fourtwenty:rough_bud'}),
         'rolled_wick': (6, ['WWW', 'PCP', 'WWW'], {'W': 'fourtwenty:hemp_wick', 'P': 'paper', 'C': 'copper_ingot'}),
         'glass_wick': (4, ['WGW', 'GDG', 'WGW'], {'W': 'fourtwenty:rolled_wick', 'G': 'glass_pane', 'D': 'glowstone_dust'}),
+        'gold_wick': (4, ['WGW', 'GBG', 'WGW'], {'W': 'fourtwenty:glass_wick', 'G': 'gold_ingot', 'B': 'blaze_powder'}),
+        'grand_hookah': (1, ['DHD', 'WHW'], {'D': 'diamond_block', 'H': 'fourtwenty:big_bertha', 'W': 'fourtwenty:gold_wick'}),
+        'the_vault': (1, ['GMG', 'MNM', 'GMG'], {'G': 'gold_block', 'M': 'fourtwenty:mother_stash', 'N': 'diamond_block'}),
+        'closet_grow': (1, ['PRP', 'DDD'], {'P': 'oak_planks', 'R': 'fourtwenty:rough_bud', 'D': 'dirt'}),
+        'grow_tent': (1, ['GLG', 'WCW'], {'G': 'green_wool', 'L': 'glowstone', 'W': 'fourtwenty:hemp_wick', 'C': 'fourtwenty:closet_grow'}),
+        'hydro_bed': (1, ['BCB', 'WHW'], {'B': 'water_bucket', 'C': 'copper_block', 'W': 'fourtwenty:rolled_wick', 'H': 'fourtwenty:grow_tent'}),
+        'aero_pod': (1, ['GDG', 'WHW'], {'G': 'glass', 'D': 'diamond', 'W': 'fourtwenty:glass_wick', 'H': 'fourtwenty:hydro_bed'}),
+        'cosmic_kush_pod': (1, ['EDE', 'WHW'], {'E': 'end_stone', 'D': 'diamond_block', 'W': 'fourtwenty:gold_wick', 'H': 'fourtwenty:aero_pod'}),
+        'think_tank': (1, ['BLB', 'IWI'], {'B': 'book', 'L': 'lectern', 'I': 'iron_ingot', 'W': 'fourtwenty:hemp_wick'}),
         'double_hose': (1, ['GHG', 'WWW'], {'G': 'gold_ingot', 'H': 'fourtwenty:weed_bong', 'W': 'fourtwenty:rolled_wick'}),
         'big_bertha': (1, ['DHD', 'WHW'], {'D': 'diamond', 'H': 'fourtwenty:double_hose', 'W': 'fourtwenty:glass_wick'}),
         'stash_jar': (1, ['GIG', 'GBG', 'GGG'], {'G': 'glass', 'I': 'iron_ingot', 'B': 'fourtwenty:weed_bud'}),
@@ -261,12 +298,12 @@ def recipes():
 
 
 def data():
-    blocks = list(WICKS) + list(HOOKAHS) + ['stash_jar', 'stash_box', 'mother_stash', 'hit_box'] + list(MACHINES)
+    blocks = list(WICKS) + list(HOOKAHS) + ['stash_jar', 'stash_box', 'mother_stash', 'the_vault', 'hit_box', 'think_tank'] + list(MACHINES) + list(PLOTS)
     for name in blocks:
         write(DATA / f'fourtwenty/loot_table/blocks/{name}.json', {
             'type': 'minecraft:block',
             'pools': [{'rolls': 1, 'entries': [{'type': 'minecraft:item', 'name': f'fourtwenty:{name}'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
-    joined = [n for n in blocks if n not in WICKS] + ['weed_bong', 'terpinator', 'terpinator_lab', 'inspiration_infuser', 'inspiration_infuser_lab']
+    joined = [n for n in blocks if n not in WICKS and n != 'closet_grow'] + ['weed_bong', 'terpinator', 'terpinator_lab', 'inspiration_infuser', 'inspiration_infuser_lab']
     write(DATA / 'fourtwenty/tags/block/bi_blocks.json', {'replace': False, 'values': [f'fourtwenty:{n}' for n in joined]})
     path = DATA / 'minecraft/tags/block/mineable/pickaxe.json'
     tag = json.loads(path.read_text()) if path.exists() else {'replace': False, 'values': []}
@@ -281,6 +318,7 @@ if __name__ == '__main__':
     textures()
     wicks()
     stashes()
+    plots()
     machines()
     recipes()
     data()

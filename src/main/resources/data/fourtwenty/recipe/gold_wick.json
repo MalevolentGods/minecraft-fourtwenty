@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "WGW",
+    "GBG",
+    "WGW"
+  ],
+  "key": {
+    "W": {
+      "item": "fourtwenty:glass_wick"
+    },
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "B": {
+      "item": "minecraft:blaze_powder"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:gold_wick",
+    "count": 4
+  },
+  "show_notification": true
+}

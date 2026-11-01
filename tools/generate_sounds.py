@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sound effects for the tech blocks, synthesized here so they can be regenerated: nothing sampled, nothing licensed.
+"""Sound effects for the tech screens, the Trim Tray and burning Wicks, synthesized here so they can be regenerated: nothing sampled, nothing licensed.
 
     python3 tools/generate_sounds.py        (needs ffmpeg with libvorbis on the PATH)
 
@@ -57,23 +57,6 @@ def snip(rng):
     return mix(0.2, (0, blade(rng.uniform(2800, 3400))), (0.07, blade(rng.uniform(3600, 4200))))
 
 
-def cure(rng):
-    """Warm air through a vent."""
-    s = t(1.1)
-    return lowpass(highpass(noise(rng, 1.1), 400), 2200) * np.sin(np.pi * s / 1.1) ** 2 * (1 + 0.25 * np.sin(2 * np.pi * 3 * s)) * 0.5
-
-
-def bubble(rng):
-    """Water through a stem: rising blips."""
-    parts = []
-    for _ in range(rng.integers(7, 11)):
-        length = rng.uniform(0.04, 0.09)
-        s = t(length)
-        f = rng.uniform(280, 520) * (1 + s * rng.uniform(6, 12))
-        parts.append((rng.uniform(0, 1.1), np.sin(2 * np.pi * np.cumsum(f) / RATE) * np.sin(np.pi * s / length) * rng.uniform(0.25, 0.5)))
-    return mix(1.25, *parts)
-
-
 def burn_out(rng):
     """A wick letting go: a crack, then fizz."""
     s = t(1.2)
@@ -97,7 +80,7 @@ def switch(rng):
     return np.sin(2 * np.pi * 160 * s) * np.exp(-s * 40) * 0.6 + highpass(noise(rng, 0.16), 1800) * np.exp(-s * 160) * 0.5
 
 
-SOUNDS = {'snip': (snip, 3), 'cure': (cure, 2), 'bubble': (bubble, 3), 'burn_out': (burn_out, 2), 'overload': (overload, 2), 'switch': (switch, 2)}
+SOUNDS = {'snip': (snip, 3), 'burn_out': (burn_out, 2), 'overload': (overload, 2), 'switch': (switch, 2)}
 
 
 def write(path, samples):

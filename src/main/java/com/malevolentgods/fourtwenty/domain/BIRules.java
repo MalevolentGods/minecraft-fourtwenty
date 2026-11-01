@@ -16,7 +16,7 @@ public final class BIRules {
     public static final int BURN_TICKS = 1200, MACHINES_PER_HOOKAH = 4, HOOKAHS_PER_WIRE = 2, TICKS_PER_SECOND = 20;
 
     public enum Tier implements StringRepresentable {
-        PUFF(4_200), TOKE(8_400), RIP(16_800);
+        PUFF(4_200), TOKE(8_400), RIP(16_800), BLAZE(33_600);
 
         private final int total;
 

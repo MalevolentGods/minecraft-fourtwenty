@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BLB",
+    "IWI"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:book"
+    },
+    "L": {
+      "item": "minecraft:lectern"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "W": {
+      "item": "fourtwenty:hemp_wick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:think_tank",
+    "count": 1
+  },
+  "show_notification": true
+}

@@ -80,6 +80,7 @@ public class WeedCropBlock extends CropBlock {
         if (!isMaxAge(state) || !level.getBlockState(pos).equals(state)) return InteractionResult.PASS;
         if (level instanceof ServerLevel server) {
             var drops = getDrops(state, server, pos, null, player, player.getMainHandItem());
+            if (com.malevolentgods.fourtwenty.power.GrowOps.bigHarvest(level, pos)) com.malevolentgods.fourtwenty.power.GrowOps.raise(state, server, pos, drops);
             if (!level.setBlock(pos, atAge(state, 0), 3)) return InteractionResult.PASS;
             boolean retainedSeed = false;
             for (ItemStack stack : drops) {

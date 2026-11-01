@@ -11,7 +11,8 @@ import java.util.function.LongSupplier;
 
 /** The block entity of a {@link BIBlock}. */
 public abstract class BIBlockEntity extends BlockEntity {
-    public static final int DATA_STORED = 0, DATA_CAPACITY = 1, DATA_OVERLOADED = 2, DATA_TIER = 3, DATA_HIT_BOX = 4, DATA_COUNT = 5;
+    public static final int DATA_STORED = 0, DATA_CAPACITY = 1, DATA_OVERLOADED = 2, DATA_TIER = 3, DATA_KIND = 4, DATA_PLOT = 5, DATA_COUNT = 6;
+    public static final int KIND_STASH = 0, KIND_HIT_BOX = 1, KIND_PLOT = 2;
     private static final int FX_EVERY = 20;
 
     protected BIBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -33,7 +34,7 @@ public abstract class BIBlockEntity extends BlockEntity {
     }
 
     /** What a gauge screen shows of a buffer. */
-    static ContainerData data(BIBuffer buffer, LongSupplier now, IntSupplier tier, int hitBox) {
+    static ContainerData data(BIBuffer buffer, LongSupplier now, IntSupplier tier, int kind, int plot) {
         return new ContainerData() {
             @Override public int get(int index) {
                 return switch (index) {
@@ -41,7 +42,8 @@ public abstract class BIBlockEntity extends BlockEntity {
                     case DATA_CAPACITY -> (int) buffer.capacity();
                     case DATA_OVERLOADED -> buffer.overloaded(now.getAsLong()) ? 1 : 0;
                     case DATA_TIER -> tier.getAsInt();
-                    case DATA_HIT_BOX -> hitBox;
+                    case DATA_KIND -> kind;
+                    case DATA_PLOT -> plot;
                     default -> 0;
                 };
             }

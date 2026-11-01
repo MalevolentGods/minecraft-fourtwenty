@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BCB",
+    "WHW"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:water_bucket"
+    },
+    "C": {
+      "item": "minecraft:copper_block"
+    },
+    "W": {
+      "item": "fourtwenty:rolled_wick"
+    },
+    "H": {
+      "item": "fourtwenty:grow_tent"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:hydro_bed",
+    "count": 1
+  },
+  "show_notification": true
+}

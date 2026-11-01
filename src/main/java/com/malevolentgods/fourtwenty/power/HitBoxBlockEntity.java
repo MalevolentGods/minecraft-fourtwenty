@@ -7,7 +7,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -48,7 +47,7 @@ public class HitBoxBlockEntity extends BIBlockEntity implements MenuProvider {
     private final BIBuffer up = new BIBuffer(BIRules.Tier.RIP, BUFFER, true, true, this::setChanged);
     private final Face highFace = new Face(true), lowFace = new Face(false);
     private final BIPush pushDown = new BIPush(), pushUp = new BIPush();
-    private final ContainerData data = BIBlockEntity.data(down, this::gameTime, () -> highTier().ordinal(), 1);
+    private final ContainerData data = BIBlockEntity.data(down, this::gameTime, () -> highTier().ordinal(), BIBlockEntity.KIND_HIT_BOX, 0);
 
     public HitBoxBlockEntity(BlockPos pos, BlockState state) {
         super(ModPower.HIT_BOX_ENTITY.get(), pos, state);
@@ -66,10 +65,10 @@ public class HitBoxBlockEntity extends BIBlockEntity implements MenuProvider {
     }
 
     public void toggle() {
-        BIRules.Tier next = highTier() == BIRules.Tier.TOKE ? BIRules.Tier.RIP : BIRules.Tier.TOKE;
+        BIRules.Tier high = highTier();
+        BIRules.Tier next = high == BIRules.Tier.TOKE ? BIRules.Tier.RIP : high == BIRules.Tier.RIP ? BIRules.Tier.BLAZE : BIRules.Tier.TOKE;
         level.setBlock(worldPosition, getBlockState().setValue(HitBoxBlock.TIER, next), 3);
         BIGrid.changed(level);
-        level.playSound(null, worldPosition, ModPower.SWITCH.get(), SoundSource.BLOCKS, 0.8f, 1);
     }
 
     @Override public void serverTick() {

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "EDE",
+    "WHW"
+  ],
+  "key": {
+    "E": {
+      "item": "minecraft:end_stone"
+    },
+    "D": {
+      "item": "minecraft:diamond_block"
+    },
+    "W": {
+      "item": "fourtwenty:gold_wick"
+    },
+    "H": {
+      "item": "fourtwenty:aero_pod"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:cosmic_kush_pod",
+    "count": 1
+  },
+  "show_notification": true
+}

@@ -9,6 +9,10 @@ This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and 
 - **Weed processing:** harvest Rough Buds, trim them for Trimmed Buds and seeds, cure them into smokeable Cured Buds. A Trim Tray and Curing Rack need no power; six powered machines do it faster and take hoppers.
 - **Boundless Inspiration:** a burning Hookah makes BI, with the Double Hose and Big Bertha as its upgrades, Stash blocks hold it, Wicks carry it, and the Hit Box steps it between tiers. One charcoal and one cured bud burn for a minute and run four machines of that tier, or machines run free while a high player is within 21 blocks.
 
+## Grow Ops and the Think Tank
+
+Five tiers of indoor plot grow any crop faster: the Closet Grow, Grow Tent, Hydro Bed, Aero Pod and Cosmic Kush Pod. Upgrade one in place by using the next tier on it, and the crop stays. The Think Tank runs research with no colony: pick a study, load it, and keep a crop growing on a plot within 8 blocks. The Blaze tier adds the Grand Hookah, The Vault and Gold Wick.
+
 ## What's new in 0.14.1
 
 - **The Sensi Heights Warehouse:** five levels from an open oak pavilion over a sunken rack room to a full concrete and glass depot, with up to 102 racks and room for 8 Courier's Huts inside it. Racks stay put through every upgrade.

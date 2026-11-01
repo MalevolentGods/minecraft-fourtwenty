@@ -25,7 +25,7 @@ public class StashBlockEntity extends BIBlockEntity implements net.minecraft.wor
         StashBlock block = (StashBlock) state.getBlock();
         tier = block.tier();
         buffer = new BIBuffer(tier, block.capacity(), true, true, this::setChanged);
-        data = BIBlockEntity.data(buffer, () -> level == null ? 0 : level.getGameTime(), tier::ordinal, 0);
+        data = BIBlockEntity.data(buffer, () -> level == null ? 0 : level.getGameTime(), tier::ordinal, BIBlockEntity.KIND_STASH, 0);
     }
 
     public BINode node() { return buffer; }

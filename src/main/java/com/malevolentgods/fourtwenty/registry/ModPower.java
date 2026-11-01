@@ -2,6 +2,8 @@ package com.malevolentgods.fourtwenty.registry;
 
 import com.malevolentgods.fourtwenty.domain.BIRules.Tier;
 import com.malevolentgods.fourtwenty.power.BINode;
+import com.malevolentgods.fourtwenty.power.GrowOpBlock;
+import com.malevolentgods.fourtwenty.power.GrowOpBlockEntity;
 import com.malevolentgods.fourtwenty.power.HitBoxBlock;
 import com.malevolentgods.fourtwenty.power.HitBoxBlockEntity;
 import com.malevolentgods.fourtwenty.power.StashBlock;
@@ -11,6 +13,9 @@ import com.malevolentgods.fourtwenty.processing.MachineBlock;
 import com.malevolentgods.fourtwenty.processing.MachineBlock.Job;
 import com.malevolentgods.fourtwenty.processing.MachineBlockEntity;
 import com.malevolentgods.fourtwenty.processing.MachineMenu;
+import com.malevolentgods.fourtwenty.processing.ThinkTankBlock;
+import com.malevolentgods.fourtwenty.processing.ThinkTankBlockEntity;
+import com.malevolentgods.fourtwenty.processing.ThinkTankMenu;
 import com.malevolentgods.fourtwenty.block.WeedBongBlock;
 import com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity;
 import com.malevolentgods.fourtwenty.terpene.TerpinatorBlockEntity;
@@ -85,7 +90,7 @@ public final class ModPower {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("fourtwenty", name)));
     }
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> SNIP = sound("snip"), CURE = sound("cure"), BUBBLE = sound("bubble"), BURN_OUT = sound("burn_out"),
+    public static final DeferredHolder<SoundEvent, SoundEvent> SNIP = sound("snip"), BURN_OUT = sound("burn_out"),
             OVERLOAD = sound("overload"), SWITCH = sound("switch");
 
     public static final DeferredHolder<Item, Item> ASH = ModItems.ITEMS.register("ash", () -> new Item(new Item.Properties()));
@@ -93,13 +98,16 @@ public final class ModPower {
     public static final DeferredHolder<Block, WickBlock> HEMP_WICK = wick("hemp_wick", Tier.PUFF);
     public static final DeferredHolder<Block, WickBlock> ROLLED_WICK = wick("rolled_wick", Tier.TOKE);
     public static final DeferredHolder<Block, WickBlock> GLASS_WICK = wick("glass_wick", Tier.RIP);
+    public static final DeferredHolder<Block, WickBlock> GOLD_WICK = wick("gold_wick", Tier.BLAZE);
 
     public static final DeferredHolder<Block, WeedBongBlock> DOUBLE_HOSE = hookah("double_hose", Tier.TOKE);
     public static final DeferredHolder<Block, WeedBongBlock> BIG_BERTHA = hookah("big_bertha", Tier.RIP);
+    public static final DeferredHolder<Block, WeedBongBlock> GRAND_HOOKAH = hookah("grand_hookah", Tier.BLAZE);
 
     public static final DeferredHolder<Block, StashBlock> STASH_JAR = stash("stash_jar", Tier.PUFF, 40_000, 4, 12);
     public static final DeferredHolder<Block, StashBlock> STASH_BOX = stash("stash_box", Tier.TOKE, 400_000, 1, 14);
     public static final DeferredHolder<Block, StashBlock> MOTHER_STASH = stash("mother_stash", Tier.RIP, 4_000_000, 0, 16);
+    public static final DeferredHolder<Block, StashBlock> THE_VAULT = stash("the_vault", Tier.BLAZE, 40_000_000, 0, 16);
 
     public static final DeferredHolder<Block, HitBoxBlock> HIT_BOX = block("hit_box", () -> new HitBoxBlock(metal()));
 
@@ -111,14 +119,33 @@ public final class ModPower {
     public static final DeferredHolder<Block, MachineBlock> THE_HUMIDOR = machine("the_humidor", Job.CURE, Tier.RIP);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StashBlockEntity>> STASH_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("stash",
-            () -> BlockEntityType.Builder.of(StashBlockEntity::new, STASH_JAR.get(), STASH_BOX.get(), MOTHER_STASH.get()).build(null));
+            () -> BlockEntityType.Builder.of(StashBlockEntity::new, STASH_JAR.get(), STASH_BOX.get(), MOTHER_STASH.get(), THE_VAULT.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HitBoxBlockEntity>> HIT_BOX_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("hit_box",
             () -> BlockEntityType.Builder.of(HitBoxBlockEntity::new, HIT_BOX.get()).build(null));
+    private static BlockBehaviour.Properties plot(int light) {
+        return BlockBehaviour.Properties.of().strength(1.5f, 6.0f).sound(SoundType.WOOD).noOcclusion().lightLevel(state -> light);
+    }
+
+    public static final DeferredHolder<Block, GrowOpBlock> COSMIC_KUSH_POD = block("cosmic_kush_pod", () -> new GrowOpBlock(5, Tier.BLAZE, null, plot(15)));
+    public static final DeferredHolder<Block, GrowOpBlock> AERO_POD = block("aero_pod", () -> new GrowOpBlock(4, Tier.RIP, COSMIC_KUSH_POD, plot(15)));
+    public static final DeferredHolder<Block, GrowOpBlock> HYDRO_BED = block("hydro_bed", () -> new GrowOpBlock(3, Tier.TOKE, AERO_POD, plot(15)));
+    public static final DeferredHolder<Block, GrowOpBlock> GROW_TENT = block("grow_tent", () -> new GrowOpBlock(2, Tier.PUFF, HYDRO_BED, plot(15)));
+    public static final DeferredHolder<Block, GrowOpBlock> CLOSET_GROW = block("closet_grow", () -> new GrowOpBlock(1, null, GROW_TENT, plot(0)));
+    public static final DeferredHolder<Block, ThinkTankBlock> THINK_TANK = block("think_tank", () -> new ThinkTankBlock(metal()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GrowOpBlockEntity>> GROW_OP_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("grow_op",
+            () -> BlockEntityType.Builder.of(GrowOpBlockEntity::new, CLOSET_GROW.get(), GROW_TENT.get(), HYDRO_BED.get(), AERO_POD.get(), COSMIC_KUSH_POD.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ThinkTankBlockEntity>> THINK_TANK_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("think_tank",
+            () -> BlockEntityType.Builder.of(ThinkTankBlockEntity::new, THINK_TANK.get()).build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MachineBlockEntity>> MACHINE_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("machine",
             () -> BlockEntityType.Builder.of(MachineBlockEntity::new, SNIP_STATION.get(), BUD_BARBER.get(), TRIM_REAPER.get(), DRY_BOX.get(), CURE_CLOSET.get(), THE_HUMIDOR.get()).build(null));
 
     public static final DeferredHolder<MenuType<?>, MenuType<com.malevolentgods.fourtwenty.power.BIMenu>> BI_MENU = ModMenuTypes.MENU_TYPES.register("bi",
             () -> IMenuTypeExtension.create((id, inventory, data) -> new com.malevolentgods.fourtwenty.power.BIMenu(id)));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<ThinkTankMenu>> THINK_TANK_MENU = ModMenuTypes.MENU_TYPES.register("think_tank",
+            () -> IMenuTypeExtension.create((id, inventory, data) -> new ThinkTankMenu(id, inventory)));
 
     public static final DeferredHolder<MenuType<?>, MenuType<MachineMenu>> MACHINE_MENU = ModMenuTypes.MENU_TYPES.register("machine",
             () -> IMenuTypeExtension.create((id, inventory, data) -> new MachineMenu(id, inventory)));
@@ -128,6 +155,7 @@ public final class ModPower {
 
     public static void register(IEventBus bus) {
         bus.addListener(ModPower::capabilities);
+        com.malevolentgods.fourtwenty.power.GrowOps.register();
         SOUNDS.register(bus);
     }
 
@@ -136,6 +164,8 @@ public final class ModPower {
         event.registerBlockEntity(BINode.CAPABILITY, STASH_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, HIT_BOX_ENTITY.get(), HitBoxBlockEntity::node);
         event.registerBlockEntity(BINode.CAPABILITY, MACHINE_ENTITY.get(), (entity, side) -> entity.node());
+        event.registerBlockEntity(BINode.CAPABILITY, GROW_OP_ENTITY.get(), (entity, side) -> entity.node());
+        event.registerBlockEntity(BINode.CAPABILITY, THINK_TANK_ENTITY.get(), (entity, side) -> entity.node());
         event.registerBlockEntity(BINode.CAPABILITY, ModTerpenes.TERPINATOR_ENTITY.get(), (TerpinatorBlockEntity entity, Direction side) -> entity.node());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MACHINE_ENTITY.get(), (entity, side) -> side == null ? null : new SidedInvWrapper(entity, side));
     }
