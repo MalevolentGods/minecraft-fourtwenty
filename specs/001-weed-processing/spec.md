@@ -86,7 +86,7 @@ A player wires up T2-T4 machines, feeds rough buds in by hopper or pipe, and col
 
 ### User Story 5 - Colonies keep running on supplied buds (Priority: P3)
 
-A colony's farmers bring in rough weed. Until the Bud Trimming Hut exists, players supply cured buds, and a Dispensary with none says why instead of failing silently.
+A colony's farmers bring in rough weed. Until the Bud Barn exists, players supply cured buds, and a Dispensary with none says why instead of failing silently.
 
 **Why this priority**: Colonies must not break, but the full colony answer is a later milestone.
 
@@ -179,5 +179,5 @@ A colony's farmers bring in rough weed. Until the Bud Trimming Hut exists, playe
 - T1 machines don't accept hoppers.
 - Higher tiers accept lower-tier power at a slower rate, if they have enough input; a part only burns out when given more than its tier.
 - Fuel is the three weed stages only; extracts arrive with the Rosin Rig.
-- Blaze tier, Grow Ops, Think Tank, Rosin Rig, Pheno Chamber, Kush Suit, Blazer and the Bud Trimming Hut are out of scope.
+- Blaze tier, Grow Ops, Think Tank, Rosin Rig, Pheno Chamber, Kush Suit, Blazer and the Bud Barn are out of scope.
 - The existing block shown as "Hookah" keeps its name and job; the BI Hookahs are new blocks.
