@@ -1,0 +1,79 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/power/puff_body",
+  "plate": "fourtwenty:block/power/puff_body",
+  "collar": "fourtwenty:block/power/puff_glow_lit",
+  "lead": "fourtwenty:block/power/puff_wick_lit"
+ },
+ "elements": [
+  {
+   "from": [
+    7,
+    16,
+    5
+   ],
+   "to": [
+    9,
+    16.25,
+    6
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7,
+      -0.25,
+      9,
+      0
+     ],
+     "texture": "#plate"
+    },
+    "south": {
+     "uv": [
+      7,
+      -0.25,
+      9,
+      0
+     ],
+     "texture": "#plate"
+    },
+    "east": {
+     "uv": [
+      5,
+      -0.25,
+      6,
+      0
+     ],
+     "texture": "#plate"
+    },
+    "west": {
+     "uv": [
+      5,
+      -0.25,
+      6,
+      0
+     ],
+     "texture": "#plate"
+    },
+    "up": {
+     "uv": [
+      7,
+      5,
+      9,
+      6
+     ],
+     "texture": "#plate"
+    },
+    "down": {
+     "uv": [
+      7,
+      5,
+      9,
+      6
+     ],
+     "texture": "#plate"
+    }
+   }
+  }
+ ]
+}

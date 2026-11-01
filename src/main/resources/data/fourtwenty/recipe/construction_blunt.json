@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CWC",
+    "RTR"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "W": {
+      "item": "fourtwenty:rolled_wick"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "fourtwenty:construction_joint"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:construction_blunt",
+    "count": 1
+  },
+  "show_notification": true
+}

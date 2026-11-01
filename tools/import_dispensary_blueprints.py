@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Bundle the Sensi Heights Dispensary (levels 1-5) as FourTwenty's default hut blueprints.
+"""RETIRED as an importer: the FourTwenty pack is gone and the Dispensary ships in Sensi Heights. Kept for the NBT helpers import_sensi_heights.py uses.
+
+Bundle the Sensi Heights Dispensary (levels 1-5) as FourTwenty's default hut blueprints.
 
 The Sensi Heights style pack (the Malevolent Colonies modpack) designs the Dispensary; this copies
 its five levels into src/main/resources/blueprints/fourtwenty/dispensary/dispensary/ for the mod:

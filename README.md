@@ -17,7 +17,7 @@ Five tiers of indoor plot grow any crop faster: the Closet Grow, Grow Tent, Hydr
 
 Every seed now has Potency, Yield and Length, rated 1 to 5. Above the 16 bred strains is a ladder of 22 more: biome landraces, Crosses from the Pheno Chamber, then Double Crosses, Ultras and Golden God, which come from pollinating. Grown side by side, Double Cross parents sometimes cross on their own, and a Buzz Bot, a robot bee that runs on Cured Buds, makes it certain. Better strains need better Grow Ops, and grow slower.
 
-The Rosin Rig refines Cured Buds into extracts that burn longer in a Hookah and hit harder in a pipe. Transport Tubes link machines, Hookahs and Terpinators into one network that carries items both ways. The Construction Joint makes twice as many building blocks. Hookahs hold 64 buds, and light themselves only when something needs the power, or with the Light button. Everything you've smoked shows as one badge.
+The Rosin Rig refines Cured Buds into extracts that burn longer in a Hookah and hit harder in a pipe. Transport Tubes link machines, Hookahs and Terpinators into one network that carries items both ways. The Construction Joint, Blunt, Spliff and Cannon are powered benches that make 2, 3, 4 and 6 times as many building and coloured blocks. Hookahs hold 64 buds, and light themselves only when something needs the power, or with the Light button. Everything you've smoked shows as one badge.
 
 ## What's new in 0.14.1
 
@@ -121,7 +121,7 @@ GWG
 
 ![Dispensary shaped recipe, requiring MineColonies: any planks across the top and bottom rows; middle row paper, weed bud, paper. Makes one Dispensary. Oak planks are shown as an example.](docs/images/recipes/dispensary.png)
 
-Use **Build Tool → Switch Pack → FourTwenty → Dispensary → dispensary1** to place the shop. The level selector previews levels 1–5; request construction, upgrades, and repairs through the standard hut controls. The bundled design is the Sensi Heights Dispensary, all on one 11 × 24 footprint:
+Use **Build Tool → Switch Pack → Sensi Heights → Craftsmanship → Dispensary** to place the shop. The level selector previews levels 1–5; request construction, upgrades, and repairs through the standard hut controls. The bundled design is the Sensi Heights Dispensary, all on one 11 × 24 footprint:
 
 - a wooden shop, then a stone shop, then a modern storefront with the green cross;
 - level 4 adds a deeper store with lit display cases and a back lounge;

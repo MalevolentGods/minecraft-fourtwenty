@@ -27,7 +27,7 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 @PrefixGameTestTemplate(false)
 public final class DispensaryPresentationGameTests {
     public static Blueprint blueprint(GameTestHelper h, int level) throws Exception {
-        try (var input = DispensaryBlock.class.getResourceAsStream("/blueprints/fourtwenty/dispensary/dispensary/dispensary" + level + ".blueprint")) {
+        try (var input = DispensaryBlock.class.getResourceAsStream("/blueprints/fourtwenty/sensiheights/craftsmanship/luxury/dispensary" + level + ".blueprint")) {
             return BlueprintUtil.readBlueprintFromNBT(NbtIo.readCompressed(input, NbtAccounter.unlimitedHeap()), h.getLevel().registryAccess());
         }
     }
@@ -118,7 +118,7 @@ public final class DispensaryPresentationGameTests {
     /** Exercise the registered level-tick listener with unchanged inventory and independent world time. */
     @GameTest(template="empty",batch="dispensary_status_refresh")
     public static void levelTicksRefreshMovementAndQueueWithoutInventoryChanges(GameTestHelper h) throws Exception {
-        var colony=IColonyManager.getInstance().createColony(h.getLevel(),h.absolutePos(new BlockPos(1,1,1)),FakePlayerFactory.getMinecraft(h.getLevel()),"Status refresh","FourTwenty");
+        var colony=IColonyManager.getInstance().createColony(h.getLevel(),h.absolutePos(new BlockPos(1,1,1)),FakePlayerFactory.getMinecraft(h.getLevel()),"Status refresh","Sensi Heights");
         EntityCitizen worker=null;
         try {
             var hut=DispensaryProductionGameTests.hut(h,colony,h.absolutePos(new BlockPos(1,1,1)));
@@ -173,7 +173,7 @@ public final class DispensaryPresentationGameTests {
     }
     @GameTest(template="empty",batch="dispensary_status")
     public static void inventoryStatusAndNativePacket(GameTestHelper h) throws Exception {
-        var colony=IColonyManager.getInstance().createColony(h.getLevel(),h.absolutePos(new BlockPos(1,1,1)),FakePlayerFactory.getMinecraft(h.getLevel()),"Status","FourTwenty");
+        var colony=IColonyManager.getInstance().createColony(h.getLevel(),h.absolutePos(new BlockPos(1,1,1)),FakePlayerFactory.getMinecraft(h.getLevel()),"Status","Sensi Heights");
         EntityCitizen worker=null;
         try {
             var hut=DispensaryProductionGameTests.hut(h,colony,h.absolutePos(new BlockPos(1,1,1)));

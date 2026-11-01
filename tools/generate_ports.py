@@ -188,6 +188,8 @@ def main():
         block(name, tier, plot())
     block('think_tank', 'puff', think_tank())
     block('rosin_rig', 'toke', full(up=stem_up(13)))
+    for name, tier in (('construction_joint', 'puff'), ('construction_blunt', 'toke'), ('construction_spliff', 'rip'), ('construction_cannon', 'blaze')):
+        block(name, tier, full(up=[box([7, 16, 5], [9, 16.25, 6], 'plate')]))
     block('pheno_chamber', 'toke', full(up=stem_up(14)))
     block('pheno_lab', 'rip', full(up=stem_up(13)))
     block('pheno_cathedral', 'blaze', full(up=stem_up(12)))

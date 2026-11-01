@@ -54,7 +54,7 @@ public final class DispensaryServiceGameTests {
                 var chunk=new net.minecraft.world.level.ChunkPos(x,z);
                 if(!world.getForcedChunks().contains(chunk.toLong())) {world.setChunkForced(x,z,true);forced.add(chunk);}
             }
-            colony=IColonyManager.getInstance().createColony(world,origin.offset(12,0,8),FakePlayerFactory.getMinecraft(world),"Dispensary service","FourTwenty");
+            colony=IColonyManager.getInstance().createColony(world,origin.offset(12,0,8),FakePlayerFactory.getMinecraft(world),"Dispensary service","Sensi Heights");
         }
         IBuilding building(net.minecraft.world.level.block.Block block, int x,int z,int level) {
             var pos=origin.offset(x,0,z);h.getLevel().setBlockAndUpdate(pos,block.defaultBlockState());
@@ -71,7 +71,7 @@ public final class DispensaryServiceGameTests {
         }
         DispensaryBuilding blueprint() throws Exception {
             var pos=origin.offset(12,0,8);
-            try(var input=DispensaryBlock.class.getResourceAsStream("/blueprints/fourtwenty/dispensary/dispensary/dispensary1.blueprint")) {
+            try(var input=DispensaryBlock.class.getResourceAsStream("/blueprints/fourtwenty/sensiheights/craftsmanship/luxury/dispensary1.blueprint")) {
                 var blueprint=com.ldtteam.structurize.blueprints.v1.BlueprintUtil.readBlueprintFromNBT(
                         net.minecraft.nbt.NbtIo.readCompressed(input,net.minecraft.nbt.NbtAccounter.unlimitedHeap()),h.getLevel().registryAccess());
                 var start=pos.subtract(blueprint.getPrimaryBlockOffset());

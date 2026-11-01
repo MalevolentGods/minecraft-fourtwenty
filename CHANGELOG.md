@@ -2,6 +2,19 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- **Construction Blunt, Spliff and Cannon:** bench upgrades that make 3, 4 and 6 times as many blocks.
+- JEI fills a Construction bench like a crafting table.
+
+### Changed
+- Construction benches need power, or a high player near, and every coloured block counts.
+- The Dispensary lives in Sensi Heights. The old FourTwenty pack is gone, and huts built from it carry on from Sensi Heights.
+
+### Fixed
+- The Construction Joint no longer hides the block under it.
+
 ## [0.15.0] - Boundless Inspiration
 
 ### Added

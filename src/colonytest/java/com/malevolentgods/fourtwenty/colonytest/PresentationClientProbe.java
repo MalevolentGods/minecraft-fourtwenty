@@ -38,8 +38,8 @@ public final class PresentationClientProbe {
                 setup=mc.getSingleplayerServer().submit(()->placeGallery(mc));
                 var futures=new java.util.ArrayList<java.util.concurrent.CompletableFuture<?>>();
                 for(int level=1;level<=5;level++) {
-                    String path="dispensary/dispensary"+level+".blueprint";
-                    futures.add(com.ldtteam.structurize.storage.StructurePacks.getBlueprintFuture("FourTwenty",path,mc.level.registryAccess())
+                    String path="craftsmanship/luxury/dispensary"+level+".blueprint";
+                    futures.add(com.ldtteam.structurize.storage.StructurePacks.getBlueprintFuture("Sensi Heights",path,mc.level.registryAccess())
                             .thenAccept(bp->{if(bp==null)throw new AssertionError("Missing selector blueprint "+path);}));
                 }
                 discovery=java.util.concurrent.CompletableFuture.allOf(futures.toArray(java.util.concurrent.CompletableFuture[]::new));
@@ -129,10 +129,10 @@ public final class PresentationClientProbe {
         world.setDayTime(6000);world.setWeatherParameters(24000,0,false,false);
         world.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false,world.getServer());
         var colony=com.minecolonies.api.colony.IColonyManager.getInstance().createColony(world,new BlockPos(288,81,128),
-                world.getServer().getPlayerList().getPlayers().getFirst(),"Presentation gallery","FourTwenty");
+                world.getServer().getPlayerList().getPlayers().getFirst(),"Presentation gallery","Sensi Heights");
         galleryColony=colony.getID();
         for(int level=1;level<=5;level++) {
-            try(var input=com.malevolentgods.fourtwenty.compat.minecolonies.building.DispensaryBlock.class.getResourceAsStream("/blueprints/fourtwenty/dispensary/dispensary/dispensary"+level+".blueprint")) {
+            try(var input=com.malevolentgods.fourtwenty.compat.minecolonies.building.DispensaryBlock.class.getResourceAsStream("/blueprints/fourtwenty/sensiheights/craftsmanship/luxury/dispensary"+level+".blueprint")) {
                 var bp=com.ldtteam.structurize.blueprints.v1.BlueprintUtil.readBlueprintFromNBT(net.minecraft.nbt.NbtIo.readCompressed(input,net.minecraft.nbt.NbtAccounter.unlimitedHeap()),world.registryAccess());
                 var start=new BlockPos(128+level*32,80,128);
                 for(var info:bp.getBlockInfoAsList()) {
@@ -142,7 +142,7 @@ public final class PresentationClientProbe {
                 var hutPos=start.offset(bp.getPrimaryBlockOffset());
                 var hut=(com.malevolentgods.fourtwenty.compat.minecolonies.building.DispensaryBuilding)colony.getServerBuildingManager().addNewBuilding(
                         (com.minecolonies.core.tileentities.TileEntityColonyBuilding)world.getBlockEntity(hutPos),world);
-                hut.setStructurePack("FourTwenty");hut.setBlueprintPath("dispensary/dispensary"+level+".blueprint");
+                hut.setStructurePack("Sensi Heights");hut.setBlueprintPath("craftsmanship/luxury/dispensary"+level+".blueprint");
                 hut.setBuildingLevel(level);hut.onUpgradeComplete(null,level);
                 hut.getModule(com.malevolentgods.fourtwenty.compat.minecolonies.DispensaryRegistry.WORK).setHiringMode(com.minecolonies.api.colony.buildings.HiringMode.MANUAL);
                 var data=colony.getCitizenManager().createAndRegisterCivilianData();data.setIsChild(false);data.setSaturation(100);

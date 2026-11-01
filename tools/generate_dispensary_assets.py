@@ -50,7 +50,6 @@ def generate():
     for name,p in [('side',side),('front',front),('top',top)]:png(ASSETS/f'textures/block/dispensary_{name}.png',p)
     icon=canvas(16,16);rect(icon,0,0,16,16,(53,39,29));rect(icon,1,1,14,14,(216,195,146));leaf(icon,0,3)
     png(ASSETS/'textures/gui/dispensary.png',icon)
-    png(ROOT/'src/main/resources/blueprints/fourtwenty/dispensary/dispensary.png',icon)
     # Native citizen models use 128x64, with vanilla body/head UVs in the upper left.
     skin=canvas(128,64);rect(skin,0,0,32,16,(177,122,86));rect(skin,0,0,32,10,(63,42,29))
     rect(skin,8,10,8,6,(189,137,96));rect(skin,9,11,2,1,(239,230,206));rect(skin,13,11,2,1,(239,230,206));rect(skin,10,11,1,1,(48,60,36));rect(skin,13,11,1,1,(48,60,36));rect(skin,11,14,3,1,(124,73,53))

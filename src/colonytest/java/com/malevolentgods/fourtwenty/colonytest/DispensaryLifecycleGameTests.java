@@ -47,7 +47,7 @@ public final class DispensaryLifecycleGameTests {
             level.getChunkAt(CHECKPOINT);
             if (stage.equals("write")) {
                 h.assertTrue(!java.nio.file.Files.exists(path), "Write requires a fresh disposable world");
-                var colony = manager.createColony(level, CHECKPOINT, FakePlayerFactory.getMinecraft(level), NAME, "FourTwenty");
+                var colony = manager.createColony(level, CHECKPOINT, FakePlayerFactory.getMinecraft(level), NAME, "Sensi Heights");
                 colony.setName(NAME);
                 var hut = DispensaryProductionGameTests.hut(h, colony, CHECKPOINT);
                 hut.setBuildingLevel(3); hut.onUpgradeComplete(null, 3);

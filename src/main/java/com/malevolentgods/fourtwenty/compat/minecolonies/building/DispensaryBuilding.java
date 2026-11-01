@@ -24,6 +24,9 @@ public final class DispensaryBuilding extends AbstractBuilding {
     private final Map<UUID, Long> customers = new LinkedHashMap<>();
     private final Map<BlockPos, Seat> seats = new HashMap<>();
     public DispensaryBuilding(IColony colony, BlockPos pos) { super(colony, pos); }
+    public static final String PACK = "Sensi Heights", PATH = "craftsmanship/luxury/dispensary";
+    private static final String OLD_PACK = "FourTwenty", OLD_PATH = "dispensary/dispensary";
+
     @Override public String getSchematicName() { return "dispensary"; }
     @Override public int getMaxBuildingLevel() { return 5; }
     public int stockTarget() { return ProductionRules.stockTarget(getBuildingLevel()); }
@@ -31,6 +34,11 @@ public final class DispensaryBuilding extends AbstractBuilding {
     /** Loading native stock/staff must never restore a queue or seat from the previous live instance. */
     @Override public void deserializeNBT(net.minecraft.core.HolderLookup.Provider provider, net.minecraft.nbt.CompoundTag tag) {
         super.deserializeNBT(provider, tag);
+        // The old FourTwenty pack is gone. Huts built from it carry on from the same Dispensary in Sensi Heights.
+        if (OLD_PACK.equals(getStructurePack())) {
+            setStructurePack(PACK);
+            if (getBlueprintPath() != null) setBlueprintPath(getBlueprintPath().replace(OLD_PATH, PATH));
+        }
         customers.clear();
         seats.clear();
     }
