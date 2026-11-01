@@ -4,6 +4,11 @@ package com.malevolentgods.fourtwenty.domain;
 public final class TrimRules {
     private TrimRules() {}
 
+    /** A powered trimmer: ticks per bud and BI per tick. Tier 1, the Trim Tray, is by hand. */
+    public record Tier(int ticks, int cost) {}
+
+    public static final java.util.List<Tier> DEFAULTS = java.util.List.of(new Tier(0, 0), new Tier(40, 16), new Tier(20, 64), new Tier(10, 256));
+
     /** A seed's chance per trimmed bud, by family. */
     public record Chances(double landrace, double neutrals, double warm, double green, double cool) {
         public static final Chances DEFAULT = new Chances(0.50, 0.25, 0.15, 0.10, 0.05);

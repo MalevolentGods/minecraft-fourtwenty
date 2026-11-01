@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CVC",
+    "RTR",
+    "CWC"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "V": {
+      "item": "minecraft:iron_bars"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "fourtwenty:dry_box"
+    },
+    "W": {
+      "item": "fourtwenty:rolled_wick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:cure_closet",
+    "count": 1
+  },
+  "show_notification": true
+}

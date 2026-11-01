@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DVD",
+    "RTR",
+    "DWD"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "V": {
+      "item": "minecraft:glass"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "fourtwenty:cure_closet"
+    },
+    "W": {
+      "item": "fourtwenty:glass_wick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:the_humidor",
+    "count": 1
+  },
+  "show_notification": true
+}

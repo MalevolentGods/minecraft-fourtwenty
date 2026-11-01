@@ -4,6 +4,11 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.15.0
+
+- **Weed processing:** harvest Rough Buds, trim them for Trimmed Buds and seeds, cure them into smokeable Cured Buds. A Trim Tray and Curing Rack need no power; six powered machines do it faster and take hoppers.
+- **Boundless Inspiration:** Hookahs burn weed into Inspo, Stash blocks hold it, Wicks carry it, and the Hit Box steps it between tiers. Machines run on Inspo, or free while a high player is within 21 blocks.
+
 ## What's new in 0.14.1
 
 - **The Sensi Heights Warehouse:** five levels from an open oak pavilion over a sunken rack room to a full concrete and glass depot, with up to 102 racks and room for 8 Courier's Huts inside it. Racks stay put through every upgrade.
@@ -42,7 +47,7 @@ This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and 
 
 Find wild weed in Plains, Savanna, Grove, and Meadow biomes, collect its seeds, and plant them on farmland. Cannabis grows through eight stages and responds to normal crop conditions and bone meal.
 
-Breaking an immature crop returns one seed. A mature crop drops one seed and 1–3 buds, with a 5% chance of 1–4 extra seeds. Right-clicking a mature crop resets it to age zero and retains one seed for replanting; the remaining harvest drops normally. Right-clicking an immature crop does nothing.
+Breaking an immature crop returns one seed. A mature crop drops one seed and 1–3 Rough Buds. Right-clicking a mature crop resets it to age zero and retains one seed for replanting; the remaining harvest drops normally. Right-clicking an immature crop does nothing.
 
 MineColonies farmers recognize the crop and its seeds through their native farming support. Actually Harvest uses its configured harvesting, replanting, tool-area, and XP behavior. With both installed, FourTwenty checks colony permissions for every cannabis crop in an area harvest. Datapacks can override the loot and additive tags.
 

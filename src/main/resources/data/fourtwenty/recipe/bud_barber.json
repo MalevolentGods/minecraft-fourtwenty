@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CSC",
+    "RTR",
+    "CWC"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "S": {
+      "item": "minecraft:shears"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "fourtwenty:snip_station"
+    },
+    "W": {
+      "item": "fourtwenty:rolled_wick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:bud_barber",
+    "count": 1
+  },
+  "show_notification": true
+}

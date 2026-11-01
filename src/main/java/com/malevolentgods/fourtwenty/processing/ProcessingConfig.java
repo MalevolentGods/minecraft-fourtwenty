@@ -7,6 +7,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 /** Server settings for trimming and curing. Before a world has loaded them (a tooltip on the title screen), the defaults apply. */
 public final class ProcessingConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+    private static final int TERPINATOR_DEFAULT = 8, INFUSER_DEFAULT = 500, FIRST_POWERED = 1, TIERS = 4;
     private static final TrimRules.Chances D = TrimRules.Chances.DEFAULT;
     private static final ModConfigSpec.DoubleValue LANDRACE = chance("seedChanceLandrace", D.landrace());
     private static final ModConfigSpec.DoubleValue NEUTRALS = chance("seedChanceNeutrals", D.neutrals());
@@ -16,12 +17,39 @@ public final class ProcessingConfig {
     private static final ModConfigSpec.IntValue RACK_TICKS = BUILDER
             .comment("Ticks a bud hangs on a Curing Rack.")
             .defineInRange("curingRackTicks", CureRules.DEFAULTS.get(0).ticks(), 1, 1_728_000);
+    private static final ModConfigSpec.IntValue[] TRIM_TICKS = tiers("trimTicks", "Ticks per bud.", i -> TrimRules.DEFAULTS.get(i).ticks());
+    private static final ModConfigSpec.IntValue[] TRIM_COST = tiers("trimCost", "BI per tick.", i -> TrimRules.DEFAULTS.get(i).cost());
+    private static final ModConfigSpec.IntValue[] CURE_TICKS = tiers("cureTicks", "Ticks per batch.", i -> CureRules.DEFAULTS.get(i).ticks());
+    private static final ModConfigSpec.IntValue[] CURE_BATCH = tiers("cureBatch", "Buds per batch.", i -> CureRules.DEFAULTS.get(i).batch());
+    private static final ModConfigSpec.IntValue[] CURE_COST = tiers("cureCost", "BI per tick.", i -> CureRules.DEFAULTS.get(i).cost());
+    private static final ModConfigSpec.IntValue FUEL_CURED = fuel("fuelCured", 800);
+    private static final ModConfigSpec.IntValue FUEL_TRIMMED = fuel("fuelTrimmed", 600);
+    private static final ModConfigSpec.IntValue FUEL_ROUGH = fuel("fuelRough", 400);
+    private static final ModConfigSpec.IntValue HIGH_SPEED = BUILDER
+            .comment("How fast a machine runs free for a high player, in percent of its speed on BI.")
+            .defineInRange("highSpeedPercent", 100, 1, 1000);
+    private static final ModConfigSpec.IntValue TERPINATOR_COST = BUILDER
+            .comment("Terpinator: BI per tick while sober.")
+            .defineInRange("terpinatorCost", TERPINATOR_DEFAULT, 0, 512);
+    private static final ModConfigSpec.IntValue INFUSER_COST = BUILDER
+            .comment("Inspiration Infuser: BI per caught colour or infused seed while sober.")
+            .defineInRange("infuserCost", INFUSER_DEFAULT, 0, 1_000_000);
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     private static volatile TrimRules.Chances chancesOverride;
     private static volatile CureRules.Tier rackOverride;
 
     private ProcessingConfig() {}
+
+    private static ModConfigSpec.IntValue[] tiers(String name, String comment, java.util.function.IntUnaryOperator value) {
+        var out = new ModConfigSpec.IntValue[TIERS];
+        for (int i = FIRST_POWERED; i < TIERS; i++) out[i] = BUILDER.comment("Tier " + (i + 1) + ": " + comment).defineInRange(name + (i + 1), value.applyAsInt(i), 1, 1_728_000);
+        return out;
+    }
+
+    private static ModConfigSpec.IntValue fuel(String name, int value) {
+        return BUILDER.comment("BI from burning one bud in a Hookah.").defineInRange(name, value, 0, 1_000_000);
+    }
 
     private static ModConfigSpec.DoubleValue chance(String name, double value) {
         return BUILDER.comment("Chance per trimmed bud of a seed.").defineInRange(name, value, 0, 1);
@@ -36,6 +64,31 @@ public final class ProcessingConfig {
         if (override != null) return override;
         return SPEC.isLoaded() ? new TrimRules.Chances(LANDRACE.get(), NEUTRALS.get(), WARM.get(), GREEN.get(), COOL.get()) : D;
     }
+
+    /** A powered curing tier, by index: 1 to 3 for tiers 2 to 4. */
+    public static CureRules.Tier cure(int index) {
+        return SPEC.isLoaded() ? new CureRules.Tier(CURE_TICKS[index].get(), CURE_BATCH[index].get(), CURE_COST[index].get()) : CureRules.DEFAULTS.get(index);
+    }
+
+    /** A powered trimming tier, by index: 1 to 3 for tiers 2 to 4. */
+    public static TrimRules.Tier trim(int index) {
+        return SPEC.isLoaded() ? new TrimRules.Tier(TRIM_TICKS[index].get(), TRIM_COST[index].get()) : TrimRules.DEFAULTS.get(index);
+    }
+
+    /** BI from burning this stack's item, or 0 if it won't burn. */
+    public static long fuel(net.minecraft.world.item.ItemStack stack) {
+        if (stack.isEmpty() || !SPEC.isLoaded()) return 0;
+        if (stack.is(com.malevolentgods.fourtwenty.registry.ModItems.WEED_BUD.get())) return FUEL_CURED.get();
+        if (stack.is(com.malevolentgods.fourtwenty.registry.ModItems.TRIMMED_BUD.get())) return FUEL_TRIMMED.get();
+        if (stack.is(com.malevolentgods.fourtwenty.registry.ModItems.ROUGH_BUD.get())) return FUEL_ROUGH.get();
+        return 0;
+    }
+
+    public static int highSpeedPercent() { return SPEC.isLoaded() ? HIGH_SPEED.get() : 100; }
+
+    public static int terpinatorCost() { return SPEC.isLoaded() ? TERPINATOR_COST.get() : TERPINATOR_DEFAULT; }
+
+    public static int infuserCost() { return SPEC.isLoaded() ? INFUSER_COST.get() : INFUSER_DEFAULT; }
 
     public static CureRules.Tier rack() {
         var override = rackOverride;

@@ -48,21 +48,21 @@ Paths are relative to the repo root. `J` = `src/main/java/com/malevolentgods/fou
 **Goal**: BI grid to Rip; Terpinator and Infuser on the shared rule.
 **Independent Test**: quickstart.md Stages 2-4.
 
-- [ ] T018 [US3] Add `markHigh` and `isHigh` in J/util/StrainEffects.java and call `markHigh` from J/util/SmokeEffects.java, J/blockentity/WeedBongBlockEntity.java and J/util/DelayedEffectManager.java
-- [ ] T019 [P] [US3] Add tiers and overload in J/domain/BIRules.java with tests in src/test/java/com/malevolentgods/fourtwenty/domain/BIRulesTest.java
-- [ ] T020 [P] [US3] Add run state in J/domain/MachinePowerRule.java with tests in src/test/java/com/malevolentgods/fourtwenty/domain/MachinePowerRuleTest.java
-- [ ] T021 [US3] Add BINode and capability in J/power/BINode.java
-- [ ] T022 [US3] Add routing, version and push in J/power/BIGrid.java
-- [ ] T023 [US3] Add shared rule and `spendOnce` in J/power/MachinePower.java
-- [ ] T024 [US3] Add Wick block, glow and burnout in J/power/WickBlock.java and J/power/BurnOut.java, with `ash` in J/registry/ModItems.java
-- [ ] T025 [US3] Add Hookah generator entity for three tiers in J/power/HookahBlock.java and J/power/HookahBlockEntity.java
-- [ ] T026 [US3] Add Stash blocks for three tiers in J/power/StashBlock.java and J/power/StashBlockEntity.java
-- [ ] T027 [US3] Add Hit Box in J/power/HitBoxBlock.java and J/power/HitBoxBlockEntity.java
-- [ ] T028 [P] [US3] Generate power block models in tools/generate_power.py
-- [ ] T029 [US3] Add power recipes in src/main/resources/data/fourtwenty/recipe/
-- [ ] T030 [US3] Gate Terpinator progress with `MachinePower` in J/terpene/TerpinatorBlockEntity.java, buffer and capability included
-- [ ] T031 [US3] Gate catch and infuse with `spendOnce` at the opened Infuser in J/infuser/Infuser.java and J/infuser/Infusion.java
-- [ ] T032 [US3] Game tests for run, pause, burnout and step-down in src/gametest/java/com/malevolentgods/fourtwenty/gametest/PowerGameTests.java
+- [X] T018 [US3] Add `markHigh` and `isHigh` in J/util/StrainEffects.java and call `markHigh` from J/util/SmokeEffects.java, J/blockentity/WeedBongBlockEntity.java and J/util/DelayedEffectManager.java
+- [X] T019 [P] [US3] Add tiers and overload in J/domain/BIRules.java with tests in src/test/java/com/malevolentgods/fourtwenty/domain/BIRulesTest.java
+- [X] T020 [P] [US3] Add run state in J/domain/MachinePowerRule.java with tests in src/test/java/com/malevolentgods/fourtwenty/domain/MachinePowerRuleTest.java
+- [X] T021 [US3] Add BINode and capability in J/power/BINode.java
+- [X] T022 [US3] Add routing, version and push in J/power/BIGrid.java
+- [X] T023 [US3] Add shared rule and `spendOnce` in J/power/MachinePower.java
+- [X] T024 [US3] Add Wick block, glow and burnout in J/power/WickBlock.java and J/power/BurnOut.java, with `ash` in J/registry/ModItems.java
+- [X] T025 [US3] Add Hookah generator entity for three tiers in J/power/HookahBlock.java and J/power/HookahBlockEntity.java
+- [X] T026 [US3] Add Stash blocks for three tiers in J/power/StashBlock.java and J/power/StashBlockEntity.java
+- [X] T027 [US3] Add Hit Box in J/power/HitBoxBlock.java and J/power/HitBoxBlockEntity.java
+- [X] T028 [P] [US3] Generate power block models in tools/generate_power.py
+- [X] T029 [US3] Add power recipes in src/main/resources/data/fourtwenty/recipe/
+- [X] T030 [US3] Gate Terpinator progress with `MachinePower` in J/terpene/TerpinatorBlockEntity.java, buffer and capability included
+- [X] T031 [US3] Gate catch and infuse with `spendOnce` at the opened Infuser in J/infuser/Infuser.java and J/infuser/Infusion.java
+- [X] T032 [US3] Game tests for run, pause, burnout and step-down in src/gametest/java/com/malevolentgods/fourtwenty/gametest/PowerGameTests.java
 - [ ] T033 [US3] Test quickstart Stages 2-4 in game, then commit
 
 ## Phase 6: User Story 4 - Automate the line (P2)
@@ -70,12 +70,12 @@ Paths are relative to the repo root. `J` = `src/main/java/com/malevolentgods/fou
 **Goal**: Six powered machines with item input and output.
 **Independent Test**: quickstart.md Stage 5.
 
-- [ ] T034 [US4] Add shared block, entity and `WorldlyContainer` in J/processing/MachineBlock.java and J/processing/MachineBlockEntity.java
-- [ ] T035 [US4] Add menu and screen in J/processing/MachineMenu.java and J/client/MachineScreen.java
-- [ ] T036 [US4] Register six machines and item capability in J/registry/ModBlocks.java, J/registry/ModBlockEntities.java and J/FourTwenty.java
-- [ ] T037 [P] [US4] Extend tools/generate_processing.py with six machine models
-- [ ] T038 [US4] Add upgrade recipes in src/main/resources/data/fourtwenty/recipe/
-- [ ] T039 [US4] Game tests for hopper in and out, strains, tier speed in src/gametest/java/com/malevolentgods/fourtwenty/gametest/ProcessingGameTests.java
+- [X] T034 [US4] Add shared block, entity and `WorldlyContainer` in J/processing/MachineBlock.java and J/processing/MachineBlockEntity.java
+- [X] T035 [US4] Add menu and screen in J/processing/MachineMenu.java and J/client/MachineScreen.java
+- [X] T036 [US4] Register six machines and item capability in J/registry/ModBlocks.java, J/registry/ModBlockEntities.java and J/FourTwenty.java
+- [X] T037 [P] [US4] Extend tools/generate_processing.py with six machine models
+- [X] T038 [US4] Add upgrade recipes in src/main/resources/data/fourtwenty/recipe/
+- [X] T039 [US4] Game tests for hopper in and out, strains, tier speed in src/gametest/java/com/malevolentgods/fourtwenty/gametest/ProcessingGameTests.java
 - [ ] T040 [US4] Test quickstart Stage 5 in game, then commit
 
 ## Phase 7: User Story 5 - Colonies keep running (P3)
@@ -83,12 +83,12 @@ Paths are relative to the repo root. `J` = `src/main/java/com/malevolentgods/fou
 **Goal**: Supplied buds work; missing buds are reported.
 **Independent Test**: A Dispensary with and without cured buds.
 
-- [ ] T041 [US5] Change "weed buds" status text to cured buds in src/main/resources/assets/fourtwenty/lang/en_us.json
+- [X] T041 [US5] Change "weed buds" status text to cured buds in src/main/resources/assets/fourtwenty/lang/en_us.json
 - [ ] T042 [US5] Test a Dispensary both ways and the game without MineColonies, then commit
 
 ## Phase 8: Polish
 
-- [ ] T043 [P] Update README.md, the in-game guide text and CHANGELOG.md
+- [X] T043 [P] Update README.md, the in-game guide text and CHANGELOG.md
 - [ ] T044 Run the full quickstart regression on a copy of a 0.14.1 world
 - [ ] T045 Open the PR; release 0.15.0 only on the user's go
 

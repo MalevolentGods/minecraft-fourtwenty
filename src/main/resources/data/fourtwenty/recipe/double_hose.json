@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GHG",
+    "WWW"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "H": {
+      "item": "fourtwenty:single_hose_hookah"
+    },
+    "W": {
+      "item": "fourtwenty:rolled_wick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:double_hose",
+    "count": 1
+  },
+  "show_notification": true
+}

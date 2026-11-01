@@ -30,6 +30,8 @@ public class FourTwenty {
         
         // Register items and blocks first
         com.malevolentgods.fourtwenty.registry.ModTerpenes.init();
+        com.malevolentgods.fourtwenty.registry.ModPower.init();
+        com.malevolentgods.fourtwenty.registry.ModPower.register(bus);
         com.malevolentgods.fourtwenty.terpene.TerpeneNetwork.register(bus);
         ModBlocks.BLOCKS.register(bus);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.util.BongBuffs::tick);

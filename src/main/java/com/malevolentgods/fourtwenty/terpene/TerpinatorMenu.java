@@ -58,6 +58,8 @@ public class TerpinatorMenu extends AbstractContainerMenu {
 
     public boolean running() { return data.get(DATA_RUNNING) != 0; }
 
+    public boolean paused() { return data.get(DATA_PAUSED) != 0; }
+
     public Container container() { return container; }
 
     @Override public boolean clickMenuButton(@Nonnull Player player, int id) {

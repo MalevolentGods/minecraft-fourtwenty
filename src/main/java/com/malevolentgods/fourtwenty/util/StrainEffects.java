@@ -91,6 +91,7 @@ public final class StrainEffects {
         }
         long until = level.getGameTime() + duration(strain);
         HIGHS.put(player.getUUID(), new High(strain, until));
+        markHigh(player, duration(strain));
         if (player instanceof ServerPlayer sp) {
             PacketDistributor.sendToPlayer(sp, new Tint(strain, duration(strain)));
             // smoking inspires colours (a colour drift on screen); with nothing new to inspire, sometimes just the drift
@@ -103,6 +104,18 @@ public final class StrainEffects {
     // ---- auras: Mossy Philosopher grows crops around you, Third-Eye Tonic shows nearby monsters through walls
 
     private record High(Strain strain, long until) {}
+
+    /** Everyone who's high, by when it wears off. Bongs and edibles land here too, without a strain's aura. Not saved: a high ends with the server. */
+    private static final Map<UUID, Long> HIGH_UNTIL = new HashMap<>();
+
+    public static void markHigh(Player player, int ticks) {
+        HIGH_UNTIL.merge(player.getUUID(), player.level().getGameTime() + ticks, Math::max);
+    }
+
+    public static boolean isHigh(Player player) {
+        Long until = HIGH_UNTIL.get(player.getUUID());
+        return until != null && player.level().getGameTime() <= until;
+    }
 
     private static final Map<UUID, High> HIGHS = new HashMap<>();
 

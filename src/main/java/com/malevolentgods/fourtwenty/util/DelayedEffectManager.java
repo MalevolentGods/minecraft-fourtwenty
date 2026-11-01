@@ -75,6 +75,7 @@ public class DelayedEffectManager {
     }
 
     private static void applyWeedEffects(Player player, int duration, int amplifier, boolean isPremium) {
+        StrainEffects.markHigh(player, duration);
         Level level = player.level();
         
         if (!level.isClientSide()) {

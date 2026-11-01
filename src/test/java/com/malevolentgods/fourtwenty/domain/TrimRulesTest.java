@@ -24,6 +24,16 @@ class TrimRulesTest {
     }
 
     @Test
+    void ratesHoldWithinThreePointsOverAThousandTrims() {
+        var rng = new java.util.Random(420);
+        for (Strain s : Strain.values()) {
+            int seeds = 0;
+            for (int i = 0; i < 1000; i++) if (TrimRules.seeded(C, s, rng.nextDouble())) seeds++;
+            assertTrue(Math.abs(seeds / 1000.0 - C.of(s.family())) <= 0.03, s + ": " + seeds);
+        }
+    }
+
+    @Test
     void rollIsBelowTheChance() {
         assertTrue(TrimRules.seeded(C, Strain.LANDRACE, 0.49));
         assertFalse(TrimRules.seeded(C, Strain.LANDRACE, 0.50));

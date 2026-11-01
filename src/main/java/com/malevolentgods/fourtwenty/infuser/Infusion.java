@@ -82,18 +82,28 @@ public final class Infusion {
         }
     }
 
-    /** Whether the player stands at an Inspiration Infuser (within 6 blocks of one). */
-    public static boolean nearInfuser(Player player) {
+    /** The Inspiration Infuser the player stands at (within 6 blocks), or null. */
+    public static BlockPos infuserNear(Player player) {
         BlockPos at = player.blockPosition();
         for (BlockPos p : BlockPos.betweenClosed(at.offset(-6, -3, -6), at.offset(6, 3, 6))) {
-            if (player.level().getBlockState(p).getBlock() instanceof InspirationInfuserBlock) return true;
+            if (player.level().getBlockState(p).getBlock() instanceof InspirationInfuserBlock) return p.immutable();
         }
-        return false;
+        return null;
+    }
+
+    /** Whether this one action at the Infuser has power: free near a high player, otherwise it comes off the Wicks. It says so if not; the pool is kept. */
+    public static boolean paid(ServerPlayer player) {
+        BlockPos at = infuserNear(player);
+        if (at == null) return true;
+        boolean paid = com.malevolentgods.fourtwenty.power.MachinePower.spendOnce(player.level(), at,
+                com.malevolentgods.fourtwenty.processing.ProcessingConfig.infuserCost());
+        if (!paid) player.displayClientMessage(net.minecraft.network.chat.Component.translatable("gui.fourtwenty.machine.no_power"), true);
+        return paid;
     }
 
     /** Does one infusion: a Landrace seed and the terpenes in, one strain seed out. */
     public static boolean infuse(ServerPlayer player, Recipe recipe) {
-        if (available(player, recipe) <= 0 || !nearInfuser(player)) return false;
+        if (available(player, recipe) <= 0 || infuserNear(player) == null || !paid(player)) return false;
         Inventory inv = player.getInventory();
         take(inv, Infusion::landraceSeed);
         for (Item terp : recipe.items()) take(inv, s -> s.is(terp));

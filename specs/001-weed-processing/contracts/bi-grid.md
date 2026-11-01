@@ -5,8 +5,10 @@ Block capability `fourtwenty:bi`, available to future Four Twenty machines.
 ```java
 interface BINode {
     int tier();                                 // 1 Puff, 2 Toke, 3 Rip
-    long receive(long amount, boolean simulate);
-    long extract(long amount, boolean simulate);
+    long stored();
+    long capacity();
+    long receive(long amount);
+    long extract(long amount);
     boolean canReceive();
     boolean canExtract();
 }

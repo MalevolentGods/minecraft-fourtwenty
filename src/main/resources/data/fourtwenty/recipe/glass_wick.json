@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "WGW",
+    "GDG",
+    "WGW"
+  ],
+  "key": {
+    "W": {
+      "item": "fourtwenty:rolled_wick"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "D": {
+      "item": "minecraft:glowstone_dust"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:glass_wick",
+    "count": 4
+  },
+  "show_notification": true
+}

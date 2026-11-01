@@ -127,7 +127,12 @@ def twine(size=32):
 
 
 def box(a, b, tex, **faces):
-    all_faces = {side: {'uv': [0, 0, 16, 16], 'texture': f'#{tex}'} for side in ('north', 'south', 'east', 'west', 'up', 'down')}
+    x0, y0, z0 = a
+    x1, y1, z1 = b
+    wrap = lambda v: max(0, min(16, v))
+    uvs = {'north': [x0, 16 - y1, x1, 16 - y0], 'south': [x0, 16 - y1, x1, 16 - y0], 'east': [z0, 16 - y1, z1, 16 - y0],
+           'west': [z0, 16 - y1, z1, 16 - y0], 'up': [x0, z0, x1, z1], 'down': [x0, z0, x1, z1]}
+    all_faces = {side: {'uv': [wrap(v) for v in uv], 'texture': f'#{tex}'} for side, uv in uvs.items()}
     for side, t in faces.items():
         all_faces[side]['texture'] = f'#{t}'
     return {'from': a, 'to': b, 'faces': all_faces}
@@ -152,8 +157,8 @@ def coplanar(elements):
 def block_model(name, textures, elements, particle):
     clash = coplanar(elements)
     assert not clash, f'{name} z-fights: {clash}'
-    model = {'parent': 'block/block', 'textures': {'particle': f'fourtwenty:block/processing/{particle}', **{k: f'fourtwenty:block/processing/{v}' for k, v in textures.items()}},
-             'elements': elements}
+    path = lambda v: v if ':' in v or v.startswith('#') else f'fourtwenty:block/processing/{v}'
+    model = {'parent': 'block/block', 'textures': {'particle': path(particle), **{k: path(v) for k, v in textures.items()}}, 'elements': elements}
     (ASSETS / f'models/block/{name}.json').write_text(json.dumps(model, indent=1) + '\n')
 
 

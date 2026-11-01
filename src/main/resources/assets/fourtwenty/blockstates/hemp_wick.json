@@ -1,0 +1,138 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/hemp_wick_core"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/hemp_wick_arm"
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/hemp_wick_arm",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/hemp_wick_arm",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/hemp_wick_arm",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "true",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/hemp_wick_arm",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": "true",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "fourtwenty:block/hemp_wick_arm",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/hemp_wick_core_lit"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/hemp_wick_arm_lit"
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/hemp_wick_arm_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/hemp_wick_arm_lit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/hemp_wick_arm_lit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "true",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/hemp_wick_arm_lit",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": "true",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "fourtwenty:block/hemp_wick_arm_lit",
+        "x": 90
+      }
+    }
+  ]
+}

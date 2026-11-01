@@ -142,7 +142,7 @@ public class TerpinatorScreen extends AbstractContainerScreen<TerpinatorMenu> {
                     PANE_X + 6, at + 1, TerpeneDraw.MUTED, false);
         }
         String why = status(menu.running(), picked, menu.getSlot(BUDS).getItem(), menu.getSlot(OUT).getItem());
-        Component status = TerpeneDraw.t("gui.fourtwenty.terpinator.status." + (why == null ? "running" : why));
+        Component status = TerpeneDraw.t("gui.fourtwenty.terpinator.status." + (why != null ? why : menu.paused() ? "no_power" : "running"));
         int at2 = BTN_Y + 20;
         for (var line : font.split(status, w)) {
             g.drawString(font, line, PANE_X + 6, at2, why == null ? 0xFF3E8E57 : TerpeneDraw.MUTED, false);
