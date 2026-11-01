@@ -13,6 +13,7 @@ class BIRulesTest {
         assertEquals(4_200, Tier.PUFF.total());
         assertEquals(8_400, Tier.TOKE.total());
         assertEquals(16_800, Tier.RIP.total());
+        assertEquals(33_600, Tier.BLAZE.total());
         for (Tier t : Tier.values()) assertEquals(t.total(), t.rate() * BIRules.BURN_TICKS, 1e-9);
     }
 

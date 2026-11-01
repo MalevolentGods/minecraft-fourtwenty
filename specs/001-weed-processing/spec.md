@@ -151,7 +151,7 @@ A colony's farmers bring in rough weed. Until the Bud Barn exists, players suppl
 - **FR-021**: With MineColonies, the Budtender's menu MUST keep working from supplied cured buds, and a Dispensary without them MUST report what's missing.
 - **FR-022**: Clients without the channel MUST NOT be sent power or machine updates.
 - **FR-023**: A Budtender MUST load at most one Hookah session per 10 minutes.
-- **FR-024**: Every tech block's screen MUST share one custom style with an animated BI gauge, and tech blocks MUST have animated textures and their own sound effects.
+- **FR-024**: Every tech block's screen MUST share one custom style with an animated BI gauge, and tech blocks MUST have animated textures. Sound belongs in the screens: running machines MUST make no sound in the world.
 
 ### Key Entities
 

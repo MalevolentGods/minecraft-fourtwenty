@@ -29,8 +29,8 @@ import java.util.Map;
 
 /**
  * Wiring: Hemp, Rolled and Glass Wick. It glows while it carries power and burns out past two Hookahs' worth of its tier. Each side is open,
- * joined to another Wick, or plugged into a BI block: a plug's flange sits on the block's edge and its tail reaches into the block's space, so
- * a Wick meets a narrow block like a Stash Jar or a Hookah instead of stopping short of it.
+ * joined to another Wick, or plugged into a BI block: a plug tapers to the block's edge, and the block draws the rest of the fitting for that side
+ * (client/PortModel).
  */
 public class WickBlock extends Block {
     public enum Link implements StringRepresentable {
@@ -44,6 +44,7 @@ public class WickBlock extends Block {
     private static final Map<Direction, VoxelShape> ARMS = new EnumMap<>(Direction.class);
     private static final VoxelShape CORE = Block.box(6, 6, 6, 10, 10, 10);
     private static final int GLOW_TICKS = 30;
+    private static final Map<Level, Map<BlockPos, Long>> CARRIED = new java.util.WeakHashMap<>();
 
     static {
         for (Direction d : Direction.values()) SIDES.put(d, EnumProperty.create(d.getName(), Link.class));
@@ -107,15 +108,23 @@ public class WickBlock extends Block {
         super.onRemove(state, level, pos, next, moved);
     }
 
-    /** Power went through: light it, and a tick later unless power comes again it goes dark. */
+    /** Power went through: light it, and it stays lit until a whole glow passes with no power. */
     public static void carry(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         if (!(state.getBlock() instanceof WickBlock)) return;
+        CARRIED.computeIfAbsent(level, l -> new HashMap<>()).put(pos.immutable(), level.getGameTime());
         if (!state.getValue(LIT)) level.setBlock(pos, state.setValue(LIT, true), 2);
         if (!level.getBlockTicks().hasScheduledTick(pos, state.getBlock())) level.scheduleTick(pos, state.getBlock(), GLOW_TICKS);
     }
 
     @Override protected void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
+        var carried = CARRIED.computeIfAbsent(level, l -> new HashMap<>());
+        long left = carried.getOrDefault(pos, Long.MIN_VALUE / 2) + GLOW_TICKS - level.getGameTime();
+        if (left > 0) {
+            level.scheduleTick(pos, this, (int) left);
+            return;
+        }
+        carried.remove(pos);
         if (state.getValue(LIT)) level.setBlock(pos, state.setValue(LIT, false), 2);
     }
 }

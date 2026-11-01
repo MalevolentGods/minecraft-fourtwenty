@@ -6,9 +6,14 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ### Added
 - **Weed processing:** mature crops give Rough Buds. Trimming makes Trimmed Buds and is where seeds come from, at a chance by strain family (Landrace 50%, Neutrals 25%, Warm 15%, Green 10%, Cool 5%). Curing makes Cured Buds, the existing Weed Bud under a new name. All chances, times and costs are in `fourtwenty-processing-server.toml`.
-- **Trim Tray and Curing Rack:** tier 1, by hand, with no power. The tray places on the floor or as a top slab.
+- **Trim Tray and Curing Rack:** tier 1, by hand, with no power. The tray stands at waist height.
 - **Powered machines:** Snip Station, Bud Barber and Trim Reaper; Dry Box, Cure Closet and The Humidor. Hoppers and pipes feed the top and sides and empty the bottom.
 - **Boundless Inspiration, up to Rip:** the Hookah now makes BI while it burns, and upgrades to the Double Hose and Big Bertha; Stash Jar, Stash Box and Mother Stash; Hemp, Rolled and Glass Wicks; the Hit Box. Too much power burns a Wick out into ash; a block on too high a tier overloads and stops, and never breaks.
+
+- **Grow Ops:** Closet Grow, Grow Tent, Hydro Bed, Aero Pod and Cosmic Kush Pod, 1.5 to 8 times as fast, upgraded in place. The top two give bigger harvests and replant.
+- **Think Tank:** research with no colony, using Grow Ops as test plots. Sixteen tier 1 studies teach the Minecraft colours.
+- **Blaze tier:** the Grand Hookah, The Vault and Gold Wick.
+- A flowering crop grows buds in its strain's colour, and Jade names the strain.
 
 ### Changed
 - Hookahs burn charcoal instead of flint and steel, lava or blaze powder, for one minute a burn.

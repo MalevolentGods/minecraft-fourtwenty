@@ -8,7 +8,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 
 import javax.annotation.Nonnull;
@@ -77,7 +76,7 @@ public class HelpScreen extends Screen {
         }
 
         @Override public void playDownSound(@Nonnull SoundManager sounds) {
-            sounds.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
+            sounds.play(SimpleSoundInstance.forUI(com.malevolentgods.fourtwenty.registry.ModPower.SWITCH.get(), 1));
         }
     }
 }

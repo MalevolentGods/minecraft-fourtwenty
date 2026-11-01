@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GLG",
+    "WCW"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:green_wool"
+    },
+    "L": {
+      "item": "minecraft:glowstone"
+    },
+    "W": {
+      "item": "fourtwenty:hemp_wick"
+    },
+    "C": {
+      "item": "fourtwenty:closet_grow"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:grow_tent",
+    "count": 1
+  },
+  "show_notification": true
+}

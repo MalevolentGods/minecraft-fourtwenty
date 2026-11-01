@@ -27,12 +27,11 @@ public final class BurnOut {
         Block.popResource(level, pos, new ItemStack(ModPower.ASH.get()));
     }
 
-    /** One moment of an overloaded block: green sparks, smoke, a sizzle. */
+    /** One moment of an overloaded block: green sparks and smoke. Its sound is in its screen. */
     public static void overloadFx(Level level, BlockPos pos) {
         if (!(level instanceof ServerLevel server)) return;
         double x = pos.getX() + 0.5, y = pos.getY() + 1, z = pos.getZ() + 0.5;
         server.sendParticles(GREEN, x, y, z, 6, 0.3, 0.1, 0.3, 0);
         server.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, x, y, z, 2, 0.2, 0, 0.2, 0.02);
-        level.playSound(null, pos, ModPower.OVERLOAD.get(), SoundSource.BLOCKS, 0.5f, 0.9f + level.random.nextFloat() * 0.2f);
     }
 }

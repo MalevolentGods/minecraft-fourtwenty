@@ -11,7 +11,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / 'src/main/resources/assets/fourtwenty'
 DATA = ROOT / 'src/main/resources/data'
-BLOCKS = ('trim_tray', 'curing_rack', 'hemp_wick', 'rolled_wick', 'glass_wick', 'double_hose', 'big_bertha', 'stash_jar', 'stash_box',
+BLOCKS = ('trim_tray', 'curing_rack', 'hemp_wick', 'rolled_wick', 'glass_wick', 'gold_wick', 'double_hose', 'big_bertha', 'grand_hookah', 'the_vault', 'closet_grow', 'grow_tent', 'hydro_bed', 'aero_pod',
+          'cosmic_kush_pod', 'think_tank', 'stash_jar', 'stash_box',
           'mother_stash', 'hit_box', 'snip_station', 'bud_barber', 'trim_reaper', 'dry_box', 'cure_closet', 'the_humidor')
 
 
@@ -59,7 +60,18 @@ def main():
             problems.append(f'{name}: no name')
         if not (DATA / f'fourtwenty/loot_table/blocks/{name}.json').exists():
             problems.append(f'{name}: no loot table')
-    print('\n'.join(problems) if problems else f'{len(BLOCKS)} blocks complete')
+    ports = ('weed_bong', 'double_hose', 'big_bertha', 'grand_hookah', 'stash_jar', 'stash_box', 'mother_stash', 'the_vault', 'snip_station', 'bud_barber', 'trim_reaper',
+             'dry_box', 'cure_closet', 'the_humidor', 'grow_tent', 'hydro_bed', 'aero_pod', 'cosmic_kush_pod', 'think_tank', 'terpinator', 'terpinator_lab',
+             'inspiration_infuser', 'inspiration_infuser_lab', 'hit_box_toke', 'hit_box_rip', 'hit_box_blaze')
+    for name in ports:
+        for side in ('north', 'east', 'south', 'west', 'up', 'down'):
+            for lit in ('', '_lit'):
+                problems += model_problems(f'fourtwenty:block/port/{name}_{side}{lit}', set())
+    for name, sides in (('weed_bong', ('east',)), ('double_hose', ('east', 'west')), ('big_bertha', ('north', 'east', 'south', 'west')), ('grand_hookah', ('north', 'east', 'south', 'west'))):
+        for side in sides:
+            problems += model_problems(f'fourtwenty:block/port/{name}_hose_{side}', set())
+        problems += model_problems(f'fourtwenty:block/{name}_item', set())
+    print('\n'.join(problems) if problems else f'{len(BLOCKS)} blocks and {len(ports)} sets of fittings complete')
     sys.exit(1 if problems else 0)
 
 

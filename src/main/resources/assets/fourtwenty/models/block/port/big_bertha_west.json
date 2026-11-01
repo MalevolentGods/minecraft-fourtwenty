@@ -1,0 +1,156 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/hookah/steel",
+  "plate": "fourtwenty:block/hookah/steel",
+  "collar": "fourtwenty:block/power/rip_glow",
+  "lead": "fourtwenty:block/power/rip_wick"
+ },
+ "elements": [
+  {
+   "from": [
+    0,
+    7.25,
+    7.25
+   ],
+   "to": [
+    3.9000000000000004,
+    8.75,
+    8.75
+   ],
+   "faces": {
+    "west": {
+     "uv": [
+      7.25,
+      7.25,
+      8.75,
+      8.75
+     ],
+     "texture": "#lead"
+    },
+    "east": {
+     "uv": [
+      7.25,
+      7.25,
+      8.75,
+      8.75
+     ],
+     "texture": "#lead"
+    },
+    "north": {
+     "uv": [
+      0,
+      7.25,
+      3.9,
+      8.75
+     ],
+     "texture": "#lead"
+    },
+    "south": {
+     "uv": [
+      0,
+      7.25,
+      3.9,
+      8.75
+     ],
+     "texture": "#lead"
+    },
+    "up": {
+     "uv": [
+      7.25,
+      0,
+      8.75,
+      3.9
+     ],
+     "texture": "#lead"
+    },
+    "down": {
+     "uv": [
+      7.25,
+      0,
+      8.75,
+      3.9
+     ],
+     "texture": "#lead"
+    }
+   },
+   "rotation": {
+    "origin": [
+     0,
+     8,
+     8
+    ],
+    "axis": "z",
+    "angle": -22.5
+   }
+  },
+  {
+   "from": [
+    3.25,
+    5,
+    6.25
+   ],
+   "to": [
+    3.75,
+    8,
+    9.75
+   ],
+   "faces": {
+    "west": {
+     "uv": [
+      6.25,
+      8,
+      9.75,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "east": {
+     "uv": [
+      6.25,
+      8,
+      9.75,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "north": {
+     "uv": [
+      3.25,
+      8,
+      3.75,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "south": {
+     "uv": [
+      3.25,
+      8,
+      3.75,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "up": {
+     "uv": [
+      6.25,
+      3.25,
+      9.75,
+      3.75
+     ],
+     "texture": "#plate"
+    },
+    "down": {
+     "uv": [
+      6.25,
+      3.25,
+      9.75,
+      3.75
+     ],
+     "texture": "#plate"
+    }
+   }
+  }
+ ]
+}

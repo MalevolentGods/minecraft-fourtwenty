@@ -1,0 +1,147 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/power/rip_body",
+  "plate": "fourtwenty:block/power/rip_body",
+  "collar": "fourtwenty:block/power/rip_glow",
+  "lead": "fourtwenty:block/power/rip_wick"
+ },
+ "elements": [
+  {
+   "from": [
+    16,
+    5,
+    5
+   ],
+   "to": [
+    16.5,
+    11,
+    11
+   ],
+   "faces": {
+    "east": {
+     "uv": [
+      5,
+      5,
+      11,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "west": {
+     "uv": [
+      5,
+      5,
+      11,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "south": {
+     "uv": [
+      15.5,
+      5,
+      16,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "north": {
+     "uv": [
+      15.5,
+      5,
+      16,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "up": {
+     "uv": [
+      5,
+      15.5,
+      11,
+      16
+     ],
+     "texture": "#plate"
+    },
+    "down": {
+     "uv": [
+      5,
+      15.5,
+      11,
+      16
+     ],
+     "texture": "#plate"
+    }
+   }
+  },
+  {
+   "from": [
+    16.5,
+    6.5,
+    6.5
+   ],
+   "to": [
+    16.75,
+    9.5,
+    9.5
+   ],
+   "faces": {
+    "east": {
+     "uv": [
+      6.5,
+      6.5,
+      9.5,
+      9.5
+     ],
+     "texture": "#collar"
+    },
+    "west": {
+     "uv": [
+      6.5,
+      6.5,
+      9.5,
+      9.5
+     ],
+     "texture": "#collar"
+    },
+    "south": {
+     "uv": [
+      15.25,
+      6.5,
+      15.5,
+      9.5
+     ],
+     "texture": "#collar"
+    },
+    "north": {
+     "uv": [
+      15.25,
+      6.5,
+      15.5,
+      9.5
+     ],
+     "texture": "#collar"
+    },
+    "up": {
+     "uv": [
+      6.5,
+      15.25,
+      9.5,
+      15.5
+     ],
+     "texture": "#collar"
+    },
+    "down": {
+     "uv": [
+      6.5,
+      15.25,
+      9.5,
+      15.5
+     ],
+     "texture": "#collar"
+    }
+   }
+  }
+ ]
+}

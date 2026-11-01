@@ -65,6 +65,8 @@ public class MachineMenu extends AbstractContainerMenu {
 
     public boolean trims() { return data.get(DATA_JOB) == 0; }
 
+    public boolean free() { return data.get(DATA_FREE) != 0; }
+
     @Override public boolean stillValid(@Nonnull Player player) { return container.stillValid(player); }
 
     @Override public @Nonnull ItemStack quickMoveStack(@Nonnull Player player, int index) {

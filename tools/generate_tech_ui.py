@@ -21,7 +21,7 @@ from PIL import Image, ImageDraw, ImageFilter
 ROOT = Path(__file__).resolve().parents[1]
 GUI = ROOT / 'src/main/resources/assets/fourtwenty/textures/gui'
 ART = 1024
-TIERS = {'puff': (96, 196, 72), 'toke': (60, 196, 180), 'rip': (168, 100, 232)}
+TIERS = {'puff': (96, 196, 72), 'toke': (60, 196, 180), 'rip': (168, 100, 232), 'blaze': (255, 140, 40)}
 
 
 def brushed(w, h, seed):

@@ -36,17 +36,21 @@ public class BIScreen extends TechScreen<BIMenu> {
         gauge(g, leftPos + GAUGE_X, topPos + GAUGE_Y, menu.stored(), menu.capacity(), 0, 0);
     }
 
-    @Override protected String helpKey() { return menu.hitBox() ? "hit_box" : "stash"; }
+    @Override protected String helpKey() { return menu.plot() ? "plot" : menu.hitBox() ? "hit_box" : "stash"; }
 
     @Override protected void tips(GuiGraphics g, int mouseX, int mouseY) {
-        gaugeTip(g, mouseX, mouseY, GAUGE_X, GAUGE_Y, menu.stored(), menu.capacity(), Component.translatable(menu.hitBox() ? "gui.fourtwenty.gauge.hit_box" : "gui.fourtwenty.gauge.stash"));
+        gaugeTip(g, mouseX, mouseY, GAUGE_X, GAUGE_Y, menu.stored(), menu.capacity(), Component.translatable(menu.plot() ? "gui.fourtwenty.gauge.machine" : menu.hitBox() ? "gui.fourtwenty.gauge.hit_box" : "gui.fourtwenty.gauge.stash"));
         if (menu.hitBox()) hover(g, mouseX, mouseY, TEXT_X, 56, BUTTON_W, BUTTON_H, Component.translatable("gui.fourtwenty.hit_box.switch.tip"));
     }
 
     @Override protected void renderLabels(@Nonnull GuiGraphics g, int mouseX, int mouseY) {
         g.drawString(font, title, 8, 6, TEXT, false);
-        BIRules.Tier tier = BIRules.Tier.values()[Math.max(0, Math.min(menu.tier(), 2))];
-        if (menu.hitBox()) {
+        BIRules.Tier tier = BIRules.Tier.values()[Math.max(0, Math.min(menu.tier(), BIRules.Tier.values().length - 1))];
+        if (menu.plot()) {
+            g.drawString(font, Component.translatable("gui.fourtwenty.plot.speed", com.malevolentgods.fourtwenty.processing.ProcessingConfig.plotSpeed(menu.plotLevel())), TEXT_X, 24, TEXT, false);
+            g.drawString(font, Component.translatable(menu.plotLevel() == 1 ? "gui.fourtwenty.plot.unpowered" : "gui.fourtwenty.plot.powered"), TEXT_X, 36, TEXT, false);
+            g.drawString(font, Component.translatable("gui.fourtwenty.plot.state." + menu.state()), TEXT_X, 48, menu.state() == 3 ? WARN : GREEN, false);
+        } else if (menu.hitBox()) {
             g.drawString(font, Component.translatable("gui.fourtwenty.hit_box.front", tierName(tier)), TEXT_X, 24, TEXT, false);
             g.drawString(font, Component.translatable("gui.fourtwenty.hit_box.sides", tierName(tier.below())), TEXT_X, 36, TEXT, false);
         } else {

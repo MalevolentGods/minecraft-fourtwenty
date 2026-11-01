@@ -59,7 +59,6 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     /** BI it has made and not yet sent down the Wicks: output only, and a Hookah can't be overloaded by what it makes. */
     private final com.malevolentgods.fourtwenty.power.BIBuffer buffer;
     private final com.malevolentgods.fourtwenty.power.BIPush push = new com.malevolentgods.fourtwenty.power.BIPush();
-    private static final int BUBBLE_EVERY = 40;
     private static final java.util.List<net.minecraft.core.Direction> ALL = java.util.List.of(net.minecraft.core.Direction.values());
 
     private final ContainerData dataAccess = new ContainerData() {
@@ -243,7 +242,6 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
             made += tier.rate();
             buffer.set(buffer.stored() + (long) made);
             made -= (long) made;
-            if (burnTime % BUBBLE_EVERY == 0) level.playSound(null, worldPosition, com.malevolentgods.fourtwenty.registry.ModPower.BUBBLE.get(), SoundSource.BLOCKS, 0.6f, 0.9f + level.random.nextFloat() * 0.2f);
         }
         push.push(level, worldPosition, ALL, tier, tier.rate(), buffer, node -> true);
         if (!isLit) return;

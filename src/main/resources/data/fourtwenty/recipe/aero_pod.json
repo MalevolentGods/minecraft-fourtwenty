@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GDG",
+    "WHW"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "W": {
+      "item": "fourtwenty:glass_wick"
+    },
+    "H": {
+      "item": "fourtwenty:hydro_bed"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:aero_pod",
+    "count": 1
+  },
+  "show_notification": true
+}

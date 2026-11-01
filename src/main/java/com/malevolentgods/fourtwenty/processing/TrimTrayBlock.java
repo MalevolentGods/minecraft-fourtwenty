@@ -19,9 +19,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -30,31 +27,27 @@ import javax.annotation.Nonnull;
 
 /**
  * Tier 1 trimming, by hand: right-click with rough buds, one snip per click. Holds nothing, so it needs no block entity.
- * It places like a slab: in the top half it stands on a wooden base with its rim flush with the block's top, a work surface at counter height.
+ * It stands on a small foot and post, a work surface at waist height.
  */
 public class TrimTrayBlock extends HorizontalDirectionalBlock {
     public static final MapCodec<TrimTrayBlock> CODEC = simpleCodec(TrimTrayBlock::new);
-    public static final EnumProperty<Half> HALF = BlockStateProperties.HALF;
-    private static final VoxelShape BOTTOM = Block.box(0, 0, 0, 16, 4, 16);
-    private static final VoxelShape TOP = Block.box(0, 8, 0, 16, 16, 16);
+    private static final VoxelShape SHAPE = net.minecraft.world.phys.shapes.Shapes.or(Block.box(3, 0, 3, 13, 2, 13), Block.box(6, 2, 6, 10, 10, 10), Block.box(0, 10, 0, 16, 14, 16));
 
     public TrimTrayBlock(Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(HALF, Half.BOTTOM));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     @Override protected @Nonnull MapCodec<? extends HorizontalDirectionalBlock> codec() { return CODEC; }
 
-    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { builder.add(FACING, HALF); }
+    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { builder.add(FACING); }
 
     @Override public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
-        Direction face = context.getClickedFace();
-        boolean top = face == Direction.DOWN || (face != Direction.UP && context.getClickLocation().y - context.getClickedPos().getY() > 0.5);
-        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(HALF, top ? Half.TOP : Half.BOTTOM);
+        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override protected @Nonnull VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
-        return state.getValue(HALF) == Half.TOP ? TOP : BOTTOM;
+        return SHAPE;
     }
 
     @Override protected @Nonnull ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos,

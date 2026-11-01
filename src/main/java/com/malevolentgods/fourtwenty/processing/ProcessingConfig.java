@@ -32,16 +32,30 @@ public final class ProcessingConfig {
     private static final ModConfigSpec.IntValue INFUSER_COST = BUILDER
             .comment("Inspiration Infuser: BI per caught colour or infused seed while sober.")
             .defineInRange("infuserCost", INFUSER_DEFAULT, 0, 1_000_000);
+    private static final ModConfigSpec.DoubleValue[] PLOT_SPEED = plotSpeeds();
+    private static final ModConfigSpec.IntValue UNIT_TICKS = BUILDER
+            .comment("Think Tank: ticks one study unit takes at speed 1. The University's pace is 1200, one unit a minute.")
+            .defineInRange("studyUnitTicks", 1200, 1, 1_728_000);
+    private static final ModConfigSpec.DoubleValue MAX_PLOT_SPEED = BUILDER
+            .comment("Think Tank: the most that plots in range add up to.")
+            .defineInRange("studyMaxPlotSpeed", 16.0, 1, 1000);
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     private static volatile TrimRules.Chances chancesOverride;
     private static volatile CureRules.Tier rackOverride;
+    private static volatile Integer unitTicksOverride;
 
     private ProcessingConfig() {}
 
     private static ModConfigSpec.IntValue[] tiers(String name, String comment, java.util.function.IntUnaryOperator value) {
         var out = new ModConfigSpec.IntValue[TIERS];
         for (int i = FIRST_POWERED; i < TIERS; i++) out[i] = BUILDER.comment("Tier " + (i + 1) + ": " + comment).defineInRange(name + (i + 1), value.applyAsInt(i), 1, 1_728_000);
+        return out;
+    }
+
+    private static ModConfigSpec.DoubleValue[] plotSpeeds() {
+        var out = new ModConfigSpec.DoubleValue[com.malevolentgods.fourtwenty.domain.GrowRules.SPEEDS.size()];
+        for (int i = 0; i < out.length; i++) out[i] = BUILDER.comment("Grow Op tier " + (i + 1) + ": how many times as fast a crop grows.").defineInRange("plotSpeed" + (i + 1), com.malevolentgods.fourtwenty.domain.GrowRules.SPEEDS.get(i), 1, 100);
         return out;
     }
 
@@ -58,6 +72,7 @@ public final class ProcessingConfig {
     /** Game tests set exact numbers here; null goes back to the config. */
     public static void overrideChances(TrimRules.Chances chances) { chancesOverride = chances; }
     public static void overrideRack(CureRules.Tier tier) { rackOverride = tier; }
+    public static void overrideUnitTicks(Integer ticks) { unitTicksOverride = ticks; }
 
     public static TrimRules.Chances chances() {
         var override = chancesOverride;
@@ -74,6 +89,20 @@ public final class ProcessingConfig {
     public static TrimRules.Tier trim(int index) {
         return SPEC.isLoaded() ? new TrimRules.Tier(TRIM_TICKS[index].get(), TRIM_COST[index].get()) : TrimRules.DEFAULTS.get(index);
     }
+
+    /** A plot's speed, by tier from 1. */
+    public static double plotSpeed(int level) {
+        int i = Math.max(1, Math.min(level, PLOT_SPEED.length)) - 1;
+        return SPEC.isLoaded() ? PLOT_SPEED[i].get() : com.malevolentgods.fourtwenty.domain.GrowRules.SPEEDS.get(i);
+    }
+
+    public static int unitTicks() {
+        var override = unitTicksOverride;
+        if (override != null) return override;
+        return SPEC.isLoaded() ? UNIT_TICKS.get() : 1200;
+    }
+
+    public static double maxPlotSpeed() { return SPEC.isLoaded() ? MAX_PLOT_SPEED.get() : 16; }
 
     public static int highSpeedPercent() { return SPEC.isLoaded() ? HIGH_SPEED.get() : 100; }
 

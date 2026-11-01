@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GMG",
+    "MNM",
+    "GMG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gold_block"
+    },
+    "M": {
+      "item": "fourtwenty:mother_stash"
+    },
+    "N": {
+      "item": "minecraft:diamond_block"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:the_vault",
+    "count": 1
+  },
+  "show_notification": true
+}

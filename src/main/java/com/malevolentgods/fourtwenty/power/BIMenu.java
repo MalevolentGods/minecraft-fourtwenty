@@ -37,7 +37,13 @@ public class BIMenu extends AbstractContainerMenu {
 
     public int tier() { return data.get(BIBlockEntity.DATA_TIER); }
 
-    public boolean hitBox() { return data.get(BIBlockEntity.DATA_HIT_BOX) != 0; }
+    public boolean hitBox() { return data.get(BIBlockEntity.DATA_KIND) == BIBlockEntity.KIND_HIT_BOX; }
+
+    public boolean plot() { return data.get(BIBlockEntity.DATA_KIND) == BIBlockEntity.KIND_PLOT; }
+
+    public int plotLevel() { return data.get(BIBlockEntity.DATA_PLOT); }
+
+    public int state() { return data.get(BIBlockEntity.DATA_STATE); }
 
     @Override public boolean clickMenuButton(@Nonnull Player player, int id) {
         if (id == BUTTON_TOGGLE && entity instanceof HitBoxBlockEntity box) {

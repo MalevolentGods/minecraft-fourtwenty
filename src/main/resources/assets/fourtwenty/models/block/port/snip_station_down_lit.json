@@ -1,0 +1,147 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/power/puff_body",
+  "plate": "fourtwenty:block/power/puff_body",
+  "collar": "fourtwenty:block/power/puff_glow_lit",
+  "lead": "fourtwenty:block/power/puff_wick_lit"
+ },
+ "elements": [
+  {
+   "from": [
+    5,
+    -0.5,
+    5
+   ],
+   "to": [
+    11,
+    0,
+    11
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5,
+      16,
+      11,
+      16.5
+     ],
+     "texture": "#plate"
+    },
+    "south": {
+     "uv": [
+      5,
+      16,
+      11,
+      16.5
+     ],
+     "texture": "#plate"
+    },
+    "east": {
+     "uv": [
+      5,
+      16,
+      11,
+      16.5
+     ],
+     "texture": "#plate"
+    },
+    "west": {
+     "uv": [
+      5,
+      16,
+      11,
+      16.5
+     ],
+     "texture": "#plate"
+    },
+    "up": {
+     "uv": [
+      5,
+      5,
+      11,
+      11
+     ],
+     "texture": "#plate"
+    },
+    "down": {
+     "uv": [
+      5,
+      5,
+      11,
+      11
+     ],
+     "texture": "#plate"
+    }
+   }
+  },
+  {
+   "from": [
+    6.5,
+    -0.75,
+    6.5
+   ],
+   "to": [
+    9.5,
+    -0.5,
+    9.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.5,
+      16.5,
+      9.5,
+      16.75
+     ],
+     "texture": "#collar"
+    },
+    "south": {
+     "uv": [
+      6.5,
+      16.5,
+      9.5,
+      16.75
+     ],
+     "texture": "#collar"
+    },
+    "east": {
+     "uv": [
+      6.5,
+      16.5,
+      9.5,
+      16.75
+     ],
+     "texture": "#collar"
+    },
+    "west": {
+     "uv": [
+      6.5,
+      16.5,
+      9.5,
+      16.75
+     ],
+     "texture": "#collar"
+    },
+    "up": {
+     "uv": [
+      6.5,
+      6.5,
+      9.5,
+      9.5
+     ],
+     "texture": "#collar"
+    },
+    "down": {
+     "uv": [
+      6.5,
+      6.5,
+      9.5,
+      9.5
+     ],
+     "texture": "#collar"
+    }
+   }
+  }
+ ]
+}

@@ -16,7 +16,7 @@ public class ModBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WeedBongBlockEntity>> WEED_BONG = 
         BLOCK_ENTITIES.register("weed_bong", () -> 
-            BlockEntityType.Builder.of(WeedBongBlockEntity::new, ModBlocks.WEED_BONG.get(), ModPower.DOUBLE_HOSE.get(), ModPower.BIG_BERTHA.get())
+            BlockEntityType.Builder.of(WeedBongBlockEntity::new, ModBlocks.WEED_BONG.get(), ModPower.DOUBLE_HOSE.get(), ModPower.BIG_BERTHA.get(), ModPower.GRAND_HOOKAH.get())
                 .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.malevolentgods.fourtwenty.blockentity.HotboxBlockEntity>> HOTBOX =

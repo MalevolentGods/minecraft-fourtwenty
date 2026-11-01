@@ -1,0 +1,10 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/power/puff_body",
+  "plate": "fourtwenty:block/power/puff_body",
+  "collar": "fourtwenty:block/power/puff_glow_lit",
+  "lead": "fourtwenty:block/power/puff_wick_lit"
+ },
+ "elements": []
+}
