@@ -16,6 +16,7 @@ public final class BIPush {
     private int version = -1;
     private long walked;
     private double credit;
+    private boolean carrying;
 
     /** Whether there's anything on this route to give power to, as of the last push. */
     public boolean hasSinks() {
@@ -47,7 +48,11 @@ public final class BIPush {
         if (moved > 0) {
             credit -= moved;
             from.extract(moved);
-            if (now % GLOW == 0) route.wicks().forEach(p -> WickBlock.carry(level, p));
+            carrying = true;
+        }
+        if (carrying && now % GLOW == 0) {
+            route.wicks().forEach(p -> WickBlock.carry(level, p));
+            carrying = false;
         }
         return moved;
     }

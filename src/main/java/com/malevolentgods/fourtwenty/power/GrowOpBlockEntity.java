@@ -51,7 +51,7 @@ public class GrowOpBlockEntity extends BIBlockEntity implements MenuProvider {
         boolean hasCrop = GrowOpBlock.isCrop(crop);
         BIRules.Tier tier = block.tier();
         running = hasCrop && !overloaded && (tier == null || MachinePower.steps(level, worldPosition, buffer, tier.machine(), meter) > 0);
-        lit(running);
+        lit(running && tier != null);
         if (running && level instanceof ServerLevel server) {
             double chance = GrowRules.extraTickChance(speed(), server.getGameRules().getInt(GameRules.RULE_RANDOMTICKING));
             if (server.random.nextDouble() < chance) crop.randomTick(server, above, server.random);

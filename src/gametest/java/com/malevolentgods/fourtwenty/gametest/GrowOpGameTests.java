@@ -51,6 +51,35 @@ public final class GrowOpGameTests {
         h.succeed();
     }
 
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void aClosetGrowNeverGlows(GameTestHelper h) {
+        h.setBlock(PLOT, ModPower.CLOSET_GROW.get());
+        h.setBlock(CROP, ModBlocks.WEED_CROP.get().getStateForAge(1));
+        var plot = (GrowOpBlockEntity) h.getBlockEntity(PLOT);
+        h.runAfterDelay(20, () -> {
+            h.assertTrue(plot.running(), "it grows the crop");
+            h.assertFalse(h.getBlockState(PLOT).getValue(com.malevolentgods.fourtwenty.power.BIBlock.LIT), "with no glow, as it has no power");
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void aWickStaysLitWhileItCarries(GameTestHelper h) {
+        var a = new BlockPos(1, 2, 2);
+        var b = new BlockPos(2, 2, 2);
+        var c = new BlockPos(3, 2, 2);
+        h.setBlock(a, ModPower.STASH_JAR.get());
+        h.setBlock(b, ModPower.HEMP_WICK.get());
+        h.setBlock(c, ModPower.TRIM_REAPER.get());
+        ((com.malevolentgods.fourtwenty.power.StashBlockEntity) h.getBlockEntity(a)).node().receive(5_000);
+        int[] ticks = {0};
+        h.onEachTick(() -> {
+            if (++ticks[0] <= 20) return;
+            h.assertTrue(h.getBlockState(b).getValue(com.malevolentgods.fourtwenty.power.WickBlock.LIT), "dark at tick " + ticks[0]);
+            if (ticks[0] >= 80) h.succeed();
+        });
+    }
+
     @GameTest(template = "empty")
     public static void upgradingKeepsTheCrop(GameTestHelper h) {
         h.setBlock(PLOT, ModPower.CLOSET_GROW.get());

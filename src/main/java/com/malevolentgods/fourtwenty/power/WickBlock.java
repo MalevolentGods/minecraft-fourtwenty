@@ -30,11 +30,12 @@ import java.util.Map;
 /**
  * Wiring: Hemp, Rolled and Glass Wick. It glows while it carries power and burns out past two Hookahs' worth of its tier. Each side is open,
  * joined to another Wick, or plugged into a BI block: a plug's flange sits on the block's edge and its tail reaches into the block's space, so
- * a Wick meets a narrow block like a Stash Jar or a Hookah instead of stopping short of it.
+ * a Wick meets a narrow block instead of stopping short of it. A LOW plug drops down first, into the body of a short block like a Hookah or Stash Jar,
+ * whose side doesn't reach wire height.
  */
 public class WickBlock extends Block {
     public enum Link implements StringRepresentable {
-        NONE, WIRE, PLUG;
+        NONE, WIRE, PLUG, LOW;
 
         @Override public @Nonnull String getSerializedName() { return name().toLowerCase(Locale.ROOT); }
     }
@@ -44,6 +45,7 @@ public class WickBlock extends Block {
     private static final Map<Direction, VoxelShape> ARMS = new EnumMap<>(Direction.class);
     private static final VoxelShape CORE = Block.box(6, 6, 6, 10, 10, 10);
     private static final int GLOW_TICKS = 30;
+    private static final Map<Level, Map<BlockPos, Long>> CARRIED = new java.util.WeakHashMap<>();
 
     static {
         for (Direction d : Direction.values()) SIDES.put(d, EnumProperty.create(d.getName(), Link.class));
@@ -82,20 +84,22 @@ public class WickBlock extends Block {
         return shapes.get(state);
     }
 
-    private static Link link(BlockState neighbour) {
+    private static Link link(BlockState neighbour, Direction side) {
         if (neighbour.getBlock() instanceof WickBlock) return Link.WIRE;
-        return neighbour.is(ModPower.BI_BLOCKS) ? Link.PLUG : Link.NONE;
+        if (!neighbour.is(ModPower.BI_BLOCKS)) return Link.NONE;
+        boolean low = neighbour.getBlock() instanceof com.malevolentgods.fourtwenty.block.WeedBongBlock || neighbour.is(ModPower.STASH_JAR.get());
+        return low && side.getAxis().isHorizontal() ? Link.LOW : Link.PLUG;
     }
 
     @Override public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
         BlockState state = defaultBlockState();
-        for (Direction d : Direction.values()) state = state.setValue(SIDES.get(d), link(context.getLevel().getBlockState(context.getClickedPos().relative(d))));
+        for (Direction d : Direction.values()) state = state.setValue(SIDES.get(d), link(context.getLevel().getBlockState(context.getClickedPos().relative(d)), d));
         return state;
     }
 
     @Override protected @Nonnull BlockState updateShape(@Nonnull BlockState state, @Nonnull Direction direction, @Nonnull BlockState neighbour, @Nonnull LevelAccessor level,
                                                         @Nonnull BlockPos pos, @Nonnull BlockPos neighbourPos) {
-        return state.setValue(SIDES.get(direction), link(neighbour));
+        return state.setValue(SIDES.get(direction), link(neighbour, direction));
     }
 
     @Override protected void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState old, boolean moved) {
@@ -107,15 +111,23 @@ public class WickBlock extends Block {
         super.onRemove(state, level, pos, next, moved);
     }
 
-    /** Power went through: light it, and a tick later unless power comes again it goes dark. */
+    /** Power went through: light it, and it stays lit until a whole glow passes with no power. */
     public static void carry(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         if (!(state.getBlock() instanceof WickBlock)) return;
+        CARRIED.computeIfAbsent(level, l -> new HashMap<>()).put(pos.immutable(), level.getGameTime());
         if (!state.getValue(LIT)) level.setBlock(pos, state.setValue(LIT, true), 2);
         if (!level.getBlockTicks().hasScheduledTick(pos, state.getBlock())) level.scheduleTick(pos, state.getBlock(), GLOW_TICKS);
     }
 
     @Override protected void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
+        var carried = CARRIED.computeIfAbsent(level, l -> new HashMap<>());
+        long left = carried.getOrDefault(pos, Long.MIN_VALUE / 2) + GLOW_TICKS - level.getGameTime();
+        if (left > 0) {
+            level.scheduleTick(pos, this, (int) left);
+            return;
+        }
+        carried.remove(pos);
         if (state.getValue(LIT)) level.setBlock(pos, state.setValue(LIT, false), 2);
     }
 }

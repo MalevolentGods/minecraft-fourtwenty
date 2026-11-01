@@ -189,7 +189,14 @@ def wicks():
                                            box([5.5, 5.5, 1], [10.5, 10.5, 2.5], 'collar'),
                                            box([4.5, 4.5, 0], [11.5, 11.5, 1], 'plate'),
                                            box([6.5, 6.5, -3.5], [9.5, 9.5, 0], 'collar'),
-                                           box([5, 5, -4.5], [11, 11, -3.5], 'plate')],
+                                           box([5, 5, -4.25], [11, 11, -3.25], 'plate')],
+                  {**tex, 'collar': t(tier, 'glow', lit), 'plate': t(tier, 'body')}, '#wick')
+            # For a short block: the same collar, then an elbow down to a plate on its body, below the top of a Hookah's cabinet or a Stash Jar.
+            model(f'{name}_low{suffix}', [box([6, 6, 2.5], [10, 10, 6], 'wick'),
+                                          box([5.5, 5.5, 1], [10.5, 10.5, 2.5], 'collar'),
+                                          box([6.5, 3, 0], [9.5, 7, 1], 'plate'),
+                                          box([6.5, 3.5, -3.25], [9.5, 6.5, 0], 'collar'),
+                                          box([5.5, 2.5, -4.25], [10.5, 7.5, -3.25], 'plate')],
                   {**tex, 'collar': t(tier, 'glow', lit), 'plate': t(tier, 'body')}, '#wick')
         parts = []
         for lit in (False, True):
@@ -199,6 +206,8 @@ def wicks():
             for side, rot in (('north', {}), ('east', {'y': 90}), ('south', {'y': 180}), ('west', {'y': 270}), ('up', {'x': 270}), ('down', {'x': 90})):
                 parts.append({'when': {side: 'wire', 'lit': flag}, 'apply': {'model': f'fourtwenty:block/{name}_arm{suffix}', **rot}})
                 parts.append({'when': {side: 'plug', 'lit': flag}, 'apply': {'model': f'fourtwenty:block/{name}_plug{suffix}', **rot}})
+                if side not in ('up', 'down'):
+                    parts.append({'when': {side: 'low', 'lit': flag}, 'apply': {'model': f'fourtwenty:block/{name}_low{suffix}', **rot}})
         write(ASSETS / f'blockstates/{name}.json', {'multipart': parts})
         model(name + '_item', [box([2, 6, 6], [14, 10, 10], 'wick')], {'wick': t(tier, 'wick')}, '#wick')
         item_model(name, f'fourtwenty:block/{name}_item')
