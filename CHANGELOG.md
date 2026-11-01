@@ -2,6 +2,11 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- Dispensaries built from the old FourTwenty pack no longer fail to load.
+
 ## [0.16.0] - The Construction Crew
 
 ### Added

@@ -1,5 +1,6 @@
 package com.malevolentgods.fourtwenty.compat.minecolonies.building;
 
+import com.malevolentgods.fourtwenty.compat.minecolonies.domain.DispensaryPackRules;
 import com.malevolentgods.fourtwenty.compat.minecolonies.domain.ProductionRules;
 import com.malevolentgods.fourtwenty.registry.ModItems;
 import com.minecolonies.api.colony.IColony;
@@ -24,8 +25,19 @@ public final class DispensaryBuilding extends AbstractBuilding {
     private final Map<UUID, Long> customers = new LinkedHashMap<>();
     private final Map<BlockPos, Seat> seats = new HashMap<>();
     public DispensaryBuilding(IColony colony, BlockPos pos) { super(colony, pos); }
-    public static final String PACK = "Sensi Heights", PATH = "craftsmanship/luxury/dispensary";
-    private static final String OLD_PACK = "FourTwenty", OLD_PATH = "dispensary/dispensary";
+    private static final String TAG_PACK = "pack", TAG_PATH = "path";
+
+    /**
+     * The old FourTwenty pack is gone, and huts built from it carry on from the same Dispensary in Sensi Heights. This has to change the saved data, before it's
+     * read: while a colony loads there's no hut block yet, and the setters need one.
+     */
+    private static net.minecraft.nbt.CompoundTag sensiHeights(net.minecraft.nbt.CompoundTag tag) {
+        if (!DispensaryPackRules.isOldPack(tag.getString(TAG_PACK))) return tag;
+        var moved = tag.copy();
+        moved.putString(TAG_PACK, DispensaryPackRules.PACK);
+        moved.putString(TAG_PATH, DispensaryPackRules.newPath(tag.getString(TAG_PATH)));
+        return moved;
+    }
 
     @Override public String getSchematicName() { return "dispensary"; }
     @Override public int getMaxBuildingLevel() { return 5; }
@@ -33,12 +45,7 @@ public final class DispensaryBuilding extends AbstractBuilding {
 
     /** Loading native stock/staff must never restore a queue or seat from the previous live instance. */
     @Override public void deserializeNBT(net.minecraft.core.HolderLookup.Provider provider, net.minecraft.nbt.CompoundTag tag) {
-        super.deserializeNBT(provider, tag);
-        // The old FourTwenty pack is gone. Huts built from it carry on from the same Dispensary in Sensi Heights.
-        if (OLD_PACK.equals(getStructurePack())) {
-            setStructurePack(PACK);
-            if (getBlueprintPath() != null) setBlueprintPath(getBlueprintPath().replace(OLD_PATH, PATH));
-        }
+        super.deserializeNBT(provider, sensiHeights(tag));
         customers.clear();
         seats.clear();
     }
