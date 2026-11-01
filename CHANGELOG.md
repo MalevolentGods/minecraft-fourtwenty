@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.17.0] - Moving On Up
 
 ### Added
 - **Residence Fancy:** a second Residence for Sensi Heights, five levels on the same hut.
