@@ -5998,6 +5998,12 @@
       "version": "2.0.0-1.21.1-20260529.024614-31",
       "file": "journeymap-api-neoforge-2.0.0-1.21.1-20260529.024614-31.jar",
       "sha256": "a4c2c19f319e9e8e95bb1e6844f38ce0a2c4599ae51e79a88ceb8e3b1914f20b"
+    },
+    {
+      "modId": "jade",
+      "version": "15.10.5+neoforge",
+      "file": "Jade-1.21.1-NeoForge-15.10.5.jar",
+      "sha256": "067bb4b007e1d6f6b79f0afe99c91252aa825472b99a76d33a60d24442f9e92d"
     }
   ]
 }

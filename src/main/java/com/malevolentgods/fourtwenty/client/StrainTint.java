@@ -10,6 +10,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
@@ -20,6 +21,9 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 @EventBusSubscriber(modid = "fourtwenty", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class StrainTint {
     private StrainTint() {}
+
+    /** Landrace buds, as the crop's art paints them. */
+    private static final int LANDRACE_BUD = 0xA8D020;
 
     private static Strain strain = Strain.LANDRACE;
     private static long start, end;
@@ -40,6 +44,15 @@ public final class StrainTint {
             start = level.getGameTime();
             end = start + t.ticks();
         };
+    }
+
+    /** A flowering crop's buds take the colour of its strain. */
+    @SubscribeEvent
+    public static void cropColours(RegisterColorHandlersEvent.Block event) {
+        event.register((state, level, pos, tint) -> {
+            Strain planted = state.getValue(com.malevolentgods.fourtwenty.block.WeedCropBlock.STRAIN);
+            return planted == Strain.LANDRACE ? LANDRACE_BUD : planted.color();
+        }, com.malevolentgods.fourtwenty.registry.ModBlocks.WEED_CROP.get());
     }
 
     @SubscribeEvent

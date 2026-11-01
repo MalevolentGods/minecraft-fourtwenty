@@ -13,6 +13,7 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - **Grow Ops:** Closet Grow, Grow Tent, Hydro Bed, Aero Pod and Cosmic Kush Pod, 1.5 to 8 times as fast, upgraded in place. The top two give bigger harvests and replant.
 - **Think Tank:** research with no colony, using Grow Ops as test plots. Sixteen tier 1 studies teach the Minecraft colours.
 - **Blaze tier:** the Grand Hookah, The Vault and Gold Wick.
+- A flowering crop grows buds in its strain's colour, and Jade names the strain.
 
 ### Changed
 - Hookahs burn charcoal instead of flint and steel, lava or blaze powder, for one minute a burn.

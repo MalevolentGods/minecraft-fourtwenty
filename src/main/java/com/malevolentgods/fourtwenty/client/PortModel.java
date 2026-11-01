@@ -124,11 +124,10 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
     @Override public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand,
                                                        @NotNull ModelData data, @Nullable RenderType renderType) {
         List<BakedQuad> quads = super.getQuads(state, side, rand, data, renderType);
-        Integer mask = data.get(MASK);
-        if (side != null || mask == null || state == null) return quads;
+        if (side != null || state == null) return quads;
         if (renderType != null && renderType != getRenderTypes(state, rand, data).iterator().next()) return quads;
         List<BakedQuad> out = new ArrayList<>(quads);
-        int turns = turns(state);
+        int mask = data.has(MASK) ? data.get(MASK) : 0, turns = turns(state);
         for (Direction world : Direction.values()) {
             if ((mask & 1 << world.ordinal()) != 0) out.addAll(fitting(state, relative(world, turns), turns, rand));
         }
