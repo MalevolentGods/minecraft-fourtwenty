@@ -103,6 +103,8 @@ public class WeedCropBlock extends CropBlock implements EntityBlock {
         if (level instanceof ServerLevel server) {
             var drops = getDrops(state, server, pos, level.getBlockEntity(pos), player, player.getMainHandItem());
             if (com.malevolentgods.fourtwenty.power.GrowOps.bigHarvest(level, pos)) com.malevolentgods.fourtwenty.power.GrowOps.raise(state, server, pos, drops);
+            ItemStack crossed = Pollination.harvest(state, server, pos, level.getBlockEntity(pos) instanceof WeedCropBlockEntity crop ? crop : null);
+            if (crossed != null) popResource(level, pos, crossed);
             if (!level.setBlock(pos, atAge(state, 0), 3)) return InteractionResult.PASS;
             boolean retainedSeed = false;
             for (ItemStack stack : drops) {

@@ -22,6 +22,7 @@ public final class ProcessingConfig {
     private static final ModConfigSpec.DoubleValue DOUBLE_CROSS = chance("seedChanceDoubleCross", D.doubleCross());
     private static final ModConfigSpec.DoubleValue ULTRA = chance("seedChanceUltra", D.ultra());
     private static final ModConfigSpec.DoubleValue GOLDEN = chance("seedChanceGolden", D.golden());
+    private static final ModConfigSpec.DoubleValue POLLEN_CHANCE = BUILDER.comment("Chance per harvest that Double Cross parents side by side give their hybrid's seed.").defineInRange("pollenChance", 0.05, 0, 1);
     private static final ModConfigSpec.DoubleValue CROSS_TIME = BUILDER.comment("Multiplies how long a Pheno Chamber's cross takes.").defineInRange("crossTime", 1.0, 0.01, 100);
     private static final ModConfigSpec.DoubleValue[] GRADE_SPEEDS = {null, null, gradeSpeed(2), gradeSpeed(3), gradeSpeed(4), gradeSpeed(5)};
     private static final ModConfigSpec.IntValue RACK_TICKS = BUILDER
@@ -54,6 +55,7 @@ public final class ProcessingConfig {
     private static volatile CureRules.Tier rackOverride;
     private static volatile Integer unitTicksOverride;
     private static volatile Integer crossTicksOverride;
+    private static volatile Double pollenChanceOverride;
 
     private ProcessingConfig() {}
 
@@ -88,6 +90,13 @@ public final class ProcessingConfig {
     public static void overrideRack(CureRules.Tier tier) { rackOverride = tier; }
     public static void overrideUnitTicks(Integer ticks) { unitTicksOverride = ticks; }
     public static void overrideCrossTicks(Integer ticks) { crossTicksOverride = ticks; }
+    public static void overridePollenChance(Double chance) { pollenChanceOverride = chance; }
+
+    public static double pollenChance() {
+        var override = pollenChanceOverride;
+        if (override != null) return override;
+        return SPEC.isLoaded() ? POLLEN_CHANCE.get() : 0.05;
+    }
 
     /** How long a cross of this grade takes. */
     public static int crossTicks(int grade) {

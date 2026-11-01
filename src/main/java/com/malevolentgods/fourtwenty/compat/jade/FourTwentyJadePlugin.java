@@ -30,6 +30,9 @@ public class FourTwentyJadePlugin implements IWailaPlugin {
             tooltip.add(StrainItems.strainName(accessor.getBlockState().getValue(WeedCropBlock.STRAIN)));
             Traits t = accessor.getBlockEntity() instanceof WeedCropBlockEntity crop ? crop.traits() : Traits.DEFAULT;
             tooltip.add(Component.translatable("tooltip.fourtwenty.traits", t.potency(), t.yield(), t.length()));
+            if (accessor.getBlockEntity() instanceof WeedCropBlockEntity crop && crop.pollen() != null) {
+                tooltip.add(Component.translatable("tooltip.fourtwenty.pollinated", StrainItems.strainName(crop.pollen().strain())));
+            }
         }
 
         @Override public ResourceLocation getUid() { return CROP_STRAIN; }

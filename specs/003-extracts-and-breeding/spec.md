@@ -11,6 +11,7 @@
 
 - Q: What is a hybrid? → A: A new tier of bud: named strains of their own, harder and slower to grow, with hybrids of hybrids above them and one strain at the top that makes the smoker a shining golden god.
 - Q: How are traits inherited? → A: Each trait, rated 1 to 5, takes the parents' average, then may move up or down by one. Every existing seed is a 2.
+- Q: How do higher hybrids get made, given the plan's cross-pollination? → A: Crosses (the first tier of hybrids) use the Pheno Chamber. Higher tiers need cross-pollination. A little weed-powered robot bee makes crosses guaranteed, and is required for the top tier hybrids.
 - Q: How are biome strains made? → A: Landrace grown in the biome, or in a Cosmic Kush Pod copying it, sometimes gives a climate-touched seed, and the Pheno Chamber settles that into the biome strain.
 
 ## The ladder
@@ -23,9 +24,11 @@ Each grade needs a better plot and a better Pheno Chamber, grows slower and give
 | 1 Bred | The 16 existing strains | Infuser | anywhere | ×1 | 25% to 5% |
 | 1 Biome | The 4 biome landraces | Pheno Chamber | anywhere | ×1 | 20% |
 | 2 Cross | 8 strains | Pheno Chamber (Toke) | any Grow Op | ×0.7 | 4% |
-| 3 Double Cross | 6 strains | Pheno Lab (Rip) | Hydro Bed or better | ×0.5 | 2% |
-| 4 Ultra | 3 strains | Pheno Cathedral (Blaze) | Aero Pod or better | ×0.35 | 1% |
-| 5 Golden | Golden God | Pheno Cathedral (Blaze) | Cosmic Kush Pod | ×0.25 | 0.5% |
+| 3 Double Cross | 6 strains | Neighbouring crops (5% a harvest), or a Buzz Bot for certain | Hydro Bed or better | ×0.5 | 2% |
+| 4 Ultra | 3 strains | Buzz Bot only | Aero Pod or better | ×0.35 | 1% |
+| 5 Golden | Golden God | Buzz Bot only | Cosmic Kush Pod | ×0.25 | 0.5% |
+
+The Pheno Lab (Rip) and Pheno Cathedral (Blaze) don't make hybrids. They breed traits into strains of those grades, by crossing a strain with itself.
 
 ### Biome landraces
 
@@ -90,16 +93,30 @@ A player reads a seed's Potency, Yield and Length, and better numbers really do 
 
 ### User Story 2 - The Pheno Chamber (Priority: P1)
 
-A player loads two seeds in a powered Pheno Chamber and gets a seed back: the named hybrid if those parents have one, otherwise one of the parents, either way with mixed traits.
+A player loads two seeds in a powered Pheno Chamber and gets a seed back: the named Cross if those parents have one, otherwise one of the parents, either way with mixed traits.
 
 **Independent Test**: Cross Wake & Bake with Sunshine Daydream and get Alarm Clock Assassin; cross a strain with itself and get better or worse traits.
 
 **Acceptance Scenarios**:
 
 1. **Given** two parents of a listed cross, **When** the Chamber finishes, **Then** the output is that hybrid with each trait the parents' average, moved by at most one, clamped to 1-5.
-2. **Given** a cross of a grade above the Chamber's, **When** the seeds are loaded, **Then** it refuses, and its screen says which Chamber it needs.
+2. **Given** strains of a grade above the Chamber's, **When** the seeds are loaded, **Then** it refuses, and its screen says which Chamber it needs.
+5. **Given** parents of a Double Cross, Ultra or Golden God, **When** loaded in any Chamber, **Then** it refuses, and its screen says they need pollinating.
 3. **Given** no power, **When** a cross is running, **Then** it pauses with progress kept.
 4. **Given** the order of the two seeds is swapped, **When** crossed, **Then** the result is the same.
+
+### User Story 2b - Pollination and the Buzz Bot (Priority: P1)
+
+Double Cross parents grown side by side sometimes cross at harvest. A Buzz Bot, a small robot bee that burns one Cured Bud a cross, makes it certain, and is the only way to Ultras and Golden God.
+
+**Acceptance Scenarios**:
+
+1. **Given** two ripe parents of a Double Cross side by side on plots that can grow it, **When** one is harvested, **Then** there is a 5% chance of the hybrid's seed, with traits as a Chamber cross.
+2. **Given** a fuelled Buzz Bot within 7 blocks of two ripe parents, **When** it has carried pollen between them, **Then** one Cured Bud is spent and the crop's next harvest gives the hybrid for certain, once.
+3. **Given** parents of an Ultra side by side and no Buzz Bot, **When** harvested, **Then** they never cross.
+4. **Given** a plot that can't grow the hybrid, **When** a Bot looks for work, **Then** it leaves those crops alone.
+5. **Given** a fuelled Buzz Bot, **When** it has nothing to cross, **Then** it wanders like a bee, visiting weed plants and never straying more than 7 blocks from one.
+6. **Given** a Buzz Bot, **When** a player hits it, **Then** it packs up into its item and gives back its buds, and nothing else can hurt it.
 
 ### User Story 3 - Harder crops (Priority: P1)
 
@@ -172,7 +189,7 @@ A player uses one bench to craft the mod's building blocks in bulk from hemp and
 - **FR-002**: Seeds, buds, joints, pipe loads and extracts MUST carry traits, with rating 2 as the default.
 - **FR-003**: Traits at 2 MUST leave every effect, drop and burn as it is today.
 - **FR-004**: The cross result MUST NOT depend on the order of the parents.
-- **FR-005**: Higher grades MUST need the plots and Chambers in the ladder.
+- **FR-005**: Higher grades MUST need the plots, Chambers and pollination in the ladder.
 - **FR-006**: Hybrids MUST inspire their parents' colours in the Infuser.
 - **FR-007**: The Terpinator MUST stay the only source of terpenes; the Rig makes extracts only.
 - **FR-008**: Pheno Chambers and the Rosin Rig MUST follow the shared power rule and accept hoppers.
@@ -189,11 +206,10 @@ A player uses one bench to craft the mod's building blocks in bulk from hemp and
 
 - **SC-001**: A player can go from Landrace seed to a grade 2 hybrid using only the Infuser, a Grow Op and a Pheno Chamber.
 - **SC-002**: A rating 2 seed behaves identically to before in all automated tests.
-- **SC-003**: Reaching Golden God needs every Grow Op tier and all three Chambers.
+- **SC-003**: Reaching Golden God needs a Pheno Chamber, a Buzz Bot and every Grow Op tier from Hydro Bed up.
 - **SC-004**: Every strain in the ladder can be reached from the Landrace seed.
 
 ## Assumptions
 
 - Research gating of hybrids waits for the research tree in Milestone 6.
-- Cross-pollination between neighbouring plots stays for later: the Chamber is the only way to cross for now.
 - Strain names here are proposals and change only in `domain/Strain` and the generators.

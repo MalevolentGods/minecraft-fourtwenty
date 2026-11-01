@@ -47,7 +47,13 @@ public class ModClientEvents {
     public static void registerRenderers(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModBlockEntities.CURING_RACK.get(), CuringRackRenderer::new);
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModBlockEntities.LAMP.get(), LampHaloRenderer::new);
+        event.registerEntityRenderer(com.malevolentgods.fourtwenty.registry.ModEntities.BUZZ_BOT.get(), BuzzBotRenderer::new);
         event.registerEntityRenderer(com.malevolentgods.fourtwenty.registry.ModEntities.SEAT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void registerLayers(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(BuzzBotRenderer.LAYER, BuzzBotRenderer::layer);
     }
 
     /** Lit lamp items get their halo in the inventory and hands, like ProjectRed's. */

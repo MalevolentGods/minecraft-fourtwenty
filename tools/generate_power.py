@@ -149,6 +149,11 @@ def lit_pair(name, elements, textures):
     item_model(name)
 
 
+def ensure(path):
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
 def textures():
     TEX.mkdir(parents=True, exist_ok=True)
     for tier in TIERS:
@@ -164,6 +169,26 @@ def textures():
     for name in MACHINES:
         front(name, False).save(TEX / f'{name}_front.png')
         strip([front(name, True, i) for i in range(4)], TEX / f'{name}_front_lit.png', 3)
+    bot = Image.new('RGBA', (32, 32), (0, 0, 0, 0))
+    d = ImageDraw.Draw(bot)
+    d.rectangle([0, 0, 23, 11], fill=(196, 150, 44, 255))                 # the body, in brass
+    for x in range(1, 24, 4):
+        d.rectangle([x, 0, x + 1, 11], fill=(32, 34, 38, 255))            # stripes
+    d.rectangle([12, 5, 15, 8], fill=(123, 255, 90, 255))                 # the eye, on the front
+    d.rectangle([24, 0, 29, 2], fill=(150, 156, 164, 255))                # the stinger
+    d.rectangle([0, 12, 10, 22], fill=(200, 236, 226, 130))               # glass wings
+    bot.save(ensure(ASSETS / 'textures/entity') / 'buzz_bot.png')
+    icon = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+    d = ImageDraw.Draw(icon)
+    d.ellipse([3, 6, 13, 13], fill=(196, 150, 44, 255), outline=(24, 26, 30, 255))
+    for x in (6, 9):
+        d.line([(x, 7), (x, 12)], fill=(32, 34, 38, 255))
+    d.point((12, 9), fill=(123, 255, 90, 255))
+    d.ellipse([3, 2, 8, 6], fill=(200, 236, 226, 170))
+    d.ellipse([8, 2, 13, 6], fill=(200, 236, 226, 170))
+    (ASSETS / 'textures/item').mkdir(exist_ok=True)
+    icon.save(ASSETS / 'textures/item/buzz_bot.png')
+    write(ASSETS / 'models/item/buzz_bot.json', {'parent': 'item/generated', 'textures': {'layer0': 'fourtwenty:item/buzz_bot'}})
     glass = shade((176, 214, 196), 'glass', 8)
     ImageDraw.Draw(glass).line([(6, 3), (6, 28)], fill=(232, 244, 238, 255), width=2)
     glass.save(TEX / 'glass.png')
@@ -297,6 +322,7 @@ def recipes():
         'dry_box': (1, ['IVI', 'RTR', 'IWI'], {'I': 'iron_ingot', 'V': 'iron_bars', 'R': 'redstone', 'T': 'fourtwenty:curing_rack', 'W': 'fourtwenty:hemp_wick'}),
         'cure_closet': (1, ['CVC', 'RTR', 'CWC'], {'C': 'copper_ingot', 'V': 'iron_bars', 'R': 'redstone', 'T': 'fourtwenty:dry_box', 'W': 'fourtwenty:rolled_wick'}),
         'the_humidor': (1, ['DVD', 'RTR', 'DWD'], {'D': 'diamond', 'V': 'glass', 'R': 'redstone', 'T': 'fourtwenty:cure_closet', 'W': 'fourtwenty:glass_wick'}),
+        'buzz_bot': (1, ['WHW', 'ICI'], {'W': 'fourtwenty:glass_wick', 'H': 'honeycomb', 'I': 'iron_ingot', 'C': 'copper_block'}),
         'pheno_chamber': (1, ['CGC', 'RTR', 'CWC'], {'C': 'copper_ingot', 'G': 'glass', 'R': 'redstone', 'T': 'flower_pot', 'W': 'fourtwenty:rolled_wick'}),
         'pheno_lab': (1, ['DGD', 'RTR', 'DWD'], {'D': 'diamond', 'G': 'glass', 'R': 'redstone', 'T': 'fourtwenty:pheno_chamber', 'W': 'fourtwenty:glass_wick'}),
         'pheno_cathedral': (1, ['BGB', 'RTR', 'BWB'], {'B': 'diamond_block', 'G': 'gold_block', 'R': 'redstone_block', 'T': 'fourtwenty:pheno_lab', 'W': 'fourtwenty:gold_wick'}),

@@ -52,7 +52,9 @@ public class PhenoScreen extends TechScreen<PhenoMenu> {
 
     @Override protected void renderLabels(@Nonnull GuiGraphics g, int mouseX, int mouseY) {
         g.drawString(font, title, 8, 6, TEXT, false);
-        if (menu.needs() >= 0) {
+        if (menu.needs() == PhenoBlockEntity.NEEDS_POLLINATING) {
+            g.drawString(font, Component.translatable("gui.fourtwenty.pheno.pollinate"), 8, STATUS_Y, WARN, false);
+        } else if (menu.needs() >= 0) {
             g.drawString(font, Component.translatable("gui.fourtwenty.pheno.needs", Component.translatable(chamber(menu.needs()))), 8, STATUS_Y, WARN, false);
         } else if (menu.makes() >= 0) {
             g.drawString(font, Component.translatable("gui.fourtwenty.pheno.makes", StrainItems.strainName(Strain.values()[menu.makes()])), 8, STATUS_Y, TEXT, false);

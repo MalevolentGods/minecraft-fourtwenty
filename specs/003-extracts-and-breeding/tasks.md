@@ -24,6 +24,13 @@
 - [X] T015 [US2] Hybrids inspire parents' colours in J/infuser/Infuser.java
 - [X] T016 [US2] Game tests
 
+## Phase 2b: Pollination and the Buzz Bot (US2b)
+
+- [X] T017 [US2b] Routes in J/domain/Crosses.java; the Chamber refuses what needs pollinating, in J/processing/PhenoBlockEntity.java
+- [X] T018 [US2b] Pollen on crops and natural crosses in J/block/Pollination.java and J/block/WeedCropBlockEntity.java
+- [X] T019 [US2b] Buzz Bot in J/entity/BuzzBot.java, J/item/BuzzBotItem.java and J/client/BuzzBotRenderer.java
+- [X] T019a [US2b] Art, recipe and game tests
+
 ## Phase 3: Biome strains (US4)
 
 - [ ] T020 [P] [US4] Climates in J/domain/Climate.java with tests

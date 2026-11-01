@@ -7,11 +7,17 @@ import java.util.function.DoubleSupplier;
 
 import static com.malevolentgods.fourtwenty.domain.Strain.*;
 
-/** What two seeds make in a Pheno Chamber. Listed parents make their hybrid; any other pair makes one of the two, with mixed traits. */
+/**
+ * What two strains make. In a Pheno Chamber, listed parents of a Cross make it, and any other pair makes one of the two with mixed traits. Anything above a
+ * Cross is made by pollinating instead: see {@link Route}.
+ */
 public final class Crosses {
     private Crosses() {}
 
     public record Cross(Strain a, Strain b, Strain child) {}
+
+    /** How a hybrid gets made: in a Pheno Chamber; by pollinating, natural or a Buzz Bot's; or only by a Buzz Bot. */
+    public enum Route { CHAMBER, POLLEN, BOT }
 
     public static final List<Cross> CROSSES = List.of(
             new Cross(TANGIE_TANGO, MERMAID_HOTBOX, TROPICAL_THUNDER),
@@ -39,6 +45,15 @@ public final class Crosses {
     public static Optional<Strain> hybrid(Strain a, Strain b) {
         if (a != b && a.family() == Family.ULTRA && b.family() == Family.ULTRA) return Optional.of(GOLDEN_GOD);
         return CROSSES.stream().filter(c -> c.a == a && c.b == b || c.a == b && c.b == a).map(Cross::child).findFirst();
+    }
+
+    public static Route route(Strain hybrid) {
+        return hybrid.grade() <= 2 ? Route.CHAMBER : hybrid.grade() == 3 ? Route.POLLEN : Route.BOT;
+    }
+
+    /** Whether these parents make a hybrid that a Pheno Chamber can't. */
+    public static boolean needsPollinating(Strain a, Strain b) {
+        return hybrid(a, b).filter(strain -> route(strain) != Route.CHAMBER).isPresent();
     }
 
     /** The child of a cross; {@code roll} is uniform in 0..1 and picks a parent when there's no hybrid. */

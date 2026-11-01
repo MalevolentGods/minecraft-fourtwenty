@@ -38,6 +38,8 @@ public class PhenoBlockEntity extends BIBlockEntity implements WorldlyContainer,
     public static final int PARENTS = 2, OUTPUTS = 2, SIZE = PARENTS + OUTPUTS;
     public static final int DATA_PROGRESS = 0, DATA_TOTAL = 1, DATA_PAUSED = 2, DATA_STORED = 3, DATA_CAPACITY = 4, DATA_OVERLOADED = 5, DATA_TIER = 6, DATA_FREE = 7,
             DATA_NEEDS = 8, DATA_MAKES = 9, DATA_COUNT = 10;
+    /** The DATA_NEEDS value for parents that only pollinating can cross. */
+    public static final int NEEDS_POLLINATING = 99;
     private static final int[] IN = {0, 1}, OUT = {2, 3};
     private static final int BUFFER_TICKS = 400;
 
@@ -59,8 +61,8 @@ public class PhenoBlockEntity extends BIBlockEntity implements WorldlyContainer,
                 case DATA_OVERLOADED -> overloaded ? 1 : 0;
                 case DATA_TIER -> block.tier().ordinal();
                 case DATA_FREE -> free ? 1 : 0;
-                case DATA_NEEDS -> loaded() && !strongEnough() ? Crosses.chamber(grade()).ordinal() : -1;
-                case DATA_MAKES -> loaded() ? Crosses.hybrid(first(), second()).map(Enum::ordinal).orElse(-1) : -1;
+                case DATA_NEEDS -> !loaded() ? -1 : pollinates() ? NEEDS_POLLINATING : !strongEnough() ? Crosses.chamber(grade()).ordinal() : -1;
+                case DATA_MAKES -> loaded() && !pollinates() ? Crosses.hybrid(first(), second()).map(Enum::ordinal).orElse(-1) : -1;
                 default -> 0;
             };
         }
@@ -92,6 +94,8 @@ public class PhenoBlockEntity extends BIBlockEntity implements WorldlyContainer,
 
     private boolean strongEnough() { return Crosses.chamber(grade()).ordinal() <= block.tier().ordinal(); }
 
+    private boolean pollinates() { return Crosses.needsPollinating(first(), second()); }
+
     private boolean outputFree() { return items.get(PARENTS).isEmpty() || items.get(PARENTS + 1).isEmpty(); }
 
     private void idle() {
@@ -107,7 +111,7 @@ public class PhenoBlockEntity extends BIBlockEntity implements WorldlyContainer,
             lit(false);
             return;
         }
-        if (!loaded() || !strongEnough() || !outputFree()) {
+        if (!loaded() || pollinates() || !strongEnough() || !outputFree()) {
             idle();
             return;
         }

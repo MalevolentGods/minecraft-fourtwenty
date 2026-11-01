@@ -55,6 +55,17 @@ class CrossesTest {
     }
 
     @Test
+    void onlyCrossesComeFromTheChamber() {
+        assertEquals(Crosses.Route.CHAMBER, Crosses.route(Strain.MOSS_BOSS));
+        assertEquals(Crosses.Route.POLLEN, Crosses.route(Strain.OLD_GROWTH));
+        assertEquals(Crosses.Route.BOT, Crosses.route(Strain.THE_ELDER_BUD));
+        assertEquals(Crosses.Route.BOT, Crosses.route(Strain.GOLDEN_GOD));
+        assertFalse(Crosses.needsPollinating(Strain.WAKE_AND_BAKE, Strain.SUNSHINE_DAYDREAM));
+        assertTrue(Crosses.needsPollinating(Strain.MOSS_BOSS, Strain.CANOPY_CREEPER));
+        assertFalse(Crosses.needsPollinating(Strain.OLD_GROWTH, Strain.OLD_GROWTH));
+    }
+
+    @Test
     void betterStrainsNeedBetterChambers() {
         assertEquals(BIRules.Tier.TOKE, Crosses.chamber(Strain.MOSS_BOSS.grade()));
         assertEquals(BIRules.Tier.RIP, Crosses.chamber(Strain.OLD_GROWTH.grade()));

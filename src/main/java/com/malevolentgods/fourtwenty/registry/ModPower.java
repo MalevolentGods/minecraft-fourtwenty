@@ -96,6 +96,8 @@ public final class ModPower {
     public static final DeferredHolder<SoundEvent, SoundEvent> SNIP = sound("snip"), BURN_OUT = sound("burn_out"),
             OVERLOAD = sound("overload"), SWITCH = sound("switch");
 
+    public static final DeferredHolder<Item, Item> BUZZ_BOT_ITEM = ModItems.ITEMS.register("buzz_bot", () -> new com.malevolentgods.fourtwenty.item.BuzzBotItem(new Item.Properties().stacksTo(16)));
+
     public static final DeferredHolder<Item, Item> ASH = ModItems.ITEMS.register("ash", () -> new Item(new Item.Properties()));
 
     public static final DeferredHolder<Block, WickBlock> HEMP_WICK = wick("hemp_wick", Tier.PUFF);
@@ -168,6 +170,9 @@ public final class ModPower {
 
     public static void register(IEventBus bus) {
         bus.addListener(ModPower::capabilities);
+        bus.addListener((net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent event) ->
+                event.put(ModEntities.BUZZ_BOT.get(), com.malevolentgods.fourtwenty.entity.BuzzBot.attributes().build()));
+        com.malevolentgods.fourtwenty.block.Pollination.register();
         com.malevolentgods.fourtwenty.power.GrowOps.register();
         SOUNDS.register(bus);
     }
