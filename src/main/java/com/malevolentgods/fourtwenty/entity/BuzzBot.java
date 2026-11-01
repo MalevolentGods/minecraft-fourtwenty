@@ -1,12 +1,18 @@
 package com.malevolentgods.fourtwenty.entity;
 
 import com.malevolentgods.fourtwenty.block.Pollination;
+import com.malevolentgods.fourtwenty.power.MachinePower;
+import com.malevolentgods.fourtwenty.power.StashBlockEntity;
+import com.malevolentgods.fourtwenty.processing.ProcessingConfig;
 import com.malevolentgods.fourtwenty.registry.ModItems;
 import com.malevolentgods.fourtwenty.registry.ModPower;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -22,23 +28,28 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- * A little robot bee that runs on Cured Buds. With fuel in it, it wanders like a bee from weed plant to weed plant, never more than 7 blocks from one, and
- * where two ripe crops can cross it carries pollen between them, one bud a cross, for a guaranteed hybrid at the next harvest. Out of fuel it just hovers.
- * Hit it and it packs up, giving back its buds. Nothing else can hurt it.
+ * A little robot bee. One Cured Bud runs it for about an hour, and it runs free while a high player is near. Running, it wanders like a bee from weed plant to
+ * weed plant, never more than 7 blocks from one, and where two ripe crops can cross it carries pollen between them for a guaranteed hybrid at the next harvest.
+ * Running low, it tops itself up at any Stash in reach. Out of power, it flies back to the block it was set down in and sleeps until it has power again.
+ * Hit it and it packs up, giving back its unspent buds. Nothing else can hurt it.
  */
 public class BuzzBot extends Mob {
-    public static final int REACH = 7, MAX_FUEL = 16;
-    private static final int LOOK_EVERY = 20, VISIT_TICKS = 30, DRIFT_TICKS = 8;
+    public static final int REACH = 7, MAX_BUDS = 16;
+    private static final EntityDataAccessor<Boolean> DORMANT = SynchedEntityData.defineId(BuzzBot.class, EntityDataSerializers.BOOLEAN);
+    private static final int LOOK_EVERY = 20, VISIT_TICKS = 30, DRIFT_TICKS = 8, LOW_POWER = 6000;
     private static final double SPEED = 0.12, ARRIVED = 0.5;
 
+    private BlockPos home;
     private BlockPos lastPlant;
     private BlockPos from, to;
-    private boolean carrying;
+    private BlockPos charger;
+    private boolean carrying, high;
     private Vec3 wander;
     private int rest;
-    private int fuel;
+    private int power;
 
     public BuzzBot(EntityType<? extends BuzzBot> type, Level level) {
         super(type, level);
@@ -51,9 +62,20 @@ public class BuzzBot extends Mob {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 4);
     }
 
-    public int fuel() { return fuel; }
+    @Override protected void defineSynchedData(@Nonnull SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DORMANT, false);
+    }
 
-    public void addFuel(int buds) { fuel = Math.min(MAX_FUEL, fuel + buds); }
+    public boolean dormant() { return entityData.get(DORMANT); }
+
+    public int power() { return power; }
+
+    public void setPower(int ticks) { power = ticks; }
+
+    public void setHome(BlockPos pos) { home = pos.immutable(); }
+
+    public void addBuds(int buds) { power = Math.min(MAX_BUDS * ProcessingConfig.botBudTicks(), power + buds * ProcessingConfig.botBudTicks()); }
 
     @Override public boolean isPushable() { return false; }
 
@@ -62,10 +84,21 @@ public class BuzzBot extends Mob {
     @Override public void tick() {
         super.tick();
         if (!(level() instanceof ServerLevel server)) return;
+        if (home == null) home = blockPosition();
         setDeltaMovement(Vec3.ZERO);
-        if (fuel <= 0 && from == null) return;
+        boolean looking = tickCount % LOOK_EVERY == 0;
+        if (looking) high = MachinePower.highNear(server, blockPosition());
+        if (!high && power > 0) power--;
+        if (charge(server, looking)) return;
+        if (!high && power <= 0) {
+            from = to = null;
+            wander = null;
+            goToSleep();
+            return;
+        }
+        entityData.set(DORMANT, false);
         if (from == null) {
-            if (tickCount % LOOK_EVERY == 0) {
+            if (looking) {
                 BlockPos[] pair = Pollination.findPair(server, blockPosition(), REACH);
                 if (pair != null) {
                     from = pair[0];
@@ -83,9 +116,49 @@ public class BuzzBot extends Mob {
             if (!carrying) {
                 carrying = true;
             } else {
-                if (Pollination.pollinate(server, from, to)) fuel--;
+                Pollination.pollinate(server, from, to);
                 from = to = null;
             }
+        }
+    }
+
+    /** Running low with a Stash in reach: goes and tops up. True while that's what it's doing. */
+    private boolean charge(ServerLevel server, boolean looking) {
+        if (charger == null) {
+            if (!looking || power >= LOW_POWER) return false;
+            charger = findStash(server);
+            if (charger == null) return false;
+            entityData.set(DORMANT, false);
+        }
+        if (!(server.getBlockEntity(charger) instanceof StashBlockEntity stash) || stash.node().stored() < ProcessingConfig.botChargeBI()) {
+            charger = null;
+            return false;
+        }
+        if (flyTo(Vec3.atCenterOf(charger).add(0, 0.8, 0))) {
+            stash.node().extract(ProcessingConfig.botChargeBI());
+            addBuds(1);
+            charger = null;
+        }
+        return true;
+    }
+
+    private @Nullable BlockPos findStash(ServerLevel server) {
+        BlockPos at = blockPosition();
+        for (BlockPos pos : BlockPos.betweenClosed(at.offset(-REACH, -REACH, -REACH), at.offset(REACH, REACH, REACH))) {
+            if (pos.closerThan(at, REACH) && server.getBlockEntity(pos) instanceof StashBlockEntity stash && stash.node().stored() >= ProcessingConfig.botChargeBI()) {
+                return pos.immutable();
+            }
+        }
+        return null;
+    }
+
+    /** Back to the block it was set down in, to settle there. */
+    private void goToSleep() {
+        Vec3 bed = Vec3.atBottomCenterOf(home).add(0, 0.1, 0);
+        if (dormant()) return;
+        if (flyTo(bed)) {
+            setPos(bed);
+            entityData.set(DORMANT, true);
         }
     }
 
@@ -124,17 +197,19 @@ public class BuzzBot extends Mob {
         return false;
     }
 
+    private void report(Player player) {
+        player.displayClientMessage(Component.translatable("entity.fourtwenty.buzz_bot.power", power / 1200), true);
+    }
+
     @Override protected @Nonnull InteractionResult mobInteract(@Nonnull Player player, @Nonnull InteractionHand hand) {
         ItemStack held = player.getItemInHand(hand);
-        if (held.is(ModItems.WEED_BUD.get()) && fuel < MAX_FUEL) {
-            if (!level().isClientSide) {
+        if (!level().isClientSide) {
+            if (held.is(ModItems.WEED_BUD.get()) && power + ProcessingConfig.botBudTicks() <= MAX_BUDS * ProcessingConfig.botBudTicks()) {
                 held.consume(1, player);
-                fuel++;
-                player.displayClientMessage(Component.translatable("entity.fourtwenty.buzz_bot.fuel", fuel, MAX_FUEL), true);
+                addBuds(1);
             }
-            return InteractionResult.sidedSuccess(level().isClientSide);
+            report(player);
         }
-        if (!level().isClientSide) player.displayClientMessage(Component.translatable("entity.fourtwenty.buzz_bot.fuel", fuel, MAX_FUEL), true);
         return InteractionResult.sidedSuccess(level().isClientSide);
     }
 
@@ -142,20 +217,25 @@ public class BuzzBot extends Mob {
     @Override public boolean hurt(@Nonnull DamageSource source, float amount) {
         if (level().isClientSide || !(source.getEntity() instanceof Player)) return false;
         spawnAtLocation(ModPower.BUZZ_BOT_ITEM.get());
-        if (fuel > 0) spawnAtLocation(new ItemStack(ModItems.WEED_BUD.get(), fuel));
+        int buds = power / ProcessingConfig.botBudTicks();
+        if (buds > 0) spawnAtLocation(new ItemStack(ModItems.WEED_BUD.get(), buds));
         discard();
         return true;
     }
 
     @Override public void addAdditionalSaveData(@Nonnull CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putInt("Fuel", fuel);
+        tag.putInt("Power", power);
+        tag.putBoolean("Dormant", dormant());
+        if (home != null) tag.put("Home", NbtUtils.writeBlockPos(home));
         if (lastPlant != null) tag.put("LastPlant", NbtUtils.writeBlockPos(lastPlant));
     }
 
     @Override public void readAdditionalSaveData(@Nonnull CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        fuel = tag.getInt("Fuel");
+        power = tag.getInt("Power");
+        entityData.set(DORMANT, tag.getBoolean("Dormant"));
+        home = NbtUtils.readBlockPos(tag, "Home").orElse(null);
         lastPlant = NbtUtils.readBlockPos(tag, "LastPlant").orElse(null);
     }
 }

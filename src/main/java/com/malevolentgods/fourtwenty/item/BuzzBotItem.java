@@ -10,7 +10,7 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 
-/** Sets a Buzz Bot free. */
+/** Sets a Buzz Bot free. The block it's set down in is where it comes back to sleep. */
 public class BuzzBotItem extends Item {
     public BuzzBotItem(Properties properties) { super(properties); }
 
@@ -19,8 +19,10 @@ public class BuzzBotItem extends Item {
         if (!level.isClientSide) {
             BuzzBot bot = ModEntities.BUZZ_BOT.get().create(level);
             if (bot == null) return InteractionResult.FAIL;
-            Vec3 at = Vec3.atBottomCenterOf(context.getClickedPos().relative(context.getClickedFace()));
-            bot.moveTo(at.x, at.y + 0.5, at.z, 0, 0);
+            var home = context.getClickedPos().relative(context.getClickedFace());
+            Vec3 at = Vec3.atBottomCenterOf(home);
+            bot.moveTo(at.x, at.y + 0.1, at.z, 0, 0);
+            bot.setHome(home);
             level.addFreshEntity(bot);
             context.getItemInHand().consume(1, context.getPlayer());
         }

@@ -23,6 +23,8 @@ public final class ProcessingConfig {
     private static final ModConfigSpec.DoubleValue ULTRA = chance("seedChanceUltra", D.ultra());
     private static final ModConfigSpec.DoubleValue GOLDEN = chance("seedChanceGolden", D.golden());
     private static final ModConfigSpec.DoubleValue POLLEN_CHANCE = BUILDER.comment("Chance per harvest that Double Cross parents side by side give their hybrid's seed.").defineInRange("pollenChance", 0.05, 0, 1);
+    private static final ModConfigSpec.IntValue BOT_BUD_MINUTES = BUILDER.comment("How many minutes one Cured Bud runs a Buzz Bot.").defineInRange("botBudMinutes", 60, 1, 1440);
+    private static final ModConfigSpec.IntValue BOT_CHARGE_BI = BUILDER.comment("The BI a Buzz Bot takes from a Stash for one bud's worth of power.").defineInRange("botChargeBI", 4200, 1, 1_000_000);
     private static final ModConfigSpec.DoubleValue CROSS_TIME = BUILDER.comment("Multiplies how long a Pheno Chamber's cross takes.").defineInRange("crossTime", 1.0, 0.01, 100);
     private static final ModConfigSpec.DoubleValue[] GRADE_SPEEDS = {null, null, gradeSpeed(2), gradeSpeed(3), gradeSpeed(4), gradeSpeed(5)};
     private static final ModConfigSpec.IntValue RACK_TICKS = BUILDER
@@ -91,6 +93,11 @@ public final class ProcessingConfig {
     public static void overrideUnitTicks(Integer ticks) { unitTicksOverride = ticks; }
     public static void overrideCrossTicks(Integer ticks) { crossTicksOverride = ticks; }
     public static void overridePollenChance(Double chance) { pollenChanceOverride = chance; }
+
+    /** How long one Cured Bud runs a Buzz Bot. */
+    public static int botBudTicks() { return (SPEC.isLoaded() ? BOT_BUD_MINUTES.get() : 60) * 1200; }
+
+    public static int botChargeBI() { return SPEC.isLoaded() ? BOT_CHARGE_BI.get() : 4200; }
 
     public static double pollenChance() {
         var override = pollenChanceOverride;

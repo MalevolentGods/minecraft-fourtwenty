@@ -15,6 +15,7 @@ import com.malevolentgods.fourtwenty.registry.ModEntities;
 import com.malevolentgods.fourtwenty.registry.ModItems;
 import com.malevolentgods.fourtwenty.registry.ModPower;
 import com.malevolentgods.fourtwenty.power.BIBuffer;
+import com.malevolentgods.fourtwenty.power.StashBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.AfterBatch;
 import net.minecraft.gametest.framework.BeforeBatch;
@@ -135,15 +136,14 @@ public final class PhenoGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 400)
-    public static void aBuzzBotMakesAnUltraForABud(GameTestHelper h) {
+    public static void aBuzzBotMakesAnUltra(GameTestHelper h) {
         var a = new BlockPos(1, 2, 1);
         var b = new BlockPos(3, 2, 1);
         plant(h, a, ModPower.AERO_POD.get(), Strain.OLD_GROWTH);
         plant(h, b, ModPower.AERO_POD.get(), Strain.ORACLE_OF_SNACKS);
         var bot = h.spawn(ModEntities.BUZZ_BOT.get(), new BlockPos(2, 3, 2));
-        bot.addFuel(1);
+        bot.addBuds(1);
         h.succeedWhen(() -> {
-            h.assertTrue(bot.fuel() == 0, "it spent its bud");
             BlockPos done = WeedCropBlockEntity.class.cast(h.getLevel().getBlockEntity(h.absolutePos(a))).pollen() != null ? a : b;
             var crop = (WeedCropBlockEntity) h.getLevel().getBlockEntity(h.absolutePos(done));
             h.assertTrue(crop.pollen() != null && crop.pollen().strain() == Strain.THE_ELDER_BUD, "it left the Ultra's pollen");
@@ -159,7 +159,7 @@ public final class PhenoGameTests {
         var plant = new BlockPos(3, 2, 3);
         plant(h, plant, ModPower.CLOSET_GROW.get(), Strain.LANDRACE);
         var bot = h.spawn(ModEntities.BUZZ_BOT.get(), new BlockPos(3, 4, 3));
-        bot.addFuel(1);
+        bot.addBuds(1);
         var start = bot.position();
         var at = h.absolutePos(plant).getCenter();
         boolean[] moved = {false};
@@ -171,6 +171,36 @@ public final class PhenoGameTests {
             h.assertTrue(moved[0], "it wandered");
             bot.discard();
             h.succeed();
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 300)
+    public static void aBuzzBotOutOfPowerGoesHomeAndSleeps(GameTestHelper h) {
+        var home = new BlockPos(1, 2, 1);
+        var bot = h.spawn(ModEntities.BUZZ_BOT.get(), new BlockPos(4, 4, 4));
+        bot.setHome(h.absolutePos(home));
+        bot.setPower(2);
+        h.succeedWhen(() -> {
+            h.assertTrue(bot.dormant(), "it went to sleep");
+            h.assertTrue(bot.blockPosition().equals(h.absolutePos(home)), "at home, not at " + bot.blockPosition());
+            bot.addBuds(1);
+            h.assertTrue(bot.power() == ProcessingConfig.botBudTicks(), "a bud is an hour");
+            bot.discard();
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 300)
+    public static void aBuzzBotRechargesAtAStash(GameTestHelper h) {
+        var jar = new BlockPos(3, 2, 3);
+        h.setBlock(jar, ModPower.STASH_JAR.get());
+        var stash = (StashBlockEntity) h.getLevel().getBlockEntity(h.absolutePos(jar));
+        ((BIBuffer) stash.node()).set(10_000);
+        var bot = h.spawn(ModEntities.BUZZ_BOT.get(), new BlockPos(1, 3, 1));
+        bot.setPower(100);
+        h.succeedWhen(() -> {
+            h.assertTrue(stash.node().stored() == 10_000 - ProcessingConfig.botChargeBI(), "it took one bud's worth of BI, leaving " + stash.node().stored());
+            h.assertTrue(bot.power() > ProcessingConfig.botBudTicks() / 2, "and has an hour's power");
+            bot.discard();
         });
     }
 
