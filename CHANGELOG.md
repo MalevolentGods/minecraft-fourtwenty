@@ -15,7 +15,7 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - **Blaze tier:** the Grand Hookah, The Vault and Gold Wick.
 - **Transport Tubes:** one tube, no tiers. Any number of machines share a network and items run both ways. A network into an unloaded chunk stops its machines.
 - **Pollination and the Buzz Bot**, biome strains, and the Golden God.
-- **Dynamic lights:** held and dropped lights and Golden Gods light up what’s around them, and coloured lamps and gods tint it. Both can be turned off in `fourtwenty-client.toml`.
+- **Coloured lamp light:** lit lamps tint the surfaces around them. It can be turned off in `fourtwenty-client.toml`.
 - A flowering crop grows buds in its strain's colour, and Jade names the strain.
 - **Guard Tower 1-5** in the Sensi Heights pack.
 - **Hybrids:** Pheno Chambers, 22 new strains, and seed traits.

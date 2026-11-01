@@ -54,8 +54,6 @@ public final class GoldenGodClient {
         }
     }
 
-    public static boolean shining(int entity) { return SHINING.contains(entity); }
-
     private static void tick(ClientTickEvent.Post event) {
         if (Minecraft.getInstance().level == null) SHINING.clear();
     }

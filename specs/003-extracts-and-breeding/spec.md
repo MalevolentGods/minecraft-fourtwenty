@@ -146,7 +146,7 @@ Smoking Golden God turns the player into a shining golden god for its length.
 
 **Acceptance Scenarios**:
 
-1. **Given** a player smokes Golden God, **Then** everyone nearby sees them shining gold with a glow in the shape of their body, and they give off bright light, and they have Resistance IV, Strength III, Regeneration III, Speed III, Haste III, Fire Resistance and creative-style flight.
+1. **Given** a player smokes Golden God, **Then** everyone nearby sees them shining gold with a glow in the shape of their body, and they have Resistance IV, Strength III, Regeneration III, Speed III, Haste III, Fire Resistance and creative-style flight.
 2. **Given** the flight ends mid-air, **Then** they float down unharmed (flying can never kill you).
 3. **Given** the player logs out or dies, **Then** the shine stops for everyone.
 
@@ -181,15 +181,15 @@ The mod's own automation, in place of chests and hoppers. One tube with no tiers
 3. **Given** a tube line running into an unloaded chunk, **Then** the machine stops, keeps its progress, and its screen says why, until the chunk is back.
 4. **Given** a chest beside a tube, **Then** the tube ignores it.
 
-### User Story 6c - Dynamic lights (Priority: P2)
+### User Story 6c - Coloured lamp light (Priority: P2)
 
-Light moves with whatever carries it. Built into the mod, with nothing placed in the world.
+Lit lamps tint what's around them. Tried with moving lights too, and dropped: rebuilding chunks as a light moved was too slow.
 
 **Acceptance Scenarios**:
 
-1. **Given** a player holding a light source, a dropped light source, or a Golden God, **Then** blocks and mobs around them are lit as if by that source.
-2. **Given** a coloured source, **Then** the surfaces it can reach take its colour, fading with distance, and solid walls stop it.
-3. **Given** a player who doesn't want it, **Then** either part turns off in their client config.
+1. **Given** a lit lamp, **Then** the solid surfaces it can reach take its colour, fading with distance, and solid walls stop it.
+2. **Given** a lamp that's broken or switched off, **Then** its colour goes at once.
+3. **Given** a player who doesn't want it, **Then** it turns off in their client config.
 
 ### User Story 7 - Construction Joint (Priority: P3)
 
