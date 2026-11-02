@@ -189,7 +189,7 @@ More huts are added as they're built. The pack lives in its own repository and i
 
 **The Inspiration Infuser** (Steel: 3 glass over iron, a weed bud and iron, over polished blackstone, glowstone dust and polished blackstone; Lab: quartz and white concrete instead). Pick a colour you're inspired by on your mind's map, then drop beads of resin (globs, drops, drips, specks; drops fall 1, 4 or 8 at a time) into the pool until it matches. Fully inspired, the pool's edge glows green while you're still on track to a working recipe and red when you're not. Catching a colour unlocks its terpene; near-identical colours unlock together. The **Infuse** tab turns a Landrace seed and a Minecraft-colour terpene into a seed of that hue's strain (olive takes green and brown). Your pool and catches are your own and persist.
 
-**The Terpinator** (Steel or Lab, crafted like the Infuser round a brewing stand): pick a colour you've caught, feed it weed and press Start. Two buds make a vial. The 16 Minecraft colours take any weed; a hemp colour needs weed of its family.
+**The Terpinator** (Steel or Lab, crafted like the Infuser round a brewing stand): pick a colour you've caught, feed it weed and press Start. Each bud makes two vials. The 16 Minecraft colours take any weed; a hemp colour needs weed of its family.
 
 **Hemp blocks** come in the 64 hemp colours, the 16 Minecraft colours and Natural Hemp, each with stairs and slabs. 4 weed buds make 2 Natural Hemp; a terpene in the middle of 8 hemp blocks (any colours) dyes them its colour. Stairs and slabs craft the usual way or in a stonecutter.
 

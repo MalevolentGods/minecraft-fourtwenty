@@ -64,6 +64,23 @@ public final class StrainGameTests {
         h.succeed();
     }
 
+    /** Through a real crafting table, as a player does it, on any row, with a plain Landrace bud. */
+    @GameTest(template = "empty")
+    public static void aJointRollsInACraftingTableOnAnyRow(GameTestHelper h) {
+        var player = h.makeMockServerPlayerInLevel();
+        var menu = new net.minecraft.world.inventory.CraftingMenu(0, player.getInventory(),
+                net.minecraft.world.inventory.ContainerLevelAccess.create(h.getLevel(), h.absolutePos(new BlockPos(1, 2, 1))));
+        for (int row = 0; row < 3; row++) {
+            for (int slot = 1; slot <= 9; slot++) menu.getSlot(slot).set(ItemStack.EMPTY);
+            menu.getSlot(1 + row * 3).set(new ItemStack(Items.PAPER));
+            menu.getSlot(2 + row * 3).set(new ItemStack(ModItems.WEED_BUD.get()));
+            menu.getSlot(3 + row * 3).set(new ItemStack(Items.PAPER));
+            menu.slotsChanged(menu.getSlot(1).container);
+            h.assertTrue(menu.getSlot(0).getItem().is(ModItems.WEED_JOINT.get()), "no joint on row " + row + ", got " + menu.getSlot(0).getItem());
+        }
+        h.succeed();
+    }
+
     /** Paper, bud, paper makes a joint of the bud's strain. */
     @GameTest(template = "empty")
     public static void aJointIsRolledFromItsBudsStrain(GameTestHelper h) {
@@ -74,6 +91,8 @@ public final class StrainGameTests {
         var level = h.getLevel();
         var recipe = level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, grid, level);
         h.assertTrue(recipe.isPresent(), "the joint recipe matches");
+        // JEI lays out only a real ShapedRecipe as shaped: anything else shows as a 2x2 that wouldn't craft
+        h.assertTrue(recipe.get().value() instanceof net.minecraft.world.item.crafting.ShapedRecipe r && r.getWidth() == 3 && r.getHeight() == 1, "it reads as one row of three");
         ItemStack joint = recipe.get().value().assemble(grid, level.registryAccess());
         h.assertTrue(joint.is(ModItems.WEED_JOINT.get()), "it makes a joint");
         h.assertTrue(ModDataComponents.strain(joint) == Strain.TANGIE_TANGO, "of Tangie Tango, got " + ModDataComponents.strain(joint));

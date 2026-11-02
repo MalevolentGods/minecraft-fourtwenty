@@ -2,6 +2,16 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+- The Terpinator makes two vials from each bud, instead of one from two.
+
+### Fixed
+- JEI shows the joint recipe in its real shape: paper, bud, paper in a row.
+- A colour the Infuser couldn't pay for no longer looks caught: it says so, and the pool can be matched again.
+- The Terpinator no longer shows a pick the server refused, or says it's running with nothing to make.
+
 ## [0.17.1] - Clear the Way
 
 ### Fixed

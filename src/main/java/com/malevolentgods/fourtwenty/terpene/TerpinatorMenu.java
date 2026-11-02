@@ -70,11 +70,10 @@ public class TerpinatorMenu extends AbstractContainerMenu {
         }
         int product = id - BUTTON_PICK;
         if (!valid(product)) return false;
+        // Not predicted on the client: the server can refuse, and it wouldn't send back a product that hasn't changed.
         if (container instanceof TerpinatorBlockEntity t) {
             if (!Infuser.caught(player, target(product))) return false;
             t.setProduct(product);
-        } else {
-            data.set(DATA_PRODUCT, product);
         }
         return true;
     }
