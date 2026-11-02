@@ -110,6 +110,15 @@ def shared_textures():
 
 # ------------------------------------------------------------------ geometry (pixels, Minecraft axes: x east, y up, z south)
 
+def off_textures():
+    """The pool and light strips of a machine with no power: dull and grey."""
+    for name in ('pool', 'light'):
+        a = np.array(Image.open(ASSETS / f'textures/block/infuser/{name}.png').convert('RGBA')).astype(float)
+        grey = a[..., :3].mean(axis=-1, keepdims=True)
+        a[..., :3] = grey * 0.14 + a[..., :3] * 0.05 + 10
+        save(Image.fromarray(a.clip(0, 255).astype(np.uint8), 'RGBA'), f'{name}_off')
+
+
 def el(x0, y0, z0, x1, y1, z1, tex, glow=False, rot=None, faces=('north', 'south', 'east', 'west', 'up', 'down'), uv=None):
     e = {'from': [round(x0, 4), round(y0, 4), round(z0, 4)], 'to': [round(x1, 4), round(y1, 4), round(z1, 4)],
          'faces': {f: ({'texture': '#' + tex, 'uv': uv} if uv else {'texture': '#' + tex}) for f in faces}}
@@ -213,8 +222,16 @@ def write_models():
                              'firstperson_righthand': {'rotation': [0, 45, 0], 'translation': [0, 0, 0], 'scale': [0.4, 0.4, 0.4]}}}
         (ASSETS / f'models/block/{name}.json').write_text(json.dumps(model, indent=1) + '\n')
         (ASSETS / f'models/item/{name}.json').write_text(json.dumps({'parent': f'fourtwenty:block/{name}'}, indent=2) + '\n')
-        variants = {f'facing={f}': {'model': f'fourtwenty:block/{name}', **({'y': y} if y else {})}
-                    for f, y in (('north', 0), ('east', 90), ('south', 180), ('west', 270))}
+        # with no power: the same machine with its pool and lights out
+        off = json.loads(json.dumps(model))
+        for t in (off['textures'], *(c['textures'] for c in off['children'].values())):
+            t['light'], t['pool'] = 'fourtwenty:block/infuser/light_off', 'fourtwenty:block/infuser/pool_off'
+        for child in off['children'].values():
+            for e in child['elements']:
+                e.pop('neoforge_data', None)
+        (ASSETS / f'models/block/{name}_off.json').write_text(json.dumps(off, indent=1) + '\n')
+        variants = {f'facing={f},powered={p}': {'model': f'fourtwenty:block/{name}{"" if on else "_off"}', **({'y': y} if y else {})}
+                    for f, y in (('north', 0), ('east', 90), ('south', 180), ('west', 270)) for p, on in (('true', True), ('false', False))}
         (ASSETS / f'blockstates/{name}.json').write_text(json.dumps({'variants': variants}, indent=2) + '\n')
     print('models', len(machine), 'machine elements,', len(glass), 'glass elements')
 
@@ -223,4 +240,5 @@ if __name__ == '__main__':
     for style, st in STYLES.items():
         textures(style, st)
     shared_textures()
+    off_textures()
     write_models()

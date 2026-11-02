@@ -52,7 +52,7 @@ public final class InfuserClient {
             washLevel = Math.max(0, Math.min(5, msg.level()));
             washStart = System.currentTimeMillis();
         };
-        InspirationInfuserBlock.clientOpen = () -> Minecraft.getInstance().setScreen(new InfuserScreen());
+        InspirationInfuserBlock.clientOpen = pos -> Minecraft.getInstance().setScreen(new InfuserScreen(pos));
         NeoForge.EVENT_BUS.addListener(InfuserClient::camera);
         NeoForge.EVENT_BUS.addListener(InfuserClient::fov);
     }

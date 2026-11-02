@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
@@ -15,6 +16,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -28,13 +31,17 @@ import java.util.Map;
 
 /**
  * The Inspiration Infuser (Steel or Lab: the same machine in two finishes). Using it opens the player's own pool; there
- * is nothing stored in the block, so every player who uses it sees their own inspiration and their own mix.
+ * is nothing stored in the block, so every player who uses it sees their own inspiration and their own mix. Without power
+ * it shuts down: it goes dark, and its screen won't mix until there's power again.
  */
 public class InspirationInfuserBlock extends HorizontalDirectionalBlock {
     public static final MapCodec<InspirationInfuserBlock> CODEC = simpleCodec(InspirationInfuserBlock::new);
 
-    /** Set by the client setup: open the Infuser screen. */
-    public static Runnable clientOpen = () -> {};
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+    private static final int CHECK_TICKS = 20;
+
+    /** Set by the client setup: open the Infuser screen for the block at this position. */
+    public static java.util.function.Consumer<BlockPos> clientOpen = pos -> {};
 
     /** Built for a north-facing machine (tools/generate_infuser_model.py): plinth, basin and rim, jar rail, arm. */
     private static final Map<Direction, VoxelShape> SHAPES = new EnumMap<>(Direction.class);
@@ -57,12 +64,12 @@ public class InspirationInfuserBlock extends HorizontalDirectionalBlock {
 
     public InspirationInfuserBlock(Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED, false));
     }
 
     @Override protected @Nonnull MapCodec<? extends HorizontalDirectionalBlock> codec() { return CODEC; }
 
-    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { builder.add(FACING); }
+    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { builder.add(FACING, POWERED); }
 
     @Override public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
         return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
@@ -73,14 +80,46 @@ public class InspirationInfuserBlock extends HorizontalDirectionalBlock {
 
     @Override protected @Nonnull InteractionResult useWithoutItem(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos,
                                                                   @Nonnull Player player, @Nonnull BlockHitResult hit) {
-        if (player instanceof ServerPlayer sp) PacketDistributor.sendToPlayer(sp, new Infuser.Sync(Infuser.get(sp).save()));
-        else if (level.isClientSide) clientOpen.run();
+        if (player instanceof ServerPlayer sp) {
+            refresh(level, pos);
+            check(level, pos);
+            PacketDistributor.sendToPlayer(sp, new Infuser.Sync(Infuser.get(sp).save()));
+        } else if (level.isClientSide) {
+            clientOpen.accept(pos);
+        }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    /** Sets the block to whether it has power right now. */
+    public static void refresh(Level level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        boolean powered = Infusion.powered(level, pos);
+        if (state.getBlock() instanceof InspirationInfuserBlock && state.getValue(POWERED) != powered) level.setBlock(pos, state.setValue(POWERED, powered), 3);
+    }
+
+    private void check(Level level, BlockPos pos) {
+        if (!level.getBlockTicks().hasScheduledTick(pos, this)) level.scheduleTick(pos, this, CHECK_TICKS);
+    }
+
+    @Override protected void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState old, boolean moved) {
+        check(level, pos);
+    }
+
+    @Override protected void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
+        refresh(level, pos);
+        check(level, pos);
+    }
+
+    /** Machines placed before this had no check running: a random tick gets theirs going. */
+    @Override protected boolean isRandomlyTicking(@Nonnull BlockState state) { return true; }
+
+    @Override protected void randomTick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
+        check(level, pos);
     }
 
     /** A few lime motes rise off the pool. */
     @Override public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
-        if (random.nextInt(4) != 0) return;
+        if (!state.getValue(POWERED) || random.nextInt(4) != 0) return;
         double x = 8 + random.nextGaussian() * 2.5, z = 7 + random.nextGaussian() * 2.5;
         switch (state.getValue(FACING)) {
             case EAST -> { double t = x; x = 16 - z; z = t; }

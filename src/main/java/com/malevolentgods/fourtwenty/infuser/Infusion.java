@@ -91,6 +91,12 @@ public final class Infusion {
         return null;
     }
 
+    /** Whether an Infuser is running: a high player is near, or there's enough stored on its Wicks for one action. */
+    public static boolean powered(net.minecraft.world.level.Level level, BlockPos at) {
+        return com.malevolentgods.fourtwenty.power.MachinePower.highNear(level, at)
+                || com.malevolentgods.fourtwenty.power.BIGrid.stored(level, at) >= com.malevolentgods.fourtwenty.processing.ProcessingConfig.infuserCost();
+    }
+
     /** Whether this one action at the Infuser has power: free near a high player, otherwise it comes off the Wicks. It says so if not; the pool is kept. */
     public static boolean paid(ServerPlayer player) {
         BlockPos at = infuserNear(player);

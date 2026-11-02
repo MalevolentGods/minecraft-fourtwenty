@@ -2,6 +2,7 @@ package com.malevolentgods.fourtwenty.client.infuser;
 
 import com.malevolentgods.fourtwenty.domain.Tint;
 import com.malevolentgods.fourtwenty.infuser.Infuser;
+import com.malevolentgods.fourtwenty.infuser.InspirationInfuserBlock;
 import com.malevolentgods.fourtwenty.infuser.InfuserState;
 import com.malevolentgods.fourtwenty.infuser.Infusion;
 import com.malevolentgods.fourtwenty.registry.ModDataComponents;
@@ -53,6 +54,7 @@ public class InfuserScreen extends Screen {
     private final Tint tint = Tint.get();
     private final int n = tint.resins().size();
     private int[] pool;
+    private final net.minecraft.core.BlockPos at;
     private final Deque<int[]> history = new ArrayDeque<>();
     /** The colour just caught here, until the server has answered, and the undo steps to give back if it says no. */
     private String catching;
@@ -83,8 +85,9 @@ public class InfuserScreen extends Screen {
     private ResourceLocation mapId;
     private String mapKey = "";
 
-    public InfuserScreen() {
+    public InfuserScreen(net.minecraft.core.BlockPos at) {
         super(Component.translatable("block.fourtwenty.inspiration_infuser"));
+        this.at = at;
         pool = state().pool.clone();
         if (pool.length != n) pool = new int[n];
         if (state().sealed != null) matchAt = System.currentTimeMillis() - 5000;
@@ -102,7 +105,6 @@ public class InfuserScreen extends Screen {
         matchAt = -1;
         history.clear();
         history.addAll(catchHistory);
-        message = "No power: that didn't count. Get high or wire up the Infuser, then take back a glob and match it again.";
     }
 
     @Override public boolean isPauseScreen() { return false; }
@@ -117,7 +119,14 @@ public class InfuserScreen extends Screen {
 
     private boolean sealed() { return state().sealed != null; }
 
+    /** Whether the machine is shut down: nothing can be mixed or infused until it has power. */
+    private boolean off() {
+        var block = Minecraft.getInstance().level == null ? null : Minecraft.getInstance().level.getBlockState(at);
+        return block == null || !block.hasProperty(InspirationInfuserBlock.POWERED) || !block.getValue(InspirationInfuserBlock.POWERED);
+    }
+
     private boolean unlocked(int i) {
+        if (off()) return false;
         String r = tint.resins().get(i);
         Tint.Target t = target();
         return tint.starter().contains(r) || (t != null && r.equals(t.extra()));
@@ -158,6 +167,7 @@ public class InfuserScreen extends Screen {
     // ------------------------------------------------------------------ actions
 
     private void drop(int i) {
+        if (off()) return;
         if (sealed()) { message = "This pool is finished. Drain it to mix again."; return; }
         if (!unlocked(i)) return;
         int add = Math.min(SIZE_SPECKS[size] * (size == 1 ? drops : 1), tint.capSpecks() - total());
@@ -366,7 +376,7 @@ public class InfuserScreen extends Screen {
                 if (mx >= ix && mx < ix + 12 && my >= iy && my < iy + 12) hover = parts.get(k);
                 ix += 14;
             }
-            button(g, cx + cw - bw - 5, cy + (ch - 14) / 2, bw, 14, have > 0 ? "Infuse" : "Need", false, have > 0, mx, my, 7, i);
+            button(g, cx + cw - bw - 5, cy + (ch - 14) / 2, bw, 14, have > 0 ? "Infuse" : "Need", false, have > 0 && !off(), mx, my, 7, i);
         }
         if (!hover.isEmpty()) g.renderTooltip(font, hover, mx, my);
     }
@@ -458,7 +468,7 @@ public class InfuserScreen extends Screen {
         if (sealed()) shown = a;
         int shownRgb = ((int) Math.round(shown[0]) << 16) | ((int) Math.round(shown[1]) << 8) | (int) Math.round(shown[2]);
         // weed-magic haze
-        Draw.glow(g, pcx, pcy, pr, pr + ring * 3.2, 0xB8F06A, 0.10);
+        if (!off()) Draw.glow(g, pcx, pcy, pr, pr + ring * 3.2, 0xB8F06A, 0.10);
         // the inspired colour: a disc under the pool, so the two meet at one exact edge
         Tint.Target t = sealed() ? tint.target(state().sealed) : target();
         double alpha = sealed() ? 1 : t == null ? 0 : breath(now, level());
@@ -504,6 +514,7 @@ public class InfuserScreen extends Screen {
                 Draw.disc(g, pcx + Math.cos(ang) * rr, pcy + Math.sin(ang) * rr, Math.max(0.4, sz), Draw.argb(Draw.hsv(s / 18.0 + now / 4000.0, 0.4, 1), 1));
             }
         }
+        if (off()) Draw.disc(g, pcx, pcy, pr + ring + 2, 0xEE0B0912);
     }
 
     private static String kanji(double d) {
@@ -523,9 +534,9 @@ public class InfuserScreen extends Screen {
         g.pose().scale(2, 2, 1);
         g.drawCenteredString(font, d < 0 ? "—" : kanji(d), 0, 0, FG);
         g.pose().popPose();
-        String status = message;
+        String status = off() ? "Shut down: no power. Get high nearby, or run a Wick from a charged Stash." : message;
         int statusColour = MUTED;
-        if (sealed()) {
+        if (sealed() && !off()) {
             Tint.Target t = tint.target(state().sealed);
             int grade = state().caught.getOrDefault(t.id(), 1);
             List<String> twins = t.twins().stream().map(id -> tint.target(id).name()).toList();
