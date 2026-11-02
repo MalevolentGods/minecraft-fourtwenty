@@ -28,6 +28,7 @@ public final class ProcessingConfig {
     private static final ModConfigSpec.IntValue BOT_CHARGE_BI = BUILDER.comment("The BI a Buzz Bot takes from a Stash for one bud's worth of power.").defineInRange("botChargeBI", 4200, 1, 1_000_000);
     private static final ModConfigSpec.DoubleValue CLIMATE_CHANCE = BUILDER.comment("Chance per Landrace harvest in a climate biome of a climate-touched seed. A Cosmic Kush Pod's copy gives half.").defineInRange("climateChance", com.malevolentgods.fourtwenty.domain.Climate.CHANCE, 0, 1);
     private static final ModConfigSpec.DoubleValue CROSS_TIME = BUILDER.comment("Multiplies how long a Pheno Chamber's cross takes.").defineInRange("crossTime", 1.0, 0.01, 100);
+    private static final ModConfigSpec.DoubleValue CROP_SPEED = BUILDER.comment("How fast weed grows: the share of random ticks that count.").defineInRange("cropSpeed", GrowRules.CROP_SPEED, 0.01, 1);
     private static final ModConfigSpec.DoubleValue[] GRADE_SPEEDS = {null, null, gradeSpeed(2), gradeSpeed(3), gradeSpeed(4), gradeSpeed(5)};
     private static final ModConfigSpec.IntValue RACK_TICKS = BUILDER
             .comment("Ticks a bud hangs on a Curing Rack.")
@@ -138,6 +139,9 @@ public final class ProcessingConfig {
         return SPEC.isLoaded() ? new TrimRules.Chances(LANDRACE.get(), NEUTRALS.get(), WARM.get(), GREEN.get(), COOL.get(),
                 BIOME.get(), CROSS.get(), DOUBLE_CROSS.get(), ULTRA.get(), GOLDEN.get()) : D;
     }
+
+    /** The share of random ticks weed grows on, for every strain, in a pot or on a plot too. */
+    public static double cropSpeed() { return SPEC.isLoaded() ? CROP_SPEED.get() : GrowRules.CROP_SPEED; }
 
     /** How fast a strain of this grade grows; grades 0 and 1 aren't slowed. */
     public static double gradeSpeed(Strain strain) {

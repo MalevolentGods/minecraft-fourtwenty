@@ -11,7 +11,7 @@ class TrimRulesTest {
 
     @Test
     void familiesGetRarer() {
-        assertEquals(50, TrimRules.percent(C, Strain.LANDRACE));
+        assertEquals(25, TrimRules.percent(C, Strain.LANDRACE));
         assertEquals(25, TrimRules.percent(C, Strain.COUCHLOCK_HUM));
         assertEquals(15, TrimRules.percent(C, Strain.CHERRY_PIE));
         assertEquals(10, TrimRules.percent(C, Strain.STICKY_ICKY));
@@ -35,8 +35,8 @@ class TrimRulesTest {
 
     @Test
     void rollIsBelowTheChance() {
-        assertTrue(TrimRules.seeded(C, Strain.LANDRACE, 0.49));
-        assertFalse(TrimRules.seeded(C, Strain.LANDRACE, 0.50));
+        assertTrue(TrimRules.seeded(C, Strain.LANDRACE, 0.24));
+        assertFalse(TrimRules.seeded(C, Strain.LANDRACE, 0.25));
         assertFalse(TrimRules.seeded(C, Strain.BLUE_DREAM, 0.05));
     }
 }

@@ -50,7 +50,7 @@ public class PottedPotPotBlock extends Block implements BonemealableBlock {
     }
 
     @Override protected void randomTick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
-        if (state.getValue(AGE) < MAX_AGE && level.getRawBrightness(pos, 0) >= 9 && random.nextInt(GROWTH_CHANCE) == 0) {
+        if (state.getValue(AGE) < MAX_AGE && level.getRawBrightness(pos, 0) >= 9 && random.nextDouble() < com.malevolentgods.fourtwenty.processing.ProcessingConfig.cropSpeed() && random.nextInt(GROWTH_CHANCE) == 0) {
             level.setBlock(pos, state.setValue(AGE, state.getValue(AGE) + 1), Block.UPDATE_CLIENTS);
         }
     }
