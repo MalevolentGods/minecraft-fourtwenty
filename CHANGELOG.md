@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.18.1] - Slow Grow
 
 ### Changed
 - Stashes hold 42,000, 420,000, 4,200,000 and 42,000,000 BI, up from 40,000, 400,000, 4,000,000 and 40,000,000.
