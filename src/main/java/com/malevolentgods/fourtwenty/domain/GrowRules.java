@@ -11,6 +11,8 @@ public final class GrowRules {
     /** The first tier, counting from 1, with bigger harvests that replant themselves. */
     public static final int BIG_HARVEST_TIER = 4;
     public static final int RANDOM_TICK_ODDS = 4096;
+    /** The share of random ticks a weed crop grows on, so it takes twice as long as other crops. */
+    public static final double CROP_SPEED = 0.5;
     /** By strain grade: how fast a crop grows, and the lowest plot tier it grows on (0 for anywhere). */
     public static final List<Double> GRADE_SPEEDS = List.of(1.0, 1.0, 0.7, 0.5, 0.35, 0.25);
     private static final List<Integer> GRADE_PLOTS = List.of(0, 0, 1, 3, 4, 5);

@@ -31,6 +31,34 @@ public final class ProcessingGameTests {
         return n;
     }
 
+    /** The share of random ticks a young plant at {@code pos} grows on. */
+    private static double growthRate(GameTestHelper h, BlockPos pos, net.minecraft.world.level.block.state.BlockState young) {
+        var level = h.getLevel();
+        var at = h.absolutePos(pos);
+        int rolls = 4000, grown = 0;
+        for (int i = 0; i < rolls; i++) {
+            level.setBlock(at, young, 2);
+            level.getBlockState(at).randomTick(level, at, level.random);
+            if (!level.getBlockState(at).equals(young)) grown++;
+        }
+        return grown / (double) rolls;
+    }
+
+    @GameTest(template = "empty")
+    public static void weedTakesTwiceAsLongToGrow(GameTestHelper h) {
+        var crop = new BlockPos(2, 3, 2);
+        var pot = new BlockPos(4, 3, 2);
+        h.setBlock(new BlockPos(3, 3, 2), net.minecraft.world.level.block.Blocks.GLOWSTONE);
+        h.setBlock(crop.below(), net.minecraft.world.level.block.Blocks.FARMLAND.defaultBlockState().setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
+        h.runAfterDelay(5, () -> {
+            double planted = growthRate(h, crop, ModBlocks.WEED_CROP.get().defaultBlockState());
+            double potted = growthRate(h, pot, com.malevolentgods.fourtwenty.registry.ModTerpenes.POTTED_POT_POTS.values().iterator().next().get().defaultBlockState());
+            h.assertTrue(Math.abs(planted - 1 / 14.0) <= 0.02, "crop grew on " + planted + " of its random ticks");
+            h.assertTrue(Math.abs(potted - 1 / 16.0) <= 0.02, "pot grew on " + potted + " of its random ticks");
+            h.succeed();
+        });
+    }
+
     @GameTest(template = "empty")
     public static void trayTrimsOneBudAndKeepsTheStrain(GameTestHelper h) {
         var pos = new BlockPos(2, 2, 2);

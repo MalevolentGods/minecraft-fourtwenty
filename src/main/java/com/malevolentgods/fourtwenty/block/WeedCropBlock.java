@@ -55,6 +55,7 @@ public class WeedCropBlock extends CropBlock implements EntityBlock {
     @Override
     protected void randomTick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
         if (!level.isAreaLoaded(pos, 1) || !plotted(level, pos, state.getValue(STRAIN))) return;
+        if (random.nextDouble() >= ProcessingConfig.cropSpeed()) return;
         if (state.getValue(STRAIN).grade() > 1 && random.nextDouble() >= ProcessingConfig.gradeSpeed(state.getValue(STRAIN))) return;
         if (level.getRawBrightness(pos, 0) >= 9) {
             int age = getAge(state);

@@ -2,6 +2,14 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+- Stashes hold 42,000, 420,000, 4,200,000 and 42,000,000 BI, up from 40,000, 400,000, 4,000,000 and 40,000,000.
+- The Weed Lab has a Stash Jar and a crafting table.
+- Weed takes twice as long to grow, in the ground, in a pot and on a Grow Op. Bone meal is unchanged.
+- Landrace buds now give a seed 25% of the time when trimmed, down from 50%. No strain is above 25%.
+
 ## [0.18.0] - Lab Hours
 
 ### Added
