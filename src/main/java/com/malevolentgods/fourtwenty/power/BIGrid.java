@@ -101,12 +101,24 @@ public final class BIGrid {
 
     /** Takes {@code amount} from whatever stores power on the Wicks touching {@code start}, all or nothing, for machines with no buffer of their own. */
     public static boolean drain(Level level, BlockPos start, long amount) {
+        List<BINode> stores = stores(level, start);
+        if (stores.stream().mapToLong(BINode::stored).sum() < amount) return false;
+        long left = amount;
+        for (BINode node : stores) left -= node.extract(left);
+        return left == 0;
+    }
+
+    /** How much power is stored on the Wicks touching {@code start}. */
+    public static long stored(Level level, BlockPos start) {
+        return stores(level, start).stream().mapToLong(BINode::stored).sum();
+    }
+
+    private static List<BINode> stores(Level level, BlockPos start) {
         List<BINode> stores = new ArrayList<>();
         Set<BlockPos> seen = new HashSet<>();
         seen.add(start);
         ArrayDeque<Step> queue = new ArrayDeque<>();
         for (Direction face : Direction.values()) queue.add(new Step(start.relative(face), face, null));
-        long total = 0;
         while (!queue.isEmpty()) {
             Step step = queue.poll();
             BlockPos at = step.pos();
@@ -116,14 +128,8 @@ public final class BIGrid {
                 continue;
             }
             BINode node = level.getCapability(BINode.CAPABILITY, at, step.from().getOpposite());
-            if (node != null && node.canExtract()) {
-                stores.add(node);
-                total += node.stored();
-            }
+            if (node != null && node.canExtract()) stores.add(node);
         }
-        if (total < amount) return false;
-        long left = amount;
-        for (BINode node : stores) left -= node.extract(left);
-        return left == 0;
+        return stores;
     }
 }

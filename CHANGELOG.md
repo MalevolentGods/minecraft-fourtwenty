@@ -2,6 +2,15 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- **Weed Lab:** a small lab decoration in Sensi Heights, wired up with a Hookah, an Infuser and a Terpinator.
+
+### Changed
+- Residence level 1 no longer has a Pot Pot.
+- The Infuser shuts down without power: it goes dark, and its screen won't mix or infuse until a high player is near or a Stash on its Wicks has enough.
+
 ## [0.17.2] - Two for One
 
 ### Changed

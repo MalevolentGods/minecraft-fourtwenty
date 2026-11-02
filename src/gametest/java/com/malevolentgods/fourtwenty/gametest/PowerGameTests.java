@@ -50,6 +50,25 @@ public final class PowerGameTests {
         machine.node().receive(machine.node().capacity());
     }
 
+    /** It shows whether it can work: on with enough stored on its Wicks, off again when that's gone. */
+    @GameTest(template = "empty")
+    public static void theInfuserShutsDownWithoutPower(GameTestHelper h) {
+        BlockPos infuser = new BlockPos(1, 2, 1), jar = new BlockPos(2, 2, 1);
+        var powered = com.malevolentgods.fourtwenty.infuser.InspirationInfuserBlock.POWERED;
+        h.setBlock(infuser, com.malevolentgods.fourtwenty.registry.ModBlocks.INFUSER.get());
+        com.malevolentgods.fourtwenty.infuser.InspirationInfuserBlock.refresh(h.getLevel(), h.absolutePos(infuser));
+        h.assertTrue(!h.getBlockState(infuser).getValue(powered), "no power, so it's off");
+        h.setBlock(jar, ModPower.STASH_JAR.get());
+        var node = ((StashBlockEntity) h.getBlockEntity(jar)).node();
+        node.receive(5_000);
+        com.malevolentgods.fourtwenty.infuser.InspirationInfuserBlock.refresh(h.getLevel(), h.absolutePos(infuser));
+        h.assertTrue(h.getBlockState(infuser).getValue(powered), "a charged Stash turns it on");
+        node.extract(5_000);
+        com.malevolentgods.fourtwenty.infuser.InspirationInfuserBlock.refresh(h.getLevel(), h.absolutePos(infuser));
+        h.assertTrue(!h.getBlockState(infuser).getValue(powered), "and it goes off when the Stash runs out");
+        h.succeed();
+    }
+
     @GameTest(template = "empty", timeoutTicks = 120)
     public static void aHookahPowersAMachineThroughAWick(GameTestHelper h) {
         h.setBlock(A, com.malevolentgods.fourtwenty.registry.ModBlocks.WEED_BONG.get());
