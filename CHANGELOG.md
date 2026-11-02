@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.17.2] - Two for One
 
 ### Changed
 - The Terpinator makes two vials from each bud, instead of one from two.
