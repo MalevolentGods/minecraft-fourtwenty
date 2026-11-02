@@ -4,20 +4,19 @@ import com.malevolentgods.fourtwenty.block.WeedCropBlock;
 import com.malevolentgods.fourtwenty.block.WeedCropBlockEntity;
 import com.malevolentgods.fourtwenty.domain.Traits;
 import com.malevolentgods.fourtwenty.domain.Strain;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -64,12 +63,18 @@ public final class ModStrainData {
 
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, "fourtwenty");
 
-    public static class StrainShaped implements CraftingRecipe {
-        final ShapedRecipe inner;
+    /** A real ShapedRecipe: JEI and other mods read the shape from that class, and show anything else as shapeless, in a layout that wouldn't craft. */
+    public static class StrainShaped extends ShapedRecipe {
+        final ShapedRecipePattern shape;
+        final ItemStack output;
 
-        StrainShaped(ShapedRecipe inner) { this.inner = inner; }
+        StrainShaped(String group, CraftingBookCategory category, ShapedRecipePattern shape, ItemStack output, boolean notify) {
+            super(group, category, shape, output, notify);
+            this.shape = shape;
+            this.output = output;
+        }
 
-        @Override public boolean matches(@Nonnull CraftingInput input, @Nonnull Level level) { return inner.matches(input, level) && oneStrain(input); }
+        @Override public boolean matches(@Nonnull CraftingInput input, @Nonnull Level level) { return super.matches(input, level) && oneStrain(input); }
 
         /** Buds of two different strains don't make one joint. */
         private static boolean oneStrain(CraftingInput input) {
@@ -86,7 +91,7 @@ public final class ModStrainData {
 
         @Override
         public @Nonnull ItemStack assemble(@Nonnull CraftingInput input, @Nonnull HolderLookup.Provider registries) {
-            ItemStack out = inner.assemble(input, registries);
+            ItemStack out = super.assemble(input, registries);
             for (int i = 0; i < input.size(); i++) {
                 ItemStack s = input.getItem(i);
                 if (s.is(ModItems.WEED_BUD.get())) return ModDataComponents.bredFrom(out, s);
@@ -94,18 +99,25 @@ public final class ModStrainData {
             return out;
         }
 
-        @Override public boolean canCraftInDimensions(int w, int h) { return inner.canCraftInDimensions(w, h); }
-        @Override public @Nonnull ItemStack getResultItem(@Nonnull HolderLookup.Provider registries) { return inner.getResultItem(registries); }
-        @Override public @Nonnull NonNullList<Ingredient> getIngredients() { return inner.getIngredients(); }
-        @Override public @Nonnull String getGroup() { return inner.getGroup(); }
-        @Override public @Nonnull CraftingBookCategory category() { return inner.category(); }
-        @Override public boolean showNotification() { return inner.showNotification(); }
         @Override public @Nonnull RecipeSerializer<?> getSerializer() { return STRAIN_SHAPED.get(); }
     }
 
     public static class StrainShapedSerializer implements RecipeSerializer<StrainShaped> {
-        private static final MapCodec<StrainShaped> CODEC = ShapedRecipe.Serializer.CODEC.xmap(StrainShaped::new, r -> r.inner);
-        private static final StreamCodec<RegistryFriendlyByteBuf, StrainShaped> STREAM = ShapedRecipe.Serializer.STREAM_CODEC.map(StrainShaped::new, r -> r.inner);
+        private static final MapCodec<StrainShaped> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+                Codec.STRING.optionalFieldOf("group", "").forGetter(ShapedRecipe::getGroup),
+                CraftingBookCategory.CODEC.fieldOf("category").orElse(CraftingBookCategory.MISC).forGetter(ShapedRecipe::category),
+                ShapedRecipePattern.MAP_CODEC.forGetter(r -> r.shape),
+                ItemStack.STRICT_CODEC.fieldOf("result").forGetter(r -> r.output),
+                Codec.BOOL.optionalFieldOf("show_notification", true).forGetter(ShapedRecipe::showNotification)).apply(i, StrainShaped::new));
+        /** The same bytes as a plain shaped recipe. */
+        private static final StreamCodec<RegistryFriendlyByteBuf, StrainShaped> STREAM = StreamCodec.of((buf, r) -> {
+            buf.writeUtf(r.getGroup());
+            buf.writeEnum(r.category());
+            ShapedRecipePattern.STREAM_CODEC.encode(buf, r.shape);
+            ItemStack.STREAM_CODEC.encode(buf, r.output);
+            buf.writeBoolean(r.showNotification());
+        }, buf -> new StrainShaped(buf.readUtf(), buf.readEnum(CraftingBookCategory.class), ShapedRecipePattern.STREAM_CODEC.decode(buf),
+                ItemStack.STREAM_CODEC.decode(buf), buf.readBoolean()));
 
         @Override public @Nonnull MapCodec<StrainShaped> codec() { return CODEC; }
         @Override public @Nonnull StreamCodec<RegistryFriendlyByteBuf, StrainShaped> streamCodec() { return STREAM; }

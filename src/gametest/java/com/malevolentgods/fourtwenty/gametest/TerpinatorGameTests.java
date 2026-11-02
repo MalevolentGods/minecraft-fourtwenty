@@ -79,11 +79,11 @@ public final class TerpinatorGameTests {
         run(h, t, TIME - 1);
         h.assertTrue(t.getItem(OUT).isEmpty(), "A vial takes " + TIME + " ticks");
         run(h, t, 1);
-        h.assertTrue(t.getItem(OUT).is(ModTerpenes.MINECRAFT_TERPENES.get("mc_white").get()) && t.getItem(BUDS).getCount() == 2,
-                "Two buds make one Bone Meal Haze, got " + t.getItem(OUT));
-        t.setItem(BUDS, buds(Strain.BLUE_DREAM, 2));
+        h.assertTrue(t.getItem(OUT).is(ModTerpenes.MINECRAFT_TERPENES.get("mc_white").get()) && t.getItem(OUT).getCount() == VIALS_PER_BUD && t.getItem(BUDS).getCount() == 3,
+                "One bud makes two Bone Meal Haze, got " + t.getItem(OUT));
+        t.setItem(BUDS, buds(Strain.BLUE_DREAM, 1));
         run(h, t, TIME);
-        h.assertTrue(t.getItem(OUT).getCount() == 2 && t.getItem(BUDS).isEmpty(), "A strain's buds work too");
+        h.assertTrue(t.getItem(OUT).getCount() == 2 * VIALS_PER_BUD && t.getItem(BUDS).isEmpty(), "A strain's buds work too");
         h.succeed();
     }
 
@@ -111,7 +111,7 @@ public final class TerpinatorGameTests {
         h.assertTrue(t.getItem(OUT).isEmpty() && t.getItem(BUDS).getCount() == 2, "Nothing happens while stopped");
         t.toggle();
         run(h, t, TIME / 2);
-        h.assertTrue(t.getItem(OUT).getCount() == 1, "It picks up where it stopped");
+        h.assertTrue(t.getItem(OUT).getCount() == VIALS_PER_BUD, "It picks up where it stopped");
         h.succeed();
     }
 
@@ -139,6 +139,17 @@ public final class TerpinatorGameTests {
         s.caught.put("white", 1);
         player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).put("fourtwenty_infuser", s.save());
         h.assertTrue(menu.clickMenuButton(player, TerpinatorMenu.BUTTON_PICK + WHITE) && t.product() == WHITE, "Caught, it can be made");
+        h.succeed();
+    }
+
+    /** The server can refuse a pick, and it only sends a product that changed, so a screen that guessed would keep showing it. */
+    @GameTest(template = "empty")
+    public static void theClientShowsOnlyWhatTheServerPicked(GameTestHelper h) {
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        var menu = new TerpinatorMenu(0, player.getInventory());
+        menu.setData(TerpinatorBlockEntity.DATA_PRODUCT, NONE);
+        menu.clickMenuButton(player, TerpinatorMenu.BUTTON_PICK + WHITE);
+        h.assertTrue(menu.product() == NONE, "the client screen guessed the pick");
         h.succeed();
     }
 

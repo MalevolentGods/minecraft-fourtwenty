@@ -54,6 +54,9 @@ public class InfuserScreen extends Screen {
     private final int n = tint.resins().size();
     private int[] pool;
     private final Deque<int[]> history = new ArrayDeque<>();
+    /** The colour just caught here, until the server has answered, and the undo steps to give back if it says no. */
+    private String catching;
+    private List<int[]> catchHistory = List.of();
     private int size = 1;
     /** How many Drops (32nds of a glob) one click lets fall: 1, 4 or 8. Other bead sizes go one at a time. */
     private int drops = 1;
@@ -90,7 +93,17 @@ public class InfuserScreen extends Screen {
 
     private static InfuserState state() { return InfuserClient.state; }
 
-    void synced() { /* the server's word on inspiration and catches; the local pool stays as the player left it */ }
+    /** The server's word on inspiration and catches; the local pool stays as the player left it. */
+    void synced() {
+        if (catching == null) return;
+        boolean counted = state().caught.containsKey(catching);
+        catching = null;
+        if (counted) return;
+        matchAt = -1;
+        history.clear();
+        history.addAll(catchHistory);
+        message = "No power: that didn't count. Get high or wire up the Infuser, then take back a glob and match it again.";
+    }
 
     @Override public boolean isPauseScreen() { return false; }
 
@@ -193,6 +206,8 @@ public class InfuserScreen extends Screen {
                 state().caught.merge(t.id(), d <= Tint.SPOT_ON ? 2 : 1, Math::max);
                 t.twins().forEach(id -> state().caught.merge(id, d <= Tint.SPOT_ON ? 2 : 1, Math::max));
                 matchAt = System.currentTimeMillis();
+                catching = t.id();
+                catchHistory = List.copyOf(history);
                 history.clear();
                 play(SoundEvents.AMETHYST_BLOCK_RESONATE, 1.2f);
                 play(SoundEvents.NOTE_BLOCK_CHIME.value(), 1.5f);

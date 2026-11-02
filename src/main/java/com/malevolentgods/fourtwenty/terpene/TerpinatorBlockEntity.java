@@ -30,14 +30,14 @@ import javax.annotation.Nonnull;
 
 /**
  * The Terpinator: mass production. Pick a terpene whose colour you've caught in the Inspiration Infuser, feed it
- * weed, press Start: every {@link #BUDS_PER} buds make one vial. The 16 Minecraft colours take any weed; a hemp
+ * weed, press Start: every bud makes {@link #VIALS_PER_BUD} vials. The 16 Minecraft colours take any weed; a hemp
  * colour takes weed of its family's strains (its accord's family: Neutrals, Warm, Green or Cool). What's being
  * made is the machine's, so anyone can keep it running; only picking a terpene needs the colour caught.
  */
 public class TerpinatorBlockEntity extends BlockEntity implements Container, MenuProvider {
     public static final int BUDS = 0, OUT = 1, SIZE = 2;
-    /** Ticks per vial, and buds per vial. */
-    public static final int TIME = 100, BUDS_PER = 2;
+    /** Ticks per bud, and vials per bud. */
+    public static final int TIME = 100, VIALS_PER_BUD = 2;
     public static final int DATA_PROGRESS = 0, DATA_PRODUCT = 1, DATA_RUNNING = 2, DATA_PAUSED = 3, DATA_COUNT = 4;
     /** Products: 0..63 the hemp colours in codex order, 64..79 the Minecraft colours in DyeColor order; -1 none. */
     public static final int PRODUCTS = 80, NONE = -1;
@@ -130,9 +130,9 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
     public static String status(boolean running, int product, ItemStack buds, ItemStack out) {
         if (!valid(product)) return "pick";
         if (!running) return "stopped";
-        if (buds.getCount() < BUDS_PER) return buds.isEmpty() ? "needs_buds" : "needs_more";
+        if (buds.isEmpty()) return "needs_buds";
         if (!feeds(buds, product)) return "wrong_family";
-        if (!out.isEmpty() && (!out.is(item(product)) || out.getCount() >= out.getMaxStackSize())) return "full";
+        if (!out.isEmpty() && (!out.is(item(product)) || out.getCount() + VIALS_PER_BUD > out.getMaxStackSize())) return "full";
         return null;
     }
 
@@ -151,10 +151,10 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
             t.setChanged();
             if (t.progress >= TIME) {
                 t.progress = 0;
-                t.items.get(BUDS).shrink(BUDS_PER);
+                t.items.get(BUDS).shrink(1);
                 ItemStack out = t.items.get(OUT);
-                if (out.isEmpty()) t.items.set(OUT, new ItemStack(item(t.product)));
-                else out.grow(1);
+                if (out.isEmpty()) t.items.set(OUT, new ItemStack(item(t.product), VIALS_PER_BUD));
+                else out.grow(VIALS_PER_BUD);
                 t.setChanged();
             }
         } else if (!working && t.running && t.progress != 0) {

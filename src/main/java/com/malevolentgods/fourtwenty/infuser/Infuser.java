@@ -187,9 +187,10 @@ public final class Infuser {
         Tint.Target t = tint.target(msg.id());
         int[] q = validPool(msg.pool());
         InfuserState s = get(player);
-        if (t == null || q == null || s.level(t.id()) <= 0) return;
+        // A refused catch still answers: the client has already sealed it, and has to be told it didn't count.
+        if (t == null || q == null || s.level(t.id()) <= 0) { put(player, s); return; }
         double d = tint.distance(Tint.specks(q), t);
-        if (d > Tint.MATCH || !Infusion.paid(player)) return;
+        if (d > Tint.MATCH || !Infusion.paid(player)) { put(player, s); return; }
         int grade = d <= Tint.SPOT_ON ? 2 : 1;
         s.caught.merge(t.id(), grade, Math::max);
         for (String twin : t.twins()) s.caught.merge(twin, grade, Math::max);
