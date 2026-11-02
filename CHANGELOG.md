@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.18.0] - Lab Hours
 
 ### Added
 - **Weed Lab:** a small lab decoration in Sensi Heights, wired up with a Hookah, an Infuser and a Terpinator.
