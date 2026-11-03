@@ -2,6 +2,11 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+- **Construction benches show their power:** a bar of stored BI fills at a steady rate (70 BI a second on a Joint, up to 560 on a Cannon, free near a high player), each recipe shows its cost (8 BI per item made), and crafting draws from the bar.
+
 ## [0.18.1] - Slow Grow
 
 ### Changed

@@ -108,17 +108,43 @@ public final class ExtractGameTests {
         h.succeed();
     }
 
-    @GameTest(template = "empty")
-    public static void aBenchNeedsPowerAndPaysForABatch(GameTestHelper h) {
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void aBenchChargesItsReserveSteadily(GameTestHelper h) {
         h.setBlock(AT, ModPower.CONSTRUCTION_JOINT.get());
         var bench = (ConstructionBlockEntity) h.getLevel().getBlockEntity(h.absolutePos(AT));
-        h.assertFalse(bench.ready(), "no power, no work");
-        ((BIBuffer) bench.node()).set(1_000_000);
-        h.assertTrue(bench.ready(), "powered, it works");
-        long before = bench.node().stored();
-        bench.pay();
-        h.assertTrue(bench.node().stored() == before - ConstructionRules.cost(bench.tier()), "and a batch costs BI");
-        h.assertFalse(ModPower.CONSTRUCTION_JOINT.get().defaultBlockState().canOcclude(), "it doesn't hide the block under it");
+        h.assertTrue(bench.reserve().stored() == 0 && !bench.affords(ConstructionRules.cost(1)), "a new bench starts empty");
+        ((BIBuffer) bench.node()).set(bench.node().capacity());
+        long start = h.getLevel().getGameTime();
+        h.runAfterDelay(20, () -> {
+            double ticks = h.getLevel().getGameTime() - start;
+            double want = ticks * ConstructionRules.chargeRate(bench.tier());
+            long got = bench.reserve().stored();
+            h.assertTrue(Math.abs(got - want) <= ConstructionRules.chargeRate(bench.tier()) * 2 + 1, "charged " + got + " in " + ticks + " ticks, wanted about " + want);
+            h.assertTrue(got < bench.reserve().capacity(), "and only at its rate, not all at once");
+            h.assertFalse(ModPower.CONSTRUCTION_JOINT.get().defaultBlockState().canOcclude(), "it doesn't hide the block under it");
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "empty")
+    public static void aShiftClickCraftsOnlyWhatTheReservePaysFor(GameTestHelper h) {
+        h.setBlock(AT, ModPower.CONSTRUCTION_JOINT.get());
+        var bench = (ConstructionBlockEntity) h.getLevel().getBlockEntity(h.absolutePos(AT));
+        var player = h.makeMockServerPlayerInLevel();
+        var menu = (ConstructionMenu) bench.createMenu(1, player.getInventory(), player);
+        menu.getSlot(1).set(new ItemStack(Items.WHITE_WOOL, 3));
+        menu.getSlot(2).set(new ItemStack(Items.BLUE_DYE, 3));
+        menu.slotsChanged(menu.getSlot(1).container);
+        h.assertTrue(menu.getSlot(0).getItem().is(Items.BLUE_WOOL) && menu.getSlot(0).getItem().getCount() == 2, "a Joint shows two blue wool for one");
+        long each = ConstructionRules.cost(2);
+        h.assertTrue(menu.cost() == each, "and what they cost: " + menu.cost());
+        menu.clicked(0, 0, net.minecraft.world.inventory.ClickType.QUICK_MOVE, player);
+        h.assertTrue(player.getInventory().countItem(Items.BLUE_WOOL) == 0 && menu.getSlot(1).getItem().getCount() == 3, "an empty reserve makes nothing");
+        bench.reserve().set(each * 2 + each / 2);
+        menu.clicked(0, 0, net.minecraft.world.inventory.ClickType.QUICK_MOVE, player);
+        h.assertTrue(player.getInventory().countItem(Items.BLUE_WOOL) == 4, "two crafts paid for, made " + player.getInventory().countItem(Items.BLUE_WOOL));
+        h.assertTrue(menu.getSlot(1).getItem().getCount() == 1, "the third waits for charge");
+        h.assertTrue(bench.reserve().stored() == each / 2, "each craft drew its cost, left " + bench.reserve().stored());
         h.succeed();
     }
 }
