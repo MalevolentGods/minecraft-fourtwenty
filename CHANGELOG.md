@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.19.0] - Animal Farm
 
 ### Added
 - **Animal huts in Sensi Heights, levels 1-5:** Cowboy, Swine Herder, Shepherd, Chicken Herder, Rabbit Hutch and Beekeeper. Each has a shed for the hut and racks, a yard, and a pen (a flower garden of beehives for the Beekeeper) that grows from an oak shed to a modern white one, with the town's roads round it from level 3.
