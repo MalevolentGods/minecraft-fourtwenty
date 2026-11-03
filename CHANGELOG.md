@@ -2,6 +2,14 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- **Animal huts in Sensi Heights, levels 1-5:** Cowboy, Swine Herder, Shepherd, Chicken Herder, Rabbit Hutch and Beekeeper. Each has a shed for the hut and racks, a yard, and a pen (a flower garden of beehives for the Beekeeper) that grows from an oak shed to a modern white one, with the town's roads round it from level 3.
+
+### Changed
+- Sensi Heights uses cream Buttercream Brain concrete instead of quartz (Dispensary 3-5, Workshop 4), with Buttercream Brain hemp stairs and slabs where quartz ones were.
+
 ## [0.18.1] - Slow Grow
 
 ### Changed
