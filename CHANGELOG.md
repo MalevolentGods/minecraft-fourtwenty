@@ -4,7 +4,12 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Pave Pen:** hold right-click on a block to turn it into road, quickly for dirt and slower for stone. It runs on buds from your inventory (rough ones first), or free while you're high. Carry smooth stone or gold to lay or upgrade to Paved Road and Yellow Brick Road, one for every eight roads as in the recipes. Press V, or sneak and right-click, for its settings. Crafted from a stick, a bud and a Cobble Path.
+- **Pave Pen Pro:** a Pave Pen, two emeralds and a Paved Road. It also lays road slabs and stairs, and reshapes roads into them, keeping the pen's charge.
+
 ### Changed
+- The Terpinator and Inspiration Infuser need nothing from the Nether: glass, iron, a glass bottle or torch, buds, and Cobble Path (white concrete for the Lab versions).
 - **Construction benches show their power:** a bar of stored BI fills at a steady rate (70 BI a second on a Joint, up to 560 on a Cannon, free near a high player), each recipe shows its cost (8 BI per item made), and crafting draws from the bar.
 
 ## [0.18.1] - Slow Grow

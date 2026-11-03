@@ -3,20 +3,20 @@
   "category": "misc",
   "pattern": [
     "GGG",
-    "ISI",
-    "PBP"
+    "IMI",
+    "CBC"
   ],
   "key": {
     "G": {
       "item": "minecraft:glass"
     },
     "I": {
-      "item": "minecraft:quartz"
+      "item": "minecraft:iron_ingot"
     },
-    "S": {
-      "item": "minecraft:brewing_stand"
+    "M": {
+      "item": "minecraft:glass_bottle"
     },
-    "P": {
+    "C": {
       "item": "minecraft:white_concrete"
     },
     "B": {

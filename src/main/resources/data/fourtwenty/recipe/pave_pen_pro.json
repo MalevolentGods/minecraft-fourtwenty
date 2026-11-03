@@ -1,0 +1,22 @@
+{
+  "type": "fourtwenty:pen_upgrade",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "fourtwenty:pave_pen"
+    },
+    {
+      "item": "minecraft:emerald"
+    },
+    {
+      "item": "minecraft:emerald"
+    },
+    {
+      "item": "fourtwenty:paved_road"
+    }
+  ],
+  "result": {
+    "id": "fourtwenty:pave_pen_pro",
+    "count": 1
+  }
+}

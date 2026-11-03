@@ -3,8 +3,8 @@
   "category": "misc",
   "pattern": [
     "GGG",
-    "ISI",
-    "PBP"
+    "IMI",
+    "CBC"
   ],
   "key": {
     "G": {
@@ -13,11 +13,11 @@
     "I": {
       "item": "minecraft:iron_ingot"
     },
-    "S": {
-      "item": "minecraft:brewing_stand"
+    "M": {
+      "item": "minecraft:glass_bottle"
     },
-    "P": {
-      "item": "minecraft:polished_blackstone"
+    "C": {
+      "item": "fourtwenty:cobble_path"
     },
     "B": {
       "item": "fourtwenty:weed_bud"

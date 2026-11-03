@@ -23,7 +23,11 @@ public class ModClientEvents {
 
     
     @SubscribeEvent
+    public static void registerKeys(net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent event) { PavePenClient.registerKeys(event); }
+
+    @SubscribeEvent
     public static void setup(net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) {
+        PavePenClient.install();
         if (net.neoforged.fml.ModList.get().isLoaded("minecolonies")) {
             event.enqueueWork(com.malevolentgods.fourtwenty.compat.minecolonies.client.DispensaryClient::registerModel);
         }

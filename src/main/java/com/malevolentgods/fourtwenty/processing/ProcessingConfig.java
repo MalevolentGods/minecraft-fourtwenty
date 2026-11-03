@@ -54,6 +54,14 @@ public final class ProcessingConfig {
     private static final ModConfigSpec.DoubleValue MAX_PLOT_SPEED = BUILDER
             .comment("Think Tank: the most that plots in range add up to.")
             .defineInRange("studyMaxPlotSpeed", 16.0, 1, 1000);
+    private static final com.malevolentgods.fourtwenty.domain.PaveRules.Numbers PAVE = com.malevolentgods.fourtwenty.domain.PaveRules.Numbers.DEFAULT;
+    private static final ModConfigSpec.IntValue PAVE_CAPACITY = BUILDER.comment("Pave Pen: the BI it holds.").defineInRange("paveCapacity", PAVE.capacity(), 100, 1_000_000);
+    private static final ModConfigSpec.DoubleValue PAVE_LAY_BASE = BUILDER.comment("Pave Pen: BI to lay a road, before hardness.").defineInRange("paveLayCost", PAVE.layBase(), 0, 100_000);
+    private static final ModConfigSpec.DoubleValue PAVE_LAY_HARDNESS = BUILDER.comment("Pave Pen: more BI for each point of the block's hardness (dirt 0.5, stone 1.5, deepslate 3).")
+            .defineInRange("paveLayCostPerHardness", PAVE.layPerHardness(), 0, 100_000);
+    private static final ModConfigSpec.DoubleValue PAVE_TICKS_BASE = BUILDER.comment("Pave Pen: ticks to lay a road, before hardness.").defineInRange("paveTicks", PAVE.ticksBase(), 1, 1200);
+    private static final ModConfigSpec.DoubleValue PAVE_TICKS_HARDNESS = BUILDER.comment("Pave Pen: more ticks for each point of hardness.").defineInRange("paveTicksPerHardness", PAVE.ticksPerHardness(), 0, 1200);
+    private static final ModConfigSpec.DoubleValue PAVE_MAX_HARDNESS = BUILDER.comment("Pave Pen: the hardest block it paves over (obsidian is 50).").defineInRange("paveMaxHardness", PAVE.maxHardness(), 0, 100);
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     private static volatile TrimRules.Chances chancesOverride;
@@ -141,6 +149,12 @@ public final class ProcessingConfig {
     }
 
     /** The share of random ticks weed grows on, for every strain, in a pot or on a plot too. */
+    /** The Pave Pen's numbers; upgrading and reshaping keep their defaults. */
+    public static com.malevolentgods.fourtwenty.domain.PaveRules.Numbers pave() {
+        return SPEC.isLoaded() ? new com.malevolentgods.fourtwenty.domain.PaveRules.Numbers(PAVE_CAPACITY.get(), PAVE_LAY_BASE.get(), PAVE_LAY_HARDNESS.get(),
+                PAVE_TICKS_BASE.get(), PAVE_TICKS_HARDNESS.get(), PAVE_MAX_HARDNESS.get(), PAVE.upgradeCost(), PAVE.upgradeTicks(), PAVE.reshapeCost(), PAVE.reshapeTicks()) : PAVE;
+    }
+
     public static double cropSpeed() { return SPEC.isLoaded() ? CROP_SPEED.get() : GrowRules.CROP_SPEED; }
 
     /** How fast a strain of this grade grows; grades 0 and 1 aren't slowed. */
