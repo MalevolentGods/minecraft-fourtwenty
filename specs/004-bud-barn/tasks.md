@@ -51,7 +51,7 @@
 
 ## Phase 7: Polish
 
-- [ ] T020 Full game test and JUnit runs; mod loads without MineColonies (the standalone probe)
+- [x] T020 Full game test and JUnit runs; mod loads without MineColonies (the standalone probe)
 - [x] T021 [P] README and CHANGELOG `[Unreleased]` entries
 - [ ] T022 [P] Update `four-twenty/PLAN.md` and `HANDOFF.md` in `IgnusVM/claude-misc` (Bud Barn built)
 - [ ] T023 Colony walkthrough on the local server (quickstart.md), then the flatworld showcase
