@@ -1,0 +1,11 @@
+<window size="190 244">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <text size="160 14" pos="15 12" textalign="MIDDLE" color="black" label="$(fourtwenty.budbarn.status.title)"/>
+    <text id="level" size="160 12" pos="15 32" color="black"/>
+    <text id="worker" size="160 26" pos="15 47" color="black" wrap="true"/>
+    <text id="state" size="160 26" pos="15 77" color="#49352b" wrap="true"/>
+    <text id="benches" size="160 12" pos="15 109" color="black"/>
+    <text id="hanging" size="160 12" pos="15 125" color="black"/>
+    <text id="stock" size="160 12" pos="15 141" color="black"/>
+    <text id="made" size="160 26" pos="15 161" color="black" wrap="true"/>
+</window>

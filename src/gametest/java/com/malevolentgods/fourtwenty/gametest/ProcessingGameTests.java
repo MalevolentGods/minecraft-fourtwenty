@@ -59,6 +59,34 @@ public final class ProcessingGameTests {
         });
     }
 
+    /** The trim a colony's Trim Daddy uses is the player's own: same bud, same strain and traits, same seed odds, nothing consumed. */
+    @GameTest(template = "empty")
+    public static void aTrayTrimsForAnyoneTheSameWay(GameTestHelper h) {
+        var pos = new BlockPos(2, 2, 2);
+        h.setBlock(pos, ModBlocks.TRIM_TRAY.get());
+        var traits = new com.malevolentgods.fourtwenty.domain.Traits(4, 3, 5);
+        ItemStack rough = ModDataComponents.withTraits(of(ModItems.ROUGH_BUD.get(), 5, Strain.CHERRY_PIE), traits);
+        ProcessingConfig.overrideChances(new TrimRules.Chances(1, 1, 1, 1, 1));
+        java.util.List<ItemStack> always;
+        try {
+            always = com.malevolentgods.fourtwenty.processing.TrimTrayBlock.trim(h.getLevel(), h.absolutePos(pos), rough);
+        } finally {
+            ProcessingConfig.overrideChances(null);
+        }
+        h.assertTrue(rough.getCount() == 5, "the caller uses up the bud, not the tray");
+        h.assertTrue(always.size() == 2 && always.get(0).is(ModItems.TRIMMED_BUD.get()) && always.get(1).is(ModItems.WEED_SEEDS.get()), "a trimmed bud and a seed");
+        for (ItemStack out : always) {
+            h.assertTrue(ModDataComponents.strain(out) == Strain.CHERRY_PIE && ModDataComponents.traits(out).equals(traits), "bred like the bud: " + out);
+        }
+        ProcessingConfig.overrideChances(new TrimRules.Chances(0, 0, 0, 0, 0));
+        try {
+            h.assertTrue(com.malevolentgods.fourtwenty.processing.TrimTrayBlock.trim(h.getLevel(), h.absolutePos(pos), rough).size() == 1, "no seed at chance 0");
+        } finally {
+            ProcessingConfig.overrideChances(null);
+        }
+        h.succeed();
+    }
+
     @GameTest(template = "empty")
     public static void trayTrimsOneBudAndKeepsTheStrain(GameTestHelper h) {
         var pos = new BlockPos(2, 2, 2);
