@@ -4,6 +4,12 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Kush Suit:** the Hotbox Helm (night vision, the haze HUD), the Puff Plate (the heaviest piece, with the Puff Pack jetpack), the Couchlock Greaves (no knockback, a crouch-landing stomp) and the Moon Boots (a high jump, no fall damage). Their powers work only while you're high and the piece holds BI; their armour always protects. If flight stops mid-air for any reason, you float down unharmed.
+- **Blazer:** an arm laser with Blaze Beam, plus Bore Toke (3x3 mining), Timber Torch (whole trees) and Paint Puff (lines and walls) once their terpenes are in. It respects claims and spawn protection.
+- **Terpene slots:** each piece takes its own hue family (reds and oranges for the Blazer, yellows for the Helm, greens for the Plate, blues for the Boots, purples for the Greaves), and each colour can unlock a power. Sneak-use a piece, or press G. The list lives in `data/fourtwenty/gear/abilities.json`.
+- **Re-Up Station** in four tiers (hang gear on it, or stand on it) and the **Dab Cell**, a handheld battery that tops up what you wear.
+
 ### Changed
 - A high outlasts a logout and a server restart: machines still run free near you, the strain's aura and screen tint come back, and Golden God's flight returns.
 

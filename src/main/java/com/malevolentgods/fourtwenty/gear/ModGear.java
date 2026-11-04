@@ -66,7 +66,11 @@ public final class ModGear {
     public static final List<DeferredHolder<Item, ? extends Item>> ALL = java.util.stream.Stream.concat(
             java.util.stream.Stream.of(HOTBOX_HELM, PUFF_PLATE, COUCHLOCK_GREAVES, MOON_BOOTS, BLAZER, DAB_CELL), STATION_ITEMS.stream()).toList();
 
+    public static final DeferredHolder<net.minecraft.world.inventory.MenuType<?>, net.minecraft.world.inventory.MenuType<GearMenu>> GEAR_MENU =
+            com.malevolentgods.fourtwenty.registry.ModMenuTypes.MENU_TYPES.register("gear", GearMenu::type);
+
     public static void register(IEventBus bus) {
+        GearNetwork.register(bus);
         MATERIALS.register(bus);
         GearPowers.register();
         bus.addListener((net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) ->

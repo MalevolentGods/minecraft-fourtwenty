@@ -92,6 +92,7 @@ public class ModClientEvents {
         event.register(com.malevolentgods.fourtwenty.registry.ModPower.BI_MENU.get(), BIScreen::new);
         event.register(com.malevolentgods.fourtwenty.registry.ModPower.THINK_TANK_MENU.get(), ThinkTankScreen::new);
         event.register(ModMenuTypes.WEED_BONG.get(), WeedBongScreen::new);
+        event.register(com.malevolentgods.fourtwenty.gear.ModGear.GEAR_MENU.get(), GearScreen::new);
         event.register(com.malevolentgods.fourtwenty.registry.ModTerpenes.TERPINATOR_MENU.get(),
                 com.malevolentgods.fourtwenty.client.terpene.TerpinatorScreen::new);
     }

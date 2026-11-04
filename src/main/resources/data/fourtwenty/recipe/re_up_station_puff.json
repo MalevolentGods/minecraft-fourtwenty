@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "WJW",
+    "NNN"
+  ],
+  "key": {
+    "W": {
+      "item": "fourtwenty:hemp_wick"
+    },
+    "J": {
+      "item": "fourtwenty:stash_jar"
+    },
+    "N": {
+      "item": "fourtwenty:natural_hemp"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:re_up_station_puff",
+    "count": 1
+  },
+  "show_notification": true
+}

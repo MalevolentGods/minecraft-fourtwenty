@@ -31,6 +31,14 @@ public final class StrainTint {
     /** The strain last smoked. */
     public static Strain smoked() { return strain; }
 
+    /** Ticks of the high left, as far as the client knows (0 when sober): the server tells it when a high starts and how long it lasts. */
+    public static long ticksLeft() {
+        var level = Minecraft.getInstance().level;
+        return level == null ? 0 : Math.max(0, end - level.getGameTime());
+    }
+
+    public static boolean high() { return ticksLeft() > 0; }
+
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
         // Bud and joint icons per strain (models/item/<item>.json overrides on this property: ordinal / 16).

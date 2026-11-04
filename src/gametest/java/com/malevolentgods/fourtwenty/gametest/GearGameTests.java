@@ -230,6 +230,22 @@ public final class GearGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void terpenesUnlockAbilitiesAndOnlyTheirFamilyFits(GameTestHelper h) {
+        var p = wearer(h);
+        p.setItemInHand(InteractionHand.MAIN_HAND, charged(ModGear.MOON_BOOTS.get(), 1000));
+        var menu = new com.malevolentgods.fourtwenty.gear.GearMenu(1, p.getInventory(), InteractionHand.MAIN_HAND);
+        var slot = menu.getSlot(0);
+        h.assertFalse(slot.mayPlace(com.malevolentgods.fourtwenty.gear.GearMenu.stackOf("lim_pin_pin")), "a red won't go in the boots");
+        ItemStack blue = com.malevolentgods.fourtwenty.gear.GearMenu.stackOf("pin_lav_lav");
+        h.assertTrue(slot.mayPlace(blue), "a blue will");
+        slot.set(blue);
+        h.assertTrue(Gear.has(p.getMainHandItem(), "water_walk"), "and unlocks water walking");
+        slot.set(ItemStack.EMPTY);
+        h.assertFalse(Gear.has(p.getMainHandItem(), "water_walk"), "taken out, it's gone");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void timberTorchFellsTheWholeTree(GameTestHelper h) {
         for (int y = 2; y <= 6; y++) h.setBlock(new BlockPos(2, y, 2), Blocks.OAK_LOG);
         h.setBlock(new BlockPos(3, 6, 2), Blocks.OAK_LOG);

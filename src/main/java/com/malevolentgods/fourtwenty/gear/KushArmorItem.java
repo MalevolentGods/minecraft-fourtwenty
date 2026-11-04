@@ -28,6 +28,14 @@ public class KushArmorItem extends ArmorItem implements Gear.GearPiece {
 
     @Override public Piece piece() { return piece; }
 
+    /** Sneak and use it in hand for its terpene slots; otherwise it goes on as armour does. */
+    @Override public @Nonnull net.minecraft.world.InteractionResultHolder<ItemStack> use(@Nonnull net.minecraft.world.level.Level level, @Nonnull net.minecraft.world.entity.player.Player player,
+                                                                                         @Nonnull net.minecraft.world.InteractionHand hand) {
+        if (!player.isSecondaryUseActive()) return super.use(level, player, hand);
+        if (player instanceof net.minecraft.server.level.ServerPlayer sp) GearMenu.open(sp, hand);
+        return net.minecraft.world.InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide);
+    }
+
     @Override public boolean isBarVisible(@Nonnull ItemStack stack) { return true; }
 
     @Override public int getBarWidth(@Nonnull ItemStack stack) { return GearTooltips.bar(stack); }

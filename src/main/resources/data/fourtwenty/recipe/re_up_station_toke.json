@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "WSW",
+    " B "
+  ],
+  "key": {
+    "W": {
+      "item": "fourtwenty:rolled_wick"
+    },
+    "S": {
+      "item": "fourtwenty:re_up_station_puff"
+    },
+    "B": {
+      "item": "fourtwenty:stash_box"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:re_up_station_toke",
+    "count": 1
+  },
+  "show_notification": true
+}
