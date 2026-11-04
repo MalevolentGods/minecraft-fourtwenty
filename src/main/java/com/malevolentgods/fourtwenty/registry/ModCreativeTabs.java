@@ -31,6 +31,7 @@ public class ModCreativeTabs {
                 com.malevolentgods.fourtwenty.registry.ModPower.EXTRACTS.forEach(item -> output.accept(item.get()));
                 output.accept(ModItems.WEED_JOINT.get());
                 output.accept(ModItems.WEED_PIPE.get());
+                com.malevolentgods.fourtwenty.gear.ModGear.ALL.forEach(item -> output.accept(item.get()));
                 for (var strain : com.malevolentgods.fourtwenty.domain.Strain.values()) {
                     if (strain == com.malevolentgods.fourtwenty.domain.Strain.LANDRACE) continue;
                     for (var item : java.util.List.of(ModItems.WEED_SEEDS.get(), ModItems.ROUGH_BUD.get(), ModItems.TRIMMED_BUD.get(), ModItems.WEED_BUD.get(), ModItems.WEED_JOINT.get()))

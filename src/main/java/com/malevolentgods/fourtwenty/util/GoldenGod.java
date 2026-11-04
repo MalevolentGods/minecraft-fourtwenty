@@ -27,19 +27,14 @@ import java.util.function.Consumer;
 public final class GoldenGod {
     private GoldenGod() {}
 
-    private static final String LENT = "fourtwenty.god_flight";
-    private static final int LANDING = 1200;
+    private static final String LENT = "golden_god";
     private static final Map<UUID, Long> GODS = new HashMap<>();
 
     public static boolean shining(ServerPlayer player) { return GODS.containsKey(player.getUUID()); }
 
     public static void ascend(ServerPlayer player, int ticks) {
         GODS.put(player.getUUID(), player.level().getGameTime() + ticks);
-        if (!player.getAbilities().mayfly) {
-            player.getAbilities().mayfly = true;
-            player.onUpdateAbilities();
-            player.getPersistentData().putBoolean(LENT, true);
-        }
+        com.malevolentgods.fourtwenty.gear.FlightLease.lend(player, LENT);
         shine(player, true);
     }
 
@@ -49,14 +44,9 @@ public final class GoldenGod {
         takeBackFlight(player);
     }
 
+    /** Golden God's share of the flight lease; the lease lands the player softly if no one else is lending. */
     private static void takeBackFlight(ServerPlayer player) {
-        if (!player.getPersistentData().getBoolean(LENT)) return;
-        player.getPersistentData().remove(LENT);
-        boolean inAir = !player.onGround();
-        player.getAbilities().mayfly = false;
-        player.getAbilities().flying = false;
-        player.onUpdateAbilities();
-        if (inAir && player.isAlive()) player.addEffect(SmokeEffects.quiet(MobEffects.SLOW_FALLING, LANDING, 0));
+        com.malevolentgods.fourtwenty.gear.FlightLease.release(player, LENT);
     }
 
     private static void shine(ServerPlayer player, boolean on) {
@@ -74,7 +64,7 @@ public final class GoldenGod {
 
     private static void loggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        takeBackFlight(player);
+        // The flight lease takes back anything lent before the logout (FlightLease.register).
         if (!player.connection.hasChannel(Shine.TYPE)) return;
         for (ServerPlayer god : player.server.getPlayerList().getPlayers()) {
             if (shining(god)) player.connection.send(new Shine(god.getId(), true));

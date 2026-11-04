@@ -46,6 +46,29 @@ public final class ModDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<PipeLoad>> PIPE_LOAD = COMPONENTS.register("pipe_load",
             () -> DataComponentType.<PipeLoad>builder().persistent(PipeLoad.CODEC).networkSynchronized(PipeLoad.STREAM_CODEC).build());
 
+    /** A Kush Suit piece, the Blazer or a Dab Cell: its BI, the terpene colours in its slots (by code), and the Blazer's mode. */
+    public record GearState(int charge, java.util.List<String> terps, int mode) {
+        public static final GearState EMPTY = new GearState(0, java.util.List.of(), 0);
+        public static final Codec<GearState> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.INT.optionalFieldOf("charge", 0).forGetter(GearState::charge),
+                Codec.STRING.listOf().optionalFieldOf("terps", java.util.List.of()).forGetter(GearState::terps),
+                Codec.INT.optionalFieldOf("mode", 0).forGetter(GearState::mode)).apply(i, GearState::new));
+        public static final StreamCodec<ByteBuf, GearState> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT, GearState::charge, ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list(8)), GearState::terps,
+                ByteBufCodecs.VAR_INT, GearState::mode, GearState::new);
+
+        public GearState { terps = java.util.List.copyOf(terps); }
+
+        public GearState withCharge(int value) { return new GearState(value, terps, mode); }
+
+        public GearState withTerps(java.util.List<String> value) { return new GearState(charge, value, mode); }
+
+        public GearState withMode(int value) { return new GearState(charge, terps, value); }
+    }
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<GearState>> GEAR = COMPONENTS.register("gear",
+            () -> DataComponentType.<GearState>builder().persistent(GearState.CODEC).networkSynchronized(GearState.STREAM_CODEC).build());
+
     public static Strain strain(ItemStack stack) {
         Strain s = stack.get(STRAIN.get());
         return s == null ? Strain.LANDRACE : s;
