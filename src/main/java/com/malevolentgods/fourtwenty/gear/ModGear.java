@@ -45,10 +45,31 @@ public final class ModGear {
     public static final DeferredHolder<Item, BlazerItem> BLAZER = ModItems.ITEMS.register("blazer", () -> new BlazerItem(new Item.Properties()));
     public static final DeferredHolder<Item, DabCellItem> DAB_CELL = ModItems.ITEMS.register("dab_cell", () -> new DabCellItem(new Item.Properties()));
 
-    public static final List<DeferredHolder<Item, ? extends Item>> ALL = List.of(HOTBOX_HELM, PUFF_PLATE, COUCHLOCK_GREAVES, MOON_BOOTS, BLAZER, DAB_CELL);
+    /** Filled by station(), so declared before the stations. */
+    private static final List<DeferredHolder<Item, ? extends Item>> STATION_ITEMS = new java.util.ArrayList<>();
+    /** Re-Up Stations, one per tier: Puff, Toke, Rip, Blaze. */
+    public static final List<DeferredHolder<net.minecraft.world.level.block.Block, ReUpStationBlock>> RE_UP_STATIONS = java.util.Arrays.stream(
+            com.malevolentgods.fourtwenty.domain.BIRules.Tier.values()).map(ModGear::station).toList();
+    public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>, net.minecraft.world.level.block.entity.BlockEntityType<ReUpStationBlockEntity>> RE_UP_ENTITY =
+            com.malevolentgods.fourtwenty.registry.ModBlockEntities.BLOCK_ENTITIES.register("re_up_station", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder.of(
+                    ReUpStationBlockEntity::new, RE_UP_STATIONS.stream().map(DeferredHolder::get).toArray(net.minecraft.world.level.block.Block[]::new)).build(null));
+
+    private static DeferredHolder<net.minecraft.world.level.block.Block, ReUpStationBlock> station(com.malevolentgods.fourtwenty.domain.BIRules.Tier tier) {
+        String name = "re_up_station_" + tier.getSerializedName();
+        var block = com.malevolentgods.fourtwenty.registry.ModBlocks.BLOCKS.register(name, () -> new ReUpStationBlock(tier,
+                net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(2.0f, 6.0f).sound(net.minecraft.world.level.block.SoundType.METAL)
+                        .noOcclusion().lightLevel(state -> state.getValue(com.malevolentgods.fourtwenty.power.BIBlock.LIT) ? 7 : 0)));
+        STATION_ITEMS.add(ModItems.ITEMS.register(name, () -> new net.minecraft.world.item.BlockItem(block.get(), new Item.Properties())));
+        return block;
+    }
+
+    public static final List<DeferredHolder<Item, ? extends Item>> ALL = java.util.stream.Stream.concat(
+            java.util.stream.Stream.of(HOTBOX_HELM, PUFF_PLATE, COUCHLOCK_GREAVES, MOON_BOOTS, BLAZER, DAB_CELL), STATION_ITEMS.stream()).toList();
 
     public static void register(IEventBus bus) {
         MATERIALS.register(bus);
         GearPowers.register();
+        bus.addListener((net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) ->
+                event.registerBlockEntity(com.malevolentgods.fourtwenty.power.BINode.CAPABILITY, RE_UP_ENTITY.get(), (entity, side) -> entity.node()));
     }
 }

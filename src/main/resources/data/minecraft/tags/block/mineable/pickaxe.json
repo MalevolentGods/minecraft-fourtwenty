@@ -249,6 +249,10 @@
     "fourtwenty:construction_joint",
     "fourtwenty:construction_blunt",
     "fourtwenty:construction_spliff",
-    "fourtwenty:construction_cannon"
+    "fourtwenty:construction_cannon",
+    "fourtwenty:re_up_station_puff",
+    "fourtwenty:re_up_station_toke",
+    "fourtwenty:re_up_station_rip",
+    "fourtwenty:re_up_station_blaze"
   ]
 }

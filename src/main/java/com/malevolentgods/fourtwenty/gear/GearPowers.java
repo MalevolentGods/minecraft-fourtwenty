@@ -50,9 +50,13 @@ public final class GearPowers {
     private static ItemStack boots(Player p) { return Gear.worn(p, EquipmentSlot.FEET, Piece.MOON_BOOTS); }
 
     private static void tick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player) || !player.isAlive()) return;
+        if (event.getEntity() instanceof ServerPlayer player && player.isAlive()) tickPlayer(player, player.tickCount % SECOND == 0);
+    }
+
+    /** A tick of every worn power: flight each tick, the rest once a second ({@code second}). Public for the game tests. */
+    public static void tickPlayer(ServerPlayer player, boolean second) {
         flight(player);
-        if (player.tickCount % SECOND != 0) return;
+        if (!second) return;
         helmSecond(player);
         greavesSecond(player);
         bootsSecond(player);
@@ -135,7 +139,7 @@ public final class GearPowers {
         if (p.getDeltaMovement().y < -0.5 && !p.isShiftKeyDown() && ability(p, greaves, "slow_fall")) give(p, MobEffects.SLOW_FALLING, EFFECT_TICKS, 0);
     }
 
-    private static void knockback(LivingKnockBackEvent event) {
+    public static void knockback(LivingKnockBackEvent event) {
         if (event.getEntity() instanceof ServerPlayer p && Gear.spend(p, greaves(p), GearConfig.knockback())) event.setCanceled(true);
     }
 
@@ -169,7 +173,7 @@ public final class GearPowers {
     }
 
     /** Landing: the Boots soak it up; crouch-landing in the Greaves stomps. */
-    private static void fall(LivingFallEvent event) {
+    public static void fall(LivingFallEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer p)) return;
         float distance = event.getDistance();
         ItemStack greaves = greaves(p);

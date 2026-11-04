@@ -99,7 +99,7 @@ public class BlazerItem extends Item implements Gear.GearPiece {
 
     // ---- Blaze Beam
 
-    private static boolean beam(ServerPlayer player, ItemStack stack) {
+    public static boolean beam(ServerPlayer player, ItemStack stack) {
         boolean power = Gear.has(stack, Mode.BEAM.ability);
         int cost = GearConfig.beam() + (power ? Gear.cost(stack, Mode.BEAM.ability) : 0);
         if (!Gear.spend(player, stack, cost)) return false;
@@ -126,7 +126,7 @@ public class BlazerItem extends Item implements Gear.GearPiece {
 
     // ---- Bore Toke: a 3x3 face, as if mined by hand
 
-    private static boolean bore(ServerPlayer player, ItemStack stack, BlockHitResult hit) {
+    public static boolean bore(ServerPlayer player, ItemStack stack, BlockHitResult hit) {
         Direction face = hit.getDirection();
         BlockPos centre = hit.getBlockPos();
         int per = Gear.cost(stack, Mode.BORE.ability), mined = 0;
@@ -151,7 +151,7 @@ public class BlazerItem extends Item implements Gear.GearPiece {
 
     // ---- Timber Torch: a whole tree
 
-    private static boolean timber(ServerPlayer player, ItemStack stack, BlockPos start) {
+    public static boolean timber(ServerPlayer player, ItemStack stack, BlockPos start) {
         Level level = player.level();
         if (!level.getBlockState(start).is(BlockTags.LOGS)) return false;
         int per = Gear.cost(stack, Mode.TIMBER.ability), cap = GearConfig.timberLogs(), felled = 0;
@@ -181,7 +181,7 @@ public class BlazerItem extends Item implements Gear.GearPiece {
 
     // ---- Paint Puff: a line along the look (or, sneaking, a wall up), from the block in the other hand
 
-    private static boolean paint(ServerPlayer player, ItemStack stack, BlockHitResult hit, boolean wall) {
+    public static boolean paint(ServerPlayer player, ItemStack stack, BlockHitResult hit, boolean wall) {
         ItemStack paint = player.getOffhandItem();
         if (!(paint.getItem() instanceof BlockItem blockItem)) {
             player.displayClientMessage(Component.translatable("message.fourtwenty.blazer.paint_needs"), true);
