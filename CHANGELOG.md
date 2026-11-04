@@ -12,6 +12,10 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ### Changed
 - A high outlasts a logout and a server restart: machines still run free near you, the strain's aura and screen tint come back, and Golden God's flight returns.
+- **Bud Barn** (with MineColonies): a hut whose **Trim Daddy** turns the colony's rough buds into Cured Buds by hand, trimming at its Trim Trays (seeds at the same odds as a player) and curing on its Curing Racks, so a Dispensary no longer runs dry. Five levels in Sensi Heights, from a timber shed to a full barn with more trays and racks and a faster worker. Its status tab says what it's doing.
+
+### Changed
+- The animal huts drop the neon lime for earth tones: each level 5 hut has its own lamp colour, and their glass is deep green.
 
 ## [0.19.0] - Animal Farm
 

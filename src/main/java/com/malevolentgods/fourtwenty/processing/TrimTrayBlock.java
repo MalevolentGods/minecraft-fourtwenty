@@ -54,16 +54,26 @@ public class TrimTrayBlock extends HorizontalDirectionalBlock {
                                                                  @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         if (!stack.is(ModItems.ROUGH_BUD.get())) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!level.isClientSide) {
-            Strain strain = ModDataComponents.strain(stack);
             ItemStack parent = stack.copy();
             stack.consume(1, player);
-            give(player, ModDataComponents.bredFrom(new ItemStack(ModItems.TRIMMED_BUD.get()), parent));
-            if (TrimRules.seeded(ProcessingConfig.chances(), strain, level.random.nextDouble())) {
-                give(player, ModDataComponents.bredFrom(new ItemStack(ModItems.WEED_SEEDS.get()), parent));
-            }
-            level.playSound(null, pos, com.malevolentgods.fourtwenty.registry.ModPower.SNIP.get(), SoundSource.BLOCKS, 0.7f, 0.9f + level.random.nextFloat() * 0.3f);
+            for (ItemStack out : trim(level, pos, parent)) give(player, out);
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    /**
+     * One snip at the tray at {@code pos}: what trimming one bud like {@code rough} gives, a trimmed bud and sometimes a seed, both bred
+     * like it. Takes nothing from {@code rough}; the caller uses up the bud. A player's click and a colony's Trim Daddy both come here.
+     */
+    public static java.util.List<ItemStack> trim(Level level, BlockPos pos, ItemStack rough) {
+        Strain strain = ModDataComponents.strain(rough);
+        var out = new java.util.ArrayList<ItemStack>(2);
+        out.add(ModDataComponents.bredFrom(new ItemStack(ModItems.TRIMMED_BUD.get()), rough));
+        if (TrimRules.seeded(ProcessingConfig.chances(), strain, level.random.nextDouble())) {
+            out.add(ModDataComponents.bredFrom(new ItemStack(ModItems.WEED_SEEDS.get()), rough));
+        }
+        level.playSound(null, pos, com.malevolentgods.fourtwenty.registry.ModPower.SNIP.get(), SoundSource.BLOCKS, 0.7f, 0.9f + level.random.nextFloat() * 0.3f);
+        return out;
     }
 
     private static void give(Player player, ItemStack stack) {

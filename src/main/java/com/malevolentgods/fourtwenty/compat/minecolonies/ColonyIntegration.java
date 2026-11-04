@@ -14,6 +14,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 public final class ColonyIntegration {
     public static void register(net.neoforged.bus.api.IEventBus bus, ModContainer container) {
         DispensaryRegistry.register(bus);
+        BudBarnRegistry.register(bus);
         container.registerConfig(ModConfig.Type.SERVER, DispensaryConfig.SPEC, "fourtwenty-dispensary-server.toml");
         NeoForge.EVENT_BUS.addListener(ColonyIntegration::tick);
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.service.PlayerSales::interact);
@@ -33,6 +34,7 @@ public final class ColonyIntegration {
             // Native voice lookup is keyed by job path and has no fallback for addon professions.
             var voices = com.minecolonies.api.sounds.ModSoundEvents.CITIZEN_SOUND_EVENTS;
             voices.putIfAbsent("budtender", java.util.Map.copyOf(java.util.Objects.requireNonNull(voices.get("unemployed"))));
+            voices.putIfAbsent("trimdaddy", java.util.Map.copyOf(java.util.Objects.requireNonNull(voices.get("unemployed"))));
         }));
         // Builders pay a craftable substitute for froglights and the architect's cutter; see BuilderCostSubstitutions.
         bus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) -> event.enqueueWork(() -> {
@@ -82,6 +84,7 @@ public final class ColonyIntegration {
             if (data.time() % 100 == 0) {
                 for (var building : colony.getServerBuildingManager().getBuildings().values()) {
                     if (building instanceof DispensaryBuilding hut) hut.getModule(DispensaryRegistry.STATUS).refresh();
+                    else if (building instanceof com.malevolentgods.fourtwenty.compat.minecolonies.building.BudBarnBuilding barn) barn.getModule(BudBarnRegistry.STATUS).refresh();
                 }
             }
         }
