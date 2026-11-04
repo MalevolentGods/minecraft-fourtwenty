@@ -2,6 +2,11 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+- A high outlasts a logout and a server restart: machines still run free near you, the strain's aura and screen tint come back, and Golden God's flight returns.
+
 ## [0.19.0] - Animal Farm
 
 ### Added

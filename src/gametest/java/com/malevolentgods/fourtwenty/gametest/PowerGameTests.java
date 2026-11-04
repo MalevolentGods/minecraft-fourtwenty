@@ -319,4 +319,21 @@ public final class PowerGameTests {
         }
         h.succeed();
     }
+
+    @GameTest(template = "empty")
+    public static void aHighOutlastsARestart(GameTestHelper h) {
+        var player = h.makeMockServerPlayerInLevel();
+        StrainEffects.markHigh(player, 1000);
+        StrainEffects.forget(player);
+        h.assertFalse(StrainEffects.isHigh(player), "a restart empties memory");
+        StrainEffects.restore(player);
+        h.assertTrue(StrainEffects.isHigh(player), "and the saved high comes back");
+        var spent = h.makeMockServerPlayerInLevel();
+        spent.getPersistentData().putLong("fourtwenty.high_until", h.getLevel().getGameTime() - 1);
+        StrainEffects.restore(spent);
+        h.assertFalse(StrainEffects.isHigh(spent), "one that ran out doesn't");
+        h.assertFalse(spent.getPersistentData().contains("fourtwenty.high_until"), "and is cleared");
+        StrainEffects.forget(player);
+        h.succeed();
+    }
 }
