@@ -162,7 +162,7 @@ Gear needs BI. The Re-Up Station, in four tiers (Puff, Toke, Rip, Blaze), charge
 - **SC-001**: In 100 tests of flight ending mid-air (by sobering, by running dry, by removing the Plate), the wearer takes no damage from the descent every time.
 - **SC-002**: With the wearer sober, no piece spends any BI or gives any power, measured over 10 minutes worn.
 - **SC-003**: A full Puff Plate gives at least 2 minutes of continuous flight, and a full Moon Boots charge lasts at least 30 minutes of normal walking and jumping.
-- **SC-004**: A Puff Re-Up Station fills an empty Moon Boots in under 2 minutes, and each higher tier at least twice as fast.
+- **SC-004**: A Blaze Re-Up Station on a network that can feed it fills empty Moon Boots in under 2 minutes, and each tier charges twice as fast as the one below (so a Puff station takes about 12 minutes: gear is mid-to-late game, as the planned capacities imply).
 - **SC-005**: Every Blazer mode changes nothing inside a protected area, in every test.
 - **SC-006**: A player can go from no gear to a working suit using only the mod's own machines and common materials, with no Nether or End trip.
 
