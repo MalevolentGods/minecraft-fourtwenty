@@ -8,6 +8,8 @@ This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and 
 
 - **Kush Suit and Blazer:** BI-powered armour and an arm laser whose powers work while you're high, unlocked further by terpenes of each piece's colour family; charged at Re-Up Stations or with a Dab Cell.
 - **Construction benches:** the Joint, Blunt, Spliff and Cannon run on BI and make 2, 3, 4 and 6 times as many building and coloured blocks. JEI fills them like a crafting table.
+- **Pave Pen:** lays our roads straight into the ground with weed, upgrades them with the smooth stone or gold you carry, and (as the Pave Pen Pro) lays and reshapes slabs and stairs. Press V for its settings.
+- **Construction benches:** the Joint, Blunt, Spliff and Cannon run on BI and make 2, 3, 4 and 6 times as many building and coloured blocks. Each item costs 8 BI from a bar on the bench, which charges at 70 to 560 BI a second by tier. JEI fills them like a crafting table.
 - **The Dispensary** now lives only in Sensi Heights, and huts from the old FourTwenty pack carry on from there.
 
 ## What's new in 0.15.0

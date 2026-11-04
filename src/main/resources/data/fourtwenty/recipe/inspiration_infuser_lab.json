@@ -3,24 +3,24 @@
   "category": "misc",
   "pattern": [
     "GGG",
-    "IWI",
-    "PDP"
+    "IMI",
+    "CBC"
   ],
   "key": {
     "G": {
       "item": "minecraft:glass"
     },
     "I": {
-      "item": "minecraft:quartz"
+      "item": "minecraft:iron_ingot"
     },
-    "W": {
+    "M": {
       "item": "fourtwenty:weed_bud"
     },
-    "P": {
+    "C": {
       "item": "minecraft:white_concrete"
     },
-    "D": {
-      "item": "minecraft:glowstone_dust"
+    "B": {
+      "item": "minecraft:torch"
     }
   },
   "result": {

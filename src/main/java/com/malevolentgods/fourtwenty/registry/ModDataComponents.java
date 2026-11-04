@@ -68,6 +68,28 @@ public final class ModDataComponents {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<GearState>> GEAR = COMPONENTS.register("gear",
             () -> DataComponentType.<GearState>builder().persistent(GearState.CODEC).networkSynchronized(GearState.STREAM_CODEC).build());
+    /** A Pave Pen's settings and what it carries: the road tier and shape it lays, its BI, and roads already paid for in smooth stone and gold. */
+    public record PenState(int target, int shape, int charge, int stone, int gold) {
+        public static final PenState DEFAULT = new PenState(1, 0, 0, 0, 0);
+        public static final Codec<PenState> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.intRange(1, 3).optionalFieldOf("target", 1).forGetter(PenState::target),
+                Codec.intRange(0, 2).optionalFieldOf("shape", 0).forGetter(PenState::shape),
+                Codec.INT.optionalFieldOf("charge", 0).forGetter(PenState::charge),
+                Codec.INT.optionalFieldOf("stone", 0).forGetter(PenState::stone),
+                Codec.INT.optionalFieldOf("gold", 0).forGetter(PenState::gold)).apply(i, PenState::new));
+        public static final StreamCodec<ByteBuf, PenState> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT, PenState::target, ByteBufCodecs.VAR_INT, PenState::shape, ByteBufCodecs.VAR_INT, PenState::charge,
+                ByteBufCodecs.VAR_INT, PenState::stone, ByteBufCodecs.VAR_INT, PenState::gold, PenState::new);
+
+        public PenState withCharge(int value) { return new PenState(target, shape, value, stone, gold); }
+
+        public PenState withCredit(int stone, int gold) { return new PenState(target, shape, charge, stone, gold); }
+
+        public PenState withMode(int target, int shape) { return new PenState(target, shape, charge, stone, gold); }
+    }
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<PenState>> PEN = COMPONENTS.register("pave_pen",
+            () -> DataComponentType.<PenState>builder().persistent(PenState.CODEC).networkSynchronized(PenState.STREAM_CODEC).build());
 
     public static Strain strain(ItemStack stack) {
         Strain s = stack.get(STRAIN.get());

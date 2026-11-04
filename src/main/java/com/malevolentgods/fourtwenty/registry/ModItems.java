@@ -73,6 +73,13 @@ public class ModItems {
         ITEMS.register("weed_pipe", () ->
             new WeedPipeItem(new Item.Properties().durability(4).stacksTo(1))); // 4 uses, doesn't stack
 
+    /** Lays and upgrades our roads with weed; the Pro also lays and reshapes road slabs and stairs. */
+    public static final DeferredHolder<Item, com.malevolentgods.fourtwenty.paving.PavePenItem> PAVE_PEN =
+        ITEMS.register("pave_pen", () -> new com.malevolentgods.fourtwenty.paving.PavePenItem(false, new Item.Properties()));
+
+    public static final DeferredHolder<Item, com.malevolentgods.fourtwenty.paving.PavePenItem> PAVE_PEN_PRO =
+        ITEMS.register("pave_pen_pro", () -> new com.malevolentgods.fourtwenty.paving.PavePenItem(true, new Item.Properties()));
+
     public static final DeferredHolder<Item, WeedCookieItem> WEED_COOKIE =
         ITEMS.register("weed_cookie", () ->
             new WeedCookieItem(new Item.Properties().stacksTo(16))); // Standard stack size for food
