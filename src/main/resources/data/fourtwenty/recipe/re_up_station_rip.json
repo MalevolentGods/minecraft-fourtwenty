@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "WSW",
+    " B "
+  ],
+  "key": {
+    "W": {
+      "item": "fourtwenty:glass_wick"
+    },
+    "S": {
+      "item": "fourtwenty:re_up_station_toke"
+    },
+    "B": {
+      "item": "fourtwenty:mother_stash"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:re_up_station_rip",
+    "count": 1
+  },
+  "show_notification": true
+}

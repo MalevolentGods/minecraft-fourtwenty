@@ -48,7 +48,8 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
     /** Top tier, so no wiring mistake can overload a Terpinator. */
     private final com.malevolentgods.fourtwenty.power.MachinePower.Meter meter = new com.malevolentgods.fourtwenty.power.MachinePower.Meter();
     private final com.malevolentgods.fourtwenty.power.BIBuffer buffer = new com.malevolentgods.fourtwenty.power.BIBuffer(
-            com.malevolentgods.fourtwenty.domain.BIRules.Tier.RIP, 2_000, true, false, this::setChanged);
+            com.malevolentgods.fourtwenty.domain.BIRules.Tier.RIP, 2_000, true, false,
+            com.malevolentgods.fourtwenty.domain.CircuitRules.ratedWatts(com.malevolentgods.fourtwenty.domain.BIRules.Tier.PUFF.machine()), this::setChanged);
     /** A pre-production Terpinator's resin, bases and accords: popped out on the first tick. */
     private final NonNullList<ItemStack> legacy = NonNullList.create();
 
@@ -233,7 +234,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
         tag.putInt("progress", progress);
         tag.putInt("product", product);
         tag.putBoolean("running", running);
-        tag.putLong("bi", buffer.stored());
+        tag.putLong("ws", buffer.stored());
         if (!legacy.isEmpty()) {
             CompoundTag old = new CompoundTag();
             ContainerHelper.saveAllItems(old, legacy, registries);
@@ -258,7 +259,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
         product = tag.contains("product") ? tag.getInt("product") : NONE;
         if (!valid(product)) product = NONE;
         running = tag.getBoolean("running");
-        buffer.set(tag.getLong("bi"));
+        buffer.set(com.malevolentgods.fourtwenty.power.BIBuffer.loadWs(tag, "ws", "bi"));
         if (tag.contains("legacy")) {
             NonNullList<ItemStack> old = NonNullList.withSize(6, ItemStack.EMPTY);
             ContainerHelper.loadAllItems(tag.getCompound("legacy"), old, registries);

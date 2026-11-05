@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "WSW",
+    " B "
+  ],
+  "key": {
+    "W": {
+      "item": "fourtwenty:gold_wick"
+    },
+    "S": {
+      "item": "fourtwenty:re_up_station_rip"
+    },
+    "B": {
+      "item": "fourtwenty:the_vault"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:re_up_station_blaze",
+    "count": 1
+  },
+  "show_notification": true
+}

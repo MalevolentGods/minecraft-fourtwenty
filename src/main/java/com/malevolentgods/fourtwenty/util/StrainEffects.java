@@ -205,6 +205,8 @@ public final class StrainEffects {
         int length = (int) (duration(strain) * t.lengthFactor());
         long until = level.getGameTime() + length;
         HIGHS.put(player.getUUID(), new High(strain, until));
+        player.getPersistentData().putString(HIGH_STRAIN, strain.id());
+        player.getPersistentData().putLong(HIGH_STRAIN_UNTIL, until);
         markHigh(player, length);
         if (player instanceof ServerPlayer sp) {
             if (strain == Strain.GOLDEN_GOD) GoldenGod.ascend(sp, length);
@@ -221,11 +223,43 @@ public final class StrainEffects {
 
     private record High(Strain strain, long until) {}
 
-    /** Everyone who's high, by when it wears off. Bongs and edibles land here too, without a strain's aura. Not saved: a high ends with the server. */
+    /**
+     * Everyone who's high, by when it wears off. Bongs and edibles land here too, without a strain's aura. Each is also saved on the
+     * player, by game time (which runs on across restarts), so a high outlasts a logout or a server restart: {@link #restore}.
+     */
     private static final Map<UUID, Long> HIGH_UNTIL = new HashMap<>();
+    private static final String HIGH_UNTIL_KEY = "fourtwenty.high_until", HIGH_STRAIN = "fourtwenty.high_strain", HIGH_STRAIN_UNTIL = "fourtwenty.high_strain_until";
 
     public static void markHigh(Player player, int ticks) {
-        HIGH_UNTIL.merge(player.getUUID(), player.level().getGameTime() + ticks, Math::max);
+        long until = HIGH_UNTIL.merge(player.getUUID(), player.level().getGameTime() + ticks, Math::max);
+        player.getPersistentData().putLong(HIGH_UNTIL_KEY, until);
+    }
+
+    /** Picks a saved high back up: when the player logs in, after a restart or not. A high that has run out is cleared instead. */
+    public static void restore(ServerPlayer player) {
+        var data = player.getPersistentData();
+        long now = player.level().getGameTime();
+        long until = data.getLong(HIGH_UNTIL_KEY);
+        if (until > now) HIGH_UNTIL.merge(player.getUUID(), until, Math::max);
+        else data.remove(HIGH_UNTIL_KEY);
+        long strainUntil = data.getLong(HIGH_STRAIN_UNTIL);
+        if (strainUntil <= now || !data.contains(HIGH_STRAIN)) {
+            data.remove(HIGH_STRAIN);
+            data.remove(HIGH_STRAIN_UNTIL);
+            return;
+        }
+        Strain strain = Strain.byId(data.getString(HIGH_STRAIN));
+        int left = (int) Math.min(Integer.MAX_VALUE, strainUntil - now);
+        HIGHS.put(player.getUUID(), new High(strain, strainUntil));
+        if (player.connection != null && player.connection.hasChannel(Tint.TYPE)) player.connection.send(new Tint(strain, left));
+        // After the login handlers: Golden God's takes back any flight it lent before the logout.
+        if (strain == Strain.GOLDEN_GOD) player.server.execute(() -> { if (!player.hasDisconnected()) GoldenGod.ascend(player, left); });
+    }
+
+    /** Drops what's held in memory for a player, as a restart does; their saved high stays. For tests. */
+    public static void forget(Player player) {
+        HIGH_UNTIL.remove(player.getUUID());
+        HIGHS.remove(player.getUUID());
     }
 
     public static boolean isHigh(Player player) {
@@ -314,9 +348,9 @@ public final class StrainEffects {
     }
 
     private static void loggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player && player.getPersistentData().contains(SMOKED)) {
-            tell(player, Strain.byId(player.getPersistentData().getString(SMOKED)));
-        }
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (player.getPersistentData().contains(SMOKED)) tell(player, Strain.byId(player.getPersistentData().getString(SMOKED)));
+        restore(player);
     }
 
     // ---- the client's screen tint

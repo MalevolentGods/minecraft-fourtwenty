@@ -59,7 +59,6 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     private double made;
     /** BI it has made and not yet sent down the Wicks: output only, and a Hookah can't be overloaded by what it makes. */
     private final com.malevolentgods.fourtwenty.power.BIBuffer buffer;
-    private final com.malevolentgods.fourtwenty.power.BIPush push = new com.malevolentgods.fourtwenty.power.BIPush();
     private static final java.util.List<net.minecraft.core.Direction> ALL = java.util.List.of(net.minecraft.core.Direction.values());
 
     private final ContainerData dataAccess = new ContainerData() {
@@ -244,14 +243,14 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
     private void serverTick() {
         migrateLegacyBurn();
         // It only starts itself for something that needs the power. Anyone can start a session with the Light button.
-        if (!isLit && push.wanted() && canLight()) lightBong(null);
+        if (!isLit && canLight() && com.malevolentgods.fourtwenty.power.Circuits.wanted(level, buffer, worldPosition)) lightBong(null);
         var tier = buffer.tier();
         if (isLit && hasWater()) {
             made += tier.rate();
             buffer.set(buffer.stored() + (long) made);
             made -= (long) made;
         }
-        push.push(level, worldPosition, ALL, tier, tier.rate(), buffer, node -> true);
+        com.malevolentgods.fourtwenty.power.Circuits.tick(level, buffer, worldPosition);
         if (!isLit) return;
         if (!hasWater()) { extinguish(); setChanged(); return; }
         burnTime++;
@@ -303,12 +302,12 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
         tag.putInt("BurnDuration", burnDuration);
         tag.putBoolean("IsLit", isLit);
         tag.putBoolean("ChargePaid", chargePaid);
-        tag.putLong("bi", buffer.stored());
+        tag.putLong("ws", buffer.stored());
         ContainerHelper.saveAllItems(tag, items, registries);
     }
     @Override protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        buffer.set(tag.getLong("bi"));
+        buffer.set(com.malevolentgods.fourtwenty.power.BIBuffer.loadWs(tag, "ws", "bi"));
         items = NonNullList.withSize(3, ItemStack.EMPTY);
         // Loading bypasses insertion validation so old invalid contents remain recoverable.
         ContainerHelper.loadAllItems(tag, items, registries);

@@ -39,6 +39,13 @@ public final class DispensaryConfig {
             .comment("Blocks from someone smoking a joint or pipe within which colonists count as exposed for the first time.")
             .defineInRange("secondhandSmokeRadius", 4, 0, 32);
     private static final java.util.Map<com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem, ModConfigSpec.IntValue> PRICES = prices();
+    private static final ModConfigSpec.IntValue[] BUD_BARN_TRIM_TICKS = budBarnTrimTicks();
+    private static final ModConfigSpec.IntValue BUD_BARN_BUFFER = BUILDER
+            .comment("Bud Barn: trimmed buds the Trim Daddy keeps beyond the free spots on the hut's Curing Racks.")
+            .defineInRange("budBarnTrimmedBuffer", com.malevolentgods.fourtwenty.compat.minecolonies.domain.BudBarnRules.BUFFER, 0, 64);
+    private static final ModConfigSpec.IntValue BUD_BARN_ROUGH = BUILDER
+            .comment("Bud Barn: rough buds the hut keeps, and asks the colony for, per Trim Tray.")
+            .defineInRange("budBarnRoughPerTray", com.malevolentgods.fourtwenty.compat.minecolonies.domain.BudBarnRules.ROUGH_PER_TRAY, 1, 64);
     public static final ModConfigSpec SPEC = BUILDER.build();
     private static java.util.Map<com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem, ModConfigSpec.IntValue> prices() {
         var prices = new java.util.EnumMap<com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem, ModConfigSpec.IntValue>(
@@ -61,6 +68,19 @@ public final class DispensaryConfig {
     public static double toleranceBreakWeight() { return BREAK_WEIGHT.get(); }
     public static int secondhandSmokeRadius() { return SECONDHAND_RADIUS.get(); }
     public static int price(com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem item) { return PRICES.get(item).get(); }
+    private static ModConfigSpec.IntValue[] budBarnTrimTicks() {
+        var out = new ModConfigSpec.IntValue[5];
+        for (int level = 1; level <= 5; level++) out[level - 1] = BUILDER.comment("Bud Barn level " + level + ": ticks the Trim Daddy takes per trim.")
+                .defineInRange("budBarnTrimTicks" + level, com.malevolentgods.fourtwenty.compat.minecolonies.domain.BudBarnRules.TRIM_TICKS[level - 1], 1, 1200);
+        return out;
+    }
+    /** Ticks per trim at a Bud Barn of this level (1-5). */
+    public static int budBarnTrimTicks(int level) {
+        int i = Math.max(1, Math.min(5, level)) - 1;
+        return SPEC.isLoaded() ? BUD_BARN_TRIM_TICKS[i].get() : com.malevolentgods.fourtwenty.compat.minecolonies.domain.BudBarnRules.TRIM_TICKS[i];
+    }
+    public static int budBarnBuffer() { return SPEC.isLoaded() ? BUD_BARN_BUFFER.get() : com.malevolentgods.fourtwenty.compat.minecolonies.domain.BudBarnRules.BUFFER; }
+    public static int budBarnRoughPerTray() { return SPEC.isLoaded() ? BUD_BARN_ROUGH.get() : com.malevolentgods.fourtwenty.compat.minecolonies.domain.BudBarnRules.ROUGH_PER_TRAY; }
     private static ModConfigSpec.IntValue duration(String name) {
         return BUILDER.comment("Elapsed simulation ticks. Changes affect future deadlines; existing deadlines are preserved.")
                 .defineInRange(name, 24_000, 1, DemandRules.MAX_TICKS);

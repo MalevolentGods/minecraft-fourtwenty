@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "NJN",
+    "K K"
+  ],
+  "key": {
+    "N": {
+      "item": "fourtwenty:natural_hemp"
+    },
+    "K": {
+      "item": "fourtwenty:kief"
+    },
+    "J": {
+      "item": "fourtwenty:stash_jar"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:moon_boots",
+    "count": 1
+  },
+  "show_notification": true
+}

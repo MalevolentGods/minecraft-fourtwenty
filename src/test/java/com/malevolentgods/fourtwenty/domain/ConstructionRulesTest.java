@@ -21,8 +21,22 @@ class ConstructionRulesTest {
     }
 
     @Test
-    void betterBenchesCostMore() {
-        assertTrue(ConstructionRules.cost(BIRules.Tier.PUFF) > 0);
-        assertTrue(ConstructionRules.cost(BIRules.Tier.BLAZE) > ConstructionRules.cost(BIRules.Tier.RIP));
+    void aCraftCostsTheSameForEveryItemItMakes() {
+        assertEquals(0, ConstructionRules.cost(0));
+        assertEquals(ConstructionRules.BI_PER_ITEM, ConstructionRules.cost(1));
+        assertEquals(64L * ConstructionRules.BI_PER_ITEM, ConstructionRules.cost(64));
+    }
+
+    @Test
+    void theReserveHoldsFourStacks() {
+        assertEquals(4 * ConstructionRules.cost(64), ConstructionRules.CAPACITY);
+    }
+
+    @Test
+    void lowerBenchesChargeSlower() {
+        BIRules.Tier[] tiers = BIRules.Tier.values();
+        for (int i = 1; i < tiers.length; i++) assertTrue(ConstructionRules.chargeRate(tiers[i - 1]) < ConstructionRules.chargeRate(tiers[i]), tiers[i].name());
+        assertEquals(420, ConstructionRules.chargeRate(BIRules.Tier.PUFF) * BIRules.TICKS_PER_SECOND, 1e-9);
+        for (BIRules.Tier t : tiers) assertTrue(ConstructionRules.intake(t) >= ConstructionRules.chargeRate(t), t.name());
     }
 }

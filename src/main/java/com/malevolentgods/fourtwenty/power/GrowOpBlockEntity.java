@@ -81,13 +81,13 @@ public class GrowOpBlockEntity extends BIBlockEntity implements MenuProvider {
 
     @Override protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putLong("bi", buffer.stored());
+        tag.putLong("ws", buffer.stored());
         if (climate != null) tag.putInt("climate", climate.ordinal() + 1);
     }
 
     @Override protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        buffer.set(tag.getLong("bi"));
+        buffer.set(com.malevolentgods.fourtwenty.power.BIBuffer.loadWs(tag, "ws", "bi"));
         int saved = tag.getInt("climate");
         var climates = com.malevolentgods.fourtwenty.domain.Climate.values();
         climate = saved > 0 && saved <= climates.length ? climates[saved - 1] : null;

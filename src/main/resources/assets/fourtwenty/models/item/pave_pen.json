@@ -1,0 +1,6 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "fourtwenty:item/pave_pen"
+  }
+}

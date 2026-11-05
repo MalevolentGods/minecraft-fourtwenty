@@ -237,11 +237,11 @@ public final class PhenoGameTests {
         var jar = new BlockPos(3, 2, 3);
         h.setBlock(jar, ModPower.STASH_JAR.get());
         var stash = (StashBlockEntity) h.getLevel().getBlockEntity(h.absolutePos(jar));
-        ((BIBuffer) stash.node()).set(10_000);
+        ((BIBuffer) stash.node()).set(60_000);
         var bot = h.spawn(ModEntities.BUZZ_BOT.get(), new BlockPos(1, 3, 1));
         bot.setPower(100);
         h.succeedWhen(() -> {
-            h.assertTrue(stash.node().stored() == 10_000 - ProcessingConfig.botChargeBI(), "it took one bud's worth of BI, leaving " + stash.node().stored());
+            h.assertTrue(stash.node().stored() == 60_000 - ProcessingConfig.botChargeBI(), "it took one bud's worth of BI, leaving " + stash.node().stored());
             h.assertTrue(bot.power() > ProcessingConfig.botBudTicks() / 2, "and has an hour's power");
             bot.discard();
         });

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "NJN",
+    "H H",
+    "N N"
+  ],
+  "key": {
+    "N": {
+      "item": "fourtwenty:natural_hemp"
+    },
+    "H": {
+      "item": "fourtwenty:hash"
+    },
+    "J": {
+      "item": "fourtwenty:stash_jar"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:couchlock_greaves",
+    "count": 1
+  },
+  "show_notification": true
+}

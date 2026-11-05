@@ -204,7 +204,7 @@ public class ThinkTankBlockEntity extends BIBlockEntity implements Container, Me
         tag.putInt("study", study);
         tag.putBoolean("started", started);
         tag.putDouble("units", units);
-        tag.putLong("bi", buffer.stored());
+        tag.putLong("ws", buffer.stored());
     }
 
     @Override protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
@@ -215,6 +215,6 @@ public class ThinkTankBlockEntity extends BIBlockEntity implements Container, Me
         if (study >= Studies.ALL.size()) study = NONE;
         started = tag.getBoolean("started");
         units = tag.getDouble("units");
-        buffer.set(tag.getLong("bi"));
+        buffer.set(com.malevolentgods.fourtwenty.power.BIBuffer.loadWs(tag, "ws", "bi"));
     }
 }

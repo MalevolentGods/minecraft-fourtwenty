@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " O ",
+    "WBW",
+    " W "
+  ],
+  "key": {
+    "O": {
+      "item": "fourtwenty:oil"
+    },
+    "W": {
+      "item": "fourtwenty:glass_wick"
+    },
+    "B": {
+      "item": "fourtwenty:stash_box"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:blazer",
+    "count": 1
+  },
+  "show_notification": true
+}

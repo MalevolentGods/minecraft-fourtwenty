@@ -121,10 +121,10 @@ public final class ModPower {
     public static final DeferredHolder<Block, WeedBongBlock> BIG_BERTHA = hookah("big_bertha", Tier.RIP);
     public static final DeferredHolder<Block, WeedBongBlock> GRAND_HOOKAH = hookah("grand_hookah", Tier.BLAZE);
 
-    public static final DeferredHolder<Block, StashBlock> STASH_JAR = stash("stash_jar", Tier.PUFF, 42_000, 4, 12);
-    public static final DeferredHolder<Block, StashBlock> STASH_BOX = stash("stash_box", Tier.TOKE, 420_000, 1, 14);
-    public static final DeferredHolder<Block, StashBlock> MOTHER_STASH = stash("mother_stash", Tier.RIP, 4_200_000, 0, 16);
-    public static final DeferredHolder<Block, StashBlock> THE_VAULT = stash("the_vault", Tier.BLAZE, 42_000_000, 0, 16);
+    public static final DeferredHolder<Block, StashBlock> STASH_JAR = stash("stash_jar", Tier.PUFF, 252_000, 4, 12);
+    public static final DeferredHolder<Block, StashBlock> STASH_BOX = stash("stash_box", Tier.TOKE, 2_520_000, 1, 14);
+    public static final DeferredHolder<Block, StashBlock> MOTHER_STASH = stash("mother_stash", Tier.RIP, 25_200_000, 0, 16);
+    public static final DeferredHolder<Block, StashBlock> THE_VAULT = stash("the_vault", Tier.BLAZE, 252_000_000, 0, 16);
 
     public static final DeferredHolder<Block, HitBoxBlock> HIT_BOX = block("hit_box", () -> new HitBoxBlock(metal()));
 

@@ -23,30 +23,52 @@ import java.util.List;
  * when something past the other side can use it: otherwise a Stash would empty itself into the box with nowhere for the power to go.
  */
 public class HitBoxBlockEntity extends BIBlockEntity implements MenuProvider {
-    private static final long BUFFER = 4_096;
+    private static final long BUFFER = 24_576;
 
-    /** A face of the box: takes power into one bank at that face's tier. */
+    /**
+     * A face of the box at that face's tier. It gives from one bank when its own side wants power, and otherwise takes into the other bank
+     * when the far side wants it, losing a little: a converter between tiers with an energy store on each side.
+     */
     private final class Face implements BINode {
         private final boolean high;
 
         Face(boolean high) { this.high = high; }
 
-        private BIBuffer bank() { return high ? down : up; }
+        /** Power that came in this face goes to this bank, to leave by the other face. */
+        private BIBuffer in() { return high ? down : up; }
+
+        /** Power leaving by this face comes from this bank. */
+        private BIBuffer out() { return high ? up : down; }
+
+        private Face other() { return high ? lowFace : highFace; }
+
+        private double rate() { return BIRules.watts(highTier().rate()); }
 
         @Override public BIRules.Tier tier() { return high ? highTier() : highTier().below(); }
-        @Override public long stored() { return bank().stored(); }
-        @Override public long capacity() { return bank().capacity(); }
-        @Override public long receive(long amount) { return (high ? pushDown : pushUp).hasSinks() ? bank().receive(amount) : 0; }
-        @Override public long extract(long amount) { return 0; }
+        @Override public long stored() { return in().stored(); }
+        @Override public long capacity() { return in().capacity(); }
+        @Override public long receive(long amount) { return in().receive(amount); }
+        @Override public long extract(long amount) { return out().extract(amount); }
         @Override public boolean canReceive() { return true; }
         @Override public boolean canExtract() { return false; }
         @Override public void overload(long now) { down.overload(now); }
+        @Override public boolean overloaded(long now) { return down.overloaded(now); }
+        @Override public double efficiency() { return 1 - com.malevolentgods.fourtwenty.processing.ProcessingConfig.circuit().hitBoxLoss(); }
+        @Override public double sourceWatts() { return rate(); }
+        @Override public boolean sourceReady() { return out().stored() > 0; }
+        @Override public double demandWatts() { return in().stored() < in().capacity() ? rate() : 0; }
+
+        @Override public Role role() {
+            if (level == null || level.isClientSide) return Role.NONE;
+            if (out().stored() > 0 && Circuits.demandBeyond(level, this, worldPosition) > 0) return Role.SOURCE;
+            if (in().stored() < in().capacity() && Circuits.demandBeyond(level, other(), worldPosition) > 0) return Role.LOAD;
+            return Role.NONE;
+        }
     }
 
     private final BIBuffer down = new BIBuffer(BIRules.Tier.RIP, BUFFER, true, true, this::setChanged);
     private final BIBuffer up = new BIBuffer(BIRules.Tier.RIP, BUFFER, true, true, this::setChanged);
     private final Face highFace = new Face(true), lowFace = new Face(false);
-    private final BIPush pushDown = new BIPush(), pushUp = new BIPush();
     private final ContainerData data = BIBlockEntity.data(down, this::gameTime, () -> highTier().ordinal(), BIBlockEntity.KIND_HIT_BOX, 0, () -> 0);
 
     public HitBoxBlockEntity(BlockPos pos, BlockState state) {
@@ -76,11 +98,8 @@ public class HitBoxBlockEntity extends BIBlockEntity implements MenuProvider {
             lit(false);
             return;
         }
-        Direction front = front();
-        List<Direction> low = Arrays.stream(Direction.values()).filter(d -> d != front).toList();
-        BIRules.Tier high = highTier();
-        pushDown.push(level, worldPosition, low, high.below(), high.rate(), down, sink -> true);
-        pushUp.push(level, worldPosition, List.of(front), high, high.rate(), up, sink -> true);
+        Circuits.tick(level, highFace, worldPosition);
+        Circuits.tick(level, lowFace, worldPosition);
         lit(down.stored() > 0 || up.stored() > 0);
     }
 
@@ -92,13 +111,13 @@ public class HitBoxBlockEntity extends BIBlockEntity implements MenuProvider {
 
     @Override protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putLong("down", down.stored());
-        tag.putLong("up", up.stored());
+        tag.putLong("ws_down", down.stored());
+        tag.putLong("ws_up", up.stored());
     }
 
     @Override protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        down.set(tag.getLong("down"));
-        up.set(tag.getLong("up"));
+        down.set(BIBuffer.loadWs(tag, "ws_down", "down"));
+        up.set(BIBuffer.loadWs(tag, "ws_up", "up"));
     }
 }

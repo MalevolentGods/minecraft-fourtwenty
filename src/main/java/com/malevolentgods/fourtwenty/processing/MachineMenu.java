@@ -16,7 +16,11 @@ import javax.annotation.Nonnull;
 import static com.malevolentgods.fourtwenty.processing.MachineBlockEntity.*;
 
 /** The menu of every powered machine: inputs on the left, progress in the middle, outputs on the right. */
-public class MachineMenu extends AbstractContainerMenu {
+public class MachineMenu extends AbstractContainerMenu implements com.malevolentgods.fourtwenty.power.PowerMeter.Shown {
+    private final net.minecraft.world.inventory.ContainerData meter;
+
+    @Override public net.minecraft.world.inventory.ContainerData meter() { return meter; }
+
     public static final int WIDTH = 176, HEIGHT = 166, X_IN = 26, X_OUT = 98, Y_SLOTS = 20, INV_X = 8, INV_Y = 84;
 
     private final Container container;
@@ -43,6 +47,8 @@ public class MachineMenu extends AbstractContainerMenu {
         }
         for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col, INV_X + col * 18, INV_Y + 58));
         addDataSlots(data);
+        meter = com.malevolentgods.fourtwenty.power.PowerMeter.of(container);
+        addDataSlots(meter);
     }
 
     public MachineMenu(int id, Inventory inventory) {

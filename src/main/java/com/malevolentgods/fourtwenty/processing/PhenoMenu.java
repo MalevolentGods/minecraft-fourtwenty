@@ -16,7 +16,11 @@ import javax.annotation.Nonnull;
 import static com.malevolentgods.fourtwenty.processing.PhenoBlockEntity.*;
 
 /** The menu of a Pheno Chamber: two parents on the left, the work in the middle, the seeds on the right. */
-public class PhenoMenu extends AbstractContainerMenu {
+public class PhenoMenu extends AbstractContainerMenu implements com.malevolentgods.fourtwenty.power.PowerMeter.Shown {
+    private final net.minecraft.world.inventory.ContainerData meter;
+
+    @Override public net.minecraft.world.inventory.ContainerData meter() { return meter; }
+
     public static final int WIDTH = 176, HEIGHT = 166, X_IN = 44, X_OUT = 108, Y_FIRST = 20, Y_SECOND = 44, INV_X = 8, INV_Y = 84;
 
     private final Container container;
@@ -43,6 +47,8 @@ public class PhenoMenu extends AbstractContainerMenu {
         }
         for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col, INV_X + col * 18, INV_Y + 58));
         addDataSlots(data);
+        meter = com.malevolentgods.fourtwenty.power.PowerMeter.of(container);
+        addDataSlots(meter);
     }
 
     public PhenoMenu(int id, Inventory inventory) {

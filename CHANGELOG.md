@@ -2,6 +2,33 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- **Inspoweedometer:** a hand-held meter that reads the Kerberos, Ignus, Phus and Willards at any BI block or Wick. Machine and Stash screens show the voltage and current too.
+- **Kush Suit:** the Hotbox Helm (night vision, the haze HUD), the Puff Plate (the heaviest piece, with the Puff Pack jetpack), the Couchlock Greaves (no knockback, a crouch-landing stomp) and the Moon Boots (a high jump, no fall damage). Their powers work only while you're high and the piece holds BI; their armour always protects. If flight stops mid-air for any reason, you float down unharmed.
+- **Blazer:** an arm laser with Blaze Beam, plus Bore Toke (3x3 mining), Timber Torch (whole trees) and Paint Puff (lines and walls) once their terpenes are in. It respects claims and spawn protection.
+- **Terpene slots:** each piece takes its own hue family (reds and oranges for the Blazer, yellows for the Helm, greens for the Plate, blues for the Boots, purples for the Greaves), and each colour can unlock a power. Sneak-use a piece, or press G. The list lives in `data/fourtwenty/gear/abilities.json`.
+- **Re-Up Station** in four tiers (hang gear on it, or stand on it) and the **Dab Cell**, a handheld battery that tops up what you wear.
+- **Bud Barn** (with MineColonies): a hut whose **Trim Daddy** turns the colony's rough buds into Cured Buds by hand, trimming at its Trim Trays (seeds at the same odds as a player) and curing on its Curing Racks, so a Dispensary no longer runs dry. Five levels in Sensi Heights, from a timber shed to a full barn with more trays and racks and a faster worker. Its status tab says what it's doing.
+- **Pave Pen:** hold right-click on a block to turn it into road, quickly for dirt and slower for stone. It runs on buds from your inventory (rough ones first), or free while you're high. Carry smooth stone or gold to lay or upgrade to Paved Road and Yellow Brick Road, one for every eight roads as in the recipes. Press V, or sneak and right-click, for its settings. Crafted from a stick, a bud and a Cobble Path.
+- **Pave Pen Pro:** a Pave Pen, two emeralds and a Paved Road. It also lays road slabs and stairs, and reshapes roads into them, keeping the pen's charge.
+
+### Changed
+- **Wick networks are real DC circuits**, in the school of Inspoweednetics, with current in **Ignus (Ig)**, voltage in **Kerberos (Kb)** and resistance in **Phus (Φ)**:
+  - **Voltages:** each tier is a voltage: Puff 4.2 Kb, Toke 42 Kb, Rip 420 Kb, Blaze 4,200 Kb.
+  - **Sources:** Hookahs hold their tier's voltage up to their rated current.
+  - **Machines** draw a fixed power at any healthy voltage.
+  - **Stashes** are batteries whose voltage follows their charge.
+  - **Wicks** have a little real resistance, so long lines lose a few percent, and stepping up with a Hit Box pays.
+  - **Brownout:** more machines than a Hookah can carry all slow down together.
+  - **Behaviour change:** Wicks are rated like real cables, for current and for voltage. A lower-tier Wick on a higher-voltage line burns out, and so does a higher-tier Wick carrying a busy Puff line's current. Builds that mix Wick tiers may need fixing.
+- **Boundless Inspiration is measured in Willards (W)**, stored in Willard-seconds (Ws). A Hookah puts out 420 W, so every number is six times what it was in BI, and everything runs exactly as before. Stored charge in existing worlds converts when it loads. Server owners: delete `fourtwenty-processing-server.toml` and `fourtwenty-gear-server.toml` so the new defaults apply.
+- **Construction benches show their power:** a bar of stored BI fills at a steady rate (420 W on a Joint, up to 3,360 W on a Cannon, free near a high player), each recipe shows its cost (48 Ws per item made), and crafting draws from the bar.
+- A high outlasts a logout and a server restart: machines still run free near you, the strain's aura and screen tint come back, and Golden God's flight returns.
+- The Terpinator and Inspiration Infuser need nothing from the Nether: glass, iron, a glass bottle or torch, buds, and Cobble Path (white concrete for the Lab versions).
+- The animal huts drop the neon lime for earth tones: each level 5 hut has its own lamp colour, and their glass is deep green.
+
 ## [0.19.0] - Animal Farm
 
 ### Added

@@ -23,7 +23,11 @@ public class ModClientEvents {
 
     
     @SubscribeEvent
+    public static void registerKeys(net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent event) { PavePenClient.registerKeys(event); }
+
+    @SubscribeEvent
     public static void setup(net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) {
+        PavePenClient.install();
         if (net.neoforged.fml.ModList.get().isLoaded("minecolonies")) {
             event.enqueueWork(com.malevolentgods.fourtwenty.compat.minecolonies.client.DispensaryClient::registerModel);
         }
@@ -92,6 +96,7 @@ public class ModClientEvents {
         event.register(com.malevolentgods.fourtwenty.registry.ModPower.BI_MENU.get(), BIScreen::new);
         event.register(com.malevolentgods.fourtwenty.registry.ModPower.THINK_TANK_MENU.get(), ThinkTankScreen::new);
         event.register(ModMenuTypes.WEED_BONG.get(), WeedBongScreen::new);
+        event.register(com.malevolentgods.fourtwenty.gear.ModGear.GEAR_MENU.get(), GearScreen::new);
         event.register(com.malevolentgods.fourtwenty.registry.ModTerpenes.TERPINATOR_MENU.get(),
                 com.malevolentgods.fourtwenty.client.terpene.TerpinatorScreen::new);
     }

@@ -50,6 +50,21 @@ public final class PowerGameTests {
         machine.node().receive(machine.node().capacity());
     }
 
+    /** A Stash saved before Willards held BI, a sixth of a Ws: it loads six times as much, and saves in Ws from then on. */
+    @GameTest(template = "empty")
+    public static void oldSavesBecomeWillardSeconds(GameTestHelper h) {
+        h.setBlock(A, ModPower.STASH_JAR.get());
+        var stash = (StashBlockEntity) h.getBlockEntity(A);
+        var old = new net.minecraft.nbt.CompoundTag();
+        old.putLong("bi", 1_000);
+        stash.loadWithComponents(old, h.getLevel().registryAccess());
+        h.assertTrue(stash.node().stored() == 6_000, "1,000 BI is 6,000 Ws, got " + stash.node().stored());
+        var saved = stash.saveWithoutMetadata(h.getLevel().registryAccess());
+        stash.loadWithComponents(saved, h.getLevel().registryAccess());
+        h.assertTrue(saved.getLong("ws") == 6_000 && stash.node().stored() == 6_000, "and a save in Ws loads as it is");
+        h.succeed();
+    }
+
     /** It shows whether it can work: on with enough stored on its Wicks, off again when that's gone. */
     @GameTest(template = "empty")
     public static void theInfuserShutsDownWithoutPower(GameTestHelper h) {
@@ -89,12 +104,12 @@ public final class PowerGameTests {
         h.setBlock(B, ModPower.SNIP_STATION.get());
         var machine = (MachineBlockEntity) h.getBlockEntity(B);
         machine.setItem(0, of(ModItems.ROUGH_BUD.get(), 1, Strain.LANDRACE));
-        machine.node().receive(5);          // a few ticks' worth at 0.875 a tick
+        machine.node().receive(30);         // a few ticks' worth at 5.25 a tick
         h.runAfterDelay(30, () -> {
             int held = machine.progress();
             h.assertTrue(held >= 4 && held <= 6, "stopped early, at " + held);
             h.assertTrue(machine.getItem(0).getCount() == 1, "nothing lost");
-            machine.node().receive(40);
+            machine.node().receive(240);
             h.runAfterDelay(25, () -> {
                 h.assertTrue(machine.progress() >= 25, "picked up where it left off, at " + machine.progress());
                 h.succeed();
@@ -129,30 +144,31 @@ public final class PowerGameTests {
         });
     }
 
-    @GameTest(template = "empty", timeoutTicks = 80)
-    public static void aWireCarriesTwoBatteriesButNotThree(GameTestHelper h) {
+    /** Machines set the current, not the batteries: nine Puff machines pull about 230 Ig through a Hemp Wick rated for 200, seven about 180. */
+    @GameTest(template = "long", timeoutTicks = 100)
+    public static void aWireBurnsOnTheCurrentItCarries(GameTestHelper h) {
         var wick = new BlockPos(2, 2, 2);
-        var sink = new BlockPos(3, 2, 2);
-        h.setBlock(wick, ModPower.HEMP_WICK.get());
-        h.setBlock(sink, ModPower.TRIM_REAPER.get());
-        for (BlockPos jar : List.of(new BlockPos(1, 2, 2), new BlockPos(2, 3, 2), new BlockPos(2, 1, 2))) {
-            h.setBlock(jar, ModPower.STASH_JAR.get());
-            ((StashBlockEntity) h.getBlockEntity(jar)).node().receive(5_000);
-        }
-        var okWick = new BlockPos(2, 2, 5);
-        var okSink = new BlockPos(3, 2, 5);
-        h.setBlock(okWick, ModPower.HEMP_WICK.get());
-        h.setBlock(okSink, ModPower.TRIM_REAPER.get());
-        for (BlockPos jar : List.of(new BlockPos(1, 2, 5), new BlockPos(2, 3, 5))) {
-            h.setBlock(jar, ModPower.STASH_JAR.get());
-            ((StashBlockEntity) h.getBlockEntity(jar)).node().receive(5_000);
-        }
+        var okWick = new BlockPos(2, 2, 6);
+        build(h, wick, 9);
+        build(h, okWick, 7);
         h.runAfterDelay(60, () -> {
             h.assertBlockPresent(Blocks.AIR, wick);
             h.assertBlockPresent(ModPower.HEMP_WICK.get(), okWick);
-            h.assertTrue(((MachineBlockEntity) h.getBlockEntity(okSink)).node().stored() > 0, "two batteries got through");
+            h.assertTrue(((MachineBlockEntity) h.getBlockEntity(okWick.east())).node().stored() > 0, "seven machines get through");
             h.succeed();
         });
+    }
+
+    /** Three Stash Jars west of a Hemp Wick, and {@code machines} Snip Stations east of it, touching each other but not the Jars. */
+    private static void build(GameTestHelper h, BlockPos wick, int machines) {
+        h.setBlock(wick, ModPower.HEMP_WICK.get());
+        for (BlockPos jar : List.of(wick.west(), wick.west().above(), wick.west().below())) {
+            h.setBlock(jar, ModPower.STASH_JAR.get());
+            ((StashBlockEntity) h.getBlockEntity(jar)).node().receive(60_000);
+        }
+        BlockPos e = wick.east(), f = e.east();
+        List<BlockPos> spots = List.of(e, e.above(), e.below(), e.north(), e.south(), f, f.above(), f.below(), f.north());
+        for (int i = 0; i < machines; i++) h.setBlock(spots.get(i), ModPower.SNIP_STATION.get());
     }
 
     @GameTest(template = "empty", timeoutTicks = 60)
@@ -223,13 +239,21 @@ public final class PowerGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 400)
     public static void twoStashesSettleLevel(GameTestHelper h) {
+        // a full Jar and an empty one: the fuller one's voltage is higher, so it charges the other, never the other way
         h.setBlock(A, ModPower.STASH_JAR.get());
         h.setBlock(B, ModPower.HEMP_WICK.get());
         h.setBlock(C, ModPower.STASH_JAR.get());
         var full = (StashBlockEntity) h.getBlockEntity(A);
         var empty = (StashBlockEntity) h.getBlockEntity(C);
-        ((BIBuffer) full.node()).receive(1_000);
-        h.succeedWhen(() -> h.assertTrue(Math.abs(full.node().stored() - empty.node().stored()) <= 8, "settled, " + full.node().stored() + " and " + empty.node().stored()));
+        ((BIBuffer) full.node()).receive(full.node().capacity());
+        long start = full.node().stored();
+        h.runAfterDelay(100, () -> {
+            long gained = empty.node().stored(), lost = start - full.node().stored();
+            h.assertTrue(gained > 1_000, "the empty one charged, by " + gained);
+            h.assertTrue(lost >= gained, "nothing made from nothing: lost " + lost + ", gained " + gained);
+            h.assertTrue(full.node().stored() > empty.node().stored(), "and it flowed downhill");
+            h.succeed();
+        });
     }
 
     @GameTest(template = "empty")
@@ -317,6 +341,23 @@ public final class PowerGameTests {
             h.assertTrue(ticks < last, block + " takes " + ticks);
             last = ticks;
         }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aHighOutlastsARestart(GameTestHelper h) {
+        var player = h.makeMockServerPlayerInLevel();
+        StrainEffects.markHigh(player, 1000);
+        StrainEffects.forget(player);
+        h.assertFalse(StrainEffects.isHigh(player), "a restart empties memory");
+        StrainEffects.restore(player);
+        h.assertTrue(StrainEffects.isHigh(player), "and the saved high comes back");
+        var spent = h.makeMockServerPlayerInLevel();
+        spent.getPersistentData().putLong("fourtwenty.high_until", h.getLevel().getGameTime() - 1);
+        StrainEffects.restore(spent);
+        h.assertFalse(StrainEffects.isHigh(spent), "one that ran out doesn't");
+        h.assertFalse(spent.getPersistentData().contains("fourtwenty.high_until"), "and is cleared");
+        StrainEffects.forget(player);
         h.succeed();
     }
 }
