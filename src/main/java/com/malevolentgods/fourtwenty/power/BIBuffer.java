@@ -2,8 +2,10 @@ package com.malevolentgods.fourtwenty.power;
 
 import com.malevolentgods.fourtwenty.domain.BIRules;
 
-/** A plain store of BI. */
+/** A plain store of Boundless Inspiration, counted in Willard-seconds (Ws). */
 public class BIBuffer implements BINode {
+    /** Saves before Willards counted plain BI, a sixth of a Ws: a Hookah made 70 BI a second where it now makes 420 W. */
+    public static final int WS_PER_OLD_BI = 6;
     private static final int OVERLOAD_TICKS = 60;
     private final BIRules.Tier tier;
     private final long capacity;
@@ -50,6 +52,11 @@ public class BIBuffer implements BINode {
     @Override public void overload(long now) { overloadedUntil = now + OVERLOAD_TICKS; }
 
     public boolean overloaded(long now) { return now < overloadedUntil; }
+
+    /** What a block saved under {@code key}, or under {@code oldKey} in BI from before Willards. */
+    public static long loadWs(net.minecraft.nbt.CompoundTag tag, String key, String oldKey) {
+        return tag.contains(key) ? tag.getLong(key) : tag.getLong(oldKey) * WS_PER_OLD_BI;
+    }
 
     /** On load: what was saved, trimmed to fit. */
     public void set(long value) {

@@ -7,7 +7,7 @@ package com.malevolentgods.fourtwenty.domain;
 public final class ConstructionRules {
     private ConstructionRules() {}
 
-    public static final int BI_PER_ITEM = 8;
+    public static final int BI_PER_ITEM = 48;
     /** A bench's reserve: four full stacks of items. */
     public static final long CAPACITY = 64L * BI_PER_ITEM * 4;
     /** How many ticks of charging a bench's intake holds, so the Wicks can keep up. */

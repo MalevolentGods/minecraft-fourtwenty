@@ -10,7 +10,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public final class ProcessingConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     private static final double TERPINATOR_DEFAULT = com.malevolentgods.fourtwenty.domain.BIRules.Tier.PUFF.machine();
-    private static final int INFUSER_DEFAULT = 500, FIRST_POWERED = 1, TIERS = 4;
+    private static final int INFUSER_DEFAULT = 3_000, FIRST_POWERED = 1, TIERS = 4;
     private static final TrimRules.Chances D = TrimRules.Chances.DEFAULT;
     private static final ModConfigSpec.DoubleValue LANDRACE = chance("seedChanceLandrace", D.landrace());
     private static final ModConfigSpec.DoubleValue NEUTRALS = chance("seedChanceNeutrals", D.neutrals());
@@ -25,7 +25,7 @@ public final class ProcessingConfig {
     private static final ModConfigSpec.DoubleValue POLLEN_CHANCE = BUILDER.comment("Chance per harvest that Double Cross parents side by side give their hybrid's seed.").defineInRange("pollenChance", 0.05, 0, 1);
     private static final ModConfigSpec.IntValue BOT_BUD_MINUTES = BUILDER.comment("How many minutes one Cured Bud runs a Buzz Bot.").defineInRange("botBudMinutes", 60, 1, 1440);
     private static final ModConfigSpec.IntValue BOT_CROSS_MINUTES = BUILDER.comment("How many minutes a Buzz Bot waits after one cross before the next.").defineInRange("botCrossMinutes", 5, 0, 1440);
-    private static final ModConfigSpec.IntValue BOT_CHARGE_BI = BUILDER.comment("The BI a Buzz Bot takes from a Stash for one bud's worth of power.").defineInRange("botChargeBI", 4200, 1, 1_000_000);
+    private static final ModConfigSpec.IntValue BOT_CHARGE_BI = BUILDER.comment("The Ws a Buzz Bot takes from a Stash for one bud's worth of power.").defineInRange("botChargeBI", 25_200, 1, 10_000_000);
     private static final ModConfigSpec.DoubleValue CLIMATE_CHANCE = BUILDER.comment("Chance per Landrace harvest in a climate biome of a climate-touched seed. A Cosmic Kush Pod's copy gives half.").defineInRange("climateChance", com.malevolentgods.fourtwenty.domain.Climate.CHANCE, 0, 1);
     private static final ModConfigSpec.DoubleValue CROSS_TIME = BUILDER.comment("Multiplies how long a Pheno Chamber's cross takes.").defineInRange("crossTime", 1.0, 0.01, 100);
     private static final ModConfigSpec.DoubleValue CROP_SPEED = BUILDER.comment("How fast weed grows: the share of random ticks that count.").defineInRange("cropSpeed", GrowRules.CROP_SPEED, 0.01, 1);
@@ -42,11 +42,11 @@ public final class ProcessingConfig {
             .comment("How fast a machine runs free for a high player, in percent of its speed on BI.")
             .defineInRange("highSpeedPercent", 100, 1, 1000);
     private static final ModConfigSpec.DoubleValue TERPINATOR_COST = BUILDER
-            .comment("Terpinator: BI per tick while sober.")
-            .defineInRange("terpinatorCost", TERPINATOR_DEFAULT, 0, 512);
+            .comment("Terpinator: Ws per tick while sober.")
+            .defineInRange("terpinatorCost", TERPINATOR_DEFAULT, 0, 3_072);
     private static final ModConfigSpec.IntValue INFUSER_COST = BUILDER
-            .comment("Inspiration Infuser: BI per caught colour or infused seed while sober.")
-            .defineInRange("infuserCost", INFUSER_DEFAULT, 0, 1_000_000);
+            .comment("Inspiration Infuser: Ws per caught colour or infused seed while sober.")
+            .defineInRange("infuserCost", INFUSER_DEFAULT, 0, 10_000_000);
     private static final ModConfigSpec.DoubleValue[] PLOT_SPEED = plotSpeeds();
     private static final ModConfigSpec.IntValue UNIT_TICKS = BUILDER
             .comment("Think Tank: ticks one study unit takes at speed 1. The University's pace is 1200, one unit a minute.")
@@ -55,10 +55,10 @@ public final class ProcessingConfig {
             .comment("Think Tank: the most that plots in range add up to.")
             .defineInRange("studyMaxPlotSpeed", 16.0, 1, 1000);
     private static final com.malevolentgods.fourtwenty.domain.PaveRules.Numbers PAVE = com.malevolentgods.fourtwenty.domain.PaveRules.Numbers.DEFAULT;
-    private static final ModConfigSpec.IntValue PAVE_CAPACITY = BUILDER.comment("Pave Pen: the BI it holds.").defineInRange("paveCapacity", PAVE.capacity(), 100, 1_000_000);
-    private static final ModConfigSpec.DoubleValue PAVE_LAY_BASE = BUILDER.comment("Pave Pen: BI to lay a road, before hardness.").defineInRange("paveLayCost", PAVE.layBase(), 0, 100_000);
-    private static final ModConfigSpec.DoubleValue PAVE_LAY_HARDNESS = BUILDER.comment("Pave Pen: more BI for each point of the block's hardness (dirt 0.5, stone 1.5, deepslate 3).")
-            .defineInRange("paveLayCostPerHardness", PAVE.layPerHardness(), 0, 100_000);
+    private static final ModConfigSpec.IntValue PAVE_CAPACITY = BUILDER.comment("Pave Pen: the Ws it holds.").defineInRange("paveCapacity", PAVE.capacity(), 600, 10_000_000);
+    private static final ModConfigSpec.DoubleValue PAVE_LAY_BASE = BUILDER.comment("Pave Pen: Ws to lay a road, before hardness.").defineInRange("paveLayCost", PAVE.layBase(), 0, 1_000_000);
+    private static final ModConfigSpec.DoubleValue PAVE_LAY_HARDNESS = BUILDER.comment("Pave Pen: more Ws for each point of the block's hardness (dirt 0.5, stone 1.5, deepslate 3).")
+            .defineInRange("paveLayCostPerHardness", PAVE.layPerHardness(), 0, 1_000_000);
     private static final ModConfigSpec.DoubleValue PAVE_TICKS_BASE = BUILDER.comment("Pave Pen: ticks to lay a road, before hardness.").defineInRange("paveTicks", PAVE.ticksBase(), 1, 1200);
     private static final ModConfigSpec.DoubleValue PAVE_TICKS_HARDNESS = BUILDER.comment("Pave Pen: more ticks for each point of hardness.").defineInRange("paveTicksPerHardness", PAVE.ticksPerHardness(), 0, 1200);
     private static final ModConfigSpec.DoubleValue PAVE_MAX_HARDNESS = BUILDER.comment("Pave Pen: the hardest block it paves over (obsidian is 50).").defineInRange("paveMaxHardness", PAVE.maxHardness(), 0, 100);
@@ -88,7 +88,7 @@ public final class ProcessingConfig {
 
     private static ModConfigSpec.DoubleValue[] costs(String name, java.util.function.IntToDoubleFunction value) {
         var out = new ModConfigSpec.DoubleValue[TIERS];
-        for (int i = FIRST_POWERED; i < TIERS; i++) out[i] = BUILDER.comment("Tier " + (i + 1) + ": BI per tick.").defineInRange(name + (i + 1), value.applyAsDouble(i), 0, 512);
+        for (int i = FIRST_POWERED; i < TIERS; i++) out[i] = BUILDER.comment("Tier " + (i + 1) + ": Ws per tick.").defineInRange(name + (i + 1), value.applyAsDouble(i), 0, 3_072);
         return out;
     }
 
@@ -117,7 +117,7 @@ public final class ProcessingConfig {
     public static int botChargeBI() {
         var override = botChargeOverride;
         if (override != null) return override;
-        return SPEC.isLoaded() ? BOT_CHARGE_BI.get() : 4200;
+        return SPEC.isLoaded() ? BOT_CHARGE_BI.get() : 25_200;
     }
 
     public static void overrideClimateChance(Double chance) { climateChanceOverride = chance; }

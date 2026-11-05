@@ -10,11 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class GearRulesTest {
     @Test
     void theApprovedCapacities() {
-        assertEquals(100_000, Piece.HOTBOX_HELM.capacity);
-        assertEquals(400_000, Piece.PUFF_PLATE.capacity);
-        assertEquals(200_000, Piece.COUCHLOCK_GREAVES.capacity);
-        assertEquals(100_000, Piece.MOON_BOOTS.capacity);
-        assertEquals(1_000_000, Piece.BLAZER.capacity);
+        assertEquals(600_000, Piece.HOTBOX_HELM.capacity);
+        assertEquals(2_400_000, Piece.PUFF_PLATE.capacity);
+        assertEquals(1_200_000, Piece.COUCHLOCK_GREAVES.capacity);
+        assertEquals(600_000, Piece.MOON_BOOTS.capacity);
+        assertEquals(6_000_000, Piece.BLAZER.capacity);
     }
 
     @Test
@@ -31,7 +31,7 @@ class GearRulesTest {
         assertEquals(0, GearRules.spend(100, 200));
         assertEquals(50, GearRules.chargeStep(99_950, 100_000, 1000), "never past full");
         assertEquals(0, GearRules.chargeStep(100_000, 100_000, 1000));
-        assertEquals(56.0, GearRules.stationRate(BIRules.Tier.BLAZE), 1e-9);
+        assertEquals(336.0, GearRules.stationRate(BIRules.Tier.BLAZE), 1e-9);
         for (int i = 1; i < BIRules.Tier.values().length; i++)
             assertEquals(2 * GearRules.stationRate(BIRules.Tier.values()[i - 1]), GearRules.stationRate(BIRules.Tier.values()[i]), 1e-9);
     }

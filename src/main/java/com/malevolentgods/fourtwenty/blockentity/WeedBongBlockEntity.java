@@ -303,12 +303,12 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
         tag.putInt("BurnDuration", burnDuration);
         tag.putBoolean("IsLit", isLit);
         tag.putBoolean("ChargePaid", chargePaid);
-        tag.putLong("bi", buffer.stored());
+        tag.putLong("ws", buffer.stored());
         ContainerHelper.saveAllItems(tag, items, registries);
     }
     @Override protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        buffer.set(tag.getLong("bi"));
+        buffer.set(com.malevolentgods.fourtwenty.power.BIBuffer.loadWs(tag, "ws", "bi"));
         items = NonNullList.withSize(3, ItemStack.EMPTY);
         // Loading bypasses insertion validation so old invalid contents remain recoverable.
         ContainerHelper.loadAllItems(tag, items, registries);

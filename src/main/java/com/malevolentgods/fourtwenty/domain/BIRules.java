@@ -6,8 +6,9 @@ import javax.annotation.Nonnull;
 import java.util.Locale;
 
 /**
- * Boundless Inspiration, shown as BI. Everything is sized from a Hookah: one charcoal and one cured bud burn for a minute on every tier, and
- * run four machines of that tier. A battery gives what a Hookah gives. A wire carries two Hookahs' worth; more than that burns it out. A block
+ * Boundless Inspiration (BI), the mod's electricity. Power is in Willards (W), stored energy in Willard-seconds (Ws), and every amount here
+ * is in Ws: a rate per tick times 20 is Willards. Everything is sized from a Hookah, which puts out 420 W: one charcoal and one cured bud
+ * burn for a minute on every tier, and run four machines of that tier. A battery gives what a Hookah gives. A wire carries two Hookahs' worth; more than that burns it out. A block
  * fed from a higher tier than its own never breaks: it overloads and stops until the higher tier is gone.
  */
 public final class BIRules {
@@ -16,7 +17,7 @@ public final class BIRules {
     public static final int BURN_TICKS = 1200, MACHINES_PER_HOOKAH = 4, HOOKAHS_PER_WIRE = 2, TICKS_PER_SECOND = 20;
 
     public enum Tier implements StringRepresentable {
-        PUFF(4_200), TOKE(8_400), RIP(16_800), BLAZE(33_600);
+        PUFF(25_200), TOKE(50_400), RIP(100_800), BLAZE(201_600);
 
         private final int total;
 
@@ -39,6 +40,9 @@ public final class BIRules {
 
         @Override public @Nonnull String getSerializedName() { return name().toLowerCase(Locale.ROOT); }
     }
+
+    /** Willards from Ws per tick. */
+    public static double watts(double wsPerTick) { return wsPerTick * TICKS_PER_SECOND; }
 
     /** Whether power of the source's tier overloads a block of this tier. */
     public static boolean overloads(Tier part, Tier source) {

@@ -233,7 +233,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
         tag.putInt("progress", progress);
         tag.putInt("product", product);
         tag.putBoolean("running", running);
-        tag.putLong("bi", buffer.stored());
+        tag.putLong("ws", buffer.stored());
         if (!legacy.isEmpty()) {
             CompoundTag old = new CompoundTag();
             ContainerHelper.saveAllItems(old, legacy, registries);
@@ -258,7 +258,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
         product = tag.contains("product") ? tag.getInt("product") : NONE;
         if (!valid(product)) product = NONE;
         running = tag.getBoolean("running");
-        buffer.set(tag.getLong("bi"));
+        buffer.set(com.malevolentgods.fourtwenty.power.BIBuffer.loadWs(tag, "ws", "bi"));
         if (tag.contains("legacy")) {
             NonNullList<ItemStack> old = NonNullList.withSize(6, ItemStack.EMPTY);
             ContainerHelper.loadAllItems(tag.getCompound("legacy"), old, registries);

@@ -50,6 +50,21 @@ public final class PowerGameTests {
         machine.node().receive(machine.node().capacity());
     }
 
+    /** A Stash saved before Willards held BI, a sixth of a Ws: it loads six times as much, and saves in Ws from then on. */
+    @GameTest(template = "empty")
+    public static void oldSavesBecomeWillardSeconds(GameTestHelper h) {
+        h.setBlock(A, ModPower.STASH_JAR.get());
+        var stash = (StashBlockEntity) h.getBlockEntity(A);
+        var old = new net.minecraft.nbt.CompoundTag();
+        old.putLong("bi", 1_000);
+        stash.loadWithComponents(old, h.getLevel().registryAccess());
+        h.assertTrue(stash.node().stored() == 6_000, "1,000 BI is 6,000 Ws, got " + stash.node().stored());
+        var saved = stash.saveWithoutMetadata(h.getLevel().registryAccess());
+        stash.loadWithComponents(saved, h.getLevel().registryAccess());
+        h.assertTrue(saved.getLong("ws") == 6_000 && stash.node().stored() == 6_000, "and a save in Ws loads as it is");
+        h.succeed();
+    }
+
     /** It shows whether it can work: on with enough stored on its Wicks, off again when that's gone. */
     @GameTest(template = "empty")
     public static void theInfuserShutsDownWithoutPower(GameTestHelper h) {
@@ -89,12 +104,12 @@ public final class PowerGameTests {
         h.setBlock(B, ModPower.SNIP_STATION.get());
         var machine = (MachineBlockEntity) h.getBlockEntity(B);
         machine.setItem(0, of(ModItems.ROUGH_BUD.get(), 1, Strain.LANDRACE));
-        machine.node().receive(5);          // a few ticks' worth at 0.875 a tick
+        machine.node().receive(30);         // a few ticks' worth at 5.25 a tick
         h.runAfterDelay(30, () -> {
             int held = machine.progress();
             h.assertTrue(held >= 4 && held <= 6, "stopped early, at " + held);
             h.assertTrue(machine.getItem(0).getCount() == 1, "nothing lost");
-            machine.node().receive(40);
+            machine.node().receive(240);
             h.runAfterDelay(25, () -> {
                 h.assertTrue(machine.progress() >= 25, "picked up where it left off, at " + machine.progress());
                 h.succeed();
@@ -228,8 +243,8 @@ public final class PowerGameTests {
         h.setBlock(C, ModPower.STASH_JAR.get());
         var full = (StashBlockEntity) h.getBlockEntity(A);
         var empty = (StashBlockEntity) h.getBlockEntity(C);
-        ((BIBuffer) full.node()).receive(1_000);
-        h.succeedWhen(() -> h.assertTrue(Math.abs(full.node().stored() - empty.node().stored()) <= 8, "settled, " + full.node().stored() + " and " + empty.node().stored()));
+        ((BIBuffer) full.node()).receive(6_000);
+        h.succeedWhen(() -> h.assertTrue(Math.abs(full.node().stored() - empty.node().stored()) <= 48, "settled, " + full.node().stored() + " and " + empty.node().stored()));
     }
 
     @GameTest(template = "empty")

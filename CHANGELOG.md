@@ -11,6 +11,7 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - **Re-Up Station** in four tiers (hang gear on it, or stand on it) and the **Dab Cell**, a handheld battery that tops up what you wear.
 
 ### Changed
+- **Boundless Inspiration is measured in Willards (W)**, stored in Willard-seconds (Ws). A Hookah puts out 420 W, so every number is six times what it was in BI, and everything runs exactly as before. Stored charge in existing worlds converts when it loads. Server owners: delete `fourtwenty-processing-server.toml` so the new defaults apply.
 - A high outlasts a logout and a server restart: machines still run free near you, the strain's aura and screen tint come back, and Golden God's flight returns.
 - **Bud Barn** (with MineColonies): a hut whose **Trim Daddy** turns the colony's rough buds into Cured Buds by hand, trimming at its Trim Trays (seeds at the same odds as a player) and curing on its Curing Racks, so a Dispensary no longer runs dry. Five levels in Sensi Heights, from a timber shed to a full barn with more trays and racks and a faster worker. Its status tab says what it's doing.
 

@@ -44,11 +44,11 @@ public class StashBlockEntity extends BIBlockEntity implements net.minecraft.wor
 
     @Override protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putLong("bi", buffer.stored());
+        tag.putLong("ws", buffer.stored());
     }
 
     @Override protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        buffer.set(tag.getLong("bi"));
+        buffer.set(com.malevolentgods.fourtwenty.power.BIBuffer.loadWs(tag, "ws", "bi"));
     }
 }

@@ -23,7 +23,7 @@ import java.util.List;
  * when something past the other side can use it: otherwise a Stash would empty itself into the box with nowhere for the power to go.
  */
 public class HitBoxBlockEntity extends BIBlockEntity implements MenuProvider {
-    private static final long BUFFER = 4_096;
+    private static final long BUFFER = 24_576;
 
     /** A face of the box: takes power into one bank at that face's tier. */
     private final class Face implements BINode {
@@ -92,13 +92,13 @@ public class HitBoxBlockEntity extends BIBlockEntity implements MenuProvider {
 
     @Override protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putLong("down", down.stored());
-        tag.putLong("up", up.stored());
+        tag.putLong("ws_down", down.stored());
+        tag.putLong("ws_up", up.stored());
     }
 
     @Override protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        down.set(tag.getLong("down"));
-        up.set(tag.getLong("up"));
+        down.set(BIBuffer.loadWs(tag, "ws_down", "down"));
+        up.set(BIBuffer.loadWs(tag, "ws_up", "up"));
     }
 }

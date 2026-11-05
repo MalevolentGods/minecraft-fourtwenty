@@ -8,15 +8,14 @@ This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and 
 
 - **Kush Suit and Blazer:** BI-powered armour and an arm laser whose powers work while you're high, unlocked further by terpenes of each piece's colour family; charged at Re-Up Stations or with a Dab Cell.
 - **Bud Barn** (with MineColonies): its Trim Daddy trims and cures the colony's rough buds by hand at real Trim Trays and Curing Racks, and sends Cured Buds and seeds to the warehouse, so Dispensaries stay stocked.
-- **Construction benches:** the Joint, Blunt, Spliff and Cannon run on BI and make 2, 3, 4 and 6 times as many building and coloured blocks. JEI fills them like a crafting table.
 - **Pave Pen:** lays our roads straight into the ground with weed, upgrades them with the smooth stone or gold you carry, and (as the Pave Pen Pro) lays and reshapes slabs and stairs. Press V for its settings.
-- **Construction benches:** the Joint, Blunt, Spliff and Cannon run on BI and make 2, 3, 4 and 6 times as many building and coloured blocks. Each item costs 8 BI from a bar on the bench, which charges at 70 to 560 BI a second by tier. JEI fills them like a crafting table.
+- **Construction benches:** the Joint, Blunt, Spliff and Cannon run on BI and make 2, 3, 4 and 6 times as many building and coloured blocks. Each item costs 48 Ws from a bar on the bench, which charges at 420 to 3,360 W by tier. JEI fills them like a crafting table.
 - **The Dispensary** now lives only in Sensi Heights, and huts from the old FourTwenty pack carry on from there.
 
 ## What's new in 0.15.0
 
 - **Weed processing:** harvest Rough Buds, trim them for Trimmed Buds and seeds, cure them into smokeable Cured Buds. A Trim Tray and Curing Rack need no power; six powered machines do it faster and take hoppers.
-- **Boundless Inspiration:** a burning Hookah makes BI, with the Double Hose and Big Bertha as its upgrades, Stash blocks hold it, Wicks carry it, and the Hit Box steps it between tiers. One charcoal and one cured bud burn for a minute and run four machines of that tier, or machines run free while a high player is within 21 blocks.
+- **Boundless Inspiration:** the mod's electricity, measured in Willards (W) and stored in Willard-seconds (Ws). A burning Hookah puts out 420 W, with the Double Hose and Big Bertha as its upgrades, Stash blocks hold it, Wicks carry it, and the Hit Box steps it between tiers. One charcoal and one cured bud burn for a minute and run four machines of that tier, or machines run free while a high player is within 21 blocks.
 
 ## Grow Ops and the Think Tank
 

@@ -10,8 +10,8 @@ public final class PaveRules {
 
     public static final int TIERS = 3;
     public static final int ROADS_PER_MATERIAL = 8;
-    /** BI a bud gives the pen: rough, trimmed, cured. */
-    public static final int ROUGH = 400, TRIMMED = 600, CURED = 800;
+    /** Ws a bud gives the pen: rough, trimmed, cured. */
+    public static final int ROUGH = 2_400, TRIMMED = 3_600, CURED = 4_800;
 
     public enum Shape {
         FULL, SLAB, STAIRS;
@@ -24,7 +24,7 @@ public final class PaveRules {
     /** The tunable numbers; the config builds these. */
     public record Numbers(int capacity, double layBase, double layPerHardness, double ticksBase, double ticksPerHardness, double maxHardness,
                           int upgradeCost, int upgradeTicks, int reshapeCost, int reshapeTicks) {
-        public static final Numbers DEFAULT = new Numbers(3200, 20, 20, 4, 10, 5, 20, 8, 10, 6);
+        public static final Numbers DEFAULT = new Numbers(19_200, 120, 120, 4, 10, 5, 120, 8, 60, 6);
     }
 
     /** The shape the pen makes: a Pro makes the chosen one; a plain pen keeps a road's own shape and lays whole blocks. */

@@ -10,8 +10,8 @@ public final class GearRules {
     private GearRules() {}
 
     public enum Piece {
-        HOTBOX_HELM(100_000, Family.YELLOWS, 3), PUFF_PLATE(400_000, Family.GREENS, 3), COUCHLOCK_GREAVES(200_000, Family.PURPLES, 3),
-        MOON_BOOTS(100_000, Family.BLUES, 3), BLAZER(1_000_000, Family.REDS, 4), DAB_CELL(400_000, null, 0);
+        HOTBOX_HELM(600_000, Family.YELLOWS, 3), PUFF_PLATE(2_400_000, Family.GREENS, 3), COUCHLOCK_GREAVES(1_200_000, Family.PURPLES, 3),
+        MOON_BOOTS(600_000, Family.BLUES, 3), BLAZER(6_000_000, Family.REDS, 4), DAB_CELL(2_400_000, null, 0);
 
         public final int capacity, slots;
         public final Family family;

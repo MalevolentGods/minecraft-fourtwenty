@@ -36,7 +36,7 @@ class ConstructionRulesTest {
     void lowerBenchesChargeSlower() {
         BIRules.Tier[] tiers = BIRules.Tier.values();
         for (int i = 1; i < tiers.length; i++) assertTrue(ConstructionRules.chargeRate(tiers[i - 1]) < ConstructionRules.chargeRate(tiers[i]), tiers[i].name());
-        assertEquals(70, ConstructionRules.chargeRate(BIRules.Tier.PUFF) * BIRules.TICKS_PER_SECOND, 1e-9);
+        assertEquals(420, ConstructionRules.chargeRate(BIRules.Tier.PUFF) * BIRules.TICKS_PER_SECOND, 1e-9);
         for (BIRules.Tier t : tiers) assertTrue(ConstructionRules.intake(t) >= ConstructionRules.chargeRate(t), t.name());
     }
 }

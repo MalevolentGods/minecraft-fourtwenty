@@ -87,13 +87,13 @@ public class ReUpStationBlockEntity extends BIBlockEntity {
 
     @Override protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putLong("bi", intake.stored());
+        tag.putLong("ws", intake.stored());
         if (!hung.isEmpty()) tag.put("hung", hung.save(registries));
     }
 
     @Override protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        intake.set(tag.getLong("bi"));
+        intake.set(com.malevolentgods.fourtwenty.power.BIBuffer.loadWs(tag, "ws", "bi"));
         hung = tag.contains("hung") ? ItemStack.parseOptional(registries, tag.getCompound("hung")) : ItemStack.EMPTY;
     }
 }

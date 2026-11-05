@@ -111,13 +111,13 @@ public class ConstructionBlockEntity extends BIBlockEntity implements MenuProvid
 
     @Override protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putLong("bi", reserve.stored());
-        tag.putLong("intake", intake.stored());
+        tag.putLong("ws", reserve.stored());
+        tag.putLong("ws_intake", intake.stored());
     }
 
     @Override protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        reserve.set(tag.getLong("bi"));
-        intake.set(tag.getLong("intake"));
+        reserve.set(BIBuffer.loadWs(tag, "ws", "bi"));
+        intake.set(BIBuffer.loadWs(tag, "ws_intake", "intake"));
     }
 }

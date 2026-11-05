@@ -1,32 +1,32 @@
 {
-  "_comment": "Kush Suit and Blazer abilities: which terpene colour unlocks which ability on which piece, and its BI cost (per tick while running, or per use). Colours must be in the piece's hue family (domain/HueFamilies). Add a line to give a colour a power; new ability ids need a handler in gear/GearPowers or gear/BlazerModes.",
+  "_comment": "Kush Suit and Blazer abilities: which terpene colour unlocks which ability on which piece, and its cost in Ws (per tick while running, or per use). Colours must be in the piece's hue family (domain/HueFamilies). Add a line to give a colour a power; new ability ids need a handler in gear/GearPowers or gear/BlazerModes.",
   "abilities": [
     {
       "piece": "hotbox_helm",
       "colour": "lim_lim_lim",
       "ability": "ore_sense",
-      "cost": 4,
+      "cost": 24,
       "per": "tick"
     },
     {
       "piece": "hotbox_helm",
       "colour": "lim_lim_pin",
       "ability": "mob_sense",
-      "cost": 4,
+      "cost": 24,
       "per": "tick"
     },
     {
       "piece": "hotbox_helm",
       "colour": "mc_yellow",
       "ability": "zoom",
-      "cost": 2,
+      "cost": 12,
       "per": "tick"
     },
     {
       "piece": "puff_plate",
       "colour": "pin_pin_lim",
       "ability": "hover",
-      "cost": 20,
+      "cost": 120,
       "per": "tick"
     },
     {
@@ -40,77 +40,77 @@
       "piece": "puff_plate",
       "colour": "pin_lim_lim",
       "ability": "fast_flight",
-      "cost": 40,
+      "cost": 240,
       "per": "tick"
     },
     {
       "piece": "couchlock_greaves",
       "colour": "lav_myr_pin",
       "ability": "big_stomp",
-      "cost": 1000,
+      "cost": 6000,
       "per": "use"
     },
     {
       "piece": "couchlock_greaves",
       "colour": "lav_lim_lav",
       "ability": "resistance",
-      "cost": 3,
+      "cost": 18,
       "per": "tick"
     },
     {
       "piece": "couchlock_greaves",
       "colour": "mc_purple",
       "ability": "slow_fall",
-      "cost": 2,
+      "cost": 12,
       "per": "tick"
     },
     {
       "piece": "moon_boots",
       "colour": "lav_lav_lim",
       "ability": "higher_jump",
-      "cost": 100,
+      "cost": 600,
       "per": "use"
     },
     {
       "piece": "moon_boots",
       "colour": "pin_lav_lav",
       "ability": "water_walk",
-      "cost": 5,
+      "cost": 30,
       "per": "tick"
     },
     {
       "piece": "moon_boots",
       "colour": "lav_pin_lim",
       "ability": "speed",
-      "cost": 3,
+      "cost": 18,
       "per": "tick"
     },
     {
       "piece": "blazer",
       "colour": "lim_pin_pin",
       "ability": "bore_toke",
-      "cost": 300,
+      "cost": 1800,
       "per": "use"
     },
     {
       "piece": "blazer",
       "colour": "lim_lav_lav",
       "ability": "timber_torch",
-      "cost": 100,
+      "cost": 600,
       "per": "use"
     },
     {
       "piece": "blazer",
       "colour": "mc_orange",
       "ability": "paint_puff",
-      "cost": 50,
+      "cost": 300,
       "per": "use"
     },
     {
       "piece": "blazer",
       "colour": "mc_red",
       "ability": "beam_power",
-      "cost": 250,
+      "cost": 1500,
       "per": "use"
     }
   ]

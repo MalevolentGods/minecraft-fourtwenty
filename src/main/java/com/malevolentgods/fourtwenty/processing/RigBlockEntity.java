@@ -196,7 +196,7 @@ public class RigBlockEntity extends BIBlockEntity implements WorldlyContainer, M
         super.saveAdditional(tag, registries);
         ContainerHelper.saveAllItems(tag, items, registries);
         tag.putInt("progress", progress);
-        tag.putLong("bi", buffer.stored());
+        tag.putLong("ws", buffer.stored());
     }
 
     @Override protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
@@ -204,6 +204,6 @@ public class RigBlockEntity extends BIBlockEntity implements WorldlyContainer, M
         items.clear();
         ContainerHelper.loadAllItems(tag, items, registries);
         progress = tag.getInt("progress");
-        buffer.set(tag.getLong("bi"));
+        buffer.set(com.malevolentgods.fourtwenty.power.BIBuffer.loadWs(tag, "ws", "bi"));
     }
 }
