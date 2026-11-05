@@ -18,7 +18,11 @@ import javax.annotation.Nonnull;
 import static com.malevolentgods.fourtwenty.processing.ThinkTankBlockEntity.*;
 
 /** The Think Tank: the study grid on the left, its inputs on the right. Button 0 collects a finished study; 1 + n picks study n. */
-public class ThinkTankMenu extends AbstractContainerMenu {
+public class ThinkTankMenu extends AbstractContainerMenu implements com.malevolentgods.fourtwenty.power.PowerMeter.Shown {
+    private final net.minecraft.world.inventory.ContainerData meter;
+
+    @Override public net.minecraft.world.inventory.ContainerData meter() { return meter; }
+
     public static final int X_IN = 98, Y_IN = 20, BUTTON_COLLECT = 0, BUTTON_PICK = 1;
 
     private final Container container;
@@ -40,6 +44,8 @@ public class ThinkTankMenu extends AbstractContainerMenu {
         }
         for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col, 8 + col * 18, 142));
         addDataSlots(data);
+        meter = com.malevolentgods.fourtwenty.power.PowerMeter.of(container);
+        addDataSlots(meter);
     }
 
     public ThinkTankMenu(int id, Inventory inventory) {

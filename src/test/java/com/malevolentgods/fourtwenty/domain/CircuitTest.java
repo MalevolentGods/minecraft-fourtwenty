@@ -238,4 +238,54 @@ class CircuitTest {
         var s = c.solve();
         assertEquals(4.2 / 1.06, s.conductorAmps()[r], 1e-6);
     }
+
+    @Test
+    void aBigMeshSolvesQuickly() {
+        // the worst case for a base: a 30 x 30 mesh of Puff Wicks (900 nodes, nothing to collapse), four Hookahs, 100 machines
+        var rules = CircuitRules.Numbers.DEFAULT;
+        double wick = rules.wickOhms(BIRules.Tier.PUFF);
+        long best = Long.MAX_VALUE;
+        Circuit.Solution s = null;
+        for (int round = 0; round < 3; round++) {
+            var c = new Circuit();
+            int[][] n = new int[30][30];
+            for (int x = 0; x < 30; x++) for (int y = 0; y < 30; y++) n[x][y] = c.node();
+            for (int x = 0; x < 30; x++) for (int y = 0; y < 30; y++) {
+                if (x + 1 < 30) c.conductor(n[x][y], n[x + 1][y], wick);
+                if (y + 1 < 30) c.conductor(n[x][y], n[x][y + 1], wick);
+            }
+            for (int[] at : new int[][]{{0, 0}, {29, 0}, {0, 29}, {29, 29}}) c.source(n[at[0]][at[1]], 4.2, rules.sourceOhms(BIRules.Tier.PUFF), rules.sourceAmps(BIRules.Tier.PUFF), 0);
+            for (int i = 0; i < 100; i++) c.load(n[(i * 7) % 30][(i * 13) % 30], 16, 2.1);
+            long start = System.nanoTime();
+            s = c.solve();
+            best = Math.min(best, System.nanoTime() - start);
+        }
+        assertTrue(s.converged() && s.share() == 1, "four Hookahs carry 1,600 W");
+        System.out.println("900-node mesh, 100 loads: " + best / 1_000_000.0 + " ms");
+        assertTrue(best < 250_000_000L, "solved in " + best / 1_000_000.0 + " ms");
+    }
+
+    @Test
+    void aLongLineWithMachinesSolvesFast() {
+        // SC-004: 1,000 Wicks and 100 devices, uncollapsed: a line with a machine every ten blocks and Hookahs at both ends
+        var rules = CircuitRules.Numbers.DEFAULT;
+        long best = Long.MAX_VALUE;
+        for (int round = 0; round < 5; round++) {
+            var c = new Circuit();
+            int prev = c.node(), first = prev;
+            for (int i = 1; i < 1000; i++) {
+                int next = c.node();
+                c.conductor(prev, next, rules.wickOhms(BIRules.Tier.PUFF));
+                if (i % 10 == 0) c.load(next, 8, 2.1);
+                prev = next;
+            }
+            for (int end : new int[]{first, prev}) c.source(end, 4.2, rules.sourceOhms(BIRules.Tier.PUFF), rules.sourceAmps(BIRules.Tier.PUFF), 0);
+            long start = System.nanoTime();
+            var s = c.solve();
+            best = Math.min(best, System.nanoTime() - start);
+            assertTrue(s.converged() && s.share() == 1);
+        }
+        System.out.println("1,000-Wick line, 100 loads: " + best / 1_000_000.0 + " ms");
+        assertTrue(best < 20_000_000L, "solved in " + best / 1_000_000.0 + " ms");
+    }
 }

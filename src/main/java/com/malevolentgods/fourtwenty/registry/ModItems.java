@@ -80,6 +80,10 @@ public class ModItems {
     public static final DeferredHolder<Item, com.malevolentgods.fourtwenty.paving.PavePenItem> PAVE_PEN_PRO =
         ITEMS.register("pave_pen_pro", () -> new com.malevolentgods.fourtwenty.paving.PavePenItem(true, new Item.Properties()));
 
+    /** Reads the Kerberos, Ignus, Phus and Willards at a BI block or Wick. */
+    public static final DeferredHolder<Item, com.malevolentgods.fourtwenty.power.InspoweedometerItem> INSPOWEEDOMETER =
+        ITEMS.register("inspoweedometer", () -> new com.malevolentgods.fourtwenty.power.InspoweedometerItem(new Item.Properties()));
+
     public static final DeferredHolder<Item, WeedCookieItem> WEED_COOKIE =
         ITEMS.register("weed_cookie", () ->
             new WeedCookieItem(new Item.Properties().stacksTo(16))); // Standard stack size for food

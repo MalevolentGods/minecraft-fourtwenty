@@ -18,7 +18,7 @@ import java.util.List;
 public final class Circuit {
     /** Past a current limit a source still gives a little with the voltage, at its internal conductance over STIFF, so a node never floats. */
     private static final double GMIN = 1e-12, TOLERANCE = 1e-9, STEP = 0.25, STIFF = 1e5;
-    private static final int ITERATIONS = 60, DENSE_LIMIT = 400;
+    private static final int ITERATIONS = 60;
     private static final double MIN_STEP = 1.0 / 4096;
     private static final int CV = 0, CC_OUT = 1, CC_IN = 2;
 
@@ -69,6 +69,9 @@ public final class Circuit {
         double[] v = new double[nodes];
         Arrays.fill(v, scale);
         int[] mode = new int[sources.size()];
+        double[] direct = v.clone();
+        int[] directMode = mode.clone();
+        if (newton(1, direct, directMode, scale) && new Attempt(1, direct, directMode, true).healthy()) return new Attempt(1, direct, directMode, true).solution();
         if (!newton(0, v, mode, scale)) return new Attempt(0, v, mode, false).solution();
         // continuation: raise the loads from nothing, each step starting from the last answer, so Newton follows the high-voltage
         // branch; the furthest it gets with every load above its minimum is the brownout share
@@ -162,34 +165,32 @@ public final class Circuit {
 
     /** Newton steps at this load share from {@code v}, in place; true when it settles. */
     private boolean newton(double share, double[] v, int[] mode, double scale) {
-        boolean dense = nodes <= DENSE_LIMIT;
         for (int iteration = 0; iteration < ITERATIONS; iteration++) {
             for (int i = 0; i < mode.length; i++) mode[i] = modeAt(sources.get(i), v[sources.get(i).node()]);
-            double[][] g = dense ? new double[nodes][nodes] : null;
-            Sparse sparse = dense ? null : new Sparse(nodes);
+            Sparse sparse = new Sparse(nodes);
             double[] b = new double[nodes];
-            for (int i = 0; i < nodes; i++) add(g, sparse, i, i, GMIN);
+            for (int i = 0; i < nodes; i++) add(sparse, i, i, GMIN);
             for (Conductor c : conductors) {
                 double y = 1 / c.ohms();
-                add(g, sparse, c.a(), c.a(), y);
-                add(g, sparse, c.b(), c.b(), y);
-                add(g, sparse, c.a(), c.b(), -y);
-                add(g, sparse, c.b(), c.a(), -y);
+                add(sparse, c.a(), c.a(), y);
+                add(sparse, c.b(), c.b(), y);
+                add(sparse, c.a(), c.b(), -y);
+                add(sparse, c.b(), c.a(), -y);
             }
             for (int i = 0; i < mode.length; i++) {
                 Source s = sources.get(i);
                 double soft = 1 / (s.ohms() * STIFF);
                 switch (mode[i]) {
                     case CC_OUT -> {
-                        add(g, sparse, s.node(), s.node(), soft);
+                        add(sparse, s.node(), s.node(), soft);
                         b[s.node()] += s.maxOut() + soft * outEdge(s);
                     }
                     case CC_IN -> {
-                        add(g, sparse, s.node(), s.node(), soft);
+                        add(sparse, s.node(), s.node(), soft);
                         b[s.node()] += -s.maxIn() + soft * inEdge(s);
                     }
                     default -> {
-                        add(g, sparse, s.node(), s.node(), 1 / s.ohms());
+                        add(sparse, s.node(), s.node(), 1 / s.ohms());
                         b[s.node()] += s.emf() / s.ohms();
                     }
                 }
@@ -200,9 +201,9 @@ public final class Circuit {
                 // the load is the resistance it had at the last voltage (V² / P), never below its minimum: a relaxation that always moves
                 // the line the way a real one settles, where Newton's method would follow a constant-power load's negative slope
                 double volts = Math.max(v[l.node()], l.minVolts());
-                add(g, sparse, l.node(), l.node(), p / (volts * volts));
+                add(sparse, l.node(), l.node(), p / (volts * volts));
             }
-            double[] x = dense ? gauss(g, b) : sparse.conjugateGradient(b, v);
+            double[] x = sparse.solve(b);
             if (x == null) return false;
             // step toward x, but stop just past the first current limit any source crosses: its mode changes there (breakpoint stepping)
             double alpha = 1;
@@ -227,41 +228,15 @@ public final class Circuit {
         return false;
     }
 
-    private static void add(double[][] g, Sparse sparse, int r, int c, double value) {
+    private static void add(Sparse sparse, int r, int c, double value) {
         if (r == GROUND || c == GROUND) return;
-        if (g != null) g[r][c] += value;
-        else sparse.add(r, c, value);
+        sparse.add(r, c, value);
     }
 
-    /** Gaussian elimination with partial pivoting; null if the matrix is singular. */
-    static double[] gauss(double[][] a, double[] b) {
-        int n = b.length;
-        double[][] m = new double[n][];
-        for (int i = 0; i < n; i++) m[i] = a[i].clone();
-        double[] y = b.clone();
-        for (int col = 0; col < n; col++) {
-            int pivot = col;
-            for (int r = col + 1; r < n; r++) if (Math.abs(m[r][col]) > Math.abs(m[pivot][col])) pivot = r;
-            if (Math.abs(m[pivot][col]) < 1e-300) return null;
-            double[] row = m[col]; m[col] = m[pivot]; m[pivot] = row;
-            double t = y[col]; y[col] = y[pivot]; y[pivot] = t;
-            for (int r = col + 1; r < n; r++) {
-                double f = m[r][col] / m[col][col];
-                if (f == 0) continue;
-                for (int k = col; k < n; k++) m[r][k] -= f * m[col][k];
-                y[r] -= f * y[col];
-            }
-        }
-        double[] x = new double[n];
-        for (int r = n - 1; r >= 0; r--) {
-            double sum = y[r];
-            for (int k = r + 1; k < n; k++) sum -= m[r][k] * x[k];
-            x[r] = sum / m[r][r];
-        }
-        return x;
-    }
-
-    /** A symmetric sparse matrix for big networks, solved by Jacobi-preconditioned conjugate gradients. */
+    /**
+     * The conductance matrix, symmetric and positive definite (every part is a positive conductance), solved directly by elimination,
+     * fewest neighbours first: Wick networks are mostly trees, which this solves in linear time, with little fill-in on meshes.
+     */
     private static final class Sparse {
         final List<java.util.Map<Integer, Double>> rows = new ArrayList<>();
 
@@ -271,51 +246,48 @@ public final class Circuit {
 
         void add(int r, int c, double value) { rows.get(r).merge(c, value, Double::sum); }
 
-        double[] times(double[] x) {
-            double[] out = new double[x.length];
-            for (int r = 0; r < x.length; r++) {
-                double sum = 0;
-                for (var e : rows.get(r).entrySet()) sum += e.getValue() * x[e.getKey()];
-                out[r] = sum;
-            }
-            return out;
-        }
-
-        double[] conjugateGradient(double[] b, double[] start) {
-            int n = b.length;
-            double[] x = start.clone(), diag = new double[n];
-            for (int i = 0; i < n; i++) diag[i] = rows.get(i).getOrDefault(i, 1.0);
-            double[] ax = times(x), r = new double[n], z = new double[n], p = new double[n];
-            double bNorm = 0;
-            for (int i = 0; i < n; i++) {
-                r[i] = b[i] - ax[i];
-                z[i] = r[i] / diag[i];
-                p[i] = z[i];
-                bNorm = Math.max(bNorm, Math.abs(b[i]));
-            }
-            double rz = dot(r, z);
-            for (int it = 0; it < 20 * n && rz != 0; it++) {
-                double[] ap = times(p);
-                double alpha = rz / dot(p, ap);
-                double worst = 0;
-                for (int i = 0; i < n; i++) {
-                    x[i] += alpha * p[i];
-                    r[i] -= alpha * ap[i];
-                    worst = Math.max(worst, Math.abs(r[i]));
+        /** null if a pivot vanishes. */
+        double[] solve(double[] rhs) {
+            int n = rhs.length;
+            double[] b = rhs.clone();
+            boolean[] done = new boolean[n];
+            int[] order = new int[n];
+            double[] pivots = new double[n];
+            List<java.util.Map<Integer, Double>> snapshots = new ArrayList<>(java.util.Collections.nCopies(n, null));
+            java.util.PriorityQueue<long[]> queue = new java.util.PriorityQueue<>((p, q) -> Long.compare(p[0], q[0]));
+            for (int i = 0; i < n; i++) queue.add(new long[]{rows.get(i).size(), i});
+            int step = 0;
+            while (!queue.isEmpty()) {
+                long[] top = queue.poll();
+                int k = (int) top[1];
+                if (done[k] || top[0] != rows.get(k).size()) continue;
+                var row = rows.get(k);
+                double pivot = row.getOrDefault(k, 0.0);
+                if (Math.abs(pivot) < 1e-300) return null;
+                done[k] = true;
+                order[step++] = k;
+                pivots[k] = pivot;
+                var others = new java.util.HashMap<>(row);
+                others.remove(k);
+                snapshots.set(k, others);
+                for (var ej : others.entrySet()) {
+                    int j = ej.getKey();
+                    var rowJ = rows.get(j);
+                    double f = ej.getValue() / pivot;
+                    b[j] -= f * b[k];
+                    for (var ei : others.entrySet()) rowJ.merge(ei.getKey(), -f * ei.getValue(), Double::sum);
+                    rowJ.remove(k);
+                    queue.add(new long[]{rowJ.size(), j});
                 }
-                if (worst <= 1e-13 * Math.max(bNorm, 1)) break;
-                for (int i = 0; i < n; i++) z[i] = r[i] / diag[i];
-                double next = dot(r, z);
-                for (int i = 0; i < n; i++) p[i] = z[i] + next / rz * p[i];
-                rz = next;
+            }
+            double[] x = new double[n];
+            for (int s = step - 1; s >= 0; s--) {
+                int k = order[s];
+                double sum = b[k];
+                for (var e : snapshots.get(k).entrySet()) sum -= e.getValue() * x[e.getKey()];
+                x[k] = sum / pivots[k];
             }
             return x;
-        }
-
-        private static double dot(double[] a, double[] b) {
-            double s = 0;
-            for (int i = 0; i < a.length; i++) s += a[i] * b[i];
-            return s;
         }
     }
 }

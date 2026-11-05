@@ -12,7 +12,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /** The gauge screen of a Stash or Hit Box: no slots. Button 0 switches a Hit Box's tier. */
-public class BIMenu extends AbstractContainerMenu {
+public class BIMenu extends AbstractContainerMenu implements com.malevolentgods.fourtwenty.power.PowerMeter.Shown {
+    private final net.minecraft.world.inventory.ContainerData meter;
+
+    @Override public net.minecraft.world.inventory.ContainerData meter() { return meter; }
+
     public static final int BUTTON_TOGGLE = 0;
     private final BlockEntity entity;
     private final ContainerData data;
@@ -23,6 +27,8 @@ public class BIMenu extends AbstractContainerMenu {
         this.entity = entity;
         this.data = data;
         addDataSlots(data);
+        meter = com.malevolentgods.fourtwenty.power.PowerMeter.of(entity);
+        addDataSlots(meter);
     }
 
     public BIMenu(int id) {

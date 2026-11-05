@@ -15,7 +15,7 @@ This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and 
 ## What's new in 0.15.0
 
 - **Weed processing:** harvest Rough Buds, trim them for Trimmed Buds and seeds, cure them into smokeable Cured Buds. A Trim Tray and Curing Rack need no power; six powered machines do it faster and take hoppers.
-- **Boundless Inspiration:** the mod's electricity, measured in Willards (W) and stored in Willard-seconds (Ws). A burning Hookah puts out 420 W, with the Double Hose and Big Bertha as its upgrades, Stash blocks hold it, Wicks carry it, and the Hit Box steps it between tiers. One charcoal and one cured bud burn for a minute and run four machines of that tier, or machines run free while a high player is within 21 blocks.
+- **Boundless Inspiration:** the mod's electricity, the science of Inspoweednetics. Power is in Willards (W), energy in Willard-seconds (Ws), current in Ignus (Ig), voltage in Kerberos (Kb) and resistance in Phus (Φ), and every Wick network is solved as a real DC circuit. The Inspoweedometer reads it all. A burning Hookah puts out 420 W, with the Double Hose and Big Bertha as its upgrades, Stash blocks hold it, Wicks carry it, and the Hit Box steps it between tiers. One charcoal and one cured bud burn for a minute and run four machines of that tier, or machines run free while a high player is within 21 blocks.
 
 ## Grow Ops and the Think Tank
 

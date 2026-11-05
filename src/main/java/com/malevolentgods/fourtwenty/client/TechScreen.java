@@ -87,7 +87,9 @@ public abstract class TechScreen<T extends AbstractContainerMenu> extends Abstra
 
     /** The popup for an BI gauge at this spot. */
     protected void gaugeTip(GuiGraphics g, int mouseX, int mouseY, int x, int y, int stored, int capacity, Component what) {
-        hover(g, mouseX, mouseY, x, y, GAUGE_W, GAUGE_H, Component.translatable("gui.fourtwenty.gauge", String.format("%,d", stored), String.format("%,d", capacity), what));
+        Component text = Component.translatable("gui.fourtwenty.gauge", String.format("%,d", stored), String.format("%,d", capacity), what);
+        if (menu instanceof com.malevolentgods.fourtwenty.power.PowerMeter.Shown shown) text = text.copy().append(" ").append(com.malevolentgods.fourtwenty.power.PowerMeter.line(shown.meter()));
+        hover(g, mouseX, mouseY, x, y, GAUGE_W, GAUGE_H, text);
     }
 
     protected void arrowTip(GuiGraphics g, int mouseX, int mouseY, int x, int y, Component text) {
