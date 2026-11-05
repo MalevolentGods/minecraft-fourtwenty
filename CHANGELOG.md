@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.20.1] - Cool Wicks
 
 ### Fixed
 - **Re-Up Stations no longer burn the Wick they sit on.** They drew two Hookahs' worth, right at a Wick's rating, so a line a little under its voltage went over it. They now charge at one and a half Hookahs (630 W on Puff, up to 5,040 W on Blaze), so gear charges about a quarter slower.
