@@ -115,13 +115,13 @@ A player connects a Toke source to a Puff machine. The machine sees ten times it
 - **FR-001**: Every Wick network MUST be solved as a DC circuit that satisfies Kirchhoff's current and voltage laws, with I = V/R at every resistive part.
 - **FR-002**: Each tier MUST have a rated voltage: Puff 4.2 Kb, Toke 42 Kb, Rip 420 Kb, Blaze 4,200 Kb.
 - **FR-003**: A Hookah (Single, Double Hose, Big Bertha, Grand Hookah) MUST act as a voltage source with a small internal resistance. Feeding the loads it is sized for (four machines of its tier), it MUST deliver its rated power, 420 W at Puff, within 2%.
-- **FR-004**: Machines, Grow Op plots, Construction benches, the Think Tank, the Rosin Rig, Pheno Chambers, Re-Up Stations, the Terpinator and the Inspiration Infuser MUST act as resistive loads sized from today's draw (R = V² / P at their rated voltage).
-- **FR-005**: A load MUST run at full speed when it receives at least 98% of its rated power. Below that, it MUST run in proportion to the power it gets. Above its rated power it MUST NOT run faster.
+- **FR-004**: Machines, Grow Op plots, Construction benches, the Think Tank, the Rosin Rig, Pheno Chambers, Re-Up Stations and the Terpinator MUST act as constant-power loads, the way real regulated supplies do. Each draws its rated power, today's draw, at any voltage up to its overload limit, so its current is I = P / V and its resistance at that moment is R = V² / P. The Inspiration Infuser keeps its one-off cost.
+- **FR-005**: A load on a line that can supply it MUST run at full speed. When every source on a line is at its limit, all loads on it MUST slow by the same fraction (brownout). No load runs faster than its rated power allows.
 - **FR-006**: A Stash MUST act as a battery: a voltage that rises with its charge, and an internal resistance. It charges when the line is above its voltage and discharges when below, at no more than today's rate for its tier.
 - **FR-007**: Each Wick block MUST have a resistance, set per tier, such that a 100-block line carrying its rated current loses 2% to 5% of the power it carries.
 - **FR-008**: The Hit Box MUST step voltage between adjacent tiers by a factor of 10 in either direction, conserving power apart from a small loss of no more than 2%.
 - **FR-009**: A block MUST overload (smoke, stop, keep its contents and progress, never break) when it sees a voltage above its tier's rated voltage by more than a set margin. It recovers when the voltage falls back.
-- **FR-010**: A Wick MUST burn out (smoke and ash, nothing explodes) when the current through it stays above its rating for one second. The rating is twice its tier's Hookah current: Puff 200 Ig, Toke 40 Ig, Rip 8 Ig, Blaze 1.6 Ig.
+- **FR-010**: A Wick MUST burn out (smoke and ash, nothing explodes) when, for one second, the current through it stays above its current rating, or the voltage on it stays above its insulation rating. Its current rating is twice its tier's Hookah current: Puff 200 Ig, Toke 40 Ig, Rip 8 Ig, Blaze 1.6 Ig. Its insulation rating is 1.5 × its tier's voltage. These are real cable ratings, the user's choice on 2026-11-04.
 - **FR-011**: A load with a high player within 21 blocks MUST run free and draw no current.
 - **FR-012**: Players MUST be able to read the voltage, current, resistance and power at any BI block or Wick with a hand-held meter item, the **Inspoweedometer** (name approved 2026-11-04).
 - **FR-013**: The screens of BI blocks MUST show the voltage and current at the block alongside their charge.
@@ -135,7 +135,7 @@ A player connects a Toke source to a Puff machine. The machine sees ten times it
 
 - **Network:** a connected set of Wicks and the BI blocks plugged into them, at one tier. It has a solved state: the voltage at every node and the current through every part.
 - **Source:** a Hookah, or a Stash while it is discharging. Has a voltage and an internal resistance.
-- **Load:** a machine, plot, bench or station. Has a resistance derived from its rated power and voltage; while running free, it is open.
+- **Load:** a machine, plot, bench or station. Draws a constant power while its buffer has room. Its resistance at any moment is V² / P; with a full buffer, it draws nothing.
 - **Battery:** a Stash. Has a stored energy in Ws, a voltage that follows it, and an internal resistance.
 - **Conductor:** a Wick block. Has a resistance and a current rating.
 - **Transformer:** a Hit Box. Joins two networks of adjacent tiers at a 10:1 voltage ratio.
@@ -150,11 +150,12 @@ A player connects a Toke source to a Puff machine. The machine sees ten times it
 - **SC-003**: Meter readings agree with a hand calculation of the same circuit to three significant figures.
 - **SC-004**: A network of 1,000 Wicks and 100 devices adds no visible server lag: the server keeps 20 ticks a second.
 - **SC-005**: Every existing power game test passes unchanged, apart from tests that name the old flow rules directly. Those tests get circuit equivalents.
-- **SC-006**: Loading a world saved by the previous version produces no overload, burnout or lost charge.
+- **SC-006**: Loading a world saved by the previous version produces no overload and no lost charge. Wicks burn only where the new cable ratings say they should, which the changelog explains.
 
 ## Assumptions
 
-- **Even slowdown:** over-subscribing a Hookah, with more than four machines of its tier, slows all of them evenly, as real voltage sag would. Today some machines may run while others wait; the circuit's even sharing replaces that.
+- **Even slowdown:** over-subscribing a Hookah, with more than four machines of its tier, slows all of them by the same fraction, as smart loads do in a brownout. Today some machines may run while others wait.
+- **Mixed Wick tiers:** a lower-tier Wick on a higher-voltage line now burns (insulation), and so does a higher-tier Wick carrying a lower tier's large current. Builds that mix Wick tiers may need changing.
 - **Hookah lighting:** Hookahs keep their current rule of lighting only when something on their Wicks needs power. "Needs power" now means the line voltage would sag below its rated value without them, or a Stash on the line has room.
 - **Tiers stay apart:** a network is one tier. The Hit Box is the only way between tiers, as now, and a direct join of two tiers is what causes an overload.
 - **One-off costs:** the Infuser's per-catch cost and the Buzz Bot's recharge keep taking stored Ws directly from Stashes on the network, rather than running as loads.
