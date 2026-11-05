@@ -9,7 +9,7 @@ The tunable numbers, as defaults (overridden from `ProcessingConfig`):
 - `volts(Tier)`: 4.2, 42, 420, 4,200 Kb.
 - `hookahWatts(Tier)`: 420, 840, 1,680, 3,360 W (from `BIRules.Tier.rate()`).
 - `baseAmps(Tier) = W / V`, `baseOhms(Tier) = V² / W`.
-- **Sources:** `sourceDroop` 0.005 pu, `sourceLimit` 1.0 pu.
+- **Sources:** `sourceDroop` 0.005 pu, `sourceLimit` 1.05 pu.
 - **Stashes:** `stashEmfLow` 0.96, `stashEmfHigh` 0.99, `stashResistance` 0.01 pu, `stashLimit` 1.0 pu.
 - **Loads:** `loadMinVolts` 0.5 pu, `loadHysteresis` 0.10.
 - **Wicks:** `wickOhmsPerBlock` 1.5e-4 pu, `wickAmpRating` 2.0 pu, `wickVoltRating` 1.5 pu, `burnTicks` 20.

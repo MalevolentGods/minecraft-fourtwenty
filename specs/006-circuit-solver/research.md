@@ -28,7 +28,7 @@ The spec's FR-004 and FR-005 are updated to match.
 
 ## R2. Sources: Hookahs and the Hit Box output
 
-**Decision:** a regulated source with a current limit (CV/CC, like a bench supply). It is an EMF `E = 1.00 pu` behind an internal resistance `r = 0.005 pu` (droop, so parallel sources share). Its output current is capped at `1.0 pu`, the rated current, where it becomes a current source. It never absorbs current. A Hookah is a source while it holds Ws, so it keeps today's buffer: one burn makes 25,200 Ws, and lighting stays "only when something on the line wants power".
+**Decision:** a regulated source with a current limit (CV/CC, like a bench supply). It is an EMF `E = 1.00 pu` behind an internal resistance `r = 0.005 pu` (droop, so parallel sources share). Its output current is capped at `1.05 pu`, just over the rated current so four machines fit with the droop, where it becomes a current source. It never absorbs current. A Hookah is a source while it holds Ws, so it keeps today's buffer: one burn makes 25,200 Ws, and lighting stays "only when something on the line wants power".
 
 **Rationale:**
 - **Rated output:** the current limit caps a Hookah at its rated output, which keeps "four machines per Hookah" true.
@@ -81,8 +81,8 @@ The spec's FR-004 and FR-005 are updated to match.
 **Decision:**
 - **Graph:** the network walk reuses BIGrid's flood fill and per-level version, plus its 100-tick rewalk for chunk loading. Wick blocks are graph nodes. Devices attach to the Wick or device they touch: two devices touching directly are merged into one node with union-find. Runs of Wicks with exactly two neighbours and no device are collapsed into one conductance (series resistances add). The voltage along a run is interpolated by cumulative resistance, and every Wick in a run shares the run's current.
 - **Equations:** modified nodal analysis, solving `G·v = i` with ground implicit. Each node also gets a tiny leak to ground (`gmin`), so a Wick island with nothing on it still solves.
-- **Constant-power loads:** linearised by Newton's method at the last voltage, with conductance `−P/V₀²` and current source `2P/V₀`, damped. If the solve doesn't converge in 30 iterations it falls back to a fixed-point step, `G = P/V₀²`, and then to the fair-share factor.
-- **Source limits:** current clamps switch a source between CV and CC between iterations, until no clamp changes.
+- **Constant-power loads:** each is the resistance `V²/P` it had at the last voltage, solved again until the line settles. This relaxation always moves the line the way a real one settles; Newton's method would follow a constant-power load's negative slope the wrong way when sources are at their limits. Loads are raised from nothing in steps (continuation), each step starting from the last answer, so the solve tracks the stable high-voltage answer. The furthest share it reaches with every load above `V_min` is the brownout share.
+- **Source limits:** past its current limit a source holds that current with a tiny extra slope (its conductance / 100,000), so no node is ever left floating. Each step stops just past the first limit any source crosses (breakpoint stepping), and the source's mode follows its voltage.
 - **Matrix solve:** dense Gaussian elimination with partial pivoting up to 400 nodes after collapsing; preconditioned conjugate gradients above that, with all-resistive linearisation. Typical bases collapse to a few dozen nodes.
 - **When it solves:** only when the network changes, using a signature of each member's discrete state (asking or not, source on or off, a Stash's fill to the nearest 2%). Every tick the cached solution moves energy: Ws per tick = W / 20, with fractional carry.
 

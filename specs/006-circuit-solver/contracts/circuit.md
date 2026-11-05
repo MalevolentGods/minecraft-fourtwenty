@@ -40,7 +40,7 @@ Every BI block screen (machines, Stashes, Hookahs, plots, benches, Re-Up Station
 |---|---|---|
 | `voltsPuff`, `voltsToke`, `voltsRip`, `voltsBlaze` | 4.2, 42, 420, 4200 | nominal Kb per tier |
 | `sourceDroop` | 0.005 | a source's internal resistance, pu |
-| `sourceLimit` | 1.0 | a source's current limit, pu |
+| `sourceLimit` | 1.05 | a source's current limit, pu |
 | `stashEmfLow`, `stashEmfHigh` | 0.96, 0.99 | a Stash's EMF empty and full, pu |
 | `stashResistance` | 0.01 | pu |
 | `stashLimit` | 1.0 | a Stash's current limit each way, pu |
