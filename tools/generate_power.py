@@ -202,15 +202,23 @@ def both(tier, what):
     return {False: t(tier, what), True: t(tier, what, True)}
 
 
+def tint_faces(boxes):
+    """Every face of a Wick takes tint 0: undyed it's untouched, dyed it takes the dye's colour (client/WickColours)."""
+    for element in boxes:
+        for face in element['faces'].values():
+            face['tintindex'] = 0
+    return boxes
+
+
 def wicks():
     for name, tier in WICKS.items():
         for lit in (False, True):
             suffix = '_lit' if lit else ''
             tex = {'wick': t(tier, 'wick', lit)}
-            model(f'{name}_core{suffix}', [box([6, 6, 6], [10, 10, 10], 'wick')], tex, '#wick')
-            model(f'{name}_arm{suffix}', [box([6, 6, 0], [10, 10, 6], 'wick')], tex, '#wick')
+            model(f'{name}_core{suffix}', tint_faces([box([6, 6, 6], [10, 10, 10], 'wick')]), tex, '#wick')
+            model(f'{name}_arm{suffix}', tint_faces([box([6, 6, 0], [10, 10, 6], 'wick')]), tex, '#wick')
             # The wire tapers as it arrives; the block draws the rest (tools/generate_ports.py).
-            model(f'{name}_plug{suffix}', [box([6, 6, 3], [10, 10, 6], 'wick'), box([6.75, 6.75, 0], [9.25, 9.25, 3], 'wick')], tex, '#wick')
+            model(f'{name}_plug{suffix}', tint_faces([box([6, 6, 3], [10, 10, 6], 'wick'), box([6.75, 6.75, 0], [9.25, 9.25, 3], 'wick')]), tex, '#wick')
         parts = []
         for lit in (False, True):
             suffix = '_lit' if lit else ''

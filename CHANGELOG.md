@@ -4,6 +4,15 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- **Real circuits: every powered block has a + and a − terminal**, a red stud on its left and a black stud on its right as you face its front. Power flows only around closed loops: a Wick from a source's + to a machine's +, and another from the machine's − back to the source's −. Series (blocks chained − to +) and parallel (blocks between two rails) both work, by Kirchhoff's laws. There's no ground.
+- **Bases built before this need return lines.** Machines on a supply line alone now get nothing, and the Inspoweedometer on them says "no return path". Nothing burns or breaks on the update.
+- **Wicks come in colours:** use a dye on one. A Wick joins only Wicks of its own colour, so a supply and a return can run side by side. Wicks plug only into terminal faces.
+- **A machine wired backwards refuses to run** and says so.
+- **Machines below their tier's voltage are a plain resistance** sized for it, so a series string or a sagging line gives them less power by Ohm's law (three Puff machines in series each get a ninth of their power). From their tier's voltage up they hold their power, as before.
+- **The Hit Box is a real transformer:** a high-voltage winding on its front (+) and back (−), a low-voltage winding on its left (+) and right (−), isolated from each other.
+- **The Inspoweedometer** reads blocks across their terminals and tells you why one gets nothing. Sneak-use a Wick to make it the reference, then read other Wicks' voltage from it.
+
 ### Fixed
 - **Re-Up Stations have a battery and a screen.** They fill from their Wick at one Hookah of their tier (420 W on Puff), well inside the Wick's rating, so they no longer burn the Wick they sit on. They charge gear from that battery at four Hookahs (1,680 W on Puff, 13,440 W on Blaze), faster than before. The battery holds 40 minutes of input. Use a station empty-handed for its screen: a gear slot, the battery bar, what comes in and goes out.
 - **Screens show resistance and power too:** the gauge popup reads Kb, Ig, Φ and W, and the Inspoweedometer gives a Wick's resistance.

@@ -88,6 +88,19 @@ public final class Circuits {
         return Optional.empty();
     }
 
+    /** A Wick's potential in its circuit's own terms, with the circuit it's on: two Wicks of one circuit compare by their difference. */
+    public record Probe(Object circuit, double potential) {}
+
+    public static Optional<Probe> potential(Level level, BlockPos pos) {
+        if (!(level.getBlockState(pos).getBlock() instanceof WickBlock)) return Optional.empty();
+        for (Object[] found : terminalOnLine(level, pos).stream().toList()) {
+            Network net = network(level, (BINode) found[0], (BlockPos) found[1]);
+            if (!net.solved()) net.tick(level, of(level).burnTimers);
+            for (Network.Wick w : net.wicks) if (w.pos().equals(pos)) return Optional.of(new Probe(net, net.potential(w)));
+        }
+        return Optional.empty();
+    }
+
     public static Optional<Reading> reading(Level level, BlockPos pos) {
         if (level.getBlockState(pos).getBlock() instanceof WickBlock wick) {
             for (Object[] found : terminalOnLine(level, pos).stream().toList()) {

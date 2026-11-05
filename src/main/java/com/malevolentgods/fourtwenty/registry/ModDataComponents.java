@@ -66,6 +66,10 @@ public final class ModDataComponents {
         public GearState withMode(int value) { return new GearState(charge, terps, value); }
     }
 
+    /** The Inspoweedometer's reference Wick, set by sneak-using one. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.core.GlobalPos>> METER_REFERENCE = COMPONENTS.register("meter_reference",
+            () -> DataComponentType.<net.minecraft.core.GlobalPos>builder().persistent(net.minecraft.core.GlobalPos.CODEC).networkSynchronized(net.minecraft.core.GlobalPos.STREAM_CODEC).build());
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<GearState>> GEAR = COMPONENTS.register("gear",
             () -> DataComponentType.<GearState>builder().persistent(GearState.CODEC).networkSynchronized(GearState.STREAM_CODEC).build());
     /** A Pave Pen's settings and what it carries: the road tier and shape it lays, its BI, and roads already paid for in smooth stone and gold. */
