@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -31,5 +31,5 @@
 
 ## Notes
 
-- Three markers remain for the user: terminal faces (FR-002), how supply and return lines run side by side (FR-004), and reversed polarity (edge cases).
+- Answered by the user (2026-11-05): + left / − right (FR-002), coloured Wicks that join only their own colour (FR-004), reversed machines refuse to run (FR-014).
 - Physics terms (Kirchhoff, series, parallel, terminals) are the domain itself: the user asked for a real circuit simulator.

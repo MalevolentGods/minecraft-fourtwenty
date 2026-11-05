@@ -76,8 +76,8 @@ A player's machines stop after the update. They carry the Inspoweedometer along 
 ### Edge Cases
 
 - **Short circuit:** a Wick joining a source's + straight to its − carries the source's limited current, at most 1.05 of its rated current. The source runs flat out into the Wick and nothing else gets power. A short across several Hookahs in parallel can exceed the Wick's rating and burn it.
-- **Lines touching:** see FR-004. Supply and return lines that join become one line, which is a short.
-- **Reversed polarity:** a machine wired − to the supply and + to the return is reversed. [NEEDS CLARIFICATION: does a reversed machine refuse to run (it sees negative voltage and stops, safely), or run anyway like a plain resistive load? Real electronics with a regulated supply usually refuse, or are damaged.]
+- **Lines touching:** two touching Wicks of different colours don't join (FR-004). Two of the same colour do, so a supply and a return of the same colour laid side by side short.
+- **Reversed polarity:** a machine wired − to the supply and + to the return sees a negative voltage. It refuses to run and draws nothing, and its screen and the meter say "wired backwards", like real electronics with polarity protection (user, 2026-11-05).
 - **Series with a full block:** in a series string, a machine whose buffer is full draws nothing. Since nothing else in the string can pass current without it, the whole string waits. That's how a series string behaves.
 - **A Stash in series:** a Stash is a battery with a voltage, so two Stashes in series add their voltages. Their tier's overload still applies to each Stash's own terminals.
 - **A loop through two sources:** sources in series add their voltages, and sources in parallel share the load.
@@ -89,14 +89,15 @@ A player's machines stop after the update. They carry the Inspoweedometer along 
 ### Functional Requirements
 
 - **FR-001**: Every powered block (Hookahs, Stashes, the Hit Box, machines, Grow Ops, Construction benches, Re-Up Stations, the Terpinator, the Think Tank, the Rosin Rig and the Pheno blocks) MUST have exactly one + terminal and one − terminal. The Hit Box MUST have two of each, one pair per winding.
-- **FR-002**: A block's terminals MUST be on fixed faces relative to the way it faces: [NEEDS CLARIFICATION: which faces? e.g. + on its left and − on its right as you look at its front; or + on top and − underneath; or + on the back and − on the front]. Its other faces MUST NOT connect.
+- **FR-002**: Looking at a block's front, its + terminal MUST be its left face and its − terminal its right face, like a battery lying on its side (user, 2026-11-05). Its other faces MUST NOT connect, so top and bottom stay free for crops, hoppers and stacking. The Hit Box has four terminals: its input winding's + and − and its output winding's + and −, placed in the plan.
 - **FR-003**: Each terminal MUST be clearly marked on the block's model, + and −, so a player can wire it without a manual.
-- **FR-004**: A Wick MUST be a single conductor that joins every Wick it touches. [NEEDS CLARIFICATION: how do supply and return lines run side by side? A: they mustn't touch: two touching Wicks are one conductor, so lines laid next to each other short (honest, but fiddly to build); B: Wicks come in colours, and only the same colour joins (like insulated wire); C: there are + Wicks and − Wicks that never join each other.]
+- **FR-004**: A Wick MUST be a single conductor. Wicks come in colours, and a Wick MUST join only touching Wicks of its own colour, like insulated wire, so a supply line and a return line can run side by side (user, 2026-11-05). Every colour of a tier has the same ratings and resistance. A Wick joins any terminal it touches, whatever its colour.
 - **FR-005**: Every circuit MUST be solved from its real loops, by Kirchhoff's current and voltage laws, with no implicit ground. A block whose terminals aren't both in a loop with a source MUST get no current.
 - **FR-006**: Series and parallel connections, and any mix, MUST solve correctly: voltages divide across series parts, and currents divide across parallel ones.
 - **FR-007**: Hookah voltages and current limits, constant-power machines, battery Stashes, Wick resistance and ratings, burnout and overload MUST behave as in 0.20.0, measured across terminals instead of against ground.
 - **FR-008**: The Hit Box MUST be a transformer with two isolated windings. It steps voltage 10:1 between adjacent tiers in either direction, with a 2% loss, and no current flows between the windings.
 - **FR-009**: Worlds from before this feature MUST load without any block breaking or any Wick burning because of the change. Blocks without a closed loop simply get no current.
+- **FR-014**: A machine wired backwards MUST refuse to run, draw nothing and say "wired backwards" on its screen and on the meter.
 - **FR-010**: The Inspoweedometer MUST read a block's voltage across its terminals, its current through them, its resistance and its power. On a block with no closed loop, it MUST say "no return path".
 - **FR-011**: Sneak-using a Wick with the Inspoweedometer MUST set it as the reference. Using it on another Wick then MUST read the voltage between the two. Using it on a Wick with no reference set reads the current through that Wick and its ratings, as now.
 - **FR-012**: The changelog MUST tell players plainly that old bases need return lines, and how to wire one.
