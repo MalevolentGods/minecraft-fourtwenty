@@ -4,12 +4,16 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
-## What's new in 0.16.0
+## What's new in 0.20.0
 
+- **Real electricity:** Boundless Inspiration is measured in Willards (W), Ignus (Ig), Kerberos (Kb) and Phus (Φ), and every Wick network is solved as a DC circuit. Wicks are rated like real cables; the Inspoweedometer reads it all.
 - **Kush Suit and Blazer:** BI-powered armour and an arm laser whose powers work while you're high, unlocked further by terpenes of each piece's colour family; charged at Re-Up Stations or with a Dab Cell.
 - **Bud Barn** (with MineColonies): its Trim Daddy trims and cures the colony's rough buds by hand at real Trim Trays and Curing Racks, and sends Cured Buds and seeds to the warehouse, so Dispensaries stay stocked.
 - **Pave Pen:** lays our roads straight into the ground with weed, upgrades them with the smooth stone or gold you carry, and (as the Pave Pen Pro) lays and reshapes slabs and stairs. Press V for its settings.
 - **Construction benches:** the Joint, Blunt, Spliff and Cannon run on BI and make 2, 3, 4 and 6 times as many building and coloured blocks. Each item costs 48 Ws from a bar on the bench, which charges at 420 to 3,360 W by tier. JEI fills them like a crafting table.
+
+## What's new in 0.16.0
+
 - **The Dispensary** now lives only in Sensi Heights, and huts from the old FourTwenty pack carry on from there.
 
 ## What's new in 0.15.0
