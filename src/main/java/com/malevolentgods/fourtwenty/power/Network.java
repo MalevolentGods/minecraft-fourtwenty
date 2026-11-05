@@ -3,6 +3,7 @@ package com.malevolentgods.fourtwenty.power;
 import com.malevolentgods.fourtwenty.domain.BIRules;
 import com.malevolentgods.fourtwenty.domain.Circuit;
 import com.malevolentgods.fourtwenty.domain.CircuitRules;
+import com.malevolentgods.fourtwenty.domain.Terminals;
 import com.malevolentgods.fourtwenty.processing.ProcessingConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,7 +21,8 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * One Wick network as a circuit: the BI blocks on it and the Wicks between them. It's walked once (and again when anything on the level's
+ * One circuit: the BI blocks on it, each between its own + and − terminal, and the Wicks of one colour between them. There's no ground:
+ * current flows only around closed loops (specs/007-polarity-circuits). It's walked once (and again when anything on the level's
  * networks changes, or every few seconds for chunks), solved when what its members want changes, and each tick it moves the Ws the last
  * solution says. Runs of plain Wicks collapse into one resistance; each Wick in a run shares the run's current, and its voltage is
  * interpolated along it. See specs/006-circuit-solver/research.md R8 and R9.
@@ -29,8 +31,8 @@ public final class Network {
     static final int MAX_WICKS = 4096;
     private static final int GLOW = 10;
 
-    /** A BI block on the network: its node object, where it is, and its circuit node. */
-    record Member(BINode node, BlockPos pos, int circuitNode) {}
+    /** A BI block on the network: its node object, where it is, and the circuit nodes of its + and − terminals. */
+    record Member(BINode node, BlockPos pos, int plus, int minus) {}
 
     /** A Wick: its tier and where it sits in the circuit, as a node, or a share along a collapsed run. */
     record Wick(BlockPos pos, BIRules.Tier tier, int node, int conductor, double fromStart, int[] incident) {}
@@ -47,6 +49,10 @@ public final class Network {
     private Circuit.Solution solution;
     private long signature = Long.MIN_VALUE, tickedAt = Long.MIN_VALUE;
     private int[] sourceIndex, loadIndex;
+    /** Each member's circuit status (Circuit.OK, NO_LOOP, REVERSED, BROWNOUT); sources are OK. */
+    private int[] status = new int[0];
+    /** The lowest voltage on the network: Wick voltages and insulation are measured from it. */
+    private double floor;
     private double nominal;
     private final Map<BINode, double[]> carry = new IdentityHashMap<>();
 
@@ -78,56 +84,82 @@ public final class Network {
         }
     }
 
-    /** Device keys compare by identity, so two faces of one block that give the same node are one terminal. */
+    /** Device keys compare by identity: one per block node (its owner, whichever terminal it was reached by). */
     private record DeviceKey(BINode node) {
         @Override public boolean equals(Object o) { return o instanceof DeviceKey k && k.node == node; }
         @Override public int hashCode() { return System.identityHashCode(node); }
     }
 
-    /** Walks out from a BI block's node at {@code pos}, through Wicks and blocks that touch it. */
+    /** One terminal of one block: a node of the circuit. */
+    private record TerminalKey(BINode owner, Terminals.Sign sign) {
+        @Override public boolean equals(Object o) { return o instanceof TerminalKey k && k.owner == owner && k.sign == sign; }
+        @Override public int hashCode() { return System.identityHashCode(owner) * 31 + sign.ordinal(); }
+    }
+
+    private static TerminalKey keyOf(BINode terminal) {
+        return terminal instanceof Terminal t ? new TerminalKey(t.owner(), t.sign()) : new TerminalKey(terminal, Terminals.Sign.PLUS);
+    }
+
+    /** The face a terminal is on, or null if the block shows it on none. */
+    private static Direction faceOf(Level level, BlockPos at, BINode terminal) {
+        for (Direction d : Direction.values()) if (level.getCapability(BINode.CAPABILITY, at, d) == terminal) return d;
+        return null;
+    }
+
+    /**
+     * Walks out from a BI block (its node, at {@code pos}) through its two terminals: along Wicks of one colour, and into the terminals of
+     * the blocks they touch, and on through those blocks' other terminals. A terminal touching a Wick joins its centre through half the
+     * Wick's resistance; two terminals facing each other join directly.
+     */
     static Network walk(Level level, BINode start, BlockPos pos) {
         Union union = new Union();
         Map<BlockPos, BIRules.Tier> wickTiers = new LinkedHashMap<>();
         Map<BlockPos, Set<BlockPos>> wickEdges = new HashMap<>();
         Map<BINode, BlockPos> devices = new LinkedHashMap<>();
-        // a block touching a Wick connects to its centre through half the Wick's resistance, so the Wick's own current is real
         List<Object[]> contacts = new ArrayList<>();
         ArrayDeque<Object[]> queue = new ArrayDeque<>();
         Set<Object> seen = new HashSet<>();
-        devices.put(start, pos);
-        seen.add(new DeviceKey(start));
-        queue.add(new Object[]{pos, start});
+        java.util.function.BiConsumer<BlockPos, BINode> device = (at, owner) -> {
+            if (devices.containsKey(owner)) return;
+            devices.put(owner, at.immutable());
+            for (Terminals.Sign sign : Terminals.Sign.values()) {
+                Terminal t = Terminal.of(owner, sign);
+                if (seen.add(keyOf(t))) queue.add(new Object[]{at.immutable(), t});
+            }
+        };
+        device.accept(pos, Terminal.owner(start));
         while (!queue.isEmpty()) {
             Object[] item = queue.poll();
             BlockPos at = (BlockPos) item[0];
-            BINode node = (BINode) item[1];
-            for (Direction d : Direction.values()) {
-                if (node != null && level.getCapability(BINode.CAPABILITY, at, d) != node) continue;
+            BINode terminal = (BINode) item[1];
+            Direction only = terminal == null ? null : faceOf(level, at, terminal);
+            if (terminal != null && only == null) continue;
+            for (Direction d : terminal == null ? Direction.values() : new Direction[]{only}) {
                 BlockPos next = at.relative(d);
                 if (!level.isLoaded(next)) continue;
-                if (level.getBlockState(next).getBlock() instanceof WickBlock wick) {
-                    if (node != null) contacts.add(new Object[]{node, next.immutable()});
-                    else {
-                        wickEdges.computeIfAbsent(at, k -> new HashSet<>()).add(next);
-                        wickEdges.computeIfAbsent(next, k -> new HashSet<>()).add(at);
+                var nextState = level.getBlockState(next);
+                if (nextState.getBlock() instanceof WickBlock wick) {
+                    if (terminal != null) contacts.add(new Object[]{terminal, next.immutable()});
+                    else if (WickBlock.joins(level.getBlockState(at), nextState)) {
+                        wickEdges.computeIfAbsent(at, k -> new HashSet<>()).add(next.immutable());
+                        wickEdges.computeIfAbsent(next.immutable(), k -> new HashSet<>()).add(at);
+                    } else {
+                        continue;
                     }
-                    if (wickTiers.size() < MAX_WICKS && seen.add(next)) {
-                        wickTiers.put(next, wick.tier());
-                        queue.add(new Object[]{next, null});
+                    if (wickTiers.size() < MAX_WICKS && seen.add(next.immutable())) {
+                        wickTiers.put(next.immutable(), wick.tier());
+                        queue.add(new Object[]{next.immutable(), null});
                     }
                     continue;
                 }
                 BINode other = level.getCapability(BINode.CAPABILITY, next, d.getOpposite());
-                if (other == null || other == node) continue;
-                if (node != null) union.join(new DeviceKey(node), new DeviceKey(other));
+                if (other == null || other == terminal) continue;
+                if (terminal != null) union.join(keyOf(terminal), keyOf(other));
                 else contacts.add(new Object[]{other, at});
-                if (seen.add(new DeviceKey(other))) {
-                    devices.put(other, next.immutable());
-                    queue.add(new Object[]{next.immutable(), other});
-                }
+                device.accept(next, Terminal.owner(other));
             }
         }
-        // a Wick is plain when nothing is joined to it and it has exactly two Wick neighbours: runs of those collapse
+        // a Wick is plain when no terminal touches it and it has exactly two Wick neighbours: runs of those collapse
         Map<Object, Integer> nodeOf = new HashMap<>();
         Map<BlockPos, Boolean> plain = new HashMap<>();
         Set<BlockPos> touched = new HashSet<>();
@@ -138,7 +170,10 @@ public final class Network {
         int[] count = {0};
         java.util.function.Function<Object, Integer> nodeFor = key -> nodeOf.computeIfAbsent(union.find(key), k -> count[0]++);
         List<Member> members = new ArrayList<>();
-        for (var e : devices.entrySet()) members.add(new Member(e.getKey(), e.getValue(), nodeFor.apply(new DeviceKey(e.getKey()))));
+        for (var e : devices.entrySet()) {
+            BINode owner = e.getKey();
+            members.add(new Member(owner, e.getValue(), nodeFor.apply(new TerminalKey(owner, Terminals.Sign.PLUS)), nodeFor.apply(new TerminalKey(owner, Terminals.Sign.MINUS))));
+        }
         CircuitRules.Numbers rules = ProcessingConfig.circuit();
         List<Run> runs = new ArrayList<>();
         Map<BlockPos, Wick> wicks = new LinkedHashMap<>();
@@ -171,10 +206,12 @@ public final class Network {
         }
         Set<String> linked = new HashSet<>();
         for (Object[] c : contacts) {
-            BINode n = (BINode) c[0];
+            BINode t = (BINode) c[0];
             BlockPos w = (BlockPos) c[1];
-            if (!devices.containsKey(n) || !wickTiers.containsKey(w) || !linked.add(System.identityHashCode(n) + "@" + w.asLong())) continue;
-            runs.add(new Run(nodeFor.apply(new DeviceKey(n)), nodeFor.apply(w), rules.wickOhms(wickTiers.get(w)) / 2));
+            TerminalKey key = keyOf(t);
+            if (!devices.containsKey(key.owner()) || !wickTiers.containsKey(w)
+                    || !linked.add(System.identityHashCode(key.owner()) + key.sign().name() + "@" + w.asLong())) continue;
+            runs.add(new Run(nodeFor.apply(key), nodeFor.apply(w), rules.wickOhms(wickTiers.get(w)) / 2));
         }
         for (BlockPos w : wickTiers.keySet()) {
             if (wicks.containsKey(w)) continue;
@@ -204,7 +241,7 @@ public final class Network {
         return keys;
     }
 
-    static Object key(BINode node) { return new DeviceKey(node); }
+    static Object key(BINode node) { return new DeviceKey(Terminal.owner(node)); }
 
     // ---- solving ------------------------------------------------------------------------------------------------------------------
 
@@ -246,10 +283,9 @@ public final class Network {
             }
         }
         nominal = top == null ? 0 : rules.volts(top);
-        double minVolts = top == null ? 1e-9 : rules.minVolts(top);
         for (int i = 0; i < members.size(); i++) {
             BINode n = members.get(i).node();
-            int at = members.get(i).circuitNode();
+            int plus = members.get(i).plus(), minus = members.get(i).minus();
             if (n.overloaded(now)) continue;
             BIRules.Tier tier = n.tier();
             double volts = rules.volts(tier);
@@ -257,21 +293,25 @@ public final class Network {
                 case SOURCE -> {
                     if (!n.sourceReady()) continue;
                     double watts = n.sourceWatts();
-                    sourceIndex[i] = circuit.source(at, volts, rules.sourceDroop() * volts * volts / watts, rules.sourceLimit() * watts / volts, 0);
+                    sourceIndex[i] = circuit.source(plus, minus, volts, rules.sourceDroop() * volts * volts / watts, rules.sourceLimit() * watts / volts, 0);
                 }
                 case BATTERY -> {
                     double amps = rules.stashAmps(tier);
-                    sourceIndex[i] = circuit.source(at, rules.stashEmf(tier, n.fill()), rules.stashOhms(tier),
+                    sourceIndex[i] = circuit.source(plus, minus, rules.stashEmf(tier, n.fill()), rules.stashOhms(tier),
                             n.stored() > 0 ? amps : 0, n.stored() < n.capacity() ? amps : 0);
                 }
                 case LOAD -> {
                     double watts = n.demandWatts();
-                    if (watts > 0) loadIndex[i] = circuit.load(at, watts, minVolts);
+                    if (watts > 0) loadIndex[i] = circuit.load(plus, minus, watts, rules.minVolts(tier));
                 }
                 default -> {}
             }
         }
         solution = circuit.solve();
+        status = new int[members.size()];
+        for (int i = 0; i < members.size(); i++) status[i] = loadIndex[i] >= 0 ? solution.loadStatus()[loadIndex[i]] : Circuit.OK;
+        floor = 0;
+        for (int i = 0; i < solution.volts().length; i++) floor = i == 0 ? solution.volts()[0] : Math.min(floor, solution.volts()[i]);
     }
 
     /** Runs this network's tick once per game tick: solve if anything changed, move the Ws, check overloads and Wicks. */
@@ -324,9 +364,8 @@ public final class Network {
 
     private void checks(Level level, long now, Map<BlockPos, Integer> burnTimers) {
         CircuitRules.Numbers rules = ProcessingConfig.circuit();
-        double[] v = solution.volts();
-        for (Member m : members) {
-            if (v.length > m.circuitNode() && v[m.circuitNode()] > rules.overloadVolts(m.node().tier())) m.node().overload(now);
+        for (int i = 0; i < members.size(); i++) {
+            if (Math.abs(memberVolts(i)) > rules.overloadVolts(members.get(i).node().tier())) members.get(i).node().overload(now);
         }
         List<BlockPos> burn = new ArrayList<>();
         boolean glow = now % GLOW == 0;
@@ -364,13 +403,20 @@ public final class Network {
         return Math.sqrt(heat / 2);
     }
 
-    double volts(Wick w) {
+    /** A Wick's voltage above the lowest point of its circuit (its − rail, on a simple loop). */
+    double volts(Wick w) { return potential(w) - floor; }
+
+    /** A Wick's voltage in the solve's own terms, for comparing two Wicks. */
+    double potential(Wick w) {
         if (solution == null) return 0;
         if (w.node() >= 0) return solution.volts()[w.node()];
-        if (w.conductor() < 0) return 0;
+        if (w.conductor() < 0) return floor;
         Run r = runs.get(w.conductor());
         return solution.volts()[r.start()] - solution.conductorAmps()[w.conductor()] * w.fromStart();
     }
+
+    /** A member's circuit status: Circuit.OK, BROWNOUT, NO_LOOP or REVERSED. */
+    int status(int i) { return i >= 0 && i < status.length ? status[i] : Circuit.NO_LOOP; }
 
     /** Current into the circuit from a member: positive out of a source, negative into a load or a charging battery. */
     double memberAmps(int i) {
@@ -387,10 +433,12 @@ public final class Network {
         return 0;
     }
 
+    /** The voltage across a member, + terminal minus − terminal. */
     double memberVolts(int i) {
         if (solution == null) return 0;
-        int n = members.get(i).circuitNode();
-        return n < solution.volts().length ? solution.volts()[n] : 0;
+        Member m = members.get(i);
+        double[] v = solution.volts();
+        return (m.plus() < v.length ? v[m.plus()] : 0) - (m.minus() < v.length ? v[m.minus()] : 0);
     }
 
     double wickLoss(Wick w) {
@@ -408,7 +456,7 @@ public final class Network {
         double total = 0;
         for (Member m : members) {
             BINode n = m.node();
-            if (n == except || !n.canReceive()) continue;
+            if (n == Terminal.owner(except) || !n.canReceive()) continue;
             if (n.canExtract()) total += n.stored() < n.capacity() ? 1 : 0;
             else total += n.demandWatts();
         }
@@ -416,7 +464,8 @@ public final class Network {
     }
 
     int indexOf(BINode node) {
-        for (int i = 0; i < members.size(); i++) if (members.get(i).node() == node) return i;
+        BINode owner = Terminal.owner(node);
+        for (int i = 0; i < members.size(); i++) if (members.get(i).node() == owner) return i;
         return -1;
     }
 

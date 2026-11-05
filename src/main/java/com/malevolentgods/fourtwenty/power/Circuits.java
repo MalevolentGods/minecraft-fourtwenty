@@ -59,26 +59,51 @@ public final class Circuits {
     }
 
     /** What the Inspoweedometer reads at a block. */
-    public record Reading(double volts, double amps, double ohms, double watts, boolean wick, double ampRating, double voltRating, double lossWatts) {}
+    /** {@code status} is Circuit.OK, BROWNOUT, NO_LOOP or REVERSED for a block; OK for a Wick. Volts on a block are across its terminals. */
+    public record Reading(double volts, double amps, double ohms, double watts, boolean wick, double ampRating, double voltRating, double lossWatts, int status) {}
 
     /** A reading at a Wick or at the BI block there; empty when it's not on a network. */
+    /**
+     * A block's terminal on the same line as the Wick at {@code pos}: one touching it, or touching any Wick of its colour joined to it,
+     * found by walking the line. Empty when the line reaches no terminal.
+     */
+    private static Optional<Object[]> terminalOnLine(Level level, BlockPos pos) {
+        java.util.ArrayDeque<BlockPos> queue = new java.util.ArrayDeque<>(java.util.List.of(pos.immutable()));
+        java.util.Set<BlockPos> seen = new java.util.HashSet<>(queue);
+        while (!queue.isEmpty() && seen.size() <= Network.MAX_WICKS) {
+            BlockPos at = queue.poll();
+            var state = level.getBlockState(at);
+            for (Direction d : Direction.values()) {
+                BlockPos next = at.relative(d);
+                if (!level.isLoaded(next)) continue;
+                var nextState = level.getBlockState(next);
+                if (nextState.getBlock() instanceof WickBlock) {
+                    if (WickBlock.joins(state, nextState) && seen.add(next.immutable())) queue.add(next.immutable());
+                    continue;
+                }
+                BINode node = level.getCapability(BINode.CAPABILITY, next, d.getOpposite());
+                if (node != null) return Optional.of(new Object[]{node, next.immutable()});
+            }
+        }
+        return Optional.empty();
+    }
+
     public static Optional<Reading> reading(Level level, BlockPos pos) {
         if (level.getBlockState(pos).getBlock() instanceof WickBlock wick) {
-            for (Direction d : Direction.values()) {
-                BINode node = level.getCapability(BINode.CAPABILITY, pos.relative(d), d.getOpposite());
-                if (node == null) continue;
-                Network net = network(level, node, pos.relative(d));
+            for (Object[] found : terminalOnLine(level, pos).stream().toList()) {
+                BINode node = (BINode) found[0];
+                Network net = network(level, node, (BlockPos) found[1]);
                 if (!net.solved()) net.tick(level, of(level).burnTimers);
                 for (Network.Wick w : net.wicks) {
                     if (!w.pos().equals(pos)) continue;
                     var rules = com.malevolentgods.fourtwenty.processing.ProcessingConfig.circuit();
                     double v = net.volts(w), a = net.amps(w);
-                    return Optional.of(new Reading(v, a, rules.wickOhms(w.tier()), v * a, true, rules.wickAmps(w.tier()), rules.wickVolts(w.tier()), net.wickLoss(w)));
+                    return Optional.of(new Reading(v, a, rules.wickOhms(w.tier()), v * a, true, rules.wickAmps(w.tier()), rules.wickVolts(w.tier()), net.wickLoss(w), com.malevolentgods.fourtwenty.domain.Circuit.OK));
                 }
             }
             BIRules.Tier tier = wick.tier();
             var rules = com.malevolentgods.fourtwenty.processing.ProcessingConfig.circuit();
-            return Optional.of(new Reading(0, 0, rules.wickOhms(tier), 0, true, rules.wickAmps(tier), rules.wickVolts(tier), 0));
+            return Optional.of(new Reading(0, 0, rules.wickOhms(tier), 0, true, rules.wickAmps(tier), rules.wickVolts(tier), 0, com.malevolentgods.fourtwenty.domain.Circuit.NO_LOOP));
         }
         for (Direction d : Direction.values()) {
             BINode node = level.getCapability(BINode.CAPABILITY, pos, d);
@@ -88,7 +113,7 @@ public final class Circuits {
             int i = net.indexOf(node);
             if (i < 0) continue;
             double v = net.memberVolts(i), a = Math.abs(net.memberAmps(i)), w = Math.abs(net.memberWatts(i));
-            return Optional.of(new Reading(v, a, a > 0 ? v / a : 0, w, false, 0, 0, 0));
+            return Optional.of(new Reading(v, a, a > 0 ? v / a : 0, w, false, 0, 0, 0, net.status(i)));
         }
         return Optional.empty();
     }

@@ -81,9 +81,13 @@ public class HitBoxBlockEntity extends BIBlockEntity implements MenuProvider {
 
     private Direction front() { return getBlockState().getValue(HitBoxBlock.FACING); }
 
+    /** Its two windings: the low one on its left (+) and right (−), the high one on its front (+) and back (−). */
     public BINode node(Direction side) {
         if (side == null) return null;
-        return side == front() ? highFace : lowFace;
+        var low = com.malevolentgods.fourtwenty.domain.Terminals.at(front(), side);
+        if (low != null) return Terminal.of(lowFace, low);
+        var high = com.malevolentgods.fourtwenty.domain.Terminals.highWinding(front(), side);
+        return high == null ? null : Terminal.of(highFace, high);
     }
 
     public void toggle() {

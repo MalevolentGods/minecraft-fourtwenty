@@ -216,16 +216,16 @@ public final class ModPower {
     }
 
     private static void capabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(BINode.CAPABILITY, ModBlockEntities.WEED_BONG.get(), (WeedBongBlockEntity entity, Direction side) -> entity.node());
-        event.registerBlockEntity(BINode.CAPABILITY, STASH_ENTITY.get(), (entity, side) -> entity.node());
+        event.registerBlockEntity(BINode.CAPABILITY, ModBlockEntities.WEED_BONG.get(), (WeedBongBlockEntity entity, Direction side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side));
+        event.registerBlockEntity(BINode.CAPABILITY, STASH_ENTITY.get(), (entity, side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side));
         event.registerBlockEntity(BINode.CAPABILITY, HIT_BOX_ENTITY.get(), HitBoxBlockEntity::node);
-        event.registerBlockEntity(BINode.CAPABILITY, MACHINE_ENTITY.get(), (entity, side) -> entity.node());
-        event.registerBlockEntity(BINode.CAPABILITY, PHENO_ENTITY.get(), (entity, side) -> entity.node());
-        event.registerBlockEntity(BINode.CAPABILITY, RIG_ENTITY.get(), (entity, side) -> entity.node());
-        event.registerBlockEntity(BINode.CAPABILITY, CONSTRUCTION_ENTITY.get(), (entity, side) -> entity.node());
-        event.registerBlockEntity(BINode.CAPABILITY, GROW_OP_ENTITY.get(), (entity, side) -> entity.node());
-        event.registerBlockEntity(BINode.CAPABILITY, THINK_TANK_ENTITY.get(), (entity, side) -> entity.node());
-        event.registerBlockEntity(BINode.CAPABILITY, ModTerpenes.TERPINATOR_ENTITY.get(), (TerpinatorBlockEntity entity, Direction side) -> entity.node());
+        event.registerBlockEntity(BINode.CAPABILITY, MACHINE_ENTITY.get(), (entity, side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side));
+        event.registerBlockEntity(BINode.CAPABILITY, PHENO_ENTITY.get(), (entity, side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side));
+        event.registerBlockEntity(BINode.CAPABILITY, RIG_ENTITY.get(), (entity, side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side));
+        event.registerBlockEntity(BINode.CAPABILITY, CONSTRUCTION_ENTITY.get(), (entity, side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side));
+        event.registerBlockEntity(BINode.CAPABILITY, GROW_OP_ENTITY.get(), (entity, side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side));
+        event.registerBlockEntity(BINode.CAPABILITY, THINK_TANK_ENTITY.get(), (entity, side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side));
+        event.registerBlockEntity(BINode.CAPABILITY, ModTerpenes.TERPINATOR_ENTITY.get(), (TerpinatorBlockEntity entity, Direction side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MACHINE_ENTITY.get(), (entity, side) -> side == null ? null : new SidedInvWrapper(entity, side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PHENO_ENTITY.get(), (entity, side) -> side == null ? null : new SidedInvWrapper(entity, side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, RIG_ENTITY.get(), (entity, side) -> side == null ? null : new SidedInvWrapper(entity, side));

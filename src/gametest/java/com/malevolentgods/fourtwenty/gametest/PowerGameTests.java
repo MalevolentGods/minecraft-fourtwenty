@@ -84,13 +84,12 @@ public final class PowerGameTests {
         h.succeed();
     }
 
-    @GameTest(template = "empty", timeoutTicks = 120)
+    @GameTest(template = "empty", timeoutTicks = 400)
     public static void aHookahPowersAMachineThroughAWick(GameTestHelper h) {
-        h.setBlock(A, com.malevolentgods.fourtwenty.registry.ModBlocks.WEED_BONG.get());
-        h.setBlock(B, ModPower.HEMP_WICK.get());
-        h.setBlock(C, ModPower.SNIP_STATION.get());
-        light(h, A);
-        var machine = (MachineBlockEntity) h.getBlockEntity(C);
+        var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 3);
+        l.hookah(1, com.malevolentgods.fourtwenty.registry.ModBlocks.WEED_BONG.get());
+        BlockPos at = l.put(3, ModPower.SNIP_STATION.get());
+        var machine = (MachineBlockEntity) h.getBlockEntity(at);
         machine.setItem(0, of(ModItems.ROUGH_BUD.get(), 2, Strain.BLUE_DREAM));
         h.succeedWhen(() -> {
             h.assertTrue(machine.getItem(0).isEmpty(), "both buds trimmed");
@@ -130,46 +129,45 @@ public final class PowerGameTests {
         h.succeedWhen(() -> h.assertTrue(machine.getItem(0).isEmpty(), "trimmed with no BI at all"));
     }
 
-    @GameTest(template = "empty", timeoutTicks = 60)
+    @GameTest(template = "empty", timeoutTicks = 200)
     public static void aWireCarryingTooMuchBurnsOutAndLeavesAsh(GameTestHelper h) {
-        h.setBlock(A, ModPower.BIG_BERTHA.get());
-        h.setBlock(B, ModPower.HEMP_WICK.get());
-        h.setBlock(C, ModPower.MOTHER_STASH.get());
-        light(h, A);
+        // a Big Bertha (420 Kb) on Hemp Wicks (insulated for 6.3 Kb), charging a Mother Stash
+        var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 3);
+        l.hookah(1, ModPower.BIG_BERTHA.get());
+        l.put(3, ModPower.MOTHER_STASH.get());
         h.succeedWhen(() -> {
-            h.assertBlockPresent(Blocks.AIR, B);
-            h.assertItemEntityPresent(ModPower.ASH.get(), B, 2);
-            h.assertBlockPresent(ModPower.MOTHER_STASH.get(), C);
-            h.assertBlockPresent(ModPower.BIG_BERTHA.get(), A);
+            boolean burned = false;
+            for (int x = 1; x <= 3; x++) burned |= h.getBlockState(l.plus(x)).isAir() || h.getBlockState(l.minus(x)).isAir();
+            h.assertTrue(burned, "a Hemp Wick burned");
+            h.assertItemEntityPresent(ModPower.ASH.get(), l.at(2), 3);
+            h.assertBlockPresent(ModPower.MOTHER_STASH.get(), l.at(3));
+            h.assertBlockPresent(ModPower.BIG_BERTHA.get(), l.at(1));
         });
     }
 
     /** Machines set the current, not the batteries: nine Puff machines pull about 230 Ig through a Hemp Wick rated for 200, seven about 180. */
     @GameTest(template = "long", timeoutTicks = 100)
     public static void aWireBurnsOnTheCurrentItCarries(GameTestHelper h) {
-        var wick = new BlockPos(2, 2, 2);
-        var okWick = new BlockPos(2, 2, 6);
-        build(h, wick, 9);
-        build(h, okWick, 7);
+        // machines set the current, not the batteries: nine Puff machines pull about 236 Ig through a Hemp rail rated for 200, seven about 184
+        var hot = new Ladder(h, 2, 0).rails(ModPower.HEMP_WICK.get(), 1, 23);
+        var cool = new Ladder(h, 2, 4).rails(ModPower.HEMP_WICK.get(), 1, 19);
+        for (var l : new Ladder[]{hot, cool}) {
+            for (int x = 1; x <= 5; x += 2) ((StashBlockEntity) h.getBlockEntity(l.put(x, ModPower.STASH_JAR.get()))).node().receive(120_000);
+        }
+        for (int i = 0; i < 9; i++) hot.put(7 + 2 * i, ModPower.SNIP_STATION.get());
+        for (int i = 0; i < 7; i++) cool.put(7 + 2 * i, ModPower.SNIP_STATION.get());
         h.runAfterDelay(60, () -> {
-            h.assertBlockPresent(Blocks.AIR, wick);
-            h.assertBlockPresent(ModPower.HEMP_WICK.get(), okWick);
-            h.assertTrue(((MachineBlockEntity) h.getBlockEntity(okWick.east())).node().stored() > 0, "seven machines get through");
+            boolean burned = false;
+            for (int x = 5; x <= 7; x++) burned |= h.getBlockState(hot.plus(x)).isAir() || h.getBlockState(hot.minus(x)).isAir();
+            h.assertTrue(burned, "nine machines burn the rail by the Jars");
+            for (int x = 1; x <= 19; x++) {
+                h.assertBlockPresent(ModPower.HEMP_WICK.get(), cool.plus(x));
+                h.assertBlockPresent(ModPower.HEMP_WICK.get(), cool.minus(x));
+            }
             h.succeed();
         });
     }
 
-    /** Three Stash Jars west of a Hemp Wick, and {@code machines} Snip Stations east of it, touching each other but not the Jars. */
-    private static void build(GameTestHelper h, BlockPos wick, int machines) {
-        h.setBlock(wick, ModPower.HEMP_WICK.get());
-        for (BlockPos jar : List.of(wick.west(), wick.west().above(), wick.west().below())) {
-            h.setBlock(jar, ModPower.STASH_JAR.get());
-            ((StashBlockEntity) h.getBlockEntity(jar)).node().receive(60_000);
-        }
-        BlockPos e = wick.east(), f = e.east();
-        List<BlockPos> spots = List.of(e, e.above(), e.below(), e.north(), e.south(), f, f.above(), f.below(), f.north());
-        for (int i = 0; i < machines; i++) h.setBlock(spots.get(i), ModPower.SNIP_STATION.get());
-    }
 
     @GameTest(template = "empty", timeoutTicks = 60)
     public static void aBlockOverloadsButNeverBreaks(GameTestHelper h) {
@@ -189,13 +187,11 @@ public final class PowerGameTests {
         });
     }
 
-    @GameTest(template = "empty", timeoutTicks = 40)
+    @GameTest(template = "empty")
     public static void aBatteryOfItsTierFeedsAMachine(GameTestHelper h) {
-        h.setBlock(A, ModPower.STASH_JAR.get());
-        h.setBlock(B, ModPower.HEMP_WICK.get());
-        h.setBlock(C, ModPower.SNIP_STATION.get());
-        ((StashBlockEntity) h.getBlockEntity(A)).node().receive(1_000);
-        var machine = (MachineBlockEntity) h.getBlockEntity(C);
+        var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 3);
+        ((StashBlockEntity) h.getBlockEntity(l.put(1, ModPower.STASH_JAR.get()))).node().receive(1_000);
+        var machine = (MachineBlockEntity) h.getBlockEntity(l.put(3, ModPower.SNIP_STATION.get()));
         h.succeedWhen(() -> h.assertTrue(machine.node().stored() > 0, "power arrived"));
     }
 
@@ -223,28 +219,31 @@ public final class PowerGameTests {
         h.succeedWhen(() -> h.assertTrue(hookah.isLit(), "something needs power, so it started"));
     }
 
-    @GameTest(template = "empty", timeoutTicks = 60)
+    @GameTest(template = "empty", timeoutTicks = 200)
     public static void aHitBoxStepsPowerDown(GameTestHelper h) {
-        var west = Direction.WEST;
-        h.setBlock(A, ModPower.DOUBLE_HOSE.get());
-        h.setBlock(B, ModPower.HIT_BOX.get().defaultBlockState().setValue(com.malevolentgods.fourtwenty.power.HitBoxBlock.FACING, west));
-        h.setBlock(C, ModPower.STASH_JAR.get());
-        light(h, A);
-        var stash = (StashBlockEntity) h.getBlockEntity(C);
+        // a Toke loop (Double Hose, Rolled rails) into the Hit Box's high winding (front +, back −), and a separate Puff loop out of its
+        // low winding (left +, right −) to a Stash Jar above it. The two loops share no Wick.
+        var l = new Ladder(h, 2, 1).rails(ModPower.ROLLED_WICK.get(), 1, 3);
+        l.hookah(1, ModPower.DOUBLE_HOSE.get());
+        BlockPos box = l.at(3);
+        h.setBlock(box, ModPower.HIT_BOX.get().defaultBlockState().setValue(com.malevolentgods.fourtwenty.power.HitBoxBlock.FACING, Direction.NORTH));
+        var red = com.malevolentgods.fourtwenty.power.WickBlock.Colour.RED;
+        BlockPos jar = box.above();
+        h.setBlock(jar, ModPower.STASH_JAR.get().defaultBlockState().setValue(com.malevolentgods.fourtwenty.power.BIBlock.FACING, Direction.NORTH));
+        for (BlockPos w : new BlockPos[]{box.east(), jar.east(), box.west(), jar.west()}) Ladder.wick(h, w, ModPower.HEMP_WICK.get(), red);
+        var stash = (StashBlockEntity) h.getBlockEntity(jar);
         h.succeedWhen(() -> {
             h.assertTrue(stash.node().stored() > 0, "power reached the Puff Stash");
-            h.assertBlockPresent(ModPower.HIT_BOX.get(), B);
+            h.assertBlockPresent(ModPower.HIT_BOX.get(), box);
         });
     }
 
     @GameTest(template = "empty", timeoutTicks = 400)
     public static void twoStashesSettleLevel(GameTestHelper h) {
-        // a full Jar and an empty one: the fuller one's voltage is higher, so it charges the other, never the other way
-        h.setBlock(A, ModPower.STASH_JAR.get());
-        h.setBlock(B, ModPower.HEMP_WICK.get());
-        h.setBlock(C, ModPower.STASH_JAR.get());
-        var full = (StashBlockEntity) h.getBlockEntity(A);
-        var empty = (StashBlockEntity) h.getBlockEntity(C);
+        // a full Jar and an empty one in parallel: the fuller one's voltage is higher, so it charges the other, never the other way
+        var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 3);
+        var full = (StashBlockEntity) h.getBlockEntity(l.put(1, ModPower.STASH_JAR.get()));
+        var empty = (StashBlockEntity) h.getBlockEntity(l.put(3, ModPower.STASH_JAR.get()));
         ((BIBuffer) full.node()).receive(full.node().capacity());
         long start = full.node().stored();
         h.runAfterDelay(100, () -> {
