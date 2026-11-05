@@ -19,7 +19,7 @@ public final class CircuitRules {
         public static final Numbers DEFAULT = new Numbers(4.2, 42, 420, 4_200,
                 0.005, 1.05,
                 0.96, 0.99, 0.01, 1.0,
-                0.5, 0.10,
+                0.05, 0.10,
                 1.5e-4, 2.0, 1.5, 20,
                 1.5, 0.02);
 
