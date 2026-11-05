@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.20.0] - Inspoweednetics
 
 ### Added
 - **Inspoweedometer:** a hand-held meter that reads the Kerberos, Ignus, Phus and Willards at any BI block or Wick. Machine and Stash screens show the voltage and current too.
