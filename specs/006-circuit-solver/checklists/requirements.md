@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -31,6 +31,6 @@
 
 ## Notes
 
-- One marker remains: FR-012, the meter's name ("Multimeter" proposed). New player-facing names need the user's approval.
+- FR-012: the meter is the **Inspoweedometer** (user, 2026-11-04).
 - Physics terms (Kirchhoff, I = V/R, I²R) are the domain, not implementation: the user asked for technically honest electronics.
 - "Even slowdown" when a Hookah is over-subscribed is a behaviour change from today, recorded as an assumption.

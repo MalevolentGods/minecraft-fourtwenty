@@ -65,11 +65,11 @@ A player runs a Puff Wick line 100 blocks to a far field of Grow Ops. Because ea
 
 ### User Story 3 - See the electricity (Priority: P2)
 
-A player wants to know what their network is doing. They point the meter item at any BI block or Wick and read the voltage (Kb), current (Ig), resistance (Φ) and power (W) there. Machine, Stash, Hookah and plot screens show the voltage and current at the block next to their charge bars.
+A player wants to know what their network is doing. They point the Inspoweedometer at any BI block or Wick and read the voltage (Kb), current (Ig), resistance (Φ) and power (W) there. Machine, Stash, Hookah and plot screens show the voltage and current at the block next to their charge bars.
 
 **Why this priority**: real electronics are only fun if you can measure them. It's also the main way to find a sagging line or a Wick close to burning out.
 
-**Independent Test**: build a known circuit (one Hookah, a 10-block line, two machines), read it with the meter, and check the numbers against hand calculation.
+**Independent Test**: build a known circuit (one Hookah, a 10-block line, two machines), read it with the Inspoweedometer, and check the numbers against hand calculation.
 
 **Acceptance Scenarios**:
 
@@ -123,7 +123,7 @@ A player connects a Toke source to a Puff machine. The machine sees ten times it
 - **FR-009**: A block MUST overload (smoke, stop, keep its contents and progress, never break) when it sees a voltage above its tier's rated voltage by more than a set margin. It recovers when the voltage falls back.
 - **FR-010**: A Wick MUST burn out (smoke and ash, nothing explodes) when the current through it stays above its rating for one second. The rating is twice its tier's Hookah current: Puff 200 Ig, Toke 40 Ig, Rip 8 Ig, Blaze 1.6 Ig.
 - **FR-011**: A load with a high player within 21 blocks MUST run free and draw no current.
-- **FR-012**: Players MUST be able to read the voltage, current, resistance and power at any BI block or Wick with a hand-held meter item, named [NEEDS CLARIFICATION: the meter's name; "Multimeter" is proposed, and new player-facing names need the user's approval].
+- **FR-012**: Players MUST be able to read the voltage, current, resistance and power at any BI block or Wick with a hand-held meter item, the **Inspoweedometer** (name approved 2026-11-04).
 - **FR-013**: The screens of BI blocks MUST show the voltage and current at the block alongside their charge.
 - **FR-014**: Every displayed value MUST use the approved units and symbols: W, Ws, Ig, Kb, Φ. Each value MUST use a sensible prefix or precision so it stays readable: 0.8 Ig, 4.2 Kb, 0.168 Φ.
 - **FR-015**: Saved worlds MUST load with every stored charge kept. Changing over to the circuit model MUST NOT trigger an overload or burnout.
