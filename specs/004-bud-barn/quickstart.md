@@ -5,7 +5,7 @@
 - `./gradlew test` covers `BudBarnRulesTest`: step order, the buffer, and that per-level speed rises.
 - `./gradlew runGameTestServer -PcompatRunDir=.compat/runs/beds-dev` covers `TrimTrayBlock.trim`, which gives the same trimmed bud and seed odds as a player's click, keeping strain and traits. The Bud Barn classes load only with MineColonies, which the game-test run has.
 
-## On the local test server (`C:\Users\Ignus\mc-local-server`)
+## On the local test server
 
 1. Start a colony and build a level 1 Bud Barn from Sensi Heights (Agriculture → Horticulture). Hire a Trim Daddy.
 2. Put 32 rough buds of two strains in the warehouse.
