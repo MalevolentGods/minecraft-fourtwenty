@@ -62,6 +62,9 @@ public final class ProcessingConfig {
     private static final ModConfigSpec.DoubleValue PAVE_TICKS_BASE = BUILDER.comment("Pave Pen: ticks to lay a road, before hardness.").defineInRange("paveTicks", PAVE.ticksBase(), 1, 1200);
     private static final ModConfigSpec.DoubleValue PAVE_TICKS_HARDNESS = BUILDER.comment("Pave Pen: more ticks for each point of hardness.").defineInRange("paveTicksPerHardness", PAVE.ticksPerHardness(), 0, 1200);
     private static final ModConfigSpec.DoubleValue PAVE_MAX_HARDNESS = BUILDER.comment("Pave Pen: the hardest block it paves over (obsidian is 50).").defineInRange("paveMaxHardness", PAVE.maxHardness(), 0, 100);
+    private static final com.malevolentgods.fourtwenty.domain.CircuitRules.Numbers C = com.malevolentgods.fourtwenty.domain.CircuitRules.Numbers.DEFAULT;
+    private static final ModConfigSpec.DoubleValue[] CIRCUIT = circuitValues();
+    private static final ModConfigSpec.IntValue BURN_TICKS = BUILDER.comment("Circuit: ticks a Wick stays over a rating before it burns out.").defineInRange("circuit.burnTicks", C.burnTicks(), 1, 1200);
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     private static volatile TrimRules.Chances chancesOverride;
@@ -198,5 +201,47 @@ public final class ProcessingConfig {
         if (override != null) return override;
         CureRules.Tier base = CureRules.DEFAULTS.get(0);
         return SPEC.isLoaded() ? new CureRules.Tier(RACK_TICKS.get(), base.batch(), base.cost()) : base;
+    }
+
+    private static ModConfigSpec.DoubleValue[] circuitValues() {
+        var c = C;
+        Object[][] values = {
+                {"voltsPuff", "Nominal Kerberos of Puff.", c.voltsPuff(), 0.001, 1e9}, {"voltsToke", "Nominal Kerberos of Toke.", c.voltsToke(), 0.001, 1e9},
+                {"voltsRip", "Nominal Kerberos of Rip.", c.voltsRip(), 0.001, 1e9}, {"voltsBlaze", "Nominal Kerberos of Blaze.", c.voltsBlaze(), 0.001, 1e9},
+                {"sourceDroop", "A Hookah's internal resistance, per unit of its tier's base resistance.", c.sourceDroop(), 1e-6, 1},
+                {"sourceLimit", "A Hookah's current limit, per unit of its rated current.", c.sourceLimit(), 0.01, 100},
+                {"stashEmfLow", "A Stash's voltage empty, per unit of nominal.", c.stashEmfLow(), 0.1, 1.5},
+                {"stashEmfHigh", "A Stash's voltage full, per unit of nominal.", c.stashEmfHigh(), 0.1, 1.5},
+                {"stashResistance", "A Stash's internal resistance, per unit.", c.stashResistance(), 1e-6, 1},
+                {"stashLimit", "A Stash's current limit each way, per unit.", c.stashLimit(), 0.01, 100},
+                {"loadMinVolts", "Below this share of nominal voltage a line browns out.", c.loadMinVolts(), 0.01, 1},
+                {"loadHysteresis", "The share of its buffer a machine uses before it asks for power again.", c.loadHysteresis(), 0, 1},
+                {"wickOhmsPerBlock", "A Wick block's resistance, per unit of its tier's base resistance.", c.wickOhmsPerBlock(), 0, 1},
+                {"wickAmpRating", "A Wick's current rating, per unit of its tier's Hookah current.", c.wickAmpRating(), 0.01, 1000},
+                {"wickVoltRating", "A Wick's insulation rating, times its tier's voltage.", c.wickVoltRating(), 1, 1000},
+                {"overloadMargin", "A block overloads above this times its tier's voltage.", c.overloadMargin(), 1, 1000},
+                {"hitBoxLoss", "The share of power lost through a Hit Box.", c.hitBoxLoss(), 0, 0.99}};
+        var out = new ModConfigSpec.DoubleValue[values.length];
+        for (int i = 0; i < values.length; i++) {
+            Object[] v = values[i];
+            out[i] = BUILDER.comment("Circuit: " + v[1]).defineInRange("circuit." + v[0], ((Number) v[2]).doubleValue(), ((Number) v[3]).doubleValue(), ((Number) v[4]).doubleValue());
+        }
+        return out;
+    }
+
+    private static volatile com.malevolentgods.fourtwenty.domain.CircuitRules.Numbers circuitOverride;
+
+    /** Game tests set exact circuit numbers here; null goes back to the config. */
+    public static void overrideCircuit(com.malevolentgods.fourtwenty.domain.CircuitRules.Numbers numbers) { circuitOverride = numbers; }
+
+    /** The circuit's numbers: from the config once a world has loaded it, else the defaults. */
+    public static com.malevolentgods.fourtwenty.domain.CircuitRules.Numbers circuit() {
+        var override = circuitOverride;
+        if (override != null) return override;
+        if (!SPEC.isLoaded()) return C;
+        double[] d = new double[CIRCUIT.length];
+        for (int i = 0; i < d.length; i++) d[i] = CIRCUIT[i].get();
+        return new com.malevolentgods.fourtwenty.domain.CircuitRules.Numbers(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], d[11],
+                d[12], d[13], d[14], BURN_TICKS.get(), d[15], d[16]);
     }
 }

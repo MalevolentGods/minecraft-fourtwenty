@@ -36,14 +36,6 @@ class BIRulesTest {
     }
 
     @Test
-    void aWireCarriesTwoHookahs() {
-        for (Tier t : Tier.values()) {
-            assertFalse(BIRules.wireBurns(t, (long) (t.rate() * 2 * 20)), t.name());
-            assertTrue(BIRules.wireBurns(t, (long) (t.rate() * 3 * 20)), t.name());
-        }
-    }
-
-    @Test
     void tierBelow() {
         assertEquals(Tier.TOKE, Tier.RIP.below());
         assertEquals(Tier.PUFF, Tier.PUFF.below());
@@ -55,19 +47,5 @@ class BIRulesTest {
         assertTrue(BIRules.overloads(Tier.TOKE, Tier.RIP));
         assertFalse(BIRules.overloads(Tier.TOKE, Tier.TOKE));
         assertFalse(BIRules.overloads(Tier.RIP, Tier.PUFF));
-    }
-
-    @Test
-    void sharesAddUpToEverything() {
-        assertEquals(11, BIRules.share(32, 3));
-        assertEquals(32, BIRules.share(32, 1));
-        assertEquals(0, BIRules.share(32, 0));
-    }
-
-    @Test
-    void stashesSettleDownhill() {
-        assertTrue(BIRules.flows(0.8, 0.5));
-        assertFalse(BIRules.flows(0.5, 0.5));
-        assertFalse(BIRules.flows(0.5, 0.8));
     }
 }

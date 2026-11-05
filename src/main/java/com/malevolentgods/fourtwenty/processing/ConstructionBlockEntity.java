@@ -58,7 +58,8 @@ public class ConstructionBlockEntity extends BIBlockEntity implements MenuProvid
     public ConstructionBlockEntity(BlockPos pos, BlockState state) {
         super(ModPower.CONSTRUCTION_ENTITY.get(), pos, state);
         block = (ConstructionJointBlock) state.getBlock();
-        intake = new BIBuffer(block.tier(), ConstructionRules.intake(block.tier()), true, false, this::setChanged);
+        intake = new BIBuffer(block.tier(), ConstructionRules.intake(block.tier()), true, false,
+                com.malevolentgods.fourtwenty.domain.BIRules.watts(ConstructionRules.chargeRate(block.tier())), this::setChanged);
         reserve = new BIBuffer(block.tier(), ConstructionRules.CAPACITY, false, false, this::setChanged);
     }
 

@@ -8,7 +8,7 @@ import java.util.Locale;
 /**
  * Boundless Inspiration (BI), the mod's electricity. Power is in Willards (W), stored energy in Willard-seconds (Ws), and every amount here
  * is in Ws: a rate per tick times 20 is Willards. Everything is sized from a Hookah, which puts out 420 W: one charcoal and one cured bud
- * burn for a minute on every tier, and run four machines of that tier. A battery gives what a Hookah gives. A wire carries two Hookahs' worth; more than that burns it out. A block
+ * burn for a minute on every tier, and run four machines of that tier. A battery gives what a Hookah gives. A wire is rated for two Hookahs' current of its tier (CircuitRules). A block
  * fed from a higher tier than its own never breaks: it overloads and stops until the higher tier is gone.
  */
 public final class BIRules {
@@ -49,18 +49,6 @@ public final class BIRules {
         return source.ordinal() > part.ordinal();
     }
 
-    /** Whether {@code sent} BI in one second is more than a wire of this tier can carry. */
-    public static boolean wireBurns(Tier wire, long sent) {
-        return sent > wire.wire() * TICKS_PER_SECOND;
-    }
 
-    /** What each of {@code sinks} sinks gets of {@code amount}, rounded up so nothing is left over by rounding. */
-    public static long share(long amount, int sinks) {
-        return sinks <= 0 ? 0 : (amount + sinks - 1) / sinks;
-    }
 
-    /** A Stash only gives to a Stash that's less full, so two of them settle instead of passing the same power back and forth. */
-    public static boolean flows(double sourceFill, double sinkFill) {
-        return sinkFill < sourceFill;
-    }
 }

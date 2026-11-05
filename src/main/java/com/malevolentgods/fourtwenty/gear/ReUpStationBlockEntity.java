@@ -31,7 +31,8 @@ public class ReUpStationBlockEntity extends BIBlockEntity {
     public ReUpStationBlockEntity(BlockPos pos, BlockState state) {
         super(ModGear.RE_UP_ENTITY.get(), pos, state);
         tier = ((ReUpStationBlock) state.getBlock()).tier();
-        intake = new BIBuffer(tier, (long) Math.ceil(GearRules.stationRate(tier) * INTAKE_TICKS), true, false, this::setChanged);
+        intake = new BIBuffer(tier, (long) Math.ceil(GearRules.stationRate(tier) * INTAKE_TICKS), true, false,
+                com.malevolentgods.fourtwenty.domain.BIRules.watts(GearRules.stationRate(tier)), this::setChanged);
     }
 
     public BINode node() { return intake; }

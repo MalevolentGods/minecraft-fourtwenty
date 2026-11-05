@@ -13,11 +13,9 @@ import java.util.List;
 
 /** Stores BI and gives it back at its tier's rate. Next to another Stash it only gives downhill, so they settle level. */
 public class StashBlockEntity extends BIBlockEntity implements net.minecraft.world.MenuProvider {
-    private static final List<Direction> ALL = List.of(Direction.values());
 
     private final BIRules.Tier tier;
     private final BIBuffer buffer;
-    private final BIPush push = new BIPush();
     private final net.minecraft.world.inventory.ContainerData data;
 
     public StashBlockEntity(BlockPos pos, BlockState state) {
@@ -33,7 +31,7 @@ public class StashBlockEntity extends BIBlockEntity implements net.minecraft.wor
     @Override public void serverTick() {
         boolean overloaded = overloadTick(buffer);
         lit(buffer.stored() > 0 && !overloaded);
-        if (!overloaded) push.push(level, worldPosition, ALL, tier, tier.rate(), buffer, sink -> !sink.canExtract() || BIRules.flows(buffer.fill(), sink.fill()));
+        Circuits.tick(level, buffer, worldPosition);
     }
 
     @Override public @Nonnull net.minecraft.network.chat.Component getDisplayName() { return getBlockState().getBlock().getName(); }

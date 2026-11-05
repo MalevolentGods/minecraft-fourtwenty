@@ -144,30 +144,31 @@ public final class PowerGameTests {
         });
     }
 
-    @GameTest(template = "empty", timeoutTicks = 80)
-    public static void aWireCarriesTwoBatteriesButNotThree(GameTestHelper h) {
+    /** Machines set the current, not the batteries: nine Puff machines pull about 230 Ig through a Hemp Wick rated for 200, seven about 180. */
+    @GameTest(template = "long", timeoutTicks = 100)
+    public static void aWireBurnsOnTheCurrentItCarries(GameTestHelper h) {
         var wick = new BlockPos(2, 2, 2);
-        var sink = new BlockPos(3, 2, 2);
-        h.setBlock(wick, ModPower.HEMP_WICK.get());
-        h.setBlock(sink, ModPower.TRIM_REAPER.get());
-        for (BlockPos jar : List.of(new BlockPos(1, 2, 2), new BlockPos(2, 3, 2), new BlockPos(2, 1, 2))) {
-            h.setBlock(jar, ModPower.STASH_JAR.get());
-            ((StashBlockEntity) h.getBlockEntity(jar)).node().receive(5_000);
-        }
-        var okWick = new BlockPos(2, 2, 5);
-        var okSink = new BlockPos(3, 2, 5);
-        h.setBlock(okWick, ModPower.HEMP_WICK.get());
-        h.setBlock(okSink, ModPower.TRIM_REAPER.get());
-        for (BlockPos jar : List.of(new BlockPos(1, 2, 5), new BlockPos(2, 3, 5))) {
-            h.setBlock(jar, ModPower.STASH_JAR.get());
-            ((StashBlockEntity) h.getBlockEntity(jar)).node().receive(5_000);
-        }
+        var okWick = new BlockPos(2, 2, 6);
+        build(h, wick, 9);
+        build(h, okWick, 7);
         h.runAfterDelay(60, () -> {
             h.assertBlockPresent(Blocks.AIR, wick);
             h.assertBlockPresent(ModPower.HEMP_WICK.get(), okWick);
-            h.assertTrue(((MachineBlockEntity) h.getBlockEntity(okSink)).node().stored() > 0, "two batteries got through");
+            h.assertTrue(((MachineBlockEntity) h.getBlockEntity(okWick.east())).node().stored() > 0, "seven machines get through");
             h.succeed();
         });
+    }
+
+    /** Three Stash Jars west of a Hemp Wick, and {@code machines} Snip Stations east of it, touching each other but not the Jars. */
+    private static void build(GameTestHelper h, BlockPos wick, int machines) {
+        h.setBlock(wick, ModPower.HEMP_WICK.get());
+        for (BlockPos jar : List.of(wick.west(), wick.west().above(), wick.west().below())) {
+            h.setBlock(jar, ModPower.STASH_JAR.get());
+            ((StashBlockEntity) h.getBlockEntity(jar)).node().receive(60_000);
+        }
+        BlockPos e = wick.east(), f = e.east();
+        List<BlockPos> spots = List.of(e, e.above(), e.below(), e.north(), e.south(), f, f.above(), f.below(), f.north());
+        for (int i = 0; i < machines; i++) h.setBlock(spots.get(i), ModPower.SNIP_STATION.get());
     }
 
     @GameTest(template = "empty", timeoutTicks = 60)
@@ -238,13 +239,21 @@ public final class PowerGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 400)
     public static void twoStashesSettleLevel(GameTestHelper h) {
+        // a full Jar and an empty one: the fuller one's voltage is higher, so it charges the other, never the other way
         h.setBlock(A, ModPower.STASH_JAR.get());
         h.setBlock(B, ModPower.HEMP_WICK.get());
         h.setBlock(C, ModPower.STASH_JAR.get());
         var full = (StashBlockEntity) h.getBlockEntity(A);
         var empty = (StashBlockEntity) h.getBlockEntity(C);
-        ((BIBuffer) full.node()).receive(6_000);
-        h.succeedWhen(() -> h.assertTrue(Math.abs(full.node().stored() - empty.node().stored()) <= 48, "settled, " + full.node().stored() + " and " + empty.node().stored()));
+        ((BIBuffer) full.node()).receive(full.node().capacity());
+        long start = full.node().stored();
+        h.runAfterDelay(100, () -> {
+            long gained = empty.node().stored(), lost = start - full.node().stored();
+            h.assertTrue(gained > 1_000, "the empty one charged, by " + gained);
+            h.assertTrue(lost >= gained, "nothing made from nothing: lost " + lost + ", gained " + gained);
+            h.assertTrue(full.node().stored() > empty.node().stored(), "and it flowed downhill");
+            h.succeed();
+        });
     }
 
     @GameTest(template = "empty")
