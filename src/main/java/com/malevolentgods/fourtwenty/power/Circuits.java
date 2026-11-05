@@ -93,13 +93,13 @@ public final class Circuits {
         return Optional.empty();
     }
 
-    /** The voltage and current at a block, for its screen: {volts, amps}. */
+    /** The voltage, current and power at a block, for its screen: {volts, amps, watts}. */
     public static float[] meter(Level level, BINode node, BlockPos pos) {
-        if (level == null || level.isClientSide || node == null) return new float[2];
+        if (level == null || level.isClientSide || node == null) return new float[3];
         Network net = network(level, node, pos);
         int i = net.indexOf(node);
-        if (i < 0) return new float[2];
-        return new float[]{(float) net.memberVolts(i), (float) Math.abs(net.memberAmps(i))};
+        if (i < 0) return new float[3];
+        return new float[]{(float) net.memberVolts(i), (float) Math.abs(net.memberAmps(i)), (float) Math.abs(net.memberWatts(i))};
     }
 
     /** Forget a level's networks (game tests that rebuild in place). */

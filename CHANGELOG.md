@@ -5,7 +5,8 @@ All notable changes to the FourTwenty mod will be documented in this file.
 ## [Unreleased]
 
 ### Fixed
-- **Re-Up Stations no longer burn the Wick they sit on.** They drew two Hookahs' worth, right at a Wick's rating, so a line a little under its voltage went over it. They now charge at one and a half Hookahs (630 W on Puff, up to 5,040 W on Blaze), so gear charges about a quarter slower.
+- **Re-Up Stations have a battery and a screen.** They fill from their Wick at one Hookah of their tier (420 W on Puff), well inside the Wick's rating, so they no longer burn the Wick they sit on. They charge gear from that battery at four Hookahs (1,680 W on Puff, 13,440 W on Blaze), faster than before. The battery holds 40 minutes of input. Use a station empty-handed for its screen: a gear slot, the battery bar, what comes in and goes out.
+- **Screens show resistance and power too:** the gauge popup reads Kb, Ig, Φ and W, and the Inspoweedometer gives a Wick's resistance.
 - **A Wick where several lines meet is judged by the heat it really makes**, the I²R in each of its halves, instead of half of every current in and out of it, which made busy junctions burn too early.
 
 ## [0.20.0] - Inspoweednetics

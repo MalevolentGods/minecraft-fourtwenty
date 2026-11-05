@@ -211,4 +211,43 @@ public final class CircuitGameTests {
             h.succeed();
         });
     }
+
+    /** The flatworld Puff row block for block, Terpinators, Infusers and all, watching the current through every Wick each tick. */
+    @GameTest(template = "long", timeoutTicks = 500)
+    public static void theFullPuffRowStaysInRating(GameTestHelper h) {
+        int z = 3;
+        hookah(h, new BlockPos(1, 2, z), ModBlocks.WEED_BONG.get());
+        wicks(h, ModPower.HEMP_WICK.get(), 2, z, 2, 12);
+        h.setBlock(new BlockPos(13, 2, z), ModPower.STASH_JAR.get());
+        ((com.malevolentgods.fourtwenty.power.StashBlockEntity) h.getBlockEntity(new BlockPos(13, 2, z))).node().receive(252_000);
+        machine(h, new BlockPos(3, 2, z - 1), ModPower.SNIP_STATION.get());
+        h.setBlock(new BlockPos(5, 2, z - 1), ModPower.DRY_BOX.get());
+        ((MachineBlockEntity) h.getBlockEntity(new BlockPos(5, 2, z - 1))).setItem(0, ModDataComponents.withStrain(new ItemStack(ModItems.TRIMMED_BUD.get(), 64), Strain.LANDRACE));
+        h.setBlock(new BlockPos(7, 2, z - 1), ModPower.GROW_TENT.get());
+        h.setBlock(new BlockPos(7, 3, z - 1), ModBlocks.WEED_CROP.get());
+        h.setBlock(new BlockPos(9, 2, z - 1), ModPower.THINK_TANK.get());
+        h.setBlock(new BlockPos(11, 2, z - 1), com.malevolentgods.fourtwenty.registry.ModTerpenes.TERPINATOR.get());
+        h.setBlock(new BlockPos(3, 2, z + 1), ModPower.CONSTRUCTION_JOINT.get());
+        BlockPos station = new BlockPos(5, 2, z + 1);
+        h.setBlock(station, com.malevolentgods.fourtwenty.gear.ModGear.RE_UP_STATIONS.get(0).get());
+        ((com.malevolentgods.fourtwenty.gear.ReUpStationBlockEntity) h.getBlockEntity(station)).hang(new ItemStack(com.malevolentgods.fourtwenty.gear.ModGear.BLAZER.get()));
+        h.setBlock(new BlockPos(7, 2, z + 1), ModBlocks.INFUSER.get());
+        h.setBlock(new BlockPos(9, 2, z + 1), ModBlocks.INFUSER_LAB.get());
+        h.setBlock(new BlockPos(11, 2, z + 1), com.malevolentgods.fourtwenty.registry.ModTerpenes.TERPINATOR_LAB.get());
+        double[] most = new double[13];
+        long[] at = new long[13];
+        h.onEachTick(() -> {
+            for (int x = 2; x <= 12; x++) {
+                var r = Circuits.reading(h.getLevel(), h.absolutePos(new BlockPos(x, 2, z)));
+                if (r.isPresent() && r.get().amps() > most[x]) { most[x] = r.get().amps(); at[x] = h.getTick(); }
+            }
+        });
+        h.runAfterDelay(400, () -> {
+            StringBuilder report = new StringBuilder();
+            for (int x = 2; x <= 12; x++) report.append(x).append(": ").append(Math.round(most[x])).append(" Ig @").append(at[x]).append("  ");
+            for (int x = 2; x <= 12; x++) h.assertBlockPresent(ModPower.HEMP_WICK.get(), new BlockPos(x, 2, z));
+            for (int x = 2; x <= 12; x++) h.assertTrue(most[x] < 190, "most current through each Wick: " + report);
+            h.succeed();
+        });
+    }
 }
