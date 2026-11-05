@@ -41,7 +41,10 @@ public final class GearRules {
     }
 
     /** Charge per tick at a Re-Up Station of this tier: what a Wick of the tier carries. */
-    public static double stationRate(BIRules.Tier tier) { return tier.wire(); }
+    /** Ws per tick a Re-Up Station charges at: one and a half Hookahs of its tier, which leaves its Wick (rated for two) headroom. */
+    public static final double STATION_HOOKAHS = 1.5;
+
+    public static double stationRate(BIRules.Tier tier) { return tier.rate() * STATION_HOOKAHS; }
 
     /** A stomp's damage from how far the wearer fell: a little from a hop, up to a cap from a long drop. */
     public static float stompDamage(float fallDistance, float max) {

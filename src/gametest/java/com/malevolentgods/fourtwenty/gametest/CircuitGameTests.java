@@ -172,4 +172,43 @@ public final class CircuitGameTests {
             h.succeed();
         });
     }
+
+    /**
+     * The flatworld demo's Puff row: a Hookah at one end, a full Stash at the other, five machines, a bench, a Re-Up Station charging
+     * boots and an Infuser along both sides. A Re-Up Station once drew two Hookahs through the Wick it sat on and burned it; nothing on
+     * this row may burn now.
+     */
+    @GameTest(template = "long", timeoutTicks = 400)
+    public static void theDemoRowNeverBurnsAWick(GameTestHelper h) {
+        int z = 3;
+        hookah(h, new BlockPos(1, 2, z), ModBlocks.WEED_BONG.get());
+        wicks(h, ModPower.HEMP_WICK.get(), 2, z, 2, 12);
+        h.setBlock(new BlockPos(13, 2, z), ModPower.STASH_JAR.get());
+        ((com.malevolentgods.fourtwenty.power.StashBlockEntity) h.getBlockEntity(new BlockPos(13, 2, z))).node().receive(252_000);
+        machine(h, new BlockPos(3, 2, z - 1), ModPower.SNIP_STATION.get());
+        h.setBlock(new BlockPos(5, 2, z - 1), ModPower.DRY_BOX.get());
+        ((MachineBlockEntity) h.getBlockEntity(new BlockPos(5, 2, z - 1))).setItem(0, ModDataComponents.withStrain(new ItemStack(ModItems.TRIMMED_BUD.get(), 64), Strain.LANDRACE));
+        h.setBlock(new BlockPos(7, 2, z - 1), ModPower.GROW_TENT.get());
+        h.setBlock(new BlockPos(9, 2, z - 1), ModPower.THINK_TANK.get());
+        h.setBlock(new BlockPos(3, 2, z + 1), ModPower.CONSTRUCTION_JOINT.get());
+        BlockPos station = new BlockPos(5, 2, z + 1);
+        h.setBlock(station, com.malevolentgods.fourtwenty.gear.ModGear.RE_UP_STATIONS.get(0).get());
+        ((com.malevolentgods.fourtwenty.gear.ReUpStationBlockEntity) h.getBlockEntity(station)).hang(new ItemStack(com.malevolentgods.fourtwenty.gear.ModGear.MOON_BOOTS.get()));
+        h.setBlock(new BlockPos(7, 2, z + 1), ModBlocks.INFUSER.get());
+        // and a station alone at the far end of a second line, fed only from its start
+        hookah(h, new BlockPos(1, 2, 6), ModBlocks.WEED_BONG.get());
+        h.setBlock(new BlockPos(2, 2, 6), ModPower.STASH_JAR.get());
+        ((com.malevolentgods.fourtwenty.power.StashBlockEntity) h.getBlockEntity(new BlockPos(2, 2, 6))).node().receive(252_000);
+        wicks(h, ModPower.HEMP_WICK.get(), 2, 6, 3, 20);
+        BlockPos far = new BlockPos(21, 2, 6);
+        h.setBlock(far, com.malevolentgods.fourtwenty.gear.ModGear.RE_UP_STATIONS.get(0).get());
+        ((com.malevolentgods.fourtwenty.gear.ReUpStationBlockEntity) h.getBlockEntity(far)).hang(new ItemStack(com.malevolentgods.fourtwenty.gear.ModGear.MOON_BOOTS.get()));
+        h.runAfterDelay(300, () -> {
+            for (int x = 2; x <= 12; x++) h.assertBlockPresent(ModPower.HEMP_WICK.get(), new BlockPos(x, 2, z));
+            for (int x = 3; x <= 20; x++) h.assertBlockPresent(ModPower.HEMP_WICK.get(), new BlockPos(x, 2, 6));
+            var boots = ((com.malevolentgods.fourtwenty.gear.ReUpStationBlockEntity) h.getBlockEntity(station)).hung();
+            h.assertTrue(com.malevolentgods.fourtwenty.gear.Gear.charge(boots) > 0, "the boots charge");
+            h.succeed();
+        });
+    }
 }

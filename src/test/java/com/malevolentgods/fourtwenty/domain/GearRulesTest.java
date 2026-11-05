@@ -31,7 +31,8 @@ class GearRulesTest {
         assertEquals(0, GearRules.spend(100, 200));
         assertEquals(50, GearRules.chargeStep(99_950, 100_000, 1000), "never past full");
         assertEquals(0, GearRules.chargeStep(100_000, 100_000, 1000));
-        assertEquals(336.0, GearRules.stationRate(BIRules.Tier.BLAZE), 1e-9);
+        assertEquals(252.0, GearRules.stationRate(BIRules.Tier.BLAZE), 1e-9);
+        for (BIRules.Tier t : BIRules.Tier.values()) assertTrue(GearRules.stationRate(t) < t.wire(), "a station leaves its Wick headroom");
         for (int i = 1; i < BIRules.Tier.values().length; i++)
             assertEquals(2 * GearRules.stationRate(BIRules.Tier.values()[i - 1]), GearRules.stationRate(BIRules.Tier.values()[i]), 1e-9);
     }
