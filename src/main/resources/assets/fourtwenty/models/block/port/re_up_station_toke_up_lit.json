@@ -1,0 +1,10 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/power/toke_body",
+  "plate": "fourtwenty:block/power/toke_body",
+  "collar": "fourtwenty:block/power/toke_glow_lit",
+  "lead": "fourtwenty:block/power/toke_wick_lit"
+ },
+ "elements": []
+}

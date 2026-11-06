@@ -1,0 +1,10 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/power/blaze_body",
+  "plate": "fourtwenty:block/power/blaze_body",
+  "collar": "fourtwenty:block/power/blaze_glow",
+  "lead": "fourtwenty:block/power/blaze_wick"
+ },
+ "elements": []
+}

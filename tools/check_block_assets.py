@@ -60,7 +60,7 @@ def main():
             problems.append(f'{name}: no name')
         if not (DATA / f'fourtwenty/loot_table/blocks/{name}.json').exists():
             problems.append(f'{name}: no loot table')
-    ports = ('construction_joint', 'construction_blunt', 'construction_spliff', 'construction_cannon', 'rosin_rig', 'pheno_chamber', 'pheno_lab', 'pheno_cathedral', 'weed_bong', 'double_hose', 'big_bertha', 'grand_hookah', 'stash_jar', 'stash_box', 'mother_stash', 'the_vault', 'snip_station', 'bud_barber', 'trim_reaper',
+    ports = ('re_up_station_puff', 're_up_station_toke', 're_up_station_rip', 're_up_station_blaze', 'lit_bit', 'weedweeno', 'construction_joint', 'construction_blunt', 'construction_spliff', 'construction_cannon', 'rosin_rig', 'pheno_chamber', 'pheno_lab', 'pheno_cathedral', 'weed_bong', 'double_hose', 'big_bertha', 'grand_hookah', 'stash_jar', 'stash_box', 'mother_stash', 'the_vault', 'snip_station', 'bud_barber', 'trim_reaper',
              'dry_box', 'cure_closet', 'the_humidor', 'grow_tent', 'hydro_bed', 'aero_pod', 'cosmic_kush_pod', 'think_tank', 'terpinator', 'terpinator_lab',
              'inspiration_infuser', 'inspiration_infuser_lab', 'hit_box_toke', 'hit_box_rip', 'hit_box_blaze')
     for name in ports:

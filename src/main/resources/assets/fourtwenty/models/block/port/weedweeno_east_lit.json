@@ -1,0 +1,147 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/power/puff_body",
+  "plate": "fourtwenty:block/power/puff_body",
+  "collar": "fourtwenty:block/power/puff_glow_lit",
+  "lead": "fourtwenty:block/power/puff_wick_lit"
+ },
+ "elements": [
+  {
+   "from": [
+    15.25,
+    2,
+    7
+   ],
+   "to": [
+    16,
+    4,
+    9
+   ],
+   "faces": {
+    "east": {
+     "uv": [
+      7,
+      12,
+      9,
+      14
+     ],
+     "texture": "#lead"
+    },
+    "west": {
+     "uv": [
+      7,
+      12,
+      9,
+      14
+     ],
+     "texture": "#lead"
+    },
+    "south": {
+     "uv": [
+      0,
+      12,
+      0.75,
+      14
+     ],
+     "texture": "#lead"
+    },
+    "north": {
+     "uv": [
+      0,
+      12,
+      0.75,
+      14
+     ],
+     "texture": "#lead"
+    },
+    "up": {
+     "uv": [
+      7,
+      0,
+      9,
+      0.75
+     ],
+     "texture": "#lead"
+    },
+    "down": {
+     "uv": [
+      7,
+      0,
+      9,
+      0.75
+     ],
+     "texture": "#lead"
+    }
+   }
+  },
+  {
+   "from": [
+    15,
+    1,
+    6
+   ],
+   "to": [
+    15.5,
+    5,
+    10
+   ],
+   "faces": {
+    "east": {
+     "uv": [
+      6,
+      11,
+      10,
+      15
+     ],
+     "texture": "#plate"
+    },
+    "west": {
+     "uv": [
+      6,
+      11,
+      10,
+      15
+     ],
+     "texture": "#plate"
+    },
+    "south": {
+     "uv": [
+      0.5,
+      11,
+      1,
+      15
+     ],
+     "texture": "#plate"
+    },
+    "north": {
+     "uv": [
+      0.5,
+      11,
+      1,
+      15
+     ],
+     "texture": "#plate"
+    },
+    "up": {
+     "uv": [
+      6,
+      0.5,
+      10,
+      1
+     ],
+     "texture": "#plate"
+    },
+    "down": {
+     "uv": [
+      6,
+      0.5,
+      10,
+      1
+     ],
+     "texture": "#plate"
+    }
+   }
+  }
+ ]
+}

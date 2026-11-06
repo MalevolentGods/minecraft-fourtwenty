@@ -131,6 +131,21 @@ def hit_box(high, low):
     return sides
 
 
+def weedweeno():
+    """A board 6 high, set in 1 from its space: a short lead in to a low gland on the board's edge."""
+    side = [box([7, 2, 0], [9, 4, 0.75], 'lead'), box([6, 1, 0.5], [10, 5, 1], 'plate')]
+    return {**{s: side for s in SIDES}, 'up': up_flange(6), 'down': down_flange()}
+
+
+def lit_bit():
+    """Glass all round: only rings, so the lamp still shows."""
+    return {**{s: small_ring() for s in SIDES}, 'up': small_ring_up(), 'down': down_flange()}
+
+
+def small_ring_up():
+    return [box([6.25, 16, 6.25], [9.75, 16.5, 9.75], 'collar')]
+
+
 def turned(element, quarter):
     e = copy.deepcopy(element)
     for _ in range(quarter):
@@ -200,6 +215,10 @@ def main():
     for high, low in (('toke', 'puff'), ('rip', 'toke'), ('blaze', 'rip')):
         extra = lambda lit, l=low: {'low_plate': f'fourtwenty:block/power/{l}_body', 'low_ring': f'fourtwenty:block/power/{l}_glow{"_lit" if lit else ""}'}
         block(f'hit_box_{high}', high, hit_box(high, low), extra=extra)
+    for tier in ('puff', 'toke', 'rip', 'blaze'):
+        block(f're_up_station_{tier}', tier, full(up=[]))
+    block('lit_bit', 'puff', lit_bit())
+    block('weedweeno', 'puff', weedweeno())
     print('ok')
 
 
