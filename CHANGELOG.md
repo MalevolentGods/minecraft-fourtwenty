@@ -5,6 +5,7 @@ All notable changes to the FourTwenty mod will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Twin Wick and Daisy Wick**, two-core cables in every Wick tier. A Twin Wick wires every block it touches in parallel, + to + and − to −, whichever way the block faces. A Daisy Wick wires the blocks along it in series and closes the loop itself. Both meet red and black rails, take dyes, burn out like Wicks, and read on the Inspoweedometer.
 - **Lit Bits:** RGB lamps that work like real LEDs. Powered through their + and − terminals, they light only on a closed loop at Puff voltage, dim as the supply sags, draw current for how bright each channel is, stay dark wired backwards, and overload on too high a voltage. Each has an ID you can change in its screen.
 - **The Sticky Finger** places Lit Bits and numbers them as it goes. A Lit Bit placed where one was broken gets its old ID back.
 - **The Weedweeno**, a Lua computer for light shows. It sets Lit Bits by ID, wirelessly within 64 blocks, and has a code editor, four presets (Rainbow, Chase, Pulse, Strobe) and as many saved programs as you like. Shows run sandboxed on the server, with a time budget per tick.

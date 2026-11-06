@@ -112,6 +112,9 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
         for (Direction side : Direction.values()) {
             var neighbour = level.getBlockState(pos.relative(side)).getBlock();
             if (neighbour instanceof WickBlock && com.malevolentgods.fourtwenty.power.Terminal.isTerminalFace(state, side)) mask |= 1 << side.ordinal();
+            // a two-core cable plugs into any face (the Hit Box's four sides only)
+            if (neighbour instanceof com.malevolentgods.fourtwenty.power.CableBlock
+                    && com.malevolentgods.fourtwenty.power.CableBlock.plugsInto(state, side)) mask |= 1 << side.ordinal();
             else if (neighbour instanceof TubeBlock) mask |= 1 << TUBE_BITS + side.ordinal();
         }
         return d.derive().with(MASK, mask).build();

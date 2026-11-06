@@ -17,6 +17,8 @@ public final class WickColours {
         event.register((state, level, pos, tint) -> {
             var dye = state.getValue(WickBlock.COLOUR).dye();
             return dye == null ? -1 : dye.getTextureDiffuseColor();
-        }, ModPower.HEMP_WICK.get(), ModPower.ROLLED_WICK.get(), ModPower.GLASS_WICK.get(), ModPower.GOLD_WICK.get());
+        }, ModPower.HEMP_WICK.get(), ModPower.ROLLED_WICK.get(), ModPower.GLASS_WICK.get(), ModPower.GOLD_WICK.get(),
+                ModPower.HEMP_TWIN_WICK.get(), ModPower.ROLLED_TWIN_WICK.get(), ModPower.GLASS_TWIN_WICK.get(), ModPower.GOLD_TWIN_WICK.get(),
+                ModPower.HEMP_DAISY_WICK.get(), ModPower.ROLLED_DAISY_WICK.get(), ModPower.GLASS_DAISY_WICK.get(), ModPower.GOLD_DAISY_WICK.get());
     }
 }

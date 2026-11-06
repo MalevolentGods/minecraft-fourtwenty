@@ -1,0 +1,16 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "category": "redstone",
+ "pattern": [
+  "WW"
+ ],
+ "key": {
+  "W": {
+   "item": "fourtwenty:hemp_wick"
+  }
+ },
+ "result": {
+  "id": "fourtwenty:hemp_twin_wick",
+  "count": 1
+ }
+}

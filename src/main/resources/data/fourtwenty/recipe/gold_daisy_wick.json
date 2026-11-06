@@ -1,0 +1,19 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:gold_wick"
+  },
+  {
+   "item": "fourtwenty:gold_wick"
+  },
+  {
+   "item": "minecraft:oxeye_daisy"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:gold_daisy_wick",
+  "count": 1
+ }
+}

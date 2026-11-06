@@ -234,6 +234,16 @@ Coloured lamps in all 16 dye colours, for builds that need lighting without anot
 
 Lit lamps and trims glow with a soft coloured halo that spills onto neighbouring blocks, including in your inventory and hands. The lamp textures and halo come from [ProjectRed](https://github.com/MrTJP/ProjectRed)'s illumar lamps (MIT License; see `licenses/ProjectRed-LICENSE.txt`). The bundled Dispensary uses them, so it needs no lighting mod. `tools/import_dispensary_blueprints.py --lamps-only` converts blueprints that use ProjectRed illumar lamps or CB Multipart lamp covers to these blocks.
 
+## Twin Wick and Daisy Wick
+
+Two-core cables that do the routine wiring for you. Each carries a + core and a − core in one block, and each core is rated like one single Wick of its tier. They come in every tier (Hemp, Rolled, Glass, Gold) and take dyes like Wicks; a cable joins only cables of its own kind and colour.
+
+- **Twin Wick (parallel):** every powered block it touches is wired across it, + to + and − to −, whatever face it touches and whichever way the block faces, so it can't be wired backwards. Lay it beside a row of blocks, or through them (Hookah, cable, machine, cable, machine): either way they're all in parallel. Craft two Wicks of a tier side by side.
+- **Daisy Wick (series):** the blocks along it are wired one after another into a single string, and its return core closes the loop for you. Loads take the current in at +, sources put it out at +, so it doesn't matter which end you start from or where the source sits; two sources add up like batteries. Ten Lit Bits on a Rolled Daisy Wick from a Double Hose each get 4.2 Kb, like a real LED string. A Daisy Wick can't branch or close on itself: if it does, it carries nothing and the Inspoweedometer says why. Craft two Wicks of a tier and an oxeye daisy.
+- **With rails:** a red single Wick touching a Twin Wick joins its + core, a black one its − core. A Daisy line with a red Wick at one end and a black Wick at the other runs between them. The Hit Box takes a cable on its front or back as its high-voltage winding and on its left or right as its low.
+
+The Inspoweedometer reads a Twin Wick's voltage between its cores and the current on each, and a Daisy Wick's string current and voltage there.
+
 ## Lit Bits and the Weedweeno
 
 Programmable RGB lamps, part of Inspoweednetics. Nothing here needs MineColonies.

@@ -1,0 +1,19 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:glass_wick"
+  },
+  {
+   "item": "fourtwenty:glass_wick"
+  },
+  {
+   "item": "minecraft:oxeye_daisy"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:glass_daisy_wick",
+  "count": 1
+ }
+}

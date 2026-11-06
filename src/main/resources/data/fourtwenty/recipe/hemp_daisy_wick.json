@@ -1,0 +1,19 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:hemp_wick"
+  },
+  {
+   "item": "fourtwenty:hemp_wick"
+  },
+  {
+   "item": "minecraft:oxeye_daisy"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:hemp_daisy_wick",
+  "count": 1
+ }
+}

@@ -1,0 +1,156 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/power/toke_wick_lit",
+  "knot": "fourtwenty:block/power/toke_wick_lit",
+  "stripe": "fourtwenty:block/power/cable_stripe",
+  "twist": "fourtwenty:block/power/cable_twist_lit",
+  "red": "fourtwenty:block/power/cable_red_lit",
+  "black": "fourtwenty:block/power/cable_black_lit",
+  "band": "fourtwenty:block/power/cable_band"
+ },
+ "elements": [
+  {
+   "from": [
+    5,
+    6,
+    5
+   ],
+   "to": [
+    11,
+    10,
+    11
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5,
+      6,
+      11,
+      10
+     ],
+     "texture": "#knot"
+    },
+    "south": {
+     "uv": [
+      5,
+      6,
+      11,
+      10
+     ],
+     "texture": "#knot"
+    },
+    "east": {
+     "uv": [
+      5,
+      6,
+      11,
+      10
+     ],
+     "texture": "#knot"
+    },
+    "west": {
+     "uv": [
+      5,
+      6,
+      11,
+      10
+     ],
+     "texture": "#knot"
+    },
+    "up": {
+     "uv": [
+      5,
+      5,
+      11,
+      11
+     ],
+     "texture": "#knot"
+    },
+    "down": {
+     "uv": [
+      5,
+      5,
+      11,
+      11
+     ],
+     "texture": "#knot"
+    }
+   }
+  },
+  {
+   "from": [
+    6.5,
+    10,
+    6.5
+   ],
+   "to": [
+    9.5,
+    10.25,
+    9.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.5,
+      5.75,
+      9.5,
+      6
+     ],
+     "texture": "#stripe",
+     "tintindex": 0
+    },
+    "south": {
+     "uv": [
+      6.5,
+      5.75,
+      9.5,
+      6
+     ],
+     "texture": "#stripe",
+     "tintindex": 0
+    },
+    "east": {
+     "uv": [
+      6.5,
+      5.75,
+      9.5,
+      6
+     ],
+     "texture": "#stripe",
+     "tintindex": 0
+    },
+    "west": {
+     "uv": [
+      6.5,
+      5.75,
+      9.5,
+      6
+     ],
+     "texture": "#stripe",
+     "tintindex": 0
+    },
+    "up": {
+     "uv": [
+      6.5,
+      6.5,
+      9.5,
+      9.5
+     ],
+     "texture": "#stripe",
+     "tintindex": 0
+    },
+    "down": {
+     "uv": [
+      6.5,
+      6.5,
+      9.5,
+      9.5
+     ],
+     "texture": "#stripe",
+     "tintindex": 0
+    }
+   }
+  }
+ ]
+}

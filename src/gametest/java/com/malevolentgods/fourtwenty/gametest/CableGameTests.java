@@ -266,4 +266,50 @@ public final class CableGameTests {
             h.succeed();
         });
     }
+
+    /** A Twin line and a Daisy line side by side don't join: a machine on the Daisy line alone gets nothing from the Twin line's Hookah. */
+    @GameTest(template = "long", timeoutTicks = 200)
+    public static void twinAndDaisyLinesDontJoin(GameTestHelper h) {
+        cables(h, ModPower.HEMP_TWIN_WICK.get(), 2, 1, 5);
+        cables(h, ModPower.HEMP_DAISY_WICK.get(), 1, 1, 5);
+        hookah(h, at(1, 3), ModBlocks.WEED_BONG.get(), Direction.NORTH);
+        BlockPos twin = machine(h, at(4, 3), ModPower.SNIP_STATION.get(), Direction.EAST);
+        BlockPos daisy = machine(h, at(3, 0), ModPower.SNIP_STATION.get(), Direction.EAST);
+        h.runAfterDelay(80, () -> {
+            h.assertTrue(read(h, twin).watts() > 100, "the Twin line runs, got " + read(h, twin));
+            h.assertTrue(read(h, daisy).watts() < 0.01, "the Daisy line doesn't join it, got " + read(h, daisy));
+            h.succeed();
+        });
+    }
+
+    /** A Double Hose into a Hit Box's front on a Rolled Twin Wick, and a Hemp Twin Wick off its side: the machine runs, stepped down. */
+    @GameTest(template = "long", timeoutTicks = 200)
+    public static void aHitBoxStepsDownBetweenTwinLines(GameTestHelper h) {
+        hookah(h, at(5, 1), ModPower.DOUBLE_HOSE.get(), Direction.EAST);
+        h.setBlock(at(5, 2), ModPower.ROLLED_TWIN_WICK.get());
+        h.setBlock(at(5, 3), ModPower.HIT_BOX.get().defaultBlockState().setValue(com.malevolentgods.fourtwenty.power.HitBoxBlock.FACING, Direction.NORTH));
+        cables(h, ModPower.HEMP_TWIN_WICK.get(), 3, 6, 8);
+        BlockPos m = machine(h, at(8, 4), ModPower.SNIP_STATION.get(), Direction.NORTH);
+        h.runAfterDelay(100, () -> {
+            var r = read(h, m);
+            h.assertTrue(r.watts() > 100, "full power through the Hit Box, got " + r);
+            h.assertTrue(r.volts() > 4.0 && r.volts() < 4.3, "at Puff voltage, got " + r);
+            h.assertBlockPresent(ModPower.HEMP_TWIN_WICK.get(), at(6, 3));
+            h.succeed();
+        });
+    }
+
+    /** The Inspoweedometer's numbers for a Twin Wick: the voltage between its cores, and its line current on each core. */
+    @GameTest(template = "long", timeoutTicks = 200)
+    public static void aTwinWickReadsBetweenItsCores(GameTestHelper h) {
+        cables(h, ModPower.HEMP_TWIN_WICK.get(), 1, 1, 5);
+        hookah(h, at(1, 2), ModBlocks.WEED_BONG.get(), Direction.SOUTH);
+        machine(h, at(5, 2), ModPower.SNIP_STATION.get(), Direction.NORTH);
+        h.runAfterDelay(80, () -> {
+            var r = Circuits.cableReading(h.getLevel(), h.absolutePos(at(3, 1))).orElseThrow();
+            h.assertTrue(r.volts() > 4.1 && r.volts() <= 4.21, "about 4.2 Kb between the cores, got " + r);
+            h.assertTrue(Math.abs(r.plusAmps() - 25) < 1.5 && Math.abs(r.minusAmps() - 25) < 1.5, "about 25 Ig on each core, got " + r);
+            h.succeed();
+        });
+    }
 }

@@ -61,6 +61,22 @@ public class InspoweedometerItem extends Item {
             player.displayClientMessage(line.copy().withStyle(ChatFormatting.AQUA), true);
             return InteractionResult.SUCCESS;
         }
+        if (level.getBlockState(pos).getBlock() instanceof CableBlock cable) {
+            var why = Circuits.daisyFailure(level, pos);
+            if (why.isPresent()) {
+                String key = why.get() == com.malevolentgods.fourtwenty.domain.DaisyLine.Reason.RING ? "message.fourtwenty.meter.daisy_ring" : "message.fourtwenty.meter.daisy_branch";
+                player.displayClientMessage(Component.translatable(key).withStyle(ChatFormatting.GOLD), true);
+                return InteractionResult.SUCCESS;
+            }
+            var c = Circuits.cableReading(level, pos).orElseThrow();
+            Component line = cable.kind() == CableBlock.Kind.TWIN
+                    ? Component.translatable("message.fourtwenty.meter.twin", Units.format(c.volts(), Units.VOLTS), Units.format(c.plusAmps(), Units.AMPS),
+                            Units.format(c.minusAmps(), Units.AMPS), Units.format(c.ampRating(), Units.AMPS), Units.format(c.ohms(), Units.OHMS), Units.format(c.lossWatts(), Units.WATTS))
+                    : Component.translatable("message.fourtwenty.meter.daisy", Units.format(c.plusAmps(), Units.AMPS), Units.format(c.ampRating(), Units.AMPS),
+                            Units.format(c.volts(), Units.VOLTS), Units.format(c.ohms(), Units.OHMS), Units.format(c.lossWatts(), Units.WATTS));
+            player.displayClientMessage(line.copy().withStyle(ChatFormatting.GREEN), true);
+            return InteractionResult.SUCCESS;
+        }
         var reading = Circuits.reading(level, pos);
         if (reading.isEmpty()) {
             player.displayClientMessage(Component.translatable("message.fourtwenty.meter.none").withStyle(ChatFormatting.GRAY), true);
