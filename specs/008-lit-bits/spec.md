@@ -109,7 +109,7 @@ A player exports their favourite program to a Bit Chit, hands it to a friend, an
 - **A Weedweeno without power:** its program stops, and resumes from the top when power returns. Lamps keep their last colour until then.
 - **Chunk unloads:** a Weedweeno in an unloaded chunk doesn't run. Lamps in unloaded chunks aren't updated, and catch up when they load.
 - **A huge show:** one Weedweeno can address at most a configured number of lamps per tick (default 1,024). Beyond that, changes queue to the next tick.
-- **Very long programs:** a program can be up to 32 KB. Longer won't save, and the editor says so.
+- **Very long programs:** a program can be up to 30,000 characters (what fits in one message to the server). Longer won't save, and the editor says so.
 - **Errors at run time:** the program stops, and the Weedweeno shows the message and its line.
 - **Breaking a Weedweeno:** it drops normally, and its saved programs go with it on the item, so nothing is lost.
 
@@ -161,7 +161,7 @@ A player exports their favourite program to a Bit Chit, hands it to a friend, an
 - **ID registry:** per world. Which IDs are in use near a place, and which ID was last at each position where a Lit Bit was broken.
 - **Sticky Finger:** a glove that carries its next ID.
 - **Weedweeno:** a controller. It has a range, its saved programs (name, code), the one running, and its status.
-- **Program:** a name and Lua code, up to 32 KB.
+- **Program:** a name and Lua code, up to 30,000 characters.
 - **Bit Chit:** an item that holds one program.
 
 ## Success Criteria *(mandatory)*
