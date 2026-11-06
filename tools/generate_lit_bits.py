@@ -3,8 +3,8 @@
 
     python3 tools/generate_lit_bits.py
 
-Everything is drawn here from scratch. A Lit Bit is a glass shell in a dark frame; its glowing core is drawn by client/LitBitRenderer
-from lit_bit_core.png, in the lamp's colour. The Weedweeno is a little circuit board on a hemp base.
+A Lit Bit wears the Four Twenty lamp's own textures (see lit_bit()); the rest is drawn here from scratch. The Weedweeno is a little
+circuit board on a hemp base.
 """
 import json
 import random
@@ -32,26 +32,9 @@ def write(path, data):
 
 
 def lit_bit():
-    shell = Image.new('RGBA', (16, 16), (200, 220, 230, 46))   # faint glass
-    d = ImageDraw.Draw(shell)
-    d.rectangle([0, 0, 15, 15], outline=FRAME + (255,))
-    d.rectangle([1, 1, 14, 14], outline=FRAME_HI + (255,))
-    for x, y in ((0, 0), (15, 0), (0, 15), (15, 15)):
-        d.point([x, y], fill=GOLD + (255,))
-    d.line([3, 2, 6, 2], fill=(255, 255, 255, 110))                # a glint
-    save(shell, ASSETS / 'textures/block/lit_bit_shell.png')
-    core = Image.new('RGBA', (16, 16), (255, 255, 255, 255))
-    dc = ImageDraw.Draw(core)
-    for i in range(8):
-        shade = 255 - i * 6
-        dc.rectangle([i, i, 15 - i, 15 - i], outline=(shade, shade, shade, 255))
-    save(core, ASSETS / 'textures/block/lit_bit_core.png')
-    faces = {f: {'uv': [0, 0, 16, 16], 'texture': '#shell'} for f in ('north', 'south', 'east', 'west', 'up', 'down')}
-    write(ASSETS / 'models/block/lit_bit.json', {
-        'parent': 'block/block', 'render_type': 'minecraft:translucent',
-        'textures': {'shell': 'fourtwenty:block/lit_bit_shell', 'particle': 'fourtwenty:block/lit_bit_shell'},
-        'elements': [{'from': [0, 0, 0], 'to': [16, 16, 16], 'faces': faces}]})
-    write(ASSETS / 'models/item/lit_bit.json', {'parent': 'fourtwenty:block/lit_bit'})
+    """A Lit Bit is a Four Twenty lamp: the white lamp's unlit face as its block, lit and tinted by client/LitBitRenderer."""
+    write(ASSETS / 'models/block/lit_bit.json', {'parent': 'minecraft:block/cube_all', 'textures': {'all': 'fourtwenty:block/white_lamp_off'}})
+    write(ASSETS / 'models/item/lit_bit.json', {'parent': 'minecraft:block/cube_all', 'textures': {'all': 'fourtwenty:block/white_lamp_on'}})
 
 
 def weedweeno():

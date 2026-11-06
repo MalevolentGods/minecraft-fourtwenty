@@ -95,10 +95,7 @@ public class CableBlock extends Block {
     }
 
     /** Whether a cable plugs into {@code neighbour} on its face {@code face}: any face of a powered block, the Hit Box's four sides only. */
-    public static boolean plugsInto(BlockState neighbour, Direction face) {
-        if (!neighbour.is(ModPower.BI_BLOCKS)) return false;
-        return !(neighbour.getBlock() instanceof HitBoxBlock) || face.getAxis().isHorizontal();
-    }
+    public static boolean plugsInto(BlockState neighbour, Direction face) { return Terminal.pluggable(neighbour, face); }
 
     private static Link link(BlockState self, Direction side, BlockState neighbour) {
         if (neighbour.getBlock() instanceof CableBlock) return joins(self, neighbour) ? Link.WIRE : Link.NONE;
@@ -112,7 +109,7 @@ public class CableBlock extends Block {
     }
 
     @Override public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
-        return linked(defaultBlockState(), context.getLevel(), context.getClickedPos());
+        return linked(defaultBlockState().setValue(WickBlock.COLOUR, WickBlock.colourOf(context.getItemInHand())), context.getLevel(), context.getClickedPos());
     }
 
     @Override protected @Nonnull BlockState updateShape(@Nonnull BlockState state, @Nonnull Direction direction, @Nonnull BlockState neighbour, @Nonnull LevelAccessor level,

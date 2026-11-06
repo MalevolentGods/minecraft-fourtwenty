@@ -1,0 +1,26 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "category": "redstone",
+ "pattern": [
+  "WWW",
+  "WDW",
+  "WWW"
+ ],
+ "key": {
+  "W": {
+   "item": "fourtwenty:gold_wick"
+  },
+  "D": {
+   "item": "minecraft:black_dye"
+  }
+ },
+ "result": {
+  "id": "fourtwenty:gold_wick",
+  "count": 8,
+  "components": {
+   "minecraft:block_state": {
+    "colour": "black"
+   }
+  }
+ }
+}

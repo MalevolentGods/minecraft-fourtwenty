@@ -165,18 +165,31 @@ WICK_DISPLAY = {'gui': {'rotation': [30, 225, 0], 'scale': [0.9, 0.9, 0.9]}, 'gr
                 'firstperson_righthand': {'rotation': [0, 45, 0], 'scale': [0.5, 0.5, 0.5]}}
 
 
+def coloured(item, colour):
+    """An ingredient: {@code item} in a colour (its block_state component), matched with NeoForge's component ingredient."""
+    return {'type': 'neoforge:components', 'items': item, 'components': {'minecraft:block_state': {'colour': colour}}}
+
+
 def data(names):
     for name, prefix, kind in names:
         wick = f'fourtwenty:{prefix}_wick'
+        keep = {'function': 'minecraft:copy_state', 'block': f'fourtwenty:{name}', 'properties': ['colour'], 'conditions': [{'condition': 'minecraft:inverted',
+                'term': {'condition': 'minecraft:block_state_property', 'block': f'fourtwenty:{name}', 'properties': {'colour': 'none'}}}]}
         write(DATA / f'fourtwenty/loot_table/blocks/{name}.json', {'type': 'minecraft:block', 'pools': [{'rolls': 1, 'entries': [
-            {'type': 'minecraft:item', 'name': f'fourtwenty:{name}'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
+            {'type': 'minecraft:item', 'name': f'fourtwenty:{name}', 'functions': [keep]}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
+        # every Wick of a tier is that tier's Wick in another arrangement: a red one and a black one side by side make a Twin
+        # Wick, the red above the black a Daisy Wick
+        red, black = coloured(wick, 'red'), coloured(wick, 'black')
+        pattern = ['RB'] if kind == 'twin' else ['R', 'B']
+        write(DATA / f'fourtwenty/recipe/{name}.json', {'type': 'minecraft:crafting_shaped', 'category': 'redstone', 'pattern': pattern,
+                                                        'key': {'R': red, 'B': black}, 'result': {'id': f'fourtwenty:{name}', 'count': 1}})
         if kind == 'twin':
-            recipe = {'type': 'minecraft:crafting_shaped', 'category': 'redstone', 'pattern': ['WW'], 'key': {'W': {'item': wick}},
-                      'result': {'id': f'fourtwenty:{name}', 'count': 1}}
-        else:
-            recipe = {'type': 'minecraft:crafting_shapeless', 'category': 'redstone',
-                      'ingredients': [{'item': wick}, {'item': wick}, {'item': 'minecraft:oxeye_daisy'}], 'result': {'id': f'fourtwenty:{name}', 'count': 1}}
-        write(DATA / f'fourtwenty/recipe/{name}.json', recipe)
+            # and the red and black Wicks themselves: eight of the tier's Wicks round a dye
+            for colour in ('red', 'black'):
+                write(DATA / f'fourtwenty/recipe/{colour}_{prefix}_wick.json', {
+                    'type': 'minecraft:crafting_shaped', 'category': 'redstone', 'pattern': ['WWW', 'WDW', 'WWW'],
+                    'key': {'W': {'item': wick}, 'D': {'item': f'minecraft:{colour}_dye'}},
+                    'result': {'id': wick, 'count': 8, 'components': {'minecraft:block_state': {'colour': colour}}}})
     ids = [f'fourtwenty:{n}' for n, _, _ in names]
     write(DATA / 'fourtwenty/tags/block/bi_cables.json', {'replace': False, 'values': ids})
     pick = DATA / 'minecraft/tags/block/mineable/pickaxe.json'

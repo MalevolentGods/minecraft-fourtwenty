@@ -172,7 +172,7 @@ public final class PowerGameTests {
     @GameTest(template = "empty", timeoutTicks = 60)
     public static void aBlockOverloadsButNeverBreaks(GameTestHelper h) {
         h.setBlock(A, ModPower.STASH_BOX.get());
-        h.setBlock(B, ModPower.ROLLED_WICK.get());
+        h.setBlock(B, ModPower.ROLLED_TWIN_WICK.get());
         h.setBlock(C, ModPower.SNIP_STATION.get());
         ((StashBlockEntity) h.getBlockEntity(A)).node().receive(1_000);
         var machine = (MachineBlockEntity) h.getBlockEntity(C);
@@ -180,7 +180,7 @@ public final class PowerGameTests {
         machine.node().receive(100);
         h.runAfterDelay(30, () -> {
             h.assertBlockPresent(ModPower.SNIP_STATION.get(), C);
-            h.assertBlockPresent(ModPower.ROLLED_WICK.get(), B);
+            h.assertBlockPresent(ModPower.ROLLED_TWIN_WICK.get(), B);
             h.assertTrue(machine.createDataForTest() == 1, "it says it's overloaded");
             h.assertTrue(machine.progress() == 0, "it stopped working");
             h.succeed();
@@ -210,7 +210,7 @@ public final class PowerGameTests {
     @GameTest(template = "empty", timeoutTicks = 60)
     public static void aHookahLightsItselfForAStashWithRoom(GameTestHelper h) {
         h.setBlock(A, com.malevolentgods.fourtwenty.registry.ModBlocks.WEED_BONG.get());
-        h.setBlock(B, ModPower.HEMP_WICK.get());
+        h.setBlock(B, ModPower.HEMP_TWIN_WICK.get());
         h.setBlock(C, ModPower.STASH_JAR.get());
         var hookah = (WeedBongBlockEntity) h.getBlockEntity(A);
         hookah.setItem(WeedBongBlockEntity.WEED_SLOT, new ItemStack(ModItems.WEED_BUD.get(), 2));
@@ -222,7 +222,7 @@ public final class PowerGameTests {
     @GameTest(template = "empty", timeoutTicks = 200)
     public static void aHitBoxStepsPowerDown(GameTestHelper h) {
         // a Toke loop (Double Hose, Rolled rails) into the Hit Box's high winding (front +, back −), and a separate Puff loop out of its
-        // low winding (left +, right −) to a Stash Jar above it. The two loops share no Wick.
+        // low winding (its left and right) to a Stash Jar above it: red Wicks on the east, black on the west. The loops share no Wick.
         var l = new Ladder(h, 2, 1).rails(ModPower.ROLLED_WICK.get(), 1, 3);
         l.hookah(1, ModPower.DOUBLE_HOSE.get());
         BlockPos box = l.at(3);
@@ -230,7 +230,8 @@ public final class PowerGameTests {
         var red = com.malevolentgods.fourtwenty.power.WickBlock.Colour.RED;
         BlockPos jar = box.above();
         h.setBlock(jar, ModPower.STASH_JAR.get().defaultBlockState().setValue(com.malevolentgods.fourtwenty.power.BIBlock.FACING, Direction.NORTH));
-        for (BlockPos w : new BlockPos[]{box.east(), jar.east(), box.west(), jar.west()}) Ladder.wick(h, w, ModPower.HEMP_WICK.get(), red);
+        for (BlockPos w : new BlockPos[]{box.east(), jar.east()}) Ladder.wick(h, w, ModPower.HEMP_WICK.get(), red);
+        for (BlockPos w : new BlockPos[]{box.west(), jar.west()}) Ladder.wick(h, w, ModPower.HEMP_WICK.get(), com.malevolentgods.fourtwenty.power.WickBlock.Colour.BLACK);
         var stash = (StashBlockEntity) h.getBlockEntity(jar);
         h.succeedWhen(() -> {
             h.assertTrue(stash.node().stored() > 0, "power reached the Puff Stash");

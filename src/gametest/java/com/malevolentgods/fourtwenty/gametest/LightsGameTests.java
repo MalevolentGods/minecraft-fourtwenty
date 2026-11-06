@@ -84,19 +84,18 @@ public final class LightsGameTests {
         });
     }
 
-    /** Wired backwards, an LED blocks: the reversed Lit Bit stays dark while the one beside it lights. */
+    /** A Lit Bit whose − side meets an undyed Wick has no return: it stays dark while the one beside it lights. */
     @GameTest(template = "long", timeoutTicks = 200)
-    public static void aReversedLitBitStaysDark(GameTestHelper h) {
+    public static void aLitBitWithNoBlackWickStaysDark(GameTestHelper h) {
         var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 5);
         l.hookah(1, ModBlocks.WEED_BONG.get());
         BlockPos right = lamp(l, 3, 30011, 0xFFFFFF);
-        BlockPos wrong = l.at(5);
-        h.setBlock(wrong, ModLights.LIT_BIT.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.EAST));
-        lamp(h, wrong).setId(30012);
-        lamp(h, wrong).setColour(0xFFFFFF);
+        h.setBlock(l.minus(5), ModPower.HEMP_WICK.get());
+        h.setBlock(l.minus(4), ModPower.HEMP_WICK.get());
+        BlockPos wrong = lamp(l, 5, 30012, 0xFFFFFF);
         h.runAfterDelay(80, () -> {
-            h.assertTrue(lamp(h, right).shown() != 0, "the right way round lights");
-            h.assertTrue(lamp(h, wrong).shown() == 0, "backwards stays dark, got " + Integer.toHexString(lamp(h, wrong).shown()));
+            h.assertTrue(lamp(h, right).shown() != 0, "the wired one lights");
+            h.assertTrue(lamp(h, wrong).shown() == 0, "no return, dark: got " + Integer.toHexString(lamp(h, wrong).shown()));
             h.succeed();
         });
     }

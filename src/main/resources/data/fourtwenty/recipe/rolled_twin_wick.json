@@ -2,11 +2,26 @@
  "type": "minecraft:crafting_shaped",
  "category": "redstone",
  "pattern": [
-  "WW"
+  "RB"
  ],
  "key": {
-  "W": {
-   "item": "fourtwenty:rolled_wick"
+  "R": {
+   "type": "neoforge:components",
+   "items": "fourtwenty:rolled_wick",
+   "components": {
+    "minecraft:block_state": {
+     "colour": "red"
+    }
+   }
+  },
+  "B": {
+   "type": "neoforge:components",
+   "items": "fourtwenty:rolled_wick",
+   "components": {
+    "minecraft:block_state": {
+     "colour": "black"
+    }
+   }
   }
  },
  "result": {

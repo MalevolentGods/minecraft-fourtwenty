@@ -228,7 +228,7 @@ def wicks():
                 parts.append({'when': {side: 'wire', 'lit': flag}, 'apply': {'model': f'fourtwenty:block/{name}_arm{suffix}', **rot}})
                 parts.append({'when': {side: 'plug', 'lit': flag}, 'apply': {'model': f'fourtwenty:block/{name}_plug{suffix}', **rot}})
         write(ASSETS / f'blockstates/{name}.json', {'multipart': parts})
-        model(name + '_item', [box([2, 6, 6], [14, 10, 10], 'wick')], {'wick': t(tier, 'wick')}, '#wick')
+        model(name + '_item', tint_faces([box([2, 6, 6], [14, 10, 10], 'wick')]), {'wick': t(tier, 'wick')}, '#wick')
         item_model(name, f'fourtwenty:block/{name}_item')
 
 

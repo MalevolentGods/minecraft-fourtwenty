@@ -79,7 +79,6 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
             }
         }
         HOSES.forEach((name, sides) -> sides.forEach(side -> event.register(part(name + "_hose", side, false))));
-        for (String sign : new String[]{"terminal_plus", "terminal_minus"}) for (Direction side : AROUND) event.register(part(sign, side, false));
         for (String name : TUBED) for (Direction side : Direction.values()) event.register(part(name + "_tube", side, false));
     }
 
@@ -111,10 +110,11 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
         int mask = 0;
         for (Direction side : Direction.values()) {
             var neighbour = level.getBlockState(pos.relative(side)).getBlock();
-            if (neighbour instanceof WickBlock && com.malevolentgods.fourtwenty.power.Terminal.isTerminalFace(state, side)) mask |= 1 << side.ordinal();
-            // a two-core cable plugs into any face (the Hit Box's four sides only)
-            if (neighbour instanceof com.malevolentgods.fourtwenty.power.CableBlock
-                    && com.malevolentgods.fourtwenty.power.CableBlock.plugsInto(state, side)) mask |= 1 << side.ordinal();
+            // red and black Wicks, and cables, plug into any face (the Hit Box's four sides only); the wiring sets + and −
+            var next = level.getBlockState(pos.relative(side));
+            boolean wire = neighbour instanceof WickBlock ? com.malevolentgods.fourtwenty.power.Terminal.signOf(next) != null
+                    : neighbour instanceof com.malevolentgods.fourtwenty.power.CableBlock;
+            if (wire && com.malevolentgods.fourtwenty.power.Terminal.pluggable(state, side)) mask |= 1 << side.ordinal();
             else if (neighbour instanceof TubeBlock) mask |= 1 << TUBE_BITS + side.ordinal();
         }
         return d.derive().with(MASK, mask).build();
@@ -152,19 +152,7 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
             int at = world(hose, turns).ordinal();
             if ((mask & (1 << at | 1 << TUBE_BITS + at)) == 0) out.addAll(turned(name + "_hose", hose, false, turns, rand));
         }
-        for (Direction world : AROUND) {
-            var sign = terminalSign(state, world);
-            if (sign != null) out.addAll(turned("terminal_" + sign, relative(world, turns), false, turns, rand));
-        }
         return out;
-    }
-
-    /** "plus" or "minus" for a terminal face of a block in {@code state}, or null for a face that doesn't connect. */
-    private static String terminalSign(BlockState state, Direction world) {
-        var front = com.malevolentgods.fourtwenty.power.Terminal.front(state);
-        var sign = com.malevolentgods.fourtwenty.domain.Terminals.at(front, world);
-        if (sign == null && state.getBlock() instanceof HitBoxBlock) sign = com.malevolentgods.fourtwenty.domain.Terminals.highWinding(front, world);
-        return sign == null ? null : sign == com.malevolentgods.fourtwenty.domain.Terminals.Sign.PLUS ? "plus" : "minus";
     }
 
     /** Wraps every block a Wick can reach. Goes after anything else that wraps these models. */

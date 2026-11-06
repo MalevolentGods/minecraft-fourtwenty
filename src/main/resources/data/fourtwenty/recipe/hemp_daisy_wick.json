@@ -1,17 +1,30 @@
 {
- "type": "minecraft:crafting_shapeless",
+ "type": "minecraft:crafting_shaped",
  "category": "redstone",
- "ingredients": [
-  {
-   "item": "fourtwenty:hemp_wick"
-  },
-  {
-   "item": "fourtwenty:hemp_wick"
-  },
-  {
-   "item": "minecraft:oxeye_daisy"
-  }
+ "pattern": [
+  "R",
+  "B"
  ],
+ "key": {
+  "R": {
+   "type": "neoforge:components",
+   "items": "fourtwenty:hemp_wick",
+   "components": {
+    "minecraft:block_state": {
+     "colour": "red"
+    }
+   }
+  },
+  "B": {
+   "type": "neoforge:components",
+   "items": "fourtwenty:hemp_wick",
+   "components": {
+    "minecraft:block_state": {
+     "colour": "black"
+    }
+   }
+  }
+ },
  "result": {
   "id": "fourtwenty:hemp_daisy_wick",
   "count": 1

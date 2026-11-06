@@ -12,6 +12,17 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 public final class WickColours {
     private WickColours() {}
 
+    /** A dyed Wick or cable item shows its colour too. */
+    @SubscribeEvent
+    public static void itemColours(RegisterColorHandlersEvent.Item event) {
+        event.register((stack, tint) -> {
+            var dye = WickBlock.colourOf(stack).dye();
+            return dye == null ? -1 : 0xFF000000 | dye.getTextureDiffuseColor();
+        }, ModPower.HEMP_WICK.get(), ModPower.ROLLED_WICK.get(), ModPower.GLASS_WICK.get(), ModPower.GOLD_WICK.get(),
+                ModPower.HEMP_TWIN_WICK.get(), ModPower.ROLLED_TWIN_WICK.get(), ModPower.GLASS_TWIN_WICK.get(), ModPower.GOLD_TWIN_WICK.get(),
+                ModPower.HEMP_DAISY_WICK.get(), ModPower.ROLLED_DAISY_WICK.get(), ModPower.GLASS_DAISY_WICK.get(), ModPower.GOLD_DAISY_WICK.get());
+    }
+
     @SubscribeEvent
     public static void colours(RegisterColorHandlersEvent.Block event) {
         event.register((state, level, pos, tint) -> {

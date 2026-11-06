@@ -5,20 +5,20 @@ All notable changes to the FourTwenty mod will be documented in this file.
 ## [Unreleased]
 
 ### Added
-- **Twin Wick and Daisy Wick**, two-core cables in every Wick tier. A Twin Wick wires every block it touches in parallel, + to + and − to −, whichever way the block faces. A Daisy Wick wires the blocks along it in series and closes the loop itself. Both meet red and black rails, take dyes, burn out like Wicks, and read on the Inspoweedometer.
-- **Lit Bits:** RGB lamps that work like real LEDs. Powered through their + and − terminals, they light only on a closed loop at Puff voltage, dim as the supply sags, draw current for how bright each channel is, stay dark wired backwards, and overload on too high a voltage. Each has an ID you can change in its screen.
+- **Twin Wick and Daisy Wick**, two-core cables in every Wick tier. A Twin Wick wires every block it touches in parallel. A Daisy Wick wires the blocks along it in series and closes the loop itself. Both meet red and black Wicks, take dyes, burn out like Wicks, and read on the Inspoweedometer. Craft a red and a black Wick of a tier side by side for a Twin, one above the other for a Daisy.
+- **Red and black Wicks** have recipes: eight Wicks of a tier round a red or black dye. A dyed Wick keeps its colour when broken and shows it in the inventory.
+- **Lit Bits:** RGB lamps that look like the Four Twenty lamps, in any colour, with their glow, and work like real LEDs: they light only on a closed loop at Puff voltage, dim as the supply sags, draw current for how bright each channel is, and overload on too high a voltage. Each has an ID you can change in its screen.
 - **The Sticky Finger** places Lit Bits and numbers them as it goes. A Lit Bit placed where one was broken gets its old ID back.
 - **The Weedweeno**, a Lua computer for light shows. It sets Lit Bits by ID, wirelessly within 64 blocks, and has a code editor, four presets (Rainbow, Chase, Pulse, Strobe) and as many saved programs as you like. Shows run sandboxed on the server, with a time budget per tick.
 - **Bit Chits** carry a program from one Weedweeno to another, and can be copied.
 
 ### Changed
-- **Real circuits: every powered block has a + and a − terminal**, a red stud on its left and a black stud on its right as you face its front. Power flows only around closed loops: a Wick from a source's + to a machine's +, and another from the machine's − back to the source's −. Series (blocks chained − to +) and parallel (blocks between two rails) both work, by Kirchhoff's laws. There's no ground.
+- **Real circuits: a red Wick is + and a black Wick is −**, on any side of a block. Power flows only around closed loops: a red Wick from a source to a machine, and a black one back. Parallel (blocks between a red and a black rail, or on a Twin Wick) and series (blocks along a Daisy Wick) are solved by Kirchhoff's laws. There's no ground, and blocks touching each other don't connect.
 - **Bases built before this need return lines.** Machines on a supply line alone now get nothing, and the Inspoweedometer on them says "no return path". Nothing burns or breaks on the update.
-- **Wicks come in colours:** use a dye on one. A Wick joins only Wicks of its own colour, so a supply and a return can run side by side. Wicks plug only into terminal faces.
-- **A machine wired backwards refuses to run** and says so.
+- **Wicks come in colours:** use a dye on one. A Wick joins only Wicks of its own colour. Only red and black Wicks plug into blocks; other colours are for runs between places.
 - **Machines below their tier's voltage are a plain resistance** sized for it, so a series string or a sagging line gives them less power by Ohm's law (three Puff machines in series each get a ninth of their power). From their tier's voltage up they hold their power, as before.
-- **The Hit Box is a real transformer:** a high-voltage winding on its front (+) and back (−), a low-voltage winding on its left (+) and right (−), isolated from each other.
-- **The Inspoweedometer** reads blocks across their terminals and tells you why one gets nothing. Sneak-use a Wick to make it the reference, then read other Wicks' voltage from it.
+- **The Hit Box is a real transformer:** a high-voltage winding on its front and back, a low-voltage winding on its left and right, isolated from each other.
+- **The Inspoweedometer** reads blocks across their + and − and tells you why one gets nothing. Sneak-use a Wick to make it the reference, then read other Wicks' voltage from it.
 
 ### Fixed
 - **Re-Up Stations have a battery and a screen.** They fill from their Wick at one Hookah of their tier (420 W on Puff), well inside the Wick's rating, so they no longer burn the Wick they sit on. They charge gear from that battery at four Hookahs (1,680 W on Puff, 13,440 W on Blaze), faster than before. The battery holds 40 minutes of input. Use a station empty-handed for its screen: a gear slot, the battery bar, what comes in and goes out.

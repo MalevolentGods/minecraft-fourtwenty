@@ -106,7 +106,8 @@ public class WickBlock extends Block {
     private static Link link(BlockState self, Direction side, BlockState neighbour) {
         if (neighbour.getBlock() instanceof WickBlock) return joins(self, neighbour) ? Link.WIRE : Link.NONE;
         if (neighbour.getBlock() instanceof CableBlock) return CableBlock.takesWick(self) ? Link.WIRE : Link.NONE;
-        return neighbour.is(ModPower.BI_BLOCKS) && Terminal.isTerminalFace(neighbour, side.getOpposite()) ? Link.PLUG : Link.NONE;
+        // only red (+) and black (−) Wicks plug into blocks, on any face
+        return Terminal.signOf(self) != null && Terminal.pluggable(neighbour, side.getOpposite()) ? Link.PLUG : Link.NONE;
     }
 
     private BlockState linked(BlockState state, LevelAccessor level, BlockPos pos) {
@@ -115,7 +116,14 @@ public class WickBlock extends Block {
     }
 
     @Override public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
-        return linked(defaultBlockState(), context.getLevel(), context.getClickedPos());
+        return linked(defaultBlockState().setValue(COLOUR, colourOf(context.getItemInHand())), context.getLevel(), context.getClickedPos());
+    }
+
+    /** The colour a Wick or cable item places in: red and black Wicks are crafted with it (its block_state component). */
+    public static Colour colourOf(net.minecraft.world.item.ItemStack stack) {
+        var props = stack.getOrDefault(net.minecraft.core.component.DataComponents.BLOCK_STATE, net.minecraft.world.item.component.BlockItemStateProperties.EMPTY);
+        Colour c = props.get(COLOUR);
+        return c == null ? Colour.NONE : c;
     }
 
     @Override protected @Nonnull BlockState updateShape(@Nonnull BlockState state, @Nonnull Direction direction, @Nonnull BlockState neighbour, @Nonnull LevelAccessor level,

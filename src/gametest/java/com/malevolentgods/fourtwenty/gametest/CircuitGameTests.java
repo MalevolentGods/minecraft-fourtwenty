@@ -199,18 +199,18 @@ public final class CircuitGameTests {
         });
     }
 
-    /** Wired backwards, a machine refuses: it draws nothing, and the meter says so. */
+    /** Only red and black Wicks plug into a block: a machine with an undyed Wick for its return gets nothing, and the meter says so. */
     @GameTest(template = "empty", timeoutTicks = 120)
-    public static void aMachineWiredBackwardsRefuses(GameTestHelper h) {
+    public static void aMachineWithNoBlackWickGetsNothing(GameTestHelper h) {
         var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 3);
         l.hookah(1, ModBlocks.WEED_BONG.get());
+        h.setBlock(l.minus(3), ModPower.HEMP_WICK.get());
         BlockPos snip = l.at(3);
         h.setBlock(snip, ModPower.SNIP_STATION.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.EAST));
         stock(h, snip, ModPower.SNIP_STATION.get());
         h.runAfterDelay(60, () -> {
             var r = read(h, snip);
-            h.assertTrue(r.status() == Circuit.REVERSED && r.watts() == 0, "refuses, reversed: " + r);
-            h.assertTrue(((MachineBlockEntity) h.getBlockEntity(snip)).node().stored() == 0, "and takes nothing");
+            h.assertTrue(r.status() == Circuit.NO_LOOP && r.watts() == 0, "no return, nothing: " + r);
             h.succeed();
         });
     }
@@ -230,35 +230,6 @@ public final class CircuitGameTests {
         });
     }
 
-    /**
-     * Three Snip Stations in series, stacked − to + down the z axis, off a Puff Hookah: one current through all, a third of the voltage
-     * each, and as resistors sized for 4.2 Kb, a ninth of their power each by Ohm's law.
-     */
-    @GameTest(template = "long", timeoutTicks = 160)
-    public static void machinesInSeriesShareTheVoltage(GameTestHelper h) {
-        var l = new Ladder(h, 2, 1);
-        BlockPos hookah = l.hookah(1, ModBlocks.WEED_BONG.get());
-        for (int x = 1; x <= 3; x++) h.setBlock(l.plus(x), ModPower.HEMP_WICK.get());
-        BlockPos[] s = new BlockPos[3];
-        for (int i = 0; i < 3; i++) {
-            s[i] = new BlockPos(3, 2, 2 + i);
-            h.setBlock(s[i], Ladder.facingWest(ModPower.SNIP_STATION.get()));
-            stock(h, s[i], ModPower.SNIP_STATION.get());
-        }
-        // the last station's − back to the Hookah's −
-        for (BlockPos w : new BlockPos[]{new BlockPos(3, 2, 5), new BlockPos(2, 2, 5), new BlockPos(1, 2, 5), new BlockPos(1, 2, 4), new BlockPos(1, 2, 3)}) {
-            h.setBlock(w, ModPower.HEMP_WICK.get());
-        }
-        h.runAfterDelay(80, () -> {
-            double total = read(h, hookah).volts();
-            double v1 = read(h, s[0]).volts(), v2 = read(h, s[1]).volts(), v3 = read(h, s[2]).volts();
-            double i1 = read(h, s[0]).amps(), i2 = read(h, s[1]).amps(), i3 = read(h, s[2]).amps();
-            h.assertTrue(Math.abs(v1 + v2 + v3 - total) < 0.02 * total, "the voltages add up: " + v1 + " + " + v2 + " + " + v3 + " vs " + total);
-            h.assertTrue(Math.abs(i1 - i2) < 0.01 * i1 && Math.abs(i2 - i3) < 0.01 * i1, "one current: " + i1 + ", " + i2 + ", " + i3);
-            h.assertTrue(Math.abs(read(h, s[1]).watts() - 105.0 / 9) < 2, "a ninth of 105 W: " + read(h, s[1]));
-            h.succeed();
-        });
-    }
 
     /** A red supply and a black return touching all the way don't join, so the machine runs. */
     @GameTest(template = "empty", timeoutTicks = 120)

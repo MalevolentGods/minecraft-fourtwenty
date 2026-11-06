@@ -312,4 +312,36 @@ public final class CableGameTests {
             h.succeed();
         });
     }
+
+    private static ItemStack wick(Block block, WickBlock.Colour colour) {
+        ItemStack stack = new ItemStack(block);
+        stack.set(net.minecraft.core.component.DataComponents.BLOCK_STATE,
+                net.minecraft.world.item.component.BlockItemStateProperties.EMPTY.with(WickBlock.COLOUR, colour));
+        return stack;
+    }
+
+    private static ItemStack craft(GameTestHelper h, int w, int ht, List<ItemStack> grid) {
+        var input = net.minecraft.world.item.crafting.CraftingInput.of(w, ht, grid);
+        var level = h.getLevel();
+        return level.getRecipeManager().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING, input, level)
+                .map(r -> r.value().assemble(input, level.registryAccess())).orElse(ItemStack.EMPTY);
+    }
+
+    /** Each tier's Wick dyes red or black, and a red and a black make a Twin side by side or a Daisy one above the other. */
+    @GameTest(template = "empty", timeoutTicks = 20)
+    public static void wicksCraftIntoColoursAndCables(GameTestHelper h) {
+        for (Block plain : List.<Block>of(ModPower.HEMP_WICK.get(), ModPower.ROLLED_WICK.get(), ModPower.GLASS_WICK.get(), ModPower.GOLD_WICK.get())) {
+            List<ItemStack> grid = new ArrayList<>();
+            for (int i = 0; i < 9; i++) grid.add(i == 4 ? new ItemStack(Items.RED_DYE) : new ItemStack(plain));
+            ItemStack red = craft(h, 3, 3, grid);
+            h.assertTrue(red.is(plain.asItem()) && red.getCount() == 8 && WickBlock.colourOf(red) == WickBlock.Colour.RED, "eight red Wicks, got " + red);
+            ItemStack r = wick(plain, WickBlock.Colour.RED), b = wick(plain, WickBlock.Colour.BLACK);
+            String tier = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(plain).getPath().replace("_wick", "");
+            ItemStack twin = craft(h, 2, 1, List.of(r, b)), daisy = craft(h, 1, 2, List.of(r, b));
+            h.assertTrue(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(twin.getItem()).getPath().equals(tier + "_twin_wick"), "a Twin, got " + twin);
+            h.assertTrue(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(daisy.getItem()).getPath().equals(tier + "_daisy_wick"), "a Daisy, got " + daisy);
+            h.assertTrue(craft(h, 2, 1, List.of(new ItemStack(plain), new ItemStack(plain))).isEmpty(), "two plain Wicks make nothing");
+        }
+        h.succeed();
+    }
 }

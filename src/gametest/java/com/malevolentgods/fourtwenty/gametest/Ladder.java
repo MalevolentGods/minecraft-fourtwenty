@@ -42,11 +42,11 @@ final class Ladder {
 
     BlockPos minus(int x) { return new BlockPos(x, y, minusZ()); }
 
-    /** Both rails, from {@code x0} to {@code x1}, in one Wick. */
+    /** Both rails, from {@code x0} to {@code x1}, in one Wick: red for +, black for − (specs/010-colour-polarity). */
     Ladder rails(Block wick, int x0, int x1) {
         for (int x = x0; x <= x1; x++) {
-            h.setBlock(plus(x), wick);
-            h.setBlock(minus(x), wick);
+            wick(h, plus(x), wick, WickBlock.Colour.RED);
+            wick(h, minus(x), wick, WickBlock.Colour.BLACK);
         }
         return this;
     }

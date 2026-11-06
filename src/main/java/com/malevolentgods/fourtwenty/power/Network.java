@@ -105,11 +105,6 @@ public final class Network {
         return terminal instanceof Terminal t ? new TerminalKey(t.owner(), t.sign()) : new TerminalKey(terminal, Terminals.Sign.PLUS);
     }
 
-    /** The face a terminal is on, or null if the block shows it on none. */
-    private static Direction faceOf(Level level, BlockPos at, BINode terminal) {
-        for (Direction d : Direction.values()) if (level.getCapability(BINode.CAPABILITY, at, d) == terminal) return d;
-        return null;
-    }
 
     /** One conductor of the wiring: a single Wick (WIRE), or one core of a two-core cable. */
     enum Core { WIRE, PLUS, MINUS }
@@ -161,16 +156,7 @@ public final class Network {
         java.util.function.BiConsumer<BlockPos, BINode> device = (at, owner) -> {
             if (devices.containsKey(owner)) return;
             devices.put(owner, at.immutable());
-            for (Terminals.Sign sign : Terminals.Sign.values()) {
-                Terminal t = Terminal.of(owner, sign);
-                if (seen.add(keyOf(t))) queue.add(new Object[]{at.immutable(), t});
-            }
-            // and any cable plugged into it, on any face
-            for (Direction d : Direction.values()) {
-                BlockPos next = at.relative(d);
-                if (!level.isLoaded(next) || !(level.getBlockState(next).getBlock() instanceof CableBlock)) continue;
-                if (ownerOnFace(level, at, d) == owner && seen.add(next.immutable())) queue.add(new Object[]{next.immutable(), null});
-            }
+            queue.add(new Object[]{at.immutable(), owner});
         };
         java.util.function.BiConsumer<BlockPos, BIRules.Tier> addWick = (at, tier) -> {
             Conductor c = new Conductor(at.immutable(), Core.WIRE);
@@ -214,33 +200,53 @@ public final class Network {
                 }
                 continue;
             }
-            Direction only = terminal == null ? null : faceOf(level, at, terminal);
-            if (terminal != null && only == null) continue;
-            for (Direction d : terminal == null ? Direction.values() : new Direction[]{only}) {
+            if (terminal != null) {
+                // a block: red and black Wicks, and cables, on any of its faces (specs/010-colour-polarity); blocks touching don't join
+                for (Direction d : Direction.values()) {
+                    if (ownerOnFace(level, at, d) != terminal) continue;
+                    BlockPos next = at.relative(d);
+                    if (!level.isLoaded(next)) continue;
+                    var nextState = level.getBlockState(next);
+                    if (nextState.getBlock() instanceof CableBlock) {
+                        if (seen.add(next.immutable())) queue.add(new Object[]{next.immutable(), null});
+                        continue;
+                    }
+                    if (!(nextState.getBlock() instanceof WickBlock wick)) continue;
+                    Terminals.Sign sign = Terminal.signOf(nextState);
+                    if (sign == null) continue;
+                    contacts.add(new Object[]{Terminal.of(terminal, sign), new Conductor(next.immutable(), Core.WIRE)});
+                    if (wickTiers.size() < MAX_WICKS && seen.add(next.immutable())) {
+                        addWick.accept(next, wick.tier());
+                        queue.add(new Object[]{next.immutable(), null});
+                    }
+                }
+                continue;
+            }
+            if (!(here.getBlock() instanceof WickBlock)) continue;
+            Terminals.Sign mine = Terminal.signOf(here);
+            for (Direction d : Direction.values()) {
                 BlockPos next = at.relative(d);
                 if (!level.isLoaded(next)) continue;
                 var nextState = level.getBlockState(next);
                 if (nextState.getBlock() instanceof CableBlock) {
-                    // a single Wick meets a cable only red or black; a terminal meets it through the device scan
-                    if (terminal == null && CableBlock.takesWick(here) && seen.add(next.immutable())) queue.add(new Object[]{next.immutable(), null});
+                    // a single Wick meets a cable only red or black
+                    if (CableBlock.takesWick(here) && seen.add(next.immutable())) queue.add(new Object[]{next.immutable(), null});
                     continue;
                 }
                 if (nextState.getBlock() instanceof WickBlock wick) {
-                    Conductor c = new Conductor(next.immutable(), Core.WIRE);
-                    if (terminal != null) contacts.add(new Object[]{terminal, c});
-                    else if (WickBlock.joins(here, nextState)) edge.accept(new Conductor(at, Core.WIRE), c);
-                    else continue;
+                    if (!WickBlock.joins(here, nextState)) continue;
+                    edge.accept(new Conductor(at, Core.WIRE), new Conductor(next.immutable(), Core.WIRE));
                     if (wickTiers.size() < MAX_WICKS && seen.add(next.immutable())) {
                         addWick.accept(next, wick.tier());
                         queue.add(new Object[]{next.immutable(), null});
                     }
                     continue;
                 }
-                BINode other = level.getCapability(BINode.CAPABILITY, next, d.getOpposite());
-                if (other == null || other == terminal) continue;
-                if (terminal != null) union.join(keyOf(terminal), keyOf(other));
-                else contacts.add(new Object[]{other, new Conductor(at, Core.WIRE)});
-                device.accept(next, Terminal.owner(other));
+                if (mine == null || !Terminal.pluggable(nextState, d.getOpposite())) continue;
+                BINode owner = ownerOnFace(level, next, d.getOpposite());
+                if (owner == null) continue;
+                contacts.add(new Object[]{Terminal.of(owner, mine), new Conductor(at, Core.WIRE)});
+                device.accept(next, owner);
             }
         }
         // ---- the cables' cores --------------------------------------------------------------------------------------------------------
@@ -705,7 +711,8 @@ public final class Network {
             BINode n = m.node();
             if (n == Terminal.owner(except)) continue;
             // an LED takes no Ws into a store, but a lamp set to a colour still wants its source lit
-            if (n.role() == BINode.Role.LED) {
+            // (by its current, not its role: a Hit Box's role asks for this network's demand in turn)
+            if (n.ledAmps() > 0) {
                 total += n.ledAmps() * Math.max(nominal, 1);
                 continue;
             }

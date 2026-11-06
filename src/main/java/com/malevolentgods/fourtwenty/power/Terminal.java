@@ -45,18 +45,28 @@ public final class Terminal implements BINode {
         return state.getBlock() instanceof WeedBongBlock ? facing.getOpposite() : facing;
     }
 
-    /** Whether {@code face} of a powered block in {@code state} is a terminal, from the block state alone (for drawing Wick plugs). */
-    public static boolean isTerminalFace(BlockState state, Direction face) {
-        Direction front = front(state);
-        if (Terminals.at(front, face) != null) return true;
-        return state.getBlock() instanceof HitBoxBlock && Terminals.highWinding(front, face) != null;
+    /**
+     * Whether wiring plugs into {@code face} of a powered block in {@code state} (specs/010-colour-polarity): any face, the Hit Box's four
+     * sides only (its top and bottom have no winding).
+     */
+    public static boolean pluggable(BlockState state, Direction face) {
+        if (!state.is(com.malevolentgods.fourtwenty.registry.ModPower.BI_BLOCKS)) return false;
+        return !(state.getBlock() instanceof HitBoxBlock) || face.getAxis().isHorizontal();
     }
 
-    /** What an ordinary powered block's capability gives on {@code side}: its + or − terminal, or nothing. */
+    /** The terminal a single Wick joins, by its colour: red is +, black is −; any other colour joins none. */
+    public static @Nullable Terminals.Sign signOf(BlockState wick) {
+        if (!(wick.getBlock() instanceof WickBlock)) return null;
+        return switch (wick.getValue(WickBlock.COLOUR)) {
+            case RED -> Terminals.Sign.PLUS;
+            case BLACK -> Terminals.Sign.MINUS;
+            default -> null;
+        };
+    }
+
+    /** What an ordinary powered block's capability gives on a side: its node, on every face; which terminal is up to the wiring. */
     public static @Nullable BINode side(BlockEntity entity, BINode node, @Nullable Direction side) {
-        if (node == null) return null;
-        Terminals.Sign sign = Terminals.at(front(entity.getBlockState()), side);
-        return sign == null ? null : of(node, sign);
+        return side == null ? null : node;
     }
 
     @Override public BIRules.Tier tier() { return owner.tier(); }
