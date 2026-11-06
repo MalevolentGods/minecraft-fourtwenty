@@ -73,5 +73,7 @@ public final class Terminal implements BINode {
     @Override public double sourceWatts() { return owner.sourceWatts(); }
     @Override public boolean sourceReady() { return owner.sourceReady(); }
     @Override public double efficiency() { return owner.efficiency(); }
+    @Override public double ledAmps() { return owner.ledAmps(); }
+    @Override public void lit(double brightness, int status) { owner.lit(brightness, status); }
     @Override public double fill() { return owner.fill(); }
 }

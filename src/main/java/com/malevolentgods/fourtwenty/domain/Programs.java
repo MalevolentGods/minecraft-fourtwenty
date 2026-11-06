@@ -1,6 +1,6 @@
 package com.malevolentgods.fourtwenty.domain;
 
-/** A Weedweeno program: a name and Lua code, small enough to send to the server in one message. */
+/** A Weedweeno program: a name and Lua code, small enough to send to the server in one message (30,000 bytes). */
 public final class Programs {
     private Programs() {}
 
@@ -22,7 +22,8 @@ public final class Programs {
         return n.length() > MAX_NAME ? n.substring(0, MAX_NAME) : n;
     }
 
-    public static boolean fits(String code) { return code != null && code.length() <= MAX_CODE; }
+    /** Whether it fits in one message to the server: at most 30,000 bytes of UTF-8. */
+    public static boolean fits(String code) { return code != null && code.getBytes(java.nio.charset.StandardCharsets.UTF_8).length <= MAX_CODE; }
 
     /** A name not already taken: "Chase", then "Chase 2", "Chase 3"... */
     public static String unique(String base, java.util.Collection<String> taken) {

@@ -127,4 +127,27 @@ class LuaShowTest {
         long lit = lamps.colours.values().stream().filter(c -> c != 0).count();
         assertEquals(1, lit, "one lamp lit at a time");
     }
+
+    @Test
+    void nothingTurnsTextIntoCode() {
+        var show = LuaShow.start("assert(load == nil and loadstring == nil and dofile == nil and require == nil and string.dump == nil)", new Fake());
+        assertEquals(LuaShow.Status.DONE, show.tick(BUDGET), show.message());
+    }
+
+    @Test
+    void oneSlowFrameIsLetOffButASlowShowIsStopped() {
+        var once = LuaShow.start("""
+                local first = true
+                while true do
+                  if first then local x = 0 for i = 1, 3000000 do x = x + i end first = false end
+                  frame()
+                end
+                """, new Fake());
+        assertEquals(LuaShow.Status.RUNNING, once.tick(1_000, 5_000_000_000L), "a slow first frame carries on");
+        for (int t = 0; t < 60; t++) assertEquals(LuaShow.Status.RUNNING, once.tick(BUDGET, 5_000_000_000L), once.message());
+        var always = LuaShow.start("while true do local x = 0 for i = 1, 3000000 do x = x + i end frame() end", new Fake());
+        LuaShow.Status status = LuaShow.Status.RUNNING;
+        for (int t = 0; t < LuaShow.MAX_OVERRUNS + 5 && status == LuaShow.Status.RUNNING; t++) status = always.tick(1_000, 5_000_000_000L);
+        assertEquals(LuaShow.Status.SLOW, status, "every frame over budget: stopped");
+    }
 }

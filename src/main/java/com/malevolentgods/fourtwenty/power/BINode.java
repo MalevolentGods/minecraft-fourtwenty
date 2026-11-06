@@ -30,7 +30,7 @@ public interface BINode {
     default void overload(long now) {}
 
     /** What a node is in the circuit (specs/006-circuit-solver/data-model.md). */
-    enum Role { SOURCE, BATTERY, LOAD, NONE }
+    enum Role { SOURCE, BATTERY, LOAD, LED, NONE }
 
     /** By default from which way power goes: both ways is a battery, out only a source, in only a load. */
     default Role role() {
@@ -55,6 +55,12 @@ public interface BINode {
 
     /** Whether it's overloaded now, so it takes nothing. */
     default boolean overloaded(long now) { return false; }
+
+    /** An LED (a Lit Bit): the current its driver is set to, in Ignus. */
+    default double ledAmps() { return 0; }
+
+    /** An LED hears how lit it is after each solve: 0 to 1 up its knee, and its circuit status (Circuit.OK, NO_LOOP, REVERSED). */
+    default void lit(double brightness, int status) {}
 
     /** The share of what reaches it that it keeps; a Hit Box loses a little. */
     default double efficiency() { return 1; }

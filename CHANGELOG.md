@@ -4,6 +4,12 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Lit Bits:** RGB lamps that work like real LEDs. Powered through their + and − terminals, they light only on a closed loop at Puff voltage, dim as the supply sags, draw current for how bright each channel is, stay dark wired backwards, and overload on too high a voltage. Each has an ID you can change in its screen.
+- **The Sticky Finger** places Lit Bits and numbers them as it goes. A Lit Bit placed where one was broken gets its old ID back.
+- **The Weedweeno**, a Lua computer for light shows. It sets Lit Bits by ID, wirelessly within 64 blocks, and has a code editor, four presets (Rainbow, Chase, Pulse, Strobe) and as many saved programs as you like. Shows run sandboxed on the server, with a time budget per tick.
+- **Bit Chits** carry a program from one Weedweeno to another, and can be copied.
+
 ### Changed
 - **Real circuits: every powered block has a + and a − terminal**, a red stud on its left and a black stud on its right as you face its front. Power flows only around closed loops: a Wick from a source's + to a machine's +, and another from the machine's − back to the source's −. Series (blocks chained − to +) and parallel (blocks between two rails) both work, by Kirchhoff's laws. There's no ground.
 - **Bases built before this need return lines.** Machines on a supply line alone now get nothing, and the Inspoweedometer on them says "no return path". Nothing burns or breaks on the update.

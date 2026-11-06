@@ -48,7 +48,7 @@ public final class Network {
 
     private Circuit.Solution solution;
     private long signature = Long.MIN_VALUE, tickedAt = Long.MIN_VALUE;
-    private int[] sourceIndex, loadIndex;
+    private int[] sourceIndex, loadIndex, ledIndex;
     /** Each member's circuit status (Circuit.OK, NO_LOOP, REVERSED, BROWNOUT); sources are OK. */
     private int[] status = new int[0];
     /** The lowest voltage on the network: Wick voltages and insulation are measured from it. */
@@ -257,6 +257,8 @@ public final class Network {
             switch (role) {
                 case SOURCE -> h = h * 31 + (n.sourceReady() ? 1 : 0);
                 case LOAD -> h = h * 31 + Double.hashCode(n.demandWatts());
+                // an LED's current to the nearest 1/32 of full white, so a light show doesn't force a solve every tick
+                case LED -> h = h * 31 + Math.round(n.ledAmps() / (3 * com.malevolentgods.fourtwenty.lights.LightsConfig.led().channelAmps()) * 32);
                 case BATTERY -> h = h * 31 + (long) Math.floor(n.fill() * 50) * 3 + (n.stored() > 0 ? 1 : 0) + (n.stored() < n.capacity() ? 2 : 0);
                 default -> {}
             }
@@ -271,8 +273,11 @@ public final class Network {
         for (Run r : runs) circuit.conductor(r.start(), r.end(), r.ohms());
         sourceIndex = new int[members.size()];
         loadIndex = new int[members.size()];
+        ledIndex = new int[members.size()];
         java.util.Arrays.fill(sourceIndex, -1);
         java.util.Arrays.fill(loadIndex, -1);
+        java.util.Arrays.fill(ledIndex, -1);
+        var led = com.malevolentgods.fourtwenty.lights.LightsConfig.led();
         BIRules.Tier top = null;
         for (Member m : members) {
             BINode n = m.node();
@@ -304,12 +309,21 @@ public final class Network {
                     double watts = n.demandWatts();
                     if (watts > 0) loadIndex[i] = circuit.load(plus, minus, watts, rules.minVolts(tier));
                 }
+                case LED -> ledIndex[i] = circuit.led(plus, minus, n.ledAmps(), led.forwardVolts(), led.fullVolts());
                 default -> {}
             }
         }
         solution = circuit.solve();
         status = new int[members.size()];
-        for (int i = 0; i < members.size(); i++) status[i] = loadIndex[i] >= 0 ? solution.loadStatus()[loadIndex[i]] : Circuit.OK;
+        for (int i = 0; i < members.size(); i++) {
+            status[i] = loadIndex[i] >= 0 ? solution.loadStatus()[loadIndex[i]] : ledIndex[i] >= 0 ? solution.ledStatus()[ledIndex[i]] : Circuit.OK;
+        }
+        // each Lit Bit hears how lit it is: how far up its knee the voltage across it puts it
+        for (int i = 0; i < members.size(); i++) {
+            if (ledIndex[i] < 0) continue;
+            double across = memberVolts(i);
+            members.get(i).node().lit(status[i] == Circuit.OK && !members.get(i).node().overloaded(now) ? led.brightness(across) : 0, status[i]);
+        }
         floor = 0;
         for (int i = 0; i < solution.volts().length; i++) floor = i == 0 ? solution.volts()[0] : Math.min(floor, solution.volts()[i]);
     }
@@ -423,6 +437,7 @@ public final class Network {
         if (solution == null) return 0;
         if (sourceIndex[i] >= 0) return solution.sourceAmps()[sourceIndex[i]];
         if (loadIndex[i] >= 0) return -solution.loadAmps()[loadIndex[i]];
+        if (ledIndex != null && ledIndex[i] >= 0) return -solution.ledAmps()[ledIndex[i]];
         return 0;
     }
 
@@ -430,6 +445,7 @@ public final class Network {
         if (solution == null) return 0;
         if (sourceIndex[i] >= 0) return solution.sourceWatts()[sourceIndex[i]];
         if (loadIndex[i] >= 0) return -solution.loadWatts()[loadIndex[i]];
+        if (ledIndex != null && ledIndex[i] >= 0) return -solution.ledAmps()[ledIndex[i]] * memberVolts(i);
         return 0;
     }
 
@@ -456,7 +472,13 @@ public final class Network {
         double total = 0;
         for (Member m : members) {
             BINode n = m.node();
-            if (n == Terminal.owner(except) || !n.canReceive()) continue;
+            if (n == Terminal.owner(except)) continue;
+            // an LED takes no Ws into a store, but a lamp set to a colour still wants its source lit
+            if (n.role() == BINode.Role.LED) {
+                total += n.ledAmps() * Math.max(nominal, 1);
+                continue;
+            }
+            if (!n.canReceive()) continue;
             if (n.canExtract()) total += n.stored() < n.capacity() ? 1 : 0;
             else total += n.demandWatts();
         }

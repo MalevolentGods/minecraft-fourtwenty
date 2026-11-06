@@ -48,7 +48,7 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
             "terpinator", "terpinator_lab", "inspiration_infuser", "inspiration_infuser_lab", "hit_box_toke", "hit_box_rip", "hit_box_blaze",
             "pheno_chamber", "pheno_lab", "pheno_cathedral", "rosin_rig",
             "construction_joint", "construction_blunt", "construction_spliff", "construction_cannon",
-            "re_up_station_puff", "re_up_station_toke", "re_up_station_rip", "re_up_station_blaze");
+            "re_up_station_puff", "re_up_station_toke", "re_up_station_rip", "re_up_station_blaze", "lit_bit", "weedweeno");
     private static final Direction[] AROUND = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
     /** The sides each Hookah has a hose on, for one facing north. A hose is its own piece, drawn unless a Wick has that side. */
     private static final Map<String, List<Direction>> HOSES = Map.of("weed_bong", List.of(Direction.EAST), "double_hose", List.of(Direction.EAST, Direction.WEST),

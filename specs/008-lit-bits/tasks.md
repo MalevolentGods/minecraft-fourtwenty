@@ -4,14 +4,14 @@
 
 ## Phase 1: Setup
 
-- [ ] T001 Bundle Cobalt 0.9.9: the squiddev Maven repository and jarJar in `build.gradle`, with the dependency locks and `gradle/verification-metadata.xml` updated. Check that the built jar carries it and that a dev run loads it.
+- [x] T001 Bundle Cobalt 0.9.9: the squiddev Maven repository and jarJar in `build.gradle`, with the dependency locks and `gradle/verification-metadata.xml` updated. Check that the built jar carries it and that a dev run loads it.
 
 ## Phase 2: Foundational (pure)
 
-- [ ] T002 [P] `S/domain/LedRules.java`: the LED current law, brightness, light level and HSV conversion; `T/domain/LedRulesTest.java`
-- [ ] T003 [P] `S/domain/Circuit.java`: an LED element (current-controlled, with a knee, reversed takes nothing); cases in `T/domain/CircuitTest.java`
-- [ ] T004 [P] `S/domain/LitBitIdRules.java` and `S/domain/Programs.java` (limits, names), with tests
-- [ ] T005 `S/lights/LuaShow.java`:
+- [x] T002 [P] `S/domain/LedRules.java`: the LED current law, brightness, light level and HSV conversion; `T/domain/LedRulesTest.java`
+- [x] T003 [P] `S/domain/Circuit.java`: an LED element (current-controlled, with a knee, reversed takes nothing); cases in `T/domain/CircuitTest.java`
+- [x] T004 [P] `S/domain/LitBitIdRules.java` and `S/domain/Programs.java` (limits, names), with tests
+- [x] T005 `S/lights/LuaShow.java`:
   - **Sandbox:** Cobalt with the standard globals only.
   - **The `bits` library:** `set`, `hsv`, `off`, `all`, `ids`, `count`, `frame`, `sleep`, `time`, `tick`, `rgb`, and `print` to the console.
   - **Running:** a coroutine per run, yielding at `frame()` and `sleep()`.
@@ -20,9 +20,9 @@
 
 ## Phase 3: User Story 2, LEDs (P1)
 
-- [ ] T006 [US2] `S/lights/LitBitBlock.java` and `LitBitBlockEntity.java` (ID, colour, level), the LED role in `S/power/BINode.java`, and the LED element in `S/power/Network.java`; registered in `S/lights/ModLights.java`, with capabilities and terminals
-- [ ] T007 [US2] `S/client/LitBitRenderer.java`, the `LampColours` payload in `S/lights/LightsNetwork.java`, and a light level that changes at most every 10 ticks
-- [ ] T008 [US2] Game tests in `G/LitBitGameTests.java`:
+- [x] T006 [US2] `S/lights/LitBitBlock.java` and `LitBitBlockEntity.java` (ID, colour, level), the LED role in `S/power/BINode.java`, and the LED element in `S/power/Network.java`; registered in `S/lights/ModLights.java`, with capabilities and terminals
+- [x] T007 [US2] `S/client/LitBitRenderer.java`, the `LampColours` payload in `S/lights/LightsNetwork.java`, and a light level that changes at most every 10 ticks
+- [x] T008 [US2] Game tests in `G/LitBitGameTests.java`:
   - current against colour (full white is three times full red);
   - black takes only its idle current;
   - dim on a sagging line;
@@ -31,9 +31,9 @@
 
 ## Phase 4: User Story 4, IDs (P2, needed by US1)
 
-- [ ] T009 [US4] `S/lights/LitBitIds.java` (SavedData plus the live index); placing at a remembered position gets its ID back, and by hand gets the lowest free ID nearby
-- [ ] T010 [US4] `S/lights/StickyFingerItem.java` (`next_id` component, places from the inventory and counts up); `S/client/StickyFingerScreen.java` and `LitBitScreen.java`, with the `SetFingerId` and `SetLitBitId` payloads
-- [ ] T011 [US4] Game tests:
+- [x] T009 [US4] `S/lights/LitBitIds.java` (SavedData plus the live index); placing at a remembered position gets its ID back, and by hand gets the lowest free ID nearby
+- [x] T010 [US4] `S/lights/StickyFingerItem.java` (`next_id` component, places from the inventory and counts up); `S/client/StickyFingerScreen.java` and `LitBitScreen.java`, with the `SetFingerId` and `SetLitBitId` payloads
+- [x] T011 [US4] Game tests:
   - the glove counts 100, 101, 102;
   - a re-placed lamp gets its ID back;
   - placing by hand takes the lowest free ID;
@@ -41,13 +41,13 @@
 
 ## Phase 5: User Stories 1 and 3, shows (P1)
 
-- [ ] T012 [US1] `S/lights/WeedweenoBlock.java`, `WeedweenoBlockEntity.java` (programs, running, status, console, its power node, resuming after a restart, programs kept on the item) and `WeedweenoMenu.java`
-- [ ] T013 [US1] Presets in `data/fourtwenty/weedweeno/presets/` (rainbow, chase, pulse, strobe); new Weedweenos start with them; a Restore Presets action
-- [ ] T014 [US3] `S/client/WeedweenoScreen.java`:
+- [x] T012 [US1] `S/lights/WeedweenoBlock.java`, `WeedweenoBlockEntity.java` (programs, running, status, console, its power node, resuming after a restart, programs kept on the item) and `WeedweenoMenu.java`
+- [x] T013 [US1] Presets in `data/fourtwenty/weedweeno/presets/` (rainbow, chase, pulse, strobe); new Weedweenos start with them; a Restore Presets action
+- [x] T014 [US3] `S/client/WeedweenoScreen.java`:
   - **Editor:** the program list, the code with line numbers, the error line marked, the console.
   - **Buttons:** New, Duplicate, Rename, Delete, Run, Stop, Export, Import.
   - **Payloads:** `WeedweenoEdit` and `WeedweenoState`.
-- [ ] T015 [US1] Game tests:
+- [x] T015 [US1] Game tests:
   - a program sets lamps by ID within range;
   - lamps beyond range are left alone;
   - stop turns them off;
@@ -56,17 +56,24 @@
 
 ## Phase 6: User Story 5, Bit Chits (P2)
 
-- [ ] T016 [US5] `S/lights/BitChitItem.java` (`program` component, tooltip); export and import in the Weedweeno; `BitChitCopyRecipe.java`
-- [ ] T017 [US5] Game test: export, copy and import round trip
+- [x] T016 [US5] `S/lights/BitChitItem.java` (`program` component, tooltip); export and import in the Weedweeno; `BitChitCopyRecipe.java`
+- [x] T017 [US5] Game test: export, copy and import round trip
 
 ## Phase 7: Polish
 
-- [ ] T018 [P] `tools/generate_lit_bits.py`: art for the lamp shell, glove, Weedweeno and Bit Chit; recipes; lang; help text
-- [ ] T019 Config values (range, budget, global cap, lamps per tick, LED numbers, operators only); README and CHANGELOG
-- [ ] T020 Timing: 1,024 lamps at 20 frames a second; full test run
+- [x] T018 [P] `tools/generate_lit_bits.py`: art for the lamp shell, glove, Weedweeno and Bit Chit; recipes; lang; help text
+- [x] T019 Config values (range, budget, global cap, lamps per tick, LED numbers, operators only); README and CHANGELOG
+- [x] T020 Timing: 1,024 lamps at 20 frames a second; full test run
 - [ ] T021 Flatworld: build a demo strip, then the quickstart in game
 
 ## Dependencies
 
 - **Order:** T001 → T005, and T002/T003 → T006. IDs (Phase 4) come before shows (Phase 5). Polish comes last.
 - **MVP:** Phases 1–5. A wall of lamps runs a preset show.
+
+## Notes from implementation
+
+- The game tests for T008, T011, T015, T017 and T020 are one file, `G/LightsGameTests.java`. The ID screens are `S/client/NumberScreen.java` (`LitBit`, `Finger`). The Weedweeno needs no menu: its screen talks to the server through payloads.
+- Dev runs need Cobalt named in the run's `dependencies { runtime ... }`; without it every show fails with ClassNotFoundException.
+- A lit LED counts as demand on its network (`Network.demandBeyond`), or a loop of lamps alone never lights its Hookah.
+- Per-frame time: a hard cut-off at the server-wide allowance (10 ms) stops a show that never yields; frames over the 2 ms budget stop it only after 40 in a row (`LuaShow.MAX_OVERRUNS`), so one cold-start frame doesn't.

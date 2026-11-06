@@ -22,6 +22,7 @@ public class FourTwenty {
 
         container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, com.malevolentgods.fourtwenty.processing.ProcessingConfig.SPEC, "fourtwenty-processing-server.toml");
         container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, com.malevolentgods.fourtwenty.gear.GearConfig.SPEC, "fourtwenty-gear-server.toml");
+        container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, com.malevolentgods.fourtwenty.lights.LightsConfig.SPEC, "fourtwenty-lights-server.toml");
         com.malevolentgods.fourtwenty.util.HotboxNetwork.register(bus);
         bus.addListener((net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent event) ->
             event.register(com.malevolentgods.fourtwenty.blockentity.HotboxBlockEntity.TICKETS));
@@ -37,6 +38,8 @@ public class FourTwenty {
         ModBlocks.BLOCKS.register(bus);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.util.BongBuffs::tick);
         com.malevolentgods.fourtwenty.gear.ModGear.register(bus);
+        com.malevolentgods.fourtwenty.lights.ModLights.init();
+        com.malevolentgods.fourtwenty.lights.ModLights.register(bus);
         ModItems.ITEMS.register(bus);
         com.malevolentgods.fourtwenty.registry.ModDataComponents.COMPONENTS.register(bus);
         com.malevolentgods.fourtwenty.registry.ModStrainData.LOOT_FUNCTIONS.register(bus);

@@ -69,6 +69,9 @@ runs {
         // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
         systemProperty 'forge.logging.console.level', 'info'
 
+        // Cobalt is a plain library, not a mod: dev runs only see it when it is named here (the built jar carries it by jarJar)
+        dependencies { runtime "cc.tweaked:cobalt:${cobalt_version}" }
+
         workingDirectory = project.file(name == 'junit' ? '.compat/junit' : compatRunDir)
         if (!packaged && compatProfile != 'baseline') modSource project.sourceSets.main
         else modSources.add('fourtwenty_launcher', project.sourceSets.launcher)

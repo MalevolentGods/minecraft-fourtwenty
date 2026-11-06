@@ -234,6 +234,37 @@ Coloured lamps in all 16 dye colours, for builds that need lighting without anot
 
 Lit lamps and trims glow with a soft coloured halo that spills onto neighbouring blocks, including in your inventory and hands. The lamp textures and halo come from [ProjectRed](https://github.com/MrTJP/ProjectRed)'s illumar lamps (MIT License; see `licenses/ProjectRed-LICENSE.txt`). The bundled Dispensary uses them, so it needs no lighting mod. `tools/import_dispensary_blueprints.py --lamps-only` converts blueprints that use ProjectRed illumar lamps or CB Multipart lamp covers to these blocks.
 
+## Lit Bits and the Weedweeno
+
+Programmable RGB lamps, part of Inspoweednetics. Nothing here needs MineColonies.
+
+- **Lit Bit:** an RGB lamp that works like a real LED. It has a + terminal (red stud, left) and a − terminal (black stud, right), like every powered block, and lights only on a closed loop at Puff voltage (4.2 Kb). Below about 2.5 Kb it stays dark, and as the supply sags it dims. Each channel draws current in proportion to how bright it is: 0.238 Ig at full, so full white is about 0.72 Ig, 3 W. Wired backwards it stays dark; on a higher tier's voltage it overloads in smoke, without breaking. Use one to see or change its **ID**. Craft red, green and blue dye over glass, a Hemp Wick and glass, and a copper ingot below, for **4 Lit Bits**.
+- **Sticky Finger:** a glove that places Lit Bits from your off hand (or inventory) and numbers them as it goes: 1, 2, 3 and on. Sneak-use it in the air to set the next ID. A Lit Bit placed where one was broken gets that one's ID back, whatever the glove says. Craft a slime ball, string, leather, string and a copper ingot.
+- **Weedweeno:** a small computer for light shows. It runs Lua programs that set Lit Bits by ID, wirelessly, within 64 blocks. It's a 5 W Puff load on a loop of its own (or free near a high player), and comes with four presets: Rainbow, Chase, Pulse and Strobe. Use it for its editor: your programs on the left, the code with line numbers in the middle (an error's line is marked), and Run, Stop, Save, New, Copy, Delete, Export and Import below, with a console. Keep as many programs as you like; a broken Weedweeno keeps them. Craft copper, a glass pane and copper; redstone, an Inspoweedometer and redstone; copper, a Hemp Wick and copper.
+- **Bit Chit:** a slip that carries a program. Export onto a blank one from a Weedweeno, then Import it into another. Craft a written Bit Chit with a blank one to copy it. Four paper and an ink sac make **4 blank Bit Chits**.
+
+A show is a loop that sets colours and then calls `frame()` to wait for the next tick:
+
+```lua
+while true do
+  for i, id in ipairs(ids()) do hsv(id, i * 30 + time() * 90, 1, 1) end
+  frame()
+end
+```
+
+| Function | What it does |
+|---|---|
+| `set(id, r, g, b)` | sets every lamp with that ID in range (0–255 each) |
+| `hsv(id, h, s, v)` | the same from hue (0–360), saturation and value (0–1) |
+| `off(id)`, `all(r, g, b)` | one ID dark; every lamp in range one colour |
+| `ids()`, `count()` | the IDs in range, sorted, and how many |
+| `frame()`, `sleep(seconds)` | wait for the next tick, or for so long |
+| `time()`, `tick()` | seconds and ticks since the show started |
+| `rgb(h, s, v)` | returns `r, g, b` for a hue |
+| `print(...)` | writes to the Weedweeno's console |
+
+Shows run on the server in a sandbox: no files, no OS, no network, and no loading code from text. Each frame has 2 ms. A show that never calls `frame()` is cut off and stopped as too slow, and so is one whose frames keep running over. Programs hold up to 30,000 characters. Server owners can tune the range, the budgets and the LED numbers, or let only operators program, in `fourtwenty-lights-server.toml`. The Lua is [Cobalt](https://github.com/SquidDev/Cobalt) (MIT License), bundled in the mod jar.
+
 ## Use a bong
 
 Place the bong anywhere; it faces you, bowl toward you. Right-click it with a **Weed Bud** anywhere in your inventory to take a hit: it uses one bud (none in creative) and gives the same effects as a pipe, with bubbling and smoke. Hits have a 5-second cooldown. Without a bud you are told to pack it first. With MineColonies, a hit is also secondhand smoke for colonists within 4 blocks.

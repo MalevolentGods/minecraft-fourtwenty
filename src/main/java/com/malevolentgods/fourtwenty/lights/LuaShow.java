@@ -75,6 +75,10 @@ public final class LuaShow {
     private volatile long deadline = Long.MAX_VALUE;
     private volatile boolean slow;
     private long ticks;
+    /** Frames in a row that took longer than their budget. */
+    private int overruns;
+    /** So many over-budget frames in a row, and the show is stopped as too slow: about two seconds. */
+    public static final int MAX_OVERRUNS = 40;
     private Status status = Status.RUNNING;
     private String message = "";
     private int line;
@@ -90,6 +94,9 @@ public final class LuaShow {
         }).build();
         CoreLibraries.standardGlobals(state);
         LuaTable g = state.globals();
+        // nothing that turns text into code: a show is the program it was saved as
+        for (String name : new String[]{"load", "loadstring", "dofile", "loadfile", "require", "collectgarbage"}) g.rawset(name, Constants.NIL);
+        if (g.rawget("string") instanceof LuaTable string) string.rawset("dump", Constants.NIL);
         RegisteredFunction.bind(g, new RegisteredFunction[]{
                 RegisteredFunction.ofV("set", (s, a) -> {
                     lamps.set(a.arg(1).checkInteger(), LedRules.pack(a.arg(2).checkInteger(), a.arg(3).checkInteger(), a.arg(4).checkInteger()));
@@ -161,17 +168,30 @@ public final class LuaShow {
         thread = null;
     }
 
-    /** Runs one frame: resumes the program until it waits for the next one, with {@code budgetNanos} to do it. */
-    public Status tick(long budgetNanos) {
+    /** Runs one frame with {@code budgetNanos}; a frame may run up to five times over before it is cut off. */
+    public Status tick(long budgetNanos) { return tick(budgetNanos, budgetNanos * 5); }
+
+    /**
+     * Runs one frame: resumes the program until it waits for the next one. A frame cut off at {@code hardNanos} stops the show as too
+     * slow at once; frames over {@code budgetNanos} are let off unless {@link #MAX_OVERRUNS} come in a row, so one slow frame (a cold
+     * start, a busy tick) doesn't end a show that keeps up the rest of the time.
+     */
+    public Status tick(long budgetNanos, long hardNanos) {
         if (status != Status.RUNNING || thread == null) return status;
         slow = false;
-        deadline = System.nanoTime() + budgetNanos;
-        var alarm = WATCHDOG.schedule(state::interrupt, Math.max(1, budgetNanos), TimeUnit.NANOSECONDS);
+        long start = System.nanoTime();
+        long hard = Math.max(budgetNanos, hardNanos);
+        deadline = start + hard;
+        var alarm = WATCHDOG.schedule(state::interrupt, Math.max(1, hard), TimeUnit.NANOSECONDS);
         try {
             LuaThread.run(thread, Constants.NONE);
             if (thread.getStatus() == LuaThread.Status.DEAD) {
                 status = Status.DONE;
                 thread = null;
+            } else if (System.nanoTime() - start > budgetNanos) {
+                if (++overruns >= MAX_OVERRUNS) fail(Status.SLOW, "too slow: each frame takes longer than its budget");
+            } else {
+                overruns = 0;
             }
         } catch (LuaError e) {
             fail(slow ? Status.SLOW : Status.ERROR, slow ? "too slow: call frame() in your loop" : e.getMessage());
