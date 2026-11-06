@@ -38,11 +38,21 @@ public final class Circuit {
     private record Conductor(int a, int b, double ohms) {}
     private record Source(int plus, int minus, double emf, double ohms, double maxOut, double maxIn) {}
     private record Load(int plus, int minus, double watts, double minVolts) {}
+    /** An LED behind a constant-current driver: dark below {@code forward}, rising to {@code setAmps} at {@code rated}, held above. */
+    private record Led(int plus, int minus, double setAmps, double forward, double rated) {
+        double amps(double volts) {
+            if (volts <= forward) return 0;
+            return setAmps * (rated <= forward ? 1 : Math.min(1, (volts - forward) / (rated - forward)));
+        }
+    }
 
     private int nodes;
     private final List<Conductor> conductors = new ArrayList<>();
     private final List<Source> sources = new ArrayList<>();
     private final List<Load> loads = new ArrayList<>();
+    private final List<Led> leds = new ArrayList<>();
+    /** Each LED's status from the probe: OK, NO_LOOP or REVERSED. */
+    private int[] ledStatus = new int[0];
     /** Each load's status from the probe: OK, NO_LOOP or REVERSED. */
     private int[] status = new int[0];
 
@@ -80,13 +90,19 @@ public final class Circuit {
     /** A load from {@code node} to {@link #GROUND}. */
     public int load(int node, double watts, double minVolts) { return load(node, GROUND, watts, minVolts); }
 
+    /** An LED across {@code plus} and {@code minus} (Lit Bits: domain/LedRules); returns its index. */
+    public int led(int plus, int minus, double setAmps, double forward, double rated) {
+        leds.add(new Led(plus, minus, Math.max(0, setAmps), Math.max(0, forward), Math.max(forward, rated)));
+        return leds.size() - 1;
+    }
+
     /**
      * What the circuit settles at. Source watts are what leaves or (negative) enters the source's own store: its EMF's share, which
      * includes its internal loss. Load watts are what reaches each load. {@code share} is the brownout factor, 1 when healthy.
      * {@code loadStatus} says, for each load, OK, BROWNOUT, NO_LOOP or REVERSED.
      */
     public record Solution(double[] volts, double[] conductorAmps, double[] sourceAmps, double[] sourceWatts, double[] loadWatts,
-                           double[] loadAmps, double losses, double share, boolean converged, int[] loadStatus) {
+                           double[] loadAmps, double losses, double share, boolean converged, int[] loadStatus, double[] ledAmps, int[] ledStatus) {
         /** The voltage across a load, + minus −. */
         public double loadVolts(double[] v, int plus, int minus) { return at(v, plus) - at(v, minus); }
     }
@@ -123,8 +139,10 @@ public final class Circuit {
     private Solution dead() {
         int[] out = new int[loads.size()];
         Arrays.fill(out, NO_LOOP);
+        int[] ledOut = new int[leds.size()];
+        Arrays.fill(ledOut, NO_LOOP);
         return new Solution(new double[nodes], new double[conductors.size()], new double[sources.size()], new double[sources.size()],
-                new double[loads.size()], new double[loads.size()], 0, 0, true, out);
+                new double[loads.size()], new double[loads.size()], 0, 0, true, out, new double[leds.size()], ledOut);
     }
 
     /**
@@ -144,11 +162,18 @@ public final class Circuit {
             inject(b, s.plus(), s.minus(), s.emf() / s.ohms());
         }
         for (Load l : loads) if (l.watts() > 0) between(sparse, l.plus(), l.minus(), PROBE * l.watts() / (scale * scale));
+        for (Led l : leds) between(sparse, l.plus(), l.minus(), PROBE * Math.max(l.setAmps(), 1e-9) / scale);
         double[] v = sparse.solve(b);
         if (v == null) return null;
         for (int i = 0; i < loads.size(); i++) {
             double across = across(v, loads.get(i));
             status[i] = across < -OPEN * scale ? REVERSED : across <= OPEN * scale ? NO_LOOP : OK;
+        }
+        ledStatus = new int[leds.size()];
+        for (int i = 0; i < leds.size(); i++) {
+            Led l = leds.get(i);
+            double across = at(v, l.plus()) - at(v, l.minus());
+            ledStatus[i] = across < -OPEN * scale ? REVERSED : across <= OPEN * scale ? NO_LOOP : OK;
         }
         return v;
     }
@@ -184,6 +209,9 @@ public final class Circuit {
         for (Source src : sources) join.accept(src.plus(), src.minus());
         for (int i = 0; i < loads.size(); i++) {
             if (probing ? loads.get(i).watts() > 0 : active(i)) join.accept(loads.get(i).plus(), loads.get(i).minus());
+        }
+        for (int i = 0; i < leds.size(); i++) {
+            if (probing || ledStatus[i] == OK) join.accept(leds.get(i).plus(), leds.get(i).minus());
         }
         List<Integer> out = new ArrayList<>();
         for (int i = 0; i < nodes; i++) if (find.applyAsInt(i) == i && !grounded[i]) out.add(i);
@@ -235,7 +263,13 @@ public final class Circuit {
                 lAmps[i] = volts > 0 ? lWatts[i] / volts : 0;
                 if (share < 1) out[i] = BROWNOUT;
             }
-            return new Solution(v, cAmps, sAmps, sWatts, lWatts, lAmps, losses, share, converged, out);
+            double[] ledAmps = new double[leds.size()];
+            for (int i = 0; i < leds.size(); i++) {
+                if (ledStatus[i] != OK) continue;
+                Led l = leds.get(i);
+                ledAmps[i] = l.amps(at(v, l.plus()) - at(v, l.minus()));
+            }
+            return new Solution(v, cAmps, sAmps, sWatts, lWatts, lAmps, losses, share, converged, out, ledAmps, ledStatus.clone());
         }
     }
 
@@ -299,6 +333,13 @@ public final class Circuit {
                 // the line the way a real one settles, where Newton's method would follow a constant-power load's negative slope
                 double volts = Math.max(across(v, l), l.minVolts());
                 between(sparse, l.plus(), l.minus(), p / (volts * volts));
+            }
+            for (int li = 0; li < leds.size(); li++) {
+                if (ledStatus[li] != OK) continue;
+                Led l = leds.get(li);
+                // the conductance that carries its current at the last voltage (I / V), and a whisper when it's dark, so the loop stays joined
+                double volts = Math.max(at(v, l.plus()) - at(v, l.minus()), 1e-9);
+                between(sparse, l.plus(), l.minus(), Math.max(l.amps(volts) / volts, PROBE * Math.max(l.setAmps(), 1e-9) / scale));
             }
             double[] x = sparse.solve(b);
             if (x == null) return false;

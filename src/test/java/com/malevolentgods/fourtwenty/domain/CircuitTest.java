@@ -390,4 +390,51 @@ class CircuitTest {
         var s = c.solve();
         assertEquals(1.05, s.sourceAmps()[0], 0.005, "at its current limit (and its tiny slope past it), no more");
     }
+
+    @Test
+    void anLedFollowsItsKnee() {
+        // a Puff Hookah (4.2 Kb) and one Lit Bit at full white: 0.716 Ig, about 3 W
+        var n = LedRules.Numbers.DEFAULT;
+        var c = new Circuit();
+        int[] h = hookah(c);
+        int lit = c.led(h[0], h[1], n.setAmps(255, 255, 255), n.forwardVolts() / 4.2, n.fullVolts() / 4.2);
+        var s = c.solve();
+        assertEquals(n.setAmps(255, 255, 255), s.ledAmps()[lit], 1e-6);
+        assertEquals(Circuit.OK, s.ledStatus()[lit]);
+    }
+
+    @Test
+    void anLedOnALowLineIsDimAndBelowItsKneeDark() {
+        // an EMF of 0.8 pu is halfway up the knee from 0.6 to 1.0: half the set current. At 0.5 pu it is dark.
+        for (double[] want : new double[][]{{0.8, 0.5}, {0.5, 0.0}}) {
+            var c = new Circuit();
+            int p = c.node(), m = c.node();
+            c.source(p, m, want[0], 1e-6, 10, 0);
+            int lit = c.led(p, m, 1.0, 0.6, 1.0);
+            var s = c.solve();
+            assertEquals(want[1], s.ledAmps()[lit], 1e-4, "at " + want[0]);
+        }
+    }
+
+    @Test
+    void anLedWiredBackwardsTakesNothing() {
+        var c = new Circuit();
+        int[] h = hookah(c);
+        int lit = c.led(h[1], h[0], 0.5, 0.6, 1.0);
+        var s = c.solve();
+        assertEquals(Circuit.REVERSED, s.ledStatus()[lit]);
+        assertEquals(0, s.ledAmps()[lit], 0);
+    }
+
+    @Test
+    void manyLedsShareALine() {
+        // 100 Lit Bits in parallel: their currents add, and each is still at its set current
+        var c = new Circuit();
+        int[] h = hookah(c);
+        int[] lits = new int[100];
+        for (int i = 0; i < lits.length; i++) lits[i] = c.led(h[0], h[1], 0.005, 0.6, 0.95);
+        var s = c.solve();
+        assertEquals(0.5, s.sourceAmps()[0], 1e-4);
+        for (int l : lits) assertEquals(0.005, s.ledAmps()[l], 1e-7);
+    }
 }
