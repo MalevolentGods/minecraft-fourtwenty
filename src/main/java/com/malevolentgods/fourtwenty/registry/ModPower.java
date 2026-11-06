@@ -91,6 +91,10 @@ public final class ModPower {
         return block(name, () -> new WickBlock(tier, wick()));
     }
 
+    private static DeferredHolder<Block, com.malevolentgods.fourtwenty.power.CableBlock> cable(String name, com.malevolentgods.fourtwenty.power.CableBlock.Kind kind, Tier tier) {
+        return block(name, () -> new com.malevolentgods.fourtwenty.power.CableBlock(kind, tier, wick()));
+    }
+
     private static DeferredHolder<Block, ConstructionJointBlock> bench(String name, Tier tier) {
         return block(name, () -> new ConstructionJointBlock(tier, metal().noOcclusion()));
     }
@@ -116,6 +120,17 @@ public final class ModPower {
     public static final DeferredHolder<Block, WickBlock> ROLLED_WICK = wick("rolled_wick", Tier.TOKE);
     public static final DeferredHolder<Block, WickBlock> GLASS_WICK = wick("glass_wick", Tier.RIP);
     public static final DeferredHolder<Block, WickBlock> GOLD_WICK = wick("gold_wick", Tier.BLAZE);
+
+    // two-core cables (specs/009-twin-daisy-wicks)
+    public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.power.CableBlock>
+            HEMP_TWIN_WICK = cable("hemp_twin_wick", com.malevolentgods.fourtwenty.power.CableBlock.Kind.TWIN, Tier.PUFF),
+            ROLLED_TWIN_WICK = cable("rolled_twin_wick", com.malevolentgods.fourtwenty.power.CableBlock.Kind.TWIN, Tier.TOKE),
+            GLASS_TWIN_WICK = cable("glass_twin_wick", com.malevolentgods.fourtwenty.power.CableBlock.Kind.TWIN, Tier.RIP),
+            GOLD_TWIN_WICK = cable("gold_twin_wick", com.malevolentgods.fourtwenty.power.CableBlock.Kind.TWIN, Tier.BLAZE),
+            HEMP_DAISY_WICK = cable("hemp_daisy_wick", com.malevolentgods.fourtwenty.power.CableBlock.Kind.DAISY, Tier.PUFF),
+            ROLLED_DAISY_WICK = cable("rolled_daisy_wick", com.malevolentgods.fourtwenty.power.CableBlock.Kind.DAISY, Tier.TOKE),
+            GLASS_DAISY_WICK = cable("glass_daisy_wick", com.malevolentgods.fourtwenty.power.CableBlock.Kind.DAISY, Tier.RIP),
+            GOLD_DAISY_WICK = cable("gold_daisy_wick", com.malevolentgods.fourtwenty.power.CableBlock.Kind.DAISY, Tier.BLAZE);
 
     public static final DeferredHolder<Block, WeedBongBlock> DOUBLE_HOSE = hookah("double_hose", Tier.TOKE);
     public static final DeferredHolder<Block, WeedBongBlock> BIG_BERTHA = hookah("big_bertha", Tier.RIP);

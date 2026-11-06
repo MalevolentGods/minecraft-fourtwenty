@@ -73,12 +73,19 @@ public final class Circuits {
         while (!queue.isEmpty() && seen.size() <= Network.MAX_WICKS) {
             BlockPos at = queue.poll();
             var state = level.getBlockState(at);
+            boolean cable = state.getBlock() instanceof CableBlock;
             for (Direction d : Direction.values()) {
                 BlockPos next = at.relative(d);
                 if (!level.isLoaded(next)) continue;
                 var nextState = level.getBlockState(next);
-                if (nextState.getBlock() instanceof WickBlock) {
-                    if (WickBlock.joins(state, nextState) && seen.add(next.immutable())) queue.add(next.immutable());
+                if (nextState.getBlock() instanceof WickBlock || nextState.getBlock() instanceof CableBlock) {
+                    if (wired(state, nextState) && seen.add(next.immutable())) queue.add(next.immutable());
+                    continue;
+                }
+                if (cable) {
+                    if (!CableBlock.plugsInto(nextState, d.getOpposite())) continue;
+                    BINode owner = Network.ownerOnFace(level, next, d.getOpposite());
+                    if (owner != null) return Optional.of(new Object[]{owner, next.immutable()});
                     continue;
                 }
                 BINode node = level.getCapability(BINode.CAPABILITY, next, d.getOpposite());
@@ -86,6 +93,45 @@ public final class Circuits {
             }
         }
         return Optional.empty();
+    }
+
+    /** Whether two touching pieces of wiring (Wicks or cables) are joined. */
+    private static boolean wired(net.minecraft.world.level.block.state.BlockState a, net.minecraft.world.level.block.state.BlockState b) {
+        if (a.getBlock() instanceof WickBlock && b.getBlock() instanceof WickBlock) return WickBlock.joins(a, b);
+        if (a.getBlock() instanceof CableBlock && b.getBlock() instanceof CableBlock) return CableBlock.joins(a, b);
+        return a.getBlock() instanceof CableBlock ? CableBlock.takesWick(b) : CableBlock.takesWick(a);
+    }
+
+    /** Why the Daisy line through the cable at {@code pos} carries nothing, if it can't be ordered. */
+    public static Optional<com.malevolentgods.fourtwenty.domain.DaisyLine.Reason> daisyFailure(Level level, BlockPos pos) {
+        if (!(level.getBlockState(pos).getBlock() instanceof CableBlock)) return Optional.empty();
+        for (Object[] found : terminalOnLine(level, pos).stream().toList()) {
+            Network net = network(level, (BINode) found[0], (BlockPos) found[1]);
+            return Optional.ofNullable(net.daisyFailed.get(pos));
+        }
+        return Optional.empty();
+    }
+
+    /** A cable's cores read together: the voltage between them, the current in each, and its tier's ratings. */
+    public record CableReading(double volts, double plusAmps, double minusAmps, double ohms, double ampRating, double voltRating, double lossWatts) {}
+
+    public static Optional<CableReading> cableReading(Level level, BlockPos pos) {
+        if (!(level.getBlockState(pos).getBlock() instanceof CableBlock cable)) return Optional.empty();
+        var rules = com.malevolentgods.fourtwenty.processing.ProcessingConfig.circuit();
+        for (Object[] found : terminalOnLine(level, pos).stream().toList()) {
+            Network net = network(level, (BINode) found[0], (BlockPos) found[1]);
+            if (!net.solved()) net.tick(level, of(level).burnTimers);
+            Network.Wick plus = null, minus = null;
+            for (Network.Wick w : net.wicks) {
+                if (!w.pos().equals(pos)) continue;
+                if (w.core() == Network.Core.PLUS) plus = w;
+                else if (w.core() == Network.Core.MINUS) minus = w;
+            }
+            if (plus == null || minus == null) break;
+            return Optional.of(new CableReading(net.potential(plus) - net.potential(minus), net.amps(plus), net.amps(minus), rules.wickOhms(cable.tier()),
+                    rules.wickAmps(cable.tier()), rules.wickVolts(cable.tier()), net.wickLoss(plus) + net.wickLoss(minus)));
+        }
+        return Optional.of(new CableReading(0, 0, 0, rules.wickOhms(cable.tier()), rules.wickAmps(cable.tier()), rules.wickVolts(cable.tier()), 0));
     }
 
     /** A Wick's potential in its circuit's own terms, with the circuit it's on: two Wicks of one circuit compare by their difference. */

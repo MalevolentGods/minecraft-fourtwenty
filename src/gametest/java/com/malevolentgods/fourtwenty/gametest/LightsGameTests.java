@@ -62,7 +62,7 @@ public final class LightsGameTests {
     public static void aLitBitShowsItsColourOnAHookah(GameTestHelper h) {
         var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 5);
         l.hookah(1, ModBlocks.WEED_BONG.get());
-        BlockPos red = lamp(l, 3, 1, 0xFF0000), mixed = lamp(l, 5, 2, 0x00FF80);
+        BlockPos red = lamp(l, 3, 30001, 0xFF0000), mixed = lamp(l, 5, 30002, 0x00FF80);
         h.runAfterDelay(80, () -> {
             int a = lamp(h, red).shown(), b = lamp(h, mixed).shown();
             h.assertTrue(LedRules.red(a) > 230 && LedRules.green(a) == 0 && LedRules.blue(a) == 0, "red, got " + Integer.toHexString(a));
@@ -89,10 +89,10 @@ public final class LightsGameTests {
     public static void aReversedLitBitStaysDark(GameTestHelper h) {
         var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 5);
         l.hookah(1, ModBlocks.WEED_BONG.get());
-        BlockPos right = lamp(l, 3, 1, 0xFFFFFF);
+        BlockPos right = lamp(l, 3, 30011, 0xFFFFFF);
         BlockPos wrong = l.at(5);
         h.setBlock(wrong, ModLights.LIT_BIT.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.EAST));
-        lamp(h, wrong).setId(2);
+        lamp(h, wrong).setId(30012);
         lamp(h, wrong).setColour(0xFFFFFF);
         h.runAfterDelay(80, () -> {
             h.assertTrue(lamp(h, right).shown() != 0, "the right way round lights");
@@ -106,7 +106,7 @@ public final class LightsGameTests {
     public static void aLitBitOverloadsOnTooHighAVoltage(GameTestHelper h) {
         var l = new Ladder(h, 2, 1).rails(ModPower.ROLLED_WICK.get(), 1, 5);
         l.hookah(1, ModPower.DOUBLE_HOSE.get());
-        BlockPos pos = lamp(l, 3, 1, 0xFFFFFF);
+        BlockPos pos = lamp(l, 3, 30021, 0xFFFFFF);
         l.put(5, ModPower.BUD_BARBER.get());
         h.runAfterDelay(100, () -> {
             h.assertBlockPresent(ModLights.LIT_BIT.get(), pos);
@@ -121,8 +121,8 @@ public final class LightsGameTests {
         var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 7);
         l.hookah(1, ModBlocks.WEED_BONG.get());
         var w = weedweeno(h, l.at(3), false);
-        BlockPos one = lamp(l, 5, 1, 0), two = lamp(l, 7, 2, 0);
-        run(w, "set(1, 0, 255, 0)\nset(2, 0, 0, 255)\nwhile true do frame() end\n");
+        BlockPos one = lamp(l, 5, 30031, 0), two = lamp(l, 7, 30032, 0);
+        run(w, "set(30031, 0, 255, 0)\nset(30032, 0, 0, 255)\nwhile true do frame() end\n");
         h.runAfterDelay(100, () -> {
             h.assertTrue(w.state() == WeedweenoBlockEntity.State.RUNNING, "running, got " + w.state() + " " + w.message());
             int a = lamp(h, one).shown(), b = lamp(h, two).shown();
@@ -231,10 +231,10 @@ public final class LightsGameTests {
     @GameTest(template = "long", timeoutTicks = 200)
     public static void aThousandLampsKeepUp(GameTestHelper h) {
         List<BlockPos> lamps = new ArrayList<>();
-        int id = 1;
-        for (int x = 1; x <= 103 && id <= 1024; x++) {
-            for (int y = 1; y <= 2 && id <= 1024; y++) {
-                for (int z = 1; z <= 5 && id <= 1024; z++) {
+        int id = 40001;
+        for (int x = 1; x <= 103 && id <= 41024; x++) {
+            for (int y = 1; y <= 2 && id <= 41024; y++) {
+                for (int z = 1; z <= 5 && id <= 41024; z++) {
                     BlockPos pos = new BlockPos(x, y, z);
                     if (x == 52 && y == 2 && z == 3) continue;
                     h.setBlock(pos, ModLights.LIT_BIT.get());
@@ -244,7 +244,7 @@ public final class LightsGameTests {
             }
         }
         var w = weedweeno(h, new BlockPos(52, 2, 3), true);
-        run(w, "local t = 0\nwhile true do\n  for _, id in ipairs(ids()) do set(id, 255, t % 256, 0) end\n  t = t + 1\n  frame()\nend\n");
+        run(w, "local t = 0\nwhile true do\n  for _, id in ipairs(ids()) do if id >= 40001 and id <= 41024 then set(id, 255, t % 256, 0) end end\n  t = t + 1\n  frame()\nend\n");
         h.runAfterDelay(20, () -> {
             h.assertTrue(w.state() == WeedweenoBlockEntity.State.RUNNING, "still running, got " + w.state() + " " + w.message());
             int lit = 0;

@@ -105,6 +105,7 @@ public class WickBlock extends Block {
     /** How this Wick meets {@code neighbour} on {@code side}: a Wick of its colour, a BI block's terminal face, or nothing. */
     private static Link link(BlockState self, Direction side, BlockState neighbour) {
         if (neighbour.getBlock() instanceof WickBlock) return joins(self, neighbour) ? Link.WIRE : Link.NONE;
+        if (neighbour.getBlock() instanceof CableBlock) return CableBlock.takesWick(self) ? Link.WIRE : Link.NONE;
         return neighbour.is(ModPower.BI_BLOCKS) && Terminal.isTerminalFace(neighbour, side.getOpposite()) ? Link.PLUG : Link.NONE;
     }
 
@@ -136,6 +137,7 @@ public class WickBlock extends Block {
                 BlockPos at = pos.relative(d);
                 BlockState around = level.getBlockState(at);
                 if (around.getBlock() instanceof WickBlock) level.setBlock(at, around.setValue(SIDES.get(d.getOpposite()), link(around, d.getOpposite(), next)), 3);
+                else if (around.getBlock() instanceof CableBlock) level.setBlock(at, around.updateShape(d.getOpposite(), next, level, at, pos), 3);
             }
             BIGrid.changed(level);
             if (!player.getAbilities().instabuild) stack.shrink(1);
@@ -155,17 +157,22 @@ public class WickBlock extends Block {
     /** Power went through: light it, and it stays lit until a whole glow passes with no power. */
     public static void carry(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
-        if (!(state.getBlock() instanceof WickBlock)) return;
+        if (!(state.getBlock() instanceof WickBlock) && !(state.getBlock() instanceof CableBlock)) return;
         CARRIED.computeIfAbsent(level, l -> new HashMap<>()).put(pos.immutable(), level.getGameTime());
         if (!state.getValue(LIT)) level.setBlock(pos, state.setValue(LIT, true), 2);
         if (!level.getBlockTicks().hasScheduledTick(pos, state.getBlock())) level.scheduleTick(pos, state.getBlock(), GLOW_TICKS);
     }
 
     @Override protected void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
+        glowTick(state, level, pos, this);
+    }
+
+    /** A Wick's or cable's glow: it goes out once a whole glow passes with no power. */
+    static void glowTick(BlockState state, ServerLevel level, BlockPos pos, Block block) {
         var carried = CARRIED.computeIfAbsent(level, l -> new HashMap<>());
         long left = carried.getOrDefault(pos, Long.MIN_VALUE / 2) + GLOW_TICKS - level.getGameTime();
         if (left > 0) {
-            level.scheduleTick(pos, this, (int) left);
+            level.scheduleTick(pos, block, (int) left);
             return;
         }
         carried.remove(pos);
