@@ -19,7 +19,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/** The Re-Up Station, one per tier: hang a piece of gear or a Dab Cell on it, or stand on its pad, and it charges from the Wicks. */
+/** The Re-Up Station, one per tier: hang a piece of gear or a Dab Cell on it, or stand on its pad, and it charges from its battery. Use it empty-handed for its screen. */
 public class ReUpStationBlock extends BIBlock {
     private final BIRules.Tier tier;
 
@@ -37,23 +37,20 @@ public class ReUpStationBlock extends BIBlock {
     @Override protected @Nonnull ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos,
                                                                  @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         if (Gear.piece(stack).isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof ReUpStationBlockEntity station && station.hung().isEmpty()) {
-            station.hang(stack.split(1));
-            player.displayClientMessage(Component.translatable("message.fourtwenty.re_up.hung", station.hung().getHoverName()), true);
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof ReUpStationBlockEntity station) {
+            if (station.hung().isEmpty()) {
+                station.hang(stack.split(1));
+                player.displayClientMessage(Component.translatable("message.fourtwenty.re_up.hung", station.hung().getHoverName()), true);
+            } else {
+                player.openMenu(station);
+            }
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override protected @Nonnull InteractionResult useWithoutItem(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos,
                                                                   @Nonnull Player player, @Nonnull BlockHitResult hit) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof ReUpStationBlockEntity station) {
-            ItemStack hung = station.takeDown();
-            if (!hung.isEmpty()) {
-                if (!player.getInventory().add(hung)) player.drop(hung, false);
-            } else {
-                player.displayClientMessage(Component.translatable("message.fourtwenty.re_up.empty", String.format("%,d", station.node().stored())), true);
-            }
-        }
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof ReUpStationBlockEntity station) player.openMenu(station);
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

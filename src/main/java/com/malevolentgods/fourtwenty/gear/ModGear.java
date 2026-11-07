@@ -69,6 +69,10 @@ public final class ModGear {
     public static final DeferredHolder<net.minecraft.world.inventory.MenuType<?>, net.minecraft.world.inventory.MenuType<GearMenu>> GEAR_MENU =
             com.malevolentgods.fourtwenty.registry.ModMenuTypes.MENU_TYPES.register("gear", GearMenu::type);
 
+    public static final DeferredHolder<net.minecraft.world.inventory.MenuType<?>, net.minecraft.world.inventory.MenuType<ReUpMenu>> RE_UP_MENU =
+            com.malevolentgods.fourtwenty.registry.ModMenuTypes.MENU_TYPES.register("re_up_station",
+                    () -> net.neoforged.neoforge.common.extensions.IMenuTypeExtension.create((id, inventory, data) -> new ReUpMenu(id, inventory)));
+
     public static void register(IEventBus bus) {
         GearNetwork.register(bus);
         MATERIALS.register(bus);

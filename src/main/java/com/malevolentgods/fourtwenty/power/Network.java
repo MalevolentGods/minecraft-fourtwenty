@@ -357,10 +357,11 @@ public final class Network {
         if (solution == null) return 0;
         if (w.conductor() >= 0) return Math.abs(solution.conductorAmps()[w.conductor()]);
         if (w.node() < 0) return 0;
-        // a Wick that's a node carries what flows through it: half of everything in and out of it (what goes in comes out)
-        double through = 0;
-        for (int c : w.incident()) through += Math.abs(solution.conductorAmps()[c]);
-        return through / 2;
+        // a Wick burns from heat. Each of its halves (to a neighbour, or to a block it feeds) carries its own current, so its heat is the
+        // sum of I²R over those halves; the current that would heat a straight run of it as much is the square root of half that sum
+        double heat = 0;
+        for (int c : w.incident()) heat += solution.conductorAmps()[c] * solution.conductorAmps()[c];
+        return Math.sqrt(heat / 2);
     }
 
     double volts(Wick w) {

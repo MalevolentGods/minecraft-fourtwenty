@@ -31,7 +31,7 @@ class GearRulesTest {
         assertEquals(0, GearRules.spend(100, 200));
         assertEquals(50, GearRules.chargeStep(99_950, 100_000, 1000), "never past full");
         assertEquals(0, GearRules.chargeStep(100_000, 100_000, 1000));
-        assertEquals(336.0, GearRules.stationRate(BIRules.Tier.BLAZE), 1e-9);
+        assertEquals(672.0, GearRules.stationRate(BIRules.Tier.BLAZE), 1e-9);
         for (int i = 1; i < BIRules.Tier.values().length; i++)
             assertEquals(2 * GearRules.stationRate(BIRules.Tier.values()[i - 1]), GearRules.stationRate(BIRules.Tier.values()[i]), 1e-9);
     }
@@ -61,5 +61,15 @@ class GearRulesTest {
             if (p == Piece.DAB_CELL) continue;
             assertTrue(p.family != null && p.slots >= 3, p.name());
         }
+    }
+
+    @Test
+    void aStationFillsGentlyAndChargesFast() {
+        for (BIRules.Tier t : BIRules.Tier.values()) {
+            assertTrue(GearRules.stationInput(t) < t.wire(), "fills inside its Wick's rating: " + t);
+            assertTrue(GearRules.stationRate(t) > GearRules.stationInput(t), "charges faster than it fills: " + t);
+        }
+        assertEquals(1_008_000, GearRules.stationCapacity(BIRules.Tier.PUFF, 40));
+        assertEquals(84.0, GearRules.stationRate(BIRules.Tier.PUFF), 1e-9, "1,680 W on Puff");
     }
 }

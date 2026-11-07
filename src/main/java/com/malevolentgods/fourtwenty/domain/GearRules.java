@@ -41,7 +41,25 @@ public final class GearRules {
     }
 
     /** Charge per tick at a Re-Up Station of this tier: what a Wick of the tier carries. */
-    public static double stationRate(BIRules.Tier tier) { return tier.wire(); }
+    /**
+     * A Re-Up Station has a battery of its own. It fills from its Wick at one Hookah of its tier, well inside the Wick's rating, and charges
+     * gear from that battery faster: four Hookahs by default. The battery holds {@code minutes} of what comes in.
+     */
+    public static final double STATION_CHARGE_HOOKAHS = 4, STATION_STORE_MINUTES = 40;
+
+    /** Ws per tick a station takes from its Wick. */
+    public static double stationInput(BIRules.Tier tier) { return tier.rate(); }
+
+    /** Ws per tick a station puts into gear, at {@code hookahs} Hookahs of its tier. */
+    public static double stationOutput(BIRules.Tier tier, double hookahs) { return tier.rate() * hookahs; }
+
+    /** The default charging rate, in Ws per tick. */
+    public static double stationRate(BIRules.Tier tier) { return stationOutput(tier, STATION_CHARGE_HOOKAHS); }
+
+    /** How much a station's battery holds: {@code minutes} of its input. */
+    public static long stationCapacity(BIRules.Tier tier, double minutes) {
+        return Math.round(stationInput(tier) * BIRules.TICKS_PER_SECOND * 60 * minutes);
+    }
 
     /** A stomp's damage from how far the wearer fell: a little from a hop, up to a cap from a long drop. */
     public static float stompDamage(float fallDistance, float max) {

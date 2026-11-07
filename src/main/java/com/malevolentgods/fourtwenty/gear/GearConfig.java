@@ -18,6 +18,10 @@ public final class GearConfig {
     private static final ModConfigSpec.DoubleValue BEAM_DAMAGE = BUILDER.comment("Blazer: Blaze Beam damage.").defineInRange("blazerBeamDamage", 8.0, 0, 100);
     private static final ModConfigSpec.DoubleValue STOMP_DAMAGE = BUILDER.comment("Couchlock Greaves: the most a stomp hurts.").defineInRange("greavesStompMaxDamage", 12.0, 0, 100);
     private static final ModConfigSpec.IntValue TIMBER = BUILDER.comment("Blazer: the most logs Timber Torch fells at once.").defineInRange("blazerTimberMaxLogs", 256, 1, 4096);
+    private static final ModConfigSpec.DoubleValue STATION_CHARGE = BUILDER.comment("Re-Up Station: how fast it charges gear from its battery, in Hookahs of its tier.")
+            .defineInRange("reUpChargeHookahs", com.malevolentgods.fourtwenty.domain.GearRules.STATION_CHARGE_HOOKAHS, 0.1, 100);
+    private static final ModConfigSpec.DoubleValue STATION_MINUTES = BUILDER.comment("Re-Up Station: how many minutes of its input its battery holds.")
+            .defineInRange("reUpStoreMinutes", com.malevolentgods.fourtwenty.domain.GearRules.STATION_STORE_MINUTES, 1, 1440);
     private static final ModConfigSpec.IntValue PAINT = BUILDER.comment("Blazer: blocks in a Paint Puff line.").defineInRange("blazerPaintLength", 8, 1, 64);
     public static final ModConfigSpec SPEC = BUILDER.build();
 
@@ -39,4 +43,6 @@ public final class GearConfig {
     public static float stompDamage() { return SPEC.isLoaded() ? STOMP_DAMAGE.get().floatValue() : 12f; }
     public static int timberLogs() { return get(TIMBER, 256); }
     public static int paintLength() { return get(PAINT, 8); }
+    public static double stationChargeHookahs() { return SPEC.isLoaded() ? STATION_CHARGE.get() : com.malevolentgods.fourtwenty.domain.GearRules.STATION_CHARGE_HOOKAHS; }
+    public static double stationStoreMinutes() { return SPEC.isLoaded() ? STATION_MINUTES.get() : com.malevolentgods.fourtwenty.domain.GearRules.STATION_STORE_MINUTES; }
 }

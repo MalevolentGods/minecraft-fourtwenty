@@ -8,7 +8,13 @@ import com.malevolentgods.fourtwenty.power.BINode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -18,26 +24,51 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Charges gear from the Wicks at its tier's wire rate: the piece hung on it first, then whoever stands on the pad (what they wear and
- * hold, and their Dab Cells). It moves stored BI, so it doesn't run free near a high player: that would make BI from nothing.
+ * Charges gear from a battery of its own: the piece hung on it first, then whoever stands on the pad (what they wear and hold, and their
+ * Dab Cells). The battery fills from the Wicks at one Hookah of its tier, inside the Wick's rating, and empties into gear faster than
+ * that (GearRules). It moves stored BI, so it doesn't run free near a high player: that would make BI from nothing.
  */
-public class ReUpStationBlockEntity extends BIBlockEntity {
-    private static final int INTAKE_TICKS = 40;
+public class ReUpStationBlockEntity extends BIBlockEntity implements Container, MenuProvider {
+    public static final int DATA_STORED = 0, DATA_CAPACITY = 1, DATA_OVERLOADED = 2, DATA_TIER = 3, DATA_IN = 4, DATA_OUT = 5, DATA_STATE = 6, DATA_COUNT = 7;
+    /** What the station is doing, for its screen. */
+    public static final int STATE_IDLE = 0, STATE_CHARGING = 1, STATE_EMPTY = 2, STATE_FULL = 3;
     private final BIRules.Tier tier;
-    private final BIBuffer intake;
+    private final BIBuffer battery;
     private ItemStack hung = ItemStack.EMPTY;
     private double owed;
+    private int state;
+    private final ContainerData data = new ContainerData() {
+        @Override public int get(int index) {
+            return switch (index) {
+                case DATA_STORED -> (int) battery.stored();
+                case DATA_CAPACITY -> (int) battery.capacity();
+                case DATA_OVERLOADED -> level != null && battery.overloaded(level.getGameTime()) ? 1 : 0;
+                case DATA_TIER -> tier.ordinal();
+                case DATA_IN -> (int) Math.round(BIRules.watts(GearRules.stationInput(tier)));
+                case DATA_OUT -> (int) Math.round(BIRules.watts(chargeRate()));
+                case DATA_STATE -> state;
+                default -> 0;
+            };
+        }
+
+        @Override public void set(int index, int value) {}
+
+        @Override public int getCount() { return DATA_COUNT; }
+    };
 
     public ReUpStationBlockEntity(BlockPos pos, BlockState state) {
         super(ModGear.RE_UP_ENTITY.get(), pos, state);
         tier = ((ReUpStationBlock) state.getBlock()).tier();
-        intake = new BIBuffer(tier, (long) Math.ceil(GearRules.stationRate(tier) * INTAKE_TICKS), true, false,
-                com.malevolentgods.fourtwenty.domain.BIRules.watts(GearRules.stationRate(tier)), this::setChanged);
+        battery = new BIBuffer(tier, GearRules.stationCapacity(tier, GearConfig.stationStoreMinutes()), true, false,
+                BIRules.watts(GearRules.stationInput(tier)), this::setChanged);
     }
 
-    public BINode node() { return intake; }
+    public BINode node() { return battery; }
 
     public BIRules.Tier tier() { return tier; }
+
+    /** Ws per tick it puts into gear. */
+    public double chargeRate() { return GearRules.stationOutput(tier, GearConfig.stationChargeHookahs()); }
 
     public ItemStack hung() { return hung; }
 
@@ -54,20 +85,23 @@ public class ReUpStationBlockEntity extends BIBlockEntity {
     }
 
     @Override public void serverTick() {
-        boolean overloaded = overloadTick(intake);
-        if (overloaded) {
+        if (overloadTick(battery)) {
             lit(false);
             return;
         }
-        owed += GearRules.stationRate(tier);
-        long budget = Math.min((long) owed, intake.stored());
-        owed -= (long) owed;
+        List<ItemStack> targets = targets();
+        owed = Math.min(owed + chargeRate(), chargeRate() + 1);
+        long budget = Math.min((long) owed, battery.stored());
         long used = 0;
-        for (ItemStack target : targets()) {
+        for (ItemStack target : targets) {
             if (used >= budget) break;
             used += Gear.fill(target, budget - used);
         }
-        if (used > 0) intake.extract(used);
+        if (used > 0) {
+            owed -= used;
+            battery.extract(used);
+        }
+        state = used > 0 ? STATE_CHARGING : targets.isEmpty() ? STATE_IDLE : battery.stored() <= 0 ? STATE_EMPTY : STATE_FULL;
         lit(used > 0);
     }
 
@@ -86,15 +120,43 @@ public class ReUpStationBlockEntity extends BIBlockEntity {
         return out;
     }
 
+    // ---- the one gear slot, for its screen and for hoppers ----
+
+    @Override public int getContainerSize() { return 1; }
+
+    @Override public boolean isEmpty() { return hung.isEmpty(); }
+
+    @Override public @Nonnull ItemStack getItem(int slot) { return slot == 0 ? hung : ItemStack.EMPTY; }
+
+    @Override public @Nonnull ItemStack removeItem(int slot, int amount) { return slot == 0 && amount > 0 ? takeDown() : ItemStack.EMPTY; }
+
+    @Override public @Nonnull ItemStack removeItemNoUpdate(int slot) { return removeItem(slot, 1); }
+
+    @Override public void setItem(int slot, @Nonnull ItemStack stack) { if (slot == 0) hang(stack); }
+
+    @Override public int getMaxStackSize() { return 1; }
+
+    @Override public boolean canPlaceItem(int slot, @Nonnull ItemStack stack) { return slot == 0 && Gear.piece(stack).isPresent(); }
+
+    @Override public boolean stillValid(@Nonnull Player player) { return Container.stillValidBlockEntity(this, player); }
+
+    @Override public void clearContent() { hung = ItemStack.EMPTY; }
+
+    @Override public @Nonnull Component getDisplayName() { return getBlockState().getBlock().getName(); }
+
+    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inventory, @Nonnull Player player) {
+        return new ReUpMenu(id, inventory, this, data);
+    }
+
     @Override protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putLong("ws", intake.stored());
+        tag.putLong("ws", battery.stored());
         if (!hung.isEmpty()) tag.put("hung", hung.save(registries));
     }
 
     @Override protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        intake.set(com.malevolentgods.fourtwenty.power.BIBuffer.loadWs(tag, "ws", "bi"));
+        battery.set(BIBuffer.loadWs(tag, "ws", "bi"));
         hung = tag.contains("hung") ? ItemStack.parseOptional(registries, tag.getCompound("hung")) : ItemStack.EMPTY;
     }
 }

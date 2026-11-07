@@ -30,7 +30,8 @@ public class InspoweedometerItem extends Item {
         var r = reading.get();
         Component line = r.wick()
                 ? Component.translatable("message.fourtwenty.meter.wick", Units.format(r.volts(), Units.VOLTS), Units.format(r.amps(), Units.AMPS),
-                        Units.format(r.ampRating(), Units.AMPS), Math.round(r.amps() / Math.max(r.ampRating(), 1e-12) * 100), Units.format(r.lossWatts(), Units.WATTS))
+                        Units.format(r.ampRating(), Units.AMPS), Math.round(r.amps() / Math.max(r.ampRating(), 1e-12) * 100), Units.format(r.ohms(), Units.OHMS),
+                        Units.format(r.lossWatts(), Units.WATTS))
                 : Component.translatable("message.fourtwenty.meter.device", Units.format(r.volts(), Units.VOLTS), Units.format(r.amps(), Units.AMPS),
                         Units.format(r.ohms(), Units.OHMS), Units.format(r.watts(), Units.WATTS));
         player.displayClientMessage(line.copy().withStyle(ChatFormatting.GREEN), !player.isSecondaryUseActive());
