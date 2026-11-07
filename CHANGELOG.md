@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.21.0] - Twisted Pair
 
 ### Added
 - **Twin Wick and Daisy Wick**, two-core cables in every Wick tier. A Twin Wick wires every block it touches in parallel. A Daisy Wick wires the blocks along it in series and closes the loop itself. Both meet red and black Wicks, take dyes, burn out like Wicks, and read on the Inspoweedometer. Craft a red and a black Wick of a tier side by side for a Twin, one above the other for a Daisy.
