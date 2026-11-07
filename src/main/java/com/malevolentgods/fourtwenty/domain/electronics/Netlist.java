@@ -202,6 +202,27 @@ public final class Netlist {
 
     public Logic.Ticker ticker(int vdd, int gnd, int out, double period) { return add(new Logic.Ticker(vdd, gnd, out, period)); }
 
+    /** A chip and an output stage on each of {@code outs}, in order. */
+    private <C extends Chips.Chip> C chip(C chip, int... outs) {
+        add(chip);
+        for (int k = 0; k < outs.length; k++) chip.pins[k] = add(new Chips.Pin(chip, k, outs[k]));
+        return chip;
+    }
+
+    /** A Puff-Pass Nug: {@code outs} the eight latched outputs, {@code carry} stage 7. */
+    public Chips.PuffPass puffPass(int vdd, int gnd, int data, int clock, int latch, int[] outs, int carry) {
+        return chip(new Chips.PuffPass(vdd, gnd, data, clock, latch), Chips.concat(outs, new int[]{carry}));
+    }
+
+    /** A Pack Nug: {@code in} its eight inputs, {@code out} the serial output. */
+    public Chips.Pack pack(int vdd, int gnd, int load, int clock, int[] in, int out) { return chip(new Chips.Pack(vdd, gnd, load, clock, in), out); }
+
+    /** A Sampler Nug: eight inputs, three select bits (the first the lowest), one output. */
+    public Chips.Sampler sampler(int vdd, int gnd, int[] in, int[] select, int out) { return chip(new Chips.Sampler(vdd, gnd, in, select), out); }
+
+    /** A Dealer Nug: one input, three select bits, eight outputs. */
+    public Chips.Dealer dealer(int vdd, int gnd, int in, int[] select, int[] outs) { return chip(new Chips.Dealer(vdd, gnd, in, select), outs); }
+
     /**
      * Runs the circuit for {@code seconds}, logic and all: solve, let every logic part look at its inputs and queue an output change
      * after its delay (a change its inputs take back before it's due never happens), step the analog circuit to the next change, make it,
