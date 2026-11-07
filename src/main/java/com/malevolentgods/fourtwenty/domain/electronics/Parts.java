@@ -8,7 +8,7 @@ public final class Parts {
     private Parts() {}
 
     /**
-     * The stiffest a part may be: 1 µΦ. A node's matrix entry holds the sum of its conductances in one double, good to 1e-16 of the
+     * The stiffest a part should be: 1 µΦ (a switch closes to this, an inductor shorts to it in DC). A node's matrix entry holds the sum of its conductances in one double, good to 1e-16 of the
      * largest, so the error in the smallest is about 1e-16 × (largest / smallest). Keeping "ideal" parts (sources, closed switches, an
      * inductor in DC) to 1e6 against a megaphu input bounds that at 1e-4 of the input's current and 1e-7 for anything a kilophu or
      * less, far inside SPICE's own tolerance (reltol 1e-3). SPICE gives ideal voltage sources rows of their own for the same reason.
@@ -19,7 +19,7 @@ public final class Parts {
 
     /** A resistance R between a and b. */
     public record Resistor(int a, int b, double ohms) implements Part {
-        public Resistor { ohms = Math.max(ohms, MIN_OHMS); }
+        public Resistor { ohms = Math.max(ohms, 1e-15); }
 
         @Override public int[] nodes() { return new int[]{a, b}; }
 
@@ -30,7 +30,7 @@ public final class Parts {
 
     /** A voltage source: an EMF from minus to plus behind a small internal resistance (its Norton equivalent). */
     public record Source(int plus, int minus, double emf, double ohms) implements Part {
-        public Source { ohms = Math.max(ohms, MIN_OHMS); }
+        public Source { ohms = Math.max(ohms, 1e-15); }
 
         @Override public int[] nodes() { return new int[]{plus, minus}; }
 
@@ -50,6 +50,159 @@ public final class Parts {
         @Override public void stamp(Stamp s, Analysis an) { s.current(a, b, an.sourceScale() * amps); }
 
         @Override public double current(Analysis an) { return an.sourceScale() * amps; }
+    }
+
+    /**
+     * A source with a current limit both ways (a Hookah, a Stash, a bench supply): an EMF behind a resistance, giving at most
+     * {@code maxOut} out of its + terminal and taking at most {@code maxIn} into it; past a limit it holds that current, with a soft
+     * slope so no node ever floats. Piecewise linear: Newton finds the right piece, stepping only to the edge of a piece it would jump
+     * past (as SPICE limits a junction).
+     */
+    public static final class LimitedSource implements Part {
+        static final double STIFF = 1e5;
+        final int plus, minus;
+        final double emf, ohms, maxOut, maxIn;
+        private double vLast, iLast, gLast;
+        private boolean started;
+
+        LimitedSource(int plus, int minus, double emf, double ohms, double maxOut, double maxIn) {
+            this.plus = plus;
+            this.minus = minus;
+            this.emf = emf;
+            this.ohms = Math.max(ohms, 1e-15);
+            this.maxOut = Math.max(0, maxOut);
+            this.maxIn = Math.max(0, maxIn);
+        }
+
+        @Override public int[] nodes() { return new int[]{plus, minus}; }
+
+        @Override public boolean nonlinear() { return true; }
+
+        private double outEdge(double k) { return k * emf - k * maxOut * ohms; }
+
+        private double inEdge(double k) { return k * emf + k * maxIn * ohms; }
+
+        /** Current out of its + terminal at {@code v} across it. */
+        double amps(double v, double k) {
+            double soft = 1 / (ohms * STIFF);
+            if (v < outEdge(k)) return k * maxOut + soft * (outEdge(k) - v);
+            if (v > inEdge(k)) return -k * maxIn + soft * (inEdge(k) - v);
+            return (k * emf - v) / ohms;
+        }
+
+        private double conductance(double v, double k) { return v < outEdge(k) || v > inEdge(k) ? 1 / (ohms * STIFF) : 1 / ohms; }
+
+        @Override public void stamp(Stamp s, Analysis an) {
+            double k = an.sourceScale(), v = an.across(plus, minus);
+            if (started) {
+                // stop just past the first edge between the last voltage and this one: the piece changes there
+                for (double edge : new double[]{outEdge(k), inEdge(k)}) {
+                    if ((vLast - edge) * (v - edge) < 0) v = edge + Math.signum(v - edge) * 1e-9 * Math.max(1, Math.abs(edge));
+                }
+            }
+            started = true;
+            double g = conductance(v, k), i = amps(v, k);
+            vLast = v;
+            iLast = i;
+            gLast = g;
+            s.conductance(plus, minus, g);
+            // out of + : i(v0) - g(v - v0), so a current i + g v0 pushed from minus to plus
+            s.current(minus, plus, i + g * v);
+        }
+
+        @Override public boolean converged(Analysis an) {
+            double v = an.across(plus, minus), predicted = iLast - gLast * (v - vLast), actual = amps(v, an.sourceScale());
+            return Math.abs(actual - predicted) <= an.reltol() * Math.max(Math.abs(actual), Math.abs(predicted)) + ABSTOL;
+        }
+
+        @Override public double current(Analysis an) { return amps(an.across(plus, minus), an.sourceScale()); }
+
+        public double ohms() { return ohms; }
+    }
+
+    /**
+     * A machine: from its rated voltage up it holds a constant power, like a regulated supply; below it, it is the resistance it has
+     * there; reversed it draws nothing. A constant power's slope is negative, which would break the matrix's symmetry, so it is stamped as
+     * the resistance it has at the last voltage (V squared over P), a relaxation that always moves the line the way a real one settles.
+     */
+    public static final class PowerLoad implements Part {
+        final int plus, minus;
+        final double watts, minVolts;
+        double share = 1;
+        private double gLast;
+
+        PowerLoad(int plus, int minus, double watts, double minVolts) {
+            this.plus = plus;
+            this.minus = minus;
+            this.watts = Math.max(0, watts);
+            this.minVolts = Math.max(minVolts, 1e-9);
+        }
+
+        @Override public int[] nodes() { return new int[]{plus, minus}; }
+
+        @Override public boolean nonlinear() { return true; }
+
+        public void share(double share) { this.share = share; }
+
+        /** What it draws at {@code v} across it. */
+        public double wattsAt(double v) {
+            if (v <= 0) return 0;
+            double want = watts * share;
+            return v >= minVolts ? want : v * v * want / (minVolts * minVolts);
+        }
+
+        public double ampsAt(double v) { return v <= 0 ? 0 : wattsAt(v) / v; }
+
+        @Override public void stamp(Stamp s, Analysis an) {
+            double v = Math.max(an.across(plus, minus), minVolts);
+            // with no share yet it is still a whisper of a conductance, so the loops through it stay joined
+            gLast = Math.max(watts * share, 1e-6 * watts) / (v * v);
+            s.conductance(plus, minus, gLast);
+        }
+
+        @Override public boolean converged(Analysis an) {
+            double v = an.across(plus, minus), actual = ampsAt(v), stamped = gLast * Math.max(v, 0);
+            return Math.abs(actual - stamped) <= an.reltol() * Math.max(Math.abs(actual), Math.abs(stamped)) + ABSTOL;
+        }
+
+        @Override public double current(Analysis an) { return ampsAt(an.across(plus, minus)); }
+    }
+
+    /** An LED behind a constant-current driver (a Lit Bit): dark below {@code forward}, rising to {@code setAmps} at {@code rated}, held above. */
+    public static final class DriverLed implements Part {
+        final int plus, minus;
+        final double setAmps, forward, rated;
+        private double gLast;
+
+        DriverLed(int plus, int minus, double setAmps, double forward, double rated) {
+            this.plus = plus;
+            this.minus = minus;
+            this.setAmps = Math.max(0, setAmps);
+            this.forward = Math.max(0, forward);
+            this.rated = Math.max(this.forward, rated);
+        }
+
+        @Override public int[] nodes() { return new int[]{plus, minus}; }
+
+        @Override public boolean nonlinear() { return true; }
+
+        public double ampsAt(double v) {
+            if (v <= forward) return 0;
+            return setAmps * (rated <= forward ? 1 : Math.min(1, (v - forward) / (rated - forward)));
+        }
+
+        @Override public void stamp(Stamp s, Analysis an) {
+            double v = Math.max(an.across(plus, minus), 1e-9), scale = Math.max(rated, 1e-9);
+            gLast = Math.max(ampsAt(v) / v, 1e-6 * Math.max(setAmps, 1e-9) / scale);
+            s.conductance(plus, minus, gLast);
+        }
+
+        @Override public boolean converged(Analysis an) {
+            double v = an.across(plus, minus), actual = ampsAt(v), stamped = gLast * Math.max(v, 0);
+            return Math.abs(actual - stamped) <= an.reltol() * Math.max(Math.abs(actual), setAmps) + 1e-9 * setAmps + ABSTOL;
+        }
+
+        @Override public double current(Analysis an) { return ampsAt(an.across(plus, minus)); }
     }
 
     /** A switch, lever or button: a tiny resistance closed, a leak of a few teraphus open. */
@@ -245,7 +398,7 @@ public final class Parts {
         @Override public boolean converged(Analysis an) {
             double v = an.across(a, k);
             double predicted = iLast + gLast * (v - vLast), actual = amps(v);
-            return Math.abs(actual - predicted) <= RELTOL * Math.max(Math.abs(actual), Math.abs(predicted)) + ABSTOL;
+            return Math.abs(actual - predicted) <= an.reltol() * Math.max(Math.abs(actual), Math.abs(predicted)) + ABSTOL;
         }
 
         @Override public double current(Analysis an) { return amps(an.across(a, k)); }

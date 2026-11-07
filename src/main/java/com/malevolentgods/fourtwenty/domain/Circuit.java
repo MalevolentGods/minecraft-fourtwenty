@@ -23,11 +23,8 @@ import java.util.List;
  * specs/007-polarity-circuits/research.md R1.
  */
 public final class Circuit {
-    /** Past a current limit a source still gives a little with the voltage, at its internal conductance over STIFF, so a node never floats. */
-    private static final double GMIN = 1e-12, TOLERANCE = 1e-9, STEP = 0.25, STIFF = 1e5, PROBE = 1e-6, OPEN = 1e-4;
-    private static final int ITERATIONS = 60;
+    private static final double GMIN = 1e-12, STEP = 0.25, PROBE = 1e-6, OPEN = 1e-4;
     private static final double MIN_STEP = 1.0 / 4096;
-    private static final int CV = 0, CC_OUT = 1, CC_IN = 2;
 
     /** What became of a load: running, in a brownout, with no closed loop through it, or wired backwards. */
     public static final int OK = 0, BROWNOUT = 1, NO_LOOP = 2, REVERSED = 3;
@@ -112,28 +109,101 @@ public final class Circuit {
         if (nodes == 0 || scale <= 0) return dead();
         double[] v = probe(scale);
         if (v == null) return dead();
-        int[] mode = new int[sources.size()];
-        double[] direct = v.clone();
-        int[] directMode = mode.clone();
-        if (newton(1, direct, directMode, scale) && new Attempt(1, direct, directMode, true).healthy()) return new Attempt(1, direct, directMode, true).solution();
-        if (!newton(0, v, mode, scale)) return new Attempt(0, v, mode, false).solution();
-        // continuation: raise the loads from nothing, each step starting from the last answer, so the solve follows the high-voltage
-        // branch; the furthest it gets with every load above its minimum is the brownout share
+        // the rest runs on the SPICE-style engine (domain/electronics), starting from the probe's voltages so it takes the high-voltage
+        // branch; if it can't settle at full load, the loads are raised from nothing in steps and the furthest it gets is the share
+        Engine full = new Engine(1, v);
+        if (full.converged) return full.solution();
         double share = 0, step = 0.25;
+        Engine best = new Engine(0, v);
+        if (!best.converged) return best.solution();
         while (share < 1 && step >= MIN_STEP) {
             double next = Math.min(1, share + step);
-            double[] trial = v.clone();
-            int[] trialMode = mode.clone();
-            if (newton(next, trial, trialMode, scale) && new Attempt(next, trial, trialMode, true).healthy()) {
+            Engine trial = new Engine(next, best.volts());
+            if (trial.converged) {
                 share = next;
-                v = trial;
-                mode = trialMode;
+                best = trial;
                 step = Math.min(step * 2, 0.5);
             } else {
                 step /= 2;
             }
         }
-        return new Attempt(share, v, mode, true).solution();
+        return best.solution();
+    }
+
+    /** One solve of this circuit by the electronics engine, at a load share, from a guess. */
+    private final class Engine {
+        final double share;
+        final boolean converged;
+        final com.malevolentgods.fourtwenty.domain.electronics.Netlist net = new com.malevolentgods.fourtwenty.domain.electronics.Netlist();
+        final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.Resistor> wires = new ArrayList<>();
+        final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.LimitedSource> supplies = new ArrayList<>();
+        final com.malevolentgods.fourtwenty.domain.electronics.Parts.PowerLoad[] machines = new com.malevolentgods.fourtwenty.domain.electronics.Parts.PowerLoad[loads.size()];
+        final com.malevolentgods.fourtwenty.domain.electronics.Parts.DriverLed[] lamps = new com.malevolentgods.fourtwenty.domain.electronics.Parts.DriverLed[leds.size()];
+
+        Engine(double share, double[] guess) {
+            this.share = share;
+            double scale = sources.stream().mapToDouble(Source::emf).max().orElse(1);
+            for (int i = 0; i < nodes; i++) net.node();
+            for (Conductor c : conductors) wires.add(net.resistor(c.a(), c.b(), c.ohms()));
+            for (Source s : sources) supplies.add(net.limitedSource(s.plus(), s.minus(), s.emf(), s.ohms(), s.maxOut(), s.maxIn()));
+            for (int i = 0; i < loads.size(); i++) {
+                if (!active(i)) continue;
+                Load l = loads.get(i);
+                machines[i] = net.powerLoad(l.plus(), l.minus(), l.watts(), l.minVolts());
+                machines[i].share(share);
+            }
+            for (int i = 0; i < leds.size(); i++) {
+                if (ledStatus[i] != OK) continue;
+                Led l = leds.get(i);
+                lamps[i] = net.driverLed(l.plus(), l.minus(), l.setAmps(), l.forward(), l.rated());
+            }
+            net.guess(guess);
+            net.stepLimit(STEP * scale);
+            // as tight as the old solver: energy is moved from these numbers every tick, so they must balance
+            net.tolerance(1e-9);
+            converged = net.operatingPoint();
+        }
+
+        double[] volts() {
+            double[] v = new double[nodes];
+            for (int i = 0; i < nodes; i++) v[i] = net.volts(i);
+            return v;
+        }
+
+        Solution solution() {
+            double[] v = volts();
+            double[] cAmps = new double[conductors.size()];
+            double losses = 0;
+            for (int i = 0; i < cAmps.length; i++) {
+                cAmps[i] = net.current(wires.get(i));
+                losses += cAmps[i] * cAmps[i] * conductors.get(i).ohms();
+            }
+            double[] sAmps = new double[sources.size()], sWatts = new double[sources.size()];
+            for (int i = 0; i < sAmps.length; i++) {
+                Source s = sources.get(i);
+                double across = at(v, s.plus()) - at(v, s.minus());
+                sAmps[i] = net.current(supplies.get(i));
+                sWatts[i] = across * sAmps[i] + sAmps[i] * sAmps[i] * s.ohms();
+                losses += sAmps[i] * sAmps[i] * s.ohms();
+            }
+            double[] lWatts = new double[loads.size()], lAmps = new double[loads.size()];
+            int[] out = status.clone();
+            for (int i = 0; i < lWatts.length; i++) {
+                if (machines[i] == null) continue;
+                Load l = loads.get(i);
+                double volts = at(v, l.plus()) - at(v, l.minus());
+                lWatts[i] = machines[i].wattsAt(volts);
+                lAmps[i] = machines[i].ampsAt(volts);
+                if (share < 1) out[i] = BROWNOUT;
+            }
+            double[] ledAmps = new double[leds.size()];
+            for (int i = 0; i < leds.size(); i++) {
+                if (lamps[i] == null) continue;
+                Led l = leds.get(i);
+                ledAmps[i] = lamps[i].ampsAt(at(v, l.plus()) - at(v, l.minus()));
+            }
+            return new Solution(v, cAmps, sAmps, sWatts, lWatts, lAmps, losses, share, converged, out, ledAmps, ledStatus.clone());
+        }
     }
 
     private Solution dead() {
@@ -222,149 +292,11 @@ public final class Circuit {
         for (int r : references(probing)) add(sparse, r, r, 1);
     }
 
-    private final class Attempt {
-        final double share;
-        final double[] v;
-        final int[] mode;
-        final boolean converged;
-
-        Attempt(double share, double[] v, int[] mode, boolean converged) {
-            this.share = share;
-            this.v = v;
-            this.mode = mode;
-            this.converged = converged;
-        }
-
-        boolean healthy() { return converged; }
-
-        Solution solution() {
-            double[] cAmps = new double[conductors.size()];
-            double losses = 0;
-            for (int i = 0; i < cAmps.length; i++) {
-                Conductor c = conductors.get(i);
-                cAmps[i] = (at(v, c.a()) - at(v, c.b())) / c.ohms();
-                losses += cAmps[i] * cAmps[i] * c.ohms();
-            }
-            double[] sAmps = new double[sources.size()], sWatts = new double[sources.size()];
-            for (int i = 0; i < sAmps.length; i++) {
-                Source s = sources.get(i);
-                double across = across(v, s);
-                sAmps[i] = sourceAmps(s, mode[i], across);
-                sWatts[i] = across * sAmps[i] + sAmps[i] * sAmps[i] * s.ohms();
-                losses += sAmps[i] * sAmps[i] * s.ohms();
-            }
-            double[] lWatts = new double[loads.size()], lAmps = new double[loads.size()];
-            int[] out = status.clone();
-            for (int i = 0; i < lWatts.length; i++) {
-                if (!active(i)) continue;
-                Load l = loads.get(i);
-                double volts = across(v, l), want = l.watts() * share;
-                lWatts[i] = volts >= l.minVolts() ? want : volts * volts * want / (l.minVolts() * l.minVolts());
-                lAmps[i] = volts > 0 ? lWatts[i] / volts : 0;
-                if (share < 1) out[i] = BROWNOUT;
-            }
-            double[] ledAmps = new double[leds.size()];
-            for (int i = 0; i < leds.size(); i++) {
-                if (ledStatus[i] != OK) continue;
-                Led l = leds.get(i);
-                ledAmps[i] = l.amps(at(v, l.plus()) - at(v, l.minus()));
-            }
-            return new Solution(v, cAmps, sAmps, sWatts, lWatts, lAmps, losses, share, converged, out, ledAmps, ledStatus.clone());
-        }
-    }
-
     private static double at(double[] v, int node) { return node == GROUND ? 0 : v[node]; }
 
     private static double across(double[] v, Load l) { return at(v, l.plus()) - at(v, l.minus()); }
 
     private static double across(double[] v, Source s) { return at(v, s.plus()) - at(v, s.minus()); }
-
-    /** Which part of its line a source is on at this voltage across it: holding its voltage, or at a current limit. */
-    private static int modeAt(Source s, double volts) {
-        return volts < outEdge(s) ? CC_OUT : volts > inEdge(s) ? CC_IN : CV;
-    }
-
-    private static double outEdge(Source s) { return s.emf() - s.maxOut() * s.ohms(); }
-
-    private static double inEdge(Source s) { return s.emf() + s.maxIn() * s.ohms(); }
-
-    private static double sourceAmps(Source s, int mode, double volts) {
-        double soft = 1 / (s.ohms() * STIFF);
-        return switch (mode) {
-            case CC_OUT -> s.maxOut() + soft * (outEdge(s) - volts);
-            case CC_IN -> -s.maxIn() + soft * (inEdge(s) - volts);
-            default -> (s.emf() - volts) / s.ohms();
-        };
-    }
-
-    /** Relaxation steps at this load share from {@code v}, in place; true when it settles. */
-    private boolean newton(double share, double[] v, int[] mode, double scale) {
-        for (int iteration = 0; iteration < ITERATIONS; iteration++) {
-            for (int i = 0; i < mode.length; i++) mode[i] = modeAt(sources.get(i), across(v, sources.get(i)));
-            Sparse sparse = new Sparse(nodes);
-            double[] b = new double[nodes];
-            for (int i = 0; i < nodes; i++) add(sparse, i, i, GMIN);
-            reference(sparse, false);
-            for (Conductor c : conductors) between(sparse, c.a(), c.b(), 1 / c.ohms());
-            for (int i = 0; i < mode.length; i++) {
-                Source s = sources.get(i);
-                double soft = 1 / (s.ohms() * STIFF);
-                switch (mode[i]) {
-                    case CC_OUT -> {
-                        between(sparse, s.plus(), s.minus(), soft);
-                        inject(b, s.plus(), s.minus(), s.maxOut() + soft * outEdge(s));
-                    }
-                    case CC_IN -> {
-                        between(sparse, s.plus(), s.minus(), soft);
-                        inject(b, s.plus(), s.minus(), -s.maxIn() + soft * inEdge(s));
-                    }
-                    default -> {
-                        between(sparse, s.plus(), s.minus(), 1 / s.ohms());
-                        inject(b, s.plus(), s.minus(), s.emf() / s.ohms());
-                    }
-                }
-            }
-            for (int li = 0; li < loads.size(); li++) {
-                Load l = loads.get(li);
-                if (!active(li)) continue;
-                // with no share yet, a load is still a whisper of a conductance, so the loops through it stay joined
-                double p = Math.max(l.watts() * share, PROBE * l.watts());
-                // the load is the resistance it had at the last voltage (V² / P), never below its minimum: a relaxation that always moves
-                // the line the way a real one settles, where Newton's method would follow a constant-power load's negative slope
-                double volts = Math.max(across(v, l), l.minVolts());
-                between(sparse, l.plus(), l.minus(), p / (volts * volts));
-            }
-            for (int li = 0; li < leds.size(); li++) {
-                if (ledStatus[li] != OK) continue;
-                Led l = leds.get(li);
-                // the conductance that carries its current at the last voltage (I / V), and a whisper when it's dark, so the loop stays joined
-                double volts = Math.max(at(v, l.plus()) - at(v, l.minus()), 1e-9);
-                between(sparse, l.plus(), l.minus(), Math.max(l.amps(volts) / volts, PROBE * Math.max(l.setAmps(), 1e-9) / scale));
-            }
-            double[] x = sparse.solve(b);
-            if (x == null) return false;
-            // step toward x, but stop just past the first current limit any source crosses: its mode changes there (breakpoint stepping)
-            double alpha = 1;
-            for (Source src : sources) {
-                double from = across(v, src), to = at(x, src.plus()) - at(x, src.minus());
-                for (double edge : new double[]{outEdge(src), inEdge(src)}) {
-                    if ((from - edge) * (to - edge) < 0) alpha = Math.min(alpha, (edge - from) / (to - from) + 1e-7);
-                }
-            }
-            double delta = 0;
-            for (int i = 0; i < nodes; i++) {
-                double d = Math.max(-STEP * scale, Math.min(STEP * scale, alpha * (x[i] - v[i])));
-                if (!Double.isFinite(d)) return false;
-                v[i] += d;
-                delta = Math.max(delta, Math.abs(d));
-            }
-            if (alpha >= 1 && delta < TOLERANCE * scale) {
-                for (int i = 0; i < mode.length; i++) mode[i] = modeAt(sources.get(i), across(v, sources.get(i)));
-                return true;
-            }
-        }
-        return false;
-    }
 
     private static void add(Sparse sparse, int r, int c, double value) {
         if (r == GROUND || c == GROUND) return;

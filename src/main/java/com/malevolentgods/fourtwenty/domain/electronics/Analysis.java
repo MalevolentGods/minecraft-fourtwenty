@@ -13,8 +13,12 @@ public final class Analysis {
     /** Every source is scaled by this (source stepping); 1 normally. */
     double sourceScale = 1;
     double[] v;
+    /** The relative tolerance of a converged solve: SPICE's default is 1e-3; ours is tighter. */
+    double reltol = 1e-6;
 
     Analysis(int nodes) { v = new double[nodes]; }
+
+    public double reltol() { return reltol; }
 
     public Mode mode() { return mode; }
 

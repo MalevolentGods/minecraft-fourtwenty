@@ -10,7 +10,7 @@ import java.util.List;
  * a gauge rather than a ground; {@link Stamp#GROUND} is there for circuits that want one.
  */
 public final class Netlist {
-    private static final int ITERATIONS = 100;
+    private static final int ITERATIONS = 150;
     private static final double GMIN = 1e-12;
 
     private int nodes;
@@ -33,6 +33,30 @@ public final class Netlist {
     public Parts.Source source(int plus, int minus, double emf, double ohms) { return add(new Parts.Source(plus, minus, emf, ohms)); }
 
     public Parts.CurrentSource currentSource(int a, int b, double amps) { return add(new Parts.CurrentSource(a, b, amps)); }
+
+    public Parts.LimitedSource limitedSource(int plus, int minus, double emf, double ohms, double maxOut, double maxIn) {
+        return add(new Parts.LimitedSource(plus, minus, emf, ohms, maxOut, maxIn));
+    }
+
+    public Parts.PowerLoad powerLoad(int plus, int minus, double watts, double minVolts) { return add(new Parts.PowerLoad(plus, minus, watts, minVolts)); }
+
+    public Parts.DriverLed driverLed(int plus, int minus, double setAmps, double forward, double rated) {
+        return add(new Parts.DriverLed(plus, minus, setAmps, forward, rated));
+    }
+
+    private double reltol = 1e-6;
+
+    /** How tightly a solve must settle, relative (SPICE: 1e-3). The absolute floors stay 1 µKb and 1 pIg. */
+    public void tolerance(double relative) { reltol = Math.max(relative, 1e-15); }
+
+    private double[] guess;
+    private double stepLimit = Double.POSITIVE_INFINITY;
+
+    /** Where the next operating point starts from (a good guess picks the right branch of a circuit with more than one answer). */
+    public void guess(double[] volts) { guess = volts == null ? null : volts.clone(); }
+
+    /** The most any node may move in one Newton step (damping, for circuits of relaxed parts). */
+    public void stepLimit(double volts) { stepLimit = volts > 0 ? volts : Double.POSITIVE_INFINITY; }
 
     public Parts.Switch switchPart(int a, int b, boolean closed) { return add(new Parts.Switch(a, b, closed)); }
 
@@ -63,6 +87,8 @@ public final class Netlist {
     /** The DC operating point: capacitors open, inductors shorted. True if it converged. */
     public boolean operatingPoint() {
         analysis = new Analysis(nodes);
+        analysis.reltol = reltol;
+        if (guess != null && guess.length == nodes) analysis.v = guess.clone();
         analysis.mode = Analysis.Mode.DC;
         boolean ok = solveRobustly();
         if (ok) for (Part p : parts) p.accept(analysis);
@@ -136,7 +162,12 @@ public final class Netlist {
             if (x == null) return false;
             boolean small = true;
             for (int i = 0; i < nodes; i++) {
-                if (Math.abs(x[i] - analysis.v[i]) > Parts.RELTOL * Math.max(Math.abs(x[i]), Math.abs(analysis.v[i])) + Parts.VNTOL) small = false;
+                double d = x[i] - analysis.v[i];
+                if (Math.abs(d) > stepLimit) {
+                    x[i] = analysis.v[i] + Math.signum(d) * stepLimit;
+                    small = false;
+                }
+                if (Math.abs(x[i] - analysis.v[i]) > analysis.reltol * Math.max(Math.abs(x[i]), Math.abs(analysis.v[i])) + Parts.VNTOL * Math.min(1, analysis.reltol / Parts.RELTOL)) small = false;
             }
             analysis.v = x;
             if (!nonlinear) return true;
