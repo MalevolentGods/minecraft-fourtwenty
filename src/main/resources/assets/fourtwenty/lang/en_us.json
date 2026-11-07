@@ -1947,7 +1947,7 @@
   "strain.fourtwenty.family.cool": "Cool",
   "strain.fourtwenty.family.landrace": "Landrace",
   "item.fourtwenty.inspoweedometer": "Inspoweedometer",
-  "tooltip.fourtwenty.item.inspoweedometer": "Use it on a BI block to read it across its terminals, or on a Wick for its current and ratings. Sneak-use a Wick to make it the reference, then read other Wicks from it. Sneak-use the air to clear it.",
+  "tooltip.fourtwenty.item.inspoweedometer": "Hold it and look at anything electrical: its reading shows live on your action bar, five times a second. Use it on a block to hold that reading, shown above the live one, to compare. Sneak-use a Wick to make it the reference, then look at other Wicks to read them from it. Sneak-use the air to clear both. It never works what it reads.",
   "message.fourtwenty.meter.device": "%s · %s · %s · %s",
   "message.fourtwenty.meter.wick": "%s · %s of %s (%s%%) · %s a block · loses %s · insulated to %s",
   "message.fourtwenty.meter.none": "Not on a Wick network",
@@ -2184,5 +2184,6 @@
   "tooltip.fourtwenty.real.blend_nug": "Bitwise logic unit",
   "tooltip.fourtwenty.real.stacker_nug": "8-bit adder / subtractor",
   "tooltip.fourtwenty.real.scale_nug": "Magnitude comparator",
-  "tooltip.fourtwenty.real.jar_nug": "8-bit register (74HC574)"
+  "tooltip.fourtwenty.real.jar_nug": "8-bit register (74HC574)",
+  "message.fourtwenty.meter.held": "Held: %s"
 }

@@ -36,6 +36,25 @@ public class ModClientEvents {
     }
 
     
+    /** The Inspoweedometer's held reading, a line above the live one on the action bar. */
+    @SubscribeEvent
+    public static void registerLayers(net.neoforged.neoforge.client.event.RegisterGuiLayersEvent event) {
+        event.registerAbove(net.neoforged.neoforge.client.gui.VanillaGuiLayers.OVERLAY_MESSAGE,
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("fourtwenty", "meter_held"), (graphics, delta) -> {
+                    var mc = net.minecraft.client.Minecraft.getInstance();
+                    if (mc.player == null || mc.options.hideGui) return;
+                    var main = mc.player.getMainHandItem();
+                    var stack = main.getItem() instanceof com.malevolentgods.fourtwenty.power.InspoweedometerItem ? main : mc.player.getOffhandItem();
+                    if (!(stack.getItem() instanceof com.malevolentgods.fourtwenty.power.InspoweedometerItem)) return;
+                    String held = com.malevolentgods.fourtwenty.power.InspoweedometerItem.held(stack);
+                    if (held == null) return;
+                    var text = net.minecraft.network.chat.Component.translatable("message.fourtwenty.meter.held", held);
+                    int width = mc.font.width(text), x = (graphics.guiWidth() - width) / 2, y = graphics.guiHeight() - 80;
+                    graphics.fill(x - 2, y - 2, x + width + 2, y + mc.font.lineHeight, 0x80000000);
+                    graphics.drawString(mc.font, text, x, y, 0xFFC8C8C8);
+                });
+    }
+
     @SubscribeEvent
     public static void registerKeys(net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent event) { PavePenClient.registerKeys(event); }
 

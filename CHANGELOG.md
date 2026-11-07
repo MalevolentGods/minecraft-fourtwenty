@@ -11,6 +11,7 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - **Lit Bits are real RGB LEDs**: each channel a diode behind its resistor, dimming along the diode's curve as the supply sags.
 
 ### Changed
+- **The Inspoweedometer reads live**: hold it and look at a block for its reading on the action bar; use it to hold a reading above the live one. It no longer works the block it reads (it used to step a Resinator or flip a switch).
 - **A SPICE-style circuit engine** runs every Wick network: Newton–Raphson with companion models, SPICE's convergence safeguards, and exact answers to 1e-9. Nothing you've built changes.
 - **Wicks placed by a command or a paste** reach toward their neighbours as hand-placed ones do.
 - **The Hit Box is one transformer**, solved with both its sides at once: power crosses in the same tick, with no banks inside. Its winding resistance is its loss, so a heavily loaded Hit Box sags a little under its tier's voltage, as a real transformer does.
