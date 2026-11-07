@@ -109,6 +109,15 @@ public class ComponentBlock extends Block implements EntityBlock {
         return InteractionResult.SUCCESS;
     }
 
+    /** A part over its rating smokes from its middle (what it shows says so: Shown.hot). */
+    @Override public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
+        if (!(level.getBlockEntity(pos) instanceof ComponentBlockEntity be) || !com.malevolentgods.fourtwenty.domain.electronics.Shown.hot(be.shown())) return;
+        for (int i = 0; i < 2; i++) {
+            level.addParticle(net.minecraft.core.particles.ParticleTypes.SMOKE, pos.getX() + 0.35 + random.nextDouble() * 0.3, pos.getY() + 0.7,
+                    pos.getZ() + 0.35 + random.nextDouble() * 0.3, 0, 0.03, 0);
+        }
+    }
+
     /** A Puff Button lets go. */
     @Override protected void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
         if (type.part == ComponentType.Part.BUTTON && level.getBlockEntity(pos) instanceof ComponentBlockEntity be) {
