@@ -982,10 +982,22 @@ public final class Network {
                         "FourTwenty: a {} Wick at {} burned out on {} Kb, over its insulation", tier.getSerializedName(), at.toShortString(), Math.round(e.getValue() * 100) / 100.0);
             }
         }
+        // a Resinator past its power rating burns out like a Wick (docs/electronics/audit-and-plan.md 3.2)
+        for (Placed c : placed) {
+            double rating = c.type().ratedWatts();
+            if (rating <= 0 || live == null) continue;
+            double ohms = level.getBlockEntity(c.pos()) instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity be ? be.value() : c.type().defaultValue;
+            double amps = componentAmps(c.pos()), watts = amps * amps * ohms;
+            if (watts > rating) {
+                if (CircuitRules.burns(burnTimers.merge(c.pos(), 1, Integer::sum), rules.burnTicks())) burn.add(c.pos());
+            } else {
+                burnTimers.remove(c.pos());
+            }
+        }
         for (BlockPos pos : burn) {
             burnTimers.remove(pos);
             var b = level.getBlockState(pos).getBlock();
-            if (b instanceof WickBlock || b instanceof CableBlock) BurnOut.burn(level, pos);
+            if (b instanceof WickBlock || b instanceof CableBlock || b instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlock) BurnOut.burn(level, pos);
         }
     }
 

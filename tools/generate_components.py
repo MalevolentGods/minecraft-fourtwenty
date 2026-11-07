@@ -49,7 +49,7 @@ TOOLTIPS = {
     'none': 'Output in front; VDD on top, GND underneath.',
 }
 EXTRA = {
-    'resinator': 'A resistor. Use it to step its value (sneak to step back).',
+    'resinator': 'A resistor, rated 10 W: past that it burns out in smoke. Use it to step its value (sneak to step back).',
     'kief_cap': 'A capacitor, in Garcias. Use it to step its value (sneak to step back).',
     'spliff_coil': 'An inductor, in Marleys. Use it to step its value (sneak to step back).',
     'one_hitter': 'A diode: current flows only from its back to its banded front.',

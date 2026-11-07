@@ -74,7 +74,10 @@ public class InspoweedometerItem extends Item {
                 if (level.getBlockEntity(pos) instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity be && !type.values.isEmpty()) {
                     text.append(com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity.format(be.value(), type.unit)).append(" · ");
                 }
-                text.append(Units.format(v[0] - v[1], Units.VOLTS)).append(" · ").append(Units.format(Math.abs(reading.get().amps()), Units.AMPS));
+                double amps = Math.abs(reading.get().amps());
+                text.append(Units.format(v[0] - v[1], Units.VOLTS)).append(" · ").append(Units.format(amps, Units.AMPS))
+                        .append(" · ").append(Units.format(Math.abs(v[0] - v[1]) * amps, Units.WATTS));
+                if (type.ratedWatts() > 0) text.append(" of ").append(Units.format(type.ratedWatts(), Units.WATTS));
             } else {
                 // VDD and GND, then each logic pin against GND, and the bit it reads as at 30% and 70% of the supply
                 double supply = v[0] - v[1];

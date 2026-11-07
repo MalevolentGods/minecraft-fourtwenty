@@ -115,4 +115,20 @@ public final class ElectronicsGameTests {
             h.succeed();
         });
     }
+
+    /** A 1 Φ Resinator across a Bench Rig at 4.2 Kb dissipates 17.6 W, over its 10 W rating: it burns out in smoke, and nothing else breaks. */
+    @GameTest(template = "long", timeoutTicks = 200)
+    public static void anOverloadedResinatorBurnsOut(GameTestHelper h) {
+        var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 5);
+        h.setBlock(l.at(1), ModPower.BENCH_RIG.get());
+        var rig = (com.malevolentgods.fourtwenty.power.SupplyBlockEntity) h.getBlockEntity(l.at(1));
+        while (Math.abs(rig.amps() - 10) > 1e-9) rig.stepAmps(1);
+        BlockPos r = l.at(4);
+        h.setBlock(r, ModElectronics.COMPONENTS.get(ComponentType.RESINATOR).get().defaultBlockState().setValue(ComponentBlock.FACING, Direction.NORTH));
+        ((ComponentBlockEntity) h.getBlockEntity(r)).step(-((ComponentBlockEntity) h.getBlockEntity(r)).type().defaultIndex());
+        h.succeedWhen(() -> {
+            h.assertTrue(h.getBlockState(r).isAir(), "the Resinator burned out");
+            h.assertBlockPresent(ModPower.BENCH_RIG.get(), l.at(1));
+        });
+    }
 }

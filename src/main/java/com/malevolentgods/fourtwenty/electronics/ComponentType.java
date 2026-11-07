@@ -78,6 +78,9 @@ public enum ComponentType {
 
     public boolean logic() { return layout != Layout.TWO_PIN; }
 
+    /** A Resinator's power rating, in Willards: past it for as long as a Wick takes to burn, it burns out. 0 for parts without one. */
+    public double ratedWatts() { return part == Part.RESISTOR ? 10 : 0; }
+
     /** The index of {@link #defaultValue} in {@link #values}. */
     public int defaultIndex() {
         for (int i = 0; i < values.size(); i++) if (Math.abs(values.get(i) - defaultValue) <= 1e-9 * Math.abs(defaultValue)) return i;

@@ -2034,7 +2034,7 @@
   "block.fourtwenty.hemp_thread": "Hemp Thread",
   "tooltip.fourtwenty.item.hemp_thread": "A thin single wire for signals: any colour joins any component pin it touches. Rated for a hundredth of a Hemp Wick.",
   "block.fourtwenty.resinator": "Resinator",
-  "tooltip.fourtwenty.item.resinator": "A resistor. Use it to step its value (sneak to step back). Two pins, back and front: any Wick or Hemp Thread on either end joins it.",
+  "tooltip.fourtwenty.item.resinator": "A resistor, rated 10 W: past that it burns out in smoke. Use it to step its value (sneak to step back). Two pins, back and front: any Wick or Hemp Thread on either end joins it.",
   "block.fourtwenty.kief_cap": "Kief Cap",
   "tooltip.fourtwenty.item.kief_cap": "A capacitor, in Garcias. Use it to step its value (sneak to step back). Two pins, back and front: any Wick or Hemp Thread on either end joins it.",
   "block.fourtwenty.spliff_coil": "Spliff Coil",

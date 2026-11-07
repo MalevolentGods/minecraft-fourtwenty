@@ -12,7 +12,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.joml.Vector3f;
 
-/** Wire carrying too much goes up in smoke and leaves ash. Only wire breaks: anything else overloads, smoking green until the power's gone. */
+/**
+ * Wire carrying too much goes up in smoke and leaves ash, and so does a Resinator past its power rating. Nothing else breaks: anything
+ * else overloads, smoking green until the power's gone.
+ */
 public final class BurnOut {
     private static final DustParticleOptions GREEN = new DustParticleOptions(new Vector3f(0.35f, 1f, 0.2f), 1.2f);
 
