@@ -253,12 +253,9 @@ def component(cid, layout, look):
                         f['tintindex'] = i
                 elements.append(ring)
         write(ASSETS / f'models/block/component/{cid}{s}.json', {'parent': 'block/block', 'textures': tex, 'elements': elements})
-    variants = {}
-    for facing, y in (('north', 0), ('east', 90), ('south', 180), ('west', 270)):
-        for on in ('false', 'true'):
-            model = f'fourtwenty:block/component/{cid}{"_on" if on == "true" and len(states) == 2 else ""}'
-            variants[f'facing={facing},on={on}'] = {'model': model, **({'y': y} if y else {})}
-    write(ASSETS / f'blockstates/{cid}.json', {'variants': variants})  # a Resinator's value isn't in the key: it only tints
+    # keyed on on and off only: client/ComponentModel turns the model to any of the 24 orientations; a Resinator's value only tints
+    variants = {f'on={on}': {'model': f'fourtwenty:block/component/{cid}{"_on" if on == "true" and len(states) == 2 else ""}'} for on in ('false', 'true')}
+    write(ASSETS / f'blockstates/{cid}.json', {'variants': variants})
     write(ASSETS / f'models/item/{cid}.json', {'parent': f'fourtwenty:block/component/{cid}'})
 
 
@@ -401,6 +398,25 @@ def ribbons():
     write(ASSETS / 'models/item/roach_clip.json', {'parent': 'fourtwenty:block/roach_clip_core'})
 
 
+def twister():
+    """The Twister's icon: a steel wrench with a lime hemp grip."""
+    img = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    steel, dark, grip, hi = (186, 190, 198, 255), (96, 100, 108, 255), (120, 180, 60, 255), (226, 230, 236, 255)
+    for i in range(7):
+        d.point([4 + i, 11 - i], fill=steel)
+        d.point([5 + i, 11 - i], fill=dark)
+    for i in range(4):
+        d.point([2 + i, 13 - i], fill=grip)
+        d.point([3 + i, 13 - i], fill=grip)
+    d.rectangle([10, 2, 13, 5], fill=steel)
+    d.rectangle([11, 3, 12, 4], fill=(0, 0, 0, 0))
+    d.point([13, 2], fill=(0, 0, 0, 0))
+    d.point([10, 2], fill=hi)
+    save(img, ASSETS / 'textures/item/twister.png')
+    write(ASSETS / 'models/item/twister.json', {'parent': 'minecraft:item/handheld', 'textures': {'layer0': 'fourtwenty:item/twister'}})
+
+
 def thread():
     """Hemp Thread: a Wick's thin sibling, the same multipart shape at a third the width."""
     img = Image.new('RGBA', (16, 16), (214, 196, 150, 255))
@@ -447,6 +463,9 @@ def data():
     write(DATA / 'fourtwenty/recipe/eighth_ribbon.json', {'type': 'minecraft:crafting_shapeless', 'category': 'redstone',
           'ingredients': [{'item': 'fourtwenty:hemp_thread'}, {'item': 'fourtwenty:hemp_thread'}, {'item': 'fourtwenty:hemp_thread'},
                           {'item': 'minecraft:paper'}], 'result': {'id': 'fourtwenty:eighth_ribbon', 'count': 4}})
+    write(DATA / 'fourtwenty/recipe/twister.json', {'type': 'minecraft:crafting_shapeless', 'category': 'tools',
+          'ingredients': [{'item': 'minecraft:iron_ingot'}, {'item': 'minecraft:iron_ingot'}, {'item': 'fourtwenty:hemp_thread'}],
+          'result': {'id': 'fourtwenty:twister', 'count': 1}})
     write(DATA / 'fourtwenty/recipe/roach_clip.json', {'type': 'minecraft:crafting_shapeless', 'category': 'redstone',
           'ingredients': [{'item': 'fourtwenty:eighth_ribbon'}, {'item': 'minecraft:copper_ingot'}, {'item': 'minecraft:iron_nugget'}],
           'result': {'id': 'fourtwenty:roach_clip', 'count': 2}})
@@ -477,6 +496,8 @@ def data():
     lang['block.fourtwenty.roach_clip'] = 'Roach Clip'
     lang['tooltip.fourtwenty.item.roach_clip'] = 'Clips one channel of an Eighth Ribbon out to a Wick, Hemp Thread or a single pin; the rest pass straight through. Use it to step the channel (sneak to step back); its band shows which.'
     lang['message.fourtwenty.roach_clip.channel'] = 'Roach Clip: channel %s'
+    lang['item.fourtwenty.twister'] = 'Twister'
+    lang['tooltip.fourtwenty.item.twister'] = 'Turns a component a quarter turn about the face you use it on; sneak to turn it back. Any way a part can point is a few twists away, and it never flips or steps what it turns.'
     lang['tooltip.fourtwenty.item.hemp_thread'] = 'A thin single wire for signals: any colour joins any component pin it touches. Rated for a hundredth of a Hemp Wick.'
     for cid, name, layout, _ in TYPES:
         lang[f'block.fourtwenty.{cid}'] = name
@@ -493,6 +514,7 @@ def main():
     for cid, _, layout, look in TYPES:
         component(cid, layout, look)
     thread()
+    twister()
     ribbons()
     data()
     print(f'wrote {len(TYPES)} components and Hemp Thread')

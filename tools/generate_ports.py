@@ -146,6 +146,20 @@ def small_ring_up():
     return [box([6.25, 16, 6.25], [9.75, 16.5, 9.75], 'collar')]
 
 
+def bottomless():
+    """The jar stands 3 in from each side: a lead in at wire height to a gland on the glass; on top a short stem onto the knob."""
+    side = [box([7, 7, 0], [9, 9, 2.5], 'lead'), box([5.75, 5.75, 2.5], [10.25, 10.25, 3], 'plate')]
+    return {**{s: side for s in SIDES}, 'up': [box([7, 15.4, 7], [9, 16, 9], 'lead')], 'down': down_flange()}
+
+
+def bench_rig():
+    """The cabinet stands 1 in at the sides and back and 1.5 in at the front: a flange on each face, the front's below the readouts."""
+    side = [box([5.5, 5.5, 0.5], [10.5, 10.5, 1], 'plate'), box([7, 7, 0], [9, 9, 0.5], 'lead')]
+    front = [box([5.5, 5.5, 1], [10.5, 9, 1.5], 'plate'), box([7, 7, 0], [9, 9, 1], 'lead')]
+    top = [box([7, 13.75, 7], [9, 16, 9], 'lead'), box([6, 13.5, 6], [10, 13.75, 10], 'plate')]
+    return {'north': front, 'east': side, 'west': side, 'south': side, 'up': top, 'down': down_flange()}
+
+
 def turned(element, quarter):
     e = copy.deepcopy(element)
     for _ in range(quarter):
@@ -219,6 +233,9 @@ def main():
         block(f're_up_station_{tier}', tier, full(up=[]))
     block('lit_bit', 'puff', lit_bit())
     block('weedweeno', 'puff', weedweeno())
+    for tier in ('puff', 'toke', 'rip', 'blaze'):
+        block(f'bottomless_stash_{tier}', tier, bottomless(), plate='fourtwenty:block/component/lab_brass')
+    block('bench_rig', 'puff', bench_rig(), plate='fourtwenty:block/infuser/steel_trim')
     print('ok')
 
 

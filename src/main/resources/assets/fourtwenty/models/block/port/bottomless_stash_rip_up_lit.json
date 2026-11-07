@@ -1,0 +1,79 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/component/lab_brass",
+  "plate": "fourtwenty:block/component/lab_brass",
+  "collar": "fourtwenty:block/power/rip_glow_lit",
+  "lead": "fourtwenty:block/power/rip_wick_lit"
+ },
+ "elements": [
+  {
+   "from": [
+    7,
+    15.4,
+    7
+   ],
+   "to": [
+    9,
+    16,
+    9
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7,
+      0,
+      9,
+      0.5999999999999996
+     ],
+     "texture": "#lead"
+    },
+    "south": {
+     "uv": [
+      7,
+      0,
+      9,
+      0.5999999999999996
+     ],
+     "texture": "#lead"
+    },
+    "east": {
+     "uv": [
+      7,
+      0,
+      9,
+      0.5999999999999996
+     ],
+     "texture": "#lead"
+    },
+    "west": {
+     "uv": [
+      7,
+      0,
+      9,
+      0.5999999999999996
+     ],
+     "texture": "#lead"
+    },
+    "up": {
+     "uv": [
+      7,
+      7,
+      9,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "down": {
+     "uv": [
+      7,
+      7,
+      9,
+      9
+     ],
+     "texture": "#lead"
+    }
+   }
+  }
+ ]
+}

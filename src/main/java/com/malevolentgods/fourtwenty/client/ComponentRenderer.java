@@ -42,14 +42,19 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
         int shown = be.shown();
         float time = be.getLevel() == null ? 0 : (be.getLevel().getGameTime() + partialTick) / 20f;
         pose.pushPose();
-        pose.translate(0.5, 0, 0.5);
-        // as the blockstate turns the model: north 0, east 90, south 180, west 270
-        pose.mulPose(Axis.YP.rotationDegrees(-(be.getBlockState().getValue(ComponentBlock.FACING).toYRot() + 180)));
-        pose.translate(-0.5, 0, -0.5);
+        pose.translate(0.5, 0.5, 0.5);
+        // as ComponentModel turns the still model: to any of the 24 orientations
+        pose.mulPose(com.malevolentgods.fourtwenty.electronics.Orientation.rotation(be.getBlockState().getValue(ComponentBlock.FACING),
+                be.getBlockState().getValue(ComponentBlock.SPIN)));
+        pose.translate(-0.5, -0.5, -0.5);
         VertexConsumer solid = buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS));
         TextureAtlasSprite glow = sprite("lab_glow");
-        // the light line along the plinth's front
-        box(pose, solid, glow, 3, 0.55, 1.7, 13, 1.1, 1.95, Shown.active(shown) ? LIME : LIME_OFF, Shown.active(shown) ? LightTexture.FULL_BRIGHT : light);
+        // a lime ring round each gland while it's active (two-pin parts: front and back)
+        if (Shown.active(shown) && type.layout == ComponentType.Layout.TWO_PIN) {
+            VertexConsumer add = buffers.getBuffer(RenderType.lightning());
+            ring(pose, add, 5.7, 5.7, 0.9, 10.3, 10.3, 1.4, LIME, 0.55f);
+            ring(pose, add, 5.7, 5.7, 14.6, 10.3, 10.3, 15.1, LIME, 0.55f);
+        }
         int level = Shown.level(shown);
         switch (type) {
             case RESINATOR -> {
@@ -61,17 +66,17 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
             case KIEF_CAP -> {
                 if (level > 0) {
                     float f = level / 15f;
-                    box(pose, solid, sprite("lab_kief"), 4.3, 2.2, 4.3, 11.7, 2.2 + 10.6 * f, 11.7, lerp(0x8C7A50, 0xFFFFFF, 0.4f + 0.6f * f), LightTexture.FULL_BRIGHT);
+                    box(pose, solid, sprite("lab_kief"), 4.8, 4.8, 3.2, 11.2, 4.8 + 6.4 * f, 12.8, lerp(0x8C7A50, 0xFFFFFF, 0.4f + 0.6f * f), LightTexture.FULL_BRIGHT);
                 }
             }
             case SPLIFF_COIL -> {
                 if (level > 0) {
-                    // rings of light drifting along it, brighter and more of them the more current
+                    // three rings of light drifting steadily along it, fading in at one end and out at the other, brighter with more current
                     VertexConsumer add = buffers.getBuffer(RenderType.lightning());
-                    int rings = 1 + level / 4;
-                    for (int r = 0; r < rings; r++) {
-                        float z = 3 + ((time * 6 + r * 10.4f / rings) % 10.4f);
-                        float a = 0.18f + 0.04f * level;
+                    for (int r = 0; r < 3; r++) {
+                        float phase = ((time * 0.5f + r / 3f) % 1f + 1f) % 1f;
+                        float z = 3 + phase * 10.4f;
+                        float a = (0.12f + 0.03f * level) * (float) Math.sin(Math.PI * phase);
                         ring(pose, add, 5.2, 5.2, z, 10.8, 10.8, z + 0.4, 0x9DE8FF, a);
                     }
                 }

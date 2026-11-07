@@ -34,6 +34,7 @@ REAL = {
     'weedweeno': 'Microcontroller',
     'bit_chit': 'EEPROM',
     'sticky_finger': 'Pick-and-place tool',
+    'twister': 'Wrench',
     # components
     'hemp_thread': 'Signal wire',
     'resinator': 'Resistor',

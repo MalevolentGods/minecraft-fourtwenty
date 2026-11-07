@@ -1,34 +1,10 @@
 {
  "variants": {
-  "facing=north,on=false": {
+  "on=false": {
    "model": "fourtwenty:block/component/resinator"
   },
-  "facing=north,on=true": {
+  "on=true": {
    "model": "fourtwenty:block/component/resinator"
-  },
-  "facing=east,on=false": {
-   "model": "fourtwenty:block/component/resinator",
-   "y": 90
-  },
-  "facing=east,on=true": {
-   "model": "fourtwenty:block/component/resinator",
-   "y": 90
-  },
-  "facing=south,on=false": {
-   "model": "fourtwenty:block/component/resinator",
-   "y": 180
-  },
-  "facing=south,on=true": {
-   "model": "fourtwenty:block/component/resinator",
-   "y": 180
-  },
-  "facing=west,on=false": {
-   "model": "fourtwenty:block/component/resinator",
-   "y": 270
-  },
-  "facing=west,on=true": {
-   "model": "fourtwenty:block/component/resinator",
-   "y": 270
   }
  }
 }

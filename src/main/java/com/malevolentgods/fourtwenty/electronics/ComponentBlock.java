@@ -32,7 +32,10 @@ import javax.annotation.Nullable;
  * a second, a Kill Switch closes while it has a redstone signal. {@code ON} shows a switch closed, or a logic part's output high.
  */
 public class ComponentBlock extends Block implements EntityBlock {
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    /** Where its front points, any of the six ways; with {@link #SPIN}, any of the 24 orientations (Orientation). */
+    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final net.minecraft.world.level.block.state.properties.IntegerProperty SPIN =
+            net.minecraft.world.level.block.state.properties.IntegerProperty.create("spin", 0, 3);
     public static final BooleanProperty ON = BooleanProperty.create("on");
     private static final VoxelShape SHAPE = Block.box(2, 2, 2, 14, 14, 14);
     public static final int BUTTON_TICKS = 20;
@@ -42,16 +45,27 @@ public class ComponentBlock extends Block implements EntityBlock {
     public ComponentBlock(ComponentType type, Properties properties) {
         super(properties);
         this.type = type;
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ON, false));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SPIN, 0).setValue(ON, false));
     }
 
     public ComponentType type() { return type; }
 
-    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { builder.add(FACING, ON); }
+    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { builder.add(FACING, SPIN, ON); }
 
-    /** Placed with its front toward the player, like every powered block. */
+    /**
+     * Placed with its front toward the player, whichever of the six ways they look; one placed facing up or down has its top away from
+     * them, so it reads the right way round. The Twister turns it after.
+     */
     @Override public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
-        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        Direction facing = context.getNearestLookingDirection().getOpposite();
+        int spin = facing.getAxis().isVertical() ? Orientation.spinFor(facing, context.getHorizontalDirection()) : 0;
+        return defaultBlockState().setValue(FACING, facing).setValue(SPIN, spin);
+    }
+
+    @Override protected @Nonnull BlockState rotate(@Nonnull BlockState state, @Nonnull net.minecraft.world.level.block.Rotation rotation) {
+        int turns = switch (rotation) { case CLOCKWISE_90 -> 1; case CLOCKWISE_180 -> 2; case COUNTERCLOCKWISE_90 -> 3; default -> 0; };
+        for (int i = 0; i < turns; i++) state = TwisterItem.turn(state, Direction.Axis.Y, true);
+        return state;
     }
 
     @Override protected @Nonnull VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
@@ -63,13 +77,13 @@ public class ComponentBlock extends Block implements EntityBlock {
     /** The pin on world side {@code side} of this block, or -1. */
     public static int pinAt(BlockState state, Direction side) {
         if (!(state.getBlock() instanceof ComponentBlock c)) return -1;
-        return c.type.pinAt(state.getValue(FACING), side);
+        return c.type.pinAt(state.getValue(FACING), state.getValue(SPIN), side);
     }
 
     /** How many pins are on world side {@code side}: 0, 1, or {@link ComponentType#BUS} for a bus face. */
     public static int widthAt(BlockState state, Direction side) {
         if (!(state.getBlock() instanceof ComponentBlock c)) return 0;
-        return c.type.widthAt(state.getValue(FACING), side);
+        return c.type.widthAt(state.getValue(FACING), state.getValue(SPIN), side);
     }
 
     /** The pin on world side {@code side} if it's a single pin (a Wick or Hemp Thread can join it), or -1. */

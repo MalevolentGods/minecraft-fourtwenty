@@ -1,0 +1,147 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/component/lab_brass",
+  "plate": "fourtwenty:block/component/lab_brass",
+  "collar": "fourtwenty:block/power/rip_glow",
+  "lead": "fourtwenty:block/power/rip_wick"
+ },
+ "elements": [
+  {
+   "from": [
+    13.5,
+    7,
+    7
+   ],
+   "to": [
+    16,
+    9,
+    9
+   ],
+   "faces": {
+    "east": {
+     "uv": [
+      7,
+      7,
+      9,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "west": {
+     "uv": [
+      7,
+      7,
+      9,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "south": {
+     "uv": [
+      0,
+      7,
+      2.5,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "north": {
+     "uv": [
+      0,
+      7,
+      2.5,
+      9
+     ],
+     "texture": "#lead"
+    },
+    "up": {
+     "uv": [
+      7,
+      0,
+      9,
+      2.5
+     ],
+     "texture": "#lead"
+    },
+    "down": {
+     "uv": [
+      7,
+      0,
+      9,
+      2.5
+     ],
+     "texture": "#lead"
+    }
+   }
+  },
+  {
+   "from": [
+    13,
+    5.75,
+    5.75
+   ],
+   "to": [
+    13.5,
+    10.25,
+    10.25
+   ],
+   "faces": {
+    "east": {
+     "uv": [
+      5.75,
+      5.75,
+      10.25,
+      10.25
+     ],
+     "texture": "#plate"
+    },
+    "west": {
+     "uv": [
+      5.75,
+      5.75,
+      10.25,
+      10.25
+     ],
+     "texture": "#plate"
+    },
+    "south": {
+     "uv": [
+      2.5,
+      5.75,
+      3,
+      10.25
+     ],
+     "texture": "#plate"
+    },
+    "north": {
+     "uv": [
+      2.5,
+      5.75,
+      3,
+      10.25
+     ],
+     "texture": "#plate"
+    },
+    "up": {
+     "uv": [
+      5.75,
+      2.5,
+      10.25,
+      3
+     ],
+     "texture": "#plate"
+    },
+    "down": {
+     "uv": [
+      5.75,
+      2.5,
+      10.25,
+      3
+     ],
+     "texture": "#plate"
+    }
+   }
+  }
+ ]
+}

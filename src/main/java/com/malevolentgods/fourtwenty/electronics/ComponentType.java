@@ -163,28 +163,19 @@ public enum ComponentType {
         return 0;
     }
 
-    /** The world direction of a pin face on a block facing {@code front}. Left is the clockwise side, as everywhere in the mod. */
-    public static Direction toWorld(Direction front, Face face) {
-        return switch (face) {
-            case FRONT -> front;
-            case BACK -> front.getOpposite();
-            case LEFT -> front.getClockWise();
-            case RIGHT -> front.getCounterClockWise();
-            case TOP -> Direction.UP;
-            case BOTTOM -> Direction.DOWN;
-        };
-    }
+    /** The world direction of a pin face on a part facing {@code front} with spin {@code spin} (Orientation). */
+    public static Direction toWorld(Direction front, int spin, Face face) { return Orientation.toWorld(front, spin, face); }
 
-    /** The pin on world side {@code side} of a block facing {@code front}, or -1 if that side has none. */
-    public int pinAt(Direction front, Direction side) {
-        for (int i = 0; i < layout.pins.size(); i++) if (toWorld(front, layout.pins.get(i)) == side) return i;
+    /** The pin on world side {@code side} of a part facing {@code front} with spin {@code spin}, or -1 if that side has none. */
+    public int pinAt(Direction front, int spin, Direction side) {
+        for (int i = 0; i < layout.pins.size(); i++) if (toWorld(front, spin, layout.pins.get(i)) == side) return i;
         return -1;
     }
 
     /** How many pins are on world side {@code side}: 0, 1, or {@link #BUS} for a bus face. */
-    public int widthAt(Direction front, Direction side) {
+    public int widthAt(Direction front, int spin, Direction side) {
         int n = 0;
-        for (Face f : layout.pins) if (toWorld(front, f) == side) n++;
+        for (Face f : layout.pins) if (toWorld(front, spin, f) == side) n++;
         return n;
     }
 

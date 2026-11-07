@@ -90,9 +90,9 @@ def box(f, t, tex, faces=('north', 'south', 'east', 'west', 'up', 'down'), tint=
 
 
 def plinth():
-    """The steel plinth every part stands on, and the slot along its front where its light line glows."""
-    return [box([2, 0, 2], [14, 1.5, 14], '#body'), box([2.5, 1.5, 2.5], [13.5, 2, 13.5], '#trim'),
-            box([3, 0.5, 1.75], [13, 1.15, 2], '#dark', faces=('north', 'up', 'down', 'east', 'west'))]
+    """No plinth (the user, 2026-11-07): a part turns to any of 24 orientations, so it floats centred in its space, its glands reaching
+    the faces. Kept as a function so the parts read the same."""
+    return []
 
 
 def gland(side, kind, depth=2.5, y=8):
@@ -106,8 +106,8 @@ def gland(side, kind, depth=2.5, y=8):
 
 
 def stands(z0, z1, top):
-    """Two little steel posts from the plinth up to a part held level, at z0 and z1."""
-    return [box([7.25, 2, z0 - 0.6], [8.75, top, z0 + 0.6], '#body'), box([7.25, 2, z1 - 0.6], [8.75, top, z1 + 0.6], '#body')]
+    """No stands without a plinth: the glands hold the part."""
+    return []
 
 
 def composite(solid, glass, extra_tex=None):
@@ -133,11 +133,11 @@ def resinator():
 
 
 def kief_cap():
-    """A glass jar with a steel lid; the renderer fills it with kief as it charges."""
-    solid = plinth() + [box([3.7, 13, 3.7], [12.3, 14.5, 12.3], '#body'), box([4.2, 14.5, 4.2], [11.8, 15, 11.8], '#trim'),
-                        box([4.2, 2, 4.2], [11.8, 2.2, 11.8], '#dark')]
-    solid += gland('front', 'in', 4) + gland('back', 'in', 4)
-    glass = [box([4, 2, 4], [12, 13, 12], '#glass')]
+    """A glass jar lying between its pins, a steel cap at each end; the renderer fills it with kief as it charges."""
+    solid = [box([4, 4, 2.2], [12, 12, 3], '#body'), box([4, 4, 13], [12, 12, 13.8], '#body'),
+             box([4.5, 4.5, 1.8], [11.5, 11.5, 2.2], '#trim'), box([4.5, 4.5, 13.8], [11.5, 11.5, 14.2], '#trim')]
+    solid += gland('front', 'in', 1.8) + gland('back', 'in', 1.8)
+    glass = [box([4.5, 4.5, 3], [11.5, 11.5, 13], '#glass')]
     return composite(solid, glass)
 
 
@@ -169,6 +169,72 @@ LAB = {
 }
 
 
+# ---- the creative supplies ---------------------------------------------------------------------------------------------------------
+
+TIERS = ('puff', 'toke', 'rip', 'blaze')
+
+
+def smoke():
+    """Smoke that never settles: 32 frames of slow swirls, looping, for the Bottomless Stash's jar (an animated texture)."""
+    n, frames = 64, 32
+    y, x = np.mgrid[0:n, 0:n] / n * 2 * np.pi
+    sheet = np.zeros((n * frames, n, 4))
+    for f in range(frames):
+        t = f / frames * 2 * np.pi
+        v = (np.sin(x * 1 + np.sin(y * 2 + t) * 1.4 + t) + np.sin(y * 1 - np.cos(x * 2 - t) * 1.2 + 2 * t)
+             + 0.6 * np.sin((x + y) * 2 + np.sin(x - t) + t) + 0.4 * np.sin((x - y) * 3 - 2 * t))
+        v = (v - v.min()) / (v.max() - v.min())
+        frame = np.zeros((n, n, 4))
+        frame[..., :3] = (200 + 55 * v)[..., None] * np.array([0.93, 0.92, 1.0])
+        frame[..., 3] = 60 + 150 * v ** 1.6
+        sheet[f * n:(f + 1) * n] = frame
+    TEX.mkdir(parents=True, exist_ok=True)
+    Image.fromarray(np.clip(sheet, 0, 255).astype(np.uint8), 'RGBA').save(TEX / 'lab_smoke.png', optimize=True)
+    (TEX / 'lab_smoke.png.mcmeta').write_text(json.dumps({'animation': {'frametime': 3, 'interpolate': True}}) + '\n', encoding='utf-8')
+
+
+def bottomless(tier, lit):
+    """A glass jar of smoke on a steel plinth, a band of its tier's colour round the lid."""
+    glow = f'fourtwenty:block/power/{tier}_glow{"_lit" if lit else ""}'
+    solid = [box([1, 0, 1], [15, 1.5, 15], '#body'), box([1.5, 1.5, 1.5], [14.5, 2, 14.5], '#trim'),
+             box([2.6, 13, 2.6], [13.4, 14.6, 13.4], '#body'),
+             box([2.5, 13.5, 2.5], [13.5, 14.1, 13.5], '#tier', faces=('north', 'south', 'east', 'west')),
+             box([6.5, 14.6, 6.5], [9.5, 15.4, 9.5], '#trim')]
+    glass = [box([3.3, 2.1, 3.3], [12.7, 12.8, 12.7], '#smoke'), box([3, 2, 3], [13, 13, 13], '#glass')]
+    return composite(solid, glass, {'tier': glow, 'smoke': 'fourtwenty:block/component/lab_smoke'})
+
+
+def bench_rig(lit):
+    """A steel lab cabinet: a dark front panel (its readouts drawn by client/BenchRigRenderer), two knobs, red and black binding posts,
+    a carrying handle at the back of its top, a light line along its foot."""
+    light = f'fourtwenty:block/infuser/light{"" if lit else "_off"}'
+    solid = [box([1, 0, 2], [15, 13.5, 15], '#body'), box([2, 1, 1.5], [14, 12.8, 2], '#dark', faces=('north', 'east', 'west', 'up', 'down')),
+             box([2.5, 9.4, 1.3], [13.5, 12.6, 1.5], '#screen', faces=('north', 'east', 'west', 'up', 'down')),
+             box([3.5, 2.2, 0.8], [5.5, 4.2, 1.5], '#trim'), box([6.2, 2.2, 0.8], [8.2, 4.2, 1.5], '#trim'),
+             box([10, 2.6, 0.9], [11.4, 4, 1.5], '#lead_vdd'), box([12, 2.6, 0.9], [13.4, 4, 1.5], '#lead_gnd'),
+             box([3, 13.5, 12], [4, 15, 13], '#trim'), box([12, 13.5, 12], [13, 15, 13], '#trim'), box([3, 15, 12], [13, 16, 13], '#trim'),
+             box([3, 0.4, 1.75], [13, 1, 2], '#light', faces=('north', 'up', 'down', 'east', 'west'))]
+    return composite(solid, [], {'light': light, 'screen': 'fourtwenty:block/component/lab_screen'})
+
+
+def supplies():
+    smoke()
+    screen = rgb('#0B1210')[None, None, :] + RNG.normal(0, 3, (S, S, 1))
+    screen[::4, :, :] += 4
+    save(screen, 'lab_screen')
+    variants = lambda name: {f'facing={f},lit={l}': {'model': f'fourtwenty:block/{name}{"_lit" if l == "true" else ""}', **({'y': y} if y else {})}
+                             for f, y in (('north', 0), ('east', 90), ('south', 180), ('west', 270)) for l in ('false', 'true')}
+    for tier in TIERS:
+        for lit in (False, True):
+            write(ASSETS / f'models/block/bottomless_stash_{tier}{"_lit" if lit else ""}.json', bottomless(tier, lit))
+        write(ASSETS / f'blockstates/bottomless_stash_{tier}.json', {'variants': variants(f'bottomless_stash_{tier}')})
+        write(ASSETS / f'models/item/bottomless_stash_{tier}.json', {'parent': f'fourtwenty:block/bottomless_stash_{tier}_lit'})
+    for lit in (False, True):
+        write(ASSETS / f'models/block/bench_rig{"_lit" if lit else ""}.json', bench_rig(lit))
+    write(ASSETS / 'blockstates/bench_rig.json', {'variants': variants('bench_rig')})
+    write(ASSETS / 'models/item/bench_rig.json', {'parent': 'fourtwenty:block/bench_rig_lit'})
+
+
 def write(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=1) + '\n', encoding='utf-8')
@@ -183,6 +249,7 @@ def main():
         on = ASSETS / f'models/block/component/{cid}_on.json'
         if on.exists():
             write(on, model)
+    supplies()
     print(f'wrote {len(LAB)} lab components')
 
 

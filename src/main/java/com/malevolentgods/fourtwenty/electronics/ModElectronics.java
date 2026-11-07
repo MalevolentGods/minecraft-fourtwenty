@@ -35,6 +35,9 @@ public final class ModElectronics {
             () -> new HempThreadBlock(BlockBehaviour.Properties.of().strength(0.1f).sound(SoundType.WOOL).noOcclusion()
                     .lightLevel(state -> state.getValue(WickBlock.LIT) ? 2 : 0)));
 
+    /** The Twister: a wrench that turns components to any of their 24 orientations. */
+    public static final DeferredHolder<Item, TwisterItem> TWISTER = ModItems.ITEMS.register("twister", () -> new TwisterItem(new Item.Properties()));
+
     /** The Eighth Ribbon: nine signal wires in one flat cable. */
     public static final DeferredHolder<Block, RibbonBlock> EIGHTH_RIBBON = ModBlocks.BLOCKS.register("eighth_ribbon",
             () -> new RibbonBlock(BlockBehaviour.Properties.of().strength(0.1f).sound(SoundType.WOOL).noOcclusion()));
@@ -47,6 +50,7 @@ public final class ModElectronics {
         ALL.add(ModItems.ITEMS.register("hemp_thread", () -> new BlockItem(HEMP_THREAD.get(), new Item.Properties())));
         ALL.add(ModItems.ITEMS.register("eighth_ribbon", () -> new BlockItem(EIGHTH_RIBBON.get(), new Item.Properties())));
         ALL.add(ModItems.ITEMS.register("roach_clip", () -> new BlockItem(ROACH_CLIP.get(), new Item.Properties())));
+        ALL.add(TWISTER);
         for (ComponentType t : ComponentType.values()) {
             DeferredHolder<Block, ComponentBlock> block = ModBlocks.BLOCKS.register(t.id,
                     () -> t == ComponentType.RESINATOR ? new ResinatorBlock(t, component()) : new ComponentBlock(t, component()));
@@ -70,6 +74,7 @@ public final class ModElectronics {
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.power.InspoweedometerItem::rightClickBlock);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.power.InspoweedometerItem::playerTick);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.power.BIGrid::chunkLoaded);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(TwisterItem::rightClickBlock);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.power.BIGrid::levelTick);
     }
 

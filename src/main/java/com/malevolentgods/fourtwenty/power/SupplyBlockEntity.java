@@ -58,12 +58,29 @@ public class SupplyBlockEntity extends BIBlockEntity {
 
     public void stepVolts(int by) {
         volts = Math.floorMod(volts + by, VOLTS.size());
-        setChanged();
+        changedForClients();
     }
 
     public void stepAmps(int by) {
         amps = Math.floorMod(amps + by, AMPS.size());
+        changedForClients();
+    }
+
+    /** Saved, and sent to clients: the Bench Rig shows its settings on its face. */
+    private void changedForClients() {
         setChanged();
+        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+    }
+
+    @Override public @Nonnull CompoundTag getUpdateTag(@Nonnull HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("volts", volts);
+        tag.putInt("amps", amps);
+        return tag;
+    }
+
+    @Override public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override public void serverTick() {

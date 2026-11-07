@@ -1,34 +1,10 @@
 {
  "variants": {
-  "facing=north,on=false": {
+  "on=false": {
    "model": "fourtwenty:block/component/ticker"
   },
-  "facing=north,on=true": {
+  "on=true": {
    "model": "fourtwenty:block/component/ticker_on"
-  },
-  "facing=east,on=false": {
-   "model": "fourtwenty:block/component/ticker",
-   "y": 90
-  },
-  "facing=east,on=true": {
-   "model": "fourtwenty:block/component/ticker_on",
-   "y": 90
-  },
-  "facing=south,on=false": {
-   "model": "fourtwenty:block/component/ticker",
-   "y": 180
-  },
-  "facing=south,on=true": {
-   "model": "fourtwenty:block/component/ticker_on",
-   "y": 180
-  },
-  "facing=west,on=false": {
-   "model": "fourtwenty:block/component/ticker",
-   "y": 270
-  },
-  "facing=west,on=true": {
-   "model": "fourtwenty:block/component/ticker_on",
-   "y": 270
   }
  }
 }

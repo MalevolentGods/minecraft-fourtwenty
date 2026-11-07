@@ -85,6 +85,7 @@ public class ModClientEvents {
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModBlockEntities.CURING_RACK.get(), CuringRackRenderer::new);
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModBlockEntities.LAMP.get(), LampHaloRenderer::new);
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.electronics.ModElectronics.COMPONENT_ENTITY.get(), ComponentRenderer::new);
+        event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModPower.SUPPLY_ENTITY.get(), BenchRigRenderer::new);
         event.registerEntityRenderer(com.malevolentgods.fourtwenty.registry.ModEntities.BUZZ_BOT.get(), BuzzBotRenderer::new);
         event.registerEntityRenderer(com.malevolentgods.fourtwenty.registry.ModEntities.SEAT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
     }
@@ -118,6 +119,7 @@ public class ModClientEvents {
         RoadModel.replace(event);
         SunkModel.wrap(event);
         PortModel.wrap(event);
+        ComponentModel.wrap(event);
     }
 
     @SubscribeEvent
