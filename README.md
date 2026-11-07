@@ -4,6 +4,13 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.21.0
+
+- **Real circuits, red and black:** power flows only around closed loops. A red Wick on any side of a block is +, a black Wick is −; other colours only join Wicks of their own colour. The Hit Box is a real transformer with two isolated windings.
+- **Twin Wick and Daisy Wick:** two-core cables in every tier. A Twin Wick wires everything it touches in parallel; a Daisy Wick wires the blocks along it in series and closes the loop itself.
+- **Lit Bits and the Weedweeno:** RGB lamps that look like our lamps in any colour and behave like real LEDs, placed and numbered by the Sticky Finger, and run by Lua light shows on the Weedweeno. Bit Chits carry shows between Weedweenos.
+- **Re-Up Stations** have their own battery and screen, and charge gear faster than their input.
+
 ## What's new in 0.20.0
 
 - **Real electricity:** Boundless Inspiration is measured in Willards (W), Ignus (Ig), Kerberos (Kb) and Phus (Φ), and every Wick network is solved as a DC circuit. Wicks are rated like real cables; the Inspoweedometer reads it all.
