@@ -59,6 +59,9 @@ public final class ModElectronics {
             ModBlockEntities.BLOCK_ENTITIES.register("component", () -> BlockEntityType.Builder.of(ComponentBlockEntity::new,
                     COMPONENTS.values().stream().map(DeferredHolder::get).toArray(Block[]::new)).build(null));
 
+    public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>, BlockEntityType<RibbonBlockEntity>> RIBBON_ENTITY =
+            ModBlockEntities.BLOCK_ENTITIES.register("ribbon", () -> BlockEntityType.Builder.of(RibbonBlockEntity::new, EIGHTH_RIBBON.get(), ROACH_CLIP.get()).build(null));
+
     /** Loads the class, so its registrations happen; call it before the registers go on the bus. */
     public static void init() {}
 

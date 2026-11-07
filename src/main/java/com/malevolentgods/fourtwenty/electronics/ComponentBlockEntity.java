@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
  * remembers between ticks (a Kief Cap's charge, a Nug's output and pending change), saved with the world so a circuit carries on after a
  * chunk reloads or the server restarts.
  */
-public class ComponentBlockEntity extends BlockEntity {
+public class ComponentBlockEntity extends ShowingBlockEntity {
     private int index = -1;
     private boolean closed;
     private double[] memory = new double[0];
@@ -105,8 +105,17 @@ public class ComponentBlockEntity extends BlockEntity {
         super.loadAdditional(tag, registries);
         index = tag.contains("value") ? tag.getInt("value") : -1;
         closed = tag.getBoolean("closed");
-        ListTag list = tag.getList("memory", Tag.TAG_DOUBLE);
-        memory = new double[list.size()];
-        for (int i = 0; i < memory.length; i++) memory[i] = list.getDouble(i);
+        // an update to a client carries what it shows, its value and its switch, not its memory
+        if (tag.contains("memory")) {
+            ListTag list = tag.getList("memory", Tag.TAG_DOUBLE);
+            memory = new double[list.size()];
+            for (int i = 0; i < memory.length; i++) memory[i] = list.getDouble(i);
+        }
+        loadShown(tag);
+    }
+
+    @Override protected void updateTag(CompoundTag tag) {
+        tag.putInt("value", index);
+        tag.putBoolean("closed", closed);
     }
 }

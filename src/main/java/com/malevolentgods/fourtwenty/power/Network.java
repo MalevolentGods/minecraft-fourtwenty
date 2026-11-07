@@ -47,6 +47,9 @@ public final class Network {
     /** One wire of an Eighth Ribbon or Roach Clip. */
     record RibbonKey(BlockPos pos, int channel) {}
 
+    /** A Ribbon and the node each of its wires is on. */
+    record RibbonAt(BlockPos pos, int[] wires) {}
+
     private record Run(int start, int end, double ohms) {}
 
     final int version;
@@ -76,6 +79,8 @@ public final class Network {
     private static final double[] ONE = {1, 1};
     /** The components on this network (electronics); when there are any, it runs in time every tick (see {@link #tickLive}). */
     final List<Placed> placed;
+    /** The Ribbons joined to its components, for their glow. */
+    List<RibbonAt> ribbons = List.of();
 
     private Network(int version, long walkedAt, List<Member> members, List<Wick> wicks, List<Run> runs, int nodes, Map<BlockPos, DaisyLine.Reason> daisyFailed,
                     List<BINode[]> couplings, List<Placed> placed) {
@@ -196,8 +201,12 @@ public final class Network {
             queue.add(new Object[]{at.immutable(), null, "component"});
         };
         // Eighth Ribbons and Roach Clips: each wire joined straight through, by union (signal wire, no resistance)
+        Set<BlockPos> ribbonsMet = new java.util.LinkedHashSet<>();
         java.util.function.Consumer<BlockPos> ribbon = at -> {
-            if (seen.add(at.immutable())) queue.add(new Object[]{at.immutable(), null, "ribbon"});
+            if (seen.add(at.immutable())) {
+                ribbonsMet.add(at.immutable());
+                queue.add(new Object[]{at.immutable(), null, "ribbon"});
+            }
         };
         int bus = com.malevolentgods.fourtwenty.electronics.ComponentType.BUS;
         java.util.function.BiConsumer<Conductor, Conductor> edge = (a, b) -> {
@@ -512,7 +521,18 @@ public final class Network {
             for (int i = 0; i < pins.length; i++) pins[i] = nodeFor.apply(new PinKey(e.getKey(), i));
             placed.add(new Placed(e.getKey(), e.getValue(), pins));
         }
-        return new Network(BIGrid.version(level), level.getGameTime(), members, new ArrayList<>(wicks.values()), runs, count[0], daisyFailed, couplings, placed);
+        // each Ribbon's nine wires, as nodes, for its glow; only when it joins a component, or its wires carry nothing
+        List<RibbonAt> ribbonsAt = new ArrayList<>();
+        if (!components.isEmpty()) {
+            for (BlockPos at : ribbonsMet) {
+                int[] wires = new int[bus];
+                for (int c = 0; c < bus; c++) wires[c] = nodeFor.apply(new RibbonKey(at, c));
+                ribbonsAt.add(new RibbonAt(at, wires));
+            }
+        }
+        Network made = new Network(BIGrid.version(level), level.getGameTime(), members, new ArrayList<>(wicks.values()), runs, count[0], daisyFailed, couplings, placed);
+        made.ribbons = ribbonsAt;
+        return made;
     }
 
     /**
@@ -841,6 +861,7 @@ public final class Network {
                 high = supply >= com.malevolentgods.fourtwenty.domain.electronics.Logic.MIN_SUPPLY && live.volts(p[2]) - live.volts(p[1]) > supply / 2;
             } else if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Active.Mosfet) high = Math.abs(live.current(part)) >= 1e-3;
             else if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Chips.Chip chip) high = chip.anyHigh();
+            be.show(shownFor(i, high));
             if (high != null) {
                 var state = level.getBlockState(pos);
                 if (state.hasProperty(com.malevolentgods.fourtwenty.electronics.ComponentBlock.ON)
@@ -848,6 +869,15 @@ public final class Network {
                     level.setBlock(pos, state.setValue(com.malevolentgods.fourtwenty.electronics.ComponentBlock.ON, high), 2);
                 }
             }
+        }
+        // each Ribbon's wires: a 1 above half the network's voltage, measured from its lowest point
+        double low = Double.POSITIVE_INFINITY;
+        for (int n = 0; n < nodes; n++) low = Math.min(low, live.volts(n));
+        for (RibbonAt r : ribbons) {
+            if (!(level.getBlockEntity(r.pos()) instanceof com.malevolentgods.fourtwenty.electronics.RibbonBlockEntity be)) continue;
+            int bits = 0;
+            for (int c = 0; c < r.wires().length; c++) if (live.volts(r.wires()[c]) - low > 0.5 * sourceVolts()) bits |= 1 << c;
+            be.show(com.malevolentgods.fourtwenty.domain.electronics.Shown.pack(bits, 0, bits != 0, false));
         }
         solution = liveSolution(ok);
         var led = com.malevolentgods.fourtwenty.lights.LightsConfig.led();
@@ -1036,6 +1066,59 @@ public final class Network {
             losses += tAmps[k] * tAmps[k] * liveWindingOhms.get(k);
         }
         return new Circuit.Solution(v, cAmps, sAmps, sWatts, lWatts, lAmps, losses, 1, converged, lStatus, ledAmps, ledStatus, tAmps);
+    }
+
+    /**
+     * The voltage the sources here are set to (the highest), for scaling what parts show; a tier's rated voltage is no guide, since a
+     * Bench Rig is rated for anything up to 4,200 Kb and usually set far below.
+     */
+    private double sourceVolts() {
+        double v = 0;
+        for (Member m : members) if (m.node().role() == BINode.Role.SOURCE && !Double.isNaN(m.node().emf())) v = Math.max(v, Math.abs(m.node().emf()));
+        return v > 0 ? v : Math.max(nominal, 1);
+    }
+
+    /**
+     * What component {@code i} shows of the live circuit (Shown): its outputs, a level (a Resinator's heat, a Kief Cap's charge, a
+     * current, a Hype Amp's output), whether it's active, whether it's over its rating.
+     */
+    private int shownFor(int i, Boolean high) {
+        Placed c = placed.get(i);
+        var part = liveParts.get(i);
+        int[] p = c.pins();
+        double amps = live.current(part);
+        double across = p.length >= 2 ? live.volts(p[0]) - live.volts(p[1]) : 0;
+        int bits = 0, levelShown = 0;
+        boolean active, hot = false;
+        if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Chips.Chip chip) {
+            for (int k = 0; k < chip.outputs(); k++) if (chip.output(k) == com.malevolentgods.fourtwenty.domain.electronics.Logic.Out.HIGH) bits |= 1 << k;
+            active = across >= com.malevolentgods.fourtwenty.domain.electronics.Logic.MIN_SUPPLY;
+            levelShown = active ? com.malevolentgods.fourtwenty.domain.electronics.Shown.LEVELS : 0;
+        } else if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Logic) {
+            bits = Boolean.TRUE.equals(high) ? 1 : 0;
+            active = across >= com.malevolentgods.fourtwenty.domain.electronics.Logic.MIN_SUPPLY;
+            levelShown = active ? com.malevolentgods.fourtwenty.domain.electronics.Shown.LEVELS : 0;
+        } else {
+            switch (c.type().part) {
+                case RESISTOR -> {
+                    double watts = Math.abs(across * amps), rated = c.type().ratedWatts();
+                    levelShown = com.malevolentgods.fourtwenty.domain.electronics.Shown.heat(watts, rated);
+                    hot = watts > rated;
+                }
+                case CAPACITOR -> levelShown = com.malevolentgods.fourtwenty.domain.electronics.Shown.share(Math.abs(across) / sourceVolts());
+                case OPAMP -> {
+                    double supply = live.volts(p[0]) - live.volts(p[1]);
+                    levelShown = supply >= com.malevolentgods.fourtwenty.domain.electronics.Logic.MIN_SUPPLY
+                            ? com.malevolentgods.fourtwenty.domain.electronics.Shown.share((live.volts(p[2]) - live.volts(p[1])) / supply) : 0;
+                }
+                default -> levelShown = com.malevolentgods.fourtwenty.domain.electronics.Shown.amps(amps);
+            }
+            bits = Boolean.TRUE.equals(high) ? 1 : 0;
+            active = Math.abs(amps) > com.malevolentgods.fourtwenty.domain.electronics.Shown.QUIET_AMPS
+                    || c.type().part == com.malevolentgods.fourtwenty.electronics.ComponentType.Part.OPAMP && levelShown > 0
+                    || c.type().part == com.malevolentgods.fourtwenty.electronics.ComponentType.Part.CAPACITOR && levelShown > 0;
+        }
+        return com.malevolentgods.fourtwenty.domain.electronics.Shown.pack(bits, levelShown, active, hot);
     }
 
     /** A component's pin voltages and its part, for the Inspoweedometer; null if it isn't on this network. */

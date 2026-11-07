@@ -25,7 +25,7 @@ import java.util.Map;
  * colour code. It joins other Ribbons and Roach Clips, wire for wire, and a chip's bus face; nothing else. Signal wire: no resistance,
  * no rating.
  */
-public class RibbonBlock extends Block {
+public class RibbonBlock extends Block implements net.minecraft.world.level.block.EntityBlock {
     public static final Map<Direction, BooleanProperty> SIDES = PipeBlock.PROPERTY_BY_DIRECTION;
     private final Map<BlockState, VoxelShape> shapes = new IdentityHashMap<>();
 
@@ -38,6 +38,9 @@ public class RibbonBlock extends Block {
     }
 
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { SIDES.values().forEach(builder::add); }
+
+    /** Its wires' bits, for the glow (RibbonBlockEntity). */
+    @Override public net.minecraft.world.level.block.entity.BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) { return new RibbonBlockEntity(pos, state); }
 
     /** The core's shape: a Ribbon's is the flat cable, a Roach Clip's is bigger. */
     protected VoxelShape core() { return Block.box(3, 7, 3, 14, 9, 14); }

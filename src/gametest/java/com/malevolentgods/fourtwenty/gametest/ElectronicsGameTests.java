@@ -209,6 +209,8 @@ public final class ElectronicsGameTests {
             h.runAfterDelay(20, () -> {
                 double one = volts.get(), want = 4.2 * (1 - Math.exp(-1));
                 h.assertTrue(Math.abs(one - want) < 0.25, "about 63% after a second: " + one + " for " + want);
+                int third = com.malevolentgods.fourtwenty.domain.electronics.Shown.level(((ComponentBlockEntity) h.getBlockEntity(cap)).shown());
+                h.assertTrue(third >= 8 && third <= 11, "it shows about two thirds full: " + third);
                 h.runAfterDelay(80, () -> {
                     h.assertTrue(volts.get() > 4.1, "nearly full after five: " + volts.get());
                     h.succeed();
@@ -346,6 +348,12 @@ public final class ElectronicsGameTests {
             double supply = v[0] - v[1];
             for (int k = 5; k <= 13; k++) h.assertTrue(v[k] - v[1] > 0.9 * supply, "pin " + k + " high: " + java.util.Arrays.toString(v));
             h.assertTrue(on(h, chip), "lit");
+            // what it shows clients: all nine outputs, active; and its Ribbon, all nine wires lit
+            int shown = ((ComponentBlockEntity) h.getBlockEntity(chip)).shown();
+            h.assertTrue(com.malevolentgods.fourtwenty.domain.electronics.Shown.bits(shown) == 0x1FF && com.malevolentgods.fourtwenty.domain.electronics.Shown.active(shown),
+                    "shows its outputs: " + Integer.toBinaryString(shown));
+            int wires = ((com.malevolentgods.fourtwenty.electronics.RibbonBlockEntity) h.getBlockEntity(new BlockPos(6, 2, 5))).shown();
+            h.assertTrue(com.malevolentgods.fourtwenty.domain.electronics.Shown.bits(wires) == 0x1FF, "its Ribbon glows on every wire: " + Integer.toBinaryString(wires));
         });
     }
     /**
