@@ -2115,6 +2115,7 @@
   "tooltip.fourtwenty.item.scale_nug": "Weighs two bytes against each other: exactly one of its outputs is high. Bus A at the back, bus B on the left; in front, channel 0 is A < B, 1 is A = B, 2 is A > B. VDD on top, GND underneath.",
   "block.fourtwenty.jar_nug": "Jar Nug",
   "tooltip.fourtwenty.item.jar_nug": "Keeps a byte (nine bits): takes its inputs on each rising clock and drives them out until release is 1, when it lets go, so several can share one bus. Bus in at the back, clock on the left, release on the right, bus out in front. VDD on top, GND underneath.",
+  "message.fourtwenty.meter.held": "Held: %s",
   "tooltip.fourtwenty.real.weed_bong": "Generator",
   "tooltip.fourtwenty.real.double_hose": "Generator",
   "tooltip.fourtwenty.real.big_bertha": "Generator",
@@ -2184,6 +2185,5 @@
   "tooltip.fourtwenty.real.blend_nug": "Bitwise logic unit",
   "tooltip.fourtwenty.real.stacker_nug": "8-bit adder / subtractor",
   "tooltip.fourtwenty.real.scale_nug": "Magnitude comparator",
-  "tooltip.fourtwenty.real.jar_nug": "8-bit register (74HC574)",
-  "message.fourtwenty.meter.held": "Held: %s"
+  "tooltip.fourtwenty.real.jar_nug": "8-bit register (74HC574)"
 }

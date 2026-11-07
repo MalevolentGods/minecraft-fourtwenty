@@ -1,8 +1,204 @@
 {
  "multipart": [
   {
+   "when": {
+    "OR": [
+     {
+      "north": "false",
+      "east": "false",
+      "south": "false",
+      "west": "false",
+      "up": "true"
+     },
+     {
+      "north": "false",
+      "east": "false",
+      "south": "false",
+      "west": "false",
+      "down": "true"
+     }
+    ]
+   },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core"
+    "model": "fourtwenty:block/eighth_ribbon_core_vertical"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_none"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "false",
+    "west": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_n"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "false",
+    "west": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_e"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "false",
+    "west": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_ne"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "true",
+    "west": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_s"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "true",
+    "west": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_ns"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "true",
+    "west": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_es"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "true",
+    "west": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_nes"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_w"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "false",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_nw"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "false",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_ew"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "false",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_new"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "true",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_sw"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "true",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_nsw"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "true",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_esw"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "true",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_nesw"
    }
   },
   {
@@ -10,7 +206,7 @@
     "north": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_arm"
+    "model": "fourtwenty:block/eighth_ribbon_north"
    }
   },
   {
@@ -18,8 +214,7 @@
     "east": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_arm",
-    "y": 90
+    "model": "fourtwenty:block/eighth_ribbon_east"
    }
   },
   {
@@ -27,8 +222,7 @@
     "south": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_arm",
-    "y": 180
+    "model": "fourtwenty:block/eighth_ribbon_south"
    }
   },
   {
@@ -36,8 +230,7 @@
     "west": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_arm",
-    "y": 270
+    "model": "fourtwenty:block/eighth_ribbon_west"
    }
   },
   {
@@ -45,8 +238,7 @@
     "up": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_arm",
-    "x": 270
+    "model": "fourtwenty:block/eighth_ribbon_up"
    }
   },
   {
@@ -54,8 +246,7 @@
     "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_arm",
-    "x": 90
+    "model": "fourtwenty:block/eighth_ribbon_down"
    }
   }
  ]

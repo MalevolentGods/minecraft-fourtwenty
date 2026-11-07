@@ -40,16 +40,16 @@ public class RibbonBlock extends Block {
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { SIDES.values().forEach(builder::add); }
 
     /** The core's shape: a Ribbon's is the flat cable, a Roach Clip's is bigger. */
-    protected VoxelShape core() { return Block.box(3, 7, 3, 13, 9, 13); }
+    protected VoxelShape core() { return Block.box(3, 7, 3, 14, 9, 14); }
 
     private VoxelShape shapeOf(BlockState state) {
         VoxelShape shape = core();
-        if (state.getValue(SIDES.get(Direction.NORTH))) shape = Shapes.or(shape, Block.box(3, 7, 0, 13, 9, 3));
-        if (state.getValue(SIDES.get(Direction.SOUTH))) shape = Shapes.or(shape, Block.box(3, 7, 13, 13, 9, 16));
-        if (state.getValue(SIDES.get(Direction.EAST))) shape = Shapes.or(shape, Block.box(13, 7, 3, 16, 9, 13));
-        if (state.getValue(SIDES.get(Direction.WEST))) shape = Shapes.or(shape, Block.box(0, 7, 3, 3, 9, 13));
-        if (state.getValue(SIDES.get(Direction.UP))) shape = Shapes.or(shape, Block.box(3, 9, 7, 13, 16, 9));
-        if (state.getValue(SIDES.get(Direction.DOWN))) shape = Shapes.or(shape, Block.box(3, 0, 7, 13, 7, 9));
+        if (state.getValue(SIDES.get(Direction.NORTH))) shape = Shapes.or(shape, Block.box(3, 7, 0, 14, 9, 3));
+        if (state.getValue(SIDES.get(Direction.SOUTH))) shape = Shapes.or(shape, Block.box(3, 7, 14, 14, 9, 16));
+        if (state.getValue(SIDES.get(Direction.EAST))) shape = Shapes.or(shape, Block.box(14, 7, 3, 16, 9, 14));
+        if (state.getValue(SIDES.get(Direction.WEST))) shape = Shapes.or(shape, Block.box(0, 7, 3, 3, 9, 14));
+        if (state.getValue(SIDES.get(Direction.UP))) shape = Shapes.or(shape, Block.box(3, 9, 7, 14, 16, 9));
+        if (state.getValue(SIDES.get(Direction.DOWN))) shape = Shapes.or(shape, Block.box(3, 0, 7, 14, 7, 9));
         return shape;
     }
 

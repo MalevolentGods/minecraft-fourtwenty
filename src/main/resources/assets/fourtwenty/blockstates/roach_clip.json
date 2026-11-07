@@ -10,7 +10,7 @@
     "north": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_arm"
+    "model": "fourtwenty:block/eighth_ribbon_north"
    }
   },
   {
@@ -18,8 +18,7 @@
     "east": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_arm",
-    "y": 90
+    "model": "fourtwenty:block/eighth_ribbon_east"
    }
   },
   {
@@ -27,8 +26,7 @@
     "south": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_arm",
-    "y": 180
+    "model": "fourtwenty:block/eighth_ribbon_south"
    }
   },
   {
@@ -36,8 +34,7 @@
     "west": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_arm",
-    "y": 270
+    "model": "fourtwenty:block/eighth_ribbon_west"
    }
   },
   {
@@ -45,8 +42,7 @@
     "up": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_arm",
-    "x": 270
+    "model": "fourtwenty:block/eighth_ribbon_up"
    }
   },
   {
@@ -54,8 +50,7 @@
     "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_arm",
-    "x": 90
+    "model": "fourtwenty:block/eighth_ribbon_down"
    }
   }
  ]

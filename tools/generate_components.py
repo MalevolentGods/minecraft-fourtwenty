@@ -104,7 +104,7 @@ BODY = {'resistor': (196, 170, 120), 'capacitor': (52, 92, 160), 'coil': (70, 54
 CHIP = (26, 30, 30)
 LEAD = {'in': (190, 192, 198), 'out': (220, 176, 60), 'vdd': (200, 40, 40), 'gnd': (24, 24, 26), 'gate': (90, 200, 90)}
 # a bus face: a wide flat connector, the Ribbon's stripes on it
-BUS_LEADS = {'front': ([3, 7, 0], [13, 9, 2]), 'back': ([3, 7, 14], [13, 9, 16]), 'left': ([14, 7, 3], [16, 9, 13]), 'right': ([0, 7, 3], [2, 9, 13])}
+BUS_LEADS = {'front': ([3, 7, 0], [14, 9, 2]), 'back': ([3, 7, 14], [14, 9, 16]), 'left': ([14, 7, 3], [16, 9, 14]), 'right': ([0, 7, 3], [2, 9, 14])}
 
 # a 3x5 pixel font for the Nug labels
 FONT = {
@@ -262,13 +262,62 @@ def component(cid, layout, look):
     write(ASSETS / f'models/item/{cid}.json', {'parent': f'fourtwenty:block/component/{cid}'})
 
 
+# The Eighth Ribbon is 11 pixels wide, from 3 to 14: a jacket pixel each side and the nine channels between. Its stripes are fixed in
+# the world, not turned with the model: along a north-south run channel k is at x = 4 + k, along an east-west run at z = 4 + k, so runs
+# line up block to block. Its core is drawn for its neighbours: straight through, a corner (two turn flat, mitred on the diagonal; the
+# other two can't turn flat without the wires crossing, so they fold over, as real ribbon cable does, the far triangle open), or a
+# T or cross (the straight run on top, the branch tucked under it).
+JACKET = (150, 150, 156)
+EDGE = (120, 120, 126)
+R0, R1 = 3, 14
+
+
+def stripe(k):
+    """Colour at offset k (0 to 10) across the ribbon: jacket at the edges, channel k-1 between."""
+    return JACKET if k <= 0 or k >= 10 else CHANNELS[k - 1]
+
+
+def core_pixel(mask, u, v):
+    n, e, s_, w = mask
+    ns, ew = n or s_, e or w
+    if (n and s_) or (ns and not ew) or not (ns or ew):
+        return stripe(u)
+    if (e and w) or (ew and not ns):
+        return stripe(v)
+    if n and w:
+        return stripe(u) if v <= u else stripe(v)
+    if s_ and e:
+        return stripe(u) if v >= u else stripe(v)
+    # a fold: the crease along the diagonal a shade darker
+    crease = lambda c: tuple(int(x * 0.7) for x in c)
+    if n and e:
+        return None if v > u else crease(stripe(u)) if v == u else stripe(u)
+    return None if v < u else crease(stripe(u)) if v == u else stripe(u)   # south and west
+
+
+def mask_name(mask):
+    return ''.join(c for c, on in zip('nesw', mask) if on) or 'none'
+
+
 def ribbon_texture():
-    # nine stripes across (x 3 to 11), along the ribbon's length; edges in its grey jacket
-    img = Image.new('RGBA', (16, 16), (150, 150, 156, 255))
-    d = ImageDraw.Draw(img)
-    for i, c in enumerate(CHANNELS):
-        d.line([3 + i, 0, 3 + i, 15], fill=c + (255,))
-    save(img, TEX / 'ribbon.png')
+    ns = Image.new('RGBA', (16, 16), JACKET + (255,))
+    ew = Image.new('RGBA', (16, 16), JACKET + (255,))
+    for k in range(11):
+        for t in range(16):
+            ns.putpixel((R0 + k, t), stripe(k) + (255,))
+            ew.putpixel((t, R0 + k), stripe(k) + (255,))
+    save(ns, TEX / 'ribbon.png')
+    save(ew, TEX / 'ribbon_ew.png')
+    save(Image.new('RGBA', (16, 16), EDGE + (255,)), TEX / 'ribbon_edge.png')
+    for m in range(16):
+        mask = tuple(bool(m >> i & 1) for i in range(4))
+        img = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+        for u in range(11):
+            for v in range(11):
+                c = core_pixel(mask, u, v)
+                if c is not None:
+                    img.putpixel((R0 + u, R0 + v), c + (255,))
+        save(img, TEX / f'ribbon_core_{mask_name(mask)}.png')
     brass = Image.new('RGBA', (16, 16), (196, 160, 70, 255))
     bd = ImageDraw.Draw(brass)
     bd.rectangle([0, 0, 15, 15], outline=(150, 118, 46, 255))
@@ -277,11 +326,42 @@ def ribbon_texture():
     save(brass, TEX / 'roach_clip.png')
 
 
+def flat(frm, to, top):
+    """A flat piece of ribbon: {top} on top and underneath, the jacket's edge round its sides."""
+    e = box(frm, to, '#edge')
+    for f in ('up', 'down'):
+        e['faces'][f]['texture'] = top
+    return e
+
+
 def ribbons():
-    """The Eighth Ribbon: a flat striped core and arms; the Roach Clip: a brass clip with its channel's band (tinted), on the same arms."""
-    tex = {'ribbon': 'fourtwenty:block/component/ribbon', 'particle': 'fourtwenty:block/component/ribbon'}
-    write(ASSETS / 'models/block/eighth_ribbon_core.json', {'parent': 'block/block', 'textures': tex, 'elements': [box([3, 7, 3], [13, 9, 13], '#ribbon')]})
-    write(ASSETS / 'models/block/eighth_ribbon_arm.json', {'parent': 'block/block', 'textures': tex, 'elements': [box([3, 7, 0], [13, 9, 3], '#ribbon')]})
+    """The Eighth Ribbon: a core drawn for its neighbours and fixed arms; the Roach Clip: a brass clip with its channel's band (tinted)."""
+    base = {'edge': 'fourtwenty:block/component/ribbon_edge', 'ns': 'fourtwenty:block/component/ribbon',
+            'ew': 'fourtwenty:block/component/ribbon_ew', 'particle': 'fourtwenty:block/component/ribbon'}
+
+    def model(name, elements, extra=None):
+        write(ASSETS / f'models/block/{name}.json', {'parent': 'block/block', 'render_type': 'minecraft:cutout',
+              'textures': {**base, **(extra or {})}, 'elements': elements})
+    arms = {
+        'north': flat([R0, 7, 0], [R1, 9, R0], '#ns'), 'south': flat([R0, 7, R1], [R1, 9, 16], '#ns'),
+        'east': flat([R1, 7, R0], [16, 9, R1], '#ew'), 'west': flat([0, 7, R0], [R0, 9, R1], '#ew'),
+    }
+    for side, e in arms.items():
+        model(f'eighth_ribbon_{side}', [e])
+    # up and down: the ribbon stood on edge, wide east to west, its stripes running up
+    for side, (y0, y1) in (('up', (9, 16)), ('down', (0, 7))):
+        e = box([R0, y0, 7], [R1, y1, 9], '#edge')
+        for f in ('north', 'south'):
+            e['faces'][f]['texture'] = '#ns'
+        model(f'eighth_ribbon_{side}', [e])
+    vertical = box([R0, 7, 7], [R1, 9, 9], '#edge')
+    for f in ('north', 'south'):
+        vertical['faces'][f]['texture'] = '#ns'
+    model('eighth_ribbon_core_vertical', [vertical])
+    for m in range(16):
+        mask = tuple(bool(m >> i & 1) for i in range(4))
+        name = mask_name(mask)
+        model(f'eighth_ribbon_core_{name}', [flat([R0, 7, R0], [R1, 9, R1], '#core')], {'core': f'fourtwenty:block/component/ribbon_core_{name}'})
     band = box([3.9, 7, 3.9], [12.1, 9, 12.1], '#band', faces=('north', 'south', 'east', 'west'))
     for f in band['faces'].values():
         f['tintindex'] = 0
@@ -289,14 +369,27 @@ def ribbons():
                 'particle': 'fourtwenty:block/component/roach_clip'}
     write(ASSETS / 'models/block/roach_clip_core.json', {'parent': 'block/block', 'textures': clip_tex,
           'elements': [box([4, 4, 4], [12, 12, 12], '#clip'), band]})
-    rotations = (('north', {}), ('east', {'y': 90}), ('south', {'y': 180}), ('west', {'y': 270}), ('up', {'x': 270}), ('down', {'x': 90}))
+    sides = ('north', 'east', 'south', 'west')
     for cid in ('eighth_ribbon', 'roach_clip'):
-        parts = [{'apply': {'model': f'fourtwenty:block/{cid}_core'}}]
-        for side, rot in rotations:
-            parts.append({'when': {side: 'true'}, 'apply': {'model': 'fourtwenty:block/eighth_ribbon_arm', **rot}})
+        if cid == 'roach_clip':
+            parts = [{'apply': {'model': 'fourtwenty:block/roach_clip_core'}}]
+        else:
+            parts = []
+            for m in range(16):
+                mask = tuple(bool(m >> i & 1) for i in range(4))
+                when = {side: str(on).lower() for side, on in zip(sides, mask)}
+                if m == 0:
+                    # nothing level with it: stood on edge if it runs up or down, else lying north to south
+                    parts.append({'when': {'OR': [{**when, 'up': 'true'}, {**when, 'down': 'true'}]},
+                                  'apply': {'model': 'fourtwenty:block/eighth_ribbon_core_vertical'}})
+                    parts.append({'when': {**when, 'up': 'false', 'down': 'false'}, 'apply': {'model': 'fourtwenty:block/eighth_ribbon_core_none'}})
+                    continue
+                parts.append({'when': when, 'apply': {'model': f'fourtwenty:block/eighth_ribbon_core_{mask_name(mask)}'}})
+        for side in sides + ('up', 'down'):
+            parts.append({'when': {side: 'true'}, 'apply': {'model': f'fourtwenty:block/eighth_ribbon_{side}'}})
         write(ASSETS / f'blockstates/{cid}.json', {'multipart': parts})
-    write(ASSETS / 'models/item/eighth_ribbon.json', {'parent': 'block/block', 'textures': tex,
-          'display': {'gui': {'rotation': [30, 45, 0], 'scale': [0.8, 0.8, 0.8]}}, 'elements': [box([3, 7, 0], [13, 9, 16], '#ribbon')]})
+    write(ASSETS / 'models/item/eighth_ribbon.json', {'parent': 'block/block', 'textures': base,
+          'display': {'gui': {'rotation': [30, 45, 0], 'scale': [0.8, 0.8, 0.8]}}, 'elements': [flat([R0, 7, 0], [R1, 9, 16], '#ns')]})
     write(ASSETS / 'models/item/roach_clip.json', {'parent': 'fourtwenty:block/roach_clip_core'})
 
 
