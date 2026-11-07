@@ -70,7 +70,16 @@ public class InspoweedometerItem extends Item {
             }
             double[] v = reading.get().pins();
             StringBuilder text = new StringBuilder();
-            if (!type.logic()) {
+            if (type.fet()) {
+                // pins {source, drain, gate}: the gate and drain against the source, and the channel current into the drain
+                text.append("Vgs ").append(Units.format(v[2] - v[0], Units.VOLTS)).append(" · Vds ").append(Units.format(v[1] - v[0], Units.VOLTS))
+                        .append(" · Id ").append(Units.format(reading.get().amps(), Units.AMPS));
+            } else if (type.part == com.malevolentgods.fourtwenty.electronics.ComponentType.Part.OPAMP) {
+                // pins {vdd, gnd, out, +, −}, each against GND
+                text.append("VDD ").append(Units.format(v[0] - v[1], Units.VOLTS)).append(" · + ").append(Units.format(v[3] - v[1], Units.VOLTS))
+                        .append(" · − ").append(Units.format(v[4] - v[1], Units.VOLTS)).append(" · out ").append(Units.format(v[2] - v[1], Units.VOLTS))
+                        .append(" · ").append(Units.format(reading.get().amps(), Units.AMPS));
+            } else if (!type.logic()) {
                 if (level.getBlockEntity(pos) instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity be && !type.values.isEmpty()) {
                     text.append(com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity.format(be.value(), type.unit)).append(" · ");
                 }

@@ -7,7 +7,8 @@
   "lead_in": "fourtwenty:block/component/lead_in",
   "lead_out": "fourtwenty:block/component/lead_out",
   "lead_vdd": "fourtwenty:block/component/lead_vdd",
-  "lead_gnd": "fourtwenty:block/component/lead_gnd"
+  "lead_gnd": "fourtwenty:block/component/lead_gnd",
+  "lead_gate": "fourtwenty:block/component/lead_gate"
  },
  "elements": [
   {

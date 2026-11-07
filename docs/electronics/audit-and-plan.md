@@ -141,6 +141,8 @@ The matrix then stays symmetric positive definite (after the one reference per l
 
 `domain/electronics`: `Stamp` (the solver), `Part`, `Parts` (resistor, Norton source, current source, switch, capacitor, inductor, Shockley diode with Zener breakdown and pnjlim, transformer two-port), `Analysis` and `Netlist` (DC operating point by Newton–Raphson with SPICE's convergence test, GMIN stepping and source stepping; time steps by the trapezoidal rule, backward Euler after each switch). `NetlistTest` holds it to exact answers: divider, Wheatstone bridge, floating loops, RC charge at τ, 2τ and 5τ, RL rise, RLC ringing period, the Shockley forward drop, reverse blocking, a Zener across three loads, and a 10:1 transformer conserving power. **Logic** (`Logic`, `Netlist.run`): the Nugs (NOT, Buffer, AND, OR, NAND, NOR, XOR, XNOR), the Tri-State Nug, the Latch Nug, the Flip-Flop Nug and the Ticker, as mixed-signal parts. Inputs are 1 MΦ to the part's own ground pin, read at 30% and 70% of its own supply (between keeps the last reading); outputs are a switched 100 Φ pull-up or pull-down; under 1.5 Kb of supply the output floats; each draws a quiescent current. `run` is the event-driven scheduler of 4.1 option 3: solve, let every part queue an output change after its delay (inertial: a change its inputs take back first never happens), integrate the analog circuit to the next event, apply it, re-solve 1 µs on, repeat, within an event budget. Every part's delay is off by under 0.1%, fixed by build order, so symmetric circuits can't lock into a mode no real one holds. `LogicTest` proves: every gate's truth table, a half adder, all 512 sums of a 4-bit ripple adder of 20 Nugs, the latch and the flip-flop, a 3-inverter ring oscillating at 2·3·delay, the Ticker's beat, an overloaded output failing as a real one does, an unpowered Nug floating, a glitch shorter than the delay filtered out, and an RC delay triggering a Nug at −RC·ln 0.3 plus one delay.
 
+**Active parts** (`Active`, phase 3): the **Sativa FET** (N-channel) and **Indica FET** (P-channel), MOSFETs on SPICE's level 1 square law (V_t 1 Kb, K 0.02 Ig/Kb², λ 0.01/Kb): off below threshold, a voltage-controlled resistor at low drain voltage, saturated above, drain and source swapping when the current reverses, the gate insulated, a fetlim-style step limit on the gate. The **Hype Amp**, an op-amp: gain 10⁵ on its input difference, its output limited smoothly (tanh) to 2% inside its supply, through 100 Φ; inputs 1 GΦ; under 1.5 Kb of supply its output floats; a pnjlim-style limit lets its input difference leave saturation only to the edge of the linear region, or Newton throws the output from rail to rail for ever. They stamp transconductances, so the solver is the general one (unsymmetric values on a symmetric pattern). Each loop's reference node is the minus pin of its stiffest source, which keeps precision when a node hangs off one transistor. `ActiveTest` proves: saturation current on the square law, off below threshold and the linear region, a current mirror, a CMOS inverter switching rail to rail at half supply and falling monotonically, a four-transistor CMOS NAND's truth table, the op-amp as follower, non-inverting amplifier (gain 2) and inverting amplifier (gain −2 about a reference), comparing near the rails, and floating unpowered.
+
 **The Hit Box** is now one two-port transformer in the solve (both windings in one network, its faces passive).
 
 **Now wired into the game**: `domain/Circuit` keeps its API, but its solve runs on this engine. Hookahs and Stashes are `LimitedSource` (a Newton device whose current-limit edges are stepped to, as pnjlim steps a junction), machines are `PowerLoad` (constant power above rating, a resistance below, stamped by secant relaxation so the matrix stays symmetric), and Lit Bits are `DriverLed`. The probe for loads with no loop, and the brownout continuation, are unchanged. The game's solves use a relative tolerance of 1e-9, as the old solver did, so the energy moved each tick balances; the engine's own default is 1e-6 (SPICE's is 1e-3). Every circuit unit test and game test passes unchanged.
@@ -169,8 +171,8 @@ Signals travel on a new thin single-conductor wire for low-current circuits (nam
 | Latches and flip-flops | Behavioural | SR latch, D flip-flop with clock; built from gates too, for players who want to. |
 | Clock | Behavioural oscillator | Set frequency; or build one from a 555-style circuit later. |
 | Probe and meter | Inspoweedometer | Reads a node's voltage against a reference; shows a pin's logic level. |
-| MOSFET (N, P) | Square-law | Phase 2, for transistor-level builds. |
-| Op-amp | Behavioural, finite gain, rails | Phase 2. |
+| MOSFET (N, P) | Square-law | Phase 3, built: Sativa FET, Indica FET. |
+| Op-amp | Behavioural, finite gain, rails | Phase 3, built: Hype Amp. |
 
 Logic runs at Puff voltage: V_DD = 4.2 Kb, V_IL = 1.3, V_IH = 2.9, V_OL ≤ 0.4, V_OH ≥ 3.8 (the shape of 74HC logic at 5 V, scaled).
 
@@ -227,7 +229,8 @@ Decided (user, 2026-11-06):
 | SR latch / D flip-flop | Latch Nug / Flip-Flop Nug |
 | Clock | Ticker |
 
-Later phases (transistors, op-amps) will need names of their own.
+| N-channel / P-channel MOSFET | Sativa FET / Indica FET |
+| Op-amp | Hype Amp |
 
 ### 4.1 Gate delay: the options
 

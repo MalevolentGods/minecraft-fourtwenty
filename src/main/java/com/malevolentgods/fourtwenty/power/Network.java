@@ -760,9 +760,16 @@ public final class Network {
             BlockPos pos = placed.get(i).pos();
             if (part == null || !(level.getBlockEntity(pos) instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity be)) continue;
             be.memory(part.save(live.time()));
-            if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Logic l) {
+            Boolean high = null;
+            if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Logic l) high = l.output() == com.malevolentgods.fourtwenty.domain.electronics.Logic.Out.HIGH;
+            // a Hype Amp shows its output above half its supply; a FET shows its channel conducting (a milli-Ig or more)
+            else if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Active.OpAmp) {
+                int[] p = placed.get(i).pins();
+                double supply = live.volts(p[0]) - live.volts(p[1]);
+                high = supply >= com.malevolentgods.fourtwenty.domain.electronics.Logic.MIN_SUPPLY && live.volts(p[2]) - live.volts(p[1]) > supply / 2;
+            } else if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Active.Mosfet) high = Math.abs(live.current(part)) >= 1e-3;
+            if (high != null) {
                 var state = level.getBlockState(pos);
-                boolean high = l.output() == com.malevolentgods.fourtwenty.domain.electronics.Logic.Out.HIGH;
                 if (state.hasProperty(com.malevolentgods.fourtwenty.electronics.ComponentBlock.ON)
                         && state.getValue(com.malevolentgods.fourtwenty.electronics.ComponentBlock.ON) != high) {
                     level.setBlock(pos, state.setValue(com.malevolentgods.fourtwenty.electronics.ComponentBlock.ON, high), 2);
@@ -882,6 +889,9 @@ public final class Network {
                 case LATCH -> net.latch(p[0], p[1], p[2], p[3], p[4]);
                 case FLIP_FLOP -> net.flipFlop(p[0], p[1], p[2], p[3], p[4]);
                 case TICKER -> net.ticker(p[0], p[1], p[2], value);
+                case NMOS -> net.mosfet(p[1], p[2], p[0], false);
+                case PMOS -> net.mosfet(p[1], p[2], p[0], true);
+                case OPAMP -> net.opAmp(p[0], p[1], p[2], p[3], p[4]);
             };
             reactive |= c.type().part == com.malevolentgods.fourtwenty.electronics.ComponentType.Part.CAPACITOR
                     || c.type().part == com.malevolentgods.fourtwenty.electronics.ComponentType.Part.INDUCTOR;

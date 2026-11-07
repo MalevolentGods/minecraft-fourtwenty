@@ -1,0 +1,13 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:indica_fet"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:hype_amp",
+  "count": 1
+ }
+}

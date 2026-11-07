@@ -8,6 +8,7 @@
   "lead_out": "fourtwenty:block/component/lead_out",
   "lead_vdd": "fourtwenty:block/component/lead_vdd",
   "lead_gnd": "fourtwenty:block/component/lead_gnd",
+  "lead_gate": "fourtwenty:block/component/lead_gate",
   "band": "fourtwenty:block/component/band",
   "gold": "fourtwenty:block/component/band_gold"
  },

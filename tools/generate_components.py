@@ -40,6 +40,9 @@ TYPES = [
     ('latch_nug', 'Latch Nug', 'twoin', 'LAT'),
     ('flip_flop_nug', 'Flip-Flop Nug', 'twoin', 'DFF'),
     ('ticker', 'Ticker', 'none', 'TIK'),
+    ('sativa_fet', 'Sativa FET', 'fet', 'nfet'),
+    ('indica_fet', 'Indica FET', 'fet', 'pfet'),
+    ('hype_amp', 'Hype Amp', 'amp', 'AMP'),
 ]
 
 TOOLTIPS = {
@@ -47,6 +50,8 @@ TOOLTIPS = {
     'one': 'Input at the back, output in front; VDD on top, GND underneath. Logic at the supply it gets: 30% and 70% of it are its thresholds.',
     'twoin': 'Inputs on the left and right, output in front; VDD on top, GND underneath. Logic at the supply it gets: 30% and 70% of it are its thresholds.',
     'none': 'Output in front; VDD on top, GND underneath.',
+    'fet': 'Source at the back, drain in front, gate on the left (the green lead).',
+    'amp': 'Inputs + on the left and − on the right, output in front; VDD on top, GND underneath.',
 }
 EXTRA = {
     'resinator': 'A resistor, rated 10 W: past that it burns out in smoke. Use it to step its value (sneak to step back).',
@@ -61,18 +66,21 @@ EXTRA = {
     'latch_nug': 'An SR latch: left sets it, right resets it.',
     'flip_flop_nug': 'A D flip-flop: left is D, right is the clock; it takes D on each rising edge.',
     'ticker': 'A clock: a square wave. Use it to step its period (sneak to step back).',
+    'sativa_fet': 'An N-channel MOSFET: a gate more than 1 Kb above its source lets current run from drain to source, more the higher it goes.',
+    'indica_fet': 'A P-channel MOSFET: a gate more than 1 Kb below its source lets current run from source to drain, more the lower it goes.',
+    'hype_amp': 'An op-amp: drives its output to 100,000 times the difference of its inputs, as far as its supply allows. With Resinators for feedback it amplifies by their ratio.',
 }
 
 BODY = {'resistor': (196, 170, 120), 'capacitor': (52, 92, 160), 'coil': (70, 54, 40), 'diode': (30, 30, 34), 'zener': (30, 30, 34),
-        'toggle': (110, 112, 118), 'kill': (120, 40, 36), 'button': (110, 112, 118)}
+        'toggle': (110, 112, 118), 'kill': (120, 40, 36), 'button': (110, 112, 118), 'nfet': (44, 74, 48), 'pfet': (74, 48, 84)}
 CHIP = (26, 30, 30)
-LEAD = {'in': (190, 192, 198), 'out': (220, 176, 60), 'vdd': (200, 40, 40), 'gnd': (24, 24, 26)}
+LEAD = {'in': (190, 192, 198), 'out': (220, 176, 60), 'vdd': (200, 40, 40), 'gnd': (24, 24, 26), 'gate': (90, 200, 90)}
 
 # a 3x5 pixel font for the Nug labels
 FONT = {
     'A': ['010', '101', '111', '101', '101'], 'B': ['110', '101', '110', '101', '110'], 'D': ['110', '101', '101', '101', '110'],
     'F': ['111', '100', '110', '100', '100'], 'I': ['111', '010', '010', '010', '111'], 'K': ['101', '110', '100', '110', '101'],
-    'L': ['100', '100', '100', '100', '111'], 'N': ['101', '111', '111', '111', '101'], 'O': ['111', '101', '101', '101', '111'],
+    'L': ['100', '100', '100', '100', '111'], 'M': ['101', '111', '111', '101', '101'], 'P': ['110', '101', '110', '100', '100'], 'N': ['101', '111', '111', '111', '101'], 'O': ['111', '101', '101', '101', '111'],
     'R': ['110', '101', '110', '101', '101'], 'T': ['111', '010', '010', '010', '010'], 'U': ['101', '101', '101', '101', '111'],
     'X': ['101', '101', '010', '101', '101'],
 }
@@ -117,6 +125,17 @@ def front_texture(cid, look, on):
             d.rectangle([4, 4, 11, 11], fill=((90, 220, 90) if on else (40, 20, 20)) + (255,))
         elif look == 'button':
             d.rectangle([4, 4, 11, 11], fill=((240, 220, 120) if on else (160, 140, 80)) + (255,))
+        elif look in ('nfet', 'pfet'):
+            # a power transistor: a black package under a drilled metal tab, N or P on it, a dot lit while its channel conducts
+            d.rectangle([1, 1, 14, 14], fill=(30, 30, 34, 255))
+            d.rectangle([1, 1, 14, 4], fill=(176, 178, 184, 255))
+            d.rectangle([7, 2, 8, 3], fill=(60, 60, 64, 255))
+            ink = (120, 230, 120) if look == 'nfet' else (200, 130, 230)
+            for r, row in enumerate(FONT['N' if look == 'nfet' else 'P']):
+                for c, bit in enumerate(row):
+                    if bit == '1':
+                        d.point([6 + c, 7 + r], fill=ink + (255,))
+            d.rectangle([11, 11, 12, 12], fill=(ink if on else (50, 50, 50)) + (255,))
         d.rectangle([0, 0, 15, 15], outline=(255, 255, 255, 60))
         save(img, TEX / f'{cid}_front{"_on" if on else ""}.png')
         return
@@ -132,6 +151,11 @@ def front_texture(cid, look, on):
                 if bit == '1':
                     d.point([x0 + c, 4 + r], fill=(230, 230, 220, 255))
         x0 += 4
+    if look == 'AMP':
+        # + on the left input's side, − on the right's, as you face it
+        d.line([2, 11, 4, 11], fill=(230, 90, 90, 255))
+        d.line([3, 10, 3, 12], fill=(230, 90, 90, 255))
+        d.line([11, 11, 13, 11], fill=(150, 170, 230, 255))
     d.rectangle([7, 11, 8, 12], fill=((120, 255, 90) if on else (40, 70, 40)) + (255,))
     save(img, TEX / f'{cid}_front{"_on" if on else ""}.png')
 
@@ -158,13 +182,15 @@ def box(frm, to, tex, faces=('north', 'south', 'east', 'west', 'up', 'down')):
 LEADS = {'front': ([7, 7, 0], [9, 9, 2]), 'back': ([7, 7, 14], [9, 9, 16]), 'left': ([14, 7, 7], [16, 9, 9]), 'right': ([0, 7, 7], [2, 9, 9]),
          'top': ([7, 14, 7], [9, 16, 9]), 'bottom': ([7, 0, 7], [9, 2, 9])}
 PINS = {'two': [('back', 'in'), ('front', 'in')], 'one': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out'), ('back', 'in')],
-        'twoin': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out'), ('left', 'in'), ('right', 'in')], 'none': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out')]}
+        'twoin': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out'), ('left', 'in'), ('right', 'in')],
+        'amp': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out'), ('left', 'in'), ('right', 'in')],
+        'fet': [('back', 'in'), ('front', 'out'), ('left', 'gate')], 'none': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out')]}
 
 
 def component(cid, layout, look):
     logic = look not in BODY
     side = 'chip_side' if logic else f'{look}_side'
-    states = (False, True) if logic or look in ('toggle', 'kill', 'button') else (False,)
+    states = (False, True) if logic or look in ('toggle', 'kill', 'button', 'nfet', 'pfet') else (False,)
     for on in states:
         front_texture(cid, look, on)
         s = '_on' if on else ''

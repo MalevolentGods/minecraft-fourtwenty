@@ -216,4 +216,66 @@ public final class ElectronicsGameTests {
             });
         });
     }
+    /**
+     * Both FETs straight across a Bench Rig at 4.2 Kb, gates tied to a rail. A Sativa FET facing north: drain (front) on the red rail,
+     * source (back) on the black one, its gate (left, east) on a red Wick. An Indica FET facing south: source on red, drain on black, its
+     * gate (left, west) on a black Wick. Each is fully on, saturated: K/2·(Vgs − Vt)²·(1 + λ·Vds), out of the Indica's drain.
+     */
+    @GameTest(template = "long", timeoutTicks = 200)
+    public static void fetsConductOnTheSquareLaw(GameTestHelper h) {
+        var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 8);
+        h.setBlock(l.at(1), ModPower.BENCH_RIG.get());
+        var rig = (com.malevolentgods.fourtwenty.power.SupplyBlockEntity) h.getBlockEntity(l.at(1));
+        while (Math.abs(rig.volts() - 4.2) > 1e-9) rig.stepVolts(rig.volts() < 4.2 ? 1 : -1);
+        while (Math.abs(rig.amps() - 1) > 1e-9) rig.stepAmps(1);
+        BlockPos sativa = l.at(4), indica = l.at(7);
+        place(h, sativa, ComponentType.SATIVA_FET, Direction.NORTH);
+        red(h, 5, 2, 2);
+        place(h, indica, ComponentType.INDICA_FET, Direction.SOUTH);
+        black(h, 6, 2, 2);
+        double vt = com.malevolentgods.fourtwenty.domain.electronics.Active.Mosfet.VT, k = com.malevolentgods.fourtwenty.domain.electronics.Active.Mosfet.K,
+                lambda = com.malevolentgods.fourtwenty.domain.electronics.Active.Mosfet.LAMBDA;
+        h.runAfterDelay(20, () -> {
+            for (BlockPos pos : new BlockPos[]{sativa, indica}) {
+                var found = com.malevolentgods.fourtwenty.power.Circuits.componentReading(h.getLevel(), h.absolutePos(pos));
+                h.assertTrue(found.isPresent(), "a reading");
+                double[] v = found.get().pins();
+                boolean p = pos == indica;
+                // {source, drain, gate}: the device's own sense is downward for an Indica FET
+                double vgs = (p ? -1 : 1) * (v[2] - v[0]), vds = (p ? -1 : 1) * (v[1] - v[0]);
+                h.assertTrue(vgs > 4.0, (p ? "Indica" : "Sativa") + " gate fully on: " + vgs);
+                double want = (p ? -1 : 1) * k / 2 * (vgs - vt) * (vgs - vt) * (1 + lambda * vds);
+                h.assertTrue(Math.abs(found.get().amps() - want) < 1e-4 * Math.abs(want), (p ? "Indica" : "Sativa") + " drain current " + found.get().amps() + " for " + want);
+                h.assertTrue(on(h, pos), "shows it conducts");
+            }
+            h.succeed();
+        });
+    }
+
+    /**
+     * Two Hype Amps on the rails with no feedback, comparing: one facing west has + (left, north) on the red rail and − (right, south)
+     * on the black, so it drives its output to near the top of its supply; the other faces east, the other way round, and drives it low.
+     */
+    @GameTest(template = "long", timeoutTicks = 200)
+    public static void hypeAmpsCompare(GameTestHelper h) {
+        var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 8);
+        l.hookah(1, ModBlocks.WEED_BONG.get());
+        BlockPos up = l.at(3), down = l.at(6);
+        place(h, up, ComponentType.HYPE_AMP, Direction.WEST);
+        place(h, down, ComponentType.HYPE_AMP, Direction.EAST);
+        power(h, l, 3);
+        power(h, l, 6);
+        h.runAfterDelay(20, () -> {
+            for (BlockPos pos : new BlockPos[]{up, down}) {
+                var found = com.malevolentgods.fourtwenty.power.Circuits.componentReading(h.getLevel(), h.absolutePos(pos));
+                h.assertTrue(found.isPresent(), "a reading");
+                double[] v = found.get().pins();
+                double supply = v[0] - v[1], out = v[2] - v[1];
+                h.assertTrue(supply > 1.5, "powered: " + supply);
+                if (pos == up) h.assertTrue(out > 0.9 * supply && on(h, pos), "+ above −: high, " + out + " of " + supply);
+                else h.assertTrue(out < 0.1 * supply && !on(h, pos), "+ below −: low, " + out + " of " + supply);
+            }
+            h.succeed();
+        });
+    }
 }

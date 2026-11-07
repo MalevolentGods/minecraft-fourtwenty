@@ -284,6 +284,9 @@
   "fourtwenty:tri_state_nug",
   "fourtwenty:latch_nug",
   "fourtwenty:flip_flop_nug",
-  "fourtwenty:ticker"
+  "fourtwenty:ticker",
+  "fourtwenty:sativa_fet",
+  "fourtwenty:indica_fet",
+  "fourtwenty:hype_amp"
  ]
 }

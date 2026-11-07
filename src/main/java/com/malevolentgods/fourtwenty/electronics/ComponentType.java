@@ -30,23 +30,28 @@ public enum ComponentType {
     TRI_STATE_NUG("tri_state_nug", Part.TRI_STATE, Layout.TWO_INPUT, "", List.of(), 0),
     LATCH_NUG("latch_nug", Part.LATCH, Layout.TWO_INPUT, "", List.of(), 0),
     FLIP_FLOP_NUG("flip_flop_nug", Part.FLIP_FLOP, Layout.TWO_INPUT, "", List.of(), 0),
-    TICKER("ticker", Part.TICKER, Layout.NO_INPUT, "s", List.of(0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0), 1.0);
+    TICKER("ticker", Part.TICKER, Layout.NO_INPUT, "s", List.of(0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0), 1.0),
+    SATIVA_FET("sativa_fet", Part.NMOS, Layout.THREE_PIN, "", List.of(), 0),
+    INDICA_FET("indica_fet", Part.PMOS, Layout.THREE_PIN, "", List.of(), 0),
+    HYPE_AMP("hype_amp", Part.OPAMP, Layout.TWO_INPUT, "", List.of(), 0);
 
     /** What the block is in the circuit. */
-    public enum Part { RESISTOR, CAPACITOR, INDUCTOR, DIODE, ZENER, TOGGLE, REDSTONE_SWITCH, BUTTON, GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER }
+    public enum Part { RESISTOR, CAPACITOR, INDUCTOR, DIODE, ZENER, TOGGLE, REDSTONE_SWITCH, BUTTON, GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, NMOS, PMOS, OPAMP }
 
     /** A pin's face, relative to the block's front. */
     public enum Face { FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM }
 
     /**
      * Which pins a part has, in the order the engine wants them. Two-pin parts: {back, front} (a One-Hitter's anode is its back, its
-     * cathode, the banded end, its front). Logic: {vdd, gnd, out, inputs...}.
+     * cathode, the banded end, its front). Logic: {vdd, gnd, out, inputs...}; a Hype Amp's inputs are + on the left, − on the right.
+     * FETs: {source, drain, gate}, the source at the back, the drain in front, the gate on the left.
      */
     public enum Layout {
         TWO_PIN(Face.BACK, Face.FRONT),
         NO_INPUT(Face.TOP, Face.BOTTOM, Face.FRONT),
         ONE_INPUT(Face.TOP, Face.BOTTOM, Face.FRONT, Face.BACK),
-        TWO_INPUT(Face.TOP, Face.BOTTOM, Face.FRONT, Face.LEFT, Face.RIGHT);
+        TWO_INPUT(Face.TOP, Face.BOTTOM, Face.FRONT, Face.LEFT, Face.RIGHT),
+        THREE_PIN(Face.BACK, Face.FRONT, Face.LEFT);
 
         public final List<Face> pins;
 
@@ -76,7 +81,16 @@ public enum ComponentType {
         this.gate = gate;
     }
 
-    public boolean logic() { return layout != Layout.TWO_PIN; }
+    /** A powered part read as bits: the Nugs and the Ticker. */
+    public boolean logic() {
+        return switch (part) {
+            case GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER -> true;
+            default -> false;
+        };
+    }
+
+    /** A transistor, read by its gate, drain and channel current. */
+    public boolean fet() { return part == Part.NMOS || part == Part.PMOS; }
 
     /** A Resinator's power rating, in Willards: past it for as long as a Wick takes to burn, it burns out. 0 for parts without one. */
     public double ratedWatts() { return part == Part.RESISTOR ? 10 : 0; }

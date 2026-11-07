@@ -268,8 +268,10 @@ Real components on the same circuits as everything else, solved the way SPICE so
 | NOT, Buffer, AND, OR, NAND, NOR, XOR, XNOR Nug | Logic gates |
 | Tri-State, Latch, Flip-Flop Nug | A tri-state buffer, an SR latch, a D flip-flop |
 | Ticker | A clock, 2 ms to 10 s |
+| Sativa FET, Indica FET | N- and P-channel MOSFETs: source at the back, drain in front, gate on the left (green lead). Build your own CMOS logic from them |
+| Hype Amp | An op-amp: + on the left, − on the right, output in front, powered like a Nug; with Resinators for feedback it amplifies by their ratio |
 
-Use a part to step its value (sneak to step back). Logic reads its inputs against its own supply (below 30% is a 0, above 70% a 1), drives its output through a real output resistance, lets it float with no power, and answers 1 ms after its inputs change, so logic of any depth settles inside a tick and an oscillator runs at the rate its gates allow. The Inspoweedometer reads a part's value, voltage, current and power, or a logic part's pins and the bits they read as. Circuits keep their state through chunk reloads and restarts, and share a time budget each tick: past it, they wait rather than slow the server.
+Use a part to step its value (sneak to step back). Logic reads its inputs against its own supply (below 30% is a 0, above 70% a 1), drives its output through a real output resistance, lets it float with no power, and answers 1 ms after its inputs change, so logic of any depth settles inside a tick and an oscillator runs at the rate its gates allow. The Inspoweedometer reads a part's value, voltage, current and power, or a logic part's pins and the bits they read as, a FET's gate and drain voltages and its current, or a Hype Amp's inputs and output. Circuits keep their state through chunk reloads and restarts, and share a time budget each tick: past it, they wait rather than slow the server.
 
 **Test supplies** (creative): a **Bottomless Stash** of each tier, which never runs dry, and the **Bench Rig**, a variable DC supply (use it to step its voltage from 0.5 to 4,200 Kb, sneak-use to step its current limit).
 

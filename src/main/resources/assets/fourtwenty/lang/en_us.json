@@ -2087,5 +2087,11 @@
   "block.fourtwenty.bench_rig": "Bench Rig",
   "tooltip.fourtwenty.item.bench_rig": "Creative: a variable DC supply. Use it to step its voltage, sneak-use to step its current limit; past the limit it holds that current. Red Wick for +, black for −.",
   "message.fourtwenty.bench_rig": "Bench Rig: %s, limit %s",
-  "message.fourtwenty.bottomless_stash": "Bottomless: it never runs dry"
+  "message.fourtwenty.bottomless_stash": "Bottomless: it never runs dry",
+  "block.fourtwenty.sativa_fet": "Sativa FET",
+  "tooltip.fourtwenty.item.sativa_fet": "An N-channel MOSFET: a gate more than 1 Kb above its source lets current run from drain to source, more the higher it goes. Source at the back, drain in front, gate on the left (the green lead).",
+  "block.fourtwenty.indica_fet": "Indica FET",
+  "tooltip.fourtwenty.item.indica_fet": "A P-channel MOSFET: a gate more than 1 Kb below its source lets current run from source to drain, more the lower it goes. Source at the back, drain in front, gate on the left (the green lead).",
+  "block.fourtwenty.hype_amp": "Hype Amp",
+  "tooltip.fourtwenty.item.hype_amp": "An op-amp: drives its output to 100,000 times the difference of its inputs, as far as its supply allows. With Resinators for feedback it amplifies by their ratio. Inputs + on the left and − on the right, output in front; VDD on top, GND underneath."
 }
