@@ -44,12 +44,17 @@ public abstract class Logic implements Part {
 
     @Override public int[] nodes() { return new int[]{vdd, gnd}; }
 
-    /** Every pin, for finding loops: inputs and output are tied to the supply pins through the part. */
+    /**
+     * The pins it ties into one loop, for finding references: its inputs (1 MΦ to its ground) and supply, and its output only while it
+     * drives it. A floating output is held to the part by nothing but its stage's 10 GΦ leakage, too little to be the reference a whole
+     * powered loop hangs from: it gets a reference of its own instead.
+     */
     @Override public int[] joined() {
-        int[] all = Arrays.copyOf(inputs, inputs.length + 3);
+        boolean driving = state != Out.FLOAT;
+        int[] all = Arrays.copyOf(inputs, inputs.length + (driving ? 3 : 2));
         all[inputs.length] = vdd;
         all[inputs.length + 1] = gnd;
-        all[inputs.length + 2] = out;
+        if (driving) all[inputs.length + 2] = out;
         return all;
     }
 

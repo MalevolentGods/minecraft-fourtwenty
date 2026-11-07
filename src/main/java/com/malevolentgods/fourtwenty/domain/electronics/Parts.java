@@ -63,7 +63,6 @@ public final class Parts {
         final int plus, minus;
         final double emf, ohms, maxOut, maxIn;
         private double vLast, iLast, gLast;
-        private boolean started;
 
         LimitedSource(int plus, int minus, double emf, double ohms, double maxOut, double maxIn) {
             this.plus = plus;
@@ -92,15 +91,22 @@ public final class Parts {
 
         private double conductance(double v, double k) { return v < outEdge(k) || v > inEdge(k) ? 1 / (ohms * STIFF) : 1 / ohms; }
 
-        @Override public void stamp(Stamp s, Analysis an) {
-            double k = an.sourceScale(), v = an.across(plus, minus);
-            if (started) {
-                // stop just past the first edge between the last voltage and this one: the piece changes there
-                for (double edge : new double[]{outEdge(k), inEdge(k)}) {
-                    if ((vLast - edge) * (v - edge) < 0) v = edge + Math.signum(v - edge) * 1e-9 * Math.max(1, Math.abs(edge));
+        /** Stops a Newton step just past the first edge of its pieces it would cross, so the next iteration stands on the new piece. */
+        @Override public double allowStep(Analysis an, double[] next) {
+            double k = an.sourceScale(), from = an.across(plus, minus);
+            double to = (plus == Stamp.GROUND ? 0 : next[plus]) - (minus == Stamp.GROUND ? 0 : next[minus]);
+            double alpha = 1;
+            for (double edge : new double[]{outEdge(k), inEdge(k)}) {
+                if ((from - edge) * (to - edge) < 0) {
+                    double past = 1e-9 * Math.max(1, Math.abs(edge)) / Math.abs(to - from);
+                    alpha = Math.min(alpha, (edge - from) / (to - from) + past);
                 }
             }
-            started = true;
+            return Math.max(1e-6, Math.min(1, alpha));
+        }
+
+        @Override public void stamp(Stamp s, Analysis an) {
+            double k = an.sourceScale(), v = an.across(plus, minus);
             double g = conductance(v, k), i = amps(v, k);
             vLast = v;
             iLast = i;
@@ -112,12 +118,17 @@ public final class Parts {
 
         @Override public boolean converged(Analysis an) {
             double v = an.across(plus, minus), predicted = iLast - gLast * (v - vLast), actual = amps(v, an.sourceScale());
-            return Math.abs(actual - predicted) <= an.reltol() * Math.max(Math.abs(actual), Math.abs(predicted)) + ABSTOL;
+            // its current is (EMF − v)/R: with a stiff source that difference carries the voltages' rounding, about 1e-16 of them over R,
+            // so no tolerance tighter than that can be met; past it, convergence would come down to luck in the last bits
+            double rounding = 1e-14 * (Math.abs(emf) + Math.abs(v)) / ohms;
+            return Math.abs(actual - predicted) <= an.reltol() * Math.max(Math.abs(actual), Math.abs(predicted)) + ABSTOL + rounding;
         }
 
         @Override public double current(Analysis an) { return amps(an.across(plus, minus), an.sourceScale()); }
 
         public double ohms() { return ohms; }
+
+        @Override public String toString() { return "LimitedSource[emf=" + emf + ", ohms=" + ohms + ", maxOut=" + maxOut + ", maxIn=" + maxIn + "]"; }
     }
 
     /**

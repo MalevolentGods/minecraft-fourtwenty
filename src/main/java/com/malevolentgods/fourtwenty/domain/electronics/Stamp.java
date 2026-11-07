@@ -7,10 +7,11 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 /**
- * One linear system G·v = i to be solved: every part stamps a conductance between two nodes and a current into them. Every stamp is a
- * positive conductance (docs/electronics/audit-and-plan.md 2.6), so the matrix is symmetric positive definite once each loop's reference
- * node is fixed at zero, and it is solved by elimination with no pivoting, fewest neighbours first: Wick networks are mostly trees,
- * solved in linear time.
+ * One linear system G·v = i to be solved: every part stamps a conductance between two nodes and a current into them, and an active part
+ * (a transistor, an op-amp) a transconductance, a current at one pair of nodes set by the voltage across another. The pattern of the
+ * matrix is kept symmetric (every entry has its mirror, zero if need be) but its values needn't be, and it is solved by Gaussian
+ * elimination fewest neighbours first, without pivoting: Wick networks are mostly trees, solved in linear time, and what passive parts
+ * stamp is symmetric positive definite once each loop's reference node is fixed at zero (docs/electronics/audit-and-plan.md 2.6).
  *
  * <p>Stiff parts (an ideal source's tiny resistance beside a kilophu resistor) cost digits in elimination, so the answer is refined: the
  * current left over at each node, against the original matrix, is solved for again with the same factors, as SPICE does. {@link #GROUND}
@@ -38,6 +39,19 @@ public final class Stamp {
         // a fixed node is held at zero: its own row is dropped, and in other rows it contributes nothing
         if (!free(r) || !free(c) || value == 0) return;
         rows.get(r).merge(c, value, Double::sum);
+        // keep the pattern symmetric: the mirror entry exists, even if it's zero
+        rows.get(c).putIfAbsent(r, 0.0);
+    }
+
+    /**
+     * A transconductance: a current {@code gm}·(v(ctrlPlus) − v(ctrlMinus)) driven from {@code from} through the part to {@code to}, as a
+     * transistor's channel answers its gate, or an op-amp's output its inputs.
+     */
+    public void transconductance(int from, int to, int ctrlPlus, int ctrlMinus, double gm) {
+        add(from, ctrlPlus, gm);
+        add(from, ctrlMinus, -gm);
+        add(to, ctrlPlus, -gm);
+        add(to, ctrlMinus, gm);
     }
 
     /** A conductance {@code g} between {@code a} and {@code b} (either may be {@link #GROUND}). */
@@ -156,7 +170,7 @@ public final class Stamp {
             for (var ej : others.entrySet()) {
                 int j = ej.getKey();
                 Map<Integer, Double> rowJ = rows.get(j);
-                double f = ej.getValue() / pivot;
+                double f = rowJ.getOrDefault(k, 0.0) / pivot;
                 targets[k][t] = j;
                 factors[k][t++] = f;
                 for (var ei : others.entrySet()) rowJ.merge(ei.getKey(), -f * ei.getValue(), Double::sum);

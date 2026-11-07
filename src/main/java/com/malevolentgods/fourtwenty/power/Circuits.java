@@ -115,6 +115,11 @@ public final class Circuits {
             for (Object[] found : terminalOnLine(level, wire).stream().toList()) {
                 Network net = network(level, (BINode) found[0], (BlockPos) found[1]);
                 double[] pins = net.pinVolts(pos);
+                if (pins == null) {
+                    // just rebuilt and not run yet: run its tick now, as the other readings do
+                    net.tick(level, of(level).burnTimers);
+                    pins = net.pinVolts(pos);
+                }
                 if (pins != null) return Optional.of(new ComponentReading(pins, net.componentAmps(pos)));
             }
         }

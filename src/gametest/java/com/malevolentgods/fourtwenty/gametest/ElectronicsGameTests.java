@@ -50,7 +50,8 @@ public final class ElectronicsGameTests {
         Ladder.wick(h, l.at(7), ModPower.HEMP_WICK.get(), WickBlock.Colour.RED);
         h.setBlock(l.at(4), ModElectronics.HEMP_THREAD.get());
         h.runAfterDelay(40, () -> {
-            h.assertTrue(on(h, nug), "input open (0): the output is high");
+            var r = com.malevolentgods.fourtwenty.power.Circuits.componentReading(h.getLevel(), h.absolutePos(nug));
+            h.assertTrue(on(h, nug), "input open (0): the output is high; pins " + r.map(x -> java.util.Arrays.toString(x.pins())).orElse("no reading"));
             ((ComponentBlockEntity) h.getBlockEntity(toggle)).closed(true);
             h.runAfterDelay(10, () -> {
                 h.assertFalse(on(h, nug), "input closed to VDD (1): the output is low");

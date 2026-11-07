@@ -17,6 +17,12 @@ public interface Part {
     /** Stamps its companion model at the present guess. */
     void stamp(Stamp stamp, Analysis analysis);
 
+    /**
+     * How much of a Newton step from the present voltages toward {@code next} it allows, 0 to 1: a part whose curve has corners stops the
+     * step just past the first corner it would cross, so the next iteration sees the new piece (breakpoint stepping). 1 for most parts.
+     */
+    default double allowStep(Analysis analysis, double[] next) { return 1; }
+
     /** Whether its stamp depends on the voltages (so the solve must iterate). */
     default boolean nonlinear() { return false; }
 

@@ -300,7 +300,11 @@ public final class Netlist {
             for (Part p : parts) p.stamp(stamp, analysis);
             double[] x = stamp.solve();
             if (x == null) return false;
-            boolean small = true;
+            // breakpoint stepping: a part with a corner on the way stops the whole step just past it
+            double alpha = 1;
+            for (Part p : parts) if (p.nonlinear()) alpha = Math.min(alpha, p.allowStep(analysis, x));
+            if (alpha < 1) for (int i = 0; i < nodes; i++) x[i] = analysis.v[i] + alpha * (x[i] - analysis.v[i]);
+            boolean small = alpha >= 1;
             for (int i = 0; i < nodes; i++) {
                 double d = x[i] - analysis.v[i];
                 if (Math.abs(d) > stepLimit) {

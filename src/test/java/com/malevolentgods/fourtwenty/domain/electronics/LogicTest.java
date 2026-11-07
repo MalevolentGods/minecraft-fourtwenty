@@ -290,4 +290,34 @@ class LogicTest {
         again.run(0.5);
         assertTrue(cap2.volts() > charge, "and goes on charging from there");
     }
+
+    /**
+     * A Latch Nug on a Hookah-like supply (stiff, current-limited, taking nothing back) through Wicks of a few µΦ, its output floating
+     * into a Hemp Thread: every run converges, through set and release, across twenty different timings. (A floating output once made
+     * the reference node hang off 10 GΦ, and the whole powered loop drifted with rounding: half these runs failed.)
+     */
+    @Test void aLightlyLoadedLogicCircuitOnAStiffSupplyAlwaysConverges() {
+        for (int trial = 0; trial < 20; trial++) {
+            var n = new Netlist();
+            for (int i = 0; i < 20; i++) n.node();
+            double[][] rs = {{2, 3, 2.52E-5}, {4, 5, 2.52E-5}, {3, 6, 1.26E-5}, {3, 7, 3.15E-5}, {5, 8, 1.89E-5}, {5, 9, 1.26E-5}, {7, 10, 1.89E-5},
+                    {7, 11, 1.89E-5}, {0, 2, 3.15E-6}, {1, 4, 3.15E-6}, {13, 8, 3.15E-6}, {14, 7, 3.15E-6}, {15, 12, 0.00315}, {16, 10, 3.15E-6}, {17, 11, 3.15E-6}};
+            for (double[] r : rs) n.resistor((int) r[0], (int) r[1], r[2]);
+            n.limitedSource(0, 1, 4.2, 2.1E-4, 105, 0);
+            var latch = n.latch(14, 13, 15, 18, 19);
+            var reset = n.switchPart(16, 19, false);
+            var set = n.switchPart(18, 17, false);
+            n.tolerance(1e-9);
+            n.stepLimit(0.25 * 4.2);
+            assertTrue(n.resume(java.util.Map.of()));
+            for (int t = 0; t < 60; t++) {
+                if (t == 20 + trial) n.set(set, true);
+                if (t == 30 + trial) n.set(set, false);
+                if (t == 55) n.set(reset, true);
+                assertTrue(n.run(0.05), "trial " + trial + ", tick " + t);
+                if (t == 50) assertEquals(Logic.Out.HIGH, latch.output(), "set, and held after release");
+            }
+            assertEquals(Logic.Out.LOW, latch.output(), "reset");
+        }
+    }
 }

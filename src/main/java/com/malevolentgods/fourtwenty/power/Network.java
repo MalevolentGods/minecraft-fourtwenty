@@ -718,6 +718,9 @@ public final class Network {
     /** All the circuits with components on a server share this much time a tick; past it, the rest wait for the next tick. */
     static final long LIVE_BUDGET_NANOS = 20_000_000;
     private static long liveSpent;
+    /** The most ticks in a row a circuit waits for the shared budget before it runs anyway. */
+    static final int MAX_WAIT = 5;
+    private int liveWaited;
 
     /** A new server tick: the electronics' shared time starts again. */
     public static void startTick(net.neoforged.neoforge.event.tick.ServerTickEvent.Pre event) { liveSpent = 0; }
@@ -745,8 +748,10 @@ public final class Network {
                 live.set(sw, be.closed());
             }
         }
-        // over the shared budget: this circuit waits a tick (it runs slow, the server doesn't)
-        if (liveSpent > LIVE_BUDGET_NANOS && solution != null) return;
+        // over the shared budget: this circuit waits a tick (it runs slow, the server doesn't); but none waits more than a few ticks in a
+        // row, or the circuits that happen to come first each tick could starve the rest for good
+        if (liveSpent > LIVE_BUDGET_NANOS && solution != null && ++liveWaited < MAX_WAIT) return;
+        liveWaited = 0;
         long started = System.nanoTime();
         boolean ok = live.run(1.0 / BIRules.TICKS_PER_SECOND);
         liveSpent += System.nanoTime() - started;
