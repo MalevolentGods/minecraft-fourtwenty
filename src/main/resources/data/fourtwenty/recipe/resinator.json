@@ -1,0 +1,19 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "minecraft:copper_ingot"
+  },
+  {
+   "item": "minecraft:coal"
+  },
+  {
+   "item": "fourtwenty:hemp_thread"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:resinator",
+  "count": 4
+ }
+}

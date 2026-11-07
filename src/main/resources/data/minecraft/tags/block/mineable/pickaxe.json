@@ -263,6 +263,27 @@
   "fourtwenty:glass_twin_wick",
   "fourtwenty:glass_daisy_wick",
   "fourtwenty:gold_twin_wick",
-  "fourtwenty:gold_daisy_wick"
+  "fourtwenty:gold_daisy_wick",
+  "fourtwenty:hemp_thread",
+  "fourtwenty:resinator",
+  "fourtwenty:kief_cap",
+  "fourtwenty:spliff_coil",
+  "fourtwenty:one_hitter",
+  "fourtwenty:zen_hitter",
+  "fourtwenty:toggle_joint",
+  "fourtwenty:kill_switch",
+  "fourtwenty:puff_button",
+  "fourtwenty:not_nug",
+  "fourtwenty:buffer_nug",
+  "fourtwenty:and_nug",
+  "fourtwenty:or_nug",
+  "fourtwenty:nand_nug",
+  "fourtwenty:nor_nug",
+  "fourtwenty:xor_nug",
+  "fourtwenty:xnor_nug",
+  "fourtwenty:tri_state_nug",
+  "fourtwenty:latch_nug",
+  "fourtwenty:flip_flop_nug",
+  "fourtwenty:ticker"
  ]
 }

@@ -1,0 +1,78 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "front": "fourtwenty:block/component/bench_rig_front",
+  "side": "fourtwenty:block/component/bench_rig_side",
+  "particle": "fourtwenty:block/component/bench_rig_side"
+ },
+ "elements": [
+  {
+   "from": [
+    1,
+    0,
+    1
+   ],
+   "to": [
+    15,
+    14,
+    15
+   ],
+   "faces": {
+    "south": {
+     "uv": [
+      1,
+      2,
+      15,
+      16
+     ],
+     "texture": "#side"
+    },
+    "east": {
+     "uv": [
+      1,
+      2,
+      15,
+      16
+     ],
+     "texture": "#side"
+    },
+    "west": {
+     "uv": [
+      1,
+      2,
+      15,
+      16
+     ],
+     "texture": "#side"
+    },
+    "north": {
+     "uv": [
+      1,
+      2,
+      15,
+      16
+     ],
+     "texture": "#front"
+    },
+    "up": {
+     "uv": [
+      1,
+      1,
+      15,
+      15
+     ],
+     "texture": "#side"
+    },
+    "down": {
+     "uv": [
+      1,
+      1,
+      15,
+      15
+     ],
+     "texture": "#side"
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:puff_button"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:resinator",
+  "count": 1
+ }
+}

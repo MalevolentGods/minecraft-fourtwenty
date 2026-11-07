@@ -1,0 +1,19 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "minecraft:copper_ingot"
+  },
+  {
+   "item": "minecraft:redstone_torch"
+  },
+  {
+   "item": "fourtwenty:hemp_thread"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:not_nug",
+  "count": 4
+ }
+}

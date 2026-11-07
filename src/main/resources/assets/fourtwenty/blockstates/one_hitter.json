@@ -1,0 +1,34 @@
+{
+ "variants": {
+  "facing=north,on=false": {
+   "model": "fourtwenty:block/component/one_hitter"
+  },
+  "facing=north,on=true": {
+   "model": "fourtwenty:block/component/one_hitter"
+  },
+  "facing=east,on=false": {
+   "model": "fourtwenty:block/component/one_hitter",
+   "y": 90
+  },
+  "facing=east,on=true": {
+   "model": "fourtwenty:block/component/one_hitter",
+   "y": 90
+  },
+  "facing=south,on=false": {
+   "model": "fourtwenty:block/component/one_hitter",
+   "y": 180
+  },
+  "facing=south,on=true": {
+   "model": "fourtwenty:block/component/one_hitter",
+   "y": 180
+  },
+  "facing=west,on=false": {
+   "model": "fourtwenty:block/component/one_hitter",
+   "y": 270
+  },
+  "facing=west,on=true": {
+   "model": "fourtwenty:block/component/one_hitter",
+   "y": 270
+  }
+ }
+}

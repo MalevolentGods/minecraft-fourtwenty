@@ -132,6 +132,14 @@ public final class ModPower {
             GLASS_DAISY_WICK = cable("glass_daisy_wick", com.malevolentgods.fourtwenty.power.CableBlock.Kind.DAISY, Tier.RIP),
             GOLD_DAISY_WICK = cable("gold_daisy_wick", com.malevolentgods.fourtwenty.power.CableBlock.Kind.DAISY, Tier.BLAZE);
 
+    // creative supplies: a Bottomless Stash of each tier, and the Bench Rig, a variable DC supply
+    public static final DeferredHolder<Block, com.malevolentgods.fourtwenty.power.SupplyBlock>
+            BOTTOMLESS_STASH_PUFF = block("bottomless_stash_puff", () -> new com.malevolentgods.fourtwenty.power.SupplyBlock(Tier.PUFF, false, metal())),
+            BOTTOMLESS_STASH_TOKE = block("bottomless_stash_toke", () -> new com.malevolentgods.fourtwenty.power.SupplyBlock(Tier.TOKE, false, metal())),
+            BOTTOMLESS_STASH_RIP = block("bottomless_stash_rip", () -> new com.malevolentgods.fourtwenty.power.SupplyBlock(Tier.RIP, false, metal())),
+            BOTTOMLESS_STASH_BLAZE = block("bottomless_stash_blaze", () -> new com.malevolentgods.fourtwenty.power.SupplyBlock(Tier.BLAZE, false, metal())),
+            BENCH_RIG = block("bench_rig", () -> new com.malevolentgods.fourtwenty.power.SupplyBlock(Tier.BLAZE, true, metal()));
+
     public static final DeferredHolder<Block, WeedBongBlock> DOUBLE_HOSE = hookah("double_hose", Tier.TOKE);
     public static final DeferredHolder<Block, WeedBongBlock> BIG_BERTHA = hookah("big_bertha", Tier.RIP);
     public static final DeferredHolder<Block, WeedBongBlock> GRAND_HOOKAH = hookah("grand_hookah", Tier.BLAZE);
@@ -169,6 +177,9 @@ public final class ModPower {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StashBlockEntity>> STASH_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("stash",
             () -> BlockEntityType.Builder.of(StashBlockEntity::new, STASH_JAR.get(), STASH_BOX.get(), MOTHER_STASH.get(), THE_VAULT.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.malevolentgods.fourtwenty.power.SupplyBlockEntity>> SUPPLY_ENTITY =
+            ModBlockEntities.BLOCK_ENTITIES.register("supply", () -> BlockEntityType.Builder.of(com.malevolentgods.fourtwenty.power.SupplyBlockEntity::new,
+                    BOTTOMLESS_STASH_PUFF.get(), BOTTOMLESS_STASH_TOKE.get(), BOTTOMLESS_STASH_RIP.get(), BOTTOMLESS_STASH_BLAZE.get(), BENCH_RIG.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HitBoxBlockEntity>> HIT_BOX_ENTITY = ModBlockEntities.BLOCK_ENTITIES.register("hit_box",
             () -> BlockEntityType.Builder.of(HitBoxBlockEntity::new, HIT_BOX.get()).build(null));
     private static BlockBehaviour.Properties plot(int light) {
@@ -233,6 +244,7 @@ public final class ModPower {
     private static void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(BINode.CAPABILITY, ModBlockEntities.WEED_BONG.get(), (WeedBongBlockEntity entity, Direction side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side));
         event.registerBlockEntity(BINode.CAPABILITY, STASH_ENTITY.get(), (entity, side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side));
+        event.registerBlockEntity(BINode.CAPABILITY, SUPPLY_ENTITY.get(), (entity, side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side));
         event.registerBlockEntity(BINode.CAPABILITY, HIT_BOX_ENTITY.get(), HitBoxBlockEntity::node);
         event.registerBlockEntity(BINode.CAPABILITY, MACHINE_ENTITY.get(), (entity, side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side));
         event.registerBlockEntity(BINode.CAPABILITY, PHENO_ENTITY.get(), (entity, side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side));

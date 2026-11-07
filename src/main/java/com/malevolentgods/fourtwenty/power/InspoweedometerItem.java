@@ -61,6 +61,36 @@ public class InspoweedometerItem extends Item {
             player.displayClientMessage(line.copy().withStyle(ChatFormatting.AQUA), true);
             return InteractionResult.SUCCESS;
         }
+        if (level.getBlockState(pos).getBlock() instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlock cb) {
+            var type = cb.type();
+            var reading = Circuits.componentReading(level, pos);
+            if (reading.isEmpty()) {
+                player.displayClientMessage(Component.translatable("message.fourtwenty.meter.none").withStyle(ChatFormatting.GRAY), true);
+                return InteractionResult.SUCCESS;
+            }
+            double[] v = reading.get().pins();
+            StringBuilder text = new StringBuilder();
+            if (!type.logic()) {
+                if (level.getBlockEntity(pos) instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity be && !type.values.isEmpty()) {
+                    text.append(com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity.format(be.value(), type.unit)).append(" · ");
+                }
+                text.append(Units.format(v[0] - v[1], Units.VOLTS)).append(" · ").append(Units.format(Math.abs(reading.get().amps()), Units.AMPS));
+            } else {
+                // VDD and GND, then each logic pin against GND, and the bit it reads as at 30% and 70% of the supply
+                double supply = v[0] - v[1];
+                text.append("VDD ").append(Units.format(supply, Units.VOLTS));
+                String[] names = type.layout == com.malevolentgods.fourtwenty.electronics.ComponentType.Layout.TWO_INPUT ? new String[]{"out", "L", "R"}
+                        : type.layout == com.malevolentgods.fourtwenty.electronics.ComponentType.Layout.ONE_INPUT ? new String[]{"out", "in"} : new String[]{"out"};
+                for (int i = 2; i < v.length; i++) {
+                    double at = v[i] - v[1];
+                    String bit = at >= 0.7 * supply ? "1" : at <= 0.3 * supply ? "0" : "?";
+                    text.append(" · ").append(names[i - 2]).append(' ').append(Units.format(at, Units.VOLTS)).append(" (").append(bit).append(')');
+                }
+            }
+            player.displayClientMessage(Component.translatable("message.fourtwenty.meter.component", Component.translatable("block.fourtwenty." + type.id), text.toString())
+                    .withStyle(ChatFormatting.GREEN), true);
+            return InteractionResult.SUCCESS;
+        }
         if (level.getBlockState(pos).getBlock() instanceof CableBlock cable) {
             var why = Circuits.daisyFailure(level, pos);
             if (why.isPresent()) {

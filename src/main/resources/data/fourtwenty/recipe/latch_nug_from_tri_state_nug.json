@@ -1,0 +1,13 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:tri_state_nug"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:latch_nug",
+  "count": 1
+ }
+}

@@ -570,7 +570,7 @@ public final class Network {
             h = h * 31 + (overloaded ? 1 : 0);
             if (overloaded) continue;
             switch (role) {
-                case SOURCE -> h = h * 31 + (n.sourceReady() ? 1 : 0);
+                case SOURCE -> h = (h * 31 + (n.sourceReady() ? 1 : 0)) * 31 + Double.hashCode(n.emf()) * 7 + Double.hashCode(n.maxAmps());
                 case LOAD -> h = h * 31 + Double.hashCode(n.demandWatts());
                 // an LED's current to the nearest 1/32 of full white, so a light show doesn't force a solve every tick
                 case LED -> h = h * 31 + Math.round(n.ledAmps() / (3 * com.malevolentgods.fourtwenty.lights.LightsConfig.led().channelAmps()) * 32);
@@ -603,6 +603,7 @@ public final class Network {
             }
         }
         nominal = top == null ? 0 : rules.volts(top);
+        for (Member m : members) if (m.node().role() == BINode.Role.SOURCE && !Double.isNaN(m.node().emf())) nominal = Math.max(nominal, m.node().emf());
         for (int i = 0; i < members.size(); i++) {
             BINode n = members.get(i).node();
             int plus = members.get(i).plus(), minus = members.get(i).minus();
@@ -612,8 +613,9 @@ public final class Network {
             switch (n.role()) {
                 case SOURCE -> {
                     if (!n.sourceReady()) continue;
-                    double watts = n.sourceWatts();
-                    sourceIndex[i] = circuit.source(plus, minus, volts, rules.sourceDroop() * volts * volts / watts, rules.sourceLimit() * watts / volts, 0);
+                    double watts = n.sourceWatts(), emf = Double.isNaN(n.emf()) ? volts : n.emf();
+                    double limit = Double.isNaN(n.maxAmps()) ? rules.sourceLimit() * watts / volts : n.maxAmps();
+                    sourceIndex[i] = circuit.source(plus, minus, emf, rules.sourceDroop() * emf / Math.max(limit, 1e-9) * (Double.isNaN(n.maxAmps()) ? rules.sourceLimit() : 1), limit, 0);
                 }
                 case BATTERY -> {
                     double amps = rules.stashAmps(tier);
@@ -797,6 +799,7 @@ public final class Network {
             }
         }
         nominal = top == null ? 0 : rules.volts(top);
+        for (Member m : members) if (m.node().role() == BINode.Role.SOURCE && !Double.isNaN(m.node().emf())) nominal = Math.max(nominal, m.node().emf());
         for (int i = 0; i < members.size(); i++) {
             BINode n = members.get(i).node();
             int plus = members.get(i).plus(), minus = members.get(i).minus();
@@ -806,9 +809,11 @@ public final class Network {
             switch (n.role()) {
                 case SOURCE -> {
                     if (!n.sourceReady()) continue;
-                    double watts = n.sourceWatts(), ohms = rules.sourceDroop() * volts * volts / watts;
+                    double watts = n.sourceWatts(), emf = Double.isNaN(n.emf()) ? volts : n.emf();
+                    double limit = Double.isNaN(n.maxAmps()) ? rules.sourceLimit() * watts / volts : n.maxAmps();
+                    double ohms = rules.sourceDroop() * emf / Math.max(limit, 1e-9) * (Double.isNaN(n.maxAmps()) ? rules.sourceLimit() : 1);
                     sourceIndex[i] = liveSources.size();
-                    liveSources.add(net.limitedSource(plus, minus, volts, ohms, rules.sourceLimit() * watts / volts, 0));
+                    liveSources.add(net.limitedSource(plus, minus, emf, ohms, limit, 0));
                     liveSourceOhms.add(new double[]{ohms});
                 }
                 case BATTERY -> {

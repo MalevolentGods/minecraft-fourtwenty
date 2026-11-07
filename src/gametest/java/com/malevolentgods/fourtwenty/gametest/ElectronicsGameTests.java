@@ -81,4 +81,38 @@ public final class ElectronicsGameTests {
             h.succeed();
         });
     }
+
+    /** A Bench Rig set to 3.3 Kb across a 1 kΦ Resinator between its rails: 3.3 mIg flows, by Ohm's law. (Hemp rails are insulated to 6.3 Kb.) */
+    @GameTest(template = "long", timeoutTicks = 200)
+    public static void aBenchRigDrivesOhmsLaw(GameTestHelper h) {
+        var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 5);
+        h.setBlock(l.at(1), ModPower.BENCH_RIG.get());
+        var rig = (com.malevolentgods.fourtwenty.power.SupplyBlockEntity) h.getBlockEntity(l.at(1));
+        while (Math.abs(rig.volts() - 3.3) > 1e-9) rig.stepVolts(1);
+        // facing north: its front pin to the red rail (north), its back pin to the black one (south)
+        BlockPos r = l.at(4);
+        h.setBlock(r, ModElectronics.COMPONENTS.get(ComponentType.RESINATOR).get().defaultBlockState().setValue(ComponentBlock.FACING, Direction.NORTH));
+        h.runAfterDelay(20, () -> {
+            var found = com.malevolentgods.fourtwenty.power.Circuits.componentReading(h.getLevel(), h.absolutePos(r));
+            h.assertTrue(found.isPresent(), "a reading");
+            var reading = found.get();
+            double across = Math.abs(reading.pins()[0] - reading.pins()[1]);
+            h.assertTrue(Math.abs(across - 3.3) < 0.02, "3.3 Kb across it, got " + across);
+            h.assertTrue(Math.abs(Math.abs(reading.amps()) - 0.0033) < 3e-5, "3.3 mIg through it, got " + reading.amps());
+            h.succeed();
+        });
+    }
+
+    /** A Bottomless Stash powers a NOT Nug with nothing on its input: its output is high, and it never runs dry. */
+    @GameTest(template = "long", timeoutTicks = 200)
+    public static void aBottomlessStashPowersLogic(GameTestHelper h) {
+        var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 7);
+        h.setBlock(l.at(1), ModPower.BOTTOMLESS_STASH_PUFF.get());
+        BlockPos nug = component(h, l.at(5), ComponentType.NOT_NUG);
+        power(h, l, 5);
+        h.runAfterDelay(20, () -> {
+            h.assertTrue(on(h, nug), "powered, input low: output high");
+            h.succeed();
+        });
+    }
 }

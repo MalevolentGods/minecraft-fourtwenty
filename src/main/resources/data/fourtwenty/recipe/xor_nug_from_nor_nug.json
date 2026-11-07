@@ -1,0 +1,13 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:nor_nug"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:xor_nug",
+  "count": 1
+ }
+}

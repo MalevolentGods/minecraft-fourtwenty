@@ -1,0 +1,13 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:resinator"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:kief_cap",
+  "count": 1
+ }
+}

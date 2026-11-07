@@ -1,0 +1,13 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:zen_hitter"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:toggle_joint",
+  "count": 1
+ }
+}

@@ -50,6 +50,12 @@ public interface BINode {
         return com.malevolentgods.fourtwenty.domain.CircuitRules.hookahWatts(tier());
     }
 
+    /** A source set to its own voltage (the Bench Rig), or NaN for its tier's. */
+    default double emf() { return Double.NaN; }
+
+    /** A source set to its own current limit (the Bench Rig), or NaN for its tier's Hookah share. */
+    default double maxAmps() { return Double.NaN; }
+
     /** Whether a source has anything to give. */
     default boolean sourceReady() { return stored() > 0; }
 

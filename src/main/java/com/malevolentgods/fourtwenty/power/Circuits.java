@@ -102,6 +102,25 @@ public final class Circuits {
         return a.getBlock() instanceof CableBlock ? CableBlock.takesWick(b) : CableBlock.takesWick(a);
     }
 
+    /** A component's reading: each pin's voltage, and the current through it (a logic part's supply current). */
+    public record ComponentReading(double[] pins, double amps) {}
+
+    /** What the Inspoweedometer reads at a component: found from the Wick or Hemp Thread on any of its pin faces. */
+    public static Optional<ComponentReading> componentReading(Level level, BlockPos pos) {
+        var state = level.getBlockState(pos);
+        for (Direction d : Direction.values()) {
+            if (com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(state, d) < 0) continue;
+            BlockPos wire = pos.relative(d);
+            if (!(level.getBlockState(wire).getBlock() instanceof WickBlock)) continue;
+            for (Object[] found : terminalOnLine(level, wire).stream().toList()) {
+                Network net = network(level, (BINode) found[0], (BlockPos) found[1]);
+                double[] pins = net.pinVolts(pos);
+                if (pins != null) return Optional.of(new ComponentReading(pins, net.componentAmps(pos)));
+            }
+        }
+        return Optional.empty();
+    }
+
     /** Why the Daisy line through the cable at {@code pos} carries nothing, if it can't be ordered. */
     public static Optional<com.malevolentgods.fourtwenty.domain.DaisyLine.Reason> daisyFailure(Level level, BlockPos pos) {
         if (!(level.getBlockState(pos).getBlock() instanceof CableBlock)) return Optional.empty();
