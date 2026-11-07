@@ -243,6 +243,119 @@ public final class Chips {
         @Override void registers(double[] r) {}
     }
 
+    /** What bus logic does to each pair of bits. */
+    public enum Op { AND, OR, XOR, NAND, NOR, XNOR, NOT_A, A }
+
+    /**
+     * Bus logic: one operation on two 9-bit buses, wire for wire (channels 0 to 7 and the carry), into a 9-bit bus. NOT A and A ignore
+     * B. Inputs: A's nine, then B's nine.
+     */
+    public static final class BusLogic extends Chip {
+        final Op op;
+
+        BusLogic(int vdd, int gnd, Op op, int[] a, int[] b) {
+            super(vdd, gnd, concat(a, b), a.length);
+            this.op = op;
+        }
+
+        public Op op() { return op; }
+
+        static int apply(Op op, int a, int b) {
+            return switch (op) {
+                case AND -> a & b;
+                case OR -> a | b;
+                case XOR -> a ^ b;
+                case NAND -> ~(a & b) & 1;
+                case NOR -> ~(a | b) & 1;
+                case XNOR -> ~(a ^ b) & 1;
+                case NOT_A -> ~a & 1;
+                case A -> a;
+            };
+        }
+
+        @Override Logic.Out[] evaluate(Analysis an) {
+            int n = pins.length;
+            Logic.Out[] out = new Logic.Out[n];
+            for (int i = 0; i < n; i++) out[i] = level(apply(op, bit(an, i), bit(an, n + i)));
+            return out;
+        }
+
+        @Override double[] registers() { return new double[0]; }
+
+        @Override void registers(double[] r) {}
+    }
+
+    /**
+     * An 8-bit adder: A + B + carry in, the sum on 8 outputs and the carry out on the ninth. Subtracting, A − B − borrow in, the
+     * difference wrapped to 8 bits (two's complement) and the ninth output 1 when it borrowed. Either way, adders chain: the low one's
+     * ninth output into the high one's carry in. Inputs: A's eight, B's eight, carry in.
+     */
+    public static final class Adder extends Chip {
+        final boolean subtract;
+
+        Adder(int vdd, int gnd, int[] a, int[] b, int carryIn, boolean subtract) {
+            super(vdd, gnd, concat(concat(a, b), new int[]{carryIn}), 9);
+            this.subtract = subtract;
+        }
+
+        @Override Logic.Out[] evaluate(Analysis an) {
+            int a = bits(an, 0, 8), b = bits(an, 8, 8), c = bit(an, 16);
+            int r = subtract ? a - b - c : a + b + c;
+            Logic.Out[] out = new Logic.Out[9];
+            for (int i = 0; i < 8; i++) out[i] = level((r >> i) & 1);
+            out[8] = level(subtract ? (r < 0 ? 1 : 0) : (r >> 8) & 1);
+            return out;
+        }
+
+        @Override double[] registers() { return new double[0]; }
+
+        @Override void registers(double[] r) {}
+    }
+
+    /** An 8-bit comparator: three outputs, A < B, A = B, A > B, unsigned. Inputs: A's eight, B's eight. */
+    public static final class Comparator extends Chip {
+        Comparator(int vdd, int gnd, int[] a, int[] b) { super(vdd, gnd, concat(a, b), 3); }
+
+        @Override Logic.Out[] evaluate(Analysis an) {
+            int a = bits(an, 0, 8), b = bits(an, 8, 8);
+            return new Logic.Out[]{level(a < b ? 1 : 0), level(a == b ? 1 : 0), level(a > b ? 1 : 0)};
+        }
+
+        @Override double[] registers() { return new double[0]; }
+
+        @Override void registers(double[] r) {}
+    }
+
+    /**
+     * A 9-bit register (a 74HC574's kind): on each rising clock edge it takes its inputs; it drives them out until release is 1, when
+     * it lets go of every output, so several can share one bus and take turns. Inputs: the nine, clock, release.
+     */
+    public static final class Register extends Chip {
+        private int q, lastClock = -1;
+
+        Register(int vdd, int gnd, int[] d, int clock, int release) { super(vdd, gnd, concat(d, new int[]{clock, release}), d.length); }
+
+        @Override Logic.Out[] evaluate(Analysis an) {
+            int n = pins.length, clk = bit(an, n), release = bit(an, n + 1);
+            if (lastClock == 0 && clk == 1) q = bits(an, 0, n);
+            lastClock = clk;
+            Logic.Out[] out = new Logic.Out[n];
+            for (int i = 0; i < n; i++) out[i] = release == 1 ? Logic.Out.FLOAT : level((q >> i) & 1);
+            return out;
+        }
+
+        @Override void unpowered() { lastClock = -1; }
+
+        @Override double[] registers() { return new double[]{q, lastClock}; }
+
+        @Override void registers(double[] r) {
+            q = (int) r[0];
+            lastClock = (int) r[1];
+        }
+
+        public int value() { return q; }
+    }
+
     static int[] concat(int[] a, int[] b) {
         int[] out = Arrays.copyOf(a, a.length + b.length);
         System.arraycopy(b, 0, out, a.length, b.length);

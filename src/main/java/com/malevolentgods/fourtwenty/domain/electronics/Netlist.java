@@ -220,6 +220,22 @@ public final class Netlist {
     /** A Sampler Nug: eight inputs, three select bits (the first the lowest), one output. */
     public Chips.Sampler sampler(int vdd, int gnd, int[] in, int[] select, int out) { return chip(new Chips.Sampler(vdd, gnd, in, select), out); }
 
+    /** Bus logic: {@code op} on buses {@code a} and {@code b}, wire for wire, into {@code out} (all the same width). */
+    public Chips.BusLogic busLogic(Chips.Op op, int vdd, int gnd, int[] a, int[] b, int[] out) { return chip(new Chips.BusLogic(vdd, gnd, op, a, b), out); }
+
+    /** An 8-bit adder (or subtractor): eight sum outputs, then the carry (or borrow) out. */
+    public Chips.Adder adder(boolean subtract, int vdd, int gnd, int[] a, int[] b, int carryIn, int[] sum, int carryOut) {
+        return chip(new Chips.Adder(vdd, gnd, a, b, carryIn, subtract), Chips.concat(sum, new int[]{carryOut}));
+    }
+
+    /** An 8-bit comparator: A < B, A = B, A > B. */
+    public Chips.Comparator comparator(int vdd, int gnd, int[] a, int[] b, int less, int equal, int greater) {
+        return chip(new Chips.Comparator(vdd, gnd, a, b), less, equal, greater);
+    }
+
+    /** A register as wide as {@code d}: takes it on the clock's rising edge, drives {@code q} unless released. */
+    public Chips.Register register(int vdd, int gnd, int[] d, int clock, int release, int[] q) { return chip(new Chips.Register(vdd, gnd, d, clock, release), q); }
+
     /** A Dealer Nug: one input, three select bits, eight outputs. */
     public Chips.Dealer dealer(int vdd, int gnd, int in, int[] select, int[] outs) { return chip(new Chips.Dealer(vdd, gnd, in, select), outs); }
 
