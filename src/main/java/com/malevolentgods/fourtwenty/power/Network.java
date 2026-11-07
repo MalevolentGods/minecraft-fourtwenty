@@ -59,9 +59,15 @@ public final class Network {
 
     /** Each cable of a Daisy line that can't be ordered, and why. */
     final Map<BlockPos, DaisyLine.Reason> daisyFailed;
+    /** Coupled windings (Hit Boxes), each {primary, secondary}: one two-port each in the solve. */
+    private final List<BINode[]> couplings;
+    /** For each member, the transformer it is a winding of in the last solution, or -1. */
+    private int[] windingOf = new int[0];
 
-    private Network(int version, long walkedAt, List<Member> members, List<Wick> wicks, List<Run> runs, int nodes, Map<BlockPos, DaisyLine.Reason> daisyFailed) {
+    private Network(int version, long walkedAt, List<Member> members, List<Wick> wicks, List<Run> runs, int nodes, Map<BlockPos, DaisyLine.Reason> daisyFailed,
+                    List<BINode[]> couplings) {
         this.daisyFailed = daisyFailed;
+        this.couplings = couplings;
         this.version = version;
         this.walkedAt = walkedAt;
         this.members = members;
@@ -153,6 +159,8 @@ public final class Network {
         Map<BlockPos, Set<BlockPos>> cableEdges = new HashMap<>();
         Map<String, Object[]> cableContacts = new LinkedHashMap<>(); // owner, cable pos, face of the cable it's on
         Map<String, Object[]> wiresAtCables = new LinkedHashMap<>(); // wire pos, cable pos
+        List<BINode[]> couplings = new ArrayList<>();
+        Set<BINode> coupled = java.util.Collections.newSetFromMap(new IdentityHashMap<>());
         java.util.function.BiConsumer<BlockPos, BINode> device = (at, owner) -> {
             if (devices.containsKey(owner)) return;
             devices.put(owner, at.immutable());
@@ -201,6 +209,12 @@ public final class Network {
                 continue;
             }
             if (terminal != null) {
+                // a transformer winding brings its other winding into the same circuit: the two are solved as one two-port
+                BINode partner = terminal.coupled();
+                if (partner != null && coupled.add(terminal) && coupled.add(partner)) {
+                    couplings.add(terminal.primary() ? new BINode[]{terminal, partner} : new BINode[]{partner, terminal});
+                    device.accept(at, partner);
+                }
                 // a block: red and black Wicks, and cables, on any of its faces (specs/010-colour-polarity); blocks touching don't join
                 for (Direction d : Direction.values()) {
                     if (ownerOnFace(level, at, d) != terminal) continue;
@@ -352,7 +366,7 @@ public final class Network {
             for (int i = 0; i < runs.size(); i++) if (runs.get(i).start() == n || runs.get(i).end() == n) incident.add(i);
             wicks.put(w, new Wick(w.pos(), w.core(), wickTiers.get(w), n, -1, 0, incident.stream().mapToInt(Integer::intValue).toArray()));
         }
-        return new Network(BIGrid.version(level), level.getGameTime(), members, new ArrayList<>(wicks.values()), runs, count[0], daisyFailed);
+        return new Network(BIGrid.version(level), level.getGameTime(), members, new ArrayList<>(wicks.values()), runs, count[0], daisyFailed, couplings);
     }
 
     /**
@@ -539,6 +553,19 @@ public final class Network {
                 default -> {}
             }
         }
+        // each Hit Box: one transformer, turns ratio its two tiers' voltages, losing its share at a Hookah's power on its primary
+        windingOf = new int[members.size()];
+        java.util.Arrays.fill(windingOf, -1);
+        for (BINode[] pair : couplings) {
+            int hi = indexOf(pair[0]), lo = indexOf(pair[1]);
+            if (hi < 0 || lo < 0 || pair[0].overloaded(now) || pair[1].overloaded(now)) continue;
+            BIRules.Tier high = pair[0].tier(), low = pair[1].tier();
+            double ratio = rules.volts(high) / rules.volts(low);
+            int t = circuit.transformer(members.get(hi).plus(), members.get(hi).minus(), members.get(lo).plus(), members.get(lo).minus(), ratio,
+                    rules.hitBoxLoss() * rules.baseOhms(high));
+            windingOf[hi] = t;
+            windingOf[lo] = t;
+        }
         solution = circuit.solve();
         status = new int[members.size()];
         for (int i = 0; i < members.size(); i++) {
@@ -672,6 +699,15 @@ public final class Network {
     /** Current into the circuit from a member: positive out of a source, negative into a load or a charging battery. */
     double memberAmps(int i) {
         if (solution == null) return 0;
+        if (i < windingOf.length && windingOf[i] >= 0) {
+            // a winding: the primary takes its current in, the secondary gives n times it out
+            double primary = solution.transformerAmps()[windingOf[i]];
+            BINode n = members.get(i).node();
+            if (n.primary()) return -primary;
+            BIRules.Tier high = n.coupled().tier(), low = n.tier();
+            var rules = ProcessingConfig.circuit();
+            return primary * rules.volts(high) / rules.volts(low);
+        }
         if (sourceIndex[i] >= 0) return solution.sourceAmps()[sourceIndex[i]];
         if (loadIndex[i] >= 0) return -solution.loadAmps()[loadIndex[i]];
         if (ledIndex != null && ledIndex[i] >= 0) return -solution.ledAmps()[ledIndex[i]];
@@ -680,6 +716,7 @@ public final class Network {
 
     double memberWatts(int i) {
         if (solution == null) return 0;
+        if (i < windingOf.length && windingOf[i] >= 0) return memberAmps(i) * memberVolts(i);
         if (sourceIndex[i] >= 0) return solution.sourceWatts()[sourceIndex[i]];
         if (loadIndex[i] >= 0) return -solution.loadWatts()[loadIndex[i]];
         if (ledIndex != null && ledIndex[i] >= 0) return -solution.ledAmps()[ledIndex[i]] * memberVolts(i);

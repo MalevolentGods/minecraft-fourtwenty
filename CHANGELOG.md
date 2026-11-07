@@ -2,6 +2,12 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+- **A SPICE-style circuit engine** runs every Wick network: Newton–Raphson with companion models, SPICE's convergence safeguards, and exact answers to 1e-9. Nothing you've built changes.
+- **The Hit Box is one transformer**, solved with both its sides at once: power crosses in the same tick, with no banks inside. Its winding resistance is its loss, so a heavily loaded Hit Box sags a little under its tier's voltage, as a real transformer does.
+
 ## [0.21.0] - Twisted Pair
 
 ### Added

@@ -59,6 +59,12 @@ public interface BINode {
     /** An LED (a Lit Bit): the current its driver is set to, in Ignus. */
     default double ledAmps() { return 0; }
 
+    /** A transformer winding (the Hit Box): the other winding it's coupled to, or null. Both are solved as one two-port. */
+    default BINode coupled() { return null; }
+
+    /** Whether this is the high-voltage winding of a coupled pair. */
+    default boolean primary() { return false; }
+
     /** An LED hears how lit it is after each solve: 0 to 1 up its knee, and its circuit status (Circuit.OK, NO_LOOP, REVERSED). */
     default void lit(double brightness, int status) {}
 

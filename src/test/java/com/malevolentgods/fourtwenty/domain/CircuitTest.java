@@ -437,4 +437,29 @@ class CircuitTest {
         assertEquals(0.5, s.sourceAmps()[0], 1e-4);
         for (int l : lits) assertEquals(0.005, s.ledAmps()[l], 1e-7);
     }
+
+    /** A Hit Box as one two-port: 42 Kb in, a 840 W Puff machine out at 4.2 Kb, in the same solve; what's lost is exactly I²R on its winding. */
+    @Test
+    void aTransformerCarriesPowerAcrossInOneSolve() {
+        var rules = CircuitRules.Numbers.DEFAULT;
+        var c = new Circuit();
+        int p1 = c.node(), m1 = c.node(), p2 = c.node(), m2 = c.node();
+        int src = c.source(p1, m1, 42, 1e-6, BIG, 0);
+        double ohms = rules.hitBoxLoss() * rules.baseOhms(BIRules.Tier.TOKE);
+        int t = c.transformer(p1, m1, p2, m2, 10, ohms);
+        int load = c.load(p2, m2, 840, rules.minVolts(BIRules.Tier.PUFF));
+        var s = c.solve();
+        assertTrue(s.converged() && s.share() == 1);
+        // its winding resistance sags the secondary a little under 4.2 Kb, where a machine is a plain resistance: it gets a few % less,
+        // as an appliance on a loaded transformer does (regulation)
+        double got = s.loadWatts()[load];
+        assertTrue(got > 0.95 * 840 && got < 840, "nearly all of it: " + got);
+        double i1 = s.transformerAmps()[t];
+        assertEquals(840 / 42.0, i1, 1, "about 20 Ig on the primary");
+        double lost = i1 * i1 * ohms;
+        assertEquals(got + lost, s.sourceWatts()[src], 1e-6 * got, "the source pays the load and the winding's I²R, nothing else");
+        assertEquals(rules.hitBoxLoss(), lost / 840, rules.hitBoxLoss() * 0.1, "about its configured loss at a Hookah's power");
+        double v2 = s.volts()[p2] - s.volts()[m2];
+        assertTrue(v2 > 4.0 && v2 < 4.2, "stepped down 10:1, less the drop: " + v2);
+    }
 }

@@ -35,6 +35,8 @@ public final class Circuit {
     private record Conductor(int a, int b, double ohms) {}
     private record Source(int plus, int minus, double emf, double ohms, double maxOut, double maxIn) {}
     private record Load(int plus, int minus, double watts, double minVolts) {}
+    /** A transformer: primary p1-m1, secondary p2-m2, turns ratio V1/V2, referred through its winding resistance. */
+    private record Coupling(int p1, int m1, int p2, int m2, double ratio, double ohms) {}
     /** An LED behind a constant-current driver: dark below {@code forward}, rising to {@code setAmps} at {@code rated}, held above. */
     private record Led(int plus, int minus, double setAmps, double forward, double rated) {
         double amps(double volts) {
@@ -48,6 +50,7 @@ public final class Circuit {
     private final List<Source> sources = new ArrayList<>();
     private final List<Load> loads = new ArrayList<>();
     private final List<Led> leds = new ArrayList<>();
+    private final List<Coupling> couplings = new ArrayList<>();
     /** Each LED's status from the probe: OK, NO_LOOP or REVERSED. */
     private int[] ledStatus = new int[0];
     /** Each load's status from the probe: OK, NO_LOOP or REVERSED. */
@@ -93,13 +96,20 @@ public final class Circuit {
         return leds.size() - 1;
     }
 
+    /** A transformer between two windings, turns ratio {@code ratio} = V1/V2, losing through {@code ohms} on its primary; returns its index. */
+    public int transformer(int p1, int m1, int p2, int m2, double ratio, double ohms) {
+        couplings.add(new Coupling(p1, m1, p2, m2, ratio, Math.max(ohms, 1e-12)));
+        return couplings.size() - 1;
+    }
+
     /**
      * What the circuit settles at. Source watts are what leaves or (negative) enters the source's own store: its EMF's share, which
      * includes its internal loss. Load watts are what reaches each load. {@code share} is the brownout factor, 1 when healthy.
      * {@code loadStatus} says, for each load, OK, BROWNOUT, NO_LOOP or REVERSED.
      */
     public record Solution(double[] volts, double[] conductorAmps, double[] sourceAmps, double[] sourceWatts, double[] loadWatts,
-                           double[] loadAmps, double losses, double share, boolean converged, int[] loadStatus, double[] ledAmps, int[] ledStatus) {
+                           double[] loadAmps, double losses, double share, boolean converged, int[] loadStatus, double[] ledAmps, int[] ledStatus,
+                           double[] transformerAmps) {
         /** The voltage across a load, + minus −. */
         public double loadVolts(double[] v, int plus, int minus) { return at(v, plus) - at(v, minus); }
     }
@@ -137,6 +147,7 @@ public final class Circuit {
         final com.malevolentgods.fourtwenty.domain.electronics.Netlist net = new com.malevolentgods.fourtwenty.domain.electronics.Netlist();
         final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.Resistor> wires = new ArrayList<>();
         final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.LimitedSource> supplies = new ArrayList<>();
+        final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.Transformer> windings = new ArrayList<>();
         final com.malevolentgods.fourtwenty.domain.electronics.Parts.PowerLoad[] machines = new com.malevolentgods.fourtwenty.domain.electronics.Parts.PowerLoad[loads.size()];
         final com.malevolentgods.fourtwenty.domain.electronics.Parts.DriverLed[] lamps = new com.malevolentgods.fourtwenty.domain.electronics.Parts.DriverLed[leds.size()];
 
@@ -157,6 +168,7 @@ public final class Circuit {
                 Led l = leds.get(i);
                 lamps[i] = net.driverLed(l.plus(), l.minus(), l.setAmps(), l.forward(), l.rated());
             }
+            for (Coupling k : couplings) windings.add(net.transformer(k.p1(), k.m1(), k.p2(), k.m2(), k.ratio(), k.ohms()));
             net.guess(guess);
             net.stepLimit(STEP * scale);
             // as tight as the old solver: energy is moved from these numbers every tick, so they must balance
@@ -202,7 +214,12 @@ public final class Circuit {
                 Led l = leds.get(i);
                 ledAmps[i] = lamps[i].ampsAt(at(v, l.plus()) - at(v, l.minus()));
             }
-            return new Solution(v, cAmps, sAmps, sWatts, lWatts, lAmps, losses, share, converged, out, ledAmps, ledStatus.clone());
+            double[] tAmps = new double[couplings.size()];
+            for (int i = 0; i < tAmps.length; i++) {
+                tAmps[i] = net.current(windings.get(i));
+                losses += tAmps[i] * tAmps[i] * couplings.get(i).ohms();
+            }
+            return new Solution(v, cAmps, sAmps, sWatts, lWatts, lAmps, losses, share, converged, out, ledAmps, ledStatus.clone(), tAmps);
         }
     }
 
@@ -212,7 +229,7 @@ public final class Circuit {
         int[] ledOut = new int[leds.size()];
         Arrays.fill(ledOut, NO_LOOP);
         return new Solution(new double[nodes], new double[conductors.size()], new double[sources.size()], new double[sources.size()],
-                new double[loads.size()], new double[loads.size()], 0, 0, true, out, new double[leds.size()], ledOut);
+                new double[loads.size()], new double[loads.size()], 0, 0, true, out, new double[leds.size()], ledOut, new double[couplings.size()]);
     }
 
     /**
@@ -232,6 +249,7 @@ public final class Circuit {
             inject(b, s.plus(), s.minus(), s.emf() / s.ohms());
         }
         for (Load l : loads) if (l.watts() > 0) between(sparse, l.plus(), l.minus(), PROBE * l.watts() / (scale * scale));
+        for (Coupling k : couplings) couple(sparse, k);
         for (Led l : leds) between(sparse, l.plus(), l.minus(), PROBE * Math.max(l.setAmps(), 1e-9) / scale);
         double[] v = sparse.solve(b);
         if (v == null) return null;
@@ -283,6 +301,10 @@ public final class Circuit {
         for (int i = 0; i < leds.size(); i++) {
             if (probing || ledStatus[i] == OK) join.accept(leds.get(i).plus(), leds.get(i).minus());
         }
+        for (Coupling k : couplings) {
+            join.accept(k.p1(), k.m1());
+            join.accept(k.p2(), k.m2());
+        }
         List<Integer> out = new ArrayList<>();
         for (int i = 0; i < nodes; i++) if (find.applyAsInt(i) == i && !grounded[i]) out.add(i);
         return out;
@@ -297,6 +319,18 @@ public final class Circuit {
     private static double across(double[] v, Load l) { return at(v, l.plus()) - at(v, l.minus()); }
 
     private static double across(double[] v, Source s) { return at(v, s.plus()) - at(v, s.minus()); }
+
+    /** A transformer's symmetric block: I1 = (V1 − n·V2)/R into the primary, n times that out of the secondary. */
+    private static void couple(Sparse sparse, Coupling k) {
+        double g = 1 / k.ohms(), n = k.ratio();
+        between(sparse, k.p1(), k.m1(), g);
+        between(sparse, k.p2(), k.m2(), n * n * g);
+        int[][] cross = {{k.p1(), k.p2(), 1}, {k.p1(), k.m2(), -1}, {k.m1(), k.p2(), -1}, {k.m1(), k.m2(), 1}};
+        for (int[] c : cross) {
+            add(sparse, c[0], c[1], -n * g * c[2]);
+            add(sparse, c[1], c[0], -n * g * c[2]);
+        }
+    }
 
     private static void add(Sparse sparse, int r, int c, double value) {
         if (r == GROUND || c == GROUND) return;
