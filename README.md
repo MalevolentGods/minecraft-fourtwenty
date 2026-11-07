@@ -272,11 +272,15 @@ Real components on the same circuits as everything else, solved the way SPICE so
 | Puff-Pass Nug | A shift register: data in at the back, clock on the left, latch on the right, 8 outputs and a carry on its bus face in front. Chain them, carry to data, for 16 bits or more |
 | Pack Nug | A shift register the other way: 8 inputs on its bus face, load and clock, out one wire, bit 7 first |
 | Sampler Nug, Dealer Nug | An 8-to-1 multiplexer and a 1-to-8 demultiplexer, selected by channels 0 to 2 of a bus on their left |
+| Blend Nug | Bitwise logic on two buses, all nine wires at once: AND, OR, XOR, NAND, NOR, XNOR, NOT A or A (use it to step) |
+| Stacker Nug | Adds two bytes and a carry in, or subtracts; carry (or borrow) out on the C wire, so two make 16 bits |
+| Scale Nug | Compares two bytes: channel 0 is A < B, 1 is A = B, 2 is A > B |
+| Jar Nug | Keeps a byte: takes its inputs on each rising clock, drives them out until release is 1, so several can share one bus |
 | Eighth Ribbon | Nine signal wires in one flat cable: channels 0 to 7 (striped in the resistor colour code) and the carry (grey). It joins other Ribbons, Roach Clips and bus faces |
 | Roach Clip | A piece of Ribbon that clips one channel out to a Wick, Hemp Thread or single pin; use it to pick the channel |
 | Hype Amp | An op-amp: + on the left, − on the right, output in front, powered like a Nug; with Resinators for feedback it amplifies by their ratio |
 
-Use a part to step its value (sneak to step back). Logic reads its inputs against its own supply (below 30% is a 0, above 70% a 1), drives its output through a real output resistance, lets it float with no power, and answers 1 ms after its inputs change, so logic of any depth settles inside a tick and an oscillator runs at the rate its gates allow. The Inspoweedometer reads a part's value, voltage, current and power, or a logic part's pins and the bits they read as, a FET's gate and drain voltages and its current, or a Hype Amp's inputs and output, or a chip's buses as bits (bit 7 first). Circuits keep their state through chunk reloads and restarts, and share a time budget each tick: past it, they wait rather than slow the server.
+Every electrical item shows its real-world name, quietly, under its name in its tooltip (a Puff-Pass Nug is a shift register, a Hookah a generator, the Inspoweedometer a multimeter, with the units' real names too). Use a part to step its value (sneak to step back). Logic reads its inputs against its own supply (below 30% is a 0, above 70% a 1), drives its output through a real output resistance, lets it float with no power, and answers 1 ms after its inputs change, so logic of any depth settles inside a tick and an oscillator runs at the rate its gates allow. The Inspoweedometer reads a part's value, voltage, current and power, or a logic part's pins and the bits they read as, a FET's gate and drain voltages and its current, or a Hype Amp's inputs and output, or a chip's buses as bits (bit 7 first). Circuits keep their state through chunk reloads and restarts, and share a time budget each tick: past it, they wait rather than slow the server.
 
 **Test supplies** (creative): a **Bottomless Stash** of each tier, which never runs dry, and the **Bench Rig**, a variable DC supply (use it to step its voltage from 0.5 to 4,200 Kb, sneak-use to step its current limit).
 

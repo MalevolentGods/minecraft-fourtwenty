@@ -37,13 +37,17 @@ public enum ComponentType {
     PUFF_PASS_NUG("puff_pass_nug", Part.SHIFT_OUT, Layout.PUFF_PASS, "", List.of(), 0),
     PACK_NUG("pack_nug", Part.SHIFT_IN, Layout.PACK, "", List.of(), 0),
     SAMPLER_NUG("sampler_nug", Part.MUX, Layout.SAMPLER, "", List.of(), 0),
-    DEALER_NUG("dealer_nug", Part.DEMUX, Layout.DEALER, "", List.of(), 0);
+    DEALER_NUG("dealer_nug", Part.DEMUX, Layout.DEALER, "", List.of(), 0),
+    BLEND_NUG("blend_nug", Part.BITWISE, Layout.BLEND, "", List.of(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0), 0),
+    STACKER_NUG("stacker_nug", Part.ARITH, Layout.STACKER, "", List.of(0.0, 1.0), 0),
+    SCALE_NUG("scale_nug", Part.COMPARE, Layout.SCALE, "", List.of(), 0),
+    JAR_NUG("jar_nug", Part.REGISTER, Layout.JAR, "", List.of(), 0);
 
     /** Wires on a bus face, and in an Eighth Ribbon: channels 0 to 7, then the carry. */
     public static final int BUS = 9;
 
     /** What the block is in the circuit. */
-    public enum Part { RESISTOR, CAPACITOR, INDUCTOR, DIODE, ZENER, TOGGLE, REDSTONE_SWITCH, BUTTON, GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, NMOS, PMOS, OPAMP, SHIFT_OUT, SHIFT_IN, MUX, DEMUX }
+    public enum Part { RESISTOR, CAPACITOR, INDUCTOR, DIODE, ZENER, TOGGLE, REDSTONE_SWITCH, BUTTON, GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, NMOS, PMOS, OPAMP, SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER }
 
     /** A pin's face, relative to the block's front. */
     public enum Face { FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM }
@@ -54,7 +58,9 @@ public enum ComponentType {
      * FETs: {source, drain, gate}, the source at the back, the drain in front, the gate on the left. A bus face (an Eighth Ribbon's
      * nine wires) is nine pins in a row, channel 0 first, the carry last: Puff-Pass {vdd, gnd, data, clock, latch, out 0-7, carry}; Pack
      * {vdd, gnd, load, clock, in 0-7, (carry), out}; Sampler {vdd, gnd, in 0-7, (carry), select 0-2 and six unused, out}; Dealer {vdd,
-     * gnd, in, select 0-2 and six unused, out 0-7, (carry)}.
+     * gnd, in, select 0-2 and six unused, out 0-7, (carry)}. Blend {vdd, gnd, A 0-8, B 0-8, out 0-8}; Stacker {vdd, gnd, A 0-7 (carry),
+     * B 0-7 (carry), carry in, sum 0-7, carry out}; Scale {vdd, gnd, A 0-7 (carry), B 0-7 (carry), A&lt;B, A=B, A&gt;B and six unused};
+     * Jar {vdd, gnd, in 0-8, clock, release, out 0-8}.
      */
     public enum Layout {
         TWO_PIN(Face.BACK, Face.FRONT),
@@ -65,7 +71,11 @@ public enum ComponentType {
         PUFF_PASS(cat(new Face[]{Face.TOP, Face.BOTTOM, Face.BACK, Face.LEFT, Face.RIGHT}, bus(Face.FRONT))),
         PACK(cat(new Face[]{Face.TOP, Face.BOTTOM, Face.LEFT, Face.RIGHT}, bus(Face.BACK), new Face[]{Face.FRONT})),
         SAMPLER(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), bus(Face.LEFT), new Face[]{Face.FRONT})),
-        DEALER(cat(new Face[]{Face.TOP, Face.BOTTOM, Face.BACK}, bus(Face.LEFT), bus(Face.FRONT)));
+        DEALER(cat(new Face[]{Face.TOP, Face.BOTTOM, Face.BACK}, bus(Face.LEFT), bus(Face.FRONT))),
+        BLEND(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), bus(Face.LEFT), bus(Face.FRONT))),
+        STACKER(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), bus(Face.LEFT), new Face[]{Face.RIGHT}, bus(Face.FRONT))),
+        SCALE(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), bus(Face.LEFT), bus(Face.FRONT))),
+        JAR(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), new Face[]{Face.LEFT, Face.RIGHT}, bus(Face.FRONT)));
 
         public final List<Face> pins;
 
@@ -110,13 +120,36 @@ public enum ComponentType {
     /** A powered part read as bits: the Nugs and the Ticker. */
     public boolean logic() {
         return switch (part) {
-            case GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, SHIFT_OUT, SHIFT_IN, MUX, DEMUX -> true;
+            case GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER -> true;
             default -> false;
         };
     }
 
     /** A chip with a bus face: a shift register or a multiplexer. */
-    public boolean chip() { return part == Part.SHIFT_OUT || part == Part.SHIFT_IN || part == Part.MUX || part == Part.DEMUX; }
+    public boolean chip() {
+        return switch (part) {
+            case SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER -> true;
+            default -> false;
+        };
+    }
+
+    /** A value as a player reads it: a Blend Nug's operation, a Stacker Nug's add or subtract, else the number in its unit. */
+    public String describe(double value) {
+        return switch (part) {
+            case BITWISE -> switch ((int) Math.round(value)) {
+                case 0 -> "AND";
+                case 1 -> "OR";
+                case 2 -> "XOR";
+                case 3 -> "NAND";
+                case 4 -> "NOR";
+                case 5 -> "XNOR";
+                case 6 -> "NOT A";
+                default -> "A";
+            };
+            case ARITH -> value > 0.5 ? "subtract" : "add";
+            default -> ComponentBlockEntity.format(value, unit);
+        };
+    }
 
     /** A transistor, read by its gate, drain and channel current. */
     public boolean fet() { return part == Part.NMOS || part == Part.PMOS; }

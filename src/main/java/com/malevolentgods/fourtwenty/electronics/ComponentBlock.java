@@ -96,13 +96,15 @@ public class ComponentBlock extends Block implements EntityBlock {
             default -> {
                 if (type.values.isEmpty()) return InteractionResult.PASS;
                 be.step(player.isShiftKeyDown() ? -1 : 1);
+                // the live circuit is built with each part's value: a new value means a new circuit
+                BIGrid.changed(level);
                 // a Resinator shows its value in its colour bands
                 if (state.hasProperty(ResinatorBlock.VALUE)) level.setBlock(pos, state.setValue(ResinatorBlock.VALUE, be.index()), 3);
             }
         }
         if (!type.values.isEmpty()) {
             player.displayClientMessage(Component.translatable("message.fourtwenty.component.value",
-                    Component.translatable("block.fourtwenty." + type.id), ComponentBlockEntity.format(be.value(), type.unit)), true);
+                    Component.translatable("block.fourtwenty." + type.id), type.describe(be.value())), true);
         }
         return InteractionResult.SUCCESS;
     }

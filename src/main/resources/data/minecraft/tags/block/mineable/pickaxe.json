@@ -293,6 +293,10 @@
   "fourtwenty:puff_pass_nug",
   "fourtwenty:pack_nug",
   "fourtwenty:sampler_nug",
-  "fourtwenty:dealer_nug"
+  "fourtwenty:dealer_nug",
+  "fourtwenty:blend_nug",
+  "fourtwenty:stacker_nug",
+  "fourtwenty:scale_nug",
+  "fourtwenty:jar_nug"
  ]
 }

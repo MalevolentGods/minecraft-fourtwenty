@@ -47,6 +47,10 @@ TYPES = [
     ('pack_nug', 'Pack Nug', 'pack', 'PAK'),
     ('sampler_nug', 'Sampler Nug', 'sampler', 'MUX'),
     ('dealer_nug', 'Dealer Nug', 'dealer', 'DMX'),
+    ('blend_nug', 'Blend Nug', 'blend', 'BIT'),
+    ('stacker_nug', 'Stacker Nug', 'stacker', 'ADD'),
+    ('scale_nug', 'Scale Nug', 'scale', 'CMP'),
+    ('jar_nug', 'Jar Nug', 'jar', 'REG'),
 ]
 
 # the resistor colour code for channels 0 to 7, the carry grey: an Eighth Ribbon's stripes and a Roach Clip's band
@@ -64,6 +68,10 @@ TOOLTIPS = {
     'pack': 'Load on the left, clock on the right, the 8 inputs on the bus face at the back, serial out in front. VDD on top, GND underneath.',
     'sampler': 'The 8 inputs on the bus face at the back, select (channels 0 to 2) on the bus face on the left, output in front. VDD on top, GND underneath.',
     'dealer': 'Input at the back, select (channels 0 to 2) on the bus face on the left, the 8 outputs on the bus face in front. VDD on top, GND underneath.',
+    'blend': 'Bus A at the back, bus B on the left, the result on the bus in front. VDD on top, GND underneath.',
+    'stacker': 'Bus A at the back, bus B on the left, carry in on the right, the result in front with the carry out on its C wire. VDD on top, GND underneath.',
+    'scale': 'Bus A at the back, bus B on the left; in front, channel 0 is A < B, 1 is A = B, 2 is A > B. VDD on top, GND underneath.',
+    'jar': 'Bus in at the back, clock on the left, release on the right, bus out in front. VDD on top, GND underneath.',
 }
 EXTRA = {
     'resinator': 'A resistor, rated 10 W: past that it burns out in smoke. Use it to step its value (sneak to step back).',
@@ -84,6 +92,10 @@ EXTRA = {
     'pack_nug': 'A shift register the other way: load takes its 8 inputs, then each rising clock sends the next out, bit 7 first.',
     'sampler_nug': 'A multiplexer: its output follows the input the select picks (0 to 7).',
     'dealer_nug': 'A demultiplexer: the output the select picks (0 to 7) follows its input; the others are 0.',
+    'blend_nug': 'Bitwise logic on two buses, all nine wires at once: AND, OR, XOR, NAND, NOR, XNOR, NOT A or A. Use it to step the operation.',
+    'stacker_nug': 'Adds two bytes and the carry in (or subtracts B and the borrow from A), the carry (or borrow) out on the C wire, so two make 16 bits. Use it to switch add and subtract.',
+    'scale_nug': 'Weighs two bytes against each other: exactly one of its outputs is high.',
+    'jar_nug': 'Keeps a byte (nine bits): takes its inputs on each rising clock and drives them out until release is 1, when it lets go, so several can share one bus.',
     'hype_amp': 'An op-amp: drives its output to 100,000 times the difference of its inputs, as far as its supply allows. With Resinators for feedback it amplifies by their ratio.',
 }
 
@@ -96,7 +108,8 @@ BUS_LEADS = {'front': ([3, 7, 0], [13, 9, 2]), 'back': ([3, 7, 14], [13, 9, 16])
 
 # a 3x5 pixel font for the Nug labels
 FONT = {
-    'A': ['010', '101', '111', '101', '101'], 'B': ['110', '101', '110', '101', '110'], 'D': ['110', '101', '101', '101', '110'],
+    'A': ['010', '101', '111', '101', '101'], 'C': ['111', '100', '100', '100', '111'], 'E': ['111', '100', '110', '100', '111'],
+    'G': ['111', '100', '101', '101', '111'], 'B': ['110', '101', '110', '101', '110'], 'D': ['110', '101', '101', '101', '110'],
     'F': ['111', '100', '110', '100', '100'], 'I': ['111', '010', '010', '010', '111'], 'K': ['101', '110', '100', '110', '101'],
     'L': ['100', '100', '100', '100', '111'], 'M': ['101', '111', '111', '101', '101'], 'P': ['110', '101', '110', '100', '100'], 'N': ['101', '111', '111', '111', '101'], 'O': ['111', '101', '101', '101', '111'],
     'R': ['110', '101', '110', '101', '101'], 'T': ['111', '010', '010', '010', '010'], 'U': ['101', '101', '101', '101', '111'],
@@ -207,7 +220,11 @@ PINS = {'two': [('back', 'in'), ('front', 'in')], 'one': [('top', 'vdd'), ('bott
         'puffpass': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'in'), ('left', 'in'), ('right', 'in'), ('front', 'bus')],
         'pack': [('top', 'vdd'), ('bottom', 'gnd'), ('left', 'in'), ('right', 'in'), ('back', 'bus'), ('front', 'out')],
         'sampler': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'bus'), ('front', 'out')],
-        'dealer': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'in'), ('left', 'bus'), ('front', 'bus')], 'none': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out')]}
+        'dealer': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'in'), ('left', 'bus'), ('front', 'bus')],
+        'blend': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'bus'), ('front', 'bus')],
+        'stacker': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'bus'), ('right', 'in'), ('front', 'bus')],
+        'scale': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'bus'), ('front', 'bus')],
+        'jar': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'in'), ('right', 'in'), ('front', 'bus')], 'none': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out')]}
 
 
 def component(cid, layout, look):

@@ -89,6 +89,15 @@ public class InspoweedometerItem extends Item {
                     case SHIFT_IN -> text.append("load ").append(bit.apply(2)).append(" clk ").append(bit.apply(3)).append(" · in ").append(word.apply(4, 8))
                             .append(" · out ").append(bit.apply(13));
                     case MUX -> text.append("in ").append(word.apply(2, 8)).append(" · select ").append(word.apply(11, 3)).append(" · out ").append(bit.apply(20));
+                    case BITWISE -> text.append(type.describe(level.getBlockEntity(pos) instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity be ? be.value() : 0))
+                            .append(" · A ").append(word.apply(2, 9)).append(" · B ").append(word.apply(11, 9)).append(" · out ").append(word.apply(20, 9));
+                    case ARITH -> text.append(type.describe(level.getBlockEntity(pos) instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity be ? be.value() : 0))
+                            .append(" · A ").append(word.apply(2, 8)).append(" · B ").append(word.apply(11, 8)).append(" · carry in ").append(bit.apply(20))
+                            .append(" · out ").append(word.apply(21, 8)).append(" carry ").append(bit.apply(29));
+                    case COMPARE -> text.append("A ").append(word.apply(2, 8)).append(" · B ").append(word.apply(11, 8)).append(" · < ").append(bit.apply(20))
+                            .append(" = ").append(bit.apply(21)).append(" > ").append(bit.apply(22));
+                    case REGISTER -> text.append("in ").append(word.apply(2, 9)).append(" · clk ").append(bit.apply(11)).append(" release ").append(bit.apply(12))
+                            .append(" · out ").append(word.apply(13, 9));
                     default -> text.append("in ").append(bit.apply(2)).append(" · select ").append(word.apply(3, 3)).append(" · out ").append(word.apply(12, 8));
                 }
             } else if (type.fet()) {

@@ -22,6 +22,12 @@ public class ModClientEvents {
             event.getToolTip().add(1, net.minecraft.network.chat.Component.translatable("tooltip.fourtwenty.wick." + role,
                     net.minecraft.network.chat.Component.translatable("color.minecraft." + colour.dye().getName())).withStyle(net.minecraft.ChatFormatting.AQUA));
         }
+        // what it really is, in electronics, quietly under its name
+        String real = "tooltip.fourtwenty.real." + id.getPath();
+        if (net.minecraft.client.resources.language.I18n.exists(real)) {
+            event.getToolTip().add(Math.min(1, event.getToolTip().size()), net.minecraft.network.chat.Component.translatable(real)
+                    .withStyle(net.minecraft.ChatFormatting.DARK_GRAY, net.minecraft.ChatFormatting.ITALIC));
+        }
         if (!net.minecraft.client.resources.language.I18n.exists(key)) return;
         var font = net.minecraft.client.Minecraft.getInstance().font;
         for (var line : font.getSplitter().splitLines(net.minecraft.network.chat.Component.translatable(key), 200, net.minecraft.network.chat.Style.EMPTY.withColor(net.minecraft.ChatFormatting.GRAY))) {

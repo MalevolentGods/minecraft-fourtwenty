@@ -348,4 +348,41 @@ public final class ElectronicsGameTests {
             h.assertTrue(on(h, chip), "lit");
         });
     }
+    /**
+     * A Stacker Nug facing east, off the rails: Roach Clips straight on its bus faces, A's (back, west) on channel 0 and B's (left,
+     * south) on channel 1, each under a red Wick, so A = 1 and B = 2. It adds: 3, no carry. Used, as a player would, it subtracts:
+     * 1 − 2 wraps to 255 and borrows. (Using a part changes its value; the circuit must follow.)
+     */
+    @GameTest(template = "long", timeoutTicks = 200)
+    public static void aStackerNugAddsThenSubtracts(GameTestHelper h) {
+        var l = new Ladder(h, 2, 0).rails(ModPower.HEMP_WICK.get(), 1, 8);
+        l.hookah(1, ModBlocks.WEED_BONG.get());
+        BlockPos stacker = new BlockPos(5, 2, 5);
+        place(h, stacker, ComponentType.STACKER_NUG, Direction.EAST);
+        for (int z = 0; z <= 6; z++) red(h, 5, 3, z);
+        for (int z = 0; z <= 5; z++) red(h, 4, 3, z);
+        for (int z = 2; z <= 5; z++) black(h, 5, 1, z);
+        h.setBlock(new BlockPos(4, 2, 5), ModElectronics.ROACH_CLIP.get().defaultBlockState().setValue(com.malevolentgods.fourtwenty.electronics.RoachClipBlock.CHANNEL, 0));
+        h.setBlock(new BlockPos(5, 2, 6), ModElectronics.ROACH_CLIP.get().defaultBlockState().setValue(com.malevolentgods.fourtwenty.electronics.RoachClipBlock.CHANNEL, 1));
+        java.util.function.ToIntFunction<double[]> sum = v -> {
+            int x = 0;
+            for (int k = 0; k < 8; k++) if (v[21 + k] - v[1] > 0.5 * (v[0] - v[1])) x |= 1 << k;
+            return x;
+        };
+        java.util.function.Supplier<double[]> pins = () -> com.malevolentgods.fourtwenty.power.Circuits.componentReading(h.getLevel(), h.absolutePos(stacker))
+                .map(com.malevolentgods.fourtwenty.power.Circuits.ComponentReading::pins).orElse(null);
+        h.runAfterDelay(20, () -> {
+            double[] v = pins.get();
+            h.assertTrue(v != null, "a reading");
+            h.assertTrue(sum.applyAsInt(v) == 3, "1 + 2 = 3: " + java.util.Arrays.toString(v));
+            h.assertTrue(v[29] - v[1] < 0.1 * (v[0] - v[1]), "no carry");
+            h.useBlock(stacker);
+            h.runAfterDelay(10, () -> {
+                double[] w = pins.get();
+                h.assertTrue(sum.applyAsInt(w) == 255, "1 - 2 wraps to 255: " + java.util.Arrays.toString(w));
+                h.assertTrue(w[29] - w[1] > 0.9 * (w[0] - w[1]), "and borrows");
+                h.succeed();
+            });
+        });
+    }
 }

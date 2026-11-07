@@ -968,6 +968,12 @@ public final class Network {
                 case SHIFT_OUT -> net.puffPass(p[0], p[1], p[2], p[3], p[4], java.util.Arrays.copyOfRange(p, 5, 13), p[13]);
                 case SHIFT_IN -> net.pack(p[0], p[1], p[2], p[3], java.util.Arrays.copyOfRange(p, 4, 12), p[13]);
                 case MUX -> net.sampler(p[0], p[1], java.util.Arrays.copyOfRange(p, 2, 10), java.util.Arrays.copyOfRange(p, 11, 14), p[20]);
+                case BITWISE -> net.busLogic(com.malevolentgods.fourtwenty.domain.electronics.Chips.Op.values()[(int) Math.round(value) & 7], p[0], p[1],
+                        java.util.Arrays.copyOfRange(p, 2, 11), java.util.Arrays.copyOfRange(p, 11, 20), java.util.Arrays.copyOfRange(p, 20, 29));
+                case ARITH -> net.adder(value > 0.5, p[0], p[1], java.util.Arrays.copyOfRange(p, 2, 10), java.util.Arrays.copyOfRange(p, 11, 19), p[20],
+                        java.util.Arrays.copyOfRange(p, 21, 29), p[29]);
+                case COMPARE -> net.comparator(p[0], p[1], java.util.Arrays.copyOfRange(p, 2, 10), java.util.Arrays.copyOfRange(p, 11, 19), p[20], p[21], p[22]);
+                case REGISTER -> net.register(p[0], p[1], java.util.Arrays.copyOfRange(p, 2, 11), p[11], p[12], java.util.Arrays.copyOfRange(p, 13, 22));
                 case DEMUX -> net.dealer(p[0], p[1], p[2], java.util.Arrays.copyOfRange(p, 3, 6), java.util.Arrays.copyOfRange(p, 12, 20));
             };
             reactive |= c.type().part == com.malevolentgods.fourtwenty.electronics.ComponentType.Part.CAPACITOR
