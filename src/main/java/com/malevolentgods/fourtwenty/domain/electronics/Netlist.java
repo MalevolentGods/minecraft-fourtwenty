@@ -22,7 +22,12 @@ public final class Netlist {
 
     public int nodes() { return nodes; }
 
+    private int logicParts;
+
     private <P extends Part> P add(P part) {
+        // no two real parts are quite alike: each logic part's delay is off by a fixed fraction of a percent (by the order it was made),
+        // so a symmetric circuit such as a ring of inverters can't lock into a mode no real one could hold
+        if (part instanceof Logic l) l.delay *= 1 + 1e-3 * ((++logicParts * 0.6180339887) % 1.0);
         parts.add(part);
         analysis = null;
         return part;
@@ -102,6 +107,7 @@ public final class Netlist {
      */
     public boolean advance(double seconds, int steps) {
         if (!started && !operatingPoint()) return false;
+        time += seconds;
         double h = seconds / Math.max(1, steps);
         boolean first = true;
         for (int i = 0; i < Math.max(1, steps); i++) {
@@ -119,6 +125,99 @@ public final class Netlist {
     }
 
     private boolean breakpoint = true;
+
+    // ---- logic: events inside the tick (docs/electronics/audit-and-plan.md 4.1, option 3) --------------------------------------
+
+    /** After a logic output changes, the circuit is re-solved a microsecond on, so capacitors barely move while the edge settles. */
+    static final double SETTLE = 1e-6;
+    private double time;
+    private int budget = 20_000;
+    private double maxStep = Double.POSITIVE_INFINITY;
+
+    /** Seconds simulated so far. */
+    public double time() { return time; }
+
+    /** The most logic events one {@link #run} may process; past it, the rest wait for the next run (a slow circuit, never a slow server). */
+    public void eventBudget(int events) { budget = Math.max(1, events); }
+
+    /** The longest analog step between events (for circuits with capacitors or inductors to integrate). */
+    public void maxStep(double seconds) { maxStep = seconds > 0 ? seconds : Double.POSITIVE_INFINITY; }
+
+    public Logic.Gate gate(Logic.Kind kind, int vdd, int gnd, int out, int... inputs) { return add(new Logic.Gate(kind, vdd, gnd, out, inputs)); }
+
+    public Logic.TriState triState(int vdd, int gnd, int out, int a, int enable) { return add(new Logic.TriState(vdd, gnd, out, a, enable)); }
+
+    public Logic.Latch latch(int vdd, int gnd, int out, int set, int reset) { return add(new Logic.Latch(vdd, gnd, out, set, reset)); }
+
+    public Logic.FlipFlop flipFlop(int vdd, int gnd, int out, int d, int clock) { return add(new Logic.FlipFlop(vdd, gnd, out, d, clock)); }
+
+    public Logic.Ticker ticker(int vdd, int gnd, int out, double period) { return add(new Logic.Ticker(vdd, gnd, out, period)); }
+
+    /**
+     * Runs the circuit for {@code seconds}, logic and all: solve, let every logic part look at its inputs and queue an output change
+     * after its delay (a change its inputs take back before it's due never happens), step the analog circuit to the next change, make it,
+     * re-solve, and again, until the time is up or the event budget is spent. True if every solve converged.
+     */
+    public boolean run(double seconds) {
+        if (!started && !operatingPoint()) return false;
+        List<Logic> logic = new ArrayList<>();
+        for (Part p : parts) if (p instanceof Logic l) logic.add(l);
+        double end = time + seconds;
+        int events = 0;
+        // see the circuit as it stands now (a switch may have flipped since the last run)
+        if (!stepTo(time + SETTLE)) return false;
+        schedule(logic);
+        while (true) {
+            double next = Double.POSITIVE_INFINITY;
+            for (Logic l : logic) if (l.pending != null) next = Math.min(next, l.due);
+            if (next > end || events >= budget) return stepTo(end) && settle(logic);
+            if (next > time && !stepTo(next)) return false;
+            for (Logic l : logic) {
+                if (l.pending != null && l.due <= time + 1e-12) {
+                    l.state = l.pending;
+                    l.pending = null;
+                    events++;
+                }
+            }
+            breakpoint();
+            if (!stepTo(time + SETTLE)) return false;
+            schedule(logic);
+        }
+    }
+
+    private boolean settle(List<Logic> logic) {
+        schedule(logic);
+        return true;
+    }
+
+    /** Each logic part, from the present solution: queue its output change, or take back one its inputs no longer want. */
+    private void schedule(List<Logic> logic) {
+        for (Logic l : logic) {
+            Logic.Out want = l.want(analysis, time);
+            if (l instanceof Logic.Ticker t && want != Logic.Out.FLOAT && want == l.state) {
+                // a running Ticker: its next edge, on the beat
+                if (l.pending == null) {
+                    l.pending = want == Logic.Out.HIGH ? Logic.Out.LOW : Logic.Out.HIGH;
+                    l.due = t.nextEdge(time);
+                }
+                continue;
+            }
+            if (want == l.state) {
+                l.pending = null;
+            } else if (want != l.pending) {
+                l.pending = want;
+                l.due = time + l.delay;
+            }
+        }
+    }
+
+    /** Integrates the analog circuit from now to {@code target}, in steps no longer than {@link #maxStep}. */
+    private boolean stepTo(double target) {
+        double span = target - time;
+        if (span <= 0) return true;
+        int steps = Double.isInfinite(maxStep) ? 1 : (int) Math.ceil(span / maxStep - 1e-9);
+        return advance(span, Math.max(1, steps));
+    }
 
     /** Something switched (a button, a gate's output): the next step starts with backward Euler, so the edge doesn't ring numerically. */
     public void breakpoint() { breakpoint = true; }
@@ -191,7 +290,11 @@ public final class Netlist {
         };
         for (Part p : parts) {
             if (!p.conducts(analysis)) continue;
-            int[] n = p.nodes();
+            int[] n = p.joined();
+            if (n.length > 2) {
+                for (int k = 1; k < n.length; k++) join(parent, grounded, find, n[0], n[k]);
+                continue;
+            }
             if (p instanceof Parts.Transformer t) {
                 join(parent, grounded, find, t.a1(), t.b1());
                 join(parent, grounded, find, t.a2(), t.b2());

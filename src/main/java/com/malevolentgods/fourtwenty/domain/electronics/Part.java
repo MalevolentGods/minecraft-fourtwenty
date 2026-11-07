@@ -8,6 +8,9 @@ public interface Part {
     /** The two nodes it joins; for a part with more, the pair that ties it into a loop (for finding references). */
     int[] nodes();
 
+    /** Every node it ties into one loop (a multi-pin part ties all its pins): by default its two {@link #nodes()}. */
+    default int[] joined() { return nodes(); }
+
     /** Whether it joins its two nodes into one loop in this analysis: an open switch doesn't, nor a capacitor in DC. */
     default boolean conducts(Analysis analysis) { return true; }
 
