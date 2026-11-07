@@ -1,0 +1,132 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "clip": "fourtwenty:block/component/roach_clip",
+  "band": "fourtwenty:block/component/band",
+  "particle": "fourtwenty:block/component/roach_clip"
+ },
+ "elements": [
+  {
+   "from": [
+    4,
+    4,
+    4
+   ],
+   "to": [
+    12,
+    12,
+    12
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      4,
+      4,
+      12,
+      12
+     ],
+     "texture": "#clip"
+    },
+    "south": {
+     "uv": [
+      4,
+      4,
+      12,
+      12
+     ],
+     "texture": "#clip"
+    },
+    "east": {
+     "uv": [
+      4,
+      4,
+      12,
+      12
+     ],
+     "texture": "#clip"
+    },
+    "west": {
+     "uv": [
+      4,
+      4,
+      12,
+      12
+     ],
+     "texture": "#clip"
+    },
+    "up": {
+     "uv": [
+      4,
+      4,
+      12,
+      12
+     ],
+     "texture": "#clip"
+    },
+    "down": {
+     "uv": [
+      4,
+      4,
+      12,
+      12
+     ],
+     "texture": "#clip"
+    }
+   }
+  },
+  {
+   "from": [
+    3.9,
+    7,
+    3.9
+   ],
+   "to": [
+    12.1,
+    9,
+    12.1
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      3.9,
+      7,
+      12.1,
+      9
+     ],
+     "texture": "#band",
+     "tintindex": 0
+    },
+    "south": {
+     "uv": [
+      3.9,
+      7,
+      12.1,
+      9
+     ],
+     "texture": "#band",
+     "tintindex": 0
+    },
+    "east": {
+     "uv": [
+      3.9,
+      7,
+      12.1,
+      9
+     ],
+     "texture": "#band",
+     "tintindex": 0
+    },
+    "west": {
+     "uv": [
+      3.9,
+      7,
+      12.1,
+      9
+     ],
+     "texture": "#band",
+     "tintindex": 0
+    }
+   }
+  }
+ ]
+}

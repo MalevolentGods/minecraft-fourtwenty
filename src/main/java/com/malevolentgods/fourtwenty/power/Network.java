@@ -44,6 +44,9 @@ public final class Network {
     /** A component on this network: where it is, what it is, and the circuit node of each of its pins. */
     record Placed(BlockPos pos, com.malevolentgods.fourtwenty.electronics.ComponentType type, int[] pins) {}
 
+    /** One wire of an Eighth Ribbon or Roach Clip. */
+    record RibbonKey(BlockPos pos, int channel) {}
+
     private record Run(int start, int end, double ohms) {}
 
     final int version;
@@ -192,6 +195,11 @@ public final class Network {
             components.put(at.immutable(), cb.type());
             queue.add(new Object[]{at.immutable(), null, "component"});
         };
+        // Eighth Ribbons and Roach Clips: each wire joined straight through, by union (signal wire, no resistance)
+        java.util.function.Consumer<BlockPos> ribbon = at -> {
+            if (seen.add(at.immutable())) queue.add(new Object[]{at.immutable(), null, "ribbon"});
+        };
+        int bus = com.malevolentgods.fourtwenty.electronics.ComponentType.BUS;
         java.util.function.BiConsumer<Conductor, Conductor> edge = (a, b) -> {
             wickEdges.computeIfAbsent(a, k -> new HashSet<>()).add(b);
             wickEdges.computeIfAbsent(b, k -> new HashSet<>()).add(a);
@@ -202,14 +210,70 @@ public final class Network {
             BlockPos at = (BlockPos) item[0];
             BINode terminal = (BINode) item[1];
             var here = level.getBlockState(at);
-            if (item.length == 3) {
-                // a component: each pin face, to the Wick or Hemp Thread there, or straight into another component's pin
+            if (item.length == 3 && "ribbon".equals(item[2])) {
+                // a Ribbon or Roach Clip: wire for wire into the next Ribbon or a bus face; a clip's channel into a Wick or a single pin
+                boolean clip = here.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RoachClipBlock;
+                int channel = clip ? com.malevolentgods.fourtwenty.electronics.RoachClipBlock.channel(here) : -1;
                 for (Direction d : Direction.values()) {
-                    int pin = com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(here, d);
-                    if (pin < 0) continue;
                     BlockPos next = at.relative(d);
                     if (!level.isLoaded(next)) continue;
                     var nextState = level.getBlockState(next);
+                    if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RibbonBlock) {
+                        for (int c = 0; c < bus; c++) union.join(new RibbonKey(at, c), new RibbonKey(next.immutable(), c));
+                        ribbon.accept(next);
+                        continue;
+                    }
+                    int first = com.malevolentgods.fourtwenty.electronics.ComponentBlock.busAt(nextState, d.getOpposite());
+                    if (first >= 0) {
+                        for (int c = 0; c < bus; c++) union.join(new RibbonKey(at, c), new PinKey(next.immutable(), first + c));
+                        component.accept(next);
+                        continue;
+                    }
+                    if (!clip) continue;
+                    int single = com.malevolentgods.fourtwenty.electronics.ComponentBlock.singlePinAt(nextState, d.getOpposite());
+                    if (single >= 0) {
+                        union.join(new RibbonKey(at, channel), new PinKey(next.immutable(), single));
+                        component.accept(next);
+                        continue;
+                    }
+                    if (nextState.getBlock() instanceof WickBlock wick) {
+                        contacts.add(new Object[]{new RibbonKey(at, channel), new Conductor(next.immutable(), Core.WIRE)});
+                        if (wickTiers.size() < MAX_WICKS && seen.add(next.immutable())) {
+                            addWick.accept(next, wick);
+                            queue.add(new Object[]{next.immutable(), null});
+                        }
+                    }
+                }
+                continue;
+            }
+            if (item.length == 3) {
+                // a component: each pin face, to the Wick or Hemp Thread there, or straight into another component's pin; a bus face to
+                // a Ribbon or another bus face, wire for wire; a single pin to a Roach Clip's channel
+                for (Direction d : Direction.values()) {
+                    int pin = com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(here, d);
+                    if (pin < 0) continue;
+                    int width = com.malevolentgods.fourtwenty.electronics.ComponentBlock.widthAt(here, d);
+                    BlockPos next = at.relative(d);
+                    if (!level.isLoaded(next)) continue;
+                    var nextState = level.getBlockState(next);
+                    if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RibbonBlock) {
+                        if (width == bus) {
+                            for (int c = 0; c < bus; c++) union.join(new PinKey(at, pin + c), new RibbonKey(next.immutable(), c));
+                            ribbon.accept(next);
+                        } else if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RoachClipBlock) {
+                            union.join(new PinKey(at, pin), new RibbonKey(next.immutable(), com.malevolentgods.fourtwenty.electronics.RoachClipBlock.channel(nextState)));
+                            ribbon.accept(next);
+                        }
+                        continue;
+                    }
+                    if (width != 1) {
+                        int theirs = com.malevolentgods.fourtwenty.electronics.ComponentBlock.busAt(nextState, d.getOpposite());
+                        if (width == bus && theirs >= 0) {
+                            for (int c = 0; c < bus; c++) union.join(new PinKey(at, pin + c), new PinKey(next.immutable(), theirs + c));
+                            component.accept(next);
+                        }
+                        continue;
+                    }
                     if (nextState.getBlock() instanceof WickBlock wick) {
                         contacts.add(new Object[]{new PinKey(at, pin), new Conductor(next.immutable(), Core.WIRE)});
                         if (wickTiers.size() < MAX_WICKS && seen.add(next.immutable())) {
@@ -218,7 +282,7 @@ public final class Network {
                         }
                         continue;
                     }
-                    int theirs = com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(nextState, d.getOpposite());
+                    int theirs = com.malevolentgods.fourtwenty.electronics.ComponentBlock.singlePinAt(nextState, d.getOpposite());
                     if (theirs >= 0) {
                         union.join(new PinKey(at, pin), new PinKey(next.immutable(), theirs));
                         component.accept(next);
@@ -302,8 +366,13 @@ public final class Network {
                     }
                     continue;
                 }
+                if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RoachClipBlock) {
+                    contacts.add(new Object[]{new RibbonKey(next.immutable(), com.malevolentgods.fourtwenty.electronics.RoachClipBlock.channel(nextState)), new Conductor(at, Core.WIRE)});
+                    ribbon.accept(next);
+                    continue;
+                }
                 if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlock) {
-                    int pin = com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(nextState, d.getOpposite());
+                    int pin = com.malevolentgods.fourtwenty.electronics.ComponentBlock.singlePinAt(nextState, d.getOpposite());
                     if (pin >= 0) {
                         contacts.add(new Object[]{new PinKey(next.immutable(), pin), new Conductor(at, Core.WIRE)});
                         component.accept(next);
@@ -412,6 +481,9 @@ public final class Network {
                 if (!components.containsKey(pk.pos())) continue;
                 key = pk;
                 id = "pin" + pk.pos().asLong() + ":" + pk.pin();
+            } else if (c[0] instanceof RibbonKey rk) {
+                key = rk;
+                id = "ribbon" + rk.pos().asLong() + ":" + rk.channel();
             } else {
                 TerminalKey tk = keyOf((BINode) c[0]);
                 if (!devices.containsKey(tk.owner())) continue;
@@ -768,6 +840,7 @@ public final class Network {
                 double supply = live.volts(p[0]) - live.volts(p[1]);
                 high = supply >= com.malevolentgods.fourtwenty.domain.electronics.Logic.MIN_SUPPLY && live.volts(p[2]) - live.volts(p[1]) > supply / 2;
             } else if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Active.Mosfet) high = Math.abs(live.current(part)) >= 1e-3;
+            else if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Chips.Chip chip) high = chip.anyHigh();
             if (high != null) {
                 var state = level.getBlockState(pos);
                 if (state.hasProperty(com.malevolentgods.fourtwenty.electronics.ComponentBlock.ON)
@@ -892,6 +965,10 @@ public final class Network {
                 case NMOS -> net.mosfet(p[1], p[2], p[0], false);
                 case PMOS -> net.mosfet(p[1], p[2], p[0], true);
                 case OPAMP -> net.opAmp(p[0], p[1], p[2], p[3], p[4]);
+                case SHIFT_OUT -> net.puffPass(p[0], p[1], p[2], p[3], p[4], java.util.Arrays.copyOfRange(p, 5, 13), p[13]);
+                case SHIFT_IN -> net.pack(p[0], p[1], p[2], p[3], java.util.Arrays.copyOfRange(p, 4, 12), p[13]);
+                case MUX -> net.sampler(p[0], p[1], java.util.Arrays.copyOfRange(p, 2, 10), java.util.Arrays.copyOfRange(p, 11, 14), p[20]);
+                case DEMUX -> net.dealer(p[0], p[1], p[2], java.util.Arrays.copyOfRange(p, 3, 6), java.util.Arrays.copyOfRange(p, 12, 20));
             };
             reactive |= c.type().part == com.malevolentgods.fourtwenty.electronics.ComponentType.Part.CAPACITOR
                     || c.type().part == com.malevolentgods.fourtwenty.electronics.ComponentType.Part.INDUCTOR;

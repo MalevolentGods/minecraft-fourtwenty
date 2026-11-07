@@ -287,6 +287,12 @@
   "fourtwenty:ticker",
   "fourtwenty:sativa_fet",
   "fourtwenty:indica_fet",
-  "fourtwenty:hype_amp"
+  "fourtwenty:hype_amp",
+  "fourtwenty:eighth_ribbon",
+  "fourtwenty:roach_clip",
+  "fourtwenty:puff_pass_nug",
+  "fourtwenty:pack_nug",
+  "fourtwenty:sampler_nug",
+  "fourtwenty:dealer_nug"
  ]
 }

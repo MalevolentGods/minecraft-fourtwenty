@@ -70,7 +70,28 @@ public class InspoweedometerItem extends Item {
             }
             double[] v = reading.get().pins();
             StringBuilder text = new StringBuilder();
-            if (type.fet()) {
+            if (type.chip()) {
+                // VDD, then each signal and bus as bits against GND; a bus reads channel 7 first, as a byte is written
+                double supply = v[0] - v[1];
+                java.util.function.IntFunction<String> bit = i -> {
+                    double at = v[i] - v[1];
+                    return at >= 0.7 * supply ? "1" : at <= 0.3 * supply ? "0" : "?";
+                };
+                java.util.function.BiFunction<Integer, Integer, String> word = (from, count) -> {
+                    StringBuilder b = new StringBuilder();
+                    for (int i = from + count - 1; i >= from; i--) b.append(bit.apply(i));
+                    return b.toString();
+                };
+                text.append("VDD ").append(Units.format(supply, Units.VOLTS)).append(" · ");
+                switch (type.part) {
+                    case SHIFT_OUT -> text.append("data ").append(bit.apply(2)).append(" clk ").append(bit.apply(3)).append(" latch ").append(bit.apply(4))
+                            .append(" · out ").append(word.apply(5, 8)).append(" carry ").append(bit.apply(13));
+                    case SHIFT_IN -> text.append("load ").append(bit.apply(2)).append(" clk ").append(bit.apply(3)).append(" · in ").append(word.apply(4, 8))
+                            .append(" · out ").append(bit.apply(13));
+                    case MUX -> text.append("in ").append(word.apply(2, 8)).append(" · select ").append(word.apply(11, 3)).append(" · out ").append(bit.apply(20));
+                    default -> text.append("in ").append(bit.apply(2)).append(" · select ").append(word.apply(3, 3)).append(" · out ").append(word.apply(12, 8));
+                }
+            } else if (type.fet()) {
                 // pins {source, drain, gate}: the gate and drain against the source, and the channel current into the drain
                 text.append("Vgs ").append(Units.format(v[2] - v[0], Units.VOLTS)).append(" · Vds ").append(Units.format(v[1] - v[0], Units.VOLTS))
                         .append(" · Id ").append(Units.format(reading.get().amps(), Units.AMPS));

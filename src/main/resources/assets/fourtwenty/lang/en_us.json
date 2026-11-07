@@ -2093,5 +2093,18 @@
   "block.fourtwenty.indica_fet": "Indica FET",
   "tooltip.fourtwenty.item.indica_fet": "A P-channel MOSFET: a gate more than 1 Kb below its source lets current run from source to drain, more the lower it goes. Source at the back, drain in front, gate on the left (the green lead).",
   "block.fourtwenty.hype_amp": "Hype Amp",
-  "tooltip.fourtwenty.item.hype_amp": "An op-amp: drives its output to 100,000 times the difference of its inputs, as far as its supply allows. With Resinators for feedback it amplifies by their ratio. Inputs + on the left and − on the right, output in front; VDD on top, GND underneath."
+  "tooltip.fourtwenty.item.hype_amp": "An op-amp: drives its output to 100,000 times the difference of its inputs, as far as its supply allows. With Resinators for feedback it amplifies by their ratio. Inputs + on the left and − on the right, output in front; VDD on top, GND underneath.",
+  "block.fourtwenty.eighth_ribbon": "Eighth Ribbon",
+  "tooltip.fourtwenty.item.eighth_ribbon": "Nine signal wires in one: channels 0 to 7, striped in the resistor colour code, and the carry in grey. Joins other Ribbons, Roach Clips and the bus faces of the Puff-Pass, Pack, Sampler and Dealer Nugs.",
+  "block.fourtwenty.roach_clip": "Roach Clip",
+  "tooltip.fourtwenty.item.roach_clip": "Clips one channel of an Eighth Ribbon out to a Wick, Hemp Thread or a single pin; the rest pass straight through. Use it to step the channel (sneak to step back); its band shows which.",
+  "message.fourtwenty.roach_clip.channel": "Roach Clip: channel %s",
+  "block.fourtwenty.puff_pass_nug": "Puff-Pass Nug",
+  "tooltip.fourtwenty.item.puff_pass_nug": "A shift register: each rising clock moves its 8 bits up one and takes data in at bit 0; a rising latch shows them all at once. The carry is bit 7, for the next one's data. Data at the back, clock on the left, latch on the right; the 8 outputs and the carry on the bus face in front, for an Eighth Ribbon. VDD on top, GND underneath.",
+  "block.fourtwenty.pack_nug": "Pack Nug",
+  "tooltip.fourtwenty.item.pack_nug": "A shift register the other way: load takes its 8 inputs, then each rising clock sends the next out, bit 7 first. Load on the left, clock on the right, the 8 inputs on the bus face at the back, serial out in front. VDD on top, GND underneath.",
+  "block.fourtwenty.sampler_nug": "Sampler Nug",
+  "tooltip.fourtwenty.item.sampler_nug": "A multiplexer: its output follows the input the select picks (0 to 7). The 8 inputs on the bus face at the back, select (channels 0 to 2) on the bus face on the left, output in front. VDD on top, GND underneath.",
+  "block.fourtwenty.dealer_nug": "Dealer Nug",
+  "tooltip.fourtwenty.item.dealer_nug": "A demultiplexer: the output the select picks (0 to 7) follows its input; the others are 0. Input at the back, select (channels 0 to 2) on the bus face on the left, the 8 outputs on the bus face in front. VDD on top, GND underneath."
 }

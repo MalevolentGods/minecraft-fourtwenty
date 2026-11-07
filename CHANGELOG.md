@@ -5,7 +5,7 @@ All notable changes to the FourTwenty mod will be documented in this file.
 ## [Unreleased]
 
 ### Added
-- **Electronics**: Resinators, Kief Caps, Spliff Coils, One-Hitters and Zen Hitters, Toggle Joints, Kill Switches and Puff Buttons, the eight logic Nugs, the Tri-State, Latch and Flip-Flop Nugs, the Ticker, Sativa and Indica FETs (N- and P-channel MOSFETs) and the Hype Amp (an op-amp), wired by their pin faces with Wicks or the new Hemp Thread, and solved like SPICE: real time steps for capacitors and inductors, real diode and transistor physics, and logic with real gate delays inside each tick.
+- **Electronics**: Resinators, Kief Caps, Spliff Coils, One-Hitters and Zen Hitters, Toggle Joints, Kill Switches and Puff Buttons, the eight logic Nugs, the Tri-State, Latch and Flip-Flop Nugs, the Ticker, Sativa and Indica FETs (N- and P-channel MOSFETs), the Hype Amp (an op-amp), the Puff-Pass and Pack Nugs (shift registers), the Sampler and Dealer Nugs (multiplexers), the Eighth Ribbon (a 9-wire bus cable) and the Roach Clip, wired by their pin faces with Wicks or the new Hemp Thread, and solved like SPICE: real time steps for capacitors and inductors, real diode and transistor physics, and logic with real gate delays inside each tick.
 - **Bottomless Stashes** (one per tier) and the **Bench Rig**, a variable DC supply, for testing circuits in creative.
 - **Lit Bits are real RGB LEDs**: each channel a diode behind its resistor, dimming along the diode's curve as the supply sags.
 

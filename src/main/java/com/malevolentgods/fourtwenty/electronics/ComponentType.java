@@ -33,10 +33,17 @@ public enum ComponentType {
     TICKER("ticker", Part.TICKER, Layout.NO_INPUT, "s", List.of(0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0), 1.0),
     SATIVA_FET("sativa_fet", Part.NMOS, Layout.THREE_PIN, "", List.of(), 0),
     INDICA_FET("indica_fet", Part.PMOS, Layout.THREE_PIN, "", List.of(), 0),
-    HYPE_AMP("hype_amp", Part.OPAMP, Layout.TWO_INPUT, "", List.of(), 0);
+    HYPE_AMP("hype_amp", Part.OPAMP, Layout.TWO_INPUT, "", List.of(), 0),
+    PUFF_PASS_NUG("puff_pass_nug", Part.SHIFT_OUT, Layout.PUFF_PASS, "", List.of(), 0),
+    PACK_NUG("pack_nug", Part.SHIFT_IN, Layout.PACK, "", List.of(), 0),
+    SAMPLER_NUG("sampler_nug", Part.MUX, Layout.SAMPLER, "", List.of(), 0),
+    DEALER_NUG("dealer_nug", Part.DEMUX, Layout.DEALER, "", List.of(), 0);
+
+    /** Wires on a bus face, and in an Eighth Ribbon: channels 0 to 7, then the carry. */
+    public static final int BUS = 9;
 
     /** What the block is in the circuit. */
-    public enum Part { RESISTOR, CAPACITOR, INDUCTOR, DIODE, ZENER, TOGGLE, REDSTONE_SWITCH, BUTTON, GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, NMOS, PMOS, OPAMP }
+    public enum Part { RESISTOR, CAPACITOR, INDUCTOR, DIODE, ZENER, TOGGLE, REDSTONE_SWITCH, BUTTON, GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, NMOS, PMOS, OPAMP, SHIFT_OUT, SHIFT_IN, MUX, DEMUX }
 
     /** A pin's face, relative to the block's front. */
     public enum Face { FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM }
@@ -44,18 +51,37 @@ public enum ComponentType {
     /**
      * Which pins a part has, in the order the engine wants them. Two-pin parts: {back, front} (a One-Hitter's anode is its back, its
      * cathode, the banded end, its front). Logic: {vdd, gnd, out, inputs...}; a Hype Amp's inputs are + on the left, − on the right.
-     * FETs: {source, drain, gate}, the source at the back, the drain in front, the gate on the left.
+     * FETs: {source, drain, gate}, the source at the back, the drain in front, the gate on the left. A bus face (an Eighth Ribbon's
+     * nine wires) is nine pins in a row, channel 0 first, the carry last: Puff-Pass {vdd, gnd, data, clock, latch, out 0-7, carry}; Pack
+     * {vdd, gnd, load, clock, in 0-7, (carry), out}; Sampler {vdd, gnd, in 0-7, (carry), select 0-2 and six unused, out}; Dealer {vdd,
+     * gnd, in, select 0-2 and six unused, out 0-7, (carry)}.
      */
     public enum Layout {
         TWO_PIN(Face.BACK, Face.FRONT),
         NO_INPUT(Face.TOP, Face.BOTTOM, Face.FRONT),
         ONE_INPUT(Face.TOP, Face.BOTTOM, Face.FRONT, Face.BACK),
         TWO_INPUT(Face.TOP, Face.BOTTOM, Face.FRONT, Face.LEFT, Face.RIGHT),
-        THREE_PIN(Face.BACK, Face.FRONT, Face.LEFT);
+        THREE_PIN(Face.BACK, Face.FRONT, Face.LEFT),
+        PUFF_PASS(cat(new Face[]{Face.TOP, Face.BOTTOM, Face.BACK, Face.LEFT, Face.RIGHT}, bus(Face.FRONT))),
+        PACK(cat(new Face[]{Face.TOP, Face.BOTTOM, Face.LEFT, Face.RIGHT}, bus(Face.BACK), new Face[]{Face.FRONT})),
+        SAMPLER(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), bus(Face.LEFT), new Face[]{Face.FRONT})),
+        DEALER(cat(new Face[]{Face.TOP, Face.BOTTOM, Face.BACK}, bus(Face.LEFT), bus(Face.FRONT)));
 
         public final List<Face> pins;
 
         Layout(Face... pins) { this.pins = List.of(pins); }
+
+        private static Face[] bus(Face face) {
+            Face[] out = new Face[BUS];
+            java.util.Arrays.fill(out, face);
+            return out;
+        }
+
+        private static Face[] cat(Face[]... parts) {
+            java.util.List<Face> out = new java.util.ArrayList<>();
+            for (Face[] p : parts) out.addAll(java.util.Arrays.asList(p));
+            return out.toArray(new Face[0]);
+        }
     }
 
     public final String id;
@@ -84,10 +110,13 @@ public enum ComponentType {
     /** A powered part read as bits: the Nugs and the Ticker. */
     public boolean logic() {
         return switch (part) {
-            case GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER -> true;
+            case GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, SHIFT_OUT, SHIFT_IN, MUX, DEMUX -> true;
             default -> false;
         };
     }
+
+    /** A chip with a bus face: a shift register or a multiplexer. */
+    public boolean chip() { return part == Part.SHIFT_OUT || part == Part.SHIFT_IN || part == Part.MUX || part == Part.DEMUX; }
 
     /** A transistor, read by its gate, drain and channel current. */
     public boolean fet() { return part == Part.NMOS || part == Part.PMOS; }
@@ -117,6 +146,13 @@ public enum ComponentType {
     public int pinAt(Direction front, Direction side) {
         for (int i = 0; i < layout.pins.size(); i++) if (toWorld(front, layout.pins.get(i)) == side) return i;
         return -1;
+    }
+
+    /** How many pins are on world side {@code side}: 0, 1, or {@link #BUS} for a bus face. */
+    public int widthAt(Direction front, Direction side) {
+        int n = 0;
+        for (Face f : layout.pins) if (toWorld(front, f) == side) n++;
+        return n;
     }
 
     public static ComponentType byId(String id) {

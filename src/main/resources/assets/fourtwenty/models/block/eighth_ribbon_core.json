@@ -1,0 +1,77 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "ribbon": "fourtwenty:block/component/ribbon",
+  "particle": "fourtwenty:block/component/ribbon"
+ },
+ "elements": [
+  {
+   "from": [
+    3,
+    7,
+    3
+   ],
+   "to": [
+    13,
+    9,
+    13
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      3,
+      7,
+      13,
+      9
+     ],
+     "texture": "#ribbon"
+    },
+    "south": {
+     "uv": [
+      3,
+      7,
+      13,
+      9
+     ],
+     "texture": "#ribbon"
+    },
+    "east": {
+     "uv": [
+      3,
+      7,
+      13,
+      9
+     ],
+     "texture": "#ribbon"
+    },
+    "west": {
+     "uv": [
+      3,
+      7,
+      13,
+      9
+     ],
+     "texture": "#ribbon"
+    },
+    "up": {
+     "uv": [
+      3,
+      3,
+      13,
+      13
+     ],
+     "texture": "#ribbon"
+    },
+    "down": {
+     "uv": [
+      3,
+      3,
+      13,
+      13
+     ],
+     "texture": "#ribbon"
+    }
+   }
+  }
+ ]
+}

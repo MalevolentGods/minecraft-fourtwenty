@@ -1,0 +1,22 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:hemp_thread"
+  },
+  {
+   "item": "fourtwenty:hemp_thread"
+  },
+  {
+   "item": "fourtwenty:hemp_thread"
+  },
+  {
+   "item": "minecraft:paper"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:eighth_ribbon",
+  "count": 4
+ }
+}

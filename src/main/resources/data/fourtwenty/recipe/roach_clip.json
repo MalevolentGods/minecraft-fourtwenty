@@ -1,0 +1,19 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:eighth_ribbon"
+  },
+  {
+   "item": "minecraft:copper_ingot"
+  },
+  {
+   "item": "minecraft:iron_nugget"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:roach_clip",
+  "count": 2
+ }
+}

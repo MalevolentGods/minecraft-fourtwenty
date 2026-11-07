@@ -3,11 +3,11 @@
  "category": "redstone",
  "ingredients": [
   {
-   "item": "fourtwenty:hype_amp"
+   "item": "fourtwenty:sampler_nug"
   }
  ],
  "result": {
-  "id": "fourtwenty:not_nug",
+  "id": "fourtwenty:dealer_nug",
   "count": 1
  }
 }

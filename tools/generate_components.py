@@ -43,7 +43,15 @@ TYPES = [
     ('sativa_fet', 'Sativa FET', 'fet', 'nfet'),
     ('indica_fet', 'Indica FET', 'fet', 'pfet'),
     ('hype_amp', 'Hype Amp', 'amp', 'AMP'),
+    ('puff_pass_nug', 'Puff-Pass Nug', 'puffpass', 'PUF'),
+    ('pack_nug', 'Pack Nug', 'pack', 'PAK'),
+    ('sampler_nug', 'Sampler Nug', 'sampler', 'MUX'),
+    ('dealer_nug', 'Dealer Nug', 'dealer', 'DMX'),
 ]
+
+# the resistor colour code for channels 0 to 7, the carry grey: an Eighth Ribbon's stripes and a Roach Clip's band
+CHANNELS = [(0x1E, 0x1E, 0x1E), (0x7A, 0x4A, 0x21), (0xD0, 0x20, 0x20), (0xF0, 0x80, 0x20), (0xF0, 0xD0, 0x20), (0x30, 0xA0, 0x40),
+            (0x20, 0x50, 0xD0), (0x80, 0x40, 0xC0), (0x80, 0x80, 0x80)]
 
 TOOLTIPS = {
     'two': 'Two pins, back and front: any Wick or Hemp Thread on either end joins it.',
@@ -52,6 +60,10 @@ TOOLTIPS = {
     'none': 'Output in front; VDD on top, GND underneath.',
     'fet': 'Source at the back, drain in front, gate on the left (the green lead).',
     'amp': 'Inputs + on the left and − on the right, output in front; VDD on top, GND underneath.',
+    'puffpass': 'Data at the back, clock on the left, latch on the right; the 8 outputs and the carry on the bus face in front, for an Eighth Ribbon. VDD on top, GND underneath.',
+    'pack': 'Load on the left, clock on the right, the 8 inputs on the bus face at the back, serial out in front. VDD on top, GND underneath.',
+    'sampler': 'The 8 inputs on the bus face at the back, select (channels 0 to 2) on the bus face on the left, output in front. VDD on top, GND underneath.',
+    'dealer': 'Input at the back, select (channels 0 to 2) on the bus face on the left, the 8 outputs on the bus face in front. VDD on top, GND underneath.',
 }
 EXTRA = {
     'resinator': 'A resistor, rated 10 W: past that it burns out in smoke. Use it to step its value (sneak to step back).',
@@ -68,6 +80,10 @@ EXTRA = {
     'ticker': 'A clock: a square wave. Use it to step its period (sneak to step back).',
     'sativa_fet': 'An N-channel MOSFET: a gate more than 1 Kb above its source lets current run from drain to source, more the higher it goes.',
     'indica_fet': 'A P-channel MOSFET: a gate more than 1 Kb below its source lets current run from source to drain, more the lower it goes.',
+    'puff_pass_nug': 'A shift register: each rising clock moves its 8 bits up one and takes data in at bit 0; a rising latch shows them all at once. The carry is bit 7, for the next one\'s data.',
+    'pack_nug': 'A shift register the other way: load takes its 8 inputs, then each rising clock sends the next out, bit 7 first.',
+    'sampler_nug': 'A multiplexer: its output follows the input the select picks (0 to 7).',
+    'dealer_nug': 'A demultiplexer: the output the select picks (0 to 7) follows its input; the others are 0.',
     'hype_amp': 'An op-amp: drives its output to 100,000 times the difference of its inputs, as far as its supply allows. With Resinators for feedback it amplifies by their ratio.',
 }
 
@@ -75,6 +91,8 @@ BODY = {'resistor': (196, 170, 120), 'capacitor': (52, 92, 160), 'coil': (70, 54
         'toggle': (110, 112, 118), 'kill': (120, 40, 36), 'button': (110, 112, 118), 'nfet': (44, 74, 48), 'pfet': (74, 48, 84)}
 CHIP = (26, 30, 30)
 LEAD = {'in': (190, 192, 198), 'out': (220, 176, 60), 'vdd': (200, 40, 40), 'gnd': (24, 24, 26), 'gate': (90, 200, 90)}
+# a bus face: a wide flat connector, the Ribbon's stripes on it
+BUS_LEADS = {'front': ([3, 7, 0], [13, 9, 2]), 'back': ([3, 7, 14], [13, 9, 16]), 'left': ([14, 7, 3], [16, 9, 13]), 'right': ([0, 7, 3], [2, 9, 13])}
 
 # a 3x5 pixel font for the Nug labels
 FONT = {
@@ -166,6 +184,7 @@ def lead_textures():
     for name, c in LEAD.items():
         save(Image.new('RGBA', (16, 16), c + (255,)), TEX / f'lead_{name}.png')
     side_texture(CHIP, 'chip_side')
+    ribbon_texture()
     for look, c in BODY.items():
         side_texture(c, f'{look}_side')
 
@@ -184,7 +203,11 @@ LEADS = {'front': ([7, 7, 0], [9, 9, 2]), 'back': ([7, 7, 14], [9, 9, 16]), 'lef
 PINS = {'two': [('back', 'in'), ('front', 'in')], 'one': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out'), ('back', 'in')],
         'twoin': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out'), ('left', 'in'), ('right', 'in')],
         'amp': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out'), ('left', 'in'), ('right', 'in')],
-        'fet': [('back', 'in'), ('front', 'out'), ('left', 'gate')], 'none': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out')]}
+        'fet': [('back', 'in'), ('front', 'out'), ('left', 'gate')],
+        'puffpass': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'in'), ('left', 'in'), ('right', 'in'), ('front', 'bus')],
+        'pack': [('top', 'vdd'), ('bottom', 'gnd'), ('left', 'in'), ('right', 'in'), ('back', 'bus'), ('front', 'out')],
+        'sampler': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'bus'), ('front', 'out')],
+        'dealer': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'in'), ('left', 'bus'), ('front', 'bus')], 'none': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out')]}
 
 
 def component(cid, layout, look):
@@ -198,8 +221,10 @@ def component(cid, layout, look):
                'particle': f'fourtwenty:block/component/{side}'}
         for kind in LEAD:
             tex[f'lead_{kind}'] = f'fourtwenty:block/component/lead_{kind}'
+        if any(kind == 'bus' for _, kind in PINS[layout]):
+            tex['lead_bus'] = 'fourtwenty:block/component/ribbon'
         body = box([2, 2, 2], [14, 14, 14], {'north': '#front', 'south': '#side', 'east': '#side', 'west': '#side', 'up': '#side', 'down': '#side'})
-        elements = [body] + [box(LEADS[face][0], LEADS[face][1], f'#lead_{kind}') for face, kind in PINS[layout]]
+        elements = [body] + [box(*(BUS_LEADS[face] if kind == 'bus' else LEADS[face]), f'#lead_{kind}') for face, kind in PINS[layout]]
         if look == 'resistor':
             # four bands round the body along its axis (north to south): two digits and the multiplier tinted from its value, then gold
             tex['band'] = 'fourtwenty:block/component/band'
@@ -218,6 +243,44 @@ def component(cid, layout, look):
             variants[f'facing={facing},on={on}'] = {'model': model, **({'y': y} if y else {})}
     write(ASSETS / f'blockstates/{cid}.json', {'variants': variants})  # a Resinator's value isn't in the key: it only tints
     write(ASSETS / f'models/item/{cid}.json', {'parent': f'fourtwenty:block/component/{cid}'})
+
+
+def ribbon_texture():
+    # nine stripes across (x 3 to 11), along the ribbon's length; edges in its grey jacket
+    img = Image.new('RGBA', (16, 16), (150, 150, 156, 255))
+    d = ImageDraw.Draw(img)
+    for i, c in enumerate(CHANNELS):
+        d.line([3 + i, 0, 3 + i, 15], fill=c + (255,))
+    save(img, TEX / 'ribbon.png')
+    brass = Image.new('RGBA', (16, 16), (196, 160, 70, 255))
+    bd = ImageDraw.Draw(brass)
+    bd.rectangle([0, 0, 15, 15], outline=(150, 118, 46, 255))
+    for x in (3, 7, 11):
+        bd.line([x, 2, x, 13], fill=(226, 196, 110, 255))
+    save(brass, TEX / 'roach_clip.png')
+
+
+def ribbons():
+    """The Eighth Ribbon: a flat striped core and arms; the Roach Clip: a brass clip with its channel's band (tinted), on the same arms."""
+    tex = {'ribbon': 'fourtwenty:block/component/ribbon', 'particle': 'fourtwenty:block/component/ribbon'}
+    write(ASSETS / 'models/block/eighth_ribbon_core.json', {'parent': 'block/block', 'textures': tex, 'elements': [box([3, 7, 3], [13, 9, 13], '#ribbon')]})
+    write(ASSETS / 'models/block/eighth_ribbon_arm.json', {'parent': 'block/block', 'textures': tex, 'elements': [box([3, 7, 0], [13, 9, 3], '#ribbon')]})
+    band = box([3.9, 7, 3.9], [12.1, 9, 12.1], '#band', faces=('north', 'south', 'east', 'west'))
+    for f in band['faces'].values():
+        f['tintindex'] = 0
+    clip_tex = {'clip': 'fourtwenty:block/component/roach_clip', 'band': 'fourtwenty:block/component/band',
+                'particle': 'fourtwenty:block/component/roach_clip'}
+    write(ASSETS / 'models/block/roach_clip_core.json', {'parent': 'block/block', 'textures': clip_tex,
+          'elements': [box([4, 4, 4], [12, 12, 12], '#clip'), band]})
+    rotations = (('north', {}), ('east', {'y': 90}), ('south', {'y': 180}), ('west', {'y': 270}), ('up', {'x': 270}), ('down', {'x': 90}))
+    for cid in ('eighth_ribbon', 'roach_clip'):
+        parts = [{'apply': {'model': f'fourtwenty:block/{cid}_core'}}]
+        for side, rot in rotations:
+            parts.append({'when': {side: 'true'}, 'apply': {'model': 'fourtwenty:block/eighth_ribbon_arm', **rot}})
+        write(ASSETS / f'blockstates/{cid}.json', {'multipart': parts})
+    write(ASSETS / 'models/item/eighth_ribbon.json', {'parent': 'block/block', 'textures': tex,
+          'display': {'gui': {'rotation': [30, 45, 0], 'scale': [0.8, 0.8, 0.8]}}, 'elements': [box([3, 7, 0], [13, 9, 16], '#ribbon')]})
+    write(ASSETS / 'models/item/roach_clip.json', {'parent': 'fourtwenty:block/roach_clip_core'})
 
 
 def thread():
@@ -255,7 +318,7 @@ def thread():
 
 
 def data():
-    ids = ['hemp_thread'] + [cid for cid, _, _, _ in TYPES]
+    ids = ['hemp_thread', 'eighth_ribbon', 'roach_clip'] + [cid for cid, _, _, _ in TYPES]
     for cid in ids:
         write(DATA / f'fourtwenty/loot_table/blocks/{cid}.json', {'type': 'minecraft:block', 'pools': [{'rolls': 1, 'entries': [
             {'type': 'minecraft:item', 'name': f'fourtwenty:{cid}'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
@@ -263,6 +326,12 @@ def data():
     # basic parts; every other part by putting one of its family alone in the grid, which turns it into the next of the family
     write(DATA / 'fourtwenty/recipe/hemp_thread.json', {'type': 'minecraft:crafting_shapeless', 'category': 'redstone',
           'ingredients': [{'item': 'fourtwenty:hemp_wick'}], 'result': {'id': 'fourtwenty:hemp_thread', 'count': 4}})
+    write(DATA / 'fourtwenty/recipe/eighth_ribbon.json', {'type': 'minecraft:crafting_shapeless', 'category': 'redstone',
+          'ingredients': [{'item': 'fourtwenty:hemp_thread'}, {'item': 'fourtwenty:hemp_thread'}, {'item': 'fourtwenty:hemp_thread'},
+                          {'item': 'minecraft:paper'}], 'result': {'id': 'fourtwenty:eighth_ribbon', 'count': 4}})
+    write(DATA / 'fourtwenty/recipe/roach_clip.json', {'type': 'minecraft:crafting_shapeless', 'category': 'redstone',
+          'ingredients': [{'item': 'fourtwenty:eighth_ribbon'}, {'item': 'minecraft:copper_ingot'}, {'item': 'minecraft:iron_nugget'}],
+          'result': {'id': 'fourtwenty:roach_clip', 'count': 2}})
     write(DATA / 'fourtwenty/recipe/resinator.json', {'type': 'minecraft:crafting_shapeless', 'category': 'redstone',
           'ingredients': [{'item': 'minecraft:copper_ingot'}, {'item': 'minecraft:coal'}, {'item': 'fourtwenty:hemp_thread'}],
           'result': {'id': 'fourtwenty:resinator', 'count': 4}})
@@ -285,6 +354,11 @@ def data():
     lang_path = ASSETS / 'lang/en_us.json'
     lang = json.loads(lang_path.read_text(encoding='utf-8'))
     lang['block.fourtwenty.hemp_thread'] = 'Hemp Thread'
+    lang['block.fourtwenty.eighth_ribbon'] = 'Eighth Ribbon'
+    lang['tooltip.fourtwenty.item.eighth_ribbon'] = 'Nine signal wires in one: channels 0 to 7, striped in the resistor colour code, and the carry in grey. Joins other Ribbons, Roach Clips and the bus faces of the Puff-Pass, Pack, Sampler and Dealer Nugs.'
+    lang['block.fourtwenty.roach_clip'] = 'Roach Clip'
+    lang['tooltip.fourtwenty.item.roach_clip'] = 'Clips one channel of an Eighth Ribbon out to a Wick, Hemp Thread or a single pin; the rest pass straight through. Use it to step the channel (sneak to step back); its band shows which.'
+    lang['message.fourtwenty.roach_clip.channel'] = 'Roach Clip: channel %s'
     lang['tooltip.fourtwenty.item.hemp_thread'] = 'A thin single wire for signals: any colour joins any component pin it touches. Rated for a hundredth of a Hemp Wick.'
     for cid, name, layout, _ in TYPES:
         lang[f'block.fourtwenty.{cid}'] = name
@@ -301,6 +375,7 @@ def main():
     for cid, _, layout, look in TYPES:
         component(cid, layout, look)
     thread()
+    ribbons()
     data()
     print(f'wrote {len(TYPES)} components and Hemp Thread')
 

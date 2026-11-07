@@ -8,6 +8,9 @@ public final class ResistorCode {
     private static final int[] CODE = {0x1E1E1E, 0x7A4A21, 0xD02020, 0xF08020, 0xF0D020, 0x30A040, 0x2050D0, 0x8040C0, 0x808080, 0xF0F0F0};
     public static final int GOLD = 0xD4AF37, SILVER = 0xC0C0C0;
 
+    /** The colour of digit {@code d} (0 black to 9 white). */
+    public static int digit(int d) { return CODE[Math.floorMod(d, CODE.length)]; }
+
     /** The colour of band {@code band} (0: first digit, 1: second, 2: multiplier) for {@code ohms}; gold is ×0.1, silver ×0.01. */
     public static int band(double ohms, int band) {
         if (ohms <= 0) return CODE[0];

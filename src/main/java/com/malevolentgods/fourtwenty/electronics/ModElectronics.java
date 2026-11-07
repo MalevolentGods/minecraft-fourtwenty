@@ -35,8 +35,18 @@ public final class ModElectronics {
             () -> new HempThreadBlock(BlockBehaviour.Properties.of().strength(0.1f).sound(SoundType.WOOL).noOcclusion()
                     .lightLevel(state -> state.getValue(WickBlock.LIT) ? 2 : 0)));
 
+    /** The Eighth Ribbon: nine signal wires in one flat cable. */
+    public static final DeferredHolder<Block, RibbonBlock> EIGHTH_RIBBON = ModBlocks.BLOCKS.register("eighth_ribbon",
+            () -> new RibbonBlock(BlockBehaviour.Properties.of().strength(0.1f).sound(SoundType.WOOL).noOcclusion()));
+
+    /** The Roach Clip: one channel of a Ribbon out to a single pin. */
+    public static final DeferredHolder<Block, RoachClipBlock> ROACH_CLIP = ModBlocks.BLOCKS.register("roach_clip",
+            () -> new RoachClipBlock(BlockBehaviour.Properties.of().strength(0.3f).sound(SoundType.METAL).noOcclusion()));
+
     static {
         ALL.add(ModItems.ITEMS.register("hemp_thread", () -> new BlockItem(HEMP_THREAD.get(), new Item.Properties())));
+        ALL.add(ModItems.ITEMS.register("eighth_ribbon", () -> new BlockItem(EIGHTH_RIBBON.get(), new Item.Properties())));
+        ALL.add(ModItems.ITEMS.register("roach_clip", () -> new BlockItem(ROACH_CLIP.get(), new Item.Properties())));
         for (ComponentType t : ComponentType.values()) {
             DeferredHolder<Block, ComponentBlock> block = ModBlocks.BLOCKS.register(t.id,
                     () -> t == ComponentType.RESINATOR ? new ResinatorBlock(t, component()) : new ComponentBlock(t, component()));

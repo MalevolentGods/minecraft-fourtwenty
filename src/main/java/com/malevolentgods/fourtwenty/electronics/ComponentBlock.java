@@ -66,6 +66,18 @@ public class ComponentBlock extends Block implements EntityBlock {
         return c.type.pinAt(state.getValue(FACING), side);
     }
 
+    /** How many pins are on world side {@code side}: 0, 1, or {@link ComponentType#BUS} for a bus face. */
+    public static int widthAt(BlockState state, Direction side) {
+        if (!(state.getBlock() instanceof ComponentBlock c)) return 0;
+        return c.type.widthAt(state.getValue(FACING), side);
+    }
+
+    /** The pin on world side {@code side} if it's a single pin (a Wick or Hemp Thread can join it), or -1. */
+    public static int singlePinAt(BlockState state, Direction side) { return widthAt(state, side) == 1 ? pinAt(state, side) : -1; }
+
+    /** The first pin of the bus face on world side {@code side} (an Eighth Ribbon joins it), or -1. */
+    public static int busAt(BlockState state, Direction side) { return widthAt(state, side) == ComponentType.BUS ? pinAt(state, side) : -1; }
+
     @Override protected @Nonnull InteractionResult useWithoutItem(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player,
                                                                   @Nonnull BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;

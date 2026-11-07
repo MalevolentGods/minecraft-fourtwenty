@@ -22,6 +22,14 @@ public final class WickColours {
         }, com.malevolentgods.fourtwenty.electronics.ModElectronics.COMPONENTS.get(com.malevolentgods.fourtwenty.electronics.ComponentType.RESINATOR).get());
     }
 
+    /** A Roach Clip's band: its channel's colour. */
+    @SubscribeEvent
+    public static void roachClipBand(RegisterColorHandlersEvent.Block event) {
+        event.register((state, level, pos, tint) -> tint != 0 ? -1
+                : 0xFF000000 | com.malevolentgods.fourtwenty.electronics.RoachClipBlock.colour(com.malevolentgods.fourtwenty.electronics.RoachClipBlock.channel(state)),
+                com.malevolentgods.fourtwenty.electronics.ModElectronics.ROACH_CLIP.get());
+    }
+
     @SubscribeEvent
     public static void resinatorItemBands(RegisterColorHandlersEvent.Item event) {
         event.register((stack, tint) -> tint < 0 || tint > 2 ? -1

@@ -112,7 +112,9 @@ public class WickBlock extends Block {
         if (neighbour.getBlock() instanceof WickBlock) return joins(self, neighbour) ? Link.WIRE : Link.NONE;
         if (neighbour.getBlock() instanceof CableBlock) return CableBlock.takesWick(self) ? Link.WIRE : Link.NONE;
         // any colour of Wick or Hemp Thread plugs into a component's pin face
-        if (com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(neighbour, side.getOpposite()) >= 0) return Link.PLUG;
+        if (com.malevolentgods.fourtwenty.electronics.ComponentBlock.singlePinAt(neighbour, side.getOpposite()) >= 0) return Link.PLUG;
+        // and into a Roach Clip, on its channel
+        if (neighbour.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RoachClipBlock) return Link.PLUG;
         // only red (+) and black (−) Wicks plug into blocks, on any face
         return Terminal.signOf(self) != null && Terminal.pluggable(neighbour, side.getOpposite()) ? Link.PLUG : Link.NONE;
     }

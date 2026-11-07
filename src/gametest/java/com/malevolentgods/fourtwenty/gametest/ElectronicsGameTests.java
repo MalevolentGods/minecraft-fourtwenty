@@ -278,4 +278,74 @@ public final class ElectronicsGameTests {
             h.succeed();
         });
     }
+    /**
+     * A Sampler Nug facing east, off the rails (Ladder at z 0 and 2; the build at z 5). Its input bus (back, west) is an Eighth Ribbon
+     * ending in a Roach Clip on channel 2, a red Wick on the clip; its select bus (left, south) a Ribbon and a clip on channel 1, a red
+     * Wick on that too. Select 2 picks input 2, which is high: the output is high. Clip the input on channel 3 instead: low.
+     */
+    @GameTest(template = "long", timeoutTicks = 200)
+    public static void aSamplerReadsARibbonThroughRoachClips(GameTestHelper h) {
+        var l = new Ladder(h, 2, 0).rails(ModPower.HEMP_WICK.get(), 1, 8);
+        l.hookah(1, ModBlocks.WEED_BONG.get());
+        BlockPos sampler = new BlockPos(5, 2, 5), inClip = new BlockPos(3, 2, 5), selClip = new BlockPos(5, 2, 7);
+        place(h, sampler, ComponentType.SAMPLER_NUG, Direction.EAST);
+        for (int z = 0; z <= 7; z++) red(h, 5, 3, z);
+        for (int z = 2; z <= 5; z++) black(h, 5, 1, z);
+        h.setBlock(new BlockPos(4, 2, 5), ModElectronics.EIGHTH_RIBBON.get());
+        h.setBlock(inClip, ModElectronics.ROACH_CLIP.get().defaultBlockState().setValue(com.malevolentgods.fourtwenty.electronics.RoachClipBlock.CHANNEL, 2));
+        for (int z = 0; z <= 5; z++) red(h, 3, 3, z);
+        h.setBlock(new BlockPos(5, 2, 6), ModElectronics.EIGHTH_RIBBON.get());
+        h.setBlock(selClip, ModElectronics.ROACH_CLIP.get().defaultBlockState().setValue(com.malevolentgods.fourtwenty.electronics.RoachClipBlock.CHANNEL, 1));
+        java.util.function.Supplier<double[]> pins = () -> com.malevolentgods.fourtwenty.power.Circuits.componentReading(h.getLevel(), h.absolutePos(sampler))
+                .map(com.malevolentgods.fourtwenty.power.Circuits.ComponentReading::pins).orElse(null);
+        h.runAfterDelay(20, () -> {
+            double[] v = pins.get();
+            h.assertTrue(v != null, "a reading");
+            double supply = v[0] - v[1];
+            h.assertTrue(supply > 3.5, "powered: " + supply);
+            h.assertTrue(v[2 + 2] - v[1] > 0.9 * supply, "input 2 high through the clip: " + java.util.Arrays.toString(v));
+            h.assertTrue(v[11 + 1] - v[1] > 0.9 * supply && v[11] - v[1] < 0.1 * supply, "select reads 2");
+            h.assertTrue(v[20] - v[1] > 0.9 * supply && on(h, sampler), "picks input 2: high");
+            h.setBlock(inClip, h.getBlockState(inClip).setValue(com.malevolentgods.fourtwenty.electronics.RoachClipBlock.CHANNEL, 3));
+            com.malevolentgods.fourtwenty.power.BIGrid.changed(h.getLevel());
+            h.runAfterDelay(10, () -> {
+                double[] w = pins.get();
+                h.assertTrue(w[2 + 3] - w[1] > 0.9 * supply, "now input 3 is high");
+                h.assertTrue(w[20] - w[1] < 0.1 * supply && !on(h, sampler), "and input 2, still picked, is low");
+                h.succeed();
+            });
+        });
+    }
+
+    /**
+     * A Puff-Pass Nug facing east with data (back) tied to VDD, its clock (left, south) and latch (right, north) each on a Ticker at
+     * 0.1 s through Hemp Thread, an Eighth Ribbon on its outputs. Ones shift in at every clock: within a few seconds all eight latched
+     * outputs and the carry are high.
+     */
+    @GameTest(template = "long", timeoutTicks = 300)
+    public static void aPuffPassNugFillsWithOnes(GameTestHelper h) {
+        var l = new Ladder(h, 2, 0).rails(ModPower.HEMP_WICK.get(), 1, 8);
+        l.hookah(1, ModBlocks.WEED_BONG.get());
+        BlockPos chip = new BlockPos(5, 2, 5), clock = new BlockPos(5, 2, 7), latch = new BlockPos(5, 2, 3);
+        place(h, chip, ComponentType.PUFF_PASS_NUG, Direction.EAST);
+        place(h, clock, ComponentType.TICKER, Direction.NORTH);
+        place(h, latch, ComponentType.TICKER, Direction.SOUTH);
+        for (int z = 0; z <= 7; z++) red(h, 5, 3, z);
+        for (int z = 2; z <= 7; z++) black(h, 5, 1, z);
+        for (int z = 0; z <= 5; z++) red(h, 4, 3, z);
+        red(h, 4, 2, 5);
+        h.setBlock(new BlockPos(5, 2, 6), ModElectronics.HEMP_THREAD.get());
+        h.setBlock(new BlockPos(5, 2, 4), ModElectronics.HEMP_THREAD.get());
+        h.setBlock(new BlockPos(6, 2, 5), ModElectronics.EIGHTH_RIBBON.get());
+        ((ComponentBlockEntity) h.getBlockEntity(clock)).step(-3);
+        ((ComponentBlockEntity) h.getBlockEntity(latch)).step(-3);
+        h.succeedWhen(() -> {
+            var found = com.malevolentgods.fourtwenty.power.Circuits.componentReading(h.getLevel(), h.absolutePos(chip));
+            h.assertTrue(found.isPresent(), "a reading");
+            double[] v = found.get().pins();
+            double supply = v[0] - v[1];
+            for (int k = 5; k <= 13; k++) h.assertTrue(v[k] - v[1] > 0.9 * supply, "pin " + k + " high: " + java.util.Arrays.toString(v));
+            h.assertTrue(on(h, chip), "lit");
+        });
+    }
 }
