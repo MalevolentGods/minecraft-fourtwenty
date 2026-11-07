@@ -2,7 +2,7 @@ package com.malevolentgods.fourtwenty.domain.electronics;
 
 /**
  * The components: each a stamp of its companion model (docs/electronics/audit-and-plan.md part 2). Currents are in Ignus, voltages in
- * Kerberos, resistance in Phus, capacitance in Kb·s per Ig (our farad) and inductance in Φ·s (our henry), all SI-shaped.
+ * Kerberos, resistance in Phus, capacitance in Garcias (Ga, Ig·s per Kb) and inductance in Marleys (Ma, Kb·s per Ig), all SI-shaped.
  */
 public final class Parts {
     private Parts() {}

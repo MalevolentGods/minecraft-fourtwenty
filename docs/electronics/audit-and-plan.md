@@ -1,6 +1,6 @@
 # Inspoweednetics: circuit audit and a component electronics plan
 
-Status: proposal, 2026-11-06. Nothing here is built yet. Units are ours: Willards (W, power), Ignus (Ig, current), Kerberos (Kb, voltage), Phus (Φ, resistance), seconds; capacitance and inductance units still need names.
+Status: proposal, 2026-11-06. Nothing here is built yet. Units are ours: Willards (W, power), Ignus (Ig, current), Kerberos (Kb, voltage), Phus (Φ, resistance), Garcias (Ga, capacitance), Marleys (Ma, inductance), seconds.
 
 The aim is a DC simulator that is as trustworthy as SPICE's operating-point and transient analyses for the circuits players can build, without simulating electrons: lumped components, Kirchhoff's laws, real device equations. Then real parts on top of it: resistors, capacitors, inductors, diodes, and logic gates that compute Boolean logic correctly when wired.
 
@@ -206,9 +206,24 @@ Decided (user, 2026-11-06):
 - **Gate delay**: option 3 of 4.1, real delays inside the tick, 1 ms per gate by default, with a per-tick budget.
 - **Releases**: test on flatworld as we go; release when the user decides it's ready.
 
-Open:
+- **Units** (user): capacitance in **Garcias** (one Garcia, two Garcias; Ga) and inductance in **Marleys** (one Marley, two Marleys; Ma). Symbols Ga and Ma chosen by Claude.
+- **Names** (user: "go with your gut"):
 
-- **Names**: the units of capacitance and inductance, the signal wire, every component and gate block.
+| Part | Name |
+|---|---|
+| Signal wire (thin, single conductor) | Hemp Thread |
+| Resistor | Resinator |
+| Switch / lever / button | Toggle Joint / Kill Switch / Puff Button |
+| Capacitor | Kief Cap |
+| Inductor | Spliff Coil |
+| Diode | One-Hitter |
+| Zener diode | Zen Hitter |
+| LED | Lit Bit (already) |
+| Logic gates | NOT Nug, AND Nug, OR Nug, NAND Nug, NOR Nug, XOR Nug, XNOR Nug, Buffer Nug, Tri-State Nug |
+| SR latch / D flip-flop | Latch Nug / Flip-Flop Nug |
+| Clock | Ticker |
+
+Later phases (transistors, op-amps) will need names of their own.
 
 ### 4.1 Gate delay: the options
 
