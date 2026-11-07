@@ -68,6 +68,14 @@ public final class Netlist {
     /** The most any node may move in one Newton step (damping, for circuits of relaxed parts). */
     public void stepLimit(double volts) { stepLimit = volts > 0 ? volts : Double.POSITIVE_INFINITY; }
 
+    /** A Sativa FET (N-channel) or Indica FET (P-channel) MOSFET: drain, gate, source. */
+    public Active.Mosfet mosfet(int drain, int gate, int source, boolean pChannel) {
+        return add(new Active.Mosfet(drain, gate, source, pChannel, Active.Mosfet.VT, Active.Mosfet.K, Active.Mosfet.LAMBDA));
+    }
+
+    /** A Hype Amp op-amp: supply, ground, output, non-inverting and inverting inputs. */
+    public Active.OpAmp opAmp(int vdd, int gnd, int out, int plus, int minus) { return add(new Active.OpAmp(vdd, gnd, out, plus, minus)); }
+
     public Parts.Switch switchPart(int a, int b, boolean closed) { return add(new Parts.Switch(a, b, closed)); }
 
     /** Flips a switch: the next time step starts with backward Euler. */
@@ -347,8 +355,31 @@ public final class Netlist {
             }
             join(parent, grounded, find, n[0], n[1]);
         }
+        // each loop's reference: the minus pin of its stiffest source, so the rails are measured from the node the solve can hold
+        // best; a node hanging off one transistor makes every stiff stamp ride on a weak tie
+        int[] best = new int[nodes];
+        double[] bestOhms = new double[nodes];
+        java.util.Arrays.fill(best, -1);
+        java.util.Arrays.fill(bestOhms, Double.POSITIVE_INFINITY);
+        for (Part p : parts) {
+            int minus;
+            double ohms;
+            if (p instanceof Parts.Source s) {
+                minus = s.minus();
+                ohms = s.ohms();
+            } else if (p instanceof Parts.LimitedSource s) {
+                minus = s.minus;
+                ohms = s.ohms;
+            } else continue;
+            if (minus == Stamp.GROUND) continue;
+            int root = find.applyAsInt(minus);
+            if (ohms < bestOhms[root]) {
+                bestOhms[root] = ohms;
+                best[root] = minus;
+            }
+        }
         List<Integer> out = new ArrayList<>();
-        for (int i = 0; i < nodes; i++) if (find.applyAsInt(i) == i && !grounded[i]) out.add(i);
+        for (int i = 0; i < nodes; i++) if (find.applyAsInt(i) == i && !grounded[i]) out.add(best[i] >= 0 ? best[i] : i);
         return out;
     }
 
