@@ -157,7 +157,7 @@ public final class Circuits {
                     if (!w.pos().equals(pos)) continue;
                     var rules = com.malevolentgods.fourtwenty.processing.ProcessingConfig.circuit();
                     double v = net.volts(w), a = net.amps(w);
-                    return Optional.of(new Reading(v, a, rules.wickOhms(w.tier()), v * a, true, rules.wickAmps(w.tier()), rules.wickVolts(w.tier()), net.wickLoss(w), com.malevolentgods.fourtwenty.domain.Circuit.OK));
+                    return Optional.of(new Reading(v, a, rules.wickOhms(w.tier()) * w.ohmsScale(), v * a, true, rules.wickAmps(w.tier()) * w.ampsScale(), rules.wickVolts(w.tier()), net.wickLoss(w), com.malevolentgods.fourtwenty.domain.Circuit.OK));
                 }
             }
             BIRules.Tier tier = wick.tier();

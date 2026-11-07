@@ -36,7 +36,13 @@ public final class Network {
     record Member(BINode node, BlockPos pos, int plus, int minus) {}
 
     /** A Wick: its tier and where it sits in the circuit, as a node, or a share along a collapsed run. */
-    record Wick(BlockPos pos, Core core, BIRules.Tier tier, int node, int conductor, double fromStart, int[] incident) {}
+    record Wick(BlockPos pos, Core core, BIRules.Tier tier, int node, int conductor, double fromStart, int[] incident, double ohmsScale, double ampsScale) {}
+
+    /** A component's pin: a node of the circuit (docs/electronics/audit-and-plan.md 3.1). */
+    record PinKey(BlockPos pos, int pin) {}
+
+    /** A component on this network: where it is, what it is, and the circuit node of each of its pins. */
+    record Placed(BlockPos pos, com.malevolentgods.fourtwenty.electronics.ComponentType type, int[] pins) {}
 
     private record Run(int start, int end, double ohms) {}
 
@@ -64,8 +70,13 @@ public final class Network {
     /** For each member, the transformer it is a winding of in the last solution, or -1. */
     private int[] windingOf = new int[0];
 
+    private static final double[] ONE = {1, 1};
+    /** The components on this network (electronics); when there are any, it runs in time every tick (see {@link #tickLive}). */
+    final List<Placed> placed;
+
     private Network(int version, long walkedAt, List<Member> members, List<Wick> wicks, List<Run> runs, int nodes, Map<BlockPos, DaisyLine.Reason> daisyFailed,
-                    List<BINode[]> couplings) {
+                    List<BINode[]> couplings, List<Placed> placed) {
+        this.placed = placed;
         this.daisyFailed = daisyFailed;
         this.couplings = couplings;
         this.version = version;
@@ -166,9 +177,20 @@ public final class Network {
             devices.put(owner, at.immutable());
             queue.add(new Object[]{at.immutable(), owner});
         };
-        java.util.function.BiConsumer<BlockPos, BIRules.Tier> addWick = (at, tier) -> {
+        Map<Conductor, double[]> scales = new HashMap<>();
+        java.util.function.BiConsumer<BlockPos, WickBlock> addWick = (at, wick) -> {
             Conductor c = new Conductor(at.immutable(), Core.WIRE);
-            if (!wickTiers.containsKey(c) && wickTiers.size() < MAX_WICKS) wickTiers.put(c, tier);
+            if (!wickTiers.containsKey(c) && wickTiers.size() < MAX_WICKS) {
+                wickTiers.put(c, wick.tier());
+                if (wick.ohmsScale() != 1 || wick.ampsScale() != 1) scales.put(c, new double[]{wick.ohmsScale(), wick.ampsScale()});
+            }
+        };
+        // components (electronics): their pins are nodes, joined to any Wick or Hemp Thread on a pin face, or to another component's pin
+        Map<BlockPos, com.malevolentgods.fourtwenty.electronics.ComponentType> components = new LinkedHashMap<>();
+        java.util.function.Consumer<BlockPos> component = at -> {
+            if (components.containsKey(at) || !(level.getBlockState(at).getBlock() instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlock cb)) return;
+            components.put(at.immutable(), cb.type());
+            queue.add(new Object[]{at.immutable(), null, "component"});
         };
         java.util.function.BiConsumer<Conductor, Conductor> edge = (a, b) -> {
             wickEdges.computeIfAbsent(a, k -> new HashSet<>()).add(b);
@@ -180,6 +202,30 @@ public final class Network {
             BlockPos at = (BlockPos) item[0];
             BINode terminal = (BINode) item[1];
             var here = level.getBlockState(at);
+            if (item.length == 3) {
+                // a component: each pin face, to the Wick or Hemp Thread there, or straight into another component's pin
+                for (Direction d : Direction.values()) {
+                    int pin = com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(here, d);
+                    if (pin < 0) continue;
+                    BlockPos next = at.relative(d);
+                    if (!level.isLoaded(next)) continue;
+                    var nextState = level.getBlockState(next);
+                    if (nextState.getBlock() instanceof WickBlock wick) {
+                        contacts.add(new Object[]{new PinKey(at, pin), new Conductor(next.immutable(), Core.WIRE)});
+                        if (wickTiers.size() < MAX_WICKS && seen.add(next.immutable())) {
+                            addWick.accept(next, wick);
+                            queue.add(new Object[]{next.immutable(), null});
+                        }
+                        continue;
+                    }
+                    int theirs = com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(nextState, d.getOpposite());
+                    if (theirs >= 0) {
+                        union.join(new PinKey(at, pin), new PinKey(next.immutable(), theirs));
+                        component.accept(next);
+                    }
+                }
+                continue;
+            }
             if (terminal == null && here.getBlock() instanceof CableBlock cable) {
                 cables.put(at, cable);
                 for (Direction d : Direction.values()) {
@@ -196,7 +242,7 @@ public final class Network {
                     if (nextState.getBlock() instanceof WickBlock wick) {
                         if (!CableBlock.takesWick(nextState)) continue;
                         wiresAtCables.put(next.asLong() + ">" + at.asLong(), new Object[]{next.immutable(), at});
-                        addWick.accept(next, wick.tier());
+                        addWick.accept(next, wick);
                         if (seen.add(next.immutable())) queue.add(new Object[]{next.immutable(), null});
                         continue;
                     }
@@ -230,7 +276,7 @@ public final class Network {
                     if (sign == null) continue;
                     contacts.add(new Object[]{Terminal.of(terminal, sign), new Conductor(next.immutable(), Core.WIRE)});
                     if (wickTiers.size() < MAX_WICKS && seen.add(next.immutable())) {
-                        addWick.accept(next, wick.tier());
+                        addWick.accept(next, wick);
                         queue.add(new Object[]{next.immutable(), null});
                     }
                 }
@@ -251,8 +297,16 @@ public final class Network {
                     if (!WickBlock.joins(here, nextState)) continue;
                     edge.accept(new Conductor(at, Core.WIRE), new Conductor(next.immutable(), Core.WIRE));
                     if (wickTiers.size() < MAX_WICKS && seen.add(next.immutable())) {
-                        addWick.accept(next, wick.tier());
+                        addWick.accept(next, wick);
                         queue.add(new Object[]{next.immutable(), null});
+                    }
+                    continue;
+                }
+                if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlock) {
+                    int pin = com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(nextState, d.getOpposite());
+                    if (pin >= 0) {
+                        contacts.add(new Object[]{new PinKey(next.immutable(), pin), new Conductor(at, Core.WIRE)});
+                        component.accept(next);
                     }
                     continue;
                 }
@@ -315,6 +369,8 @@ public final class Network {
             members.add(new Member(owner, e.getValue(), nodeFor.apply(new TerminalKey(owner, Terminals.Sign.PLUS)), nodeFor.apply(new TerminalKey(owner, Terminals.Sign.MINUS))));
         }
         CircuitRules.Numbers rules = ProcessingConfig.circuit();
+        java.util.function.Function<Conductor, Double> ohmsOf = c -> rules.wickOhms(wickTiers.get(c)) * scales.getOrDefault(c, ONE)[0];
+        java.util.function.Function<Conductor, double[]> scaleOf = c -> scales.getOrDefault(c, ONE);
         List<Run> runs = new ArrayList<>();
         Map<Conductor, Wick> wicks = new LinkedHashMap<>();
         Set<String> walked = new HashSet<>();
@@ -329,7 +385,7 @@ public final class Network {
                 Conductor prev = w, at = first;
                 double ohms = 0;
                 while (true) {
-                    ohms += (rules.wickOhms(wickTiers.get(prev)) + rules.wickOhms(wickTiers.get(at))) / 2;
+                    ohms += (ohmsOf.apply(prev) + ohmsOf.apply(at)) / 2;
                     if (!plain.get(at)) break;
                     chain.add(at);
                     along.add(ohms);
@@ -342,31 +398,49 @@ public final class Network {
                 int to = nodeFor.apply(at);
                 int index = runs.size();
                 runs.add(new Run(from, to, ohms));
-                for (int i = 0; i < chain.size(); i++) wicks.put(chain.get(i), new Wick(chain.get(i).pos(), chain.get(i).core(), wickTiers.get(chain.get(i)), -1, index, along.get(i), null));
+                for (int i = 0; i < chain.size(); i++) wicks.put(chain.get(i), new Wick(chain.get(i).pos(), chain.get(i).core(), wickTiers.get(chain.get(i)), -1, index, along.get(i), null,
+                        scaleOf.apply(chain.get(i))[0], scaleOf.apply(chain.get(i))[1]));
             }
         }
         Set<String> linked = new HashSet<>();
         for (Object[] c : contacts) {
-            BINode t = (BINode) c[0];
             Conductor w = (Conductor) c[1];
-            TerminalKey key = keyOf(t);
-            if (!devices.containsKey(key.owner()) || !wickTiers.containsKey(w)
-                    || !linked.add(System.identityHashCode(key.owner()) + key.sign().name() + "@" + w.id())) continue;
-            runs.add(new Run(nodeFor.apply(key), nodeFor.apply(w), rules.wickOhms(wickTiers.get(w)) / 2));
+            if (!wickTiers.containsKey(w)) continue;
+            Object key;
+            String id;
+            if (c[0] instanceof PinKey pk) {
+                if (!components.containsKey(pk.pos())) continue;
+                key = pk;
+                id = "pin" + pk.pos().asLong() + ":" + pk.pin();
+            } else {
+                TerminalKey tk = keyOf((BINode) c[0]);
+                if (!devices.containsKey(tk.owner())) continue;
+                key = tk;
+                id = System.identityHashCode(tk.owner()) + tk.sign().name();
+            }
+            if (!linked.add(id + "@" + w.id())) continue;
+            runs.add(new Run(nodeFor.apply(key), nodeFor.apply(w), ohmsOf.apply(w) / 2));
         }
         for (Conductor w : wickTiers.keySet()) {
             if (wicks.containsKey(w)) continue;
             if (plain.get(w)) {
                 // a ring of plain conductors with nothing on it carries nothing
-                wicks.put(w, new Wick(w.pos(), w.core(), wickTiers.get(w), -1, -1, 0, null));
+                wicks.put(w, new Wick(w.pos(), w.core(), wickTiers.get(w), -1, -1, 0, null, scaleOf.apply(w)[0], scaleOf.apply(w)[1]));
                 continue;
             }
             int n = nodeFor.apply(w);
             List<Integer> incident = new ArrayList<>();
             for (int i = 0; i < runs.size(); i++) if (runs.get(i).start() == n || runs.get(i).end() == n) incident.add(i);
-            wicks.put(w, new Wick(w.pos(), w.core(), wickTiers.get(w), n, -1, 0, incident.stream().mapToInt(Integer::intValue).toArray()));
+            wicks.put(w, new Wick(w.pos(), w.core(), wickTiers.get(w), n, -1, 0, incident.stream().mapToInt(Integer::intValue).toArray(),
+                    scaleOf.apply(w)[0], scaleOf.apply(w)[1]));
         }
-        return new Network(BIGrid.version(level), level.getGameTime(), members, new ArrayList<>(wicks.values()), runs, count[0], daisyFailed, couplings);
+        List<Placed> placed = new ArrayList<>();
+        for (var e : components.entrySet()) {
+            int[] pins = new int[e.getValue().layout.pins.size()];
+            for (int i = 0; i < pins.length; i++) pins[i] = nodeFor.apply(new PinKey(e.getKey(), i));
+            placed.add(new Placed(e.getKey(), e.getValue(), pins));
+        }
+        return new Network(BIGrid.version(level), level.getGameTime(), members, new ArrayList<>(wicks.values()), runs, count[0], daisyFailed, couplings, placed);
     }
 
     /**
@@ -478,6 +552,7 @@ public final class Network {
         Set<Object> keys = new HashSet<>();
         for (Member m : members) keys.add(new DeviceKey(m.node()));
         for (Wick w : wicks) keys.add(w.pos());
+        for (Placed c : placed) keys.add(c.pos());
         return keys;
     }
 
@@ -586,6 +661,12 @@ public final class Network {
         long now = level.getGameTime();
         if (tickedAt == now) return;
         tickedAt = now;
+        if (!placed.isEmpty()) {
+            tickLive(level, now);
+            move(now);
+            checks(level, now, burnTimers);
+            return;
+        }
         long sig = signature(now);
         if (solution == null || sig != signature) {
             solve(now);
@@ -629,6 +710,241 @@ public final class Network {
         }
     }
 
+    // ---- electronics: a network with components runs in time, every tick (docs/electronics/audit-and-plan.md 3.3) ----------------
+
+    private static final double OPEN_SHARE = 1e-4;
+    private com.malevolentgods.fourtwenty.domain.electronics.Netlist live;
+    private long liveSignature = Long.MIN_VALUE;
+    private final List<com.malevolentgods.fourtwenty.domain.electronics.Part> liveParts = new ArrayList<>();
+    private final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.Resistor> liveRuns = new ArrayList<>();
+    private final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.LimitedSource> liveSources = new ArrayList<>();
+    private final List<double[]> liveSourceOhms = new ArrayList<>();
+    private final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.PowerLoad> liveLoads = new ArrayList<>();
+    private final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.DriverLed> liveLeds = new ArrayList<>();
+    private final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.Transformer> liveWindings = new ArrayList<>();
+    private final List<Double> liveWindingOhms = new ArrayList<>();
+
+    /** One tick of a network with components: build it if its machines changed, then run it for a tick of time, logic and all. */
+    private void tickLive(Level level, long now) {
+        long sig = signature(now);
+        if (live == null || sig != liveSignature) {
+            buildLive(level, now);
+            liveSignature = sig;
+        }
+        for (int i = 0; i < placed.size(); i++) {
+            if (liveParts.get(i) instanceof com.malevolentgods.fourtwenty.domain.electronics.Parts.Switch sw
+                    && level.getBlockEntity(placed.get(i).pos()) instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity be) {
+                live.set(sw, be.closed());
+            }
+        }
+        boolean ok = live.run(1.0 / BIRules.TICKS_PER_SECOND);
+        for (int i = 0; i < placed.size(); i++) {
+            var part = liveParts.get(i);
+            BlockPos pos = placed.get(i).pos();
+            if (part == null || !(level.getBlockEntity(pos) instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity be)) continue;
+            be.memory(part.save(live.time()));
+            if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Logic l) {
+                var state = level.getBlockState(pos);
+                boolean high = l.output() == com.malevolentgods.fourtwenty.domain.electronics.Logic.Out.HIGH;
+                if (state.hasProperty(com.malevolentgods.fourtwenty.electronics.ComponentBlock.ON)
+                        && state.getValue(com.malevolentgods.fourtwenty.electronics.ComponentBlock.ON) != high) {
+                    level.setBlock(pos, state.setValue(com.malevolentgods.fourtwenty.electronics.ComponentBlock.ON, high), 2);
+                }
+            }
+        }
+        solution = liveSolution(ok);
+        var led = com.malevolentgods.fourtwenty.lights.LightsConfig.led();
+        status = new int[members.size()];
+        for (int i = 0; i < members.size(); i++) {
+            status[i] = loadIndex[i] >= 0 ? solution.loadStatus()[loadIndex[i]] : ledIndex[i] >= 0 ? solution.ledStatus()[ledIndex[i]] : Circuit.OK;
+        }
+        for (int i = 0; i < members.size(); i++) {
+            if (ledIndex[i] < 0) continue;
+            members.get(i).node().lit(status[i] == Circuit.OK && !members.get(i).node().overloaded(now) ? led.brightness(memberVolts(i)) : 0, status[i]);
+        }
+        floor = 0;
+        for (int i = 0; i < solution.volts().length; i++) floor = i == 0 ? solution.volts()[0] : Math.min(floor, solution.volts()[i]);
+    }
+
+    /** The live circuit: the machines as solve() makes them, the Wicks, the Hit Boxes, and every component, given back its memory. */
+    private void buildLive(Level level, long now) {
+        CircuitRules.Numbers rules = ProcessingConfig.circuit();
+        var net = new com.malevolentgods.fourtwenty.domain.electronics.Netlist();
+        for (int i = 0; i < nodes; i++) net.node();
+        liveRuns.clear();
+        liveSources.clear();
+        liveSourceOhms.clear();
+        liveLoads.clear();
+        liveLeds.clear();
+        liveWindings.clear();
+        liveWindingOhms.clear();
+        liveParts.clear();
+        for (Run r : runs) liveRuns.add(net.resistor(r.start(), r.end(), r.ohms()));
+        sourceIndex = new int[members.size()];
+        loadIndex = new int[members.size()];
+        ledIndex = new int[members.size()];
+        java.util.Arrays.fill(sourceIndex, -1);
+        java.util.Arrays.fill(loadIndex, -1);
+        java.util.Arrays.fill(ledIndex, -1);
+        var led = com.malevolentgods.fourtwenty.lights.LightsConfig.led();
+        BIRules.Tier top = null;
+        for (Member m : members) {
+            BINode n = m.node();
+            if (n.overloaded(now)) continue;
+            BINode.Role role = n.role();
+            if (role == BINode.Role.SOURCE && n.sourceReady() || role == BINode.Role.BATTERY && n.stored() > 0) {
+                if (top == null || n.tier().ordinal() > top.ordinal()) top = n.tier();
+            }
+        }
+        nominal = top == null ? 0 : rules.volts(top);
+        for (int i = 0; i < members.size(); i++) {
+            BINode n = members.get(i).node();
+            int plus = members.get(i).plus(), minus = members.get(i).minus();
+            if (n.overloaded(now)) continue;
+            BIRules.Tier tier = n.tier();
+            double volts = rules.volts(tier);
+            switch (n.role()) {
+                case SOURCE -> {
+                    if (!n.sourceReady()) continue;
+                    double watts = n.sourceWatts(), ohms = rules.sourceDroop() * volts * volts / watts;
+                    sourceIndex[i] = liveSources.size();
+                    liveSources.add(net.limitedSource(plus, minus, volts, ohms, rules.sourceLimit() * watts / volts, 0));
+                    liveSourceOhms.add(new double[]{ohms});
+                }
+                case BATTERY -> {
+                    double amps = rules.stashAmps(tier), ohms = rules.stashOhms(tier);
+                    sourceIndex[i] = liveSources.size();
+                    liveSources.add(net.limitedSource(plus, minus, rules.stashEmf(tier, n.fill()), ohms, n.stored() > 0 ? amps : 0, n.stored() < n.capacity() ? amps : 0));
+                    liveSourceOhms.add(new double[]{ohms});
+                }
+                case LOAD -> {
+                    double watts = n.demandWatts();
+                    if (watts > 0) {
+                        loadIndex[i] = liveLoads.size();
+                        liveLoads.add(net.powerLoad(plus, minus, watts, rules.minVolts(tier)));
+                    }
+                }
+                case LED -> {
+                    ledIndex[i] = liveLeds.size();
+                    liveLeds.add(net.driverLed(plus, minus, n.ledAmps(), led.forwardVolts(), led.fullVolts()));
+                }
+                default -> {}
+            }
+        }
+        windingOf = new int[members.size()];
+        java.util.Arrays.fill(windingOf, -1);
+        for (BINode[] pair : couplings) {
+            int hi = indexOf(pair[0]), lo = indexOf(pair[1]);
+            if (hi < 0 || lo < 0 || pair[0].overloaded(now) || pair[1].overloaded(now)) continue;
+            BIRules.Tier high = pair[0].tier(), low = pair[1].tier();
+            double ohms = rules.hitBoxLoss() * rules.baseOhms(high);
+            windingOf[hi] = liveWindings.size();
+            windingOf[lo] = liveWindings.size();
+            liveWindings.add(net.transformer(members.get(hi).plus(), members.get(hi).minus(), members.get(lo).plus(), members.get(lo).minus(),
+                    rules.volts(high) / rules.volts(low), ohms));
+            liveWindingOhms.add(ohms);
+        }
+        Map<com.malevolentgods.fourtwenty.domain.electronics.Part, double[]> memory = new IdentityHashMap<>();
+        boolean reactive = false;
+        for (Placed c : placed) {
+            var be = level.getBlockEntity(c.pos()) instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity b ? b : null;
+            double value = be == null ? c.type().defaultValue : be.value();
+            int[] p = c.pins();
+            com.malevolentgods.fourtwenty.domain.electronics.Part part = switch (c.type().part) {
+                case RESISTOR -> net.resistor(p[0], p[1], value);
+                case CAPACITOR -> net.capacitor(p[0], p[1], value);
+                case INDUCTOR -> net.inductor(p[0], p[1], value);
+                case DIODE -> net.diode(p[0], p[1], com.malevolentgods.fourtwenty.domain.electronics.Parts.DiodeModel.SILICON);
+                case ZENER -> net.diode(p[0], p[1], com.malevolentgods.fourtwenty.domain.electronics.Parts.DiodeModel.zener(value));
+                case TOGGLE, REDSTONE_SWITCH, BUTTON -> net.switchPart(p[0], p[1], be != null && be.closed());
+                case GATE -> net.gate(c.type().gate, p[0], p[1], p[2], java.util.Arrays.copyOfRange(p, 3, p.length));
+                case TRI_STATE -> net.triState(p[0], p[1], p[2], p[3], p[4]);
+                case LATCH -> net.latch(p[0], p[1], p[2], p[3], p[4]);
+                case FLIP_FLOP -> net.flipFlop(p[0], p[1], p[2], p[3], p[4]);
+                case TICKER -> net.ticker(p[0], p[1], p[2], value);
+            };
+            reactive |= c.type().part == com.malevolentgods.fourtwenty.electronics.ComponentType.Part.CAPACITOR
+                    || c.type().part == com.malevolentgods.fourtwenty.electronics.ComponentType.Part.INDUCTOR;
+            liveParts.add(part);
+            if (be != null && be.memory().length > 0) memory.put(part, be.memory());
+        }
+        net.tolerance(1e-9);
+        net.stepLimit(0.25 * Math.max(nominal, 1));
+        net.eventBudget(2000);
+        if (reactive) net.maxStep(1.0 / BIRules.TICKS_PER_SECOND / 10);
+        net.resume(memory);
+        live = net;
+    }
+
+    /** The live circuit's state, in the shape the rest of this class reads (Circuit.Solution). */
+    private Circuit.Solution liveSolution(boolean converged) {
+        var an = live.analysis();
+        double[] v = new double[nodes];
+        for (int i = 0; i < nodes; i++) v[i] = live.volts(i);
+        double losses = 0;
+        double[] cAmps = new double[liveRuns.size()];
+        for (int i = 0; i < cAmps.length; i++) {
+            cAmps[i] = live.current(liveRuns.get(i));
+            losses += cAmps[i] * cAmps[i] * runs.get(i).ohms();
+        }
+        double[] sAmps = new double[liveSources.size()], sWatts = new double[liveSources.size()];
+        for (int k = 0; k < sAmps.length; k++) {
+            var src = liveSources.get(k);
+            int[] n = src.nodes();
+            double across = live.volts(n[0]) - live.volts(n[1]);
+            sAmps[k] = live.current(src);
+            double ohms = liveSourceOhms.get(k)[0];
+            sWatts[k] = across * sAmps[k] + sAmps[k] * sAmps[k] * ohms;
+            losses += sAmps[k] * sAmps[k] * ohms;
+        }
+        double scale = Math.max(nominal, 1e-9);
+        double[] lWatts = new double[liveLoads.size()], lAmps = new double[liveLoads.size()];
+        int[] lStatus = new int[liveLoads.size()];
+        for (int k = 0; k < lWatts.length; k++) {
+            var load = liveLoads.get(k);
+            int[] n = load.nodes();
+            double across = live.volts(n[0]) - live.volts(n[1]);
+            lWatts[k] = load.wattsAt(across);
+            lAmps[k] = load.ampsAt(across);
+            lStatus[k] = across < -OPEN_SHARE * scale ? Circuit.REVERSED : across <= OPEN_SHARE * scale ? Circuit.NO_LOOP : Circuit.OK;
+        }
+        double[] ledAmps = new double[liveLeds.size()];
+        int[] ledStatus = new int[liveLeds.size()];
+        for (int k = 0; k < ledAmps.length; k++) {
+            var l = liveLeds.get(k);
+            int[] n = l.nodes();
+            double across = live.volts(n[0]) - live.volts(n[1]);
+            ledAmps[k] = l.ampsAt(across);
+            ledStatus[k] = across < -OPEN_SHARE * scale ? Circuit.REVERSED : across <= OPEN_SHARE * scale ? Circuit.NO_LOOP : Circuit.OK;
+        }
+        double[] tAmps = new double[liveWindings.size()];
+        for (int k = 0; k < tAmps.length; k++) {
+            tAmps[k] = live.current(liveWindings.get(k));
+            losses += tAmps[k] * tAmps[k] * liveWindingOhms.get(k);
+        }
+        return new Circuit.Solution(v, cAmps, sAmps, sWatts, lWatts, lAmps, losses, 1, converged, lStatus, ledAmps, ledStatus, tAmps);
+    }
+
+    /** A component's pin voltages and its part, for the Inspoweedometer; null if it isn't on this network. */
+    double[] pinVolts(BlockPos pos) {
+        for (int i = 0; i < placed.size(); i++) {
+            if (!placed.get(i).pos().equals(pos) || live == null) continue;
+            int[] pins = placed.get(i).pins();
+            double[] out = new double[pins.length];
+            for (int k = 0; k < pins.length; k++) out[k] = live.volts(pins[k]);
+            return out;
+        }
+        return null;
+    }
+
+    /** The current through a component (first pin to second; a logic part's supply current). */
+    double componentAmps(BlockPos pos) {
+        for (int i = 0; i < placed.size(); i++) {
+            if (placed.get(i).pos().equals(pos) && live != null && liveParts.get(i) != null) return live.current(liveParts.get(i));
+        }
+        return 0;
+    }
+
     private void checks(Level level, long now, Map<BlockPos, Integer> burnTimers) {
         CircuitRules.Numbers rules = ProcessingConfig.circuit();
         for (int i = 0; i < members.size(); i++) {
@@ -641,7 +957,7 @@ public final class Network {
         for (Wick w : wicks) {
             double amps = amps(w), volts = volts(w);
             tierAt.put(w.pos(), w.tier());
-            boolean over = amps > rules.wickAmps(w.tier()) || volts > rules.wickVolts(w.tier());
+            boolean over = amps > rules.wickAmps(w.tier()) * w.ampsScale() || volts > rules.wickVolts(w.tier());
             if (over) overVolts.merge(w.pos(), volts, (x, y) -> Double.isNaN(x) ? y : Math.max(x, y));
             else overVolts.putIfAbsent(w.pos(), Double.NaN);
             if (glow && amps > 1e-6 * rules.baseAmps(w.tier())) WickBlock.carry(level, w.pos());
@@ -734,7 +1050,7 @@ public final class Network {
     double wickLoss(Wick w) {
         CircuitRules.Numbers rules = ProcessingConfig.circuit();
         double a = amps(w);
-        return a * a * rules.wickOhms(w.tier());
+        return a * a * rules.wickOhms(w.tier()) * w.ohmsScale();
     }
 
     double nominal() { return nominal; }
@@ -743,7 +1059,8 @@ public final class Network {
 
     /** What everything on it but {@code except} asks for, in Willards, without solving: loads' demand, and room in batteries. */
     double demandBeyond(BINode except) {
-        double total = 0;
+        // electronics draw power too: a network with components wants its source lit
+        double total = placed.isEmpty() ? 0 : 1;
         for (Member m : members) {
             BINode n = m.node();
             if (n == Terminal.owner(except)) continue;

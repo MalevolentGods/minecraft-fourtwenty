@@ -39,6 +39,7 @@ public class FourTwenty {
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.util.BongBuffs::tick);
         com.malevolentgods.fourtwenty.gear.ModGear.register(bus);
         com.malevolentgods.fourtwenty.lights.ModLights.init();
+        com.malevolentgods.fourtwenty.electronics.ModElectronics.init();
         com.malevolentgods.fourtwenty.lights.ModLights.register(bus);
         ModItems.ITEMS.register(bus);
         com.malevolentgods.fourtwenty.registry.ModDataComponents.COMPONENTS.register(bus);

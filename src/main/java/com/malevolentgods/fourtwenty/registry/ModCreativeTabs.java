@@ -36,6 +36,7 @@ public class ModCreativeTabs {
                 output.accept(ModItems.PAVE_PEN_PRO.get());
                 output.accept(ModItems.INSPOWEEDOMETER.get());
                 com.malevolentgods.fourtwenty.lights.ModLights.ALL.forEach(item -> output.accept(item.get()));
+                com.malevolentgods.fourtwenty.electronics.ModElectronics.ALL.forEach(item -> output.accept(item.get()));
                 for (var strain : com.malevolentgods.fourtwenty.domain.Strain.values()) {
                     if (strain == com.malevolentgods.fourtwenty.domain.Strain.LANDRACE) continue;
                     for (var item : java.util.List.of(ModItems.WEED_SEEDS.get(), ModItems.ROUGH_BUD.get(), ModItems.TRIMMED_BUD.get(), ModItems.WEED_BUD.get(), ModItems.WEED_JOINT.get()))

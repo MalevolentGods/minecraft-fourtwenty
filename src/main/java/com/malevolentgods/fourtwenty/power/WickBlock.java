@@ -88,6 +88,11 @@ public class WickBlock extends Block {
 
     public BIRules.Tier tier() { return tier; }
 
+    /** This wire's resistance and current rating against a Wick of its tier (Hemp Thread is thin). */
+    public double ohmsScale() { return 1; }
+
+    public double ampsScale() { return 1; }
+
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         SIDES.values().forEach(builder::add);
         builder.add(LIT, COLOUR);
@@ -106,6 +111,8 @@ public class WickBlock extends Block {
     private static Link link(BlockState self, Direction side, BlockState neighbour) {
         if (neighbour.getBlock() instanceof WickBlock) return joins(self, neighbour) ? Link.WIRE : Link.NONE;
         if (neighbour.getBlock() instanceof CableBlock) return CableBlock.takesWick(self) ? Link.WIRE : Link.NONE;
+        // any colour of Wick or Hemp Thread plugs into a component's pin face
+        if (com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(neighbour, side.getOpposite()) >= 0) return Link.PLUG;
         // only red (+) and black (−) Wicks plug into blocks, on any face
         return Terminal.signOf(self) != null && Terminal.pluggable(neighbour, side.getOpposite()) ? Link.PLUG : Link.NONE;
     }
