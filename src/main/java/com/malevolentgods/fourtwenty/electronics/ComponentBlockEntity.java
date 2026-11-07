@@ -35,12 +35,28 @@ public class ComponentBlockEntity extends BlockEntity {
         return t.values.get(index);
     }
 
+    /** Which of its type's values it's at. */
+    public int index() {
+        value();
+        return index;
+    }
+
     public void step(int by) {
         ComponentType t = type();
         if (t == null || t.values.isEmpty()) return;
         value();
         index = Math.floorMod(index + by, t.values.size());
         setChanged();
+    }
+
+    /** A Resinator placed before its bands showed its value catches its bands up when it loads. */
+    @Override public void onLoad() {
+        super.onLoad();
+        if (level == null || level.isClientSide) return;
+        BlockState state = getBlockState();
+        if (state.hasProperty(ResinatorBlock.VALUE) && state.getValue(ResinatorBlock.VALUE) != index()) {
+            level.setBlock(worldPosition, state.setValue(ResinatorBlock.VALUE, index()), 3);
+        }
     }
 
     public boolean closed() { return closed; }

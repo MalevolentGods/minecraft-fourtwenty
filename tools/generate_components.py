@@ -101,8 +101,7 @@ def front_texture(cid, look, on):
         img = Image.new('RGBA', (16, 16), BODY[look] + (255,))
         d = ImageDraw.Draw(img)
         if look == 'resistor':
-            for x, c in ((3, (120, 60, 20)), (6, (20, 20, 20)), (9, (220, 40, 40)), (12, (210, 170, 40))):
-                d.rectangle([x, 1, x + 1, 14], fill=c + (255,))
+            pass  # its bands are rings round the body, coloured from its value (client/WickColours)
         elif look == 'capacitor':
             d.rectangle([11, 0, 13, 15], fill=(220, 220, 230, 255))
             d.text((3, 4), '', fill=(255, 255, 255, 255))
@@ -138,6 +137,8 @@ def front_texture(cid, look, on):
 
 
 def lead_textures():
+    save(Image.new('RGBA', (16, 16), (255, 255, 255, 255)), TEX / 'band.png')
+    save(Image.new('RGBA', (16, 16), (212, 175, 55, 255)), TEX / 'band_gold.png')
     for name, c in LEAD.items():
         save(Image.new('RGBA', (16, 16), c + (255,)), TEX / f'lead_{name}.png')
     side_texture(CHIP, 'chip_side')
@@ -173,13 +174,23 @@ def component(cid, layout, look):
             tex[f'lead_{kind}'] = f'fourtwenty:block/component/lead_{kind}'
         body = box([2, 2, 2], [14, 14, 14], {'north': '#front', 'south': '#side', 'east': '#side', 'west': '#side', 'up': '#side', 'down': '#side'})
         elements = [body] + [box(LEADS[face][0], LEADS[face][1], f'#lead_{kind}') for face, kind in PINS[layout]]
+        if look == 'resistor':
+            # four bands round the body along its axis (north to south): two digits and the multiplier tinted from its value, then gold
+            tex['band'] = 'fourtwenty:block/component/band'
+            tex['gold'] = 'fourtwenty:block/component/band_gold'
+            for i, z in enumerate((4, 6.5, 9, 12)):
+                ring = box([1.9, 1.9, z], [14.1, 14.1, z + 1.5], '#band' if i < 3 else '#gold', faces=('east', 'west', 'up', 'down'))
+                if i < 3:
+                    for f in ring['faces'].values():
+                        f['tintindex'] = i
+                elements.append(ring)
         write(ASSETS / f'models/block/component/{cid}{s}.json', {'parent': 'block/block', 'textures': tex, 'elements': elements})
     variants = {}
     for facing, y in (('north', 0), ('east', 90), ('south', 180), ('west', 270)):
         for on in ('false', 'true'):
             model = f'fourtwenty:block/component/{cid}{"_on" if on == "true" and len(states) == 2 else ""}'
             variants[f'facing={facing},on={on}'] = {'model': model, **({'y': y} if y else {})}
-    write(ASSETS / f'blockstates/{cid}.json', {'variants': variants})
+    write(ASSETS / f'blockstates/{cid}.json', {'variants': variants})  # a Resinator's value isn't in the key: it only tints
     write(ASSETS / f'models/item/{cid}.json', {'parent': f'fourtwenty:block/component/{cid}'})
 
 

@@ -84,6 +84,8 @@ public class ComponentBlock extends Block implements EntityBlock {
             default -> {
                 if (type.values.isEmpty()) return InteractionResult.PASS;
                 be.step(player.isShiftKeyDown() ? -1 : 1);
+                // a Resinator shows its value in its colour bands
+                if (state.hasProperty(ResinatorBlock.VALUE)) level.setBlock(pos, state.setValue(ResinatorBlock.VALUE, be.index()), 3);
             }
         }
         if (!type.values.isEmpty()) {

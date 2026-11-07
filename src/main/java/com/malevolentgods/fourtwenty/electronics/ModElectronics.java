@@ -38,7 +38,8 @@ public final class ModElectronics {
     static {
         ALL.add(ModItems.ITEMS.register("hemp_thread", () -> new BlockItem(HEMP_THREAD.get(), new Item.Properties())));
         for (ComponentType t : ComponentType.values()) {
-            DeferredHolder<Block, ComponentBlock> block = ModBlocks.BLOCKS.register(t.id, () -> new ComponentBlock(t, component()));
+            DeferredHolder<Block, ComponentBlock> block = ModBlocks.BLOCKS.register(t.id,
+                    () -> t == ComponentType.RESINATOR ? new ResinatorBlock(t, component()) : new ComponentBlock(t, component()));
             COMPONENTS.put(t, block);
             ALL.add(ModItems.ITEMS.register(t.id, () -> new BlockItem(block.get(), new Item.Properties())));
         }

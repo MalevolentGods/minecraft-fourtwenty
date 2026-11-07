@@ -12,6 +12,23 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 public final class WickColours {
     private WickColours() {}
 
+    /** A Resinator's bands: the resistor colour code of its value (tint 0, 1, 2: first digit, second digit, multiplier). */
+    @SubscribeEvent
+    public static void resinatorBands(RegisterColorHandlersEvent.Block event) {
+        event.register((state, level, pos, tint) -> {
+            if (tint < 0 || tint > 2 || !state.hasProperty(com.malevolentgods.fourtwenty.electronics.ResinatorBlock.VALUE)) return -1;
+            double ohms = com.malevolentgods.fourtwenty.electronics.ResinatorBlock.ohms(state.getValue(com.malevolentgods.fourtwenty.electronics.ResinatorBlock.VALUE));
+            return 0xFF000000 | com.malevolentgods.fourtwenty.electronics.ResinatorBlock.band(ohms, tint);
+        }, com.malevolentgods.fourtwenty.electronics.ModElectronics.COMPONENTS.get(com.malevolentgods.fourtwenty.electronics.ComponentType.RESINATOR).get());
+    }
+
+    @SubscribeEvent
+    public static void resinatorItemBands(RegisterColorHandlersEvent.Item event) {
+        event.register((stack, tint) -> tint < 0 || tint > 2 ? -1
+                : 0xFF000000 | com.malevolentgods.fourtwenty.electronics.ResinatorBlock.band(com.malevolentgods.fourtwenty.electronics.ComponentType.RESINATOR.defaultValue, tint),
+                com.malevolentgods.fourtwenty.electronics.ModElectronics.COMPONENTS.get(com.malevolentgods.fourtwenty.electronics.ComponentType.RESINATOR).get());
+    }
+
     /** A dyed Wick or cable item shows its colour too. */
     @SubscribeEvent
     public static void itemColours(RegisterColorHandlersEvent.Item event) {
