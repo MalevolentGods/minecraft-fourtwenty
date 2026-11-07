@@ -3,8 +3,9 @@ package com.malevolentgods.fourtwenty.domain;
 import com.malevolentgods.fourtwenty.domain.HueFamilies.Family;
 
 /**
- * The Kush Suit and Blazer: the pieces, what they hold, and the rules every power follows. A power works only while the wearer is high
- * and the piece can pay for it, and pays only when it acts. Flight can never kill: whenever it ends in the air, the wearer floats down.
+ * The Kush Suit and Blazer: the pieces, what they hold, and the rules every power follows. Like the machines, gear runs free while its
+ * wearer is high; sober, a power works only if the piece can pay for it from its charge, and pays only when it acts. Flight can never kill:
+ * whenever it ends in the air, the wearer floats down.
  */
 public final class GearRules {
     private GearRules() {}
@@ -25,10 +26,13 @@ public final class GearRules {
         public String id() { return name().toLowerCase(java.util.Locale.ROOT); }
     }
 
-    /** Whether a power costing {@code cost} can run. */
+    /** Whether a power costing {@code cost} can run: always while high, or sober from enough charge. */
     public static boolean powered(boolean high, int charge, int cost) {
-        return high && charge >= Math.max(0, cost) && charge > 0;
+        return high || charge >= Math.max(0, cost) && charge > 0;
     }
+
+    /** Whether a power that runs is paid for from the charge: only when the wearer is sober. */
+    public static boolean pays(boolean high) { return !high; }
 
     /** The charge after paying {@code cost}; the caller checks {@link #powered} first. */
     public static int spend(int charge, int cost) {

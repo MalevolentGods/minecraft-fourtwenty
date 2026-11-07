@@ -20,9 +20,12 @@ class GearRulesTest {
     @Test
     void powersNeedTheHighAndTheCharge() {
         assertTrue(GearRules.powered(true, 500, 200));
-        assertFalse(GearRules.powered(false, 500, 200), "sober");
-        assertFalse(GearRules.powered(true, 100, 200), "short");
-        assertFalse(GearRules.powered(true, 0, 0), "empty, even for a free power");
+        assertTrue(GearRules.powered(true, 0, 200), "high: free, even empty");
+        assertTrue(GearRules.powered(false, 500, 200), "sober, on its charge");
+        assertFalse(GearRules.powered(false, 100, 200), "sober and short");
+        assertFalse(GearRules.powered(false, 0, 0), "sober and empty, even for a free power");
+        assertFalse(GearRules.pays(true), "high pays nothing");
+        assertTrue(GearRules.pays(false), "sober pays");
     }
 
     @Test
@@ -47,8 +50,9 @@ class GearRulesTest {
     @Test
     void flightEndsSafely() {
         assertTrue(GearRules.keepFlying(true, 1000, 5, true));
-        assertFalse(GearRules.keepFlying(false, 1000, 5, true), "sober");
-        assertFalse(GearRules.keepFlying(true, 0, 5, true), "empty");
+        assertTrue(GearRules.keepFlying(false, 1000, 5, true), "sober, on its charge");
+        assertTrue(GearRules.keepFlying(true, 0, 5, true), "high, free");
+        assertFalse(GearRules.keepFlying(false, 0, 5, true), "sober and empty");
         assertFalse(GearRules.keepFlying(true, 1000, 5, false), "Plate off");
         assertTrue(GearRules.needsSoftLanding(false, true));
         assertFalse(GearRules.needsSoftLanding(true, true), "already down");
