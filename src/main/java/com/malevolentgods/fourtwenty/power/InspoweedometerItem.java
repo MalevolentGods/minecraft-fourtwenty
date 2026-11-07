@@ -27,6 +27,14 @@ public class InspoweedometerItem extends Item {
         super(properties.stacksTo(1));
     }
 
+    /**
+     * A meter reads what it touches and never works it: with it in hand, a block's own right-click (stepping a Resinator, flipping a
+     * Toggle Joint, opening a machine) doesn't happen, so the reading is of the circuit as it was. Both sides, so the client agrees.
+     */
+    public static void rightClickBlock(net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock event) {
+        if (event.getItemStack().getItem() instanceof InspoweedometerItem) event.setUseBlock(net.neoforged.neoforge.common.util.TriState.FALSE);
+    }
+
     @Override public @Nonnull InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (player.isSecondaryUseActive() && stack.has(ModDataComponents.METER_REFERENCE.get())) {
