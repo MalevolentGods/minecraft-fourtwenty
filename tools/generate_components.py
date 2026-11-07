@@ -361,6 +361,14 @@ def ribbons():
     for m in range(16):
         mask = tuple(bool(m >> i & 1) for i in range(4))
         name = mask_name(mask)
+        if name in ('ne', 'sw'):
+            # a fold: only the half the ribbon covers, built of one-pixel strips stepping along the crease, each with its own edge
+            strips = []
+            for v in range(11):
+                u0, u1 = (v, 11) if name == 'ne' else (0, v + 1)
+                strips.append(flat([R0 + u0, 7, R0 + v], [R0 + u1, 9, R0 + v + 1], '#core'))
+            model(f'eighth_ribbon_core_{name}', strips, {'core': f'fourtwenty:block/component/ribbon_core_{name}'})
+            continue
         model(f'eighth_ribbon_core_{name}', [flat([R0, 7, R0], [R1, 9, R1], '#core')], {'core': f'fourtwenty:block/component/ribbon_core_{name}'})
     band = box([3.9, 7, 3.9], [12.1, 9, 12.1], '#band', faces=('north', 'south', 'east', 'west'))
     for f in band['faces'].values():
