@@ -19,7 +19,7 @@ public final class CircuitRules {
         public static final Numbers DEFAULT = new Numbers(4.2, 42, 420, 4_200,
                 0.005, 1.05,
                 0.96, 0.99, 0.01, 1.0,
-                0.5, 0.10,
+                1.0, 0.10,
                 1.5e-4, 2.0, 1.5, 20,
                 1.5, 0.02);
 
@@ -64,7 +64,7 @@ public final class CircuitRules {
         /** Above this a block of the tier overloads. */
         public double overloadVolts(BIRules.Tier tier) { return overloadMargin * volts(tier); }
 
-        /** Below this, a line whose highest source is of this tier is browning out. */
+        /** A machine of this tier holds its power from this voltage up; below it, it is the resistance it has there (R = V² / P). */
         public double minVolts(BIRules.Tier tier) { return loadMinVolts * volts(tier); }
     }
 

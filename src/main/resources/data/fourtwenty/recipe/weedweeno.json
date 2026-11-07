@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "CPC",
+    "RIR",
+    "CWC"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "P": {
+      "item": "minecraft:glass_pane"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "I": {
+      "item": "fourtwenty:inspoweedometer"
+    },
+    "W": {
+      "item": "fourtwenty:hemp_wick"
+    }
+  },
+  "result": {
+    "id": "fourtwenty:weedweeno",
+    "count": 1
+  },
+  "show_notification": true
+}

@@ -14,6 +14,14 @@ public class ModClientEvents {
         var id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(event.getItemStack().getItem());
         if (!"fourtwenty".equals(id.getNamespace())) return;
         String key = "tooltip.fourtwenty.item." + id.getPath();
+        // a dyed Wick says what its colour does
+        var colour = com.malevolentgods.fourtwenty.power.WickBlock.colourOf(event.getItemStack());
+        if (colour != com.malevolentgods.fourtwenty.power.WickBlock.Colour.NONE && event.getItemStack().getItem() instanceof net.minecraft.world.item.BlockItem bi
+                && bi.getBlock() instanceof com.malevolentgods.fourtwenty.power.WickBlock) {
+            String role = colour == com.malevolentgods.fourtwenty.power.WickBlock.Colour.RED ? "red" : colour == com.malevolentgods.fourtwenty.power.WickBlock.Colour.BLACK ? "black" : "other";
+            event.getToolTip().add(1, net.minecraft.network.chat.Component.translatable("tooltip.fourtwenty.wick." + role,
+                    net.minecraft.network.chat.Component.translatable("color.minecraft." + colour.dye().getName())).withStyle(net.minecraft.ChatFormatting.AQUA));
+        }
         if (!net.minecraft.client.resources.language.I18n.exists(key)) return;
         var font = net.minecraft.client.Minecraft.getInstance().font;
         for (var line : font.getSplitter().splitLines(net.minecraft.network.chat.Component.translatable(key), 200, net.minecraft.network.chat.Style.EMPTY.withColor(net.minecraft.ChatFormatting.GRAY))) {

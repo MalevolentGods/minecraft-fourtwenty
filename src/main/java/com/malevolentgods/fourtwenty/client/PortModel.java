@@ -37,7 +37,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A block on the Wicks, with its own fitting on each side a Wick reaches. Fittings are ordinary models from tools/generate_ports.py, drawn for a block
+ * A block on the Wicks: a red + stud and a black − stud on its terminal faces (tools/generate_terminals.py), and its own fitting on each
+ * terminal face a Wick plugs into. Fittings are ordinary models from tools/generate_ports.py, drawn for a block
  * facing north and turned with this one. Nothing is stored: the model looks at the neighbours each time the chunk builds, so no block needs a state for it.
  */
 public final class PortModel extends BakedModelWrapper<BakedModel> {
@@ -46,7 +47,8 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
             "snip_station", "bud_barber", "trim_reaper", "dry_box", "cure_closet", "the_humidor", "grow_tent", "hydro_bed", "aero_pod", "cosmic_kush_pod", "think_tank",
             "terpinator", "terpinator_lab", "inspiration_infuser", "inspiration_infuser_lab", "hit_box_toke", "hit_box_rip", "hit_box_blaze",
             "pheno_chamber", "pheno_lab", "pheno_cathedral", "rosin_rig",
-            "construction_joint", "construction_blunt", "construction_spliff", "construction_cannon");
+            "construction_joint", "construction_blunt", "construction_spliff", "construction_cannon",
+            "re_up_station_puff", "re_up_station_toke", "re_up_station_rip", "re_up_station_blaze", "lit_bit", "weedweeno");
     private static final Direction[] AROUND = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
     /** The sides each Hookah has a hose on, for one facing north. A hose is its own piece, drawn unless a Wick has that side. */
     private static final Map<String, List<Direction>> HOSES = Map.of("weed_bong", List.of(Direction.EAST), "double_hose", List.of(Direction.EAST, Direction.WEST),
@@ -108,7 +110,11 @@ public final class PortModel extends BakedModelWrapper<BakedModel> {
         int mask = 0;
         for (Direction side : Direction.values()) {
             var neighbour = level.getBlockState(pos.relative(side)).getBlock();
-            if (neighbour instanceof WickBlock) mask |= 1 << side.ordinal();
+            // red and black Wicks, and cables, plug into any face (the Hit Box's four sides only); the wiring sets + and −
+            var next = level.getBlockState(pos.relative(side));
+            boolean wire = neighbour instanceof WickBlock ? com.malevolentgods.fourtwenty.power.Terminal.signOf(next) != null
+                    : neighbour instanceof com.malevolentgods.fourtwenty.power.CableBlock;
+            if (wire && com.malevolentgods.fourtwenty.power.Terminal.pluggable(state, side)) mask |= 1 << side.ordinal();
             else if (neighbour instanceof TubeBlock) mask |= 1 << TUBE_BITS + side.ordinal();
         }
         return d.derive().with(MASK, mask).build();

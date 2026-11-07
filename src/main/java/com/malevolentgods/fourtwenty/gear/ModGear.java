@@ -78,6 +78,6 @@ public final class ModGear {
         MATERIALS.register(bus);
         GearPowers.register();
         bus.addListener((net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) ->
-                event.registerBlockEntity(com.malevolentgods.fourtwenty.power.BINode.CAPABILITY, RE_UP_ENTITY.get(), (entity, side) -> entity.node()));
+                event.registerBlockEntity(com.malevolentgods.fourtwenty.power.BINode.CAPABILITY, RE_UP_ENTITY.get(), (entity, side) -> com.malevolentgods.fourtwenty.power.Terminal.side(entity, entity.node(), side)));
     }
 }

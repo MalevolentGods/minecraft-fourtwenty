@@ -1,0 +1,13 @@
+{
+ "replace": false,
+ "values": [
+  "fourtwenty:hemp_twin_wick",
+  "fourtwenty:hemp_daisy_wick",
+  "fourtwenty:rolled_twin_wick",
+  "fourtwenty:rolled_daisy_wick",
+  "fourtwenty:glass_twin_wick",
+  "fourtwenty:glass_daisy_wick",
+  "fourtwenty:gold_twin_wick",
+  "fourtwenty:gold_daisy_wick"
+ ]
+}

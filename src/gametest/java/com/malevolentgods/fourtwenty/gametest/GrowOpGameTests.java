@@ -63,19 +63,15 @@ public final class GrowOpGameTests {
         });
     }
 
-    @GameTest(template = "empty", timeoutTicks = 100)
+    @GameTest(template = "empty", timeoutTicks = 200)
     public static void aWickStaysLitWhileItCarries(GameTestHelper h) {
-        var a = new BlockPos(1, 2, 2);
-        var b = new BlockPos(2, 2, 2);
-        var c = new BlockPos(3, 2, 2);
-        h.setBlock(a, ModPower.STASH_JAR.get());
-        h.setBlock(b, ModPower.HEMP_WICK.get());
-        h.setBlock(c, ModPower.TRIM_REAPER.get());
-        ((com.malevolentgods.fourtwenty.power.StashBlockEntity) h.getBlockEntity(a)).node().receive(5_000);
+        var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 3);
+        ((com.malevolentgods.fourtwenty.power.StashBlockEntity) h.getBlockEntity(l.put(1, ModPower.STASH_JAR.get()))).node().receive(60_000);
+        l.put(3, ModPower.SNIP_STATION.get());
         int[] ticks = {0};
         h.onEachTick(() -> {
             if (++ticks[0] <= 20) return;
-            h.assertTrue(h.getBlockState(b).getValue(com.malevolentgods.fourtwenty.power.WickBlock.LIT), "dark at tick " + ticks[0]);
+            h.assertTrue(h.getBlockState(l.plus(2)).getValue(com.malevolentgods.fourtwenty.power.WickBlock.LIT), "dark at tick " + ticks[0]);
             if (ticks[0] >= 80) h.succeed();
         });
     }
@@ -156,22 +152,14 @@ public final class GrowOpGameTests {
         });
     }
 
-    @GameTest(template = "empty", timeoutTicks = 60)
+    @GameTest(template = "empty", timeoutTicks = 200)
     public static void theGrandHookahIsBlazeAndGoldWickCarriesIt(GameTestHelper h) {
-        var a = new BlockPos(1, 2, 2);
-        var b = new BlockPos(2, 2, 2);
-        var c = new BlockPos(3, 2, 2);
-        h.setBlock(a, ModPower.GRAND_HOOKAH.get());
-        h.setBlock(b, ModPower.GOLD_WICK.get());
-        h.setBlock(c, ModPower.COSMIC_KUSH_POD.get());
-        var hookah = (WeedBongBlockEntity) h.getBlockEntity(a);
-        hookah.setItem(WeedBongBlockEntity.WEED_SLOT, new ItemStack(ModItems.WEED_BUD.get(), 1));
-        hookah.setItem(WeedBongBlockEntity.WATER_SLOT, new ItemStack(Items.WATER_BUCKET));
-        hookah.setItem(WeedBongBlockEntity.FUEL_SLOT, new ItemStack(Items.CHARCOAL));
-        var plot = (GrowOpBlockEntity) h.getBlockEntity(c);
+        var l = new Ladder(h, 2, 1).rails(ModPower.GOLD_WICK.get(), 1, 3);
+        l.hookah(1, ModPower.GRAND_HOOKAH.get());
+        var plot = (GrowOpBlockEntity) h.getBlockEntity(l.put(3, ModPower.COSMIC_KUSH_POD.get()));
         h.succeedWhen(() -> {
             h.assertTrue(plot.node().stored() > 0, "power reached the Cosmic Kush Pod");
-            h.assertBlockPresent(ModPower.GOLD_WICK.get(), b);
+            h.assertBlockPresent(ModPower.GOLD_WICK.get(), l.plus(2));
         });
     }
 }

@@ -214,7 +214,7 @@ public final class ProcessingConfig {
                 {"stashEmfHigh", "A Stash's voltage full, per unit of nominal.", c.stashEmfHigh(), 0.1, 1.5},
                 {"stashResistance", "A Stash's internal resistance, per unit.", c.stashResistance(), 1e-6, 1},
                 {"stashLimit", "A Stash's current limit each way, per unit.", c.stashLimit(), 0.01, 100},
-                {"loadMinVolts", "Below this share of nominal voltage a line browns out.", c.loadMinVolts(), 0.01, 1},
+                {"loadRegulation", "A machine holds its power from this share of its tier's voltage up; below it, it is a plain resistance, R = V² / P.", c.loadMinVolts(), 0.01, 1.5},
                 {"loadHysteresis", "The share of its buffer a machine uses before it asks for power again.", c.loadHysteresis(), 0, 1},
                 {"wickOhmsPerBlock", "A Wick block's resistance, per unit of its tier's base resistance.", c.wickOhmsPerBlock(), 0, 1},
                 {"wickAmpRating", "A Wick's current rating, per unit of its tier's Hookah current.", c.wickAmpRating(), 0.01, 1000},

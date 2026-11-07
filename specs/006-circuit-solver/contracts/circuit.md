@@ -44,7 +44,7 @@ Every BI block screen (machines, Stashes, Hookahs, plots, benches, Re-Up Station
 | `stashEmfLow`, `stashEmfHigh` | 0.96, 0.99 | a Stash's EMF empty and full, pu |
 | `stashResistance` | 0.01 | pu |
 | `stashLimit` | 1.0 | a Stash's current limit each way, pu |
-| `loadMinVolts` | 0.5 | below this, the line browns out, pu |
+| `loadMinVolts` | 0.05 | below this across a machine, the line browns out, pu (low, so series strings run) |
 | `loadHysteresis` | 0.10 | the buffer share a load uses before it asks again |
 | `wickOhmsPerBlock` | 0.00015 | pu of the tier's base resistance |
 | `wickAmpRating` | 2.0 | pu of a Hookah's current |

@@ -55,15 +55,17 @@ class CircuitTest {
 
     @Test
     void eightMachinesBrownOutEvenly() {
-        // twice what a 1.05-limited source can give: everything slows by the same share, and the source runs at its limit
+        // twice what a 1.05-limited source can give: it holds its limit, the line sags under the machines' rated voltage, and each one
+        // becomes its rated resistance (4 pu): eight in parallel are 0.5, so 0.525 pu and 0.069 W each, all alike
         var c = new Circuit();
         int n = c.node();
         int src = c.source(n, 1, 0.005, 1.05, 0);
         int[] loads = new int[8];
-        for (int i = 0; i < 8; i++) loads[i] = c.load(n, 0.25, 0.5);
+        for (int i = 0; i < 8; i++) loads[i] = c.load(n, 0.25, 1.0);
         var s = c.solve();
-        assertTrue(s.share() > 0.5 && s.share() < 0.53, "share " + s.share());
         for (int l : loads) assertEquals(s.loadWatts()[loads[0]], s.loadWatts()[l], 1e-12);
+        assertEquals(0.525, s.volts()[n], 1e-3);
+        assertEquals(0.0689, s.loadWatts()[loads[0]], 1e-3);
         assertEquals(1.05, s.sourceAmps()[src], 0.01);
     }
 
@@ -287,5 +289,152 @@ class CircuitTest {
         }
         System.out.println("1,000-Wick line, 100 loads: " + best / 1_000_000.0 + " ms");
         assertTrue(best < 20_000_000L, "solved in " + best / 1_000_000.0 + " ms");
+    }
+
+    // ---- loops: no ground, every part between its own + and - ----
+
+    private static int[] hookah(Circuit c) {
+        int plus = c.node(), minus = c.node();
+        c.source(plus, minus, 1, 0.005, 1.05, 0);
+        return new int[]{plus, minus};
+    }
+
+    @Test
+    void parallelLoadsShareTheVoltage() {
+        var c = new Circuit();
+        int[] h = hookah(c);
+        int[] loads = {c.load(h[0], h[1], 0.25, 0.05), c.load(h[0], h[1], 0.25, 0.05), c.load(h[0], h[1], 0.25, 0.05)};
+        var s = c.solve();
+        double v = s.volts()[h[0]] - s.volts()[h[1]];
+        for (int l : loads) {
+            assertEquals(0.25, s.loadWatts()[l], 1e-9);
+            assertEquals(0.25 / v, s.loadAmps()[l], 1e-9);
+        }
+        assertEquals(0.75 / v, s.sourceAmps()[0], 1e-6, "the source carries the sum");
+    }
+
+    @Test
+    void seriesLoadsShareTheCurrentAndSplitTheVoltage() {
+        // three equal machines rated for the line, + to -: one current through all, each a third of the voltage and, as resistors sized
+        // for the full voltage, a ninth of the power
+        var c = new Circuit();
+        int[] h = hookah(c);
+        int a = c.node(), b = c.node();
+        int l1 = c.load(h[0], a, 0.25, 1.0), l2 = c.load(a, b, 0.25, 1.0), l3 = c.load(b, h[1], 0.25, 1.0);
+        var s = c.solve();
+        assertEquals(1, s.share(), 0);
+        double total = s.volts()[h[0]] - s.volts()[h[1]];
+        assertEquals(s.loadAmps()[l1], s.loadAmps()[l2], 1e-9);
+        assertEquals(s.loadAmps()[l2], s.loadAmps()[l3], 1e-9);
+        double v1 = s.volts()[h[0]] - s.volts()[a], v2 = s.volts()[a] - s.volts()[b], v3 = s.volts()[b] - s.volts()[h[1]];
+        assertEquals(total, v1 + v2 + v3, 1e-9, "Kirchhoff's voltage law");
+        assertEquals(total / 3, v2, 1e-6);
+        assertEquals(0.25 / 9, s.loadWatts()[l2], 1e-3, "a ninth of its power");
+    }
+
+    @Test
+    void aMixOfSeriesAndParallel() {
+        // two loads in parallel, in series with a third: KCL at the middle node, KVL around the loop
+        var c = new Circuit();
+        int[] h = hookah(c);
+        int mid = c.node();
+        int p1 = c.load(h[0], mid, 0.2, 1.0), p2 = c.load(h[0], mid, 0.2, 1.0), s1 = c.load(mid, h[1], 0.4, 1.0);
+        var s = c.solve();
+        assertEquals(s.loadAmps()[p1] + s.loadAmps()[p2], s.loadAmps()[s1], 1e-6);
+        assertEquals(s.volts()[h[0]] - s.volts()[h[1]], (s.volts()[h[0]] - s.volts()[mid]) + (s.volts()[mid] - s.volts()[h[1]]), 1e-12);
+        for (int l : new int[]{p1, p2, s1}) assertEquals(Circuit.OK, s.loadStatus()[l]);
+    }
+
+    @Test
+    void aReversedLoadTakesNothing() {
+        var c = new Circuit();
+        int[] h = hookah(c);
+        int good = c.load(h[0], h[1], 0.25, 0.05), backwards = c.load(h[1], h[0], 0.25, 0.05);
+        var s = c.solve();
+        assertEquals(Circuit.REVERSED, s.loadStatus()[backwards]);
+        assertEquals(0, s.loadWatts()[backwards], 0);
+        assertEquals(0.25, s.loadWatts()[good], 1e-9, "and doesn't stop the others");
+    }
+
+    @Test
+    void noReturnPathMeansNoCurrent() {
+        // a supply line only: the load's - goes nowhere
+        var c = new Circuit();
+        int[] h = hookah(c);
+        int dangling = c.node();
+        int l = c.load(h[0], dangling, 0.25, 0.05);
+        int ok = c.load(h[0], h[1], 0.25, 0.05);
+        var s = c.solve();
+        assertEquals(Circuit.NO_LOOP, s.loadStatus()[l]);
+        assertEquals(0, s.loadWatts()[l], 0);
+        assertEquals(Circuit.OK, s.loadStatus()[ok]);
+        assertEquals(1, s.share(), 0, "an open load doesn't brown the rest out");
+    }
+
+    @Test
+    void sourcesInSeriesAddTheirVoltages() {
+        var c = new Circuit();
+        int a = c.node(), mid = c.node(), b = c.node();
+        c.source(a, mid, 1, 0.005, 1.05, 0);
+        c.source(mid, b, 1, 0.005, 1.05, 0);
+        int r = c.conductor(a, b, 10);
+        var s = c.solve();
+        assertEquals(2 / (10 + 0.01), s.conductorAmps()[r], 1e-9);
+    }
+
+    @Test
+    void aShortRunsTheSourceFlatOut() {
+        var c = new Circuit();
+        int[] h = hookah(c);
+        c.conductor(h[0], h[1], 1e-6);
+        var s = c.solve();
+        assertEquals(1.05, s.sourceAmps()[0], 0.005, "at its current limit (and its tiny slope past it), no more");
+    }
+
+    @Test
+    void anLedFollowsItsKnee() {
+        // a Puff Hookah (4.2 Kb) and one Lit Bit at full white: 0.716 Ig, about 3 W
+        var n = LedRules.Numbers.DEFAULT;
+        var c = new Circuit();
+        int[] h = hookah(c);
+        int lit = c.led(h[0], h[1], n.setAmps(255, 255, 255), n.forwardVolts() / 4.2, n.fullVolts() / 4.2);
+        var s = c.solve();
+        assertEquals(n.setAmps(255, 255, 255), s.ledAmps()[lit], 1e-6);
+        assertEquals(Circuit.OK, s.ledStatus()[lit]);
+    }
+
+    @Test
+    void anLedOnALowLineIsDimAndBelowItsKneeDark() {
+        // an EMF of 0.8 pu is halfway up the knee from 0.6 to 1.0: half the set current. At 0.5 pu it is dark.
+        for (double[] want : new double[][]{{0.8, 0.5}, {0.5, 0.0}}) {
+            var c = new Circuit();
+            int p = c.node(), m = c.node();
+            c.source(p, m, want[0], 1e-6, 10, 0);
+            int lit = c.led(p, m, 1.0, 0.6, 1.0);
+            var s = c.solve();
+            assertEquals(want[1], s.ledAmps()[lit], 1e-4, "at " + want[0]);
+        }
+    }
+
+    @Test
+    void anLedWiredBackwardsTakesNothing() {
+        var c = new Circuit();
+        int[] h = hookah(c);
+        int lit = c.led(h[1], h[0], 0.5, 0.6, 1.0);
+        var s = c.solve();
+        assertEquals(Circuit.REVERSED, s.ledStatus()[lit]);
+        assertEquals(0, s.ledAmps()[lit], 0);
+    }
+
+    @Test
+    void manyLedsShareALine() {
+        // 100 Lit Bits in parallel: their currents add, and each is still at its set current
+        var c = new Circuit();
+        int[] h = hookah(c);
+        int[] lits = new int[100];
+        for (int i = 0; i < lits.length; i++) lits[i] = c.led(h[0], h[1], 0.005, 0.6, 0.95);
+        var s = c.solve();
+        assertEquals(0.5, s.sourceAmps()[0], 1e-4);
+        for (int l : lits) assertEquals(0.005, s.ledAmps()[l], 1e-7);
     }
 }

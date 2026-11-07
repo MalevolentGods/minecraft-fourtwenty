@@ -1,0 +1,82 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/power/blaze_wick",
+  "knot": "fourtwenty:block/power/blaze_wick",
+  "stripe": "fourtwenty:block/power/cable_stripe",
+  "twist": "fourtwenty:block/power/cable_twist",
+  "red": "fourtwenty:block/power/cable_red",
+  "black": "fourtwenty:block/power/cable_black",
+  "band": "fourtwenty:block/power/cable_band"
+ },
+ "elements": [
+  {
+   "from": [
+    5.5,
+    6.5,
+    0
+   ],
+   "to": [
+    10.5,
+    9.5,
+    5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.5,
+      6.5,
+      10.5,
+      9.5
+     ],
+     "texture": "#twist"
+    },
+    "south": {
+     "uv": [
+      5.5,
+      6.5,
+      10.5,
+      9.5
+     ],
+     "texture": "#twist"
+    },
+    "east": {
+     "uv": [
+      0,
+      6.5,
+      5,
+      9.5
+     ],
+     "texture": "#twist"
+    },
+    "west": {
+     "uv": [
+      0,
+      6.5,
+      5,
+      9.5
+     ],
+     "texture": "#twist"
+    },
+    "up": {
+     "uv": [
+      5.5,
+      0,
+      10.5,
+      5
+     ],
+     "texture": "#twist"
+    },
+    "down": {
+     "uv": [
+      5.5,
+      0,
+      10.5,
+      5
+     ],
+     "texture": "#twist"
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,40 @@
+{
+ "type": "minecraft:block",
+ "pools": [
+  {
+   "rolls": 1,
+   "entries": [
+    {
+     "type": "minecraft:item",
+     "name": "fourtwenty:hemp_daisy_wick",
+     "functions": [
+      {
+       "function": "minecraft:copy_state",
+       "block": "fourtwenty:hemp_daisy_wick",
+       "properties": [
+        "colour"
+       ],
+       "conditions": [
+        {
+         "condition": "minecraft:inverted",
+         "term": {
+          "condition": "minecraft:block_state_property",
+          "block": "fourtwenty:hemp_daisy_wick",
+          "properties": {
+           "colour": "none"
+          }
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "conditions": [
+    {
+     "condition": "minecraft:survives_explosion"
+    }
+   ]
+  }
+ ]
+}

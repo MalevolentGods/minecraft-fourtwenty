@@ -1,0 +1,150 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "particle": "fourtwenty:block/power/toke_wick",
+  "knot": "fourtwenty:block/power/toke_wick",
+  "stripe": "fourtwenty:block/power/cable_stripe",
+  "twist": "fourtwenty:block/power/cable_twist",
+  "red": "fourtwenty:block/power/cable_red",
+  "black": "fourtwenty:block/power/cable_black",
+  "band": "fourtwenty:block/power/cable_band"
+ },
+ "elements": [
+  {
+   "from": [
+    5,
+    7,
+    0
+   ],
+   "to": [
+    7.5,
+    9,
+    5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5,
+      7,
+      7.5,
+      9
+     ],
+     "texture": "#red"
+    },
+    "south": {
+     "uv": [
+      5,
+      7,
+      7.5,
+      9
+     ],
+     "texture": "#red"
+    },
+    "east": {
+     "uv": [
+      0,
+      7,
+      5,
+      9
+     ],
+     "texture": "#red"
+    },
+    "west": {
+     "uv": [
+      0,
+      7,
+      5,
+      9
+     ],
+     "texture": "#red"
+    },
+    "up": {
+     "uv": [
+      5,
+      0,
+      7.5,
+      5
+     ],
+     "texture": "#red"
+    },
+    "down": {
+     "uv": [
+      5,
+      0,
+      7.5,
+      5
+     ],
+     "texture": "#red"
+    }
+   }
+  },
+  {
+   "from": [
+    8.5,
+    7,
+    0
+   ],
+   "to": [
+    11,
+    9,
+    5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      8.5,
+      7,
+      11,
+      9
+     ],
+     "texture": "#black"
+    },
+    "south": {
+     "uv": [
+      8.5,
+      7,
+      11,
+      9
+     ],
+     "texture": "#black"
+    },
+    "east": {
+     "uv": [
+      0,
+      7,
+      5,
+      9
+     ],
+     "texture": "#black"
+    },
+    "west": {
+     "uv": [
+      0,
+      7,
+      5,
+      9
+     ],
+     "texture": "#black"
+    },
+    "up": {
+     "uv": [
+      8.5,
+      0,
+      11,
+      5
+     ],
+     "texture": "#black"
+    },
+    "down": {
+     "uv": [
+      8.5,
+      0,
+      11,
+      5
+     ],
+     "texture": "#black"
+    }
+   }
+  }
+ ]
+}

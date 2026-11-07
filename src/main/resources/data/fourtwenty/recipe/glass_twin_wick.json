@@ -1,0 +1,31 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "category": "redstone",
+ "pattern": [
+  "RB"
+ ],
+ "key": {
+  "R": {
+   "type": "neoforge:components",
+   "items": "fourtwenty:glass_wick",
+   "components": {
+    "minecraft:block_state": {
+     "colour": "red"
+    }
+   }
+  },
+  "B": {
+   "type": "neoforge:components",
+   "items": "fourtwenty:glass_wick",
+   "components": {
+    "minecraft:block_state": {
+     "colour": "black"
+    }
+   }
+  }
+ },
+ "result": {
+  "id": "fourtwenty:glass_twin_wick",
+  "count": 1
+ }
+}

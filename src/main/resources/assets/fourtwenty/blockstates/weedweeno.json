@@ -1,0 +1,39 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "fourtwenty:block/weedweeno"
+      }
+    },
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "fourtwenty:block/weedweeno",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "fourtwenty:block/weedweeno",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "fourtwenty:block/weedweeno",
+        "y": 270
+      }
+    }
+  ]
+}
