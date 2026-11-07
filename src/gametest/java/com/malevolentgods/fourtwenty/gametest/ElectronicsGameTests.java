@@ -131,4 +131,88 @@ public final class ElectronicsGameTests {
             h.assertBlockPresent(ModPower.BENCH_RIG.get(), l.at(1));
         });
     }
+    private static void place(GameTestHelper h, BlockPos pos, ComponentType type, Direction facing) {
+        h.setBlock(pos, ModElectronics.COMPONENTS.get(type).get().defaultBlockState().setValue(ComponentBlock.FACING, facing));
+    }
+
+    private static void red(GameTestHelper h, int x, int y, int z) { Ladder.wick(h, new BlockPos(x, y, z), ModPower.HEMP_WICK.get(), WickBlock.Colour.RED); }
+
+    private static void black(GameTestHelper h, int x, int y, int z) { Ladder.wick(h, new BlockPos(x, y, z), ModPower.HEMP_WICK.get(), WickBlock.Colour.BLACK); }
+
+    /**
+     * A Latch Nug facing north south of the rails: its left (set) is east and its right (reset) west, each through a Toggle Joint to VDD.
+     * Set, release: it holds high. Reset, release: it holds low.
+     */
+    @GameTest(template = "long", timeoutTicks = 300)
+    public static void aLatchNugRemembers(GameTestHelper h) {
+        var l = new Ladder(h, 2, 0).rails(ModPower.HEMP_WICK.get(), 1, 7);
+        l.hookah(1, ModBlocks.WEED_BONG.get());
+        BlockPos latch = new BlockPos(5, 2, 4), set = new BlockPos(6, 2, 4), reset = new BlockPos(4, 2, 4);
+        place(h, latch, ComponentType.LATCH_NUG, Direction.NORTH);
+        for (int z = 0; z <= 4; z++) red(h, 5, 3, z);
+        for (int z = 2; z <= 4; z++) black(h, 5, 1, z);
+        place(h, set, ComponentType.TOGGLE_JOINT, Direction.EAST);
+        place(h, reset, ComponentType.TOGGLE_JOINT, Direction.EAST);
+        red(h, 7, 2, 4);
+        red(h, 7, 3, 4);
+        red(h, 6, 3, 4);
+        red(h, 3, 2, 4);
+        red(h, 3, 3, 4);
+        red(h, 4, 3, 4);
+        h.setBlock(new BlockPos(5, 2, 3), ModElectronics.HEMP_THREAD.get());
+        var s = (ComponentBlockEntity) h.getBlockEntity(set);
+        var r = (ComponentBlockEntity) h.getBlockEntity(reset);
+        h.runAfterDelay(30, () -> {
+            h.assertFalse(on(h, latch), "starts reset");
+            s.closed(true);
+            h.runAfterDelay(10, () -> {
+                h.assertTrue(on(h, latch), "set");
+                s.closed(false);
+                h.runAfterDelay(10, () -> {
+                    h.assertTrue(on(h, latch), "holds after the set is released");
+                    r.closed(true);
+                    h.runAfterDelay(10, () -> {
+                        h.assertFalse(on(h, latch), "reset");
+                        r.closed(false);
+                        h.runAfterDelay(10, () -> {
+                            h.assertFalse(on(h, latch), "holds reset");
+                            h.succeed();
+                        });
+                    });
+                });
+            });
+        });
+    }
+
+    /**
+     * Along the row from the Bench Rig (4.2 Kb): a red Wick, a Toggle Joint, a 1 kΦ Resinator, a 1 mGa Kief Cap, a black Wick. Close the
+     * toggle: after one time constant (1 s, 20 ticks) the cap has about 63% of the supply, after five nearly all of it.
+     */
+    @GameTest(template = "long", timeoutTicks = 300)
+    public static void aKiefCapChargesOnItsTimeConstant(GameTestHelper h) {
+        var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 7);
+        h.setBlock(l.at(1), ModPower.BENCH_RIG.get());
+        red(h, 2, 2, 2);
+        BlockPos toggle = l.at(3), cap = l.at(5);
+        place(h, toggle, ComponentType.TOGGLE_JOINT, Direction.EAST);
+        place(h, l.at(4), ComponentType.RESINATOR, Direction.EAST);
+        place(h, cap, ComponentType.KIEF_CAP, Direction.EAST);
+        black(h, 6, 2, 2);
+        java.util.function.Supplier<Double> volts = () -> {
+            var reading = com.malevolentgods.fourtwenty.power.Circuits.componentReading(h.getLevel(), h.absolutePos(cap));
+            return reading.map(r -> Math.abs(r.pins()[0] - r.pins()[1])).orElse(-1.0);
+        };
+        h.runAfterDelay(10, () -> {
+            h.assertTrue(volts.get() >= 0 && volts.get() < 0.05, "starts empty: " + volts.get());
+            ((ComponentBlockEntity) h.getBlockEntity(toggle)).closed(true);
+            h.runAfterDelay(20, () -> {
+                double one = volts.get(), want = 4.2 * (1 - Math.exp(-1));
+                h.assertTrue(Math.abs(one - want) < 0.25, "about 63% after a second: " + one + " for " + want);
+                h.runAfterDelay(80, () -> {
+                    h.assertTrue(volts.get() > 4.1, "nearly full after five: " + volts.get());
+                    h.succeed();
+                });
+            });
+        });
+    }
 }

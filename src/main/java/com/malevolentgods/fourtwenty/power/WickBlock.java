@@ -162,6 +162,11 @@ public class WickBlock extends Block {
 
     @Override protected void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState old, boolean moved) {
         if (!old.is(this)) BIGrid.changed(level);
+        // placed some other way than by hand (a command, a paste): reach toward its neighbours now, as it would have when placed
+        if (!level.isClientSide && !old.is(this)) {
+            BlockState linked = linked(state, level, pos);
+            if (linked != state) level.setBlock(pos, linked, 2);
+        }
     }
 
     @Override protected void onRemove(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState next, boolean moved) {

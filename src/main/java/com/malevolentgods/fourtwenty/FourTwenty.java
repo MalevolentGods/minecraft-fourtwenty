@@ -40,6 +40,7 @@ public class FourTwenty {
         com.malevolentgods.fourtwenty.gear.ModGear.register(bus);
         com.malevolentgods.fourtwenty.lights.ModLights.init();
         com.malevolentgods.fourtwenty.electronics.ModElectronics.init();
+        com.malevolentgods.fourtwenty.electronics.ModElectronics.register(bus);
         com.malevolentgods.fourtwenty.lights.ModLights.register(bus);
         ModItems.ITEMS.register(bus);
         com.malevolentgods.fourtwenty.registry.ModDataComponents.COMPONENTS.register(bus);

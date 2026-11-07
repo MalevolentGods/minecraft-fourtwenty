@@ -715,6 +715,12 @@ public final class Network {
     // ---- electronics: a network with components runs in time, every tick (docs/electronics/audit-and-plan.md 3.3) ----------------
 
     private static final double OPEN_SHARE = 1e-4;
+    /** All the circuits with components on a server share this much time a tick; past it, the rest wait for the next tick. */
+    static final long LIVE_BUDGET_NANOS = 20_000_000;
+    private static long liveSpent;
+
+    /** A new server tick: the electronics' shared time starts again. */
+    public static void startTick(net.neoforged.neoforge.event.tick.ServerTickEvent.Pre event) { liveSpent = 0; }
     private com.malevolentgods.fourtwenty.domain.electronics.Netlist live;
     private long liveSignature = Long.MIN_VALUE;
     private final List<com.malevolentgods.fourtwenty.domain.electronics.Part> liveParts = new ArrayList<>();
@@ -739,7 +745,11 @@ public final class Network {
                 live.set(sw, be.closed());
             }
         }
+        // over the shared budget: this circuit waits a tick (it runs slow, the server doesn't)
+        if (liveSpent > LIVE_BUDGET_NANOS && solution != null) return;
+        long started = System.nanoTime();
         boolean ok = live.run(1.0 / BIRules.TICKS_PER_SECOND);
+        liveSpent += System.nanoTime() - started;
         for (int i = 0; i < placed.size(); i++) {
             var part = liveParts.get(i);
             BlockPos pos = placed.get(i).pos();

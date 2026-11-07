@@ -51,6 +51,10 @@ public final class ModElectronics {
     /** Loads the class, so its registrations happen; call it before the registers go on the bus. */
     public static void init() {}
 
+    public static void register(net.neoforged.bus.api.IEventBus bus) {
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.power.Network::startTick);
+    }
+
     /** Hemp Thread: Puff tier, but thin. */
     public static final class HempThreadBlock extends WickBlock {
         public HempThreadBlock(Properties properties) { super(BIRules.Tier.PUFF, properties); }

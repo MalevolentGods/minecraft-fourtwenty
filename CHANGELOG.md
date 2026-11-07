@@ -4,8 +4,14 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Electronics**: Resinators, Kief Caps, Spliff Coils, One-Hitters and Zen Hitters, Toggle Joints, Kill Switches and Puff Buttons, the eight logic Nugs, the Tri-State, Latch and Flip-Flop Nugs, and the Ticker, wired by their pin faces with Wicks or the new Hemp Thread, and solved like SPICE: real time steps for capacitors and inductors, real diode physics, and logic with real gate delays inside each tick.
+- **Bottomless Stashes** (one per tier) and the **Bench Rig**, a variable DC supply, for testing circuits in creative.
+- **Lit Bits are real RGB LEDs**: each channel a diode behind its resistor, dimming along the diode's curve as the supply sags.
+
 ### Changed
 - **A SPICE-style circuit engine** runs every Wick network: Newton–Raphson with companion models, SPICE's convergence safeguards, and exact answers to 1e-9. Nothing you've built changes.
+- **Wicks placed by a command or a paste** reach toward their neighbours as hand-placed ones do.
 - **The Hit Box is one transformer**, solved with both its sides at once: power crosses in the same tick, with no banks inside. Its winding resistance is its loss, so a heavily loaded Hit Box sags a little under its tier's voltage, as a real transformer does.
 
 ## [0.21.0] - Twisted Pair
