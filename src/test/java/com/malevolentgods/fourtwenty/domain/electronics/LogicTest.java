@@ -260,4 +260,34 @@ class LogicTest {
         assertTrue(seen > 0, "it switched");
         assertEquals(expected, seen, 0.004, "on time");
     }
+
+    /** A circuit rebuilt mid-run (a chunk reloads, a block is placed nearby) carries on: the latch still holds, the capacitor keeps its charge. */
+    @Test void aRebuiltCircuitRemembers() {
+        Board b = new Board();
+        int s = b.input(), r = b.input(), q = b.n.node(), c = b.n.node();
+        var latch = b.n.latch(b.vdd, b.gnd, q, s, r);
+        b.n.resistor(q, c, 1000);
+        var cap = b.n.capacitor(c, b.gnd, 1e-3);
+        b.n.maxStep(0.01);
+        b.set(0, true);
+        b.run(0.02);
+        b.set(0, false);
+        b.run(0.5);
+        double charge = cap.volts();
+        assertTrue(charge > 1, "charging: " + charge);
+        var memory = b.n.memory();
+        double[] latchMemory = memory.get(latch), capMemory = memory.get(cap);
+        // the same circuit, built again from nothing, given back its memory
+        Board again = new Board();
+        int s2 = again.input(), r2 = again.input(), q2 = again.n.node(), c2 = again.n.node();
+        var latch2 = again.n.latch(again.vdd, again.gnd, q2, s2, r2);
+        again.n.resistor(q2, c2, 1000);
+        var cap2 = again.n.capacitor(c2, again.gnd, 1e-3);
+        again.n.maxStep(0.01);
+        assertTrue(again.n.resume(java.util.Map.of(latch2, latchMemory, cap2, capMemory)));
+        assertEquals(Logic.Out.HIGH, latch2.output(), "the latch still holds");
+        assertEquals(charge, cap2.volts(), charge * 0.01, "the capacitor kept its charge");
+        again.run(0.5);
+        assertTrue(cap2.volts() > charge, "and goes on charging from there");
+    }
 }

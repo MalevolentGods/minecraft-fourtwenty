@@ -29,6 +29,15 @@ public interface Part {
     /** A time step was accepted at these voltages: remember what the next step needs (a capacitor's voltage, an inductor's current). */
     default void accept(Analysis analysis) {}
 
+    /**
+     * What it remembers between ticks (a capacitor's charge, a gate's output and memory), so a block can keep it across the circuit
+     * being rebuilt, a chunk reloading or a restart; empty for a part with no memory. Times are relative to {@code now}.
+     */
+    default double[] save(double now) { return new double[0]; }
+
+    /** Takes back what {@link #save} gave (ignoring anything it doesn't recognise). */
+    default void load(double[] state, double now) {}
+
     /** The current through it, from its first node to its second, at these voltages. */
     double current(Analysis analysis);
 }

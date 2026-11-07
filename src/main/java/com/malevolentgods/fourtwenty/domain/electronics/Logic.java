@@ -79,6 +79,33 @@ public abstract class Logic implements Part {
         return reading[i];
     }
 
+    /** Extra memory a kind keeps (a latch's or flip-flop's bit, the clock it last saw). */
+    double[] memory() { return new double[0]; }
+
+    void remember(double[] memory) {}
+
+    /** Output, pending change and when it's due (from now), what each input last read, then the kind's own memory. */
+    @Override public double[] save(double now) {
+        double[] mem = memory();
+        double[] out = new double[3 + reading.length + mem.length];
+        out[0] = state.ordinal();
+        out[1] = pending == null ? -1 : pending.ordinal();
+        out[2] = pending == null ? 0 : Math.max(0, due - now);
+        for (int i = 0; i < reading.length; i++) out[3 + i] = reading[i];
+        System.arraycopy(mem, 0, out, 3 + reading.length, mem.length);
+        return out;
+    }
+
+    @Override public void load(double[] s, double now) {
+        if (s.length < 3 + reading.length) return;
+        Out[] outs = Out.values();
+        state = outs[(int) Math.max(0, Math.min(outs.length - 1, s[0]))];
+        pending = s[1] < 0 ? null : outs[(int) Math.min(outs.length - 1, s[1])];
+        due = now + s[2];
+        for (int i = 0; i < reading.length; i++) reading[i] = (int) s[3 + i];
+        remember(java.util.Arrays.copyOfRange(s, 3 + reading.length, s.length));
+    }
+
     /** What the output should be now, from the inputs as solved (and the time, for a Ticker). */
     abstract Out want(Analysis an, double time);
 
@@ -131,6 +158,10 @@ public abstract class Logic implements Part {
 
         Latch(int vdd, int gnd, int out, int set, int reset) { super(vdd, gnd, out, set, reset); }
 
+        @Override double[] memory() { return new double[]{q ? 1 : 0}; }
+
+        @Override void remember(double[] m) { if (m.length >= 1) q = m[0] > 0.5; }
+
         @Override Out want(Analysis an, double time) {
             if (!powered(an)) return Out.FLOAT;
             int s = bit(an, 0), r = bit(an, 1);
@@ -146,6 +177,15 @@ public abstract class Logic implements Part {
         private int lastClock = -1;
 
         FlipFlop(int vdd, int gnd, int out, int d, int clock) { super(vdd, gnd, out, d, clock); }
+
+        @Override double[] memory() { return new double[]{q ? 1 : 0, lastClock}; }
+
+        @Override void remember(double[] m) {
+            if (m.length >= 2) {
+                q = m[0] > 0.5;
+                lastClock = (int) m[1];
+            }
+        }
 
         @Override Out want(Analysis an, double time) {
             if (!powered(an)) {

@@ -82,6 +82,42 @@ public final class Netlist {
         return add(new Parts.Transformer(a1, b1, a2, b2, ratio, ohms));
     }
 
+    /**
+     * Picks up a circuit that was running before it was rebuilt: each part takes back its memory, and the next {@link #run} starts from
+     * the operating point with that memory in place rather than from rest.
+     */
+    public boolean resume(java.util.Map<Part, double[]> memory) {
+        for (var e : memory.entrySet()) e.getKey().load(e.getValue(), time);
+        boolean ok = operatingPointKeeping();
+        breakpoint();
+        return ok;
+    }
+
+    /** A DC solve that doesn't overwrite what capacitors and inductors remember (they were just restored). */
+    private boolean operatingPointKeeping() {
+        analysis = new Analysis(nodes);
+        analysis.reltol = reltol;
+        if (guess != null && guess.length == nodes) analysis.v = guess.clone();
+        // a short transient step, so restored charges and currents stand rather than being reset to their DC values
+        analysis.mode = Analysis.Mode.TRANSIENT;
+        analysis.method = Analysis.Method.EULER;
+        analysis.h = SETTLE;
+        boolean ok = solveRobustly();
+        if (ok) for (Part p : parts) p.accept(analysis);
+        started = ok;
+        return ok;
+    }
+
+    /** Every part's memory, to keep between ticks. */
+    public java.util.Map<Part, double[]> memory() {
+        java.util.Map<Part, double[]> out = new java.util.IdentityHashMap<>();
+        for (Part p : parts) {
+            double[] s = p.save(time);
+            if (s.length > 0) out.put(p, s);
+        }
+        return out;
+    }
+
     /** The present solution, for reading parts. */
     public Analysis analysis() { return analysis; }
 

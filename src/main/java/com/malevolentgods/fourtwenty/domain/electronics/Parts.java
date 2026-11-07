@@ -267,6 +267,15 @@ public final class Parts {
         }
 
         public double volts() { return vPrev; }
+
+        @Override public double[] save(double now) { return new double[]{vPrev, iPrev}; }
+
+        @Override public void load(double[] state, double now) {
+            if (state.length >= 2) {
+                vPrev = state[0];
+                iPrev = state[1];
+            }
+        }
     }
 
     /** An inductor: a short in DC; in time, v = L·di/dt by backward Euler or the trapezoidal rule. */
@@ -308,6 +317,15 @@ public final class Parts {
         }
 
         public double amps() { return iPrev; }
+
+        @Override public double[] save(double now) { return new double[]{iPrev, vPrev}; }
+
+        @Override public void load(double[] state, double now) {
+            if (state.length >= 2) {
+                iPrev = state[0];
+                vPrev = state[1];
+            }
+        }
     }
 
     /**
