@@ -1143,7 +1143,9 @@ public final class Network {
 
     private void checks(Level level, long now, Map<BlockPos, Integer> burnTimers) {
         CircuitRules.Numbers rules = ProcessingConfig.circuit();
-        for (int i = 0; i < members.size(); i++) {
+        // a solve that didn't converge says nothing true about voltages: it trips nothing
+        boolean trusted = solution == null || solution.converged();
+        for (int i = 0; i < members.size() && trusted; i++) {
             if (Math.abs(memberVolts(i)) > rules.overloadVolts(members.get(i).node().tier())) members.get(i).node().overload(now);
         }
         // a block burns once however many of its cores are over: both cores of a cable share its timer

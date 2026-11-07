@@ -69,6 +69,8 @@ public final class ModElectronics {
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.power.Network::startTick);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.power.InspoweedometerItem::rightClickBlock);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.power.InspoweedometerItem::playerTick);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.power.BIGrid::chunkLoaded);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.power.BIGrid::levelTick);
     }
 
     /** Hemp Thread: Puff tier, but thin. */

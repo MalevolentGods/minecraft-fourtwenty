@@ -97,9 +97,15 @@ public final class Netlist {
 
     /**
      * Picks up a circuit that was running before it was rebuilt: each part takes back its memory, and the next {@link #run} starts from
-     * the operating point with that memory in place rather than from rest.
+     * the operating point with that memory in place rather than from rest. A part with nothing to remember (one just placed) starts
+     * where the circuit's DC operating point puts it: a new capacitor charged, not empty. An empty one across a stiff supply asks
+     * thousands of amps of the first microsecond's step, past any source's limit.
      */
     public boolean resume(java.util.Map<Part, double[]> memory) {
+        if (!operatingPoint() && memory.isEmpty()) {
+            breakpoint();
+            return false;
+        }
         for (var e : memory.entrySet()) e.getKey().load(e.getValue(), time);
         boolean ok = operatingPointKeeping();
         breakpoint();

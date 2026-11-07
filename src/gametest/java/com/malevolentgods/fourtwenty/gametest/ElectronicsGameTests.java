@@ -393,4 +393,23 @@ public final class ElectronicsGameTests {
             });
         });
     }
+    /**
+     * A Kief Cap straight across a Bottomless Stash. Its supply is so stiff that an empty cap would ask thousands of Ig of the first
+     * microsecond, and the bad solve tripped the supply, over and over. A new cap starts charged instead, and nothing trips.
+     */
+    @GameTest(template = "long", timeoutTicks = 100)
+    public static void aKiefCapAcrossAStiffSupplyDoesntTripIt(GameTestHelper h) {
+        var l = new Ladder(h, 2, 1).rails(ModPower.HEMP_WICK.get(), 1, 6);
+        h.setBlock(l.at(1), ModPower.BOTTOMLESS_STASH_PUFF.get());
+        BlockPos cap = l.at(4);
+        place(h, cap, ComponentType.KIEF_CAP, Direction.NORTH);
+        var stash = (com.malevolentgods.fourtwenty.power.SupplyBlockEntity) h.getBlockEntity(l.at(1));
+        h.onEachTick(() -> h.assertFalse(stash.node().overloaded(h.getLevel().getGameTime()), "the supply never trips"));
+        h.runAfterDelay(30, () -> {
+            var r = com.malevolentgods.fourtwenty.power.Circuits.componentReading(h.getLevel(), h.absolutePos(cap)).orElseThrow();
+            double v = Math.abs(r.pins()[0] - r.pins()[1]);
+            h.assertTrue(Math.abs(v - 4.2) < 0.01, "charged to the supply: " + v);
+            h.succeed();
+        });
+    }
 }

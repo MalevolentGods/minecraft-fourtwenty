@@ -33,6 +33,29 @@ public final class BIGrid {
         VERSIONS.computeIfAbsent(level, l -> new int[1])[0]++;
     }
 
+    /** Levels where a chunk has loaded since the networks were last walked, and when they were last told to walk again. */
+    private static final Map<Level, long[]> LOADED = new WeakHashMap<>();
+    /** At most one re-walk a second for chunks loading, however fast someone flies. */
+    private static final int LOAD_EVERY = 20;
+
+    /**
+     * A chunk loaded: a network that runs into it was walked without it (a walk stops at unloaded blocks), so every network walks again,
+     * soon. Without this a build across a chunk border came up half-wired after a restart, or when its owner came back to it.
+     */
+    public static void chunkLoaded(net.neoforged.neoforge.event.level.ChunkEvent.Load event) {
+        if (event.getLevel() instanceof Level level && !level.isClientSide) LOADED.computeIfAbsent(level, l -> new long[]{0, Long.MIN_VALUE / 2})[0] = 1;
+    }
+
+    /** At the end of each level tick: walk again if a chunk has loaded and it's been a second since the last time. */
+    public static void levelTick(net.neoforged.neoforge.event.tick.LevelTickEvent.Post event) {
+        Level level = event.getLevel();
+        long[] state = LOADED.get(level);
+        if (state == null || state[0] == 0 || level.getGameTime() - state[1] < LOAD_EVERY) return;
+        state[0] = 0;
+        state[1] = level.getGameTime();
+        changed(level);
+    }
+
     private record Step(BlockPos pos, Direction from, BlockPos parent) {}
 
     /** Takes {@code amount} from whatever stores power on the Wicks touching {@code start}, all or nothing, for machines with no buffer of their own. */
