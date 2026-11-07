@@ -626,7 +626,7 @@ public final class Network {
                     double watts = n.demandWatts();
                     if (watts > 0) loadIndex[i] = circuit.load(plus, minus, watts, rules.minVolts(tier));
                 }
-                case LED -> ledIndex[i] = circuit.led(plus, minus, n.ledAmps(), led.forwardVolts(), led.fullVolts());
+                case LED -> ledIndex[i] = circuit.led(plus, minus, n.ledAmps(), led.forwardVolts(), led.ratedVolts(), led.channelAmps());
                 default -> {}
             }
         }
@@ -652,7 +652,7 @@ public final class Network {
         for (int i = 0; i < members.size(); i++) {
             if (ledIndex[i] < 0) continue;
             double across = memberVolts(i);
-            members.get(i).node().lit(status[i] == Circuit.OK && !members.get(i).node().overloaded(now) ? led.brightness(across) : 0, status[i]);
+            members.get(i).node().lit(status[i] == Circuit.OK && !members.get(i).node().overloaded(now) ? glow(i) : 0, status[i]);
         }
         floor = 0;
         for (int i = 0; i < solution.volts().length; i++) floor = i == 0 ? solution.volts()[0] : Math.min(floor, solution.volts()[i]);
@@ -722,7 +722,7 @@ public final class Network {
     private final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.LimitedSource> liveSources = new ArrayList<>();
     private final List<double[]> liveSourceOhms = new ArrayList<>();
     private final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.PowerLoad> liveLoads = new ArrayList<>();
-    private final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.DriverLed> liveLeds = new ArrayList<>();
+    private final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.RgbLed> liveLeds = new ArrayList<>();
     private final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.Transformer> liveWindings = new ArrayList<>();
     private final List<Double> liveWindingOhms = new ArrayList<>();
 
@@ -762,7 +762,7 @@ public final class Network {
         }
         for (int i = 0; i < members.size(); i++) {
             if (ledIndex[i] < 0) continue;
-            members.get(i).node().lit(status[i] == Circuit.OK && !members.get(i).node().overloaded(now) ? led.brightness(memberVolts(i)) : 0, status[i]);
+            members.get(i).node().lit(status[i] == Circuit.OK && !members.get(i).node().overloaded(now) ? glow(i) : 0, status[i]);
         }
         floor = 0;
         for (int i = 0; i < solution.volts().length; i++) floor = i == 0 ? solution.volts()[0] : Math.min(floor, solution.volts()[i]);
@@ -831,7 +831,7 @@ public final class Network {
                 }
                 case LED -> {
                     ledIndex[i] = liveLeds.size();
-                    liveLeds.add(net.driverLed(plus, minus, n.ledAmps(), led.forwardVolts(), led.fullVolts()));
+                    liveLeds.add(net.rgbLed(plus, minus, n.ledAmps() / led.channelAmps(), led.forwardVolts(), led.ratedVolts(), led.channelAmps()));
                 }
                 default -> {}
             }
@@ -1012,6 +1012,12 @@ public final class Network {
         if (w.conductor() < 0) return floor;
         Run r = runs.get(w.conductor());
         return solution.volts()[r.start()] - solution.conductorAmps()[w.conductor()] * w.fromStart();
+    }
+
+    /** How lit a Lit Bit is: the current its diodes really carry, against what its colour asks for at full supply. */
+    private double glow(int i) {
+        double want = members.get(i).node().ledAmps();
+        return want <= 0 ? 0 : Math.max(0, Math.min(1, solution.ledAmps()[ledIndex[i]] / want));
     }
 
     /** A member's circuit status: Circuit.OK, BROWNOUT, NO_LOOP or REVERSED. */

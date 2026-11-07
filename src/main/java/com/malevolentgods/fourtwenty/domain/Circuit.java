@@ -38,7 +38,7 @@ public final class Circuit {
     /** A transformer: primary p1-m1, secondary p2-m2, turns ratio V1/V2, referred through its winding resistance. */
     private record Coupling(int p1, int m1, int p2, int m2, double ratio, double ohms) {}
     /** An LED behind a constant-current driver: dark below {@code forward}, rising to {@code setAmps} at {@code rated}, held above. */
-    private record Led(int plus, int minus, double setAmps, double forward, double rated) {
+    private record Led(int plus, int minus, double setAmps, double forward, double rated, double channelAmps) {
         double amps(double volts) {
             if (volts <= forward) return 0;
             return setAmps * (rated <= forward ? 1 : Math.min(1, (volts - forward) / (rated - forward)));
@@ -92,7 +92,12 @@ public final class Circuit {
 
     /** An LED across {@code plus} and {@code minus} (Lit Bits: domain/LedRules); returns its index. */
     public int led(int plus, int minus, double setAmps, double forward, double rated) {
-        leds.add(new Led(plus, minus, Math.max(0, setAmps), Math.max(0, forward), Math.max(forward, rated)));
+        return led(plus, minus, setAmps, forward, rated, LedRules.Numbers.DEFAULT.channelAmps());
+    }
+
+    /** An RGB LED (a Lit Bit): {@code setAmps} at full brightness, each channel {@code channelAmps} at {@code rated} volts. */
+    public int led(int plus, int minus, double setAmps, double forward, double rated, double channelAmps) {
+        leds.add(new Led(plus, minus, Math.max(0, setAmps), Math.max(0, forward), Math.max(forward, rated), Math.max(channelAmps, 1e-9)));
         return leds.size() - 1;
     }
 
@@ -149,7 +154,7 @@ public final class Circuit {
         final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.LimitedSource> supplies = new ArrayList<>();
         final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.Transformer> windings = new ArrayList<>();
         final com.malevolentgods.fourtwenty.domain.electronics.Parts.PowerLoad[] machines = new com.malevolentgods.fourtwenty.domain.electronics.Parts.PowerLoad[loads.size()];
-        final com.malevolentgods.fourtwenty.domain.electronics.Parts.DriverLed[] lamps = new com.malevolentgods.fourtwenty.domain.electronics.Parts.DriverLed[leds.size()];
+        final com.malevolentgods.fourtwenty.domain.electronics.Parts.RgbLed[] lamps = new com.malevolentgods.fourtwenty.domain.electronics.Parts.RgbLed[leds.size()];
 
         Engine(double share, double[] guess) {
             this.share = share;
@@ -166,7 +171,7 @@ public final class Circuit {
             for (int i = 0; i < leds.size(); i++) {
                 if (ledStatus[i] != OK) continue;
                 Led l = leds.get(i);
-                lamps[i] = net.driverLed(l.plus(), l.minus(), l.setAmps(), l.forward(), l.rated());
+                lamps[i] = net.rgbLed(l.plus(), l.minus(), l.setAmps() / l.channelAmps(), l.forward(), l.rated(), l.channelAmps());
             }
             for (Coupling k : couplings) windings.add(net.transformer(k.p1(), k.m1(), k.p2(), k.m2(), k.ratio(), k.ohms()));
             net.guess(guess);

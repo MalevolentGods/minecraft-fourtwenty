@@ -205,6 +205,72 @@ public final class Parts {
         @Override public double current(Analysis an) { return ampsAt(an.across(plus, minus)); }
     }
 
+    /**
+     * A Lit Bit as a real RGB LED: each channel an LED (the Shockley equation) behind its current-setting resistor, its colour a duty
+     * cycle (PWM) on each channel, as real RGB strips are driven. The resistor is sized so one channel at full duty draws
+     * {@code channelAmps} at {@code rated} volts; below the LED's forward voltage it's dark, and as the supply sags it dims along the
+     * diode's knee. Its slope is positive, so it stamps as a Newton companion and the matrix stays symmetric.
+     */
+    public static final class RgbLed implements Part {
+        final int plus, minus;
+        /** The sum of the three channels' duties (0 to 3): the share of a channel's current the lamp draws in all. */
+        final double duty;
+        final double saturation, nvt, series;
+        private double vLast, iLast, gLast;
+
+        RgbLed(int plus, int minus, double duty, double forward, double rated, double channelAmps) {
+            this.plus = plus;
+            this.minus = minus;
+            this.duty = Math.max(0, duty);
+            DiodeModel m = DiodeModel.led(forward);
+            this.saturation = m.saturation();
+            this.nvt = m.emission() * THERMAL;
+            double drop = nvt * Math.log(channelAmps / saturation + 1);
+            this.series = Math.max((rated - drop) / Math.max(channelAmps, 1e-12), 1e-6);
+        }
+
+        @Override public int[] nodes() { return new int[]{plus, minus}; }
+
+        @Override public boolean nonlinear() { return true; }
+
+        /** One channel at full duty: the current that solves the diode with its resistor, i = Is(e^((v − iR)/nVt) − 1). */
+        double channel(double v) {
+            if (v <= 0) return saturation * Math.expm1(v / nvt);
+            double lo = 0, hi = v / series;
+            for (int k = 0; k < 80; k++) {
+                double i = (lo + hi) / 2;
+                if (i - saturation * Math.expm1((v - i * series) / nvt) > 0) hi = i; else lo = i;
+            }
+            return (lo + hi) / 2;
+        }
+
+        /** The channel's slope at {@code v}: the diode's conductance in series with its resistor. */
+        double slope(double v) {
+            double i = Math.max(channel(v), 0);
+            double gd = (i + saturation) / nvt;
+            return gd / (1 + gd * series) + 1e-12;
+        }
+
+        public double ampsAt(double v) { return duty * channel(v); }
+
+        @Override public void stamp(Stamp s, Analysis an) {
+            double v = an.across(plus, minus);
+            double i = ampsAt(v), g = duty * slope(v) + 1e-12;
+            vLast = v;
+            iLast = i;
+            gLast = g;
+            s.conductance(plus, minus, g);
+            s.current(plus, minus, i - g * v);
+        }
+
+        @Override public boolean converged(Analysis an) {
+            double v = an.across(plus, minus), predicted = iLast + gLast * (v - vLast), actual = ampsAt(v);
+            return Math.abs(actual - predicted) <= an.reltol() * Math.max(Math.abs(actual), Math.abs(predicted)) + ABSTOL;
+        }
+
+        @Override public double current(Analysis an) { return ampsAt(an.across(plus, minus)); }
+    }
+
     /** A switch, lever or button: a tiny resistance closed, a leak of a few teraphus open. */
     public static final class Switch implements Part {
         static final double CLOSED = MIN_OHMS, OPEN = 1e12;

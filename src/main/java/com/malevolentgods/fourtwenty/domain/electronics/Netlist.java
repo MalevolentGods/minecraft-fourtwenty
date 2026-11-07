@@ -45,6 +45,11 @@ public final class Netlist {
 
     public Parts.PowerLoad powerLoad(int plus, int minus, double watts, double minVolts) { return add(new Parts.PowerLoad(plus, minus, watts, minVolts)); }
 
+    /** A Lit Bit: an RGB LED of {@code duty} channels' worth (0 to 3), each sized to draw {@code channelAmps} at {@code rated} volts. */
+    public Parts.RgbLed rgbLed(int plus, int minus, double duty, double forward, double rated, double channelAmps) {
+        return add(new Parts.RgbLed(plus, minus, duty, forward, rated, channelAmps));
+    }
+
     public Parts.DriverLed driverLed(int plus, int minus, double setAmps, double forward, double rated) {
         return add(new Parts.DriverLed(plus, minus, setAmps, forward, rated));
     }

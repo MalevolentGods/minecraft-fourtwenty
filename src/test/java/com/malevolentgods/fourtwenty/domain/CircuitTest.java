@@ -393,11 +393,12 @@ class CircuitTest {
 
     @Test
     void anLedFollowsItsKnee() {
-        // a Puff Hookah (4.2 Kb) and one Lit Bit at full white: 0.716 Ig, about 3 W
+        // a Lit Bit at full white on 4.2 Kb, the voltage its channels are sized for: exactly its set current, 0.714 Ig, about 3 W
         var n = LedRules.Numbers.DEFAULT;
         var c = new Circuit();
-        int[] h = hookah(c);
-        int lit = c.led(h[0], h[1], n.setAmps(255, 255, 255), n.forwardVolts() / 4.2, n.fullVolts() / 4.2);
+        int p = c.node(), m = c.node();
+        c.source(p, m, 4.2, 1e-6, 100, 0);
+        int lit = c.led(p, m, n.setAmps(255, 255, 255), n.forwardVolts(), n.ratedVolts(), n.channelAmps());
         var s = c.solve();
         assertEquals(n.setAmps(255, 255, 255), s.ledAmps()[lit], 1e-6);
         assertEquals(Circuit.OK, s.ledStatus()[lit]);
@@ -405,14 +406,25 @@ class CircuitTest {
 
     @Test
     void anLedOnALowLineIsDimAndBelowItsKneeDark() {
-        // an EMF of 0.8 pu is halfway up the knee from 0.6 to 1.0: half the set current. At 0.5 pu it is dark.
-        for (double[] want : new double[][]{{0.8, 0.5}, {0.5, 0.0}}) {
+        // each channel is an LED (Shockley) behind the resistor that gives 0.238 Ig at 4.2 Kb; at 80% of that supply the current is
+        // what the diode and resistor give together (solved here on its own), and at half it's below the forward voltage: dark
+        var n = LedRules.Numbers.DEFAULT;
+        double nvt = 2 * 0.025852, is = 0.01 / Math.expm1(n.forwardVolts() / nvt);
+        double r = (n.ratedVolts() - nvt * Math.log(n.channelAmps() / is + 1)) / n.channelAmps();
+        for (double share : new double[]{0.8, 0.5}) {
+            double v = share * n.ratedVolts(), lo = 0, hi = v / r;
+            for (int k = 0; k < 200; k++) {
+                double i = (lo + hi) / 2;
+                if (i - is * Math.expm1((v - i * r) / nvt) > 0) hi = i; else lo = i;
+            }
             var c = new Circuit();
             int p = c.node(), m = c.node();
-            c.source(p, m, want[0], 1e-6, 10, 0);
-            int lit = c.led(p, m, 1.0, 0.6, 1.0);
+            c.source(p, m, v, 1e-6, 10, 0);
+            int lit = c.led(p, m, n.channelAmps(), n.forwardVolts(), n.ratedVolts(), n.channelAmps());
             var s = c.solve();
-            assertEquals(want[1], s.ledAmps()[lit], 1e-4, "at " + want[0]);
+            assertEquals(lo, s.ledAmps()[lit], 1e-6 + 1e-6 * lo, "at " + share);
+            if (share == 0.8) assertTrue(lo > 0.1 * n.channelAmps() && lo < 0.7 * n.channelAmps(), "dimmed: " + lo);
+            else assertTrue(lo < 1e-3 * n.channelAmps(), "dark below its forward voltage: " + lo);
         }
     }
 
@@ -428,14 +440,16 @@ class CircuitTest {
 
     @Test
     void manyLedsShareALine() {
-        // 100 Lit Bits in parallel: their currents add, and each is still at its set current
+        // 100 Lit Bits in parallel on 4.2 Kb, each set to 5 mIg: their currents add, and each carries its own
+        var n = LedRules.Numbers.DEFAULT;
         var c = new Circuit();
-        int[] h = hookah(c);
+        int p = c.node(), m = c.node();
+        int src = c.source(p, m, 4.2, 1e-6, 100, 0);
         int[] lits = new int[100];
-        for (int i = 0; i < lits.length; i++) lits[i] = c.led(h[0], h[1], 0.005, 0.6, 0.95);
+        for (int i = 0; i < lits.length; i++) lits[i] = c.led(p, m, 0.005, n.forwardVolts(), n.ratedVolts(), n.channelAmps());
         var s = c.solve();
-        assertEquals(0.5, s.sourceAmps()[0], 1e-4);
-        for (int l : lits) assertEquals(0.005, s.ledAmps()[l], 1e-7);
+        assertEquals(0.5, s.sourceAmps()[src], 1e-6);
+        for (int l : lits) assertEquals(0.005, s.ledAmps()[l], 1e-8);
     }
 
     /** A Hit Box as one two-port: 42 Kb in, a 840 W Puff machine out at 4.2 Kb, in the same solve; what's lost is exactly I²R on its winding. */
