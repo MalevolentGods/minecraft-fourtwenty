@@ -6,7 +6,7 @@ back wall; behind it the sealed logic room tools/build_calculator.py fills. Prin
 """
 X0, X1 = 299, 353               # walls included
 Z0, Z1 = -89, -7                # back wall, front wall
-FLOOR, ROOF = -61, -51          # floor level with the ground; the roof deck
+FLOOR, ROOF = -61, -47          # floor level with the ground; the glass roof, a level clear above the machine's highest wire (-49)
 ZP = -14                        # the panel wall between the lobby and the logic room
 PANEL = (316, 327, -60, -52)    # x0, x1, y0, y1 of the dark surround round the panel (the trays themselves are the machine's)
 
@@ -33,10 +33,13 @@ def put(x, y, z, block):
 
 out.append(f'forceload add {X0 - 2} {Z0 - 2} {X1 + 2} {Z1 + 2}')
 # clear the space, then the floor: black under the logic, light gray in the lobby with a lime path from the door to the panel
-# (in two: a fill takes at most 32768 blocks)
-ZM = (Z0 + Z1) // 2
-fill(X0, FLOOR + 1, Z0, X1, ROOF + 3, ZM, 'minecraft:air')
-fill(X0, FLOOR + 1, ZM + 1, X1, ROOF + 3, Z1, 'minecraft:air')
+# (in thirds: a fill takes at most 32768 blocks); "noclear" leaves the space, to raise the shell round a machine already built
+import sys
+if 'noclear' not in sys.argv:
+    z = Z0
+    for z1 in (Z0 + (Z1 - Z0) // 3, Z0 + 2 * (Z1 - Z0) // 3, Z1):
+        fill(X0, FLOOR + 1, z, X1, ROOF + 3, z1, 'minecraft:air')
+        z = z1 + 1
 fill(X0, FLOOR, Z0, X1, FLOOR, ZP, BLACK)
 fill(X0, FLOOR, ZP + 1, X1, FLOOR, Z1, GRAY)
 fill(320, FLOOR, ZP + 1, 323, FLOOR, Z1, LIME)
@@ -70,8 +73,9 @@ for x in range(319, 325):
     put(x, -53, ZP + 1, f'{TRIM}[facing=south]')
 # a low black counter under the keypad, a step out from the wall
 fill(318, FLOOR + 1, ZP + 1, 325, FLOOR + 1, ZP + 1, BLACK)
-# open to the sky (the user's call, 2026-11-08): the walls' top course in white, a cream parapet on it with lime glass along the front
-# and lime trim on the corners, nothing across the top
+# a flat glass roof over everything (the user's call, 2026-11-08), the walls' top course in white round it, a cream parapet on that with
+# lime glass along the front and lime trim on the corners
+fill(X0 + 1, ROOF, Z0 + 1, X1 - 1, ROOF, Z1 - 1, GLASS)
 for x0, z0, x1, z1 in ((X0, Z0, X1, Z0), (X0, Z0, X0, Z1), (X1, Z0, X1, Z1), (X0, Z1, X1, Z1)):
     fill(x0, ROOF, z0, x1, ROOF, z1, WHITE)
     fill(x0, ROOF + 1, z0, x1, ROOF + 1, z1, CREAM)
