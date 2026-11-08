@@ -1036,6 +1036,10 @@ public final class Network {
         long started = System.nanoTime();
         boolean ok = live.run(1.0 / BIRules.TICKS_PER_SECOND);
         liveSpent += System.nanoTime() - started;
+        if (Boolean.getBoolean("fourtwenty.profile") && System.nanoTime() - started > 20_000_000) {
+            System.out.println("PROFILE live tick " + (System.nanoTime() - started) / 1_000_000 + " ms, nodes " + nodes + ", parts " + placed.size() + ", runs " + runs.size()
+                    + ", events " + live.lastEvents() + ", solves " + live.lastSolves());
+        }
         for (int i = 0; i < placed.size(); i++) {
             var part = liveParts.get(i);
             BlockPos pos = placed.get(i).pos();

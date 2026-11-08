@@ -12,7 +12,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
  * The keypad calculator built on flatworld (CalculatorLayout, from tools/build_calculator.py), driven as a player would, key by key:
- * 12 + 34 = 46; C, 50 - 8 = 42; C, 7 5 back = 7; C, 200 + 100 = 300 with the overflow lamp lit. Register X is what the display shows.
+ * 1234 + 8765 = 9999; C, 9999 + 9999 = 19998; C, 5 - 8 = 3 with the negative lamp lit; C, 1 2 3 4 5 holds 1234 (the fifth digit
+ * refused); C, 7 5 back = 7. Register X, its two Jar Nugs, is what the display shows.
  */
 @GameTestHolder("fourtwenty_tests")
 @PrefixGameTestTemplate(false)
@@ -21,10 +22,14 @@ public final class CalculatorGameTests {
 
     private static BlockPos at(int[] p) { return new BlockPos(1 + p[0], p[1], 1 + p[2]); }
 
-    private static int x(GameTestHelper h) {
-        double[] m = ((ComponentBlockEntity) h.getBlockEntity(at(CalculatorLayout.JX))).memory();
-        return m.length > 11 ? (int) m[11] : -1;
+    private static int jar(GameTestHelper h, int[] p) {
+        double[] m = ((ComponentBlockEntity) h.getBlockEntity(at(p))).memory();
+        return m.length > 11 ? (int) m[11] & 0xFF : -1;
     }
+
+    private static int x(GameTestHelper h) { return jar(h, CalculatorLayout.XH) << 8 | jar(h, CalculatorLayout.XL); }
+
+    private static boolean lit(GameTestHelper h, int[] p) { return h.getBlockState(at(p)).getValue(LampBlock.LIT); }
 
     /** Presses each key of {@code keys} in turn (down 4 ticks, up 4), then runs {@code then}. */
     private static void type(GameTestHelper h, String keys, Runnable then) {
@@ -40,9 +45,16 @@ public final class CalculatorGameTests {
         });
     }
 
-    @GameTest(template = "long", batch = "calculator", timeoutTicks = 1600)
+    @GameTest(template = "long", batch = "calculator", timeoutTicks = 2400)
     public static void theCalculatorCalculates(GameTestHelper h) {
         var blocks = h.getLevel().holderLookup(Registries.BLOCK);
+        // the machine reaches far past the test's own structure: keep all of its chunks loaded and ticking while it runs
+        java.util.Set<net.minecraft.world.level.ChunkPos> forced = new java.util.HashSet<>();
+        for (String line : CalculatorLayout.BLOCKS) {
+            String[] f = line.split(" ", 4);
+            forced.add(new net.minecraft.world.level.ChunkPos(h.absolutePos(new BlockPos(1 + Integer.parseInt(f[0]), 0, 1 + Integer.parseInt(f[2])))));
+        }
+        for (var c : forced) h.getLevel().setChunkForced(c.x, c.z, true);
         for (String line : CalculatorLayout.BLOCKS) {
             String[] f = line.split(" ", 4);
             BlockPos pos = new BlockPos(1 + Integer.parseInt(f[0]), Integer.parseInt(f[1]), 1 + Integer.parseInt(f[2]));
@@ -54,16 +66,22 @@ public final class CalculatorGameTests {
                 h.fail("bad layout line " + line + ": " + e.getMessage());
             }
         }
-        h.runAfterDelay(20, () -> type(h, "12+34=", () -> {
-            h.assertTrue(x(h) == 46, "12 + 34 = 46: " + x(h));
-            type(h, "C50-8=", () -> {
-                h.assertTrue(x(h) == 42, "50 - 8 = 42: " + x(h));
-                type(h, "C75<", () -> {
-                    h.assertTrue(x(h) == 7, "C, 7 5 back = 7: " + x(h));
-                    type(h, "C200+100=", () -> {
-                        h.assertTrue(x(h) == 300, "200 + 100 = 300: " + x(h));
-                        h.assertTrue(h.getBlockState(at(CalculatorLayout.OVERFLOW)).getValue(LampBlock.LIT), "past 255: the overflow lamp is lit");
-                        h.succeed();
+        h.runAfterDelay(20, () -> type(h, "1234+8765=", () -> {
+            h.assertTrue(x(h) == 9999, "1234 + 8765 = 9999: " + x(h));
+            type(h, "C9999+9999=", () -> {
+                h.assertTrue(x(h) == 19998, "9999 + 9999 = 19998: " + x(h));
+                type(h, "C5-8=", () -> {
+                    h.assertTrue(x(h) == 3 && lit(h, CalculatorLayout.NEGATIVE), "5 - 8 = 3, negative: " + x(h) + ", lamp " + lit(h, CalculatorLayout.NEGATIVE));
+                    type(h, "C12345", () -> {
+                        h.assertTrue(x(h) == 1234 && !lit(h, CalculatorLayout.NEGATIVE), "a fifth digit refused: " + x(h));
+                        type(h, "C75<", () -> {
+                            h.assertTrue(x(h) == 7, "C, 7 5 back = 7: " + x(h));
+                            type(h, "C50-8=", () -> {
+                                h.assertTrue(x(h) == 42 && !lit(h, CalculatorLayout.NEGATIVE), "50 - 8 = 42: " + x(h));
+                                for (var c : forced) h.getLevel().setChunkForced(c.x, c.z, false);
+                                h.succeed();
+                            });
+                        });
                     });
                 });
             });

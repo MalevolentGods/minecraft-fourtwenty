@@ -313,9 +313,15 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
         // a mounted digit is a plate on its tray: its screen 7 voxels further back, and no toggle on its back (it toggles from the front)
         boolean mounted = state.getValue(ComponentBlock.MOUNTED);
         double dz = mounted ? 7 : 0;
-        ComponentBlockEntity source = null;
-        // the source: the first that's powered with something plugged into its back (a Ribbon, or a bus face)
-        for (ComponentBlockEntity d : row) if (Shown.active(d.shown()) && fed(level, d)) { source = d; break; }
+        ComponentBlockEntity source = null, high = null;
+        // the source: the rightmost that's powered with something plugged into its back (a Ribbon, or a bus face); a second fed one to
+        // its left is the high byte of a 16-bit number (the source's carry wire then unread)
+        for (int i = row.size() - 1; i >= 0; i--) {
+            ComponentBlockEntity d = row.get(i);
+            if (!Shown.active(d.shown()) || !fed(level, d)) continue;
+            if (source == null) source = d;
+            else if (high == null) high = d;
+        }
         // the back toggle: up for hex, down for decimal
         boolean hex = be.value() > 0.5;
         if (!mounted) {
@@ -324,7 +330,8 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
         String text = "";
         boolean overflow = false;
         if (source != null) {
-            int value = Shown.bits(source.shown()) & 0x1FF;   // the byte and the carry: a sum to 510
+            // the byte and the carry (a sum to 510); or, with a high byte fed too, sixteen bits (to 65535)
+            int value = high == null ? Shown.bits(source.shown()) & 0x1FF : (Shown.bits(high.shown()) & 0xFF) << 8 | Shown.bits(source.shown()) & 0xFF;
             text = source.value() > 0.5 ? Integer.toHexString(value).toUpperCase(java.util.Locale.ROOT) : Integer.toString(value);
             if (text.length() > n) {
                 text = text.substring(text.length() - n);

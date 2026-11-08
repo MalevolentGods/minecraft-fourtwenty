@@ -259,7 +259,18 @@ public final class Netlist {
      * after its delay (a change its inputs take back before it's due never happens), step the analog circuit to the next change, make it,
      * re-solve, and again, until the time is up or the event budget is spent. True if every solve converged.
      */
+    /** This circuit's elimination plans (Stamp.Plans): worked out once per pattern, reused every solve. */
+    private final Stamp.Plans plans = new Stamp.Plans();
+
+    /** What the last run took: logic events, and linear solves (Newton iterations). */
+    private int lastEvents, solves;
+
+    public int lastEvents() { return lastEvents; }
+
+    public int lastSolves() { return solves; }
+
     public boolean run(double seconds) {
+        solves = 0;
         if (!started && !operatingPoint()) return false;
         List<Logic> logic = new ArrayList<>();
         for (Part p : parts) if (p instanceof Logic l) logic.add(l);
@@ -271,6 +282,7 @@ public final class Netlist {
         while (true) {
             double next = Double.POSITIVE_INFINITY;
             for (Logic l : logic) if (l.pending != null) next = Math.min(next, l.due);
+            lastEvents = events;
             if (next > end || events >= budget) return stepTo(end) && settle(logic);
             if (next > time && !stepTo(next)) return false;
             for (Logic l : logic) {
@@ -369,7 +381,8 @@ public final class Netlist {
         boolean[] fixed = new boolean[nodes];
         for (int r : references()) fixed[r] = true;
         for (int iteration = 0; iteration < ITERATIONS; iteration++) {
-            Stamp stamp = new Stamp(nodes, fixed);
+            solves++;
+            Stamp stamp = new Stamp(nodes, fixed, plans);
             for (int i = 0; i < nodes; i++) stamp.conductance(i, Stamp.GROUND, GMIN + gExtra);
             for (Part p : parts) p.stamp(stamp, analysis);
             double[] x = stamp.solve();

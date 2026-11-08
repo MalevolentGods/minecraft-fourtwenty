@@ -1,16 +1,19 @@
-"""The keypad calculator on flatworld (Sensi Heights tier 5): a 4x4 keypad and a 3-digit display mounted on Rolling Trays in a lobby
+"""The keypad calculator on flatworld (Sensi Heights tier 5): a 4x4 keypad and a 5-digit display mounted on Rolling Trays in a lobby
 wall, a Dankoder behind the keypad, and the logic in a sealed room behind, every wire routed by a router that refuses any cell where a
 wire would touch something it mustn't, then an independent check that each net reaches exactly its own pins.
 
-    python tools/build_calculator.py > cmds          the flatworld commands (the building and the machine)
+    python tools/build_calculator.py > cmds          the flatworld commands for the machine (tools/build_calculator_house.py: its building)
     python tools/build_calculator.py java > Layout   the machine alone, for the game test (CalculatorLayout.java)
 
-The machine (0 to 255, with an overflow lamp; codes from the Dankoder): digits 0-9; A +, B -, C clear, D =, E back (one step), F '.'
-(nothing). Five Jar Nugs: X (the entry, shown), A (the first operand), P (X before the last digit, for back), and two staging registers
-SD (X x 10 + digit) and SR (A + X, or A - X), which with P share one bus into X: each lets go of it unless its key was pressed, so the
-others (+, -, C) load 0. The key-down pulse, delayed by Buffer Nugs, clocks the staging registers first (CLK1) and X after (CLK2).
-x 10 is three doublings and one more add (8x + 2x); subtraction flips X with an XOR Blend Nug against a mask of the operation, and adds
-1 on the Stacker's carry in.
+The machine works in 16 bits, every register a pair of Jar Nugs and every adder a pair of Stacker Nugs, the low one's carry into the
+high one's. Entries up to 9999 (a fifth digit is refused), sums up to 19998, differences shown as their size with a "negative" lamp.
+Keys (Dankoder codes): digits 0-9; A +, B -, C clear, D =, E back (one step), F '.' (nothing).
+
+Registers: X (the entry, shown), A (the first operand), P (X before the last digit, for back), and staging registers SD (X x 10 + the
+digit), SA (A + X), S1 (A - X) and S2 (X - A), which with P share one bus into X: each lets go of it unless its key was pressed (and,
+for = after -, unless it's the right one of A - X and X - A: S2 when A - X borrows), so +, - and C load 0. The key-down pulse, delayed
+by Buffer Nugs, clocks the staging registers first (CLK1) and X after (CLK2). x 10 is three doublings and one more add (8x + 2x).
+Two pairs of Scale Nugs watch X: past 999 a digit is refused, past 9999 + and - are; a refused key flashes the red lamp.
 """
 import sys
 from collections import deque
@@ -22,21 +25,35 @@ FLOOR = -61                     # the building's floor, level with the ground
 ZP = -14                        # the panel wall: its trays face south into the lobby
 DIRS = {'E': (1, 0, 0), 'W': (-1, 0, 0), 'S': (0, 0, 1), 'N': (0, 0, -1), 'U': (0, 1, 0), 'D': (0, -1, 0)}
 OPP = {'E': 'W', 'W': 'E', 'S': 'N', 'N': 'S', 'U': 'D', 'D': 'U'}
-BOUNDS = ((303, 340), (Y - 1, Y + 7), (-39, ZP - 1))
-BUILDING = ((302, 341), (-40, -7))      # x, z: walls included
-ORIGIN = (302, FLOOR, -40)              # the game test's layout is relative to this
 
-RIBBONS = ['K', 'DEC', 'X', 'X2', 'X4', 'X8', 'X10', 'D10', 'S', 'A', 'R', 'R2', 'XM', 'MASK']
-THREADS = ['CLK1', 'CLK2', 'n1', 'CMD', 'DIG', 'OPK', 'OP', 'CLKP', 'CLKA', 'NDOT', 'CLKX', 'RSD', 'RSR', 'RP', 'OVF',
-           'B1', 'B2', 'B3', 'STB', 'PLUS', 'MINUS', 'EQ', 'BKS', 'DOT', 'CARRY', 'M8']
-TYPE = {n: 'ribbon' for n in RIBBONS + ['MASK2']}
-TYPE.update({n: 'thread' for n in THREADS})
+
+def COL(k): return 306 + 4 * k
+
+
+def ROW(r): return -18 - 5 * r
+
+
+# the arithmetic: its own, roomier grid behind the gates (16-bit buses crowd)
+def AP(k, r): return (306 + 6 * k, Y, ROW(5) - 6 * (r + 1))
+
+
+BACK = AP(0, 4)[2] - 3
+BOUNDS = ((300, 343), (Y - 1, Y + 11), (BACK, ZP - 1))
+ORIGIN = (299, FLOOR, BACK - 2)        # the game test's layout is relative to this (the back wall's corner)
+
+TYPE = {}                       # net -> 'ribbon', 'thread', 'lime' (a lime Hemp Thread: it joins only lime), 'red', 'black'
 TYPE['VDD'], TYPE['GND'] = 'red', 'black'
+WIRES = ('thread', 'lime', 'red', 'black')
 
 grid = {}                       # (x, y, z) -> dict(kind, net, ...)
 reserved = {}                   # (x, y, z) -> net, or None to be kept empty
 comps = []
 panel = []                      # (pos, block state, nbt): the panel's parts, not routed
+
+
+def net(name, kind='thread'):
+    TYPE.setdefault(name, kind)
+    return name
 
 
 def step(p, d):
@@ -49,105 +66,165 @@ def comp(name, block, pos, pins, nbt=''):
     c = {'kind': 'comp', 'name': name, 'block': block, 'pins': pins, 'nbt': nbt}
     grid[pos] = c
     comps.append((pos, c))
-    for d, (net, kind) in pins.items():
+    for d, (n, kind) in pins.items():
         cell = step(pos, d)
-        if net is None:
+        if n is None:
             reserved[cell] = None
         elif cell not in grid:
-            reserved.setdefault(cell, net)
+            reserved.setdefault(cell, n)
     return c
 
 
-def chip(name, block, pos, pins, nbt=''):
-    """A chip facing east: front E, back W, left S, right N, VDD top, GND bottom (its riser up to the VDD lines is reserved)."""
-    pins = dict(pins)
-    pins['U'] = ('VDD', 'single')
-    pins['D'] = ('GND', 'single')
-    comp(name, block + '[facing=east]', pos, pins, nbt)
-    for dy in (1, 2):
-        reserved[(pos[0], pos[1] + dy, pos[2])] = 'VDD'
-
-
-def cell(pos, kind, net, chan=None, channel=None):
-    grid[pos] = {'kind': kind, 'net': net, 'chan': chan, 'channel': channel}
+def cell(pos, kind, n, chan=None, channel=None):
+    grid[pos] = {'kind': kind, 'net': n, 'chan': chan, 'channel': channel}
 
 
 def clip(pos, bus, channel, chan):
     """A Roach Clip on {bus}, tapping {channel} out to the single net {chan}."""
+    net(bus, 'ribbon')
+    net(chan)
     cell(pos, 'clip', bus, chan, channel)
     reserved.pop(pos, None)
 
 
+def chip(name, block, pos, pins, nbt=''):
+    """A chip facing east: front E, back W, left S, right N, VDD top, GND bottom (its riser up to the VDD lines is reserved). A pin
+    given as ('tap', bus, channel, name) is a Roach Clip on that bus, on that face, its channel the pin's net."""
+    out = {}
+    taps = []
+    for d, spec in pins.items():
+        if isinstance(spec, tuple) and spec and spec[0] == 'tap':
+            _, bus, ch, n = spec
+            taps.append((step(pos, d), bus, ch, n))
+            out[d] = (net(n), 'single')
+        else:
+            out[d] = spec
+            if spec[0] is not None:
+                net(spec[0], 'ribbon' if spec[1] == 'bus' else 'thread')
+    out['U'] = ('VDD', 'single')
+    out['D'] = ('GND', 'single')
+    comp(name, block + '[facing=east]', pos, out, nbt)
+    for t in taps:
+        clip(*t)
+    for dy in (1, 2):
+        reserved[(pos[0], pos[1] + dy, pos[2])] = 'VDD'
+
+
+def bus(n): return (n, 'bus')
+
+
+def one(n): return (n, 'single')
+
+
+NONE_BUS, NONE_ONE = (None, 'bus'), (None, 'single')
+
+
+def gate(name, kind, k, r, a, b, out):
+    """A two-input Nug at column k, row r: a on its left (S), b on its right (N), out in front (E)."""
+    chip(name, kind, (COL(k), Y, ROW(r)), {'S': a if isinstance(a, tuple) else one(a), 'N': b if isinstance(b, tuple) else one(b), 'E': one(out)})
+
+
+def inv(name, k, r, a, out, kind='not_nug'):
+    chip(name, kind, (COL(k), Y, ROW(r)), {'W': a if isinstance(a, tuple) else one(a), 'E': one(out)})
+
+
+def add16(name, r, pair, aL, aH, bL, bH, outL, outH, subtract=False):
+    """A 16-bit adder (or subtractor), pair {pair} of arithmetic row {r}: two Stacker Nugs, the low one's carry (or borrow) wire into
+    the high one's carry in."""
+    nbt = '{value:1}' if subtract else ''
+    chip(name + 'L', 'stacker_nug', AP(2 * pair, r), {'W': bus(aL), 'S': bus(bL) if bL else NONE_BUS, 'N': NONE_ONE, 'E': bus(outL)}, nbt)
+    chip(name + 'H', 'stacker_nug', AP(2 * pair + 1, r), {'W': bus(aH), 'S': bus(bH) if bH else NONE_BUS, 'N': ('tap', outL, 8, name + 'c'),
+                                                           'E': bus(outH)}, nbt)
+
+
+def jar16(name, r, pair, inL, inH, clk, rel, outL, outH):
+    """A 16-bit register, pair {pair} of arithmetic row {r}: two Jar Nugs on one clock and one release."""
+    for suffix, k, i, o in (('L', 2 * pair, inL, outL), ('H', 2 * pair + 1, inH, outH)):
+        chip(name + suffix, 'jar_nug', AP(k, r), {'W': bus(i), 'S': one(clk), 'N': one(rel) if rel else NONE_ONE, 'E': bus(o)})
+
+
+def const(name, k, r, value):
+    """A constant byte into the B face (S) of the chip at column k, row r: a column of Roach Clips up from that face, one per set
+    channel, each tapping VDD (the chip's own VDD riser touches the column)."""
+    chans = [c for c in range(8) if value >> c & 1]
+    x, z = COL(k), ROW(r) + 1
+    for i, c in enumerate(chans):
+        clip((x, Y + i, z), name, c, 'VDD')
+    reserved[(x, Y + len(chans), z)] = None
+
+
 # ---- the parts ---------------------------------------------------------------------------------------------------------------------
-def C(k): return 312 + 4 * k
-
-
-R0, R1, R2, R3, R4, R5 = -18, -22, -26, -30, -34, -38
-# the key-down pulse, delayed: four Buffers to CLK1, four more to CLK2
-for i in range(4):
-    chip(f'BUF{i}', 'buffer_nug', (312 + i, Y, R0), {'W': ('STB' if i == 0 else 'direct', 'single'), 'E': ('CLK1' if i == 3 else 'direct', 'single')})
-for i in range(4):
-    chip(f'BUF{4 + i}', 'buffer_nug', (326 + i, Y, R0), {'W': ('CLK1' if i == 0 else 'direct', 'single'), 'E': ('CLK2' if i == 3 else 'direct', 'single')})
-for x in (313, 314, 315, 327, 328, 329):
-    reserved.pop((x, Y, R0), None)
-clip((311, Y, R0), 'K', 8, 'STB')
-# decoding: a command is code bit 3 and (bit 1 or bit 2); a digit isn't one
-chip('OR1', 'or_nug', (C(0), Y, R1), {'S': ('B1', 'single'), 'N': ('B2', 'single'), 'E': ('n1', 'single')})
-clip((C(0), Y, R1 + 1), 'K', 1, 'B1')
-clip((C(0), Y, R1 - 1), 'K', 2, 'B2')
-chip('AND1', 'and_nug', (C(1), Y, R1), {'S': ('B3', 'single'), 'N': ('n1', 'single'), 'E': ('CMD', 'single')})
-clip((C(1), Y, R1 + 1), 'K', 3, 'B3')
-chip('NOT1', 'not_nug', (C(2), Y, R1), {'W': ('CMD', 'single'), 'E': ('DIG', 'single')})
-chip('NOT3', 'not_nug', (C(3), Y, R1), {'W': ('DIG', 'single'), 'E': ('RSD', 'single')})
-chip('AND2', 'and_nug', (C(4), Y, R1), {'S': ('CLK1', 'single'), 'N': ('DIG', 'single'), 'E': ('CLKP', 'single')})
-# the Dealer picks out the command: its select the code's low bits, its input bit 3; out A +, B -, D =, E back, F '.'
-chip('DEAL', 'dealer_nug', (C(5), Y, R1), {'W': ('B3', 'single'), 'S': ('K', 'bus'), 'E': ('DEC', 'bus')})
-clip((C(5) - 1, Y, R1), 'K', 3, 'B3')
-chip('OR2', 'or_nug', (C(0), Y, R2), {'S': ('MINUS', 'single'), 'N': ('PLUS', 'single'), 'E': ('OPK', 'single')})
-clip((C(0), Y, R2 + 1), 'DEC', 3, 'MINUS')
-clip((C(0), Y, R2 - 1), 'DEC', 2, 'PLUS')
-chip('LATCH', 'latch_nug', (C(1), Y, R2), {'S': ('MINUS', 'single'), 'N': ('PLUS', 'single'), 'E': ('OP', 'single')})
-clip((C(1), Y, R2 + 1), 'DEC', 3, 'MINUS')
-clip((C(1), Y, R2 - 1), 'DEC', 2, 'PLUS')
-chip('AND3', 'and_nug', (C(2), Y, R2), {'S': ('CLK1', 'single'), 'N': ('OPK', 'single'), 'E': ('CLKA', 'single')})
-chip('NOT2', 'not_nug', (C(3), Y, R2), {'W': ('DOT', 'single'), 'E': ('NDOT', 'single')})
-clip((C(3) - 1, Y, R2), 'DEC', 7, 'DOT')
-chip('AND4', 'and_nug', (C(4), Y, R2), {'S': ('CLK2', 'single'), 'N': ('NDOT', 'single'), 'E': ('CLKX', 'single')})
-chip('NOT4', 'not_nug', (C(5), Y, R2), {'W': ('EQ', 'single'), 'E': ('RSR', 'single')})
-clip((C(5) - 1, Y, R2), 'DEC', 5, 'EQ')
-chip('NOT5', 'not_nug', (C(6), Y, R2), {'W': ('BKS', 'single'), 'E': ('RP', 'single')})
-clip((C(6) - 1, Y, R2), 'DEC', 6, 'BKS')
-# arithmetic: x 10 as 2x, 4x, 8x, 8x + 2x; then + the digit (the code bus); A + X, or A + ~X + 1
-chip('S1', 'stacker_nug', (C(0), Y, R3), {'W': ('X', 'bus'), 'S': ('X', 'bus'), 'N': (None, 'single'), 'E': ('X2', 'bus')})
-chip('S2', 'stacker_nug', (C(1), Y, R3), {'W': ('X2', 'bus'), 'S': ('X2', 'bus'), 'N': (None, 'single'), 'E': ('X4', 'bus')})
-chip('S3', 'stacker_nug', (C(2), Y, R3), {'W': ('X4', 'bus'), 'S': ('X4', 'bus'), 'N': (None, 'single'), 'E': ('X8', 'bus')})
-chip('S4', 'stacker_nug', (C(3), Y, R3), {'W': ('X8', 'bus'), 'S': ('X2', 'bus'), 'N': (None, 'single'), 'E': ('X10', 'bus')})
-chip('S5', 'stacker_nug', (C(4), Y, R3), {'W': ('X10', 'bus'), 'S': ('K', 'bus'), 'N': (None, 'single'), 'E': ('D10', 'bus')})
-chip('JSD', 'jar_nug', (C(5), Y, R3), {'W': ('D10', 'bus'), 'S': ('CLK1', 'single'), 'N': ('RSD', 'single'), 'E': ('S', 'bus')})
-chip('JP', 'jar_nug', (C(6), Y, R3), {'W': ('X', 'bus'), 'S': ('CLKP', 'single'), 'N': ('RP', 'single'), 'E': ('S', 'bus')})
-chip('BLEND', 'blend_nug', (C(0), Y, R4), {'W': ('X', 'bus'), 'S': ('MASK', 'bus'), 'E': ('XM', 'bus')}, '{value:2}')
-chip('S6', 'stacker_nug', (C(1), Y, R4), {'W': ('A', 'bus'), 'S': ('XM', 'bus'), 'N': ('OP', 'single'), 'E': ('R', 'bus')})
-chip('JSR', 'jar_nug', (C(2), Y, R4), {'W': ('R2', 'bus'), 'S': ('CLK1', 'single'), 'N': ('RSR', 'single'), 'E': ('S', 'bus')})
-chip('JX', 'jar_nug', (C(3), Y, R4), {'W': ('S', 'bus'), 'S': ('CLKX', 'single'), 'N': (None, 'single'), 'E': ('X', 'bus')})
-chip('JA', 'jar_nug', (C(4), Y, R4), {'W': ('X', 'bus'), 'S': ('CLKA', 'single'), 'N': (None, 'single'), 'E': ('A', 'bus')})
-# the overflow lamp: X's ninth bit, past 255 (the display still reads it, to 511)
-clip((C(3) + 2, Y, R4), 'X', 8, 'OVF')
-# subtracting, the carry out means "no borrow", not a ninth bit: carry and minus flips it back to 0 before SR takes the result
-chip('AND6', 'and_nug', (C(3), Y, R5), {'S': ('CARRY', 'single'), 'N': ('OP', 'single'), 'E': ('M8', 'single')})
-clip((C(3), Y, R5 + 1), 'R', 8, 'CARRY')
-chip('BLEND2', 'blend_nug', (C(2), Y, R5), {'W': ('R', 'bus'), 'S': ('MASK2', 'bus'), 'E': ('R2', 'bus')}, '{value:2}')
-clip((C(2), Y, R5 + 1), 'MASK2', 8, 'M8')
-# the mask: eight Roach Clips in a row, channels 0 to 7, each touched by the OP thread running beside them; the row leaves the Blend's B
-# face southward first (straight west it would touch the Blend's A input, X)
-cell((C(0), Y, R4 + 2), 'ribbon', 'MASK')
-for i in range(8):
-    clip((304 + i, Y, R4 + 2), 'MASK', i, 'OP')
-    cell((304 + i, Y, R4 + 3), 'thread', 'OP')
-    reserved[(304 + i, Y, R4 + 1)] = None
-    reserved[(304 + i, Y + 1, R4 + 2)] = None
-# the supply: a Bottomless Stash in the room's corner
-comp('STASH', 'bottomless_stash_puff[facing=north]', (C(6), Y, R4),
-     {'E': ('VDD', 'single'), 'D': ('GND', 'single'), 'W': (None, 'single'), 'N': (None, 'single'), 'S': (None, 'single'), 'U': (None, 'single')})
+# the key-down pulse, delayed: six Buffers to CLK1, six more to CLK2
+for i in range(6):
+    chip(f'BUF{i}', 'buffer_nug', (306 + i, Y, ROW(0)), {'W': ('tap', 'K', 8, 'STB') if i == 0 else one('direct'), 'E': one('CLK1' if i == 5 else 'direct')})
+    chip(f'BUF{6 + i}', 'buffer_nug', (330 + i, Y, ROW(0)), {'W': one('CLK1' if i == 0 else 'direct'), 'E': one('CLK2' if i == 5 else 'direct')})
+for x in list(range(307, 312)) + list(range(331, 336)):
+    reserved.pop((x, Y, ROW(0)), None)
+# decoding: a command is code bit 3 and (bit 1 or bit 2); a digit isn't one. The Dealer picks out which command.
+gate('OR1', 'or_nug', 0, 1, ('tap', 'K', 1, 'B1'), ('tap', 'K', 2, 'B2'), 'n1')
+gate('AND1', 'and_nug', 1, 1, ('tap', 'K', 3, 'B3'), 'n1', 'CMD')
+inv('NOT1', 2, 1, 'CMD', 'DIG')
+inv('NOT3', 3, 1, 'DIG', 'RSD')
+gate('AND2', 'and_nug', 4, 1, 'CLK1', 'DIG', 'CLKP')
+chip('DEAL', 'dealer_nug', (COL(5), Y, ROW(1)), {'W': ('tap', 'K', 3, 'B3'), 'S': bus('K'), 'E': bus('DEC')})
+gate('OR2', 'or_nug', 6, 1, ('tap', 'DEC', 3, 'MINUS'), ('tap', 'DEC', 2, 'PLUS'), 'OPK')
+net('OP', 'lime')
+gate('LATCH', 'latch_nug', 7, 1, ('tap', 'DEC', 3, 'MINUS'), ('tap', 'DEC', 2, 'PLUS'), 'OP')
+inv('NOTOP', 8, 1, 'OP', 'NOP')
+# clocks, gated by a refusal
+gate('AND3', 'and_nug', 0, 2, 'CLK1', 'OPK', 'CLKA0')
+gate('ANDA', 'and_nug', 1, 2, 'CLKA0', 'NREF', 'CLKA')
+inv('NOT2', 2, 2, ('tap', 'DEC', 7, 'DOT'), 'NDOT')
+gate('AND4', 'and_nug', 3, 2, 'CLK2', 'NDOT', 'CLKX0')
+gate('ANDX', 'and_nug', 4, 2, 'CLKX0', 'NREF', 'CLKX')
+inv('NOT5', 5, 2, ('tap', 'DEC', 6, 'BKS'), 'RP')
+# which result = takes: A + X after +; after -, A - X, or X - A if A - X borrows (NEG)
+gate('EQOP', 'and_nug', 6, 2, ('tap', 'DEC', 5, 'EQ'), 'OP', 'EQOP')
+gate('RELA', 'nand_nug', 7, 2, ('tap', 'DEC', 5, 'EQ'), 'NOP', 'RSA')
+inv('NOTNEG', 8, 2, 'NEG', 'NNEG')
+gate('REL1', 'nand_nug', 0, 3, 'EQOP', 'NNEG', 'RS1')
+gate('SELNEG', 'and_nug', 1, 3, 'EQOP', 'NEG', 'SELNEG')
+inv('NOTS2', 2, 3, 'SELNEG', 'RS2')
+# the negative lamp: what SELNEG was when X last loaded
+gate('NEGFF', 'flip_flop_nug', 3, 3, 'SELNEG', 'CLKX', 'NEGQ')
+# refusals: a digit past 999, + or - past 9999; a refused key flashes the red lamp
+gate('R1', 'and_nug', 4, 3, 'DIG', 'BIG4', 'r1')
+gate('R2', 'and_nug', 5, 3, 'OPK', 'BIG5', 'r2')
+gate('REF', 'or_nug', 6, 3, 'r1', 'r2', 'REF')
+inv('NREF', 7, 3, 'REF', 'NREF')
+gate('OVF', 'and_nug', 8, 3, ('tap', 'K', 8, 'STB'), 'REF', 'OVF')
+# X >= 1000 (0x03E8) and X >= 10000 (0x2710): high byte greater, or equal and the low byte not less
+for i, (big, hi, lo, k0) in enumerate((('BIG4', 0x03, 0xE8, 0), ('BIG5', 0x27, 0x10, 5))):
+    sh, sl = f'SH{i}', f'SL{i}'
+    chip('SCH' + big, 'scale_nug', (COL(k0), Y, ROW(4)), {'W': bus('XH'), 'S': bus(f'C{hi:02X}'), 'E': bus(sh)})
+    const(f'C{hi:02X}', k0, 4, hi)
+    chip('SCL' + big, 'scale_nug', (COL(k0 + 1), Y, ROW(4)), {'W': bus('XL'), 'S': bus(f'C{lo:02X}'), 'E': bus(sl)})
+    const(f'C{lo:02X}', k0 + 1, 4, lo)
+    inv('GE' + big, k0 + 2, 4, ('tap', sl, 0, 'LT' + big), 'GE' + big)
+    gate('T' + big, 'and_nug', k0 + 3, 4, ('tap', sh, 1, 'EQ' + big), 'GE' + big, 'T' + big)
+    kk, rr = (k0 + 4, 4) if k0 + 4 <= 8 else (0, 5)
+    gate(big, 'or_nug', kk, rr, ('tap', sh, 2, 'GT' + big), 'T' + big, big)
+# arithmetic: x 10 as 2x, 4x, 8x, 8x + 2x; then + the digit (the code bus, into the low byte)
+add16('S1', 0, 0, 'XL', 'XH', 'XL', 'XH', 'X2L', 'X2H')
+add16('S2', 0, 1, 'X2L', 'X2H', 'X2L', 'X2H', 'X4L', 'X4H')
+add16('S3', 0, 2, 'X4L', 'X4H', 'X4L', 'X4H', 'X8L', 'X8H')
+add16('S4', 1, 0, 'X8L', 'X8H', 'X2L', 'X2H', 'X10L', 'X10H')
+add16('S5', 1, 1, 'X10L', 'X10H', 'K', None, 'D10L', 'D10H')
+jar16('JSD', 1, 2, 'D10L', 'D10H', 'CLK1', 'RSD', 'SL', 'SH')
+jar16('JP', 2, 0, 'XL', 'XH', 'CLKP', 'RP', 'SL', 'SH')
+jar16('JX', 2, 1, 'SL', 'SH', 'CLKX', None, 'XL', 'XH')
+jar16('JA', 2, 2, 'XL', 'XH', 'CLKA', None, 'AL', 'AH')
+add16('ADD', 3, 0, 'AL', 'AH', 'XL', 'XH', 'RAL', 'RAH')
+add16('SUB1', 3, 1, 'AL', 'AH', 'XL', 'XH', 'R1L', 'R1H', subtract=True)
+add16('SUB2', 3, 2, 'XL', 'XH', 'AL', 'AH', 'R2L', 'R2H', subtract=True)
+jar16('JSA', 4, 0, 'RAL', 'RAH', 'CLK1', 'RSA', 'SL', 'SH')
+jar16('JS1', 4, 1, 'R1L', 'R1H', 'CLK1', 'RS1', 'SL', 'SH')
+jar16('JS2', 4, 2, 'R2L', 'R2H', 'CLK1', 'RS2', 'SL', 'SH')
+# A - X borrows: its borrow wire, tapped where it goes into S1's high Jar
+clip(step(AP(3, 4), 'W'), 'R1H', 8, 'NEG')
+# the supply: a Bottomless Stash in the room's far corner
+comp('STASH', 'bottomless_stash_puff[facing=north]', (COL(8), Y, ROW(5)),
+     {'E': one('VDD'), 'D': one('GND'), 'W': NONE_ONE, 'N': NONE_ONE, 'S': NONE_ONE, 'U': NONE_ONE})
 
 # ---- the panel: trays in the wall at ZP facing south; keys at y -59 to -56, x 320 to 323; the display row at -55 -------------------
 KX, KY = 320, -59
@@ -161,52 +238,52 @@ TRAYS = {}
 for r, row in enumerate(LAYOUT):
     for c, key in enumerate(row):
         TRAYS[(KX + c, KY + 3 - r, ZP)] = ('key', key)
-for c in range(3):
-    TRAYS[(KX + 1 + c, DISPLAY_Y, ZP)] = ('digit', c)
-TRAYS[(KX, DISPLAY_Y, ZP)] = ('lamp', 'OVF')
-TRAYS[(KX + 4, DISPLAY_Y, ZP)] = ('lamp', 'OP')
-FEED = {(KX + 3, DISPLAY_Y, ZP): ('X', 'bus'), (KX + 2, DISPLAY_Y, ZP): ('VDD', 'single'), (KX + 1, DISPLAY_Y, ZP): ('GND', 'single'),
-        (KX, DISPLAY_Y, ZP): ('OVF', 'single'), (KX + 4, DISPLAY_Y, ZP): ('OP', 'single')}
+# five digits, x 319 to 323: the low byte fed at the right, the high byte two to its left; lamps: overflow left, negative and minus right
+for c in range(5):
+    TRAYS[(KX - 1 + c, DISPLAY_Y, ZP)] = ('digit', c)
+TRAYS[(KX - 2, DISPLAY_Y, ZP)] = ('lamp', 'OVF')
+TRAYS[(KX + 4, DISPLAY_Y, ZP)] = ('lamp', 'NEGQ')
+TRAYS[(KX + 5, DISPLAY_Y, ZP)] = ('lamp', 'OP')
+FEED = {(KX + 3, DISPLAY_Y, ZP): bus('XL'), (KX + 1, DISPLAY_Y, ZP): bus('XH'), (KX + 2, DISPLAY_Y, ZP): one('VDD'), (KX, DISPLAY_Y, ZP): one('GND'),
+        (KX - 2, DISPLAY_Y, ZP): one('OVF'), (KX + 4, DISPLAY_Y, ZP): one('NEGQ'), (KX + 5, DISPLAY_Y, ZP): one('OP')}
 # behind the panel nothing but its feeds and the Dankoder: a wire on a tray's back would be its signal or its power
-for x in range(KX - 3, KX + 6):
+for x in range(KX - 5, KX + 9):
     for y in range(Y - 1, Y + 8):
         reserved[(x, y, ZP - 1)] = None
 for pos, (what, v) in TRAYS.items():
-    comp('tray', f'rolling_tray[facing=south]', pos, {'N': FEED.get(pos, (None, 'single'))})
+    comp('tray', 'rolling_tray[facing=south]', pos, {'N': FEED.get(pos, NONE_ONE)})
     if pos in FEED:
         reserved[step(pos, 'N')] = FEED[pos][0]
 # the Dankoder behind the bottom-left key: its back on that tray, its front (north) the code bus
 DK = (KX, KY, ZP - 1)
-comp('DANK', 'dankoder[facing=north]', DK, {'N': ('K', 'bus'), 'U': (None, 'single'), 'D': (None, 'single'), 'E': (None, 'bus'), 'W': (None, 'bus')})
+comp('DANK', 'dankoder[facing=north]', DK, {'N': bus('K'), 'U': NONE_ONE, 'D': NONE_ONE, 'E': NONE_BUS, 'W': NONE_BUS})
 for pos, (what, v) in TRAYS.items():
     front = (pos[0], pos[1], pos[2] + 1)
     if what == 'key':
-        n = NUMBER[v]
-        label = LABEL.get(v, v)
-        panel.append((front, 'puff_button[facing=south,mounted=true]', f'{{value:{n + 1},label:"{label}",glow:{GLOW[v]}}}'))
+        panel.append((front, 'puff_button[facing=south,mounted=true]', f'{{value:{NUMBER[v] + 1},label:"{LABEL.get(v, v)}",glow:{GLOW[v]}}}'))
     elif what == 'digit':
         panel.append((front, 'numb_nug[facing=south,mounted=true]', ''))
     else:
-        panel.append((front, 'red_lamp' if v == 'OVF' else 'orange_lamp', ''))
+        panel.append((front, {'OVF': 'red_lamp', 'NEGQ': 'lime_lamp', 'OP': 'orange_lamp'}[v], ''))
 
-for p, net in list(reserved.items()):
-    if net is not None and p not in grid:
-        cell(p, TYPE[net], net)
+for p, n in list(reserved.items()):
+    if n is not None and p not in grid:
+        cell(p, TYPE[n], n)
 
 
 # ---- joining rules -----------------------------------------------------------------------------------------------------------------
 def joins(t, c_dir_from_n, n):
-    """If a cell of type t (ribbon, clip, thread, red, black) sits beside n, on n's side c_dir_from_n, what joins: [(n's net, how)]."""
+    """If a cell of type t (ribbon, clip, thread, lime, red, black) sits beside n, on n's side c_dir_from_n, what joins: [(n's net, how)]."""
     k = n['kind']
     if k == 'comp':
         pin = n['pins'].get(c_dir_from_n)
         if not pin or pin[0] is None:
             return []
-        net, kind = pin
+        n_, kind = pin
         if kind == 'bus' and t in ('ribbon', 'clip'):
-            return [(net, 'bus')]
-        if kind == 'single' and t in ('thread', 'red', 'black', 'clip'):
-            return [(net, 'chan' if t == 'clip' else 'wire')]
+            return [(n_, 'bus')]
+        if kind == 'single' and (t in WIRES or t == 'clip'):
+            return [(n_, 'chan' if t == 'clip' else 'wire')]
         return []
     if k == 'ribbon':
         return [(n['net'], 'bus')] if t in ('ribbon', 'clip') else []
@@ -214,16 +291,14 @@ def joins(t, c_dir_from_n, n):
         if t in ('ribbon', 'clip'):
             return [(n['net'], 'bus')]
         return [(n['chan'], 'wire')]
-    if k == 'thread':
-        return [(n['net'], 'wire')] if t == 'thread' else ([(n['net'], 'chan')] if t == 'clip' else [])
-    if k in ('red', 'black'):
+    if k in WIRES:
         if t == k:
             return [(n['net'], 'wire')]
         return [(n['net'], 'chan')] if t == 'clip' else []
     return []
 
 
-def ok(p, net, t, chan=None):
+def ok(p, n_, t, chan=None):
     for d in DIRS:
         q = step(p, d)
         n = grid.get(q)
@@ -233,41 +308,48 @@ def ok(p, net, t, chan=None):
                 continue
             n = {'kind': TYPE[r], 'net': r, 'chan': None}
         for jn, how in joins(t, OPP[d], n):
-            want = chan if how == 'chan' else net
+            want = chan if how == 'chan' else n_
             if jn != want and jn != 'direct':
                 return False
     return True
 
 
-def free(p, net):
+def free(p, n_):
     (x0, x1), (y0, y1), (z0, z1) = BOUNDS
     if not (x0 <= p[0] <= x1 and y0 <= p[1] <= y1 and z0 <= p[2] <= z1):
         return False
     if p in grid:
         return False
     r = reserved.get(p, 'free')
-    return r == 'free' or r == net
+    return r == 'free' or r == n_
 
 
-def route(net):
-    t = TYPE[net]
-    cells = [p for p, v in grid.items() if (v.get('net') == net and v['kind'] != 'comp') or (v['kind'] == 'clip' and v['chan'] == net)]
-    cells = [p for p in cells if grid[p]['kind'] != 'clip' or grid[p]['net'] == net or t != 'ribbon']
+class Blocked(Exception):
+    pass
+
+
+def route(n_):
+    t = TYPE[n_]
+    cells = [p for p, v in grid.items() if (v.get('net') == n_ and v['kind'] != 'comp' and (v['kind'] != 'clip' or t == 'ribbon'))
+             or (v['kind'] == 'clip' and v['chan'] == n_)]
     if len(cells) < 2:
+        return
+    # taps only (clips each beside its own pin), all of one bus and channel: already one node
+    if all(grid[p]['kind'] == 'clip' and grid[p]['chan'] == n_ for p in cells) and len({(grid[p]['net'], grid[p]['channel']) for p in cells}) == 1:
         return
     tree = {cells[0]}
     todo = set(cells[1:])
 
-    def touching(p, q):
-        # a cell of this net reaches a clip's tap only from a wire, a clip's bus only from a ribbon
-        return True
+    def tap(p):
+        # a clip whose channel this (single) net is: a wire beside it reaches that channel, another clip beside it doesn't
+        return t != 'ribbon' and grid.get(p, {}).get('kind') == 'clip'
 
     def grow():
         changed = True
         while changed:
             changed = False
             for p in list(todo):
-                if any(step(p, d) in tree for d in DIRS):
+                if any(step(p, d) in tree and not (tap(p) and tap(step(p, d))) for d in DIRS):
                     tree.add(p)
                     todo.discard(p)
                     changed = True
@@ -283,19 +365,21 @@ def route(net):
                 if q in prev:
                     continue
                 if q in todo:
+                    if tap(p) and tap(q):
+                        continue
                     prev[q] = p
                     hit = q
                     break
-                if free(q, net) and ok(q, net, t):
+                if free(q, n_) and ok(q, n_, t):
                     prev[q] = p
                     queue.append(q)
             if hit:
                 break
         if not hit:
-            raise Blocked(net, sorted(todo)[:3])
+            raise Blocked(n_, sorted(todo)[:3])
         p = prev[hit]
         while p is not None and p not in tree:
-            cell(p, t, net)
+            cell(p, t, n_)
             tree.add(p)
             p = prev[p]
         tree.add(hit)
@@ -305,24 +389,21 @@ def route(net):
 
 # the buses first (they're wide and stiff), then the threads, then power; a net that can't get through goes first next time, from a
 # clean slate
-class Blocked(Exception):
-    pass
-
-
-ORDER = RIBBONS + [n for n in THREADS if n not in ('B1', 'B2', 'B3', 'STB', 'PLUS', 'MINUS', 'EQ', 'BKS', 'DOT', 'CARRY')] + ['VDD', 'GND']
+ORDER = [n for n, t in TYPE.items() if t == 'ribbon'] + [n for n, t in TYPE.items() if t in ('thread', 'lime')] + ['VDD', 'GND']
+ORDER = [n for n in ORDER if n != 'direct']
 clean = (dict(grid), dict(reserved))
-for attempt in range(60):
+for attempt in range(80):
     grid.clear(); grid.update(clean[0])
     reserved.clear(); reserved.update(clean[1])
     try:
-        for net in ORDER:
-            route(net)
+        for n in ORDER:
+            route(n)
         break
     except Blocked as e:
-        net = e.args[0]
-        ORDER.remove(net)
-        ORDER.insert(0, net)
-        sys.stderr.write(f'attempt {attempt}: {net} blocked, first next time' + chr(10))
+        n = e.args[0]
+        ORDER.remove(n)
+        ORDER.insert(0, n)
+        sys.stderr.write(f'attempt {attempt}: {n} blocked, first next time' + chr(10))
 else:
     raise SystemExit('no order routes')
 
@@ -361,20 +442,20 @@ def check():
             union((p, 'chan'), ('channel', find((p, 'self')), v['channel']))
     sets = {}
     for pos, c in comps:
-        for d, (net, kind) in c['pins'].items():
-            if net in (None, 'direct'):
+        for d, (n, kind) in c['pins'].items():
+            if n in (None, 'direct'):
                 continue
-            sets.setdefault(net, set()).add(find(('pin', pos, d)))
+            sets.setdefault(n, set()).add(find(('pin', pos, d)))
     # and every clip's tap belongs to its net: a tap left unwired is a split too
     for p, v in grid.items():
         if v['kind'] == 'clip':
             sets.setdefault(v['chan'], set()).add(find((p, 'chan')))
-    bad = {net: len(s) for net, s in sets.items() if len(s) != 1}
+    bad = {n: len(s) for n, s in sets.items() if len(s) != 1}
     roots = {}
-    for net, s in sets.items():
+    for n, s in sets.items():
         for r in s:
-            roots.setdefault(r, set()).add(net)
-    merged = [nets for nets in roots.values() if len(nets) > 1]
+            roots.setdefault(r, set()).add(n)
+    merged = [ns for ns in roots.values() if len(ns) > 1]
     return bad, merged
 
 
@@ -393,10 +474,16 @@ def state(v):
         return f'fourtwenty:roach_clip[channel={v["channel"]}]', ''
     if k == 'thread':
         return 'fourtwenty:hemp_thread', ''
+    if k == 'lime':
+        return 'fourtwenty:hemp_thread[colour=lime]', ''
     return f'fourtwenty:hemp_wick[colour={"red" if k == "red" else "black"}]', ''
 
 
 machine = [(p, *state(v)) for p, v in grid.items()] + [(p, 'fourtwenty:' + s, n) for p, s, n in panel]
+
+
+def rel(p): return f'{{{p[0] - ORIGIN[0]}, {p[1] - ORIGIN[1]}, {p[2] - ORIGIN[2]}}}'
+
 
 # ---- the game test's layout: every block of the machine relative to ORIGIN ----------------------------------------------------------
 if len(sys.argv) > 1 and sys.argv[1] == 'java':
@@ -408,20 +495,17 @@ if len(sys.argv) > 1 and sys.argv[1] == 'java':
     keys = []
     for pos, (what, v) in TRAYS.items():
         if what == 'key':
-            f = (pos[0], pos[1], pos[2] + 1)
-            keys.append(f'        KEYS.put("{v}", new int[]{{{f[0] - ORIGIN[0]}, {f[1] - ORIGIN[1]}, {f[2] - ORIGIN[2]}}});')
-    jx = [p for p, c in comps if c['name'] == 'JX'][0]
-    digit = [p for p, (w, v) in TRAYS.items() if w == 'digit'][-1]
+            keys.append(f'        KEYS.put("{v}", new int[]{rel((pos[0], pos[1], pos[2] + 1))});')
+    named = {c['name']: p for p, c in comps}
     print('package com.malevolentgods.fourtwenty.gametest;' + NL)
     print('import java.util.HashMap;')
     print('import java.util.Map;' + NL)
     print('/** The keypad calculator, from its flatworld build\'s router (tools/build_calculator.py): every block relative to its corner. Generated. */')
     print('final class CalculatorLayout {')
     print('    private CalculatorLayout() {}' + NL)
-    print(f'    /** Register X (the entry, as shown) and the display\'s fed digit. */')
-    print(f'    static final int[] JX = {{{jx[0] - ORIGIN[0]}, {jx[1] - ORIGIN[1]}, {jx[2] - ORIGIN[2]}}};')
-    ovf = (KX, DISPLAY_Y, ZP + 1)
-    print(f'    static final int[] OVERFLOW = {{{ovf[0] - ORIGIN[0]}, {ovf[1] - ORIGIN[1]}, {ovf[2] - ORIGIN[2]}}};')
+    print('    /** Register X\'s two Jar Nugs (the entry, as shown), low and high byte; the lamps. */')
+    print(f'    static final int[] XL = {rel(named["JXL"])}, XH = {rel(named["JXH"])};')
+    print(f'    static final int[] OVERFLOW = {rel((KX - 2, DISPLAY_Y, ZP + 1))}, NEGATIVE = {rel((KX + 4, DISPLAY_Y, ZP + 1))};')
     print('    static final Map<String, int[]> KEYS = new HashMap<>();' + NL)
     print('    static {')
     print(NL.join(keys))
@@ -433,8 +517,6 @@ if len(sys.argv) > 1 and sys.argv[1] == 'java':
     sys.exit(0)
 
 # ---- out: the machine (the building comes from tools/build_calculator_house.py, around it) -----------------------------------------
-out = []
-for p, s, nbt in machine:
-    out.append(f'setblock {p[0]} {p[1]} {p[2]} {s}{nbt}')
-sys.stderr.write(f'{len(grid)} cells, {len(panel)} panel parts, nets ok\n')
-print('\n'.join(out))
+out = [f'setblock {p[0]} {p[1]} {p[2]} {s}{nbt}' for p, s, nbt in machine]
+sys.stderr.write(f'{len(grid)} cells, {len(panel)} panel parts, {sum(1 for _, c in comps if c["name"] != "tray")} parts, nets ok' + chr(10))
+print(chr(10).join(out))
