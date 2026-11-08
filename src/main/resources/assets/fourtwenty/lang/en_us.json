@@ -2127,7 +2127,7 @@
   "message.fourtwenty.rolling_tray.channel": "Rolling Tray: channel %s",
   "message.fourtwenty.rolling_tray.no_channel": "Rolling Tray: no channel",
   "block.fourtwenty.dankoder": "Dankoder",
-  "tooltip.fourtwenty.item.dankoder": "A keypad encoder: while a key is down it gives that key's number; let go, it keeps the last one. Two down, the lower wins. Against a board of Rolling Trays it numbers the buttons and toggles on it in reading order, top row first, left to right; each key's own screen (sneak-use it with an empty hand) can give it any number 0 to F instead. Keys 0 to 7 on the bus face on the left, 8 to F on the right; the number out in front (channels 0 to 3), the carry high while a key is down. Its back on a Rolling Tray reads the whole board instead, power and all. VDD on top, GND underneath.",
+  "tooltip.fourtwenty.item.dankoder": "A keypad encoder: while a key is down it gives that key's number; let go, it keeps the last one. Two down, the lower wins. Against a board of Rolling Trays it numbers the buttons and toggles on it in reading order, top row first, left to right; each key's own screen (sneak-use it with an empty hand) can give it any number 0 to 23 instead. Keys 0 to 7 on the bus face on the left, 8 to 15 on the right, 16 to 23 at the back; the number out in front (channels 0 to 4), the carry high while a key is down. Its back on a Rolling Tray reads the whole board instead (up to 24 keys), power and all. VDD on top, GND underneath.",
   "gui.fourtwenty.key_label": "Key Label",
   "gui.fourtwenty.key_label.text": "Up to 4 characters on its face",
   "gui.fourtwenty.key_label.no_glow": "No glow: plain ink",
@@ -2213,5 +2213,5 @@
   "tooltip.fourtwenty.real.scale_nug": "Magnitude comparator",
   "tooltip.fourtwenty.real.jar_nug": "8-bit register (74HC574)",
   "tooltip.fourtwenty.real.numb_nug": "7-segment display",
-  "tooltip.fourtwenty.real.dankoder": "Keypad encoder (74C922)"
+  "tooltip.fourtwenty.real.dankoder": "Keypad encoder (74C922 / 74C923)"
 }

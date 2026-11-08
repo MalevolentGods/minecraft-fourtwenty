@@ -226,6 +226,25 @@ class ByteChipsTest {
         assertEquals(3, dk.code());
     }
 
+    /** A Dankoder with 24 keys gives a 5-bit code: key 20 reads 20, key 3 reads 3. */
+    @Test void theDankoderCountsPastFifteen() {
+        var b = new Board();
+        int[] keys = b.inputs(24), out = b.nodes(9);
+        int[] codes = new int[24];
+        for (int i = 0; i < 24; i++) codes[i] = i;
+        b.n.dankoder(b.vdd, b.gnd, keys, codes, out);
+        int[] number = java.util.Arrays.copyOf(out, 8);
+        b.run();
+        for (int k : new int[]{20, 3, 23}) {
+            b.set(keys[k], true);
+            b.run();
+            assertEquals(k, b.word(number), "key " + k);
+            assertEquals(1, b.bit(out[8]), "carry high while key " + k + " is down");
+            b.set(keys[k], false);
+            b.run();
+        }
+    }
+
     /** Two registers on one shared bus, taking turns: whichever isn't released drives it, and each reads back its own byte. */
     @Test void twoRegistersShareABus() {
         Board b = new Board();

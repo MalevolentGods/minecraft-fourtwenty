@@ -53,7 +53,7 @@ public final class KeyLabels {
                     if (!(state.getBlock() instanceof ComponentBlock cb) || !cb.type().key() || ComponentBlock.mountedOn(state) == null) return;
                     if (!(p.level().getBlockEntity(m.pos) instanceof ComponentBlockEntity be)) return;
                     be.label(clean(m.label), glow(m.glow));
-                    int number = m.number < 0 || m.number > 15 ? -1 : m.number;
+                    int number = m.number < 0 || m.number >= ComponentType.DANKODER_KEYS ? -1 : m.number;
                     if ((int) Math.round(be.value()) != number) {
                         be.select(number);
                         // a new number is a new circuit

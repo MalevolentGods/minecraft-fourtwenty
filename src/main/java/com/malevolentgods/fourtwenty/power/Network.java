@@ -208,7 +208,8 @@ public final class Network {
         java.util.function.ToIntFunction<BlockPos> along = p -> p.getX() * right.getStepX() + p.getY() * right.getStepY() + p.getZ() * right.getStepZ();
         java.util.function.ToIntFunction<BlockPos> height = p -> p.getX() * up.getStepX() + p.getY() * up.getStepY() + p.getZ() * up.getStepZ();
         keys.sort(java.util.Comparator.comparingInt((BlockPos p) -> -height.applyAsInt(p)).thenComparingInt(along));
-        return keys.size() > 16 ? keys.subList(0, 16) : keys;
+        int most = com.malevolentgods.fourtwenty.electronics.ComponentType.DANKODER_KEYS;
+        return keys.size() > most ? keys.subList(0, most) : keys;
     }
 
     /**
@@ -466,8 +467,8 @@ public final class Network {
             }
             if (item.length == 3 && components.get(at) == com.malevolentgods.fourtwenty.electronics.ComponentType.DANKODER) {
                 // a Dankoder: its keys are its bus pins, and, with its back on a Rolling Tray (not that tray's front), every key on the board
-                int[] codes = new int[16];
-                for (int i = 0; i < 16; i++) codes[i] = i;
+                int[] codes = new int[com.malevolentgods.fourtwenty.electronics.ComponentType.DANKODER_KEYS];
+                for (int i = 0; i < codes.length; i++) codes[i] = i;
                 Direction back = com.malevolentgods.fourtwenty.electronics.Orientation.toWorld(here.getValue(com.malevolentgods.fourtwenty.electronics.ComponentBlock.FACING), here.getValue(com.malevolentgods.fourtwenty.electronics.ComponentBlock.SPIN),
                         com.malevolentgods.fourtwenty.electronics.ComponentType.Face.BACK);
                 BlockPos behind = at.relative(back);
@@ -1308,12 +1309,13 @@ public final class Network {
                 case DISPLAY -> net.display(p[0], p[1], java.util.Arrays.copyOfRange(p, 2, 11));
                 case DEMUX -> net.dealer(p[0], p[1], p[2], java.util.Arrays.copyOfRange(p, 3, 6), java.util.Arrays.copyOfRange(p, 12, 20));
                 case ENCODER -> {
-                    int[] keys = new int[16];
-                    for (int k = 0; k < 16; k++) keys[k] = p[com.malevolentgods.fourtwenty.electronics.ComponentType.dankoderKey(k)];
+                    int many = com.malevolentgods.fourtwenty.electronics.ComponentType.DANKODER_KEYS;
+                    int[] keys = new int[many];
+                    for (int k = 0; k < many; k++) keys[k] = p[com.malevolentgods.fourtwenty.electronics.ComponentType.dankoderKey(k)];
                     int[] codes = dankoderCodes.getOrDefault(c.pos(), null);
                     if (codes == null) {
-                        codes = new int[16];
-                        for (int k = 0; k < 16; k++) codes[k] = k;
+                        codes = new int[many];
+                        for (int k = 0; k < many; k++) codes[k] = k;
                     }
                     yield net.dankoder(p[0], p[1], keys, codes, java.util.Arrays.copyOfRange(p, 20, 29));
                 }

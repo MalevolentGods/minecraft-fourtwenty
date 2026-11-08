@@ -374,9 +374,9 @@ public final class Chips {
     }
 
     /**
-     * The Dankoder (a keypad encoder, a 74C922's kind): sixteen key inputs, each with the number it stands for. While a key is down it
-     * drives that number on outputs 0 to 3 (the lowest number if several are down) and the carry, output 8, high; let go, the carry
-     * falls and the number stays, the last key pressed. Outputs 4 to 7 are always 0.
+     * The Dankoder (a keypad encoder, a 74C922's and 74C923's kind): its key inputs, each with the number it stands for. While a key is
+     * down it drives that number on outputs 0 to 4 (the lowest number if several are down) and the carry, output 8, high; let go, the
+     * carry falls and the number stays, the last key pressed. Outputs 5 to 7 are always 0.
      */
     public static final class Encoder extends Chip {
         private final int[] codes;
@@ -392,7 +392,7 @@ public final class Chips {
             for (int i = 0; i < inputs.length; i++) if (bit(an, i) == 1 && (down < 0 || codes[i] < down)) down = codes[i];
             if (down >= 0) code = down;
             Logic.Out[] out = new Logic.Out[pins.length];
-            for (int k = 0; k < 8; k++) out[k] = level(k < 4 ? (code >> k) & 1 : 0);
+            for (int k = 0; k < 8; k++) out[k] = level(k < 5 ? (code >> k) & 1 : 0);
             out[8] = level(down >= 0 ? 1 : 0);
             return out;
         }

@@ -50,7 +50,7 @@ public class KeyLabelScreen extends Screen {
         setInitialFocus(box);
         // its number for a Dankoder: its place on the board, then 0 to F; click to step on, sneak-click (shift) to step back
         addRenderableWidget(Button.builder(numberText(number), b -> {
-            number = Math.floorMod(number + 1 + (hasShiftDown() ? -1 : 1), 17) - 1;
+            number = Math.floorMod(number + 1 + (hasShiftDown() ? -1 : 1), com.malevolentgods.fourtwenty.electronics.ComponentType.DANKODER_KEYS + 1) - 1;
             b.setMessage(numberText(number));
         }).bounds(x, y + 58, 120, 20).build());
         addRenderableWidget(Button.builder(Component.translatable("gui.done"), b -> done()).bounds(x, y + 82, 120, 20).build());

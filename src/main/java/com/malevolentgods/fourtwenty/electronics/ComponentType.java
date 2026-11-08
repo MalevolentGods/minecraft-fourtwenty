@@ -53,7 +53,7 @@ public enum ComponentType {
 
         static {
             java.util.List<Double> keys = new java.util.ArrayList<>();
-            for (int k = -1; k < 16; k++) keys.add((double) k);
+            for (int k = -1; k < DANKODER_KEYS; k++) keys.add((double) k);
             NUMBERS = List.copyOf(keys);
         }
     }
@@ -92,8 +92,11 @@ public enum ComponentType {
         SCALE(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), bus(Face.LEFT), bus(Face.FRONT))),
         JAR(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), new Face[]{Face.LEFT, Face.RIGHT}, bus(Face.FRONT))),
         DISPLAY(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK))),
-        /** The Dankoder: keys 0 to 7 on the left bus (its carry wire unused), 8 to F on the right, the number out in front; its back reads a board. */
-        DANKODER(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.LEFT), bus(Face.RIGHT), bus(Face.FRONT)));
+        /**
+         * The Dankoder: keys 0 to 7 on the left bus (its carry wire unused), 8 to 15 on the right, 16 to 23 on the back, the number out in
+         * front; its back, against a Rolling Tray, reads that board instead.
+         */
+        DANKODER(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.LEFT), bus(Face.RIGHT), bus(Face.FRONT), bus(Face.BACK)));
 
         public final List<Face> pins;
 
@@ -173,8 +176,11 @@ public enum ComponentType {
     /** A key a Dankoder reads: a Puff Button or a Toggle Joint. */
     public boolean key() { return part == Part.BUTTON || part == Part.TOGGLE; }
 
-    /** The Dankoder pin for key {@code i} (0 to 15): the left bus's channels 0 to 7, then the right's. */
-    public static int dankoderKey(int i) { return i < 8 ? 2 + i : 11 + (i - 8); }
+    /** Keys a Dankoder reads: 24, a 5-bit code (a 74C923 does 20). */
+    public static final int DANKODER_KEYS = 24;
+
+    /** The Dankoder pin for key {@code i} (0 to 23): the left bus's channels 0 to 7, then the right's, then the back's. */
+    public static int dankoderKey(int i) { return i < 8 ? 2 + i : i < 16 ? 11 + (i - 8) : 29 + (i - 16); }
 
     /** A part people touch or read, that mounts flush on a Rolling Tray: a Puff Button, a Toggle Joint, a Numb Nug. */
     public boolean mountable() { return part == Part.BUTTON || part == Part.TOGGLE || part == Part.DISPLAY; }

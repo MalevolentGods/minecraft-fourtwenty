@@ -74,7 +74,7 @@ REAL = {
     'scale_nug': 'Magnitude comparator',
     'jar_nug': '8-bit register (74HC574)',
     'numb_nug': '7-segment display',
-    'dankoder': 'Keypad encoder (74C922)',
+    'dankoder': 'Keypad encoder (74C922 / 74C923)',
 }
 
 

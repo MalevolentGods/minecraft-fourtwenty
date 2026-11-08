@@ -223,7 +223,7 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
             box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 6.3, 6.3, 10.3 + in, 9.7, 9.7, 10.4 + in,
                     lens, closed || number >= 0 && !labelled ? LightTexture.FULL_BRIGHT : light);
             if (labelled) text(pose, buffers, be.label(), be.glow(), closed, 8, 8, 10.27 + in, 3.6, 2.8, light);
-            else if (number >= 0) glyph(pose, buffers, number, 6.6, 6.0, 9.4, 10.0, 10.2 + in, closed ? 0xE8FFB0 : LIME);
+            else if (number >= 0 && number < 16) glyph(pose, buffers, number, 6.6, 6.0, 9.4, 10.0, 10.2 + in, closed ? 0xE8FFB0 : LIME);
             return;
         }
         if (type == ComponentType.TOGGLE_JOINT) {
@@ -238,7 +238,7 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
             box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 11.6, 11.6, 12.85, 12.8, 12.8, 12.95,
                     closed ? LIME : LIME_OFF, closed ? LightTexture.FULL_BRIGHT : light);
             if (!be.label().isEmpty()) text(pose, buffers, be.label(), be.glow(), closed, 8, 3.2, 12.9, 11, 2.6, light);
-            else if (number >= 0) glyph(pose, buffers, number, 2.0, 2.0, 4.6, 5.6, 12.85, LIME);
+            else if (number >= 0 && number < 16) glyph(pose, buffers, number, 2.0, 2.0, 4.6, 5.6, 12.85, LIME);
         }
     }
 
@@ -333,8 +333,9 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
             // the byte and the carry (a sum to 510); or, with a high byte fed too, sixteen bits (to 65535)
             int value = high == null ? Shown.bits(source.shown()) & 0x1FF : (Shown.bits(high.shown()) & 0xFF) << 8 | Shown.bits(source.shown()) & 0xFF;
             text = source.value() > 0.5 ? Integer.toHexString(value).toUpperCase(java.util.Locale.ROOT) : Integer.toString(value);
-            // reading sixteen bits, the high byte's carry wire is the sign: a minus in front
+            // reading sixteen bits, the high byte's carry wire is the sign: a minus in front; the low byte's is an error: E
             if (high != null && (Shown.bits(high.shown()) & 0x100) != 0) text = "-" + text;
+            if (high != null && (Shown.bits(source.shown()) & 0x100) != 0) text = "E";
             if (text.length() > n) {
                 text = text.substring(text.length() - n);
                 overflow = true;

@@ -76,7 +76,7 @@ TOOLTIPS = {
     'stacker': 'Bus A at the back, bus B on the left, carry in on the right, the result in front with the carry out on its C wire. VDD on top, GND underneath.',
     'scale': 'Bus A at the back, bus B on the left; in front, channel 0 is A < B, 1 is A = B, 2 is A > B. VDD on top, GND underneath.',
     'jar': 'Bus in at the back, clock on the left, release on the right, bus out in front. VDD on top, GND underneath.',
-    'dankoder': 'Keys 0 to 7 on the bus face on the left, 8 to F on the right; the number out in front (channels 0 to 3), the carry high while a key is down. Its back on a Rolling Tray reads the whole board instead, power and all. VDD on top, GND underneath.',
+    'dankoder': 'Keys 0 to 7 on the bus face on the left, 8 to 15 on the right, 16 to 23 at the back; the number out in front (channels 0 to 4), the carry high while a key is down. Its back on a Rolling Tray reads the whole board instead (up to 24 keys), power and all. VDD on top, GND underneath.',
     'display': 'A byte in on the bus face at the back (an Eighth Ribbon), VDD on top, GND underneath. Numb Nugs side by side, facing the same way, are one display: only one of them needs power and a Ribbon.',
 }
 EXTRA = {
@@ -88,7 +88,7 @@ EXTRA = {
     'toggle_joint': 'A switch: use it to flip it. Mounted on a Rolling Tray, sneak-use it with an empty hand to give it a label, a glow and the number a Dankoder reads it as.',
     'kill_switch': 'A switch closed while it has a redstone signal.',
     'puff_button': 'A button: closed for a moment (0.4 s) when used. Mounted on a Rolling Tray, sneak-use it with an empty hand to give it a label, a glow and the number a Dankoder reads it as (shown on its cap until it has a label).',
-    'dankoder': 'A keypad encoder: while a key is down it gives that key\'s number; let go, it keeps the last one. Two down, the lower wins. Against a board of Rolling Trays it numbers the buttons and toggles on it in reading order, top row first, left to right; each key\'s own screen (sneak-use it with an empty hand) can give it any number 0 to F instead.',
+    'dankoder': 'A keypad encoder: while a key is down it gives that key\'s number; let go, it keeps the last one. Two down, the lower wins. Against a board of Rolling Trays it numbers the buttons and toggles on it in reading order, top row first, left to right; each key\'s own screen (sneak-use it with an empty hand) can give it any number 0 to 23 instead.',
     'slow_burner': 'Lets through a steady current, its setting, whatever the voltage across it once that is a Kb or so: a Kief Cap fills or drains at a steady rate through it. It makes no current of its own; a supply drives it. Use it to step its current (sneak to step back).',
     'tri_state_nug': 'Left is A, right is enable: passes A while enabled, lets go of its output otherwise.',
     'latch_nug': 'An SR latch: left sets it, right resets it.',
@@ -235,7 +235,7 @@ PINS = {'two': [('back', 'in'), ('front', 'in')], 'one': [('top', 'vdd'), ('bott
         'scale': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'bus'), ('front', 'bus')],
         'jar': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'in'), ('right', 'in'), ('front', 'bus')],
         'display': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus')],
-        'dankoder': [('top', 'vdd'), ('bottom', 'gnd'), ('left', 'bus'), ('right', 'bus'), ('front', 'bus')], 'none': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out')]}
+        'dankoder': [('top', 'vdd'), ('bottom', 'gnd'), ('left', 'bus'), ('right', 'bus'), ('front', 'bus'), ('back', 'bus')], 'none': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out')]}
 
 
 # the parts that mount flush on a Rolling Tray (ComponentType.mountable)
