@@ -70,20 +70,12 @@ for x in range(319, 325):
     put(x, -53, ZP + 1, f'{TRIM}[facing=south]')
 # a low black counter under the keypad, a step out from the wall
 fill(318, FLOOR + 1, ZP + 1, 325, FLOOR + 1, ZP + 1, BLACK)
-# the roof: white, lights over the lobby, a cream parapet with lime glass and lime trim on the corners: a terrace
-fill(X0, ROOF, Z0, X1, ROOF, Z1, WHITE)
-fill(X0, ROOF + 1, Z0, X1, ROOF + 1, Z0, CREAM)
-fill(X0, ROOF + 1, Z1, X1, ROOF + 1, Z1, CREAM)
-fill(X0, ROOF + 1, Z0, X0, ROOF + 1, Z1, CREAM)
-fill(X1, ROOF + 1, Z0, X1, ROOF + 1, Z1, CREAM)
+# open to the sky (the user's call, 2026-11-08): the walls' top course in white, a cream parapet on it with lime glass along the front
+# and lime trim on the corners, nothing across the top
+for x0, z0, x1, z1 in ((X0, Z0, X1, Z0), (X0, Z0, X0, Z1), (X1, Z0, X1, Z1), (X0, Z1, X1, Z1)):
+    fill(x0, ROOF, z0, x1, ROOF, z1, WHITE)
+    fill(x0, ROOF + 1, z0, x1, ROOF + 1, z1, CREAM)
 fill(X0 + 1, ROOF + 2, Z1, X1 - 1, ROOF + 2, Z1, LIME_GLASS)
 for x, z in ((X0, Z0), (X1, Z0), (X0, Z1), (X1, Z1)):
     put(x, ROOF + 2, z, f'{TRIM}[facing=up]')
-# the terrace deck: a light gray walk round a lime square
-fill(X0 + 4, ROOF, Z0 + 4, X1 - 4, ROOF, Z1 - 4, GRAY)
-fill(X0 + 8, ROOF, Z0 + 8, X1 - 8, ROOF, Z1 - 8, LIME)
-# the lobby's ceiling lights, set into the roof over it (after the deck, which would cover them)
-for x in range(X0 + 3, X1 - 2, 4):
-    for z in (ZP + 2, Z1 - 2):
-        put(x, ROOF, z, LIGHT)
 print('\n'.join(out))
