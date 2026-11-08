@@ -127,8 +127,10 @@ def resinator():
     """A glass tube over a resin rod (the renderer draws the rod, warmed by its heat); its value's bands as rings round the rod."""
     solid = plinth() + stands(4.5, 11.5, 5) + gland('front', 'in', 3) + gland('back', 'in', 3)
     for i, z in enumerate((4.6, 6.4, 8.2, 10.6)):
-        solid.append(box([6.3, 6.3, z], [9.7, 9.7, z + 1.2], '#band' if i < 3 else '#gold', faces=('east', 'west', 'up', 'down'), tint=i if i < 3 else None))
-    glass = [box([5, 5, 3], [11, 11, 13], '#glass')]
+        # closed rings: their ends too, or you'd see down the gap between band and rod
+        solid.append(box([6.3, 6.3, z], [9.7, 9.7, z + 1.2], '#band' if i < 3 else '#gold', tint=i if i < 3 else None))
+    # the glass hugs the bands, a finger's width out
+    glass = [box([5.8, 5.8, 3], [10.2, 10.2, 13], '#glass')]
     return composite(solid, glass, {'band': 'fourtwenty:block/component/band', 'gold': 'fourtwenty:block/component/band_gold'})
 
 
