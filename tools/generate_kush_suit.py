@@ -40,7 +40,98 @@ def trim(img, box):
     d.rectangle([x0, y0, x1 - 1, y1 - 1], outline=GOLD + (255,))
 
 
+# The suit's painted sheet (the user's art, 2026-11-08): helmet front and sides, chest with both shoulders, two boots, the leggings. Each
+# box is a panel of it, in the sheet's pixels; armour_from_sheet() fits each onto its faces of the armour layout.
+SHEET = Path(__file__).resolve().parent / 'art/kush_suit_sheet.png'
+SCALE = 4   # 256x128: four pixels to each of the layout's 64x32
+CROPS = {
+    'helm_front': (290, 15, 600, 268), 'helm_top': (330, 15, 560, 110), 'helm_right': (12, 28, 228, 258), 'helm_left': (657, 28, 874, 258),
+    'chest': (300, 280, 590, 612), 'chest_top': (300, 282, 590, 340), 'chest_side': (290, 285, 335, 610),
+    'arm': (612, 280, 870, 340), 'arm_out': (800, 300, 870, 515), 'arm_in': (615, 300, 700, 515), 'arm_low': (612, 450, 870, 520),
+    'medallion': (698, 346, 802, 450),
+    'boot_front': (140, 625, 300, 870), 'boot_outer': (50, 625, 140, 870), 'boot_inner': (300, 625, 400, 870),
+    'leg_front': (1110, 275, 1340, 868), 'leg_outer': (920, 275, 1100, 868), 'leg_inner': (1590, 275, 1757, 868),
+    'belt': (1200, 69, 1450, 300), 'belt_side': (1015, 69, 1110, 300),
+}
+DARK = (24, 26, 30, 255)
+
+
+def armour_from_sheet():
+    """Both armour layers cut from the sheet: layer 1 the helmet, chestplate (body and arms) and boots (the legs' lower half); layer 2
+    the leggings (the legs, and the belt round the body's lower part). Faces nobody sees (undersides) are plain dark plate."""
+    sheet = Image.open(SHEET).convert('RGBA')
+
+    def put(img, crop, face, turn=0, flip=False):
+        u0, v0, u1, v1 = face
+        part = sheet.crop(CROPS[crop] if isinstance(crop, str) else crop)
+        if turn:
+            part = part.rotate(turn, expand=True)
+        if flip:
+            part = part.transpose(Image.FLIP_LEFT_RIGHT)
+        w, h = (u1 - u0) * SCALE, (v1 - v0) * SCALE
+        part = part.resize((w, h), Image.LANCZOS)
+        # the sheet's see-through gaps between panels are plate here: a face is never a hole
+        back = Image.new('RGBA', (w, h), DARK)
+        img.paste(Image.alpha_composite(back, part), (u0 * SCALE, v0 * SCALE))
+
+    def dark(img, face):
+        u0, v0, u1, v1 = face
+        img.paste(Image.new('RGBA', ((u1 - u0) * SCALE, (v1 - v0) * SCALE), DARK), (u0 * SCALE, v0 * SCALE))
+
+    out = ASSETS / 'textures/models/armor'
+    out.mkdir(parents=True, exist_ok=True)
+    one = Image.new('RGBA', (64 * SCALE, 32 * SCALE), (0, 0, 0, 0))
+    # helmet: top, (bottom), right, front, left, back
+    put(one, 'helm_top', (8, 0, 16, 8))
+    dark(one, (16, 0, 24, 8))
+    put(one, 'helm_right', (0, 8, 8, 16))
+    put(one, 'helm_front', (8, 8, 16, 16))
+    put(one, 'helm_left', (16, 8, 24, 16))
+    put(one, 'helm_right', (24, 8, 32, 16), flip=True)
+    # chest: top, bottom, right, front, left, back
+    put(one, 'chest_top', (20, 16, 28, 20))
+    dark(one, (28, 16, 36, 20))
+    put(one, 'chest_side', (16, 20, 20, 32))
+    put(one, 'chest', (20, 20, 28, 32))
+    put(one, 'chest_side', (28, 20, 32, 32), flip=True)
+    put(one, 'chest', (32, 20, 40, 32), flip=True)
+    # arms (the left mirrors the right): the shoulder's medallion at the top of the outer face, its lightning strip below; the strips
+    # either side of the medallion, upright as they're painted, round the rest
+    put(one, 'arm', (44, 16, 48, 20))
+    dark(one, (48, 16, 52, 20))
+    put(one, 'medallion', (40, 20, 44, 24))
+    put(one, 'arm_out', (40, 24, 44, 32))
+    put(one, 'arm_in', (44, 20, 48, 32))
+    put(one, 'arm_out', (48, 20, 52, 32), flip=True)
+    put(one, 'arm_in', (52, 20, 56, 32), flip=True)
+    # boots: the legs' lower half (rows 26 to 32), a dark sole
+    dark(one, (8, 16, 12, 20))
+    put(one, 'boot_outer', (0, 26, 4, 32))
+    put(one, 'boot_front', (4, 26, 8, 32))
+    put(one, 'boot_inner', (8, 26, 12, 32))
+    put(one, 'boot_front', (12, 26, 16, 32), flip=True)
+    one.save(out / 'kush_layer_1.png')
+
+    two = Image.new('RGBA', (64 * SCALE, 32 * SCALE), (0, 0, 0, 0))
+    # leggings: the belt round the body's lower part (rows 24 to 32)
+    put(two, 'belt_side', (16, 24, 20, 32))
+    put(two, 'belt', (20, 24, 28, 32))
+    put(two, 'belt_side', (28, 24, 32, 32), flip=True)
+    put(two, 'belt', (32, 24, 40, 32), flip=True)
+    # the legs: top, (bottom), outer, front, inner, back
+    put(two, 'leg_front', (4, 16, 8, 20))
+    dark(two, (8, 16, 12, 20))
+    put(two, 'leg_outer', (0, 20, 4, 32))
+    put(two, 'leg_front', (4, 20, 8, 32))
+    put(two, 'leg_inner', (8, 20, 12, 32))
+    put(two, 'leg_outer', (12, 20, 16, 32), flip=True)
+    two.save(out / 'kush_layer_2.png')
+
+
 def armour_layers():
+    if SHEET.exists():
+        armour_from_sheet()
+        return
     rng = random.Random(420)
     # The humanoid armour layout (64x32): each part's faces, as boxes. Head, body, arms, legs.
     parts = [(0, 0, 32, 16), (16, 16, 40, 32), (40, 16, 56, 32), (0, 16, 16, 32)]
