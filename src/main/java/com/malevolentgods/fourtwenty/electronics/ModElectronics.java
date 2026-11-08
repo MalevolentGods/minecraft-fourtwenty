@@ -63,7 +63,7 @@ public final class ModElectronics {
         ALL.add(TWISTER);
         for (ComponentType t : ComponentType.values()) {
             DeferredHolder<Block, ComponentBlock> block = ModBlocks.BLOCKS.register(t.id,
-                    () -> t == ComponentType.RESINATOR ? new ResinatorBlock(t, component()) : new ComponentBlock(t, component()));
+                    () -> t == ComponentType.RESINATOR ? new ResinatorBlock(t, component()) : t.tall() ? new BigChipBlock(t, component()) : new ComponentBlock(t, component()));
             COMPONENTS.put(t, block);
             ALL.add(ModItems.ITEMS.register(t.id, () -> new BlockItem(block.get(), new Item.Properties())));
         }

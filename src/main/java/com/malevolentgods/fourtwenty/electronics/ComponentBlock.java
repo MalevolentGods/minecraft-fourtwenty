@@ -118,13 +118,13 @@ public class ComponentBlock extends Block implements EntityBlock {
     public static int pinAt(BlockState state, Direction side) {
         // a mounted part's pins are all wired through its tray
         if (!(state.getBlock() instanceof ComponentBlock c) || state.getValue(MOUNTED)) return -1;
-        return c.type.pinAt(state.getValue(FACING), state.getValue(SPIN), side);
+        return c.type.pinAt(state.getValue(FACING), state.getValue(SPIN), side, BigChipBlock.upper(state));
     }
 
     /** How many pins are on world side {@code side}: 0, 1, or {@link ComponentType#BUS} for a bus face. */
     public static int widthAt(BlockState state, Direction side) {
         if (!(state.getBlock() instanceof ComponentBlock c) || state.getValue(MOUNTED)) return 0;
-        return c.type.widthAt(state.getValue(FACING), state.getValue(SPIN), side);
+        return c.type.widthAt(state.getValue(FACING), state.getValue(SPIN), side, BigChipBlock.upper(state));
     }
 
     /** The pin on world side {@code side} if it's a single pin (a Wick or Hemp Thread can join it), or -1. */

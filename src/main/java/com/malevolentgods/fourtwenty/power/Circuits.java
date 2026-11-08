@@ -108,11 +108,21 @@ public final class Circuits {
     public record ComponentReading(double[] pins, double amps) {}
 
     /** What the Inspoweedometer reads at a component: found from the Wick or Hemp Thread on any of its pin faces. */
-    public static Optional<ComponentReading> componentReading(Level level, BlockPos pos) {
-        var state = level.getBlockState(pos);
+    public static Optional<ComponentReading> componentReading(Level level, BlockPos at) {
+        var state = level.getBlockState(at);
         List<BlockPos> wires = new ArrayList<>();
         for (Direction d : Direction.values()) {
-            if (com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(state, d) >= 0) wires.add(pos.relative(d));
+            if (com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(state, d) >= 0) wires.add(at.relative(d));
+        }
+        // a big chip: read as one part, keyed on its lower block, found from the Wicks on either block
+        BlockPos pos = at;
+        if (state.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.BigChipBlock) {
+            BlockPos partner = at.relative(com.malevolentgods.fourtwenty.electronics.BigChipBlock.toPartner(state));
+            var other = level.getBlockState(partner);
+            for (Direction d : Direction.values()) {
+                if (com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(other, d) >= 0) wires.add(partner.relative(d));
+            }
+            pos = com.malevolentgods.fourtwenty.electronics.BigChipBlock.lower(state, at);
         }
         // a part mounted on a Rolling Tray: the Wicks on its board, found through the trays beside its own
         Direction back = com.malevolentgods.fourtwenty.electronics.ComponentBlock.mountedOn(state);

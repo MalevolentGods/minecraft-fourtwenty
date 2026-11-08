@@ -431,4 +431,105 @@ public final class ElectronicsGameTests {
             h.succeed();
         });
     }
+
+    /** A big chip facing east at (5,2,5), its upper block at (5,3,5), on a Bottomless Stash's rails: VDD over the top, GND underneath. */
+    private static BlockPos bigChip(GameTestHelper h, ComponentType type) {
+        var l = new Ladder(h, 2, 0).rails(ModPower.HEMP_WICK.get(), 1, 8);
+        h.setBlock(l.at(1), ModPower.BOTTOMLESS_STASH_PUFF.get());
+        BlockPos chip = new BlockPos(5, 2, 5);
+        var state = ModElectronics.COMPONENTS.get(type).get().defaultBlockState().setValue(ComponentBlock.FACING, Direction.EAST);
+        h.setBlock(chip, state);
+        h.setBlock(chip.above(), state.setValue(com.malevolentgods.fourtwenty.electronics.BigChipBlock.UPPER, true));
+        red(h, 5, 3, 0);
+        for (int z = 0; z <= 5; z++) red(h, 5, 4, z);
+        for (int z = 2; z <= 5; z++) black(h, 5, 1, z);
+        return chip;
+    }
+
+    private static void clip(GameTestHelper h, BlockPos pos, int channel) {
+        h.setBlock(pos, ModElectronics.ROACH_CLIP.get().defaultBlockState().setValue(com.malevolentgods.fourtwenty.electronics.RoachClipBlock.CHANNEL, channel));
+    }
+
+    /** The 16-bit word on a big chip's bus pair starting at pin {@code from} (low bus, then high), read from its pin voltages. */
+    private static int word(double[] v, int from) {
+        int x = 0;
+        for (int k = 0; k < 8; k++) {
+            if (v[from + k] - v[1] > 0.5 * (v[0] - v[1])) x |= 1 << k;
+            if (v[from + 9 + k] - v[1] > 0.5 * (v[0] - v[1])) x |= 1 << (8 + k);
+        }
+        return x;
+    }
+
+    private static boolean high(double[] v, int pin) { return v[pin] - v[1] > 0.5 * (v[0] - v[1]); }
+
+    private static double[] pins(GameTestHelper h, BlockPos pos) {
+        return com.malevolentgods.fourtwenty.power.Circuits.componentReading(h.getLevel(), h.absolutePos(pos))
+                .map(com.malevolentgods.fourtwenty.power.Circuits.ComponentReading::pins).orElse(null);
+    }
+
+    /**
+     * A Manyfier, two blocks tall: A's low byte through a Roach Clip on the lower block's back (channel 2, so 4), B's high byte through
+     * one on the upper block's left (channel 1, so 512). 4 × 512 = 2048 in front. Both clips to channel 7: 128 × 32768 = 4,194,304, past
+     * 16 bits: 0 in front, 64 on the right's low byte, and the flag.
+     */
+    @GameTest(template = "long", timeoutTicks = 200)
+    public static void aManyfierMultipliesSixteenBits(GameTestHelper h) {
+        BlockPos chip = bigChip(h, ComponentType.MANYFIER);
+        for (int z = 0; z <= 5; z++) red(h, 4, 3, z);
+        red(h, 5, 4, 6);
+        clip(h, new BlockPos(4, 2, 5), 2);
+        clip(h, new BlockPos(5, 3, 6), 1);
+        h.runAfterDelay(20, () -> {
+            double[] v = pins(h, chip);
+            h.assertTrue(v != null, "a reading");
+            h.assertTrue(word(v, 2) == 4 && word(v, 20) == 512, "reads A = 4, B = 512: " + word(v, 2) + ", " + word(v, 20) + " " + java.util.Arrays.toString(v));
+            h.assertTrue(word(v, 38) == 2048, "4 x 512 = 2048: " + word(v, 38));
+            h.assertFalse(high(v, 46), "no overflow");
+            clip(h, new BlockPos(4, 2, 5), 7);
+            clip(h, new BlockPos(5, 3, 6), 7);
+            h.runAfterDelay(10, () -> {
+                double[] w = pins(h, chip);
+                h.assertTrue(word(w, 38) == 0 && word(w, 56) == 64, "128 x 32768 = 0x400000: " + word(w, 38) + ", " + word(w, 56));
+                h.assertTrue(high(w, 46), "the flag: past 65,535");
+                h.succeed();
+            });
+        });
+    }
+
+    /**
+     * A Fewinator: A's high byte through a Roach Clip on the upper block's back (channel 3, so 2048), nothing on B: dividing by 0 gives
+     * 0 and the flag. Then B's low byte through one on the lower block's left (channel 2, so 4): 2048 ÷ 4 = 512, remainder 0.
+     */
+    @GameTest(template = "long", timeoutTicks = 200)
+    public static void aFewinatorDivides(GameTestHelper h) {
+        BlockPos chip = bigChip(h, ComponentType.FEWINATOR);
+        red(h, 4, 4, 5);
+        clip(h, new BlockPos(4, 3, 5), 3);
+        for (int z = 0; z <= 6; z++) red(h, 6, 3, z);
+        red(h, 6, 2, 6);
+        h.runAfterDelay(20, () -> {
+            double[] v = pins(h, chip);
+            h.assertTrue(v != null, "a reading");
+            h.assertTrue(word(v, 2) == 2048, "reads A = 2048: " + word(v, 2) + " " + java.util.Arrays.toString(v));
+            h.assertTrue(word(v, 38) == 0 && high(v, 46), "divided by 0: 0 and the flag");
+            clip(h, new BlockPos(5, 2, 6), 2);
+            h.runAfterDelay(10, () -> {
+                double[] w = pins(h, chip);
+                h.assertTrue(word(w, 38) == 512 && word(w, 56) == 0, "2048 / 4 = 512 r 0: " + word(w, 38) + " r " + word(w, 56));
+                h.assertFalse(high(w, 46), "no flag");
+                h.succeed();
+            });
+        });
+    }
+
+    /** Breaking either block of a big chip takes the other with it. */
+    @GameTest(template = "long", timeoutTicks = 40)
+    public static void aBigChipGoesWhole(GameTestHelper h) {
+        BlockPos chip = bigChip(h, ComponentType.MANYFIER);
+        h.destroyBlock(chip.above());
+        h.runAfterDelay(2, () -> {
+            h.assertBlockNotPresent(ModElectronics.COMPONENTS.get(ComponentType.MANYFIER).get(), chip);
+            h.succeed();
+        });
+    }
 }

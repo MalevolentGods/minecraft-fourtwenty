@@ -405,6 +405,56 @@ public final class Chips {
         public int code() { return code; }
     }
 
+    /**
+     * A big chip's 16-bit arithmetic (the Manyfier, a multiplier; the Fewinator, a divider): A and B each on two buses, low byte and high
+     * (their carry wires unread), the result on four, each 8 bits and a carry. The Manyfier gives the 32-bit product, bits 0 to 15 in
+     * front and 16 to 31 on the right; the low byte's carry is 1 when the product is past 16 bits (more than 65,535). The Fewinator gives
+     * A ÷ B, the quotient in front and the remainder on the right; dividing by 0 gives 0 and 0 with the low byte's carry 1. Inputs: A lo,
+     * A hi, B lo, B hi, nine each.
+     */
+    public static final class Arith16 extends Chip {
+        final boolean divide;
+
+        Arith16(int vdd, int gnd, int[] a, int[] b, boolean divide) {
+            super(vdd, gnd, concat(a, b), 4 * ComponentBus.WIDTH);
+            this.divide = divide;
+        }
+
+        private int word(Analysis an, int from) { return bits(an, from, 8) | bits(an, from + ComponentBus.WIDTH, 8) << 8; }
+
+        @Override Logic.Out[] evaluate(Analysis an) {
+            long a = word(an, 0), b = word(an, 2 * ComponentBus.WIDTH);
+            long first, second;
+            boolean flag;
+            if (divide) {
+                flag = b == 0;
+                first = flag ? 0 : a / b;
+                second = flag ? 0 : a % b;
+            } else {
+                long p = a * b;
+                first = p & 0xFFFF;
+                second = p >> 16 & 0xFFFF;
+                flag = p > 0xFFFF;
+            }
+            return outputs(first, second, flag);
+        }
+
+        /** The four buses: {@code first} on the front pair, {@code second} on the right, the flag on the front low byte's carry. */
+        static Logic.Out[] outputs(long first, long second, boolean flag) {
+            Logic.Out[] out = new Logic.Out[4 * ComponentBus.WIDTH];
+            long[] bytes = {first & 0xFF, first >> 8 & 0xFF, second & 0xFF, second >> 8 & 0xFF};
+            for (int f = 0; f < 4; f++) {
+                for (int k = 0; k < 8; k++) out[ComponentBus.WIDTH * f + k] = level((int) (bytes[f] >> k & 1));
+                out[ComponentBus.WIDTH * f + 8] = level(f == 0 && flag ? 1 : 0);
+            }
+            return out;
+        }
+
+        @Override double[] registers() { return new double[0]; }
+
+        @Override void registers(double[] r) {}
+    }
+
     /** A bus's width: eight wires and the carry. */
     static final class ComponentBus {
         static final int WIDTH = 9;

@@ -3,11 +3,11 @@
  "category": "redstone",
  "ingredients": [
   {
-   "item": "fourtwenty:dankoder"
+   "item": "fourtwenty:manyfier"
   }
  ],
  "result": {
-  "id": "fourtwenty:not_nug",
+  "id": "fourtwenty:fewinator",
   "count": 1
  }
 }

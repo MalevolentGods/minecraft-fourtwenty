@@ -257,6 +257,24 @@ CHIPS = {
 }
 
 
+# big chips, two blocks tall (BigChipBlock): a bus header on every side of each block, the label on the upper block's top
+BIG = {'manyfier': 'MULTIPLY', 'fewinator': 'DIVIDE'}
+
+
+def big_chip(cid, upper):
+    """One block of a big chip: one steel slab through both, a header each side; GND under the lower, VDD and the label on the upper.
+    The renderer lights nine beads across each block's front, above or below its header."""
+    if upper:
+        solid = [box([3, 0, 3], [13, 12, 13], '#body'), box([2.8, 11.6, 2.8], [13.2, 12.2, 13.2], '#trim'),
+                 flat_face(box([4, 12.2, 4], [12, 12.5, 12], '#dark'), 'up', '#label')]
+        solid += gland('top', 'vdd', 3.6)
+    else:
+        solid = [box([3, 2.6, 3], [13, 16, 13], '#body'), box([2.8, 2, 2.8], [13.2, 2.6, 13.2], '#trim')]
+        solid += gland('bottom', 'gnd', 2)
+    solid += [header(face) for face in ('front', 'back', 'left', 'right')]
+    return composite(solid, [], {'header': 'fourtwenty:block/component/lab_header', 'label': f'fourtwenty:block/component/lab_label_{cid}'})
+
+
 def header(side):
     """An IDC header on a bus face, framing the Ribbon (x 3 to 14 at y 7 to 9) where it plugs in."""
     if side == 'front':
@@ -398,6 +416,12 @@ def family_textures():
         draw = square_wave if kind == 'WAVE' else words(kind) if kind in ('SR', 'D FF') else gate(kind)
         plaque_texture(f'lab_plaque_{cid}', draw)
     plaque_texture('lab_plaque_hype_amp', opamp)
+    for cid, label in BIG.items():
+        img = Image.new('RGB', (256, 256), (23, 25, 29))
+        d = ImageDraw.Draw(img)
+        d.rectangle([2, 2, 253, 253], outline=(60, 64, 72), width=3)
+        words(label, 40)(d, 256, 256)
+        img.save(TEX / f'lab_label_{cid}.png', optimize=True)
     for cid, (_, label) in CHIPS.items():
         # read along the plate's length (z), so drawn sideways
         img = Image.new('RGB', (256, 58), (23, 25, 29))
@@ -608,6 +632,9 @@ def main():
         LAB[cid] = (lambda c=cid, l=layout: nug_body(c, l, f'lab_plaque_{c}'))
     for cid, (faces, _) in CHIPS.items():
         LAB[cid] = (lambda c=cid, f=faces: chip(c, f, None))
+    for cid in BIG:
+        LAB[cid] = (lambda c=cid: big_chip(c, False))
+        LAB[cid + '_upper'] = (lambda c=cid: big_chip(c, True))
     LAB['sativa_fet'] = lambda: fet('sativa_fet')
     LAB['indica_fet'] = lambda: fet('indica_fet')
     LAB['hype_amp'] = hype_amp

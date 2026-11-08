@@ -75,6 +75,8 @@ REAL = {
     'jar_nug': '8-bit register (74HC574)',
     'numb_nug': '7-segment display',
     'dankoder': 'Keypad encoder (74C922 / 74C923)',
+    'manyfier': '16 x 16-bit multiplier',
+    'fewinator': '16-bit divider (quotient and remainder)',
 }
 
 

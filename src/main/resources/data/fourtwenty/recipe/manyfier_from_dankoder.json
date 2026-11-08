@@ -1,0 +1,13 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:dankoder"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:manyfier",
+  "count": 1
+ }
+}

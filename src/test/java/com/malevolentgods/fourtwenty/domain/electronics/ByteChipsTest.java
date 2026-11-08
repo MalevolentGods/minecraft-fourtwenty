@@ -142,6 +142,51 @@ class ByteChipsTest {
         }
     }
 
+    /** A 16-bit word on two nine-wire buses, low then high, the carry wires left out. */
+    private static int[] word16(int[] buses) {
+        int[] w = new int[16];
+        for (int i = 0; i < 8; i++) {
+            w[i] = buses[i];
+            w[8 + i] = buses[9 + i];
+        }
+        return w;
+    }
+
+    /** The Manyfier and the Fewinator: 16-bit products (all 32 bits, and the flag past 65,535), quotients and remainders. */
+    @Test void theBigChipsMultiplyAndDivide() {
+        Random r = new Random(420);
+        for (boolean divide : new boolean[]{false, true}) {
+            Board b = new Board();
+            int[] a = b.inputs(18), c = b.inputs(18), out = b.nodes(36);
+            b.n.arith16(divide, b.vdd, b.gnd, a, c, out);
+            List<int[]> cases = new ArrayList<>(List.of(new int[]{0, 0}, new int[]{9999, 6}, new int[]{9999, 9999}, new int[]{255, 257},
+                    new int[]{65535, 65535}, new int[]{256, 256}, new int[]{12, 0}, new int[]{7, 1}, new int[]{1000, 7}));
+            for (int k = 0; k < 30; k++) cases.add(new int[]{r.nextInt(65536), r.nextInt(divide ? 65536 : 300)});
+            for (int[] t : cases) {
+                b.set(word16(a), t[0]);
+                b.set(word16(c), t[1]);
+                b.run();
+                long x = t[0], y = t[1];
+                long first, second;
+                boolean flag;
+                if (divide) {
+                    flag = y == 0;
+                    first = flag ? 0 : x / y;
+                    second = flag ? 0 : x % y;
+                } else {
+                    first = x * y & 0xFFFF;
+                    second = x * y >> 16;
+                    flag = x * y > 0xFFFF;
+                }
+                String what = x + (divide ? " / " : " * ") + y;
+                assertEquals(first, b.word(word16(java.util.Arrays.copyOfRange(out, 0, 18))), what);
+                assertEquals(second, b.word(word16(java.util.Arrays.copyOfRange(out, 18, 36))), what + ": second");
+                assertEquals(flag ? 1 : 0, b.bit(out[8]), what + ": flag");
+                assertEquals(0, b.bit(out[17]) + b.bit(out[26]) + b.bit(out[35]), what + ": other carries");
+            }
+        }
+    }
+
     /** Less, equal, greater: exactly one is high, the right one. */
     @Test void theComparatorWeighs() {
         Random r = new Random(11);

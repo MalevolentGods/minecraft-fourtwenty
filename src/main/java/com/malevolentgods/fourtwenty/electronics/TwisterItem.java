@@ -31,6 +31,19 @@ public class TwisterItem extends Item {
         boolean clockwise = (face.getAxisDirection() == Direction.AxisDirection.POSITIVE) != (context.getPlayer() != null && context.getPlayer().isSecondaryUseActive());
         // a part mounted on a Rolling Tray faces out from it: there's no other way for it to turn
         if (state.hasProperty(ComponentBlock.MOUNTED) && state.getValue(ComponentBlock.MOUNTED)) return InteractionResult.PASS;
+        if (state.getBlock() instanceof BigChipBlock) {
+            // a big chip stands on its own height: it turns about that, both blocks together (set quietly, so neither sees the other
+            // half turned away and goes)
+            Direction height = BigChipBlock.toPartner(state);
+            boolean cw = clockwise;
+            BlockPos partner = pos.relative(height);
+            BlockState other = level.getBlockState(partner);
+            level.setBlock(pos, turn(state, height.getAxis(), cw), 2 | 16);
+            if (BigChipBlock.partnerOf(state, other)) level.setBlock(partner, turn(other, height.getAxis(), cw), 2 | 16);
+            BIGrid.changed(level);
+            level.playSound(null, pos, SoundEvents.LANTERN_PLACE, SoundSource.BLOCKS, 0.6f, 1.6f);
+            return InteractionResult.SUCCESS;
+        }
         BlockState turned = turn(state, face.getAxis(), clockwise);
         level.setBlock(pos, turned, 3);
         BIGrid.changed(level);

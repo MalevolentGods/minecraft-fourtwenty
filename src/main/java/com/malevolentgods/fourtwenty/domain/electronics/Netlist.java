@@ -251,6 +251,14 @@ public final class Netlist {
     /** A Dankoder: its keys, each standing for {@code codes[i]}; {@code out} the number on 0 to 4, 5 to 7 low, the carry key-down. */
     public Chips.Encoder dankoder(int vdd, int gnd, int[] keys, int[] codes, int[] out) { return chip(new Chips.Encoder(vdd, gnd, keys, codes), out); }
 
+    /**
+     * A Manyfier ({@code divide} false) or a Fewinator: A and B each 18 pins (low bus, high bus), {@code out} 36 (front low, front high,
+     * right low, right high).
+     */
+    public Chips.Arith16 arith16(boolean divide, int vdd, int gnd, int[] a, int[] b, int[] out) {
+        return chip(new Chips.Arith16(vdd, gnd, a, b, divide), out);
+    }
+
     /** A Dealer Nug: one input, three select bits, eight outputs. */
     public Chips.Dealer dealer(int vdd, int gnd, int in, int[] select, int[] outs) { return chip(new Chips.Dealer(vdd, gnd, in, select), outs); }
 

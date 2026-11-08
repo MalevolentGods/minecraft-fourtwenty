@@ -45,7 +45,9 @@ public enum ComponentType {
     SCALE_NUG("scale_nug", Part.COMPARE, Layout.SCALE, "", List.of(), 0),
     JAR_NUG("jar_nug", Part.REGISTER, Layout.JAR, "", List.of(), 0),
     NUMB_NUG("numb_nug", Part.DISPLAY, Layout.DISPLAY, "", List.of(0.0, 1.0), 0),
-    DANKODER("dankoder", Part.ENCODER, Layout.DANKODER, "", List.of(), 0);
+    DANKODER("dankoder", Part.ENCODER, Layout.DANKODER, "", List.of(), 0),
+    MANYFIER("manyfier", Part.MULTIPLY, Layout.BIG_CHIP, "", List.of(), 0),
+    FEWINATOR("fewinator", Part.DIVIDE, Layout.BIG_CHIP, "", List.of(), 0);
 
     /** A key's number on a Dankoder: -1 for its place on the board (reading order), else 0 to F, set with the Twister. */
     private static final class Keys {
@@ -62,7 +64,7 @@ public enum ComponentType {
     public static final int BUS = 9;
 
     /** What the block is in the circuit. */
-    public enum Part { RESISTOR, CAPACITOR, INDUCTOR, DIODE, ZENER, TOGGLE, REDSTONE_SWITCH, BUTTON, REGULATOR, GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, NMOS, PMOS, OPAMP, SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER, DISPLAY, ENCODER }
+    public enum Part { RESISTOR, CAPACITOR, INDUCTOR, DIODE, ZENER, TOGGLE, REDSTONE_SWITCH, BUTTON, REGULATOR, GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, NMOS, PMOS, OPAMP, SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER, DISPLAY, ENCODER, MULTIPLY, DIVIDE }
 
     /** A pin's face, relative to the block's front. */
     public enum Face { FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM }
@@ -96,11 +98,39 @@ public enum ComponentType {
          * The Dankoder: keys 0 to 7 on the left bus (its carry wire unused), 8 to 15 on the right, 16 to 23 on the back, the number out in
          * front; its back, against a Rolling Tray, reads that board instead.
          */
-        DANKODER(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.LEFT), bus(Face.RIGHT), bus(Face.FRONT), bus(Face.BACK)));
+        DANKODER(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.LEFT), bus(Face.RIGHT), bus(Face.FRONT), bus(Face.BACK))),
+        /**
+         * A big chip, two blocks tall (the Manyfier, the Fewinator): VDD on the upper block's top, GND under the lower; on every side a bus
+         * face on each block, the lower the low byte and the upper the high. A at the back, B on the left, the result in front and its
+         * second half on the right. Pins: {vdd, gnd, A lo, A hi, B lo, B hi, front lo, front hi, right lo, right hi}, nine each.
+         */
+        BIG_CHIP(upperBig(), cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), bus(Face.BACK), bus(Face.LEFT), bus(Face.LEFT), bus(Face.FRONT),
+                bus(Face.FRONT), bus(Face.RIGHT), bus(Face.RIGHT)));
 
         public final List<Face> pins;
+        /** For a two-block chip, whether each pin is on the upper block; null for a one-block part. */
+        private final boolean[] upper;
 
-        Layout(Face... pins) { this.pins = List.of(pins); }
+        Layout(Face... pins) { this(null, pins); }
+
+        Layout(boolean[] upper, Face... pins) {
+            this.pins = List.of(pins);
+            this.upper = upper;
+        }
+
+        /** Which of a big chip's pins are on its upper block: VDD, then each face's high byte. */
+        private static boolean[] upperBig() {
+            boolean[] u = new boolean[2 + 8 * 9];
+            u[0] = true;
+            for (int f = 0; f < 8; f++) for (int c = 0; c < 9; c++) u[2 + 9 * f + c] = f % 2 == 1;
+            return u;
+        }
+
+        /** Two blocks tall: the second block on top of the first (its TOP side). */
+        public boolean tall() { return upper != null; }
+
+        /** Whether pin {@code i} is on the upper block of a tall part. */
+        public boolean upper(int i) { return upper != null && upper[i]; }
 
         private static Face[] bus(Face face) {
             Face[] out = new Face[BUS];
@@ -141,7 +171,7 @@ public enum ComponentType {
     /** A powered part read as bits: the Nugs and the Ticker. */
     public boolean logic() {
         return switch (part) {
-            case GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER, ENCODER -> true;
+            case GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER, ENCODER, MULTIPLY, DIVIDE -> true;
             default -> false;
         };
     }
@@ -149,7 +179,7 @@ public enum ComponentType {
     /** A chip with a bus face: a shift register or a multiplexer. */
     public boolean chip() {
         return switch (part) {
-            case SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER, DISPLAY, ENCODER -> true;
+            case SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER, DISPLAY, ENCODER, MULTIPLY, DIVIDE -> true;
             default -> false;
         };
     }
@@ -213,17 +243,25 @@ public enum ComponentType {
     public static Direction toWorld(Direction front, int spin, Face face) { return Orientation.toWorld(front, spin, face); }
 
     /** The pin on world side {@code side} of a part facing {@code front} with spin {@code spin}, or -1 if that side has none. */
-    public int pinAt(Direction front, int spin, Direction side) {
-        for (int i = 0; i < layout.pins.size(); i++) if (toWorld(front, spin, layout.pins.get(i)) == side) return i;
+    public int pinAt(Direction front, int spin, Direction side) { return pinAt(front, spin, side, false); }
+
+    /** The same, on the upper block of a two-block part when {@code upper}. */
+    public int pinAt(Direction front, int spin, Direction side, boolean upper) {
+        for (int i = 0; i < layout.pins.size(); i++) if (layout.upper(i) == upper && toWorld(front, spin, layout.pins.get(i)) == side) return i;
         return -1;
     }
 
     /** How many pins are on world side {@code side}: 0, 1, or {@link #BUS} for a bus face. */
-    public int widthAt(Direction front, int spin, Direction side) {
+    public int widthAt(Direction front, int spin, Direction side) { return widthAt(front, spin, side, false); }
+
+    public int widthAt(Direction front, int spin, Direction side, boolean upper) {
         int n = 0;
-        for (Face f : layout.pins) if (toWorld(front, spin, f) == side) n++;
+        for (int i = 0; i < layout.pins.size(); i++) if (layout.upper(i) == upper && toWorld(front, spin, layout.pins.get(i)) == side) n++;
         return n;
     }
+
+    /** Two blocks tall: the Manyfier and the Fewinator. */
+    public boolean tall() { return layout.tall(); }
 
     public static ComponentType byId(String id) {
         for (ComponentType t : values()) if (t.id.equals(id)) return t;

@@ -2138,6 +2138,10 @@
   "message.fourtwenty.skip_me_bro.taken": "A wire already runs that way through it",
   "message.fourtwenty.skip_me_bro.full": "It already holds two wires",
   "message.fourtwenty.skip_me_bro.straight": "Only a straight wire can be skipped over",
+  "block.fourtwenty.manyfier": "Manyfier",
+  "tooltip.fourtwenty.item.manyfier": "Multiplies two 16-bit numbers (0 to 65,535): the product's low 16 bits in front, its high 16 on the right. The front low byte's C wire goes high when the product is past 65,535. Two blocks tall, a bus face on every side of each: the lower block carries the low byte, the upper the high. A at the back, B on the left, the result in front and its other half on the right. VDD on top of the upper block, GND under the lower. The Twister turns it about its height.",
+  "block.fourtwenty.fewinator": "Fewinator",
+  "tooltip.fourtwenty.item.fewinator": "Divides A by B, both 16-bit: the quotient in front, the remainder on the right. Dividing by 0 gives 0 with the front low byte's C wire high. Two blocks tall, a bus face on every side of each: the lower block carries the low byte, the upper the high. A at the back, B on the left, the result in front and its other half on the right. VDD on top of the upper block, GND under the lower. The Twister turns it about its height.",
   "tooltip.fourtwenty.real.weed_bong": "Generator",
   "tooltip.fourtwenty.real.double_hose": "Generator",
   "tooltip.fourtwenty.real.big_bertha": "Generator",
@@ -2213,5 +2217,7 @@
   "tooltip.fourtwenty.real.scale_nug": "Magnitude comparator",
   "tooltip.fourtwenty.real.jar_nug": "8-bit register (74HC574)",
   "tooltip.fourtwenty.real.numb_nug": "7-segment display",
-  "tooltip.fourtwenty.real.dankoder": "Keypad encoder (74C922 / 74C923)"
+  "tooltip.fourtwenty.real.dankoder": "Keypad encoder (74C922 / 74C923)",
+  "tooltip.fourtwenty.real.manyfier": "16 x 16-bit multiplier",
+  "tooltip.fourtwenty.real.fewinator": "16-bit divider (quotient and remainder)"
 }

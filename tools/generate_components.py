@@ -55,6 +55,8 @@ TYPES = [
     ('jar_nug', 'Jar Nug', 'jar', 'REG'),
     ('numb_nug', 'Numb Nug', 'display', 'NUM'),
     ('dankoder', 'Dankoder', 'dankoder', 'ENC'),
+    ('manyfier', 'Manyfier', 'big', 'MUL'),
+    ('fewinator', 'Fewinator', 'big', 'DIV'),
 ]
 
 # the resistor colour code for channels 0 to 7, the carry grey: an Eighth Ribbon's stripes and a Roach Clip's band
@@ -78,6 +80,7 @@ TOOLTIPS = {
     'jar': 'Bus in at the back, clock on the left, release on the right, bus out in front. VDD on top, GND underneath.',
     'dankoder': 'Keys 0 to 7 on the bus face on the left, 8 to 15 on the right, 16 to 23 at the back; the number out in front (channels 0 to 4), the carry high while a key is down. Its back on a Rolling Tray reads the whole board instead (up to 24 keys), power and all. VDD on top, GND underneath.',
     'display': 'A byte in on the bus face at the back (an Eighth Ribbon), VDD on top, GND underneath. Numb Nugs side by side, facing the same way, are one display: only one of them needs power and a Ribbon.',
+    'big': 'Two blocks tall, a bus face on every side of each: the lower block carries the low byte, the upper the high. A at the back, B on the left, the result in front and its other half on the right. VDD on top of the upper block, GND under the lower. The Twister turns it about its height.',
 }
 EXTRA = {
     'resinator': 'A resistor, rated 10 W: past that it burns out in smoke. Use it to step its value (sneak to step back).',
@@ -105,6 +108,8 @@ EXTRA = {
     'scale_nug': 'Weighs two bytes against each other: exactly one of its outputs is high.',
     'numb_nug': 'A digit of a display: the nine wires of a Ribbon, the byte and its carry, 0 to 511 in decimal or 000 to 1FF in hex. Use its back to switch. The one with power and data sets the whole row; with two fed, the right one is the low byte and the left the high, and the row reads 16 bits (to 65535).',
     'jar_nug': 'Keeps a byte (nine bits): takes its inputs on each rising clock and drives them out until release is 1, when it lets go, so several can share one bus.',
+    'manyfier': "Multiplies two 16-bit numbers (0 to 65,535): the product's low 16 bits in front, its high 16 on the right. The front low byte's C wire goes high when the product is past 65,535.",
+    'fewinator': "Divides A by B, both 16-bit: the quotient in front, the remainder on the right. Dividing by 0 gives 0 with the front low byte's C wire high.",
     'hype_amp': 'An op-amp: drives its output to 100,000 times the difference of its inputs, as far as its supply allows. With Resinators for feedback it amplifies by their ratio.',
 }
 
@@ -122,7 +127,7 @@ FONT = {
     'F': ['111', '100', '110', '100', '100'], 'I': ['111', '010', '010', '010', '111'], 'K': ['101', '110', '100', '110', '101'],
     'L': ['100', '100', '100', '100', '111'], 'M': ['101', '111', '111', '101', '101'], 'P': ['110', '101', '110', '100', '100'], 'N': ['101', '111', '111', '111', '101'], 'O': ['111', '101', '101', '101', '111'],
     'R': ['110', '101', '110', '101', '101'], 'T': ['111', '010', '010', '010', '010'], 'U': ['101', '101', '101', '101', '111'],
-    'X': ['101', '101', '010', '101', '101'],
+    'X': ['101', '101', '010', '101', '101'], 'V': ['101', '101', '101', '101', '010'],
 }
 
 
@@ -235,7 +240,8 @@ PINS = {'two': [('back', 'in'), ('front', 'in')], 'one': [('top', 'vdd'), ('bott
         'scale': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'bus'), ('front', 'bus')],
         'jar': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'in'), ('right', 'in'), ('front', 'bus')],
         'display': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus')],
-        'dankoder': [('top', 'vdd'), ('bottom', 'gnd'), ('left', 'bus'), ('right', 'bus'), ('front', 'bus'), ('back', 'bus')], 'none': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out')]}
+        'dankoder': [('top', 'vdd'), ('bottom', 'gnd'), ('left', 'bus'), ('right', 'bus'), ('front', 'bus'), ('back', 'bus')],
+        'big': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'bus'), ('front', 'bus'), ('right', 'bus')], 'none': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out')]}
 
 
 # the parts that mount flush on a Rolling Tray (ComponentType.mountable)
@@ -275,6 +281,14 @@ def component(cid, layout, look):
         variants = {f'mounted=false,{k}': v for k, v in variants.items()}
         for on in ('false', 'true'):
             variants[f'mounted=true,on={on}'] = {'model': f'fourtwenty:block/component/{cid}_mounted'}
+    if layout == 'big':
+        # two blocks tall (BigChipBlock): the upper block its own model (generate_component_lab.py), placeholder here
+        write(ASSETS / f'models/block/component/{cid}_upper.json', {'parent': 'block/block', 'textures': tex, 'elements': elements})
+        variants = {}
+        for upper in ('false', 'true'):
+            for on in ('false', 'true'):
+                name = cid + ('_upper' if upper == 'true' else '_on' if on == 'true' else '')
+                variants[f'on={on},upper={upper}'] = {'model': f'fourtwenty:block/component/{name}'}
     write(ASSETS / f'blockstates/{cid}.json', {'variants': variants})
     write(ASSETS / f'models/item/{cid}.json', {'parent': f'fourtwenty:block/component/{cid}'})
 

@@ -172,6 +172,18 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
                 pose.popPose();
                 if (closed) ring(pose, buffers.getBuffer(RenderType.lightning()), 5.9, 5.7, 4.9, 8.3, 9.1, 11.1, 0xFF5A3A, 0.25f);
             }
+            case MANYFIER, FEWINATOR -> {
+                // nine beads across each block's front, above its header on the lower block and below it on the upper: that block's
+                // byte of the result (the lower's ninth, the flag)
+                boolean upper = com.malevolentgods.fourtwenty.electronics.BigChipBlock.upper(be.getBlockState());
+                double y = upper ? 2.6 : 11.6;
+                for (int k = 0; k < 9; k++) {
+                    boolean on = Shown.bit(shown, k);
+                    double x = 11.6 - k * 0.85;
+                    box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, x - 0.6, y, 2.6, x, y + 0.8, 3,
+                            on ? (k == 8 ? 0xFF5A3A : LIME) : 0x2A2238, on ? LightTexture.FULL_BRIGHT : light);
+                }
+            }
             default -> {
                 if (type.chip()) {
                     // nine resin beads under the glass strip, one per output, lit for a 1

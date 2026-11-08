@@ -261,8 +261,26 @@ public final class Network {
         };
         // components (electronics): their pins are nodes, joined to any Wick or Hemp Thread on a pin face, or to another component's pin
         Map<BlockPos, com.malevolentgods.fourtwenty.electronics.ComponentType> components = new LinkedHashMap<>();
-        java.util.function.Consumer<BlockPos> component = at -> {
-            if (components.containsKey(at) || !(level.getBlockState(at).getBlock() instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlock cb)) return;
+        // a big chip's upper block (BigChipBlock): walked for its faces, its pins joined to the part's, which is keyed on its lower block
+        Map<BlockPos, BlockPos> upperHalves = new HashMap<>();
+        java.util.function.Consumer<BlockPos> component = found -> {
+            BlockPos at = found;
+            var st = level.getBlockState(at);
+            if (!(st.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlock cb)) return;
+            if (cb.type().tall()) {
+                boolean up = com.malevolentgods.fourtwenty.electronics.BigChipBlock.upper(st);
+                BlockPos partner = at.relative(com.malevolentgods.fourtwenty.electronics.BigChipBlock.toPartner(st));
+                if (!level.isLoaded(partner) || !com.malevolentgods.fourtwenty.electronics.BigChipBlock.partnerOf(st, level.getBlockState(partner))) return;
+                BlockPos lowerAt = (up ? partner : at).immutable(), upperAt = (up ? at : partner).immutable();
+                if (components.containsKey(lowerAt)) return;
+                upperHalves.put(upperAt, lowerAt);
+                for (int i = 0; i < cb.type().layout.pins.size(); i++) {
+                    if (cb.type().layout.upper(i)) union.join(new PinKey(upperAt, i), new PinKey(lowerAt, i));
+                }
+                queue.add(new Object[]{upperAt, null, "component"});
+                at = lowerAt;
+            }
+            if (components.containsKey(at)) return;
             components.put(at.immutable(), cb.type());
             queue.add(new Object[]{at.immutable(), null, "component"});
         };
@@ -766,7 +784,9 @@ public final class Network {
             if (!wickTiers.containsKey(w)) continue;
             Object key;
             String id;
-            if (c[0] instanceof PinKey pk) {
+            if (c[0] instanceof PinKey found) {
+                // a pin on a big chip's upper block is the part's, keyed on its lower block
+                PinKey pk = upperHalves.containsKey(found.pos()) ? new PinKey(upperHalves.get(found.pos()), found.pin()) : found;
                 if (!components.containsKey(pk.pos())) continue;
                 key = pk;
                 id = "pin" + pk.pos().asLong() + ":" + pk.pin();
@@ -1160,6 +1180,17 @@ public final class Network {
                         com.malevolentgods.fourtwenty.domain.electronics.Shown.active(shown), com.malevolentgods.fourtwenty.domain.electronics.Shown.hot(shown));
             }
             be.show(shown);
+            if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Chips.Arith16 big) {
+                // a big chip's upper block shows the high byte of its result
+                var lowerState = level.getBlockState(pos);
+                BlockPos up = pos.relative(com.malevolentgods.fourtwenty.electronics.BigChipBlock.toPartner(lowerState));
+                if (level.getBlockEntity(up) instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity upper) {
+                    int bits = 0;
+                    for (int k = 0; k < 9; k++) if (big.output(9 + k) == com.malevolentgods.fourtwenty.domain.electronics.Logic.Out.HIGH) bits |= 1 << k;
+                    upper.show(com.malevolentgods.fourtwenty.domain.electronics.Shown.pack(bits, com.malevolentgods.fourtwenty.domain.electronics.Shown.level(shown),
+                            com.malevolentgods.fourtwenty.domain.electronics.Shown.active(shown), false));
+                }
+            }
             if (high != null) {
                 var state = level.getBlockState(pos);
                 if (state.hasProperty(com.malevolentgods.fourtwenty.electronics.ComponentBlock.ON)
@@ -1309,6 +1340,8 @@ public final class Network {
                 case COMPARE -> net.comparator(p[0], p[1], java.util.Arrays.copyOfRange(p, 2, 10), java.util.Arrays.copyOfRange(p, 11, 19), p[20], p[21], p[22]);
                 case REGISTER -> net.register(p[0], p[1], java.util.Arrays.copyOfRange(p, 2, 11), p[11], p[12], java.util.Arrays.copyOfRange(p, 13, 22));
                 case DISPLAY -> net.display(p[0], p[1], java.util.Arrays.copyOfRange(p, 2, 11));
+                case MULTIPLY, DIVIDE -> net.arith16(c.type().part == com.malevolentgods.fourtwenty.electronics.ComponentType.Part.DIVIDE, p[0], p[1],
+                        java.util.Arrays.copyOfRange(p, 2, 20), java.util.Arrays.copyOfRange(p, 20, 38), java.util.Arrays.copyOfRange(p, 38, 74));
                 case DEMUX -> net.dealer(p[0], p[1], p[2], java.util.Arrays.copyOfRange(p, 3, 6), java.util.Arrays.copyOfRange(p, 12, 20));
                 case ENCODER -> {
                     int many = com.malevolentgods.fourtwenty.electronics.ComponentType.DANKODER_KEYS;
@@ -1411,7 +1444,7 @@ public final class Network {
             bits = display.read(live.analysis());
             levelShown = active ? com.malevolentgods.fourtwenty.domain.electronics.Shown.LEVELS : 0;
         } else if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Chips.Chip chip) {
-            for (int k = 0; k < chip.outputs(); k++) if (chip.output(k) == com.malevolentgods.fourtwenty.domain.electronics.Logic.Out.HIGH) bits |= 1 << k;
+            for (int k = 0; k < Math.min(9, chip.outputs()); k++) if (chip.output(k) == com.malevolentgods.fourtwenty.domain.electronics.Logic.Out.HIGH) bits |= 1 << k;
             active = across >= com.malevolentgods.fourtwenty.domain.electronics.Logic.MIN_SUPPLY;
             levelShown = active ? com.malevolentgods.fourtwenty.domain.electronics.Shown.LEVELS : 0;
         } else if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Logic) {

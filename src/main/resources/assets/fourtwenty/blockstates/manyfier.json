@@ -1,0 +1,16 @@
+{
+ "variants": {
+  "on=false,upper=false": {
+   "model": "fourtwenty:block/component/manyfier"
+  },
+  "on=true,upper=false": {
+   "model": "fourtwenty:block/component/manyfier_on"
+  },
+  "on=false,upper=true": {
+   "model": "fourtwenty:block/component/manyfier_upper"
+  },
+  "on=true,upper=true": {
+   "model": "fourtwenty:block/component/manyfier_upper"
+  }
+ }
+}
