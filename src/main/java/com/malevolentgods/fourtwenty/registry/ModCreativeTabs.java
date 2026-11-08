@@ -26,6 +26,15 @@ public class ModCreativeTabs {
                 output.accept(ModItems.TRIM_TRAY.get());
                 output.accept(ModItems.CURING_RACK.get());
                 com.malevolentgods.fourtwenty.registry.ModPower.ITEMS.forEach(item -> output.accept(item.get()));
+                // the red (+) and black (−) Wicks of each tier, as their dye recipes make them
+                for (var wick : java.util.List.of(ModPower.HEMP_WICK, ModPower.ROLLED_WICK, ModPower.GLASS_WICK, ModPower.GOLD_WICK)) {
+                    for (var colour : java.util.List.of(com.malevolentgods.fourtwenty.power.WickBlock.Colour.RED, com.malevolentgods.fourtwenty.power.WickBlock.Colour.BLACK)) {
+                        ItemStack stack = new ItemStack(wick.get());
+                        stack.set(net.minecraft.core.component.DataComponents.BLOCK_STATE,
+                                net.minecraft.world.item.component.BlockItemStateProperties.EMPTY.with(com.malevolentgods.fourtwenty.power.WickBlock.COLOUR, colour));
+                        output.accept(stack);
+                    }
+                }
                 output.accept(com.malevolentgods.fourtwenty.registry.ModPower.ASH.get());
                 output.accept(com.malevolentgods.fourtwenty.registry.ModPower.BUZZ_BOT_ITEM.get());
                 com.malevolentgods.fourtwenty.registry.ModPower.EXTRACTS.forEach(item -> output.accept(item.get()));
