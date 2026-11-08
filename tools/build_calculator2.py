@@ -200,7 +200,9 @@ for pos, (what, v) in trays.items():
 
 attempt = b.route(attempts=int(os.environ.get("ATTEMPTS", "80")))
 b.check()
+# the power source last: a powered circuit is walked again for every block that joins it, so building into one is slow
 blocks = list(b.blocks()) + panel
+blocks.sort(key=lambda m: 'bottomless_stash' in m[1])
 counts = {}
 for _, s, _ in blocks:
     k = s.split('[')[0]
@@ -209,4 +211,30 @@ sys.stderr.write(f'routed on attempt {attempt}: {len(blocks)} blocks; ' + ', '.j
 xs = [p[0] for p, _, _ in blocks]
 zs = [p[2] for p, _, _ in blocks]
 sys.stderr.write(f'extent x {min(xs)}..{max(xs)}, z {min(zs)}..{max(zs)}' + chr(10))
-print(chr(10).join(f'setblock {p[0]} {p[1]} {p[2]} {s}{n}' for p, s, n in blocks))
+if len(sys.argv) > 3 and sys.argv[3] == 'java':
+    # the game test's layout: every block relative to the board's corner
+    ox, oz = min(xs) - 1, min(zs) - 1
+    rel = lambda p: f'{{{p[0] - ox}, {p[1] - (Y - 2)}, {p[2] - oz}}}'
+    NL = chr(10)
+    named = {c['name']: q for q, c in b.comps}
+    print('package com.malevolentgods.fourtwenty.gametest;' + NL)
+    print('import java.util.HashMap;')
+    print('import java.util.Map;' + NL)
+    print('/** The v2 calculator on its two-layer board (tools/build_calculator2.py): every block relative to its corner. Generated. */')
+    print('final class CalculatorBoardLayout {')
+    print('    private CalculatorBoardLayout() {}' + NL)
+    print(f'    static final int[] XL = {rel(named["JXL"])}, XH = {rel(named["JXH"])}, SIGN = {rel(named["SIGN"])};')
+    print('    static final Map<String, int[]> KEYS = new HashMap<>();' + NL)
+    print('    static {')
+    for pos, (what, v) in trays.items():
+        if what == 'key':
+            print(f'        KEYS.put("{v}", new int[]{rel((pos[0], pos[1], pos[2] + 1))});')
+    print('    }' + NL)
+    print('    static final String[] BLOCKS = {')
+    for p, s, n in sorted(blocks, key=lambda m: (m[1] != 'fourtwenty:skip_me_bro' and 'skip_me_bro' not in m[1], m[0][1], m[0][0], m[0][2])):
+        body = f'{p[0] - ox} {p[1] - (Y - 2)} {p[2] - oz} {s}{n}'.replace(chr(92), chr(92) * 2).replace('"', chr(92) + '"')
+        print(f'            "{body}",')
+    print('    };')
+    print('}')
+else:
+    print(chr(10).join(f'setblock {p[0]} {p[1]} {p[2]} {s}{n}' for p, s, n in blocks))

@@ -77,7 +77,7 @@ public final class CalculatorGameTests {
             try {
                 var parsed = BlockStateParser.parseForBlock(blocks, f[3], true);
                 h.setBlock(pos, parsed.blockState());
-                if (parsed.nbt() != null && h.getBlockEntity(pos) instanceof ComponentBlockEntity be) be.loadWithComponents(parsed.nbt(), h.getLevel().registryAccess());
+                if (parsed.nbt() != null && h.getLevel().getBlockEntity(h.absolutePos(pos)) instanceof net.minecraft.world.level.block.entity.BlockEntity be) be.loadWithComponents(parsed.nbt(), h.getLevel().registryAccess());
             } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
                 h.fail("bad layout line " + line + ": " + e.getMessage());
             }
