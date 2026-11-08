@@ -186,7 +186,7 @@ def kill_switch():
              box([9.2, 5.8, 5], [10.4, 9.6, 5.8], '#brass')]
     solid += gland('front', 'in', 4) + gland('back', 'in', 4)
     # no floor: the steel base is the floor, and the coil and contact stand on it
-    glass = [box([4.8, 5.8, 4], [11.2, 11.2, 12], '#glass', faces=('north', 'south', 'east', 'west', 'up'))]
+    glass = [box([4.8, 5.85, 4], [11.2, 11.2, 12], '#glass', faces=('north', 'south', 'east', 'west', 'up'))]
     return composite(solid, glass, {'coil': 'fourtwenty:block/component/lab_coil'})
 
 
