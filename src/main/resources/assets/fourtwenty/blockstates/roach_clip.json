@@ -13,19 +13,46 @@
       "east": "false",
       "south": "false",
       "west": "false",
-      "up": "true"
+      "up": "true",
+      "vaxis": "x"
      },
      {
       "north": "false",
       "east": "false",
       "south": "false",
       "west": "false",
-      "down": "true"
+      "down": "true",
+      "vaxis": "x"
      }
     ]
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_vertical"
+    "model": "fourtwenty:block/eighth_ribbon_core_vertical_x"
+   }
+  },
+  {
+   "when": {
+    "OR": [
+     {
+      "north": "false",
+      "east": "false",
+      "south": "false",
+      "west": "false",
+      "up": "true",
+      "vaxis": "z"
+     },
+     {
+      "north": "false",
+      "east": "false",
+      "south": "false",
+      "west": "false",
+      "down": "true",
+      "vaxis": "z"
+     }
+    ]
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_vertical_z"
    }
   },
   {
@@ -43,10 +70,35 @@
   },
   {
    "when": {
+    "OR": [
+     {
+      "north": "true",
+      "east": "false",
+      "south": "false",
+      "west": "false",
+      "up": "true"
+     },
+     {
+      "north": "true",
+      "east": "false",
+      "south": "false",
+      "west": "false",
+      "down": "true"
+     }
+    ]
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_bend_n"
+   }
+  },
+  {
+   "when": {
     "north": "true",
     "east": "false",
     "south": "false",
-    "west": "false"
+    "west": "false",
+    "up": "false",
+    "down": "false"
    },
    "apply": {
     "model": "fourtwenty:block/eighth_ribbon_core_n"
@@ -54,10 +106,35 @@
   },
   {
    "when": {
+    "OR": [
+     {
+      "north": "false",
+      "east": "true",
+      "south": "false",
+      "west": "false",
+      "up": "true"
+     },
+     {
+      "north": "false",
+      "east": "true",
+      "south": "false",
+      "west": "false",
+      "down": "true"
+     }
+    ]
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_bend_e"
+   }
+  },
+  {
+   "when": {
     "north": "false",
     "east": "true",
     "south": "false",
-    "west": "false"
+    "west": "false",
+    "up": "false",
+    "down": "false"
    },
    "apply": {
     "model": "fourtwenty:block/eighth_ribbon_core_e"
@@ -76,10 +153,35 @@
   },
   {
    "when": {
+    "OR": [
+     {
+      "north": "false",
+      "east": "false",
+      "south": "true",
+      "west": "false",
+      "up": "true"
+     },
+     {
+      "north": "false",
+      "east": "false",
+      "south": "true",
+      "west": "false",
+      "down": "true"
+     }
+    ]
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_bend_s"
+   }
+  },
+  {
+   "when": {
     "north": "false",
     "east": "false",
     "south": "true",
-    "west": "false"
+    "west": "false",
+    "up": "false",
+    "down": "false"
    },
    "apply": {
     "model": "fourtwenty:block/eighth_ribbon_core_s"
@@ -120,10 +222,35 @@
   },
   {
    "when": {
+    "OR": [
+     {
+      "north": "false",
+      "east": "false",
+      "south": "false",
+      "west": "true",
+      "up": "true"
+     },
+     {
+      "north": "false",
+      "east": "false",
+      "south": "false",
+      "west": "true",
+      "down": "true"
+     }
+    ]
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_bend_w"
+   }
+  },
+  {
+   "when": {
     "north": "false",
     "east": "false",
     "south": "false",
-    "west": "true"
+    "west": "true",
+    "up": "false",
+    "down": "false"
    },
    "apply": {
     "model": "fourtwenty:block/eighth_ribbon_core_w"
@@ -240,18 +367,38 @@
   },
   {
    "when": {
-    "up": "true"
+    "up": "true",
+    "vaxis": "x"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_up"
+    "model": "fourtwenty:block/eighth_ribbon_up_x"
    }
   },
   {
    "when": {
-    "down": "true"
+    "up": "true",
+    "vaxis": "z"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_down"
+    "model": "fourtwenty:block/eighth_ribbon_up_z"
+   }
+  },
+  {
+   "when": {
+    "down": "true",
+    "vaxis": "x"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_down_x"
+   }
+  },
+  {
+   "when": {
+    "down": "true",
+    "vaxis": "z"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_down_z"
    }
   }
  ]

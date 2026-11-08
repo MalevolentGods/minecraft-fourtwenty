@@ -28,7 +28,9 @@ public class RibbonRenderer implements BlockEntityRenderer<RibbonBlockEntity> {
         if (bits == 0) return;
         var state = be.getBlockState();
         boolean n = on(state, Direction.NORTH), s = on(state, Direction.SOUTH), e = on(state, Direction.EAST), w = on(state, Direction.WEST);
-        boolean ns = n || s, ew = e || w;
+        boolean ns = n || s, ew = e || w, up = on(state, Direction.UP), down = on(state, Direction.DOWN);
+        boolean zWide = state.getValue(RibbonBlock.VAXIS) == Direction.Axis.Z;
+        int flat = (n ? 1 : 0) + (s ? 1 : 0) + (e ? 1 : 0) + (w ? 1 : 0);
         VertexConsumer add = buffers.getBuffer(RenderType.lightning());
         for (int k = 0; k < 9; k++) {
             if ((bits >> k & 1) == 0) continue;
@@ -38,12 +40,30 @@ public class RibbonRenderer implements BlockEntityRenderer<RibbonBlockEntity> {
             if (s) ComponentRenderer.ring(pose, add, a, 6.95, 14, b, 9.05, 16, c, 0.5f);
             if (e) ComponentRenderer.ring(pose, add, 14, 6.95, a, 16, 9.05, b, c, 0.5f);
             if (w) ComponentRenderer.ring(pose, add, 0, 6.95, a, 3, 9.05, b, c, 0.5f);
-            if (on(state, Direction.UP)) ComponentRenderer.ring(pose, add, a, 9, 6.95, b, 16, 9.05, c, 0.5f);
-            if (on(state, Direction.DOWN)) ComponentRenderer.ring(pose, add, a, 0, 6.95, b, 7, 9.05, c, 0.5f);
-            // the core: along whichever run goes straight through (corners fold, and keep their own look)
+            // upright arms and core, turned as the run is (wire k along x, or along z)
+            if (up) upright(pose, add, zWide, a, b, 9, 16, c);
+            if (down) upright(pose, add, zWide, a, b, 0, 7, c);
+            if (flat == 0 && (up || down)) {
+                upright(pose, add, zWide, a, b, 7, 9, c);
+                continue;
+            }
+            // a bend from flat to upright: only from its arm to the middle
+            if (flat == 1 && (up || down)) {
+                if (n) ComponentRenderer.ring(pose, add, a, 6.95, 3, b, 9.05, 9, c, 0.5f);
+                if (s) ComponentRenderer.ring(pose, add, a, 6.95, 7, b, 9.05, 14, c, 0.5f);
+                if (e) ComponentRenderer.ring(pose, add, 7, 6.95, a, 14, 9.05, b, c, 0.5f);
+                if (w) ComponentRenderer.ring(pose, add, 3, 6.95, a, 9, 9.05, b, c, 0.5f);
+                continue;
+            }
+            // the core: along whichever run goes straight through (flat corners fold, and keep their own look)
             if (n && s || ns && !ew || !ns && !ew) ComponentRenderer.ring(pose, add, a, 6.95, 3, b, 9.05, 14, c, 0.5f);
             else if (e && w || ew && !ns) ComponentRenderer.ring(pose, add, 3, 6.95, a, 14, 9.05, b, c, 0.5f);
         }
+    }
+
+    private static void upright(PoseStack pose, VertexConsumer add, boolean zWide, double a, double b, double y0, double y1, int c) {
+        if (zWide) ComponentRenderer.ring(pose, add, 6.95, y0, a, 9.05, y1, b, c, 0.5f);
+        else ComponentRenderer.ring(pose, add, a, y0, 6.95, b, y1, 9.05, c, 0.5f);
     }
 
     private static boolean on(net.minecraft.world.level.block.state.BlockState state, Direction d) {
