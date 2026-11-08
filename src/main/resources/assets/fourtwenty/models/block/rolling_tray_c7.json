@@ -1,0 +1,12 @@
+{
+ "parent": "minecraft:block/cube",
+ "textures": {
+  "north": "fourtwenty:block/component/rolling_tray_front",
+  "south": "fourtwenty:block/component/rolling_tray_back_c7",
+  "east": "fourtwenty:block/component/rolling_tray_side",
+  "west": "fourtwenty:block/component/rolling_tray_side",
+  "up": "fourtwenty:block/component/rolling_tray_side",
+  "down": "fourtwenty:block/component/rolling_tray_side",
+  "particle": "fourtwenty:block/component/rolling_tray_side"
+ }
+}

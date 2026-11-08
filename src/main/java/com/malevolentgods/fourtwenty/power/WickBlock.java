@@ -115,6 +115,14 @@ public class WickBlock extends Block {
         if (com.malevolentgods.fourtwenty.electronics.ComponentBlock.singlePinAt(neighbour, side.getOpposite()) >= 0) return Link.PLUG;
         // and into a Roach Clip, on its channel
         if (neighbour.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RoachClipBlock) return Link.PLUG;
+        // a Rolling Tray: any Wick or thread on its back (its part's signal), red and black on its other faces (its rails); none on its front
+        if (neighbour.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock) {
+            net.minecraft.core.Direction front = com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.front(neighbour);
+            if (side.getOpposite() == front) return Link.NONE;
+            return side == front || Terminal.signOf(self) != null ? Link.PLUG : Link.NONE;
+        }
+        // a lamp: any Wick or thread is its signal, a black Wick its −
+        if (neighbour.getBlock() instanceof com.malevolentgods.fourtwenty.block.LampBlock) return Link.PLUG;
         // only red (+) and black (−) Wicks plug into blocks, on any face
         return Terminal.signOf(self) != null && Terminal.pluggable(neighbour, side.getOpposite()) ? Link.PLUG : Link.NONE;
     }

@@ -37,7 +37,20 @@ public class ComponentBlock extends Block implements EntityBlock {
     public static final net.minecraft.world.level.block.state.properties.IntegerProperty SPIN =
             net.minecraft.world.level.block.state.properties.IntegerProperty.create("spin", 0, 3);
     public static final BooleanProperty ON = BooleanProperty.create("on");
+    /** Mounted flush on a Rolling Tray behind it: a thin plate with no poles of its own, its pins wired through the tray. */
+    public static final BooleanProperty MOUNTED = BooleanProperty.create("mounted");
     private static final VoxelShape SHAPE = Block.box(2, 2, 2, 14, 14, 14);
+    /** A mounted part's plate, by the side its back is on. */
+    private static final java.util.Map<Direction, VoxelShape> PLATES = new java.util.EnumMap<>(Direction.class);
+
+    static {
+        PLATES.put(Direction.NORTH, Block.box(0, 0, 0, 16, 16, 4));
+        PLATES.put(Direction.SOUTH, Block.box(0, 0, 12, 16, 16, 16));
+        PLATES.put(Direction.WEST, Block.box(0, 0, 0, 4, 16, 16));
+        PLATES.put(Direction.EAST, Block.box(12, 0, 0, 16, 16, 16));
+        PLATES.put(Direction.DOWN, Block.box(0, 0, 0, 16, 4, 16));
+        PLATES.put(Direction.UP, Block.box(0, 12, 0, 16, 16, 16));
+    }
     public static final int BUTTON_TICKS = 20;
 
     private final ComponentType type;
@@ -45,18 +58,25 @@ public class ComponentBlock extends Block implements EntityBlock {
     public ComponentBlock(ComponentType type, Properties properties) {
         super(properties);
         this.type = type;
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SPIN, 0).setValue(ON, false));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SPIN, 0).setValue(ON, false).setValue(MOUNTED, false));
     }
 
     public ComponentType type() { return type; }
 
-    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { builder.add(FACING, SPIN, ON); }
+    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { builder.add(FACING, SPIN, ON, MOUNTED); }
 
     /**
      * Placed with its front toward the player, whichever of the six ways they look; one placed facing up or down has its top away from
      * them, so it reads the right way round. The Twister turns it after.
      */
     @Override public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
+        // on a Rolling Tray's front: mounted flush, facing out from it
+        Direction face = context.getClickedFace();
+        BlockState against = context.getLevel().getBlockState(context.getClickedPos().relative(face.getOpposite()));
+        if (type.mountable() && against.getBlock() instanceof RollingTrayBlock && RollingTrayBlock.front(against) == face) {
+            int spin = face.getAxis().isVertical() ? Orientation.spinFor(face, context.getHorizontalDirection()) : 0;
+            return defaultBlockState().setValue(FACING, face).setValue(SPIN, spin).setValue(MOUNTED, true);
+        }
         Direction facing = context.getNearestLookingDirection().getOpposite();
         int spin = facing.getAxis().isVertical() ? Orientation.spinFor(facing, context.getHorizontalDirection()) : 0;
         return defaultBlockState().setValue(FACING, facing).setValue(SPIN, spin);
@@ -69,20 +89,40 @@ public class ComponentBlock extends Block implements EntityBlock {
     }
 
     @Override protected @Nonnull VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
-        return SHAPE;
+        return state.getValue(MOUNTED) ? PLATES.get(state.getValue(FACING).getOpposite()) : SHAPE;
+    }
+
+    /** The side a mounted part's tray is on, or null if it isn't mounted. */
+    public static @Nullable Direction mountedOn(BlockState state) {
+        return state.getBlock() instanceof ComponentBlock && state.getValue(MOUNTED) ? state.getValue(FACING).getOpposite() : null;
+    }
+
+    /** A mounted part needs its tray: without it, it falls off. */
+    @Override protected boolean canSurvive(@Nonnull BlockState state, @Nonnull net.minecraft.world.level.LevelReader level, @Nonnull BlockPos pos) {
+        Direction back = mountedOn(state);
+        if (back == null) return true;
+        BlockState tray = level.getBlockState(pos.relative(back));
+        return tray.getBlock() instanceof RollingTrayBlock && RollingTrayBlock.front(tray) == back.getOpposite();
+    }
+
+    @Override protected @Nonnull BlockState updateShape(@Nonnull BlockState state, @Nonnull Direction side, @Nonnull BlockState neighbour,
+                                                        @Nonnull net.minecraft.world.level.LevelAccessor level, @Nonnull BlockPos pos, @Nonnull BlockPos neighbourPos) {
+        if (side == mountedOn(state) && !canSurvive(state, level, pos)) return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+        return super.updateShape(state, side, neighbour, level, pos, neighbourPos);
     }
 
     @Override public @Nullable BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) { return new ComponentBlockEntity(pos, state); }
 
     /** The pin on world side {@code side} of this block, or -1. */
     public static int pinAt(BlockState state, Direction side) {
-        if (!(state.getBlock() instanceof ComponentBlock c)) return -1;
+        // a mounted part's pins are all wired through its tray
+        if (!(state.getBlock() instanceof ComponentBlock c) || state.getValue(MOUNTED)) return -1;
         return c.type.pinAt(state.getValue(FACING), state.getValue(SPIN), side);
     }
 
     /** How many pins are on world side {@code side}: 0, 1, or {@link ComponentType#BUS} for a bus face. */
     public static int widthAt(BlockState state, Direction side) {
-        if (!(state.getBlock() instanceof ComponentBlock c)) return 0;
+        if (!(state.getBlock() instanceof ComponentBlock c) || state.getValue(MOUNTED)) return 0;
         return c.type.widthAt(state.getValue(FACING), state.getValue(SPIN), side);
     }
 
@@ -110,8 +150,9 @@ public class ComponentBlock extends Block implements EntityBlock {
             }
             case REDSTONE_SWITCH -> player.displayClientMessage(Component.translatable("message.fourtwenty.component.redstone"), true);
             case DISPLAY -> {
+                // its hex/decimal toggle is on its back; a mounted one's back is on its tray, so it toggles from the front
                 Direction back = Orientation.toWorld(state.getValue(FACING), state.getValue(SPIN), ComponentType.Face.BACK);
-                if (hit.getDirection() != back) return InteractionResult.PASS;
+                if (!state.getValue(MOUNTED) && hit.getDirection() != back) return InteractionResult.PASS;
                 be.step(1);
                 BIGrid.changed(level);
                 level.sendBlockUpdated(pos, state, state, 2);

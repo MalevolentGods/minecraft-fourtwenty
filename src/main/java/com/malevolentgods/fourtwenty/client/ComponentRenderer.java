@@ -50,6 +50,12 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
         pose.translate(-0.5, -0.5, -0.5);
         // ask for each buffer where it's drawn: a batched source ends one buffer when another is asked for
         TextureAtlasSprite glow = sprite("lab_glow");
+        boolean mounted = be.getBlockState().getValue(ComponentBlock.MOUNTED);
+        if (mounted && type.part != ComponentType.Part.DISPLAY) {
+            mounted(be, type, pose, buffers, light, glow);
+            pose.popPose();
+            return;
+        }
         // a lime ring round each gland while it's active (two-pin parts: front and back)
         if (Shown.active(shown) && type.layout == ComponentType.Layout.TWO_PIN) {
             VertexConsumer add = buffers.getBuffer(RenderType.lightning());
@@ -199,6 +205,35 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
         pose.popPose();
     }
 
+    /**
+     * A switch mounted on a Rolling Tray, its plate against the tray (z 13 to 16): a Puff Button's cap stands out of its collar and pushes
+     * in, glowing while held; a Toggle Joint's lever, on its boss, flips up for on and down for off, a lime lamp beside it while on.
+     */
+    private static void mounted(ComponentBlockEntity be, ComponentType type, PoseStack pose, MultiBufferSource buffers, int light, TextureAtlasSprite glow) {
+        boolean closed = be.getBlockState().getValue(ComponentBlock.ON);
+        if (type == ComponentType.PUFF_BUTTON) {
+            float m = motion(be, 22f, 6f);
+            double in = 0.9 * m;
+            box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("component/lab_brass"), 5.6, 5.6, 10.4 + in, 10.4, 10.4, 11.95,
+                    0xFFFFFF, light);
+            box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 6.3, 6.3, 10.3 + in, 9.7, 9.7, 10.4 + in,
+                    closed ? LIME : 0x6A7A40, closed ? LightTexture.FULL_BRIGHT : light);
+            return;
+        }
+        if (type == ComponentType.TOGGLE_JOINT) {
+            float m = motion(be, 9f, 9f);
+            pose.pushPose();
+            pose.translate(8 / 16f, 8 / 16f, 11.6 / 16f);
+            pose.mulPose(Axis.XP.rotationDegrees(-28 + 56 * m));
+            pose.translate(-8 / 16f, -8 / 16f, -11.6 / 16f);
+            box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("infuser/steel_trim"), 7.45, 7.45, 6.6, 8.55, 8.55, 11.6, 0xFFFFFF, light);
+            box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("component/lab_brass"), 7, 7, 5.6, 9, 9, 6.6, 0xFFFFFF, light);
+            pose.popPose();
+            box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 11.6, 11.6, 12.85, 12.8, 12.8, 12.95,
+                    closed ? LIME : LIME_OFF, closed ? LightTexture.FULL_BRIGHT : light);
+        }
+    }
+
     /** Segments a to g for 0-9 and A-F (a top, b top right, c bottom right, d bottom, e bottom left, f top left, g middle). */
     private static final int[] GLYPHS = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71};
     /** Each segment as (left, bottom, right, top) in voxels as you face the display: a digit 7 wide and 9 high. */
@@ -226,12 +261,17 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
             row.add(d);
         }
         int place = row.indexOf(be), n = row.size();
+        // a mounted digit is a plate on its tray: its screen 7 voxels further back, and no toggle on its back (it toggles from the front)
+        boolean mounted = state.getValue(ComponentBlock.MOUNTED);
+        double dz = mounted ? 7 : 0;
         ComponentBlockEntity source = null;
         // the source: the first that's powered with something plugged into its back (a Ribbon, or a bus face)
         for (ComponentBlockEntity d : row) if (Shown.active(d.shown()) && fed(level, d)) { source = d; break; }
         // the back toggle: up for hex, down for decimal
         boolean hex = be.value() > 0.5;
-        box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("infuser/steel_trim"), 7.6, hex ? 12.2 : 10.9, 12.4, 8.4, hex ? 13.4 : 12.1, 13.4, 0xFFFFFF, light);
+        if (!mounted) {
+            box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("infuser/steel_trim"), 7.6, hex ? 12.2 : 10.9, 12.4, 8.4, hex ? 13.4 : 12.1, 13.4, 0xFFFFFF, light);
+        }
         String text = "";
         boolean overflow = false;
         if (source != null) {
@@ -249,7 +289,7 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
             boolean on = k < 7 ? (glyph >> k & 1) != 0 : point;
             double[] s = SEGMENTS[k];
             // as you face it, its left is the model's east: x runs the other way
-            box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("component/lab_glow"), 16 - s[2], s[1], 4.7, 16 - s[0], s[3], 4.8,
+            box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("component/lab_glow"), 16 - s[2], s[1], 4.7 + dz, 16 - s[0], s[3], 4.8 + dz,
                     on ? LIME : source != null ? 0x1E2A14 : 0x161A12, on ? LightTexture.FULL_BRIGHT : light);
         }
     }
@@ -257,14 +297,16 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
     private static boolean fed(net.minecraft.world.level.Level level, ComponentBlockEntity d) {
         var s = d.getBlockState();
         net.minecraft.core.Direction back = com.malevolentgods.fourtwenty.electronics.Orientation.toWorld(s.getValue(ComponentBlock.FACING), s.getValue(ComponentBlock.SPIN), ComponentType.Face.BACK);
-        var behind = level.getBlockState(d.getBlockPos().relative(back));
+        // a mounted one is fed through its tray: a Ribbon on the tray's back
+        net.minecraft.core.BlockPos at = d.getBlockPos().relative(back, s.getValue(ComponentBlock.MOUNTED) ? 2 : 1);
+        var behind = level.getBlockState(at);
         return behind.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RibbonBlock || ComponentBlock.busAt(behind, back.getOpposite()) >= 0;
     }
 
     private static boolean same(net.minecraft.world.level.Level level, net.minecraft.core.BlockPos at, net.minecraft.world.level.block.state.BlockState like) {
         var s = level.getBlockState(at);
         return s.getBlock() == like.getBlock() && s.getValue(ComponentBlock.FACING) == like.getValue(ComponentBlock.FACING)
-                && s.getValue(ComponentBlock.SPIN) == like.getValue(ComponentBlock.SPIN);
+                && s.getValue(ComponentBlock.SPIN) == like.getValue(ComponentBlock.SPIN) && s.getValue(ComponentBlock.MOUNTED) == like.getValue(ComponentBlock.MOUNTED);
     }
 
     /**

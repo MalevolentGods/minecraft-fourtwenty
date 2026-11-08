@@ -29,6 +29,8 @@ public class TwisterItem extends Item {
         Direction face = context.getClickedFace();
         // looking at a face, clockwise is the negative turn about its outward axis for faces pointing the positive way, and the reverse
         boolean clockwise = (face.getAxisDirection() == Direction.AxisDirection.POSITIVE) != (context.getPlayer() != null && context.getPlayer().isSecondaryUseActive());
+        // a part mounted on a Rolling Tray faces out from it: there's no other way for it to turn
+        if (state.hasProperty(ComponentBlock.MOUNTED) && state.getValue(ComponentBlock.MOUNTED)) return InteractionResult.PASS;
         BlockState turned = turn(state, face.getAxis(), clockwise);
         level.setBlock(pos, turned, 3);
         BIGrid.changed(level);

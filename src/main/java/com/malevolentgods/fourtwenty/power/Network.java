@@ -50,6 +50,9 @@ public final class Network {
     /** A Ribbon and the node each of its wires is on. */
     record RibbonAt(BlockPos pos, int[] wires) {}
 
+    /** A lamp the circuit drives: its signal and its − as nodes. */
+    record LampAt(BlockPos pos, int signal, int minus) {}
+
     private record Run(int start, int end, double ohms) {}
 
     final int version;
@@ -81,6 +84,8 @@ public final class Network {
     final List<Placed> placed;
     /** The Ribbons joined to its components, for their glow. */
     List<RibbonAt> ribbons = List.of();
+    /** The lamps on it (a lamp is a small load from its signal to its −, lit while its signal is a 1). */
+    List<LampAt> lamps = List.of();
 
     private Network(int version, long walkedAt, List<Member> members, List<Wick> wicks, List<Run> runs, int nodes, Map<BlockPos, DaisyLine.Reason> daisyFailed,
                     List<BINode[]> couplings, List<Placed> placed) {
@@ -208,6 +213,17 @@ public final class Network {
                 queue.add(new Object[]{at.immutable(), null, "ribbon"});
             }
         };
+        // Rolling Trays (panel boards) and the lamps on them or on their own: walked as wiring, by union, like Ribbons
+        java.util.function.Consumer<BlockPos> tray = at -> {
+            if (seen.add(at.immutable())) queue.add(new Object[]{at.immutable(), null, "tray"});
+        };
+        Set<BlockPos> lampsMet = new java.util.LinkedHashSet<>();
+        java.util.function.Consumer<BlockPos> lamp = at -> {
+            if (seen.add(at.immutable())) {
+                lampsMet.add(at.immutable());
+                queue.add(new Object[]{at.immutable(), null, "lamp"});
+            }
+        };
         int bus = com.malevolentgods.fourtwenty.electronics.ComponentType.BUS;
         java.util.function.BiConsumer<Conductor, Conductor> edge = (a, b) -> {
             wickEdges.computeIfAbsent(a, k -> new HashSet<>()).add(b);
@@ -232,6 +248,10 @@ public final class Network {
                         ribbon.accept(next);
                         continue;
                     }
+                    if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock) {
+                        tray.accept(next);
+                        continue;
+                    }
                     int first = com.malevolentgods.fourtwenty.electronics.ComponentBlock.busAt(nextState, d.getOpposite());
                     if (first >= 0) {
                         for (int c = 0; c < bus; c++) union.join(new RibbonKey(at, c), new PinKey(next.immutable(), first + c));
@@ -253,6 +273,85 @@ public final class Network {
                         }
                     }
                 }
+                continue;
+            }
+            if (item.length == 3 && "tray".equals(item[2])) {
+                // a Rolling Tray: its part on its front; trays beside it share the rails and the board bus; red and black Wicks on the
+                // rails; its back the part's signal (a Wick or thread for one, a Ribbon for a bus); any other Ribbon on the board bus
+                Direction front = com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.front(here), back = front.getOpposite();
+                int signals = com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.signals(level, at, here);
+                int channel = com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.channel(here);
+                int plus = com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.PLUS, minus = com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.MINUS, board = com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.BUS;
+                if (signals == 1 && channel != com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.NONE) union.join(new RibbonKey(at, 0), new RibbonKey(at, board + channel));
+                for (Direction d : Direction.values()) {
+                    BlockPos next = at.relative(d);
+                    if (!level.isLoaded(next)) continue;
+                    var nextState = level.getBlockState(next);
+                    if (d == front) {
+                        if (com.malevolentgods.fourtwenty.electronics.ComponentBlock.mountedOn(nextState) == d.getOpposite()) component.accept(next);
+                        else if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.block.LampBlock) lamp.accept(next);
+                        continue;
+                    }
+                    if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock) {
+                        union.join(new RibbonKey(at, plus), new RibbonKey(next.immutable(), plus));
+                        union.join(new RibbonKey(at, minus), new RibbonKey(next.immutable(), minus));
+                        for (int c = 0; c < bus; c++) union.join(new RibbonKey(at, board + c), new RibbonKey(next.immutable(), board + c));
+                        tray.accept(next);
+                        continue;
+                    }
+                    if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RibbonBlock) {
+                        if (d == back && signals == bus) {
+                            for (int c = 0; c < bus; c++) union.join(new RibbonKey(next.immutable(), c), new RibbonKey(at, c));
+                        } else if (d == back && signals == 1 && nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RoachClipBlock) {
+                            union.join(new RibbonKey(next.immutable(), com.malevolentgods.fourtwenty.electronics.RoachClipBlock.channel(nextState)), new RibbonKey(at, 0));
+                        } else {
+                            for (int c = 0; c < bus; c++) union.join(new RibbonKey(next.immutable(), c), new RibbonKey(at, board + c));
+                        }
+                        ribbon.accept(next);
+                        continue;
+                    }
+                    if (nextState.getBlock() instanceof WickBlock wick) {
+                        Terminals.Sign sign = Terminal.signOf(nextState);
+                        int wire = d == back && signals == 1 ? 0 : sign == Terminals.Sign.PLUS ? plus : sign == Terminals.Sign.MINUS ? minus : -1;
+                        if (wire < 0) continue;
+                        contacts.add(new Object[]{new RibbonKey(at, wire), new Conductor(next.immutable(), Core.WIRE)});
+                        if (wickTiers.size() < MAX_WICKS && seen.add(next.immutable())) {
+                            addWick.accept(next, wick);
+                            queue.add(new Object[]{next.immutable(), null});
+                        }
+                    }
+                }
+                continue;
+            }
+            if (item.length == 3 && "lamp".equals(item[2])) {
+                // a lamp: its signal (wire 0) from any Wick or thread but a black one, its − (wire 1) from a black Wick; or both from the
+                // Rolling Tray it's in front of
+                for (Direction d : Direction.values()) {
+                    BlockPos next = at.relative(d);
+                    if (!level.isLoaded(next)) continue;
+                    var nextState = level.getBlockState(next);
+                    if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock && com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.front(nextState) == d.getOpposite()) {
+                        union.join(new RibbonKey(at, 0), new RibbonKey(next.immutable(), 0));
+                        union.join(new RibbonKey(at, 1), new RibbonKey(next.immutable(), com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.MINUS));
+                        tray.accept(next);
+                        continue;
+                    }
+                    if (!(nextState.getBlock() instanceof WickBlock wick)) continue;
+                    int wire = Terminal.signOf(nextState) == Terminals.Sign.MINUS ? 1 : 0;
+                    contacts.add(new Object[]{new RibbonKey(at, wire), new Conductor(next.immutable(), Core.WIRE)});
+                    if (wickTiers.size() < MAX_WICKS && seen.add(next.immutable())) {
+                        addWick.accept(next, wick);
+                        queue.add(new Object[]{next.immutable(), null});
+                    }
+                }
+                continue;
+            }
+            if (item.length == 3 && com.malevolentgods.fourtwenty.electronics.ComponentBlock.mountedOn(here) != null) {
+                // a part mounted on a Rolling Tray: every pin wired through the tray (its supply to the rails, its signal to the back)
+                BlockPos trayAt = at.relative(com.malevolentgods.fourtwenty.electronics.ComponentBlock.mountedOn(here));
+                var type = components.get(at);
+                for (int i = 0; i < type.layout.pins.size(); i++) union.join(new PinKey(at, i), new RibbonKey(trayAt, type.mountWire(i)));
+                if (level.isLoaded(trayAt) && level.getBlockState(trayAt).getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock) tray.accept(trayAt);
                 continue;
             }
             if (item.length == 3) {
@@ -378,6 +477,14 @@ public final class Network {
                 if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RoachClipBlock) {
                     contacts.add(new Object[]{new RibbonKey(next.immutable(), com.malevolentgods.fourtwenty.electronics.RoachClipBlock.channel(nextState)), new Conductor(at, Core.WIRE)});
                     ribbon.accept(next);
+                    continue;
+                }
+                if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock) {
+                    tray.accept(next);
+                    continue;
+                }
+                if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.block.LampBlock) {
+                    lamp.accept(next);
                     continue;
                 }
                 if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlock) {
@@ -530,8 +637,11 @@ public final class Network {
                 ribbonsAt.add(new RibbonAt(at, wires));
             }
         }
+        List<LampAt> lampsAt = new ArrayList<>();
+        for (BlockPos at : lampsMet) lampsAt.add(new LampAt(at, nodeFor.apply(new RibbonKey(at, 0)), nodeFor.apply(new RibbonKey(at, 1))));
         Network made = new Network(BIGrid.version(level), level.getGameTime(), members, new ArrayList<>(wicks.values()), runs, count[0], daisyFailed, couplings, placed);
         made.ribbons = ribbonsAt;
+        made.lamps = lampsAt;
         return made;
     }
 
@@ -755,7 +865,7 @@ public final class Network {
         long now = level.getGameTime();
         if (tickedAt == now) return;
         tickedAt = now;
-        if (!placed.isEmpty()) {
+        if (!placed.isEmpty() || !lamps.isEmpty()) {
             tickLive(level, now);
             move(now);
             checks(level, now, burnTimers);
@@ -826,6 +936,8 @@ public final class Network {
     private final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.RgbLed> liveLeds = new ArrayList<>();
     private final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.Transformer> liveWindings = new ArrayList<>();
     private final List<Double> liveWindingOhms = new ArrayList<>();
+    /** A lamp in the circuit: a few kΦ, a milli-Ig or so from a logic 1. */
+    static final double LAMP_OHMS = 4200;
 
     /** One tick of a network with components: build it if its machines changed, then run it for a tick of time, logic and all. */
     private void tickLive(Level level, long now) {
@@ -879,6 +991,10 @@ public final class Network {
             for (int c = 0; c < r.wires().length; c++) if (live.volts(r.wires()[c]) - low > 0.5 * sourceVolts()) bits |= 1 << c;
             be.show(com.malevolentgods.fourtwenty.domain.electronics.Shown.pack(bits, 0, bits != 0, false));
         }
+        // each lamp: lit while its signal stands a 1 above its −
+        for (LampAt l : lamps) {
+            com.malevolentgods.fourtwenty.block.LampBlock.circuit(level, l.pos(), live.volts(l.signal()) - live.volts(l.minus()) > 0.5 * sourceVolts());
+        }
         solution = liveSolution(ok);
         var led = com.malevolentgods.fourtwenty.lights.LightsConfig.led();
         status = new int[members.size()];
@@ -907,6 +1023,7 @@ public final class Network {
         liveWindingOhms.clear();
         liveParts.clear();
         for (Run r : runs) liveRuns.add(net.resistor(r.start(), r.end(), r.ohms()));
+        for (LampAt l : lamps) net.resistor(l.signal(), l.minus(), LAMP_OHMS);
         sourceIndex = new int[members.size()];
         loadIndex = new int[members.size()];
         ledIndex = new int[members.size()];
@@ -1282,7 +1399,7 @@ public final class Network {
     /** What everything on it but {@code except} asks for, in Willards, without solving: loads' demand, and room in batteries. */
     double demandBeyond(BINode except) {
         // electronics draw power too: a network with components wants its source lit
-        double total = placed.isEmpty() ? 0 : 1;
+        double total = placed.isEmpty() && lamps.isEmpty() ? 0 : 1;
         for (Member m : members) {
             BINode n = m.node();
             if (n == Terminal.owner(except)) continue;

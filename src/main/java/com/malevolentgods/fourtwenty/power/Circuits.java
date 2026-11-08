@@ -5,7 +5,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.WeakHashMap;
@@ -108,9 +110,29 @@ public final class Circuits {
     /** What the Inspoweedometer reads at a component: found from the Wick or Hemp Thread on any of its pin faces. */
     public static Optional<ComponentReading> componentReading(Level level, BlockPos pos) {
         var state = level.getBlockState(pos);
+        List<BlockPos> wires = new ArrayList<>();
         for (Direction d : Direction.values()) {
-            if (com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(state, d) < 0) continue;
-            BlockPos wire = pos.relative(d);
+            if (com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(state, d) >= 0) wires.add(pos.relative(d));
+        }
+        // a part mounted on a Rolling Tray: the Wicks on its board, found through the trays beside its own
+        Direction back = com.malevolentgods.fourtwenty.electronics.ComponentBlock.mountedOn(state);
+        if (back != null) {
+            java.util.ArrayDeque<BlockPos> trays = new java.util.ArrayDeque<>(List.of(pos.relative(back)));
+            java.util.Set<BlockPos> met = new java.util.HashSet<>(trays);
+            while (!trays.isEmpty() && met.size() < 256) {
+                BlockPos t = trays.poll();
+                if (!(level.getBlockState(t).getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock)) continue;
+                for (Direction d : Direction.values()) {
+                    BlockPos next = t.relative(d);
+                    if (level.getBlockState(next).getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock) {
+                        if (met.add(next)) trays.add(next);
+                    } else {
+                        wires.add(next);
+                    }
+                }
+            }
+        }
+        for (BlockPos wire : wires) {
             if (!(level.getBlockState(wire).getBlock() instanceof WickBlock)) continue;
             for (Object[] found : terminalOnLine(level, wire).stream().toList()) {
                 Network net = network(level, (BINode) found[0], (BlockPos) found[1]);

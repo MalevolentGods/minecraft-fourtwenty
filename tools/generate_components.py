@@ -233,6 +233,10 @@ PINS = {'two': [('back', 'in'), ('front', 'in')], 'one': [('top', 'vdd'), ('bott
         'display': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus')], 'none': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out')]}
 
 
+# the parts that mount flush on a Rolling Tray (ComponentType.mountable)
+MOUNTABLE = ('puff_button', 'toggle_joint', 'numb_nug')
+
+
 def component(cid, layout, look):
     logic = look not in BODY
     side = 'chip_side' if logic else f'{look}_side'
@@ -261,6 +265,11 @@ def component(cid, layout, look):
         write(ASSETS / f'models/block/component/{cid}{s}.json', {'parent': 'block/block', 'textures': tex, 'elements': elements})
     # keyed on on and off only: client/ComponentModel turns the model to any of the 24 orientations; a Resinator's value only tints
     variants = {f'on={on}': {'model': f'fourtwenty:block/component/{cid}{"_on" if on == "true" and len(states) == 2 else ""}'} for on in ('false', 'true')}
+    if cid in MOUNTABLE:
+        # mounted on a Rolling Tray: a plate (generate_component_lab.py), the same either way; the renderer draws what moves
+        variants = {f'mounted=false,{k}': v for k, v in variants.items()}
+        for on in ('false', 'true'):
+            variants[f'mounted=true,on={on}'] = {'model': f'fourtwenty:block/component/{cid}_mounted'}
     write(ASSETS / f'blockstates/{cid}.json', {'variants': variants})
     write(ASSETS / f'models/item/{cid}.json', {'parent': f'fourtwenty:block/component/{cid}'})
 
@@ -510,7 +519,7 @@ def thread():
 
 
 def data():
-    ids = ['hemp_thread', 'eighth_ribbon', 'roach_clip'] + [cid for cid, _, _, _ in TYPES]
+    ids = ['hemp_thread', 'eighth_ribbon', 'roach_clip', 'rolling_tray'] + [cid for cid, _, _, _ in TYPES]
     for cid in ids:
         write(DATA / f'fourtwenty/loot_table/blocks/{cid}.json', {'type': 'minecraft:block', 'pools': [{'rolls': 1, 'entries': [
             {'type': 'minecraft:item', 'name': f'fourtwenty:{cid}'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
@@ -521,6 +530,9 @@ def data():
     write(DATA / 'fourtwenty/recipe/eighth_ribbon.json', {'type': 'minecraft:crafting_shapeless', 'category': 'redstone',
           'ingredients': [{'item': 'fourtwenty:hemp_thread'}, {'item': 'fourtwenty:hemp_thread'}, {'item': 'fourtwenty:hemp_thread'},
                           {'item': 'minecraft:paper'}], 'result': {'id': 'fourtwenty:eighth_ribbon', 'count': 4}})
+    write(DATA / 'fourtwenty/recipe/rolling_tray.json', {'type': 'minecraft:crafting_shapeless', 'category': 'redstone',
+          'ingredients': [{'item': 'minecraft:iron_ingot'}, {'item': 'minecraft:copper_ingot'}, {'item': 'fourtwenty:eighth_ribbon'}],
+          'result': {'id': 'fourtwenty:rolling_tray', 'count': 4}})
     write(DATA / 'fourtwenty/recipe/twister.json', {'type': 'minecraft:crafting_shapeless', 'category': 'tools',
           'ingredients': [{'item': 'minecraft:iron_ingot'}, {'item': 'minecraft:iron_ingot'}, {'item': 'fourtwenty:hemp_thread'}],
           'result': {'id': 'fourtwenty:twister', 'count': 1}})
@@ -554,6 +566,12 @@ def data():
     lang['block.fourtwenty.roach_clip'] = 'Roach Clip'
     lang['tooltip.fourtwenty.item.roach_clip'] = 'Clips one channel of an Eighth Ribbon out to a Wick, Hemp Thread or a single pin; the rest pass straight through. Use it to step the channel (sneak to step back); its band shows which.'
     lang['message.fourtwenty.roach_clip.channel'] = 'Roach Clip: channel %s'
+    lang['block.fourtwenty.rolling_tray'] = 'Rolling Tray'
+    lang['tooltip.fourtwenty.item.rolling_tray'] = ('A panel board. Put a Puff Button, Toggle Joint or Numb Nug on its front and it mounts flush, no poles needed; a lamp in front of it is its lamp. '
+        'Trays side by side share power: a red Wick on any feeds them all, a black their return. Each part\'s signal comes out of its own tray\'s back (a Wick or Hemp Thread, '
+        'or a Ribbon for a Numb Nug), so a grid of parts is still wired one by one. Use it to put its part on a channel of the board\'s bus too (sneak to step back).')
+    lang['message.fourtwenty.rolling_tray.channel'] = 'Rolling Tray: channel %s'
+    lang['message.fourtwenty.rolling_tray.no_channel'] = 'Rolling Tray: no channel'
     lang['item.fourtwenty.twister'] = 'Twister'
     lang['tooltip.fourtwenty.item.twister'] = 'Turns a component a quarter turn about the face you use it on; sneak to turn it back. Any way a part can point is a few twists away, and it never flips or steps what it turns.'
     lang['tooltip.fourtwenty.item.hemp_thread'] = 'A thin single wire for signals: any colour joins any component pin it touches. Rated for a hundredth of a Hemp Wick.'

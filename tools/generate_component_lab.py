@@ -307,6 +307,86 @@ def numb_nug():
     return composite(solid, glass, {'header': 'fourtwenty:block/component/lab_header', 'screen': 'fourtwenty:block/component/lab_screen'})
 
 
+# ---- mounted on a Rolling Tray: a plate the full face of its space, its back on the tray (z 13 to 16), a trim frame round its front ----
+
+def plate(z=13, depth=0.5):
+    """A panel plate: steel the full face, a trim frame standing proud round its edge (no back faces where it sits on the plate, and its
+    sides only where they show), so plates side by side read as one panel."""
+    f = z - depth
+    return [box([0, 0, z], [16, 16, 16], '#body'),
+            box([0, 15, f], [16, 16, z], '#trim', faces=('north', 'east', 'west', 'up', 'down')),
+            box([0, 0, f], [16, 1, z], '#trim', faces=('north', 'east', 'west', 'up', 'down')),
+            box([0, 1, f], [1, 15, z], '#trim', faces=('north', 'east', 'west')),
+            box([15, 1, f], [16, 15, z], '#trim', faces=('north', 'east', 'west'))]
+
+
+def puff_button_mounted():
+    """A dark collar in the plate; the brass cap (the renderer's) stands out of it and pushes in."""
+    return composite(plate() + [box([5, 5, 12], [11, 11, 13], '#dark', faces=('north', 'east', 'west', 'up', 'down'))], [])
+
+
+def toggle_joint_mounted():
+    """A trim boss the lever (the renderer's) pivots on, flipping up for on; its lamp beside it is the renderer's too."""
+    return composite(plate() + [box([6, 6, 11.6], [10, 10, 13], '#trim', faces=('north', 'east', 'west', 'up', 'down'))], [])
+
+
+def numb_nug_mounted():
+    """The digit's screen the full face of the plate, deeper than a switch's (z 12 to 16), trim above and below, dark glass in front."""
+    solid = [box([0, 0, 12], [16, 16, 16], '#body'),
+             box([0, 15, 11.3], [16, 16, 12], '#trim', faces=('north', 'east', 'west', 'up', 'down')),
+             box([0, 0, 11.3], [16, 1, 12], '#trim', faces=('north', 'east', 'west', 'up', 'down')),
+             box([0, 1, 11.8], [16, 15, 12], '#screen', faces=('north',))]
+    glass = [box([0, 1, 11.4], [16, 15, 11.6], '#glass', faces=('north',))]
+    return composite(solid, glass, {'screen': 'fourtwenty:block/component/lab_screen'})
+
+
+MOUNTED = {'puff_button': puff_button_mounted, 'toggle_joint': toggle_joint_mounted, 'numb_nug': numb_nug_mounted}
+
+
+def rolling_tray():
+    """The Rolling Tray: a steel board. Its front a brass-framed socket the part sits in, four screws; its sides the board's rails, a red
+    line and a black; its back an IDC header with the channel's band (resistor colour code, the carry grey, none steel)."""
+    front = Image.fromarray(np.clip(brushed('#4A4E56', 12), 0, 255).astype(np.uint8))
+    d = ImageDraw.Draw(front)
+    d.rectangle([18, 18, 237, 237], outline=(194, 154, 68), width=10)
+    d.rectangle([30, 30, 225, 225], fill=(30, 32, 37))
+    for x, y in ((8, 8), (232, 8), (8, 232), (232, 232)):
+        d.ellipse([x - 6 + 6, y - 6 + 6, x + 6 + 6, y + 6 + 6], fill=(150, 154, 160))
+    d.rectangle([0, 0, 255, 255], outline=(110, 114, 122), width=4)
+    front.save(TEX / 'rolling_tray_front.png', optimize=True)
+    side = Image.fromarray(np.clip(brushed('#5A5E66', 12), 0, 255).astype(np.uint8))
+    d = ImageDraw.Draw(side)
+    d.rectangle([0, 92, 255, 104], fill=(208, 40, 40))
+    d.rectangle([0, 152, 255, 164], fill=(24, 24, 28))
+    d.rectangle([0, 0, 255, 255], outline=(110, 114, 122), width=4)
+    side.save(TEX / 'rolling_tray_side.png', optimize=True)
+    code = [0x1E1E1E, 0x7A4A21, 0xD02020, 0xF08020, 0xF0D020, 0x30A040, 0x2050D0, 0x8040C0, 0x808080]
+    for k in list(range(9)) + [None]:
+        back = Image.fromarray(np.clip(brushed('#2C2F35', 10), 0, 255).astype(np.uint8))
+        d = ImageDraw.Draw(back)
+        for i in range(9):
+            x = (2 + i) / 12 * 256
+            d.rectangle([x - 7, 100, x + 7, 156], fill=(40, 42, 48))
+            d.rectangle([x - 4, 112, x + 4, 144], fill=(200, 160, 60))
+        band = (120, 124, 132) if k is None else tuple(int(code[k] >> sh & 255) for sh in (16, 8, 0))
+        d.rectangle([40, 196, 215, 222], fill=band, outline=(70, 74, 82), width=3)
+        d.rectangle([0, 0, 255, 255], outline=(110, 114, 122), width=4)
+        name = 'rolling_tray_back' + ('' if k is None else f'_c{k}')
+        back.save(TEX / f'{name}.png', optimize=True)
+        tex = {'north': 'fourtwenty:block/component/rolling_tray_front', 'south': f'fourtwenty:block/component/{name}',
+               'east': 'fourtwenty:block/component/rolling_tray_side', 'west': 'fourtwenty:block/component/rolling_tray_side',
+               'up': 'fourtwenty:block/component/rolling_tray_side', 'down': 'fourtwenty:block/component/rolling_tray_side',
+               'particle': 'fourtwenty:block/component/rolling_tray_side'}
+        write(ASSETS / f'models/block/{name.replace("_back", "")}.json', {'parent': 'minecraft:block/cube', 'textures': tex})
+    turns = {'north': {}, 'east': {'y': 90}, 'south': {'y': 180}, 'west': {'y': 270}, 'up': {'x': 270}, 'down': {'x': 90}}
+    variants = {}
+    for facing, turn in turns.items():
+        for k in range(10):
+            variants[f'channel={k},facing={facing}'] = {'model': 'fourtwenty:block/rolling_tray' + ('' if k == 9 else f'_c{k}'), **turn}
+    write(ASSETS / 'blockstates/rolling_tray.json', {'variants': variants})
+    write(ASSETS / 'models/item/rolling_tray.json', {'parent': 'fourtwenty:block/rolling_tray'})
+
+
 def family_textures():
     header_texture()
     for cid, (layout, kind) in NUGS.items():
@@ -535,8 +615,14 @@ def main():
         on = ASSETS / f'models/block/component/{cid}_on.json'
         if on.exists():
             write(on, model)
+    for cid, make in MOUNTED.items():
+        model = make()
+        check(cid + '_mounted', model)
+        write(ASSETS / f'models/block/component/{cid}_mounted.json', model)
     supplies()
-    print(f'wrote {len(LAB)} lab components')
+    # last, so the textures before it keep their noise
+    rolling_tray()
+    print(f'wrote {len(LAB)} lab components, {len(MOUNTED)} mounted plates and the Rolling Tray')
 
 
 if __name__ == '__main__':

@@ -46,7 +46,12 @@ public final class ModElectronics {
     public static final DeferredHolder<Block, RoachClipBlock> ROACH_CLIP = ModBlocks.BLOCKS.register("roach_clip",
             () -> new RoachClipBlock(BlockBehaviour.Properties.of().strength(0.3f).sound(SoundType.METAL).noOcclusion()));
 
+    /** The Rolling Tray: a panel board that buttons, toggles, Numb Nugs and lamps mount on, side by side, each wired on its own. */
+    public static final DeferredHolder<Block, RollingTrayBlock> ROLLING_TRAY = ModBlocks.BLOCKS.register("rolling_tray",
+            () -> new RollingTrayBlock(BlockBehaviour.Properties.of().strength(0.8f).sound(SoundType.METAL)));
+
     static {
+        ALL.add(ModItems.ITEMS.register("rolling_tray", () -> new BlockItem(ROLLING_TRAY.get(), new Item.Properties())));
         ALL.add(ModItems.ITEMS.register("hemp_thread", () -> new BlockItem(HEMP_THREAD.get(), new Item.Properties())));
         ALL.add(ModItems.ITEMS.register("eighth_ribbon", () -> new BlockItem(EIGHTH_RIBBON.get(), new Item.Properties())));
         ALL.add(ModItems.ITEMS.register("roach_clip", () -> new BlockItem(ROACH_CLIP.get(), new Item.Properties())));

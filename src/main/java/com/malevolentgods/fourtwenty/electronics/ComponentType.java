@@ -156,6 +156,21 @@ public enum ComponentType {
         };
     }
 
+    /** A part people touch or read, that mounts flush on a Rolling Tray: a Puff Button, a Toggle Joint, a Numb Nug. */
+    public boolean mountable() { return part == Part.BUTTON || part == Part.TOGGLE || part == Part.DISPLAY; }
+
+    /** Its signal lines when mounted: one for a switch, a bus for a Numb Nug. */
+    public int mountSignals() { return part == Part.DISPLAY ? BUS : 1; }
+
+    /**
+     * Where pin {@code i} goes when mounted, as a Rolling Tray's wire: a switch's back pin to the board's +, its front to the tray's
+     * signal; a Numb Nug's supply to the rails, its nine data pins to the tray's signal lines.
+     */
+    public int mountWire(int i) {
+        if (part == Part.DISPLAY) return i == 0 ? RollingTrayBlock.PLUS : i == 1 ? RollingTrayBlock.MINUS : i - 2;
+        return i == 0 ? RollingTrayBlock.PLUS : 0;
+    }
+
     /** A transistor, read by its gate, drain and channel current. */
     public boolean fet() { return part == Part.NMOS || part == Part.PMOS; }
 

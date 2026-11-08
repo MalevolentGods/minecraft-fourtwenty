@@ -71,6 +71,8 @@ public class RibbonBlock extends Block implements net.minecraft.world.level.bloc
 
     /** Whether a Ribbon reaches toward {@code neighbour} on {@code side}: another Ribbon or Roach Clip, or a chip's bus face. */
     public static boolean links(Direction side, BlockState neighbour) {
+        // a Rolling Tray takes a Ribbon on any face but its front: on its back for its part, else on the board's bus
+        if (neighbour.getBlock() instanceof RollingTrayBlock) return RollingTrayBlock.front(neighbour) != side.getOpposite();
         return neighbour.getBlock() instanceof RibbonBlock || ComponentBlock.busAt(neighbour, side.getOpposite()) >= 0;
     }
 
