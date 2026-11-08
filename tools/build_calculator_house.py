@@ -4,8 +4,8 @@ back wall; behind it the sealed logic room tools/build_calculator.py fills. Prin
 
     python tools/build_calculator_house.py > house.cmds
 """
-X0, X1 = 299, 344               # walls included
-Z0, Z1 = -78, -7                # back wall, front wall
+X0, X1 = 299, 353               # walls included
+Z0, Z1 = -89, -7                # back wall, front wall
 FLOOR, ROOF = -61, -51          # floor level with the ground; the roof deck
 ZP = -14                        # the panel wall between the lobby and the logic room
 PANEL = (316, 327, -60, -52)    # x0, x1, y0, y1 of the dark surround round the panel (the trays themselves are the machine's)

@@ -12,7 +12,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 /**
  * The keypad calculator built on flatworld (CalculatorLayout, from tools/build_calculator.py), driven as a player would, key by key:
  * 1234 + 8765 = 9999; C, 9999 + 9999 = 19998; C, 5 - 8 = -3 (3, the display's minus on); C, 1 2 3 4 5 holds 1234 (the fifth digit
- * refused); C, 7 5 back = 7. Register X, its two Jar Nugs, is what the display shows.
+ * refused); C, 7 5 back = 7; then signed entries (+/-). Register X, its two Jar Nugs, is what the display shows.
  */
 @GameTestHolder("fourtwenty_tests")
 @PrefixGameTestTemplate(false)
@@ -44,6 +44,20 @@ public final class CalculatorGameTests {
         h.runAfterDelay(4, () -> {
             be.closed(false);
             h.runAfterDelay(4, () -> type(h, keys.substring(1), then));
+        });
+    }
+
+    /** Signed entries (+/-): -5 + 8 = 3; -3 - 4 = -7; -5 - -8 = 3. */
+    private static void signed(GameTestHelper h, Runnable then) {
+        type(h, "C5±+8=", () -> {
+            h.assertTrue(x(h) == 3 && !negative(h), "-5 + 8 = 3: " + x(h) + (negative(h) ? " negative" : ""));
+            type(h, "C3±-4=", () -> {
+                h.assertTrue(x(h) == 7 && negative(h), "-3 - 4 = -7: " + x(h) + (negative(h) ? " negative" : ""));
+                type(h, "C5±-8±=", () -> {
+                    h.assertTrue(x(h) == 3 && !negative(h), "-5 - -8 = 3: " + x(h) + (negative(h) ? " negative" : ""));
+                    then.run();
+                });
+            });
         });
     }
 
@@ -80,8 +94,10 @@ public final class CalculatorGameTests {
                             h.assertTrue(x(h) == 7, "C, 7 5 back = 7: " + x(h));
                             type(h, "C50-8=", () -> {
                                 h.assertTrue(x(h) == 42 && !negative(h), "50 - 8 = 42: " + x(h));
+                                signed(h, () -> {
                                 for (var c : forced) h.getLevel().setChunkForced(c.x, c.z, false);
                                 h.succeed();
+                                });
                             });
                         });
                     });

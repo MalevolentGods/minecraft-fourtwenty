@@ -4,6 +4,7 @@ wire would touch something it mustn't, then an independent check that each net r
 
     python tools/build_calculator.py > cmds          the flatworld commands for the machine (tools/build_calculator_house.py: its building)
     python tools/build_calculator.py java > Layout   the machine alone, for the game test (CalculatorLayout.java)
+    python tools/build_calculator.py both LAYOUT CMDS   both from one routing (it takes minutes)
 
 The machine works in 16 bits, every register a pair of Jar Nugs and every adder a pair of Stacker Nugs, the low one's carry into the
 high one's. Entries up to 9999 (a fifth digit is refused), sums up to 19998, differences shown as their size with a "negative" lamp.
@@ -27,18 +28,18 @@ DIRS = {'E': (1, 0, 0), 'W': (-1, 0, 0), 'S': (0, 0, 1), 'N': (0, 0, -1), 'U': (
 OPP = {'E': 'W', 'W': 'E', 'S': 'N', 'N': 'S', 'U': 'D', 'D': 'U'}
 
 
-def COL(k): return 306 + 4 * k
+def COL(k): return 306 + 5 * k
 
 
-def ROW(r): return -18 - 5 * r
+def ROW(r): return -18 - 6 * r
 
 
 # the arithmetic: its own, roomier grid behind the gates (16-bit buses crowd)
-def AP(k, r): return (306 + 6 * k, Y, ROW(5) - 6 * (r + 1))
+def AP(k, r): return (306 + 6 * k, Y, ROW(6) - 6 * (r + 1))
 
 
 BACK = AP(0, 4)[2] - 3
-BOUNDS = ((300, 343), (Y - 1, Y + 11), (BACK, ZP - 1))
+BOUNDS = ((300, 352), (Y - 1, Y + 11), (BACK, ZP - 1))
 ORIGIN = (299, FLOOR, BACK - 2)        # the game test's layout is relative to this (the back wall's corner)
 
 TYPE = {}                       # net -> 'ribbon', 'thread', 'lime' (a lime Hemp Thread: it joins only lime), 'red', 'black'
@@ -170,23 +171,25 @@ chip('DEAL', 'dealer_nug', (COL(5), Y, ROW(1)), {'W': ('tap', 'K', 3, 'B3'), 'S'
 gate('OR2', 'or_nug', 6, 1, ('tap', 'DEC', 3, 'MINUS'), ('tap', 'DEC', 2, 'PLUS'), 'OPK')
 net('OP', 'lime')
 gate('LATCH', 'latch_nug', 7, 1, ('tap', 'DEC', 3, 'MINUS'), ('tap', 'DEC', 2, 'PLUS'), 'OP')
-inv('NOTOP', 8, 1, 'OP', 'NOP')
+inv('NOTEFF', 8, 1, 'EFF', 'NEFF')
 # clocks, gated by a refusal
 gate('AND3', 'and_nug', 0, 2, 'CLK1', 'OPK', 'CLKA0')
 gate('ANDA', 'and_nug', 1, 2, 'CLKA0', 'NREF', 'CLKA')
-inv('NOT2', 2, 2, ('tap', 'DEC', 7, 'DOT'), 'NDOT')
-gate('AND4', 'and_nug', 3, 2, 'CLK2', 'NDOT', 'CLKX0')
-gate('ANDX', 'and_nug', 4, 2, 'CLKX0', 'NREF', 'CLKX')
+inv('NOT2', 2, 2, ('tap', 'DEC', 7, 'PM'), 'NPM')
+# CLKS: any key not refused (the sign's clock); CLKX: that, but not +/- (which flips only the sign)
+gate('AND4', 'and_nug', 3, 2, 'CLK2', 'NREF', 'CLKS')
+gate('ANDX', 'and_nug', 4, 2, 'CLKS', 'NPM', 'CLKX')
 inv('NOT5', 5, 2, ('tap', 'DEC', 6, 'BKS'), 'RP')
-# which result = takes: A + X after +; after -, A - X, or X - A if A - X borrows (NEG)
-gate('EQOP', 'and_nug', 6, 2, ('tap', 'DEC', 5, 'EQ'), 'OP', 'EQOP')
-gate('RELA', 'nand_nug', 7, 2, ('tap', 'DEC', 5, 'EQ'), 'NOP', 'RSA')
+# which result = takes, on the sizes: their sum when the signs and the operation make it one (EFF 0), else the larger less the smaller
+# (A - X, or X - A if A - X borrows: NEG)
+gate('EQOP', 'and_nug', 6, 2, ('tap', 'DEC', 5, 'EQ'), 'EFF', 'EQOP')
+gate('RELA', 'nand_nug', 7, 2, ('tap', 'DEC', 5, 'EQ'), 'NEFF', 'RSA')
 inv('NOTNEG', 8, 2, 'NEG', 'NNEG')
 gate('REL1', 'nand_nug', 0, 3, 'EQOP', 'NNEG', 'RS1')
 gate('SELNEG', 'and_nug', 1, 3, 'EQOP', 'NEG', 'SELNEG')
 inv('NOTS2', 2, 3, 'SELNEG', 'RS2')
-# the negative lamp: what SELNEG was when X last loaded
-gate('NEGFF', 'flip_flop_nug', 3, 3, 'SELNEG', 'CLKX', 'NEGQ')
+# X's sign (SX), a flip-flop beside X: kept by a digit or back, flipped by +/-, the result's on =, else (C, +, -) cleared
+gate('SXFF', 'flip_flop_nug', 3, 3, 'SXD', 'CLKS', 'SX')
 # refusals: a digit past 999, + or - past 9999; a refused key flashes the red lamp
 gate('R1', 'and_nug', 4, 3, 'DIG', 'BIG4', 'r1')
 gate('R2', 'and_nug', 5, 3, 'OPK', 'BIG5', 'r2')
@@ -203,6 +206,20 @@ for i, (big, hi, lo, k0) in enumerate((('BIG4', 0x03, 0xE8, 0), ('BIG5', 0x27, 0
     gate('T' + big, 'and_nug', k0 + 3, 4, ('tap', sh, 1, 'EQ' + big), 'GE' + big, 'T' + big)
     kk, rr = (k0 + 4, 4) if k0 + 4 <= 8 else (0, 5)
     gate(big, 'or_nug', kk, rr, ('tap', sh, 2, 'GT' + big), 'T' + big, big)
+# the signs: EFF (subtract the sizes) = A's sign xor X's xor the operation; the result's sign = A's, flipped if X - A was taken
+gate('XSA', 'xor_nug', 1, 5, 'SA', 'SX', 'SAX')
+gate('XEFF', 'xor_nug', 2, 5, 'SAX', 'OP', 'EFF')
+gate('EN', 'and_nug', 3, 5, 'EFF', 'NEG', 'EN')
+gate('RSG', 'xor_nug', 4, 5, 'SA', 'EN', 'RSIGN')
+gate('KEEP', 'or_nug', 5, 5, 'DIG', ('tap', 'DEC', 6, 'BKS'), 'KEEP')
+gate('K1', 'and_nug', 6, 5, 'KEEP', 'SX', 'K1')
+inv('NSX', 7, 5, 'SX', 'NSX')
+gate('F1', 'and_nug', 0, 6, ('tap', 'DEC', 7, 'PM'), 'NSX', 'F1')
+gate('Q1', 'and_nug', 1, 6, ('tap', 'DEC', 5, 'EQ'), 'RSIGN', 'Q1')
+gate('O1', 'or_nug', 2, 6, 'K1', 'F1', 'O1')
+gate('SXD', 'or_nug', 3, 6, 'O1', 'Q1', 'SXD')
+# A's sign: X's, taken when A takes X
+gate('SAFF', 'flip_flop_nug', 4, 6, 'SX', 'CLKA', 'SA')
 # arithmetic: x 10 as 2x, 4x, 8x, 8x + 2x; then + the digit (the code bus, into the low byte)
 add16('S1', 0, 0, 'XL', 'XH', 'XL', 'XH', 'X2L', 'X2H')
 add16('S2', 0, 1, 'X2L', 'X2H', 'X2L', 'X2H', 'X4L', 'X4H')
@@ -224,18 +241,18 @@ clip(step(AP(3, 4), 'W'), 'R1H', 8, 'NEG')
 # the display's high byte, its carry wire set while the result is negative: the Numb Nugs draw a minus in front
 SIGN_AT = (316, Y, ROW(0))      # near the display (deeper in, the room's too crowded to route its buses)
 chip('SIGN', 'blend_nug', SIGN_AT, {'W': bus('XH'), 'S': bus('MASKS'), 'E': bus('DH')}, '{value:2}')
-clip(step(SIGN_AT, 'S'), 'MASKS', 8, 'NEGQ')
+clip(step(SIGN_AT, 'S'), 'MASKS', 8, 'SX')
 # the supply: a Bottomless Stash in the room's far corner
 comp('STASH', 'bottomless_stash_puff[facing=north]', (COL(8), Y, ROW(5)),
      {'E': one('VDD'), 'D': one('GND'), 'W': NONE_ONE, 'N': NONE_ONE, 'S': NONE_ONE, 'U': NONE_ONE})
 
 # ---- the panel: trays in the wall at ZP facing south; keys at y -59 to -56, x 320 to 323; the display row at -55 -------------------
 KX, KY = 320, -59
-LAYOUT = [['7', '8', '9', 'C'], ['4', '5', '6', '-'], ['1', '2', '3', '+'], ['<', '0', '.', '=']]
-NUMBER = {**{str(d): d for d in range(10)}, '+': 10, '-': 11, 'C': 12, '=': 13, '<': 14, '.': 15}
+LAYOUT = [['7', '8', '9', 'C'], ['4', '5', '6', '-'], ['1', '2', '3', '+'], ['<', '0', '±', '=']]
+NUMBER = {**{str(d): d for d in range(10)}, '+': 10, '-': 11, 'C': 12, '=': 13, '<': 14, '±': 15}
 LABEL = {'<': '←', '-': '−'}
 # glows (dye ids): digits white, + and - lime, = green, C red, back orange, '.' gray
-GLOW = {**{str(d): 0 for d in range(10)}, '+': 5, '-': 5, '=': 13, 'C': 14, '<': 1, '.': 7}
+GLOW = {**{str(d): 0 for d in range(10)}, '+': 5, '-': 5, '=': 13, 'C': 14, '<': 1, '±': 5}
 DISPLAY_Y = KY + 4
 TRAYS = {}
 for r, row in enumerate(LAYOUT):
@@ -355,26 +372,37 @@ def route(n_):
                     changed = True
     grow()
     while todo:
+        # cheapest path, not shortest: a cell on the chips' own level or the ground plane costs more, so wires climb into the room
+        # above and leave the chips' faces free for the wires that must reach them
+        import heapq
         prev = {p: None for p in tree}
-        queue = deque(tree)
+        dist = {p: 0 for p in tree}
+        heap = [(0, p) for p in tree]
+        heapq.heapify(heap)
         hit = None
-        while queue:
-            p = queue.popleft()
+        while heap:
+            dp, p = heapq.heappop(heap)
+            if dp > dist.get(p, 1 << 30):
+                continue
+            if p in todo and p not in tree:
+                hit = p
+                break
+            if p in todo:
+                continue
             for d in DIRS:
                 q = step(p, d)
-                if q in prev:
-                    continue
-                if q in todo:
+                if q in todo and q not in prev:
                     if tap(p) and tap(q):
                         continue
+                    nd = dp + 1
+                elif free(q, n_) and ok(q, n_, t):
+                    nd = dp + (4 if q[1] <= Y else 1)
+                else:
+                    continue
+                if nd < dist.get(q, 1 << 30):
+                    dist[q] = nd
                     prev[q] = p
-                    hit = q
-                    break
-                if free(q, n_) and ok(q, n_, t):
-                    prev[q] = p
-                    queue.append(q)
-            if hit:
-                break
+                    heapq.heappush(heap, (nd, q))
         if not hit:
             raise Blocked(n_, sorted(todo)[:3])
         p = prev[hit]
@@ -392,7 +420,7 @@ def route(n_):
 ORDER = [n for n, t in TYPE.items() if t == 'ribbon'] + [n for n, t in TYPE.items() if t in ('thread', 'lime')] + ['VDD', 'GND']
 ORDER = [n for n in ORDER if n != 'direct']
 clean = (dict(grid), dict(reserved))
-for attempt in range(80):
+for attempt in range(300):
     grid.clear(); grid.update(clean[0])
     reserved.clear(); reserved.update(clean[1])
     try:
@@ -402,6 +430,13 @@ for attempt in range(80):
     except Blocked as e:
         n = e.args[0]
         ORDER.remove(n)
+        # the rest a little shuffled too (seeded, so a build is repeatable): moving only the stuck net first can go round in circles
+        import random
+        rng = random.Random(attempt)
+        for i in range(len(ORDER) - 1):
+            if rng.random() < 0.15:
+                j = min(len(ORDER) - 1, i + rng.randint(1, 4))
+                ORDER[i], ORDER[j] = ORDER[j], ORDER[i]
         ORDER.insert(0, n)
         sys.stderr.write(f'attempt {attempt}: {n} blocked, first next time' + chr(10))
 else:
@@ -486,7 +521,10 @@ def rel(p): return f'{{{p[0] - ORIGIN[0]}, {p[1] - ORIGIN[1]}, {p[2] - ORIGIN[2]
 
 
 # ---- the game test's layout: every block of the machine relative to ORIGIN ----------------------------------------------------------
-if len(sys.argv) > 1 and sys.argv[1] == 'java':
+BOTH = len(sys.argv) > 3 and sys.argv[1] == 'both'     # both LAYOUT.java CMDS: one routing, both files
+if BOTH:
+    sys.stdout = open(sys.argv[2], 'w', encoding='utf-8')
+if len(sys.argv) > 1 and sys.argv[1] in ('java', 'both'):
     NL = chr(10)
     lines = []
     for p, s, nbt in sorted(machine, key=lambda m: (m[0][1], m[0][0], m[0][2])):
@@ -514,7 +552,10 @@ if len(sys.argv) > 1 and sys.argv[1] == 'java':
     print(NL.join(lines))
     print('    };')
     print('}')
-    sys.exit(0)
+    if not BOTH:
+        sys.exit(0)
+    sys.stdout.close()
+    sys.stdout = open(sys.argv[3], 'w', encoding='utf-8')
 
 # ---- out: the machine (the building comes from tools/build_calculator_house.py, around it) -----------------------------------------
 out = [f'setblock {p[0]} {p[1]} {p[2]} {s}{nbt}' for p, s, nbt in machine]
