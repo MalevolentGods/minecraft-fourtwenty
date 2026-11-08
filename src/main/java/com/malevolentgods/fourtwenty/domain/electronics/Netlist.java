@@ -320,9 +320,23 @@ public final class Netlist {
     /** Something switched (a button, a gate's output): the next step starts with backward Euler, so the edge doesn't ring numerically. */
     public void breakpoint() { breakpoint = true; }
 
+    /** The tolerance a solve settles for when the one asked for can't be reached: SPICE's default, a thousandth, made a thousand times stricter. */
+    static final double LOOSE_RELTOL = 1e-6;
+
     private boolean solveRobustly() {
         double[] start = analysis.v.clone();
         if (newton(0)) return true;
+        // a node held only by gigaohm leakage (a logic output not yet driven, a diode's far side) can't be pinned to a part in a
+        // billion: it wobbles in its last digits for ever. Settle for a part in a million before the costly stepping below, which
+        // can't do better and, failing, would run again every tick.
+        if (analysis.reltol < LOOSE_RELTOL) {
+            double tight = analysis.reltol;
+            analysis.reltol = LOOSE_RELTOL;
+            boolean settled = newton(0);
+            analysis.reltol = tight;
+            if (settled) return true;
+            analysis.v = start.clone();
+        }
         // GMIN stepping: a big leak on every node, shrunk a decade at a time, each solve starting from the last
         analysis.v = start.clone();
         boolean ok = true;
