@@ -59,6 +59,21 @@ public class ComponentBlockEntity extends ShowingBlockEntity {
         }
     }
 
+    private String label = "";
+    private int glow = -1;
+
+    /** A mounted key's label (KeyLabels): a few characters on its face, empty for none. */
+    public String label() { return label; }
+
+    /** The dye its label glows in, or -1 for plain ink. */
+    public int glow() { return glow; }
+
+    public void label(String label, int glow) {
+        this.label = label;
+        this.glow = glow;
+        setChanged();
+    }
+
     public boolean closed() { return closed; }
 
     public void closed(boolean closed) {
@@ -96,6 +111,10 @@ public class ComponentBlockEntity extends ShowingBlockEntity {
         super.saveAdditional(tag, registries);
         tag.putInt("value", index);
         tag.putBoolean("closed", closed);
+        if (!label.isEmpty()) {
+            tag.putString("label", label);
+            tag.putInt("glow", glow);
+        }
         ListTag list = new ListTag();
         for (double d : memory) list.add(DoubleTag.valueOf(d));
         tag.put("memory", list);
@@ -105,6 +124,8 @@ public class ComponentBlockEntity extends ShowingBlockEntity {
         super.loadAdditional(tag, registries);
         index = tag.contains("value") ? tag.getInt("value") : -1;
         closed = tag.getBoolean("closed");
+        label = KeyLabels.clean(tag.getString("label"));
+        glow = tag.contains("glow") ? KeyLabels.glow(tag.getInt("glow")) : -1;
         // an update to a client carries what it shows, its value and its switch, not its memory
         if (tag.contains("memory")) {
             ListTag list = tag.getList("memory", Tag.TAG_DOUBLE);
@@ -117,5 +138,7 @@ public class ComponentBlockEntity extends ShowingBlockEntity {
     @Override protected void updateTag(CompoundTag tag) {
         tag.putInt("value", index);
         tag.putBoolean("closed", closed);
+        tag.putString("label", label);
+        tag.putInt("glow", glow);
     }
 }

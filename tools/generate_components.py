@@ -84,9 +84,9 @@ EXTRA = {
     'spliff_coil': 'An inductor, in Marleys. Use it to step its value (sneak to step back).',
     'one_hitter': 'A diode: current flows only from its back to its banded front.',
     'zen_hitter': 'A Zener diode: wired banded end to +, it holds its voltage. Use it to step its voltage.',
-    'toggle_joint': 'A switch: use it to flip it. Mounted on a Rolling Tray, the Twister sets the number a Dankoder reads it as.',
+    'toggle_joint': 'A switch: use it to flip it. Mounted on a Rolling Tray, the Twister sets the number a Dankoder reads it as, and sneak-using it with an empty hand gives it a label and a glow.',
     'kill_switch': 'A switch closed while it has a redstone signal.',
-    'puff_button': 'A button: closed for a second when used. Mounted on a Rolling Tray, the Twister sets the number a Dankoder reads it as (shown on its cap).',
+    'puff_button': 'A button: closed for a second when used. Mounted on a Rolling Tray, the Twister sets the number a Dankoder reads it as (shown on its cap), and sneak-using it with an empty hand gives it a label and a glow.',
     'dankoder': 'A keypad encoder: while a key is down it gives that key\'s number; let go, it keeps the last one. Two down, the lower wins. Against a board of Rolling Trays it numbers the buttons and toggles on it in reading order, top row first, left to right; the Twister on a key gives it any number 0 to F.',
     'slow_burner': 'Lets through a steady current, its setting, whatever the voltage across it once that is a Kb or so: a Kief Cap fills or drains at a steady rate through it. It makes no current of its own; a supply drives it. Use it to step its current (sneak to step back).',
     'tri_state_nug': 'Left is A, right is enable: passes A while enabled, lets go of its output otherwise.',
@@ -577,6 +577,9 @@ def data():
     lang['message.fourtwenty.rolling_tray.channel'] = 'Rolling Tray: channel %s'
     lang['message.fourtwenty.dankoder.key'] = 'Key: %s'
     lang['message.fourtwenty.dankoder.auto'] = 'Key: its place on the board'
+    lang['gui.fourtwenty.key_label'] = 'Key Label'
+    lang['gui.fourtwenty.key_label.text'] = 'Up to 4 characters on its face'
+    lang['gui.fourtwenty.key_label.no_glow'] = 'No glow: plain ink'
     lang['message.fourtwenty.rolling_tray.no_channel'] = 'Rolling Tray: no channel'
     lang['item.fourtwenty.twister'] = 'Twister'
     lang['tooltip.fourtwenty.item.twister'] = 'Turns a component a quarter turn about the face you use it on; sneak to turn it back. Any way a part can point is a few twists away, and it never flips or steps what it turns.'

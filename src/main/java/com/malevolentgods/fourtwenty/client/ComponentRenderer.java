@@ -218,10 +218,12 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
             double in = 0.9 * m;
             box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("component/lab_brass"), 5.6, 5.6, 10.4 + in, 10.4, 10.4, 11.95,
                     0xFFFFFF, light);
-            int lens = number >= 0 ? closed ? 0x3A5A20 : 0x141A10 : closed ? LIME : 0x6A7A40;
+            boolean labelled = !be.label().isEmpty();
+            int lens = labelled ? closed ? 0x2A2E26 : 0x15171A : number >= 0 ? closed ? 0x3A5A20 : 0x141A10 : closed ? LIME : 0x6A7A40;
             box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 6.3, 6.3, 10.3 + in, 9.7, 9.7, 10.4 + in,
-                    lens, closed || number >= 0 ? LightTexture.FULL_BRIGHT : light);
-            if (number >= 0) glyph(pose, buffers, number, 6.6, 6.0, 9.4, 10.0, 10.2 + in, closed ? 0xE8FFB0 : LIME);
+                    lens, closed || number >= 0 && !labelled ? LightTexture.FULL_BRIGHT : light);
+            if (labelled) text(pose, buffers, be.label(), be.glow(), closed, 8, 8, 10.27 + in, 3.6, 2.8, light);
+            else if (number >= 0) glyph(pose, buffers, number, 6.6, 6.0, 9.4, 10.0, 10.2 + in, closed ? 0xE8FFB0 : LIME);
             return;
         }
         if (type == ComponentType.TOGGLE_JOINT) {
@@ -235,8 +237,36 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
             pose.popPose();
             box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 11.6, 11.6, 12.85, 12.8, 12.8, 12.95,
                     closed ? LIME : LIME_OFF, closed ? LightTexture.FULL_BRIGHT : light);
-            if (number >= 0) glyph(pose, buffers, number, 2.0, 2.0, 4.6, 5.6, 12.85, LIME);
+            if (!be.label().isEmpty()) text(pose, buffers, be.label(), be.glow(), closed, 8, 3.2, 12.9, 11, 2.6, light);
+            else if (number >= 0) glyph(pose, buffers, number, 2.0, 2.0, 4.6, 5.6, 12.85, LIME);
         }
+    }
+
+    /**
+     * A key's label, centred on (cx, cy) at depth z, as large as fits (maxW by maxH voxels): plain ink, or glowing in its dye's colour
+     * with a darker halo, brighter while the key is down.
+     */
+    private static void text(PoseStack pose, MultiBufferSource buffers, String label, int dye, boolean down, double cx, double cy, double z,
+                             double maxW, double maxH, int light) {
+        var font = Minecraft.getInstance().font;
+        int w = font.width(label);
+        if (w == 0) return;
+        float s = (float) Math.min(maxW / w, maxH / 7.0) / 16f;
+        pose.pushPose();
+        pose.translate(cx / 16, cy / 16, z / 16);
+        // text faces south as drawn; turned to face the key's front (north in the model), reading left to right as you face it
+        pose.mulPose(Axis.YP.rotationDegrees(180));
+        pose.scale(s, -s, s);
+        float x = -w / 2f, y = -3.5f;
+        if (dye >= 0) {
+            int c = net.minecraft.world.item.DyeColor.byId(dye).getFireworkColor();
+            if (down) c = lerp(c, 0xFFFFFF, 0.45f);
+            font.drawInBatch8xOutline(net.minecraft.network.chat.Component.literal(label).getVisualOrderText(), x, y, c, lerp(c, 0x000000, 0.65f),
+                    pose.last().pose(), buffers, LightTexture.FULL_BRIGHT);
+        } else {
+            font.drawInBatch(label, x, y, down ? 0xFFFFFF : 0xD8D8D8, false, pose.last().pose(), buffers, net.minecraft.client.gui.Font.DisplayMode.POLYGON_OFFSET, 0, light);
+        }
+        pose.popPose();
     }
 
     /** A hex digit in seven segments over the box (left, bottom, right, top) as you face it, at depth {@code z}: a key's label. */

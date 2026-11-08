@@ -75,6 +75,7 @@ public final class ModElectronics {
     public static void init() {}
 
     public static void register(net.neoforged.bus.api.IEventBus bus) {
+        KeyLabels.register(bus);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.power.Network::startTick);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.power.InspoweedometerItem::rightClickBlock);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.power.InspoweedometerItem::playerTick);
