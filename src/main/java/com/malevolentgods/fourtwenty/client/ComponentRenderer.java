@@ -118,9 +118,10 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
                 double period = Math.max(0.05, be.value());
                 float amp = period < 0.3 ? 6 : 22;
                 pose.pushPose();
-                pose.translate(8 / 16f, 13.6 / 16f, 8 / 16f);
+                // it hangs from the pivot block under the cap (y 13.1 to 13.75), its rod running up into it
+                pose.translate(8 / 16f, 13.4 / 16f, 8 / 16f);
                 pose.mulPose(Axis.ZP.rotationDegrees(amp * (float) Math.sin(2 * Math.PI * time / period)));
-                pose.translate(-8 / 16f, -13.6 / 16f, -8 / 16f);
+                pose.translate(-8 / 16f, -13.4 / 16f, -8 / 16f);
                 box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("infuser/steel_trim"), 7.75, 11.4, 7.75, 8.25, 13.6, 8.25, 0xFFFFFF, light);
                 boolean high = Shown.bit(shown, 0);
                 box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), high ? glow : sprite("component/lab_brass"),

@@ -437,10 +437,20 @@ def thread():
             k = rnd.randint(-10, 10) - (26 if edge else 0)
             px[x, y] = (max(0, base[0] + k), max(0, base[1] + k), max(0, base[2] + k), 255)
     save(img, ASSETS / 'textures/block/power/hemp_thread.png')
-    lit = img.copy()
-    d = ImageDraw.Draw(lit)
-    d.rectangle([0, 28, n - 1, 35], fill=(170, 240, 110, 255))
+    # carrying current: the whole braid warmed toward lime, not a band (on a thread two pixels thick a band fills the face)
+    lit = Image.blend(img, Image.new('RGBA', (n, n), (170, 240, 110, 255)), 0.32)
     save(lit, ASSETS / 'textures/block/power/hemp_thread_lit.png')
+    # the knot: darker twine wound round the join, turn by turn
+    knot = Image.new('RGBA', (n, n), (0, 0, 0, 255))
+    kp = knot.load()
+    for y in range(n):
+        for x in range(n):
+            turn = (y + x // 16) % 6
+            base = (120, 92, 52) if turn in (0, 5) else (150, 118, 70)
+            k = rnd.randint(-8, 8)
+            kp[x, y] = (base[0] + k, base[1] + k, base[2] + k, 255)
+    save(knot, ASSETS / 'textures/block/power/hemp_thread_knot.png')
+    save(Image.blend(knot, Image.new('RGBA', (n, n), (170, 240, 110, 255)), 0.32), ASSETS / 'textures/block/power/hemp_thread_knot_lit.png')
 
     def tinted(boxes):
         for e in boxes:
@@ -456,8 +466,8 @@ def thread():
     # a knot, a wrapped bead, where three or more threads (or pins) meet
     for lit_ in (False, True):
         s = '_lit' if lit_ else ''
-        tex = {'wick': f'fourtwenty:block/power/hemp_thread{s}', 'particle': f'fourtwenty:block/power/hemp_thread{s}'}
-        write(ASSETS / f'models/block/hemp_thread_knot{s}.json', {'parent': 'block/block', 'textures': tex, 'elements': tinted([box([6.4, 6.4, 6.4], [9.6, 9.6, 9.6], '#wick')])})
+        tex = {'wick': f'fourtwenty:block/power/hemp_thread_knot{s}', 'particle': f'fourtwenty:block/power/hemp_thread{s}'}
+        write(ASSETS / f'models/block/hemp_thread_knot{s}.json', {'parent': 'block/block', 'textures': tex, 'elements': tinted([box([6.6, 6.6, 6.6], [9.4, 9.4, 9.4], '#wick')])})
     import itertools
     sides = ('north', 'east', 'south', 'west', 'up', 'down')
     parts = []

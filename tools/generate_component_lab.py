@@ -229,6 +229,9 @@ def nug_body(cid, layout, symbol_tex):
     """A Nug: a steel body, a lip, a glass dome (its crystal or pendulum the renderer's), a plaque engraved with what it is in front."""
     solid = [box([4, 4, 4], [12, 10, 12], '#body'), box([3.8, 9.6, 3.8], [12.2, 10.2, 12.2], '#trim'), box([5, 13.8, 5], [11, 14.4, 11], '#trim'),
              flat_face(box([4.5, 4.4, 3.8], [11.5, 6.2, 4.05], '#dark'), 'north', '#plaque')]
+    if layout == 'none':
+        # the Ticker's pendulum hangs from a pivot block under the cap
+        solid.append(box([7.3, 13.1, 7.3], [8.7, 13.75, 8.7], '#dark'))
     solid += gland('top', 'vdd', 1.6) + gland('bottom', 'gnd', 4) + gland('front', 'out', 4)
     for face in {'one': ('back',), 'twoin': ('left', 'right'), 'none': ()}[layout]:
         solid += gland(face, 'in', 4)
