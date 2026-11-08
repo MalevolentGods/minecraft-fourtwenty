@@ -12,7 +12,7 @@ import json
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / 'src/main/resources/assets/fourtwenty'
@@ -102,7 +102,217 @@ def gland(side, kind, depth=2.5, y=8):
         return [box([lo, y - 1.6, 0], [hi, y + 1.6, depth], '#brass'), box([6, y - 2, 0.2], [10, y + 2, 0.8], f'#lead_{kind}')]
     if side == 'back':
         return [box([lo, y - 1.6, 16 - depth], [hi, y + 1.6, 16], '#brass'), box([6, y - 2, 15.2], [10, y + 2, 15.8], f'#lead_{kind}')]
+    if side == 'left':      # the model's left is east (+x)
+        return [box([16 - depth, lo, lo], [16, hi, hi], '#brass'), box([15.2, 6, 6], [15.8, 10, 10], f'#lead_{kind}')]
+    if side == 'right':
+        return [box([0, lo, lo], [depth, hi, hi], '#brass'), box([0.2, 6, 6], [0.8, 10, 10], f'#lead_{kind}')]
+    if side == 'top':
+        return [box([lo, 16 - depth, lo], [hi, 16, hi], '#brass'), box([6, 15.2, 6], [10, 15.8, 10], f'#lead_{kind}')]
+    if side == 'bottom':
+        return [box([lo, 0, lo], [hi, depth, hi], '#brass'), box([6, 0.2, 6], [10, 0.8, 10], f'#lead_{kind}')]
     raise ValueError(side)
+
+
+LIME = (155, 212, 42)
+
+
+def plaque_texture(name, draw):
+    """An engraved plaque: lime lines on dark steel, drawn at its own proportions (7 by 1.9) and stretched to a square, as its face
+    shows the whole texture."""
+    w, h = 256, 70
+    img = Image.new('RGB', (w, h), (23, 25, 29))
+    d = ImageDraw.Draw(img)
+    d.rectangle([1, 1, w - 2, h - 2], outline=(60, 64, 72), width=2)
+    draw(d, w, h)
+    img.resize((256, 256), Image.NEAREST).save(TEX / f'{name}.png', optimize=True)
+
+
+def font(size):
+    return ImageFont.load_default(size=size)
+
+
+def bezier(p0, p1, p2, n=24):
+    return [((1 - t) ** 2 * p0[0] + 2 * (1 - t) * t * p1[0] + t * t * p2[0], (1 - t) ** 2 * p0[1] + 2 * (1 - t) * t * p1[1] + t * t * p2[1])
+            for t in (i / n for i in range(n + 1))]
+
+
+def gate(kind):
+    """The gate's symbol, as in a schematic: inputs on the left, output on the right, a bubble for the inverted ones."""
+    def draw(d, w, h):
+        lw, cy, s = 5, h // 2, h * 0.36
+        x0, x1 = w // 2 - 46, w // 2 + 34      # the body's back and tip
+        bubble = kind in ('NOT', 'NAND', 'NOR', 'XNOR')
+        back = x0                               # where the inputs reach the body
+        if kind in ('NOT', 'BUFFER', 'TRI'):
+            d.polygon([(x0, cy - s), (x1, cy), (x0, cy + s)], outline=LIME, width=lw)
+            if kind == 'TRI':
+                d.line([(w // 2 - 6, cy - s - 2), (w // 2 - 6, cy - s * 0.45)], fill=LIME, width=lw)
+            tip = x1
+        elif kind in ('AND', 'NAND'):
+            r = s
+            flat = x1 - r
+            d.line([(x0, cy - s), (flat, cy - s)], fill=LIME, width=lw)
+            d.line([(x0, cy + s), (flat, cy + s)], fill=LIME, width=lw)
+            d.line([(x0, cy - s), (x0, cy + s)], fill=LIME, width=lw)
+            d.arc([flat - r, cy - s, flat + r, cy + s], -90, 90, fill=LIME, width=lw)
+            tip = flat + r
+        else:   # the OR family: a concave back, two curves meeting at the tip
+            top = bezier((x0, cy - s), (x0 + 0.62 * (x1 - x0), cy - s), (x1, cy))
+            bottom = bezier((x0, cy + s), (x0 + 0.62 * (x1 - x0), cy + s), (x1, cy))
+            backc = bezier((x0, cy - s), (x0 + 18, cy), (x0, cy + s))
+            for line in (top, bottom, backc):
+                d.line(line, fill=LIME, width=lw, joint='curve')
+            if kind in ('XOR', 'XNOR'):
+                d.line(bezier((x0 - 10, cy - s), (x0 + 8, cy), (x0 - 10, cy + s)), fill=LIME, width=lw, joint='curve')
+            back = x0 + 8
+            tip = x1
+        if bubble:
+            d.ellipse([tip + 1, cy - 7, tip + 15, cy + 7], outline=LIME, width=4)
+            tip += 15
+        d.line([(tip, cy), (w - 18, cy)], fill=LIME, width=lw)
+        if kind in ('NOT', 'BUFFER', 'TRI'):
+            d.line([(18, cy), (x0, cy)], fill=LIME, width=lw)
+        else:
+            d.line([(18, cy - s * 0.5), (back, cy - s * 0.5)], fill=LIME, width=lw)
+            d.line([(18, cy + s * 0.5), (back, cy + s * 0.5)], fill=LIME, width=lw)
+    return draw
+
+
+def words(text, size=44):
+    def draw(d, w, h):
+        f = font(size)
+        box_ = d.textbbox((0, 0), text, font=f)
+        d.text(((w - (box_[2] - box_[0])) / 2 - box_[0], (h - (box_[3] - box_[1])) / 2 - box_[1]), text, fill=LIME, font=f)
+    return draw
+
+
+def square_wave(d, w, h):
+    y0, y1, x = h - 18, 18, 22
+    pts = []
+    for i in range(4):
+        pts += [(x, y0), (x, y1), (x + 26, y1), (x + 26, y0), (x + 52, y0)]
+        x += 52
+    d.line(pts, fill=LIME, width=5)
+
+
+def opamp(d, w, h):
+    cx, cy, s = w // 2, h // 2, h * 0.38
+    d.polygon([(cx - 40, cy - s), (cx + 40, cy), (cx - 40, cy + s)], outline=LIME, width=5)
+    # + by the top input, − by the bottom, drawn as strokes
+    d.line([(cx - 34, cy - 12), (cx - 22, cy - 12)], fill=LIME, width=4)
+    d.line([(cx - 28, cy - 18), (cx - 28, cy - 6)], fill=LIME, width=4)
+    d.line([(cx - 34, cy + 12), (cx - 22, cy + 12)], fill=LIME, width=4)
+    d.line([(18, cy - 12), (cx - 40, cy - 12)], fill=LIME, width=5)
+    d.line([(18, cy + 12), (cx - 40, cy + 12)], fill=LIME, width=5)
+    d.line([(cx + 40, cy), (w - 18, cy)], fill=LIME, width=5)
+
+
+def header_texture():
+    """An IDC header's face: nine gold sockets across it, evenly, so it reads the same either way round."""
+    img = Image.new('RGB', (256, 256), (18, 20, 24))
+    d = ImageDraw.Draw(img)
+    for k in range(9):
+        x = (2 + k) / 12 * 256
+        d.rectangle([x - 7, 100, x + 7, 156], fill=(40, 42, 48))
+        d.rectangle([x - 4, 112, x + 4, 144], fill=(200, 160, 60))
+    d.rectangle([0, 0, 255, 255], outline=(70, 74, 82), width=6)
+    img.save(TEX / 'lab_header.png', optimize=True)
+
+
+def flat_face(element, face, tex):
+    """Show a whole texture on one face (a plaque or header face), whatever its size."""
+    element['faces'][face] = {'uv': [0, 0, 16, 16], 'texture': tex}
+    return element
+
+
+def nug_body(cid, layout, symbol_tex):
+    """A Nug: a steel body, a lip, a glass dome (its crystal or pendulum the renderer's), a plaque engraved with what it is in front."""
+    solid = [box([4, 4, 4], [12, 10, 12], '#body'), box([3.8, 9.6, 3.8], [12.2, 10.2, 12.2], '#trim'), box([5, 13.8, 5], [11, 14.4, 11], '#trim'),
+             flat_face(box([4.5, 4.4, 3.8], [11.5, 6.2, 4.05], '#dark'), 'north', '#plaque')]
+    solid += gland('top', 'vdd', 1.6) + gland('bottom', 'gnd', 4) + gland('front', 'out', 4)
+    for face in {'one': ('back',), 'twoin': ('left', 'right'), 'none': ()}[layout]:
+        solid += gland(face, 'in', 4)
+    glass = [box([4.6, 10.2, 4.6], [11.4, 13.8, 11.4], '#glass')]
+    return composite(solid, glass, {'plaque': f'fourtwenty:block/component/{symbol_tex}'})
+
+
+NUGS = {'not_nug': ('one', 'NOT'), 'buffer_nug': ('one', 'BUFFER'), 'and_nug': ('twoin', 'AND'), 'or_nug': ('twoin', 'OR'),
+        'nand_nug': ('twoin', 'NAND'), 'nor_nug': ('twoin', 'NOR'), 'xor_nug': ('twoin', 'XOR'), 'xnor_nug': ('twoin', 'XNOR'),
+        'tri_state_nug': ('twoin', 'TRI'), 'latch_nug': ('twoin', 'SR'), 'flip_flop_nug': ('twoin', 'D FF'), 'ticker': ('none', 'WAVE')}
+
+# bus chips: their faces (front, back, left, right): 'bus' for a header, a pin role for a gland, None for nothing
+CHIPS = {
+    'puff_pass_nug': ({'front': 'bus', 'back': 'in', 'left': 'in', 'right': 'in'}, 'SHIFT'),
+    'pack_nug': ({'front': 'out', 'back': 'bus', 'left': 'in', 'right': 'in'}, 'LOAD'),
+    'sampler_nug': ({'front': 'out', 'back': 'bus', 'left': 'bus'}, 'MUX'),
+    'dealer_nug': ({'front': 'bus', 'back': 'in', 'left': 'bus'}, 'DEMUX'),
+    'blend_nug': ({'front': 'bus', 'back': 'bus', 'left': 'bus'}, 'LOGIC'),
+    'stacker_nug': ({'front': 'bus', 'back': 'bus', 'left': 'bus', 'right': 'in'}, 'ADD'),
+    'scale_nug': ({'front': 'bus', 'back': 'bus', 'left': 'bus'}, 'CMP'),
+    'jar_nug': ({'front': 'bus', 'back': 'bus', 'left': 'in', 'right': 'in'}, 'REG'),
+}
+
+
+def header(side):
+    """An IDC header on a bus face, framing the Ribbon (x 3 to 14 at y 7 to 9) where it plugs in."""
+    if side == 'front':
+        return flat_face(box([2.5, 6, 0], [14.5, 10, 3], '#dark'), 'north', '#header')
+    if side == 'back':
+        return flat_face(box([2.5, 6, 13], [14.5, 10, 16], '#dark'), 'south', '#header')
+    if side == 'left':
+        # a hair taller than the front and back headers, so where two meet at a corner they cross instead of fighting
+        return flat_face(box([13, 5.9, 2.5], [16, 10.1, 14.5], '#dark'), 'east', '#header')
+    return flat_face(box([0, 5.9, 2.5], [3, 10.1, 14.5], '#dark'), 'west', '#header')
+
+
+def chip(cid, faces, label):
+    """A bus chip: a steel slab, a lip, nine resin beads under a glass strip (the renderer lights them), a label plate, headers and glands."""
+    solid = [box([3, 4, 3], [13, 10, 13], '#body'), box([2.8, 9.6, 2.8], [13.2, 10.2, 13.2], '#trim'),
+             flat_face(box([10.6, 10.2, 4], [12.4, 10.5, 12], '#dark'), 'up', '#label')]
+    solid += gland('top', 'vdd', 5.8) + gland('bottom', 'gnd', 4)
+    for face, role in faces.items():
+        solid += [header(face)] if role == 'bus' else gland(face, role, 3)
+    glass = [box([3.6, 10.2, 4], [5.4, 10.9, 12], '#glass')]
+    return composite(solid, glass, {'header': 'fourtwenty:block/component/lab_header', 'label': f'fourtwenty:block/component/lab_label_{cid}'})
+
+
+def fet(cid):
+    """A three-legged glass bulb: source behind, drain in front, gate on its left; the renderer lights its resin core with its current."""
+    solid = [box([5.5, 4.4, 5.5], [10.5, 5, 10.5], '#trim'), box([5.5, 11, 5.5], [10.5, 11.6, 10.5], '#trim')]
+    solid += gland('back', 'in', 5) + gland('front', 'out', 5) + gland('left', 'gate', 5)
+    glass = [box([5, 5, 5], [11, 11, 11], '#glass')]
+    return composite(solid, glass)
+
+
+def hype_amp():
+    """A steel body with its op-amp symbol in front and a level window on top (the renderer raises a bar of light with its output)."""
+    solid = [box([4, 4, 4], [12, 10, 12], '#body'), box([3.8, 9.6, 3.8], [12.2, 10.2, 12.2], '#trim'),
+             flat_face(box([4.5, 4.4, 3.8], [11.5, 6.2, 4.05], '#dark'), 'north', '#plaque')]
+    solid += gland('top', 'vdd', 5.8) + gland('bottom', 'gnd', 4) + gland('front', 'out', 4) + gland('left', 'in', 4) + gland('right', 'in', 4)
+    glass = [box([4.4, 10.2, 4.4], [6, 11, 11.6], '#glass')]
+    return composite(solid, glass, {'plaque': 'fourtwenty:block/component/lab_plaque_hype_amp'})
+
+
+def family_textures():
+    header_texture()
+    for cid, (layout, kind) in NUGS.items():
+        draw = square_wave if kind == 'WAVE' else words(kind) if kind in ('SR', 'D FF') else gate(kind)
+        plaque_texture(f'lab_plaque_{cid}', draw)
+    plaque_texture('lab_plaque_hype_amp', opamp)
+    for cid, (_, label) in CHIPS.items():
+        # read along the plate's length (z), so drawn sideways
+        img = Image.new('RGB', (256, 58), (23, 25, 29))
+        d = ImageDraw.Draw(img)
+        d.rectangle([1, 1, 254, 56], outline=(60, 64, 72), width=2)
+        words(label, 40)(d, 256, 58)
+        img.rotate(90, expand=True).resize((256, 256), Image.NEAREST).save(TEX / f'lab_label_{cid}.png', optimize=True)
+    # Slow Burner: white rolling paper, a brown filter tip
+    paper = rgb('#F6F3EA')[None, None, :] + RNG.normal(0, 3, (S, S, 1))
+    paper[:, ::16, :] -= 7
+    save(paper, 'lab_paper_white')
+    filt = rgb('#B07A3E')[None, None, :] + RNG.normal(0, 10, (S, S, 1))
+    save(filt, 'lab_filter')
+
 
 
 def stands(z0, z1, top):
@@ -195,7 +405,7 @@ def slow_burner():
     solid = [box([6.7, 6.7, 3.6], [9.3, 9.3, 12.4], '#paper'), box([6.5, 6.5, 11.4], [9.5, 9.5, 12.6], '#crutch')]
     solid += gland('front', 'in', 3) + gland('back', 'in', 3)
     glass = [box([5.8, 5.8, 3], [10.2, 10.2, 13], '#glass')]
-    return composite(solid, glass, {'paper': 'fourtwenty:block/component/lab_paper', 'crutch': 'fourtwenty:block/component/lab_brass'})
+    return composite(solid, glass, {'paper': 'fourtwenty:block/component/lab_paper_white', 'crutch': 'fourtwenty:block/component/lab_filter'})
 
 
 LAB = {
@@ -294,6 +504,14 @@ def write(path, data):
 
 def main():
     textures()
+    family_textures()
+    for cid, (layout, kind) in NUGS.items():
+        LAB[cid] = (lambda c=cid, l=layout: nug_body(c, l, f'lab_plaque_{c}'))
+    for cid, (faces, _) in CHIPS.items():
+        LAB[cid] = (lambda c=cid, f=faces: chip(c, f, None))
+    LAB['sativa_fet'] = lambda: fet('sativa_fet')
+    LAB['indica_fet'] = lambda: fet('indica_fet')
+    LAB['hype_amp'] = hype_amp
     save(rgb('#6FD38A')[None, None, :].repeat(S, 0).repeat(S, 1) + RNG.normal(0, 6, (S, S, 1)), 'lab_zen')
     for cid, make in LAB.items():
         model = make()

@@ -1,0 +1,83 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "wick": "fourtwenty:block/power/hemp_thread_lit",
+  "particle": "fourtwenty:block/power/hemp_thread_lit"
+ },
+ "elements": [
+  {
+   "from": [
+    6.4,
+    6.4,
+    6.4
+   ],
+   "to": [
+    9.6,
+    9.6,
+    9.6
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.4,
+      6.4,
+      9.6,
+      9.6
+     ],
+     "texture": "#wick",
+     "tintindex": 0
+    },
+    "south": {
+     "uv": [
+      6.4,
+      6.4,
+      9.6,
+      9.6
+     ],
+     "texture": "#wick",
+     "tintindex": 0
+    },
+    "east": {
+     "uv": [
+      6.4,
+      6.4,
+      9.6,
+      9.6
+     ],
+     "texture": "#wick",
+     "tintindex": 0
+    },
+    "west": {
+     "uv": [
+      6.4,
+      6.4,
+      9.6,
+      9.6
+     ],
+     "texture": "#wick",
+     "tintindex": 0
+    },
+    "up": {
+     "uv": [
+      6.4,
+      6.4,
+      9.6,
+      9.6
+     ],
+     "texture": "#wick",
+     "tintindex": 0
+    },
+    "down": {
+     "uv": [
+      6.4,
+      6.4,
+      9.6,
+      9.6
+     ],
+     "texture": "#wick",
+     "tintindex": 0
+    }
+   }
+  }
+ ]
+}

@@ -14,8 +14,8 @@
   "lead_vdd": "fourtwenty:block/component/lead_vdd",
   "lead_gnd": "fourtwenty:block/component/lead_gnd",
   "lead_gate": "fourtwenty:block/component/lead_gate",
-  "paper": "fourtwenty:block/component/lab_paper",
-  "crutch": "fourtwenty:block/component/lab_brass"
+  "paper": "fourtwenty:block/component/lab_paper_white",
+  "crutch": "fourtwenty:block/component/lab_filter"
  },
  "children": {
   "machine": {
@@ -34,8 +34,8 @@
     "lead_vdd": "fourtwenty:block/component/lead_vdd",
     "lead_gnd": "fourtwenty:block/component/lead_gnd",
     "lead_gate": "fourtwenty:block/component/lead_gate",
-    "paper": "fourtwenty:block/component/lab_paper",
-    "crutch": "fourtwenty:block/component/lab_brass"
+    "paper": "fourtwenty:block/component/lab_paper_white",
+    "crutch": "fourtwenty:block/component/lab_filter"
    },
    "elements": [
     {
@@ -464,8 +464,8 @@
     "lead_vdd": "fourtwenty:block/component/lead_vdd",
     "lead_gnd": "fourtwenty:block/component/lead_gnd",
     "lead_gate": "fourtwenty:block/component/lead_gate",
-    "paper": "fourtwenty:block/component/lab_paper",
-    "crutch": "fourtwenty:block/component/lab_brass"
+    "paper": "fourtwenty:block/component/lab_paper_white",
+    "crutch": "fourtwenty:block/component/lab_filter"
    },
    "elements": [
     {

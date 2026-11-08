@@ -372,16 +372,18 @@ def ribbons():
     band = box([3.9, 7, 3.9], [12.1, 9, 12.1], '#band', faces=('north', 'south', 'east', 'west'))
     for f in band['faces'].values():
         f['tintindex'] = 0
-    clip_tex = {'clip': 'fourtwenty:block/component/roach_clip', 'band': 'fourtwenty:block/component/band',
-                'particle': 'fourtwenty:block/component/roach_clip'}
+    clip_tex = {'clip': 'fourtwenty:block/component/lab_brass', 'band': 'fourtwenty:block/component/band',
+                'particle': 'fourtwenty:block/component/lab_brass'}
+    spring = box([12.6, 6.8, 6.4], [13.6, 9.2, 9.6], '#band')
+    for f in spring['faces'].values():
+        f['tintindex'] = 0
     write(ASSETS / 'models/block/roach_clip_core.json', {'parent': 'block/block', 'textures': clip_tex,
-          'elements': [box([4, 4, 4], [12, 12, 12], '#clip'), band]})
+          'elements': [box([3.4, 9.3, 3.4], [12.6, 10.4, 12.6], '#clip'), box([3.4, 5.6, 3.4], [12.6, 6.7, 12.6], '#clip'),
+                       box([12.6, 5.6, 5.4], [13.6, 6.8, 10.6], '#clip'), box([12.6, 9.2, 5.4], [13.6, 10.4, 10.6], '#clip'), spring]})
     sides = ('north', 'east', 'south', 'west')
     for cid in ('eighth_ribbon', 'roach_clip'):
-        if cid == 'roach_clip':
-            parts = [{'apply': {'model': 'fourtwenty:block/roach_clip_core'}}]
-        else:
-            parts = []
+        parts = [{'apply': {'model': 'fourtwenty:block/roach_clip_core'}}] if cid == 'roach_clip' else []
+        if True:
             for m in range(16):
                 mask = tuple(bool(m >> i & 1) for i in range(4))
                 when = {side: str(on).lower() for side, on in zip(sides, mask)}
@@ -421,13 +423,23 @@ def twister():
 
 def thread():
     """Hemp Thread: a Wick's thin sibling, the same multipart shape at a third the width."""
-    img = Image.new('RGBA', (16, 16), (214, 196, 150, 255))
-    d = ImageDraw.Draw(img)
-    for y in range(0, 16, 3):
-        d.line([0, y, 15, y], fill=(184, 164, 118, 255))
+    # braided hemp, 64 pixels: three strands twisting along the thread, a shade between them
+    n = 64
+    img = Image.new('RGBA', (n, n), (0, 0, 0, 255))
+    px = img.load()
+    import random
+    rnd = random.Random(420)
+    for y in range(n):
+        for x in range(n):
+            strand = ((x * 2 + y) // 8) % 3
+            base = [(196, 172, 118), (170, 146, 96), (214, 192, 138)][strand]
+            edge = ((x * 2 + y) % 8) in (0, 7)
+            k = rnd.randint(-10, 10) - (26 if edge else 0)
+            px[x, y] = (max(0, base[0] + k), max(0, base[1] + k), max(0, base[2] + k), 255)
     save(img, ASSETS / 'textures/block/power/hemp_thread.png')
     lit = img.copy()
-    ImageDraw.Draw(lit).line([0, 8, 15, 8], fill=(150, 255, 120, 255))
+    d = ImageDraw.Draw(lit)
+    d.rectangle([0, 28, n - 1, 35], fill=(170, 240, 110, 255))
     save(lit, ASSETS / 'textures/block/power/hemp_thread_lit.png')
 
     def tinted(boxes):
@@ -441,9 +453,18 @@ def thread():
         write(ASSETS / f'models/block/hemp_thread_core{s}.json', {'parent': 'block/block', 'textures': tex, 'elements': tinted([box([7, 7, 7], [9, 9, 9], '#wick')])})
         write(ASSETS / f'models/block/hemp_thread_arm{s}.json', {'parent': 'block/block', 'textures': tex, 'elements': tinted([box([7, 7, 0], [9, 9, 7], '#wick')])})
         write(ASSETS / f'models/block/hemp_thread_plug{s}.json', {'parent': 'block/block', 'textures': tex, 'elements': tinted([box([7, 7, 0], [9, 9, 7], '#wick')])})
+    # a knot, a wrapped bead, where three or more threads (or pins) meet
+    for lit_ in (False, True):
+        s = '_lit' if lit_ else ''
+        tex = {'wick': f'fourtwenty:block/power/hemp_thread{s}', 'particle': f'fourtwenty:block/power/hemp_thread{s}'}
+        write(ASSETS / f'models/block/hemp_thread_knot{s}.json', {'parent': 'block/block', 'textures': tex, 'elements': tinted([box([6.4, 6.4, 6.4], [9.6, 9.6, 9.6], '#wick')])})
+    import itertools
+    sides = ('north', 'east', 'south', 'west', 'up', 'down')
     parts = []
     for lit_ in ('false', 'true'):
         s = '_lit' if lit_ == 'true' else ''
+        parts.append({'when': {'OR': [{**{side: 'wire|plug' for side in trio}, 'lit': lit_} for trio in itertools.combinations(sides, 3)]},
+                      'apply': {'model': f'fourtwenty:block/hemp_thread_knot{s}'}})
         parts.append({'when': {'lit': lit_}, 'apply': {'model': f'fourtwenty:block/hemp_thread_core{s}'}})
         for side, rot in (('north', {}), ('east', {'y': 90}), ('south', {'y': 180}), ('west', {'y': 270}), ('up', {'x': 270}), ('down', {'x': 90})):
             parts.append({'when': {side: 'wire', 'lit': lit_}, 'apply': {'model': f'fourtwenty:block/hemp_thread_arm{s}', **rot}})

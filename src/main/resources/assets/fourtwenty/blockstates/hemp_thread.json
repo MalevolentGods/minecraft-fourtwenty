@@ -2,6 +2,135 @@
  "multipart": [
   {
    "when": {
+    "OR": [
+     {
+      "north": "wire|plug",
+      "east": "wire|plug",
+      "south": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "north": "wire|plug",
+      "east": "wire|plug",
+      "west": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "north": "wire|plug",
+      "east": "wire|plug",
+      "up": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "north": "wire|plug",
+      "east": "wire|plug",
+      "down": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "north": "wire|plug",
+      "south": "wire|plug",
+      "west": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "north": "wire|plug",
+      "south": "wire|plug",
+      "up": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "north": "wire|plug",
+      "south": "wire|plug",
+      "down": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "north": "wire|plug",
+      "west": "wire|plug",
+      "up": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "north": "wire|plug",
+      "west": "wire|plug",
+      "down": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "north": "wire|plug",
+      "up": "wire|plug",
+      "down": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "east": "wire|plug",
+      "south": "wire|plug",
+      "west": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "east": "wire|plug",
+      "south": "wire|plug",
+      "up": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "east": "wire|plug",
+      "south": "wire|plug",
+      "down": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "east": "wire|plug",
+      "west": "wire|plug",
+      "up": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "east": "wire|plug",
+      "west": "wire|plug",
+      "down": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "east": "wire|plug",
+      "up": "wire|plug",
+      "down": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "south": "wire|plug",
+      "west": "wire|plug",
+      "up": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "south": "wire|plug",
+      "west": "wire|plug",
+      "down": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "south": "wire|plug",
+      "up": "wire|plug",
+      "down": "wire|plug",
+      "lit": "false"
+     },
+     {
+      "west": "wire|plug",
+      "up": "wire|plug",
+      "down": "wire|plug",
+      "lit": "false"
+     }
+    ]
+   },
+   "apply": {
+    "model": "fourtwenty:block/hemp_thread_knot"
+   }
+  },
+  {
+   "when": {
     "lit": "false"
    },
    "apply": {
@@ -124,6 +253,135 @@
    "apply": {
     "model": "fourtwenty:block/hemp_thread_plug",
     "x": 90
+   }
+  },
+  {
+   "when": {
+    "OR": [
+     {
+      "north": "wire|plug",
+      "east": "wire|plug",
+      "south": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "north": "wire|plug",
+      "east": "wire|plug",
+      "west": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "north": "wire|plug",
+      "east": "wire|plug",
+      "up": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "north": "wire|plug",
+      "east": "wire|plug",
+      "down": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "north": "wire|plug",
+      "south": "wire|plug",
+      "west": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "north": "wire|plug",
+      "south": "wire|plug",
+      "up": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "north": "wire|plug",
+      "south": "wire|plug",
+      "down": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "north": "wire|plug",
+      "west": "wire|plug",
+      "up": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "north": "wire|plug",
+      "west": "wire|plug",
+      "down": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "north": "wire|plug",
+      "up": "wire|plug",
+      "down": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "east": "wire|plug",
+      "south": "wire|plug",
+      "west": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "east": "wire|plug",
+      "south": "wire|plug",
+      "up": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "east": "wire|plug",
+      "south": "wire|plug",
+      "down": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "east": "wire|plug",
+      "west": "wire|plug",
+      "up": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "east": "wire|plug",
+      "west": "wire|plug",
+      "down": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "east": "wire|plug",
+      "up": "wire|plug",
+      "down": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "south": "wire|plug",
+      "west": "wire|plug",
+      "up": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "south": "wire|plug",
+      "west": "wire|plug",
+      "down": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "south": "wire|plug",
+      "up": "wire|plug",
+      "down": "wire|plug",
+      "lit": "true"
+     },
+     {
+      "west": "wire|plug",
+      "up": "wire|plug",
+      "down": "wire|plug",
+      "lit": "true"
+     }
+    ]
+   },
+   "apply": {
+    "model": "fourtwenty:block/hemp_thread_knot_lit"
    }
   },
   {

@@ -30,9 +30,7 @@ import java.util.Set;
  */
 public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEntity> {
     /** The parts with the new look; the rest keep their plain models for now. */
-    static final Set<ComponentType> LAB = EnumSet.of(ComponentType.RESINATOR, ComponentType.KIEF_CAP, ComponentType.SPLIFF_COIL,
-            ComponentType.ONE_HITTER, ComponentType.ZEN_HITTER, ComponentType.TOGGLE_JOINT, ComponentType.PUFF_BUTTON, ComponentType.KILL_SWITCH,
-            ComponentType.SLOW_BURNER);
+    static final Set<ComponentType> LAB = EnumSet.allOf(ComponentType.class);
     /** Each switch's moving part, 0 open to 1 closed, as last drawn, and when: it eases toward the switch's state. */
     private static final java.util.Map<ComponentBlockEntity, float[]> MOTION = new java.util.WeakHashMap<>();
     private static final int LIME = 0xB8F06A, LIME_OFF = 0x34401F;
@@ -100,6 +98,35 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
                 box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 6.7, 6.7, 3.0, 9.3, 9.3, 3.6, cherry,
                         level > 0 ? LightTexture.FULL_BRIGHT : light);
             }
+            case SATIVA_FET, INDICA_FET -> {
+                // the resin core glows with the channel current: green for N, purple for P
+                float f = level / 15f;
+                int on = type == ComponentType.SATIVA_FET ? 0xA8FF6A : 0xD08CFF, off = type == ComponentType.SATIVA_FET ? 0x1E3A18 : 0x2E1A3A;
+                box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 6.6, 6.6, 6.6, 9.4, 9.4, 9.4,
+                        level > 0 ? lerp(off, on, 0.35f + 0.65f * f) : off, level > 0 ? LightTexture.FULL_BRIGHT : light);
+            }
+            case HYPE_AMP -> {
+                // a bar of light along the window, as high as its output stands in its supply
+                if (level > 0) {
+                    float f = level / 15f;
+                    box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 4.6, 10.3, 4.6, 5.8, 10.8, 4.6 + 6.8 * f,
+                            lerp(0xB8F06A, 0xFFB54A, f), LightTexture.FULL_BRIGHT);
+                }
+            }
+            case TICKER -> {
+                // a pendulum swinging on its period; its bob lights on the high half of each beat
+                double period = Math.max(0.05, be.value());
+                float amp = period < 0.3 ? 6 : 22;
+                pose.pushPose();
+                pose.translate(8 / 16f, 13.6 / 16f, 8 / 16f);
+                pose.mulPose(Axis.ZP.rotationDegrees(amp * (float) Math.sin(2 * Math.PI * time / period)));
+                pose.translate(-8 / 16f, -13.6 / 16f, -8 / 16f);
+                box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("infuser/steel_trim"), 7.75, 11.4, 7.75, 8.25, 13.6, 8.25, 0xFFFFFF, light);
+                boolean high = Shown.bit(shown, 0);
+                box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), high ? glow : sprite("component/lab_brass"),
+                        7.1, 10.5, 7.1, 8.9, 11.6, 8.9, high ? LIME : 0xFFFFFF, high ? LightTexture.FULL_BRIGHT : light);
+                pose.popPose();
+            }
             case TOGGLE_JOINT -> {
                 // the lever swings over the pivot along the circuit: toward the front closed, the back open
                 float m = motion(be, 9f, 9f);
@@ -137,7 +164,35 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
                 pose.popPose();
                 if (closed) ring(pose, buffers.getBuffer(RenderType.lightning()), 5.9, 5.7, 4.9, 8.3, 9.1, 11.1, 0xFF5A3A, 0.25f);
             }
-            default -> {}
+            default -> {
+                if (type.chip()) {
+                    // nine resin beads under the glass strip, one per output, lit for a 1
+                    for (int k = 0; k < 9; k++) {
+                        boolean on = Shown.bit(shown, k);
+                        double z = 4.25 + k * 0.85;
+                        box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 4.1, 10.25, z, 4.9, 10.75, z + 0.6,
+                                on ? LIME : 0x2A2238, on ? LightTexture.FULL_BRIGHT : light);
+                    }
+                } else if (type.logic()) {
+                    // the Nug's resin crystal under its dome: lime while its output is 1, turning slowly; dark green while 0
+                    boolean high = Shown.bit(shown, 0);
+                    pose.pushPose();
+                    pose.translate(8 / 16f, 11.9 / 16f, 8 / 16f);
+                    if (high) pose.mulPose(Axis.YP.rotationDegrees(time * 30 % 360));
+                    float[][] shards = {{0, 0, 0, 2.2f, 0}, {0.9f, 0.6f, 0.3f, 1.3f, 35}, {-0.8f, 0.8f, -0.4f, 1.2f, 70}, {0.2f, 1.3f, 0.7f, 1.0f, 20}};
+                    for (float[] sh : shards) {
+                        pose.pushPose();
+                        pose.translate(sh[0] / 16f, sh[1] / 16f, sh[2] / 16f);
+                        pose.mulPose(Axis.YP.rotationDegrees(sh[4]));
+                        pose.mulPose(Axis.XP.rotationDegrees(sh[4] * 0.6f));
+                        float h = sh[3] / 2;
+                        box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, -h, -h, -h, h, h, h,
+                                high ? LIME : 0x1C3214, high ? LightTexture.FULL_BRIGHT : light);
+                        pose.popPose();
+                    }
+                    pose.popPose();
+                }
+            }
         }
         pose.popPose();
     }
