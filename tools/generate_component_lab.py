@@ -165,7 +165,33 @@ def hitter(band):
     return composite(solid, glass, {'char': 'fourtwenty:block/component/lab_char', band: f'fourtwenty:block/component/{"lead_in" if band == "silver" else "lab_zen"}'})
 
 
+def toggle_joint():
+    """A steel housing between the glands, a trim plate on top; its brass lever (the renderer's) swings over the pivot."""
+    solid = [box([5, 5, 4], [11, 10, 12], '#body'), box([4.5, 10, 3.5], [11.5, 10.6, 12.5], '#trim'), box([7, 10.6, 7], [9, 11, 9], '#dark')]
+    solid += gland('front', 'in', 4) + gland('back', 'in', 4)
+    return composite(solid, [])
+
+
+def puff_button():
+    """A steel housing, a collar on top the mushroom button (the renderer's) sinks into."""
+    solid = [box([5, 5, 4], [11, 9, 12], '#body'), box([4.5, 9, 3.5], [11.5, 9.6, 12.5], '#trim'), box([6.4, 9.6, 6.4], [9.6, 10, 9.6], '#dark')]
+    solid += gland('front', 'in', 4) + gland('back', 'in', 4)
+    return composite(solid, [])
+
+
+def kill_switch():
+    """A relay under glass: a copper coil and a contact on a steel base; its armature (the renderer's) snaps down onto the contact."""
+    solid = [box([5, 5, 4], [11, 5.8, 12], '#body'), box([6, 5.8, 5], [8.2, 9, 11], '#coil'), box([9.6, 5.8, 9.6], [10.4, 8.0, 10.4], '#brass'),
+             box([9.2, 5.8, 5], [10.4, 9.6, 5.8], '#brass')]
+    solid += gland('front', 'in', 4) + gland('back', 'in', 4)
+    glass = [box([4.8, 5.8, 4], [11.2, 11.2, 12], '#glass')]
+    return composite(solid, glass, {'coil': 'fourtwenty:block/component/lab_coil'})
+
+
 LAB = {
+    'toggle_joint': toggle_joint,
+    'puff_button': puff_button,
+    'kill_switch': kill_switch,
     'resinator': resinator,
     'kief_cap': kief_cap,
     'spliff_coil': spliff_coil,

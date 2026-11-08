@@ -31,7 +31,9 @@ import java.util.Set;
 public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEntity> {
     /** The parts with the new look; the rest keep their plain models for now. */
     static final Set<ComponentType> LAB = EnumSet.of(ComponentType.RESINATOR, ComponentType.KIEF_CAP, ComponentType.SPLIFF_COIL,
-            ComponentType.ONE_HITTER, ComponentType.ZEN_HITTER);
+            ComponentType.ONE_HITTER, ComponentType.ZEN_HITTER, ComponentType.TOGGLE_JOINT, ComponentType.PUFF_BUTTON, ComponentType.KILL_SWITCH);
+    /** Each switch's moving part, 0 open to 1 closed, as last drawn, and when: it eases toward the switch's state. */
+    private static final java.util.Map<ComponentBlockEntity, float[]> MOTION = new java.util.WeakHashMap<>();
     private static final int LIME = 0xB8F06A, LIME_OFF = 0x34401F;
 
     public ComponentRenderer(BlockEntityRendererProvider.Context context) {}
@@ -90,14 +92,67 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
                     ring(pose, add, 7.3, 7.3, 6.7, 8.7, 8.7, 13.2, ember, 0.15f + 0.35f * f);
                 }
             }
+            case TOGGLE_JOINT -> {
+                // the lever swings over the pivot along the circuit: toward the front closed, the back open
+                float m = motion(be, 9f, 9f);
+                pose.pushPose();
+                pose.translate(8 / 16f, 11 / 16f, 8 / 16f);
+                pose.mulPose(Axis.XP.rotationDegrees(-32 + 64 * (1 - m)));
+                pose.translate(-8 / 16f, -11 / 16f, -8 / 16f);
+                box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("infuser/steel_trim"), 7.45, 11, 7.45, 8.55, 15, 8.55, 0xFFFFFF, light);
+                box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("component/lab_brass"), 7, 14.6, 7, 9, 16, 9, 0xFFFFFF, light);
+                pose.popPose();
+                boolean closed = be.getBlockState().getValue(ComponentBlock.ON);
+                box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 9.7, 10.6, 10.2, 10.7, 10.75, 11.2,
+                        closed ? LIME : LIME_OFF, closed ? LightTexture.FULL_BRIGHT : light);
+            }
+            case PUFF_BUTTON -> {
+                // the cap sinks fast and rises slower; it glows while held
+                float m = motion(be, 22f, 6f);
+                double drop = 1.1 * m;
+                box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("infuser/steel_trim"), 7, 10 - drop, 7, 9, 11 - drop, 9, 0xFFFFFF, light);
+                boolean held = be.getBlockState().getValue(ComponentBlock.ON);
+                box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("component/lab_brass"), 6, 11 - drop, 6, 10, 12.2 - drop, 10,
+                        0xFFFFFF, light);
+                box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 6.6, 12.2 - drop, 6.6, 9.4, 12.35 - drop, 9.4,
+                        held ? LIME : 0x6A7A40, held ? LightTexture.FULL_BRIGHT : light);
+            }
+            case KILL_SWITCH -> {
+                // the armature, hinged at the back post, snaps down onto the contact while closed; the coil warms red
+                float m = motion(be, 30f, 14f);
+                boolean closed = be.getBlockState().getValue(ComponentBlock.ON);
+                pose.pushPose();
+                pose.translate(0, 8.25 / 16f, 5.4 / 16f);
+                pose.mulPose(Axis.XP.rotationDegrees(-12 * (1 - m)));
+                pose.translate(0, -8.25 / 16f, -5.4 / 16f);
+                box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("component/lab_brass"), 8.8, 8.0, 5, 10.6, 8.5, 10.8, 0xFFFFFF, light);
+                pose.popPose();
+                if (closed) ring(pose, buffers.getBuffer(RenderType.lightning()), 5.9, 5.7, 4.9, 8.3, 9.1, 11.1, 0xFF5A3A, 0.25f);
+            }
             default -> {}
         }
         pose.popPose();
     }
 
+    /**
+     * A switch's moving part, eased toward its state: 1 while the switch is closed (ON), 0 open; {@code down} and {@code up} are how
+     * fast it closes and opens, per second.
+     */
+    private static float motion(ComponentBlockEntity be, float down, float up) {
+        float target = be.getBlockState().getValue(ComponentBlock.ON) ? 1 : 0;
+        float[] m = MOTION.computeIfAbsent(be, k -> new float[]{target, System.nanoTime()});
+        long now = System.nanoTime();
+        float dt = Math.min(0.1f, (now - (long) m[1]) / 1e9f);
+        m[1] = now;
+        float rate = target > m[0] ? down : up;
+        m[0] += (target - m[0]) * Math.min(1, rate * dt);
+        return m[0];
+    }
+
+    /** A block-atlas sprite of ours: a bare name is under block/component, a path with a folder under block. */
     private static TextureAtlasSprite sprite(String name) {
         return Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS)
-                .getSprite(ResourceLocation.fromNamespaceAndPath("fourtwenty", "block/component/" + name));
+                .getSprite(ResourceLocation.fromNamespaceAndPath("fourtwenty", "block/" + (name.contains("/") ? name : "component/" + name)));
     }
 
     static int lerp(int a, int b, float t) {

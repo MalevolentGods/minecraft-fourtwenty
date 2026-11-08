@@ -99,9 +99,11 @@ public class ComponentBlock extends Block implements EntityBlock {
         switch (type.part) {
             case TOGGLE -> {
                 be.closed(!be.closed());
+                level.playSound(null, pos, net.minecraft.sounds.SoundEvents.LEVER_CLICK, net.minecraft.sounds.SoundSource.BLOCKS, 0.35f, be.closed() ? 0.7f : 0.55f);
                 level.setBlock(pos, state.setValue(ON, be.closed()), 3);
             }
             case BUTTON -> {
+                level.playSound(null, pos, net.minecraft.sounds.SoundEvents.STONE_BUTTON_CLICK_ON, net.minecraft.sounds.SoundSource.BLOCKS, 0.35f, 0.8f);
                 be.closed(true);
                 level.setBlock(pos, state.setValue(ON, true), 3);
                 level.scheduleTick(pos, this, BUTTON_TICKS);
@@ -136,6 +138,7 @@ public class ComponentBlock extends Block implements EntityBlock {
     @Override protected void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
         if (type.part == ComponentType.Part.BUTTON && level.getBlockEntity(pos) instanceof ComponentBlockEntity be) {
             be.closed(false);
+            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.STONE_BUTTON_CLICK_OFF, net.minecraft.sounds.SoundSource.BLOCKS, 0.3f, 0.7f);
             level.setBlock(pos, state.setValue(ON, false), 3);
         }
     }
@@ -148,6 +151,7 @@ public class ComponentBlock extends Block implements EntityBlock {
         boolean powered = level.hasNeighborSignal(pos);
         if (level.getBlockEntity(pos) instanceof ComponentBlockEntity be && be.closed() != powered) {
             be.closed(powered);
+            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.LEVER_CLICK, net.minecraft.sounds.SoundSource.BLOCKS, 0.25f, powered ? 1.6f : 1.4f);
             level.setBlock(pos, state.setValue(ON, powered), 3);
         }
     }
