@@ -1,5 +1,5 @@
-"""A router for FourTwenty circuits laid out like a printed circuit board: chips on one level, every signal a trace on that same level,
-VDD a level above and GND the floor below; signals in Hemp Thread of different colours (wires join only their own colour, so neighbours
+"""A router for FourTwenty circuits laid out like a two-layer printed circuit board: chips on one level, signals as traces on that level
+and on a bridge layer two above (reached by vias through the VDD level), VDD a level above the chips and GND the floor below; signals in Hemp Thread of different colours (wires join only their own colour, so neighbours
 may run side by side), and crossings made with Nah, Skip Me, Bro hops. Then a check that rebuilds every net as the game does.
 
     board = Board(level=-59)
@@ -26,6 +26,7 @@ COLOURS = ['none', 'white', 'orange', 'magenta', 'light_blue', 'yellow', 'lime',
 RIBBON_COLOURS = COLOURS + ['red', 'black']
 HOP_COST = 6
 TURN_COST = 3
+VIA_COST = 4
 
 
 def step(p, d):
@@ -164,8 +165,12 @@ class Board:
             (fx0, fx1), (fy0, fy1), (fz0, fz1) = self.feed
             if fx0 <= p[0] <= fx1 and fy0 <= p[1] <= fy1 and fz0 <= p[2] <= fz1:
                 return True
-        # the board: signals on the chips' level, VDD a level above, GND below
-        return p[1] == {'red': self.Y + 1, 'black': self.Y - 1}.get(t, self.Y)
+        # the board: signals on the chips' level and a bridge layer two above (through the VDD level by vias), VDD a level above, GND below
+        if t == 'red':
+            return p[1] == self.Y + 1
+        if t == 'black':
+            return p[1] == self.Y - 1
+        return self.Y <= p[1] <= self.Y + 2
 
     def free(self, p, net):
         if not self.inside(p, net) or p in self.grid:
@@ -214,7 +219,8 @@ class Board:
                     raise Blocked(net, [p])
                 self.grid[p] = self.wire(net)
                 del self.reserved[p]
-        cells = self.cells(net)
+        # start from a wire of its own, not a clip (a clip may sit where the net can't run, a constant's column on the chips' level)
+        cells = sorted(self.cells(net), key=lambda p: self.grid[p]['kind'] == 'clip')
         if len(cells) < 2:
             return
         tap = lambda p: t != 'ribbon' and self.grid.get(p, {}).get('kind') == 'clip'
@@ -252,8 +258,11 @@ class Board:
                     break
                 for d in DIRS:
                     q = step(p, d)
+                    # a signal crosses the VDD level only straight up or down (a via), never along it
+                    if t not in ('red', 'black') and AXIS[d] != 'y' and q[1] == self.Y + 1:
+                        continue
                     moves = []
-                    turn = 0 if came is None or came == d else TURN_COST
+                    turn = (0 if came is None or came == d else TURN_COST) + (VIA_COST if AXIS[d] == 'y' and t not in ('red', 'black') else 0)
                     if q in todo and not (tap(p) and tap(q)):
                         moves.append((q, None, dp + 1 + turn))
                     elif self.free(q, net) and self.ok(q, me):
@@ -319,11 +328,12 @@ class Board:
             self.colour[n] = rng.choice(free[:3]) if free else rng.choice(palette)
 
     def route(self, order=None, attempts=60):
-        """Routes every net: Ribbons first, then signals, then power; a net that can't get through goes first next time, the rest shuffled a
+        """Routes every net: power first, then Ribbons, then signals; a net that can't get through goes first next time, the rest shuffled a
         little, from a clean slate."""
         clean = (dict(self.grid), dict(self.reserved))
         nets = [n for n in self.type if n != 'direct']
-        order = order or ([n for n in nets if self.type[n] == 'ribbon'] + [n for n in nets if self.type[n] == 'thread'] + ['VDD', 'GND'])
+        # power first, as a board's planes are: signals then thread their vias between its lines
+        order = order or (['VDD', 'GND'] + [n for n in nets if self.type[n] == 'ribbon'] + [n for n in nets if self.type[n] == 'thread'])
         for attempt in range(attempts):
             rng = random.Random(attempt)
             self.grid, self.reserved = dict(clean[0]), dict(clean[1])

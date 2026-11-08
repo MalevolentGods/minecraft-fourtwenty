@@ -71,11 +71,13 @@ def jar16(name, inL, inH, clk, rel, outL, outH):
 
 
 def const(pos, name, value):
-    """A constant byte into the B face (S) of the chip at pos: Roach Clips in a column up from that face, each tapping VDD."""
+    """A constant byte into the B face (S) of the chip at pos: Roach Clips in a row on the board running south from that face, one per
+    set channel, each tapping VDD (the VDD level lies right above them)."""
     chans = [c for c in range(8) if value >> c & 1]
     x, y, z = step(pos, 'S')
     for i, c in enumerate(chans):
-        b.clip((x, y + i, z), name, c, 'VDD')
+        b.clip((x, y, z + i), name, c, 'VDD')
+    b.reserved[(x, y, z + len(chans))] = None
 
 
 # ---- the machine (v1's logic) ------------------------------------------------------------------------------------------------------
