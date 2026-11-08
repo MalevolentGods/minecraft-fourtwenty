@@ -74,6 +74,9 @@ public final class Netlist {
     }
 
     /** A Hype Amp op-amp: supply, ground, output, non-inverting and inverting inputs. */
+    /** A Slow Burner (a current regulator): {@code amps} from {@code a} to {@code b} when the voltage drives it, whatever that voltage past its knee. */
+    public Active.CurrentRegulator currentRegulator(int a, int b, double amps) { return add(new Active.CurrentRegulator(a, b, amps)); }
+
     public Active.OpAmp opAmp(int vdd, int gnd, int out, int plus, int minus) { return add(new Active.OpAmp(vdd, gnd, out, plus, minus)); }
 
     public Parts.Switch switchPart(int a, int b, boolean closed) { return add(new Parts.Switch(a, b, closed)); }

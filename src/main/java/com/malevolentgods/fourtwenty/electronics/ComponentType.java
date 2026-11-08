@@ -19,6 +19,8 @@ public enum ComponentType {
     TOGGLE_JOINT("toggle_joint", Part.TOGGLE, Layout.TWO_PIN, "", List.of(), 0),
     KILL_SWITCH("kill_switch", Part.REDSTONE_SWITCH, Layout.TWO_PIN, "", List.of(), 0),
     PUFF_BUTTON("puff_button", Part.BUTTON, Layout.TWO_PIN, "", List.of(), 0),
+    SLOW_BURNER("slow_burner", Part.REGULATOR, Layout.TWO_PIN, "Ig",
+            List.of(1e-4, 2.2e-4, 4.7e-4, 1e-3, 2.2e-3, 4.7e-3, 0.01, 0.022, 0.047, 0.1, 0.22, 0.47, 1.0), 1e-3),
     NOT_NUG("not_nug", Part.GATE, Layout.ONE_INPUT, "", List.of(), 0, Logic.Kind.NOT),
     BUFFER_NUG("buffer_nug", Part.GATE, Layout.ONE_INPUT, "", List.of(), 0, Logic.Kind.BUFFER),
     AND_NUG("and_nug", Part.GATE, Layout.TWO_INPUT, "", List.of(), 0, Logic.Kind.AND),
@@ -47,7 +49,7 @@ public enum ComponentType {
     public static final int BUS = 9;
 
     /** What the block is in the circuit. */
-    public enum Part { RESISTOR, CAPACITOR, INDUCTOR, DIODE, ZENER, TOGGLE, REDSTONE_SWITCH, BUTTON, GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, NMOS, PMOS, OPAMP, SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER }
+    public enum Part { RESISTOR, CAPACITOR, INDUCTOR, DIODE, ZENER, TOGGLE, REDSTONE_SWITCH, BUTTON, REGULATOR, GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, NMOS, PMOS, OPAMP, SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER }
 
     /** A pin's face, relative to the block's front. */
     public enum Face { FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM }

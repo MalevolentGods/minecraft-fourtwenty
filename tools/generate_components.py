@@ -28,6 +28,7 @@ TYPES = [
     ('toggle_joint', 'Toggle Joint', 'two', 'toggle'),
     ('kill_switch', 'Kill Switch', 'two', 'kill'),
     ('puff_button', 'Puff Button', 'two', 'button'),
+    ('slow_burner', 'Slow Burner', 'two', 'burner'),
     ('not_nug', 'NOT Nug', 'one', 'NOT'),
     ('buffer_nug', 'Buffer Nug', 'one', 'BUF'),
     ('and_nug', 'AND Nug', 'twoin', 'AND'),
@@ -82,6 +83,7 @@ EXTRA = {
     'toggle_joint': 'A switch: use it to flip it.',
     'kill_switch': 'A switch closed while it has a redstone signal.',
     'puff_button': 'A button: closed for a second when used.',
+    'slow_burner': 'Lets through a steady current, its setting, whatever the voltage across it once that is a Kb or so: a Kief Cap fills or drains at a steady rate through it. It makes no current of its own; a supply drives it. Use it to step its current (sneak to step back).',
     'tri_state_nug': 'Left is A, right is enable: passes A while enabled, lets go of its output otherwise.',
     'latch_nug': 'An SR latch: left sets it, right resets it.',
     'flip_flop_nug': 'A D flip-flop: left is D, right is the clock; it takes D on each rising edge.',
@@ -100,7 +102,7 @@ EXTRA = {
 }
 
 BODY = {'resistor': (196, 170, 120), 'capacitor': (52, 92, 160), 'coil': (70, 54, 40), 'diode': (30, 30, 34), 'zener': (30, 30, 34),
-        'toggle': (110, 112, 118), 'kill': (120, 40, 36), 'button': (110, 112, 118), 'nfet': (44, 74, 48), 'pfet': (74, 48, 84)}
+        'toggle': (110, 112, 118), 'kill': (120, 40, 36), 'button': (110, 112, 118), 'burner': (237, 230, 211), 'nfet': (44, 74, 48), 'pfet': (74, 48, 84)}
 CHIP = (26, 30, 30)
 LEAD = {'in': (190, 192, 198), 'out': (220, 176, 60), 'vdd': (200, 40, 40), 'gnd': (24, 24, 26), 'gate': (90, 200, 90)}
 # a bus face: a wide flat connector, the Ribbon's stripes on it

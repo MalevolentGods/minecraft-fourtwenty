@@ -45,6 +45,7 @@ REAL = {
     'toggle_joint': 'Toggle switch',
     'kill_switch': 'Relay',
     'puff_button': 'Momentary push button',
+    'slow_burner': 'Current regulator',
     'not_nug': 'NOT gate (inverter)',
     'buffer_nug': 'Buffer',
     'and_nug': 'AND gate',

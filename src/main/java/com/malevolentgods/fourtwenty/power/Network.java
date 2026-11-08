@@ -987,6 +987,7 @@ public final class Network {
                 case DIODE -> net.diode(p[0], p[1], com.malevolentgods.fourtwenty.domain.electronics.Parts.DiodeModel.SILICON);
                 case ZENER -> net.diode(p[0], p[1], com.malevolentgods.fourtwenty.domain.electronics.Parts.DiodeModel.zener(value));
                 case TOGGLE, REDSTONE_SWITCH, BUTTON -> net.switchPart(p[0], p[1], be != null && be.closed());
+                case REGULATOR -> net.currentRegulator(p[0], p[1], value);
                 case GATE -> net.gate(c.type().gate, p[0], p[1], p[2], java.util.Arrays.copyOfRange(p, 3, p.length));
                 case TRI_STATE -> net.triState(p[0], p[1], p[2], p[3], p[4]);
                 case LATCH -> net.latch(p[0], p[1], p[2], p[3], p[4]);

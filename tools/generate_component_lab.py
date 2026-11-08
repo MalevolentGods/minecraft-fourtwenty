@@ -190,7 +190,16 @@ def kill_switch():
     return composite(solid, glass, {'coil': 'fourtwenty:block/component/lab_coil'})
 
 
+def slow_burner():
+    """A rolled joint in a glass sleeve, burning slowly from its front end (the renderer lights its cherry with its current)."""
+    solid = [box([6.7, 6.7, 3.6], [9.3, 9.3, 12.4], '#paper'), box([6.5, 6.5, 11.4], [9.5, 9.5, 12.6], '#crutch')]
+    solid += gland('front', 'in', 3) + gland('back', 'in', 3)
+    glass = [box([5.8, 5.8, 3], [10.2, 10.2, 13], '#glass')]
+    return composite(solid, glass, {'paper': 'fourtwenty:block/component/lab_paper', 'crutch': 'fourtwenty:block/component/lab_brass'})
+
+
 LAB = {
+    'slow_burner': slow_burner,
     'toggle_joint': toggle_joint,
     'puff_button': puff_button,
     'kill_switch': kill_switch,

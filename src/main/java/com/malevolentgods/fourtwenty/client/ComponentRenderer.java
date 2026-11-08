@@ -31,7 +31,8 @@ import java.util.Set;
 public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEntity> {
     /** The parts with the new look; the rest keep their plain models for now. */
     static final Set<ComponentType> LAB = EnumSet.of(ComponentType.RESINATOR, ComponentType.KIEF_CAP, ComponentType.SPLIFF_COIL,
-            ComponentType.ONE_HITTER, ComponentType.ZEN_HITTER, ComponentType.TOGGLE_JOINT, ComponentType.PUFF_BUTTON, ComponentType.KILL_SWITCH);
+            ComponentType.ONE_HITTER, ComponentType.ZEN_HITTER, ComponentType.TOGGLE_JOINT, ComponentType.PUFF_BUTTON, ComponentType.KILL_SWITCH,
+            ComponentType.SLOW_BURNER);
     /** Each switch's moving part, 0 open to 1 closed, as last drawn, and when: it eases toward the switch's state. */
     private static final java.util.Map<ComponentBlockEntity, float[]> MOTION = new java.util.WeakHashMap<>();
     private static final int LIME = 0xB8F06A, LIME_OFF = 0x34401F;
@@ -91,6 +92,13 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
                     VertexConsumer add = buffers.getBuffer(RenderType.lightning());
                     ring(pose, add, 7.3, 7.3, 6.7, 8.7, 8.7, 13.2, ember, 0.15f + 0.35f * f);
                 }
+            }
+            case SLOW_BURNER -> {
+                // the joint's cherry, at its front end, glows with the current it pushes, breathing slowly
+                float f = level / 15f, breath = 0.85f + 0.15f * (float) Math.sin(time * 2.2);
+                int cherry = level > 0 ? lerp(0x7A2A10, 0xFF8A3A, f * breath) : 0x3A2A20;
+                box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 6.7, 6.7, 3.0, 9.3, 9.3, 3.6, cherry,
+                        level > 0 ? LightTexture.FULL_BRIGHT : light);
             }
             case TOGGLE_JOINT -> {
                 // the lever swings over the pivot along the circuit: toward the front closed, the back open

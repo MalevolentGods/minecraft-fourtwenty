@@ -188,4 +188,56 @@ public final class Active {
             return (target(supply, an.across(plus, minus))[0] - an.across(out, gnd)) / R_OUT;
         }
     }
+
+    /**
+     * A current regulator, the Slow Burner, as a current-regulator diode: it lets through its set current, whatever the voltage across
+     * it once there's enough (the current eases in as tanh(v / {@link #KNEE}), 96% of it at 1 Kb); either way round, so a capacitor fills
+     * at a steady rate through it one way and drains steadily the other. Not a source: its current always runs the way the voltage across
+     * it pushes, so it only ever takes power, never gives it.
+     */
+    public static final class CurrentRegulator implements Part {
+        public static final double KNEE = 0.5;
+        final int a, b;
+        final double amps;
+        private double vLast, iLast, gLast;
+
+        CurrentRegulator(int a, int b, double amps) {
+            this.a = a;
+            this.b = b;
+            this.amps = Math.abs(amps);
+        }
+
+        @Override public int[] nodes() { return new int[]{a, b}; }
+
+        @Override public boolean nonlinear() { return true; }
+
+        double[] at(double v) {
+            double t = Math.tanh(v / KNEE);
+            return new double[]{amps * t, amps / KNEE * (1 - t * t) + 1e-12};
+        }
+
+        @Override public void stamp(Stamp s, Analysis an) {
+            double v = an.across(a, b);
+            double[] c = at(v);
+            vLast = v;
+            iLast = c[0];
+            gLast = c[1];
+            s.conductance(a, b, c[1]);
+            s.current(a, b, c[0] - c[1] * v);
+        }
+
+        @Override public boolean converged(Analysis an) {
+            double v = an.across(a, b), actual = at(v)[0], predicted = iLast + gLast * (v - vLast);
+            return Math.abs(actual - predicted) <= an.reltol() * Math.max(Math.abs(actual), amps * 1e-3) + Parts.ABSTOL;
+        }
+
+        /** Like pnjlim: the voltage across it may move at most a couple of knees past where it was in one step, so tanh's flat ends don't throw Newton. */
+        @Override public double allowStep(Analysis an, double[] next) {
+            double from = an.across(a, b), to = (a == Stamp.GROUND ? 0 : next[a]) - (b == Stamp.GROUND ? 0 : next[b]);
+            double most = 4 * KNEE + Math.abs(from);
+            return Math.abs(to - from) > most ? most / Math.abs(to - from) : 1;
+        }
+
+        @Override public double current(Analysis an) { return at(an.across(a, b))[0]; }
+    }
 }

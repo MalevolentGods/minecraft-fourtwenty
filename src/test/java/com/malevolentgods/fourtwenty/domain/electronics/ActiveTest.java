@@ -177,4 +177,46 @@ class ActiveTest {
         assertTrue(n.operatingPoint());
         assertEquals(0, n.current(amp), 1e-12, "unpowered: its output floats");
     }
+
+    /** A Slow Burner holds its current whatever the load, once past its knee: 1 mIg into 100 Φ and into 2.2 kΦ alike. */
+    @Test void aSlowBurnerHoldsItsCurrent() {
+        for (double ohms : new double[]{100, 1000, 2200}) {
+            var n = new Netlist();
+            int p = n.node(), q = n.node(), m = n.node();
+            n.source(p, q, 4.2, 1e-6);
+            var cc = n.currentRegulator(p, m, 1e-3);
+            n.resistor(m, q, ohms);
+            assertTrue(n.operatingPoint());
+            double across = n.volts(p) - n.volts(m);
+            assertEquals(1e-3 * Math.tanh(across / Active.CurrentRegulator.KNEE), n.current(cc), 1e-12, "on its curve, into " + ohms);
+            assertEquals(1e-3, n.current(cc), 5e-6, "and holding 1 mIg, into " + ohms);
+        }
+    }
+
+    /** It fills a Kief Cap at a steady rate, I / C, a straight line, until the cap nears the supply. */
+    @Test void aSlowBurnerFillsACapInAStraightLine() {
+        var n = new Netlist();
+        int p = n.node(), q = n.node(), m = n.node();
+        n.source(p, q, 4.2, 1e-6);
+        var sw = n.switchPart(p, m, false);
+        int c = n.node();
+        n.currentRegulator(m, c, 1e-3);
+        n.capacitor(c, q, 1e-3);
+        n.maxStep(0.005);
+        assertTrue(n.run(0.05));
+        n.set(sw, true);
+        double v0 = n.volts(c) - n.volts(q);
+        for (int k = 1; k <= 10; k++) {
+            assertTrue(n.run(0.2));
+            double v = n.volts(c) - n.volts(q), want = v0 + 1.0 * 0.2 * k;   // 1 mIg into 1 mGa: 1 Kb a second
+            if (want < 2.5) assertEquals(want, v, 0.02, "a straight line at " + 0.2 * k + " s");
+        }
+    }
+
+    /** A regulator, not a source: at any voltage, either way round, it takes power (v·i ≥ 0) and never gives it. */
+    @Test void aSlowBurnerNeverGivesPower() {
+        var r = new Active.CurrentRegulator(0, 1, 0.47);
+        for (double v = -50; v <= 50; v += 0.01) assertTrue(v * r.at(v)[0] >= 0, "at " + v);
+        assertEquals(0, r.at(0)[0], 0, "no voltage, no current");
+    }
 }

@@ -37,9 +37,11 @@ public class InspoweedometerItem extends Item {
 
     @Override public @Nonnull InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (player.isSecondaryUseActive() && (stack.has(ModDataComponents.METER_REFERENCE.get()) || held(stack) != null)) {
+        // use in the air: clears the held reading; sneaking, the Wick reference too
+        boolean sneak = player.isSecondaryUseActive();
+        if (held(stack) != null || sneak && stack.has(ModDataComponents.METER_REFERENCE.get())) {
             if (!level.isClientSide) {
-                stack.remove(ModDataComponents.METER_REFERENCE.get());
+                if (sneak) stack.remove(ModDataComponents.METER_REFERENCE.get());
                 stack.remove(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
                 player.displayClientMessage(Component.translatable("message.fourtwenty.meter.cleared").withStyle(ChatFormatting.GRAY), true);
             }
@@ -62,7 +64,8 @@ public class InspoweedometerItem extends Item {
         }
         Component line = read(level, player, pos, stack, false);
         if (line != null) {
-            hold(stack, line.getString());
+            var colour = line.getStyle().getColor();
+            hold(stack, line.getString(), colour == null ? 0xFFFFFF : colour.getValue());
             player.displayClientMessage(line, true);
         }
         return InteractionResult.SUCCESS;
@@ -76,9 +79,16 @@ public class InspoweedometerItem extends Item {
         return tag.contains("held") ? tag.getString("held") : null;
     }
 
-    static void hold(ItemStack stack, String reading) {
+    /** The held reading's colour, as the live one had it. */
+    public static int heldColour(ItemStack stack) {
+        var data = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+        return data == null || !data.copyTag().contains("colour") ? 0xFFFFFF : data.copyTag().getInt("colour");
+    }
+
+    static void hold(ItemStack stack, String reading, int colour) {
         var tag = new net.minecraft.nbt.CompoundTag();
         tag.putString("held", reading);
+        tag.putInt("colour", colour);
         stack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tag));
     }
 

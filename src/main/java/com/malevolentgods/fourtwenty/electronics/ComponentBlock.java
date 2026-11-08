@@ -127,7 +127,12 @@ public class ComponentBlock extends Block implements EntityBlock {
 
     /** A part over its rating smokes from its middle (what it shows says so: Shown.hot). */
     @Override public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
-        if (!(level.getBlockEntity(pos) instanceof ComponentBlockEntity be) || !com.malevolentgods.fourtwenty.domain.electronics.Shown.hot(be.shown())) return;
+        if (!(level.getBlockEntity(pos) instanceof ComponentBlockEntity be)) return;
+        // a Slow Burner pushing current breathes out a thin wisp now and then
+        if (type == ComponentType.SLOW_BURNER && com.malevolentgods.fourtwenty.domain.electronics.Shown.level(be.shown()) > 0 && random.nextInt(4) == 0) {
+            level.addParticle(net.minecraft.core.particles.ParticleTypes.SMOKE, pos.getX() + 0.5, pos.getY() + 0.62, pos.getZ() + 0.5, 0, 0.01, 0);
+        }
+        if (!com.malevolentgods.fourtwenty.domain.electronics.Shown.hot(be.shown())) return;
         for (int i = 0; i < 2; i++) {
             level.addParticle(net.minecraft.core.particles.ParticleTypes.SMOKE, pos.getX() + 0.35 + random.nextDouble() * 0.3, pos.getY() + 0.7,
                     pos.getZ() + 0.35 + random.nextDouble() * 0.3, 0, 0.03, 0);

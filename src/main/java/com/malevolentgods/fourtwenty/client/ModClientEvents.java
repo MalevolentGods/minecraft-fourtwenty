@@ -48,10 +48,14 @@ public class ModClientEvents {
                     if (!(stack.getItem() instanceof com.malevolentgods.fourtwenty.power.InspoweedometerItem)) return;
                     String held = com.malevolentgods.fourtwenty.power.InspoweedometerItem.held(stack);
                     if (held == null) return;
-                    var text = net.minecraft.network.chat.Component.translatable("message.fourtwenty.meter.held", held);
-                    int width = mc.font.width(text), x = (graphics.guiWidth() - width) / 2, y = graphics.guiHeight() - 80;
-                    graphics.fill(x - 2, y - 2, x + width + 2, y + mc.font.lineHeight, 0x80000000);
-                    graphics.drawString(mc.font, text, x, y, 0xFFC8C8C8);
+                    // drawn as the action bar draws the live reading (Gui.renderOverlayMessage), one line above it
+                    var text = net.minecraft.network.chat.Component.translatable("message.fourtwenty.meter.held", held)
+                            .withStyle(s -> s.withColor(com.malevolentgods.fourtwenty.power.InspoweedometerItem.heldColour(stack)));
+                    int width = mc.font.width(text);
+                    graphics.pose().pushPose();
+                    graphics.pose().translate(graphics.guiWidth() / 2f, graphics.guiHeight() - 68 - 12, 0);
+                    graphics.drawStringWithBackdrop(mc.font, text, -width / 2, -4, width, 0xFFFFFFFF);
+                    graphics.pose().popPose();
                 });
     }
 

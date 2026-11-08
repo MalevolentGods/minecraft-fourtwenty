@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "on=false": {
+   "model": "fourtwenty:block/component/slow_burner"
+  },
+  "on=true": {
+   "model": "fourtwenty:block/component/slow_burner"
+  }
+ }
+}
