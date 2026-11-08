@@ -155,8 +155,11 @@ def spliff_coil():
 def hitter(band):
     """A glass one-hitter pipe, its brass bowl at the front (the cathode, banded); the renderer lights the bowl while it conducts."""
     solid = plinth() + stands(6, 11.5, 6.75) + gland('front', 'in', 2.2) + gland('back', 'in', 2.6)
-    solid += [box([6, 5.5, 2.2], [10, 10.5, 5.6], '#brass', faces=('north', 'south', 'east', 'west', 'down')),
-              box([6.4, 10.3, 2.6], [9.6, 10.4, 5.2], '#char', faces=('up',)),
+    # a solid bowl, its top charred, a brass rim standing round it (an open box showed through: it had no inside)
+    bowl = box([6, 5.5, 2.2], [10, 10.5, 5.6], '#brass')
+    bowl['faces']['up']['texture'] = '#char'
+    solid += [bowl, box([6, 10.5, 2.2], [10, 10.9, 2.6], '#brass'), box([6, 10.5, 5.2], [10, 10.9, 5.6], '#brass'),
+              box([6, 10.5, 2.6], [6.4, 10.9, 5.2], '#brass'), box([9.6, 10.5, 2.6], [10, 10.9, 5.2], '#brass'),
               box([6.6, 6.6, 5.6], [9.4, 9.4, 6.6], f'#{band}')]
     glass = [box([6.75, 6.75, 6.6], [9.25, 9.25, 13.4], '#glass')]
     return composite(solid, glass, {'char': 'fourtwenty:block/component/lab_char', band: f'fourtwenty:block/component/{"lead_in" if band == "silver" else "lab_zen"}'})

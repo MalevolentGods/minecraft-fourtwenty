@@ -85,7 +85,7 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
                 if (level > 0) {
                     float f = level / 15f;
                     int ember = type == ComponentType.ZEN_HITTER ? lerp(0x2E8A52, 0x9DFFC4, f) : lerp(0x8A2A10, 0xFFB060, f);
-                    box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 6.5, 10.35, 2.7, 9.5, 10.5, 5.1, ember, LightTexture.FULL_BRIGHT);
+                    box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 6.45, 10.5, 2.65, 9.55, 10.62, 5.15, ember, LightTexture.FULL_BRIGHT);
                     VertexConsumer add = buffers.getBuffer(RenderType.lightning());
                     ring(pose, add, 7.3, 7.3, 6.7, 8.7, 8.7, 13.2, ember, 0.15f + 0.35f * f);
                 }
