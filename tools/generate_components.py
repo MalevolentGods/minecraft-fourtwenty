@@ -9,6 +9,7 @@ part, silver for inputs and for both ends of a two-pin part. Its front shows wha
 or a switch has an "on" look as well. Models face north; the blockstate turns them.
 """
 import json
+import sys
 from pathlib import Path
 
 from PIL import Image, ImageDraw
@@ -603,6 +604,10 @@ def main():
     ribbons()
     data()
     print(f'wrote {len(TYPES)} components and Hemp Thread')
+    # the plain models above are only placeholders: the lab look (generate_component_lab.py) overwrites them, so it always runs after,
+    # or a regenerate here alone ships every part in its placeholder (it did once, 2026-11-08)
+    import subprocess
+    subprocess.run([sys.executable, str(Path(__file__).resolve().parent / 'generate_component_lab.py')], check=True)
 
 
 if __name__ == '__main__':
