@@ -47,7 +47,7 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
         pose.mulPose(com.malevolentgods.fourtwenty.electronics.Orientation.rotation(be.getBlockState().getValue(ComponentBlock.FACING),
                 be.getBlockState().getValue(ComponentBlock.SPIN)));
         pose.translate(-0.5, -0.5, -0.5);
-        VertexConsumer solid = buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS));
+        // ask for each buffer where it's drawn: a batched source ends one buffer when another is asked for
         TextureAtlasSprite glow = sprite("lab_glow");
         // a lime ring round each gland while it's active (two-pin parts: front and back)
         if (Shown.active(shown) && type.layout == ComponentType.Layout.TWO_PIN) {
@@ -61,12 +61,12 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
                 // the rod: dark resin when cold, amber as it warms, white past its rating
                 float heat = level / 15f;
                 int c = heat <= 0 ? 0x6A4A2A : heat < 2 / 3f ? lerp(0x8A5A26, 0xFFB54A, heat * 1.5f) : lerp(0xFFB54A, 0xFFFFFF, (heat - 2 / 3f) * 3);
-                box(pose, solid, glow, 6.5, 6.5, 3.5, 9.5, 9.5, 12.5, c, heat > 0 ? LightTexture.FULL_BRIGHT : light);
+                box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 6.5, 6.5, 3.5, 9.5, 9.5, 12.5, c, heat > 0 ? LightTexture.FULL_BRIGHT : light);
             }
             case KIEF_CAP -> {
                 if (level > 0) {
                     float f = level / 15f;
-                    box(pose, solid, sprite("lab_kief"), 4.8, 4.8, 3.2, 11.2, 4.8 + 6.4 * f, 12.8, lerp(0x8C7A50, 0xFFFFFF, 0.4f + 0.6f * f), LightTexture.FULL_BRIGHT);
+                    box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("lab_kief"), 4.8, 4.8, 3.2, 11.2, 4.8 + 6.4 * f, 12.8, lerp(0x8C7A50, 0xFFFFFF, 0.4f + 0.6f * f), LightTexture.FULL_BRIGHT);
                 }
             }
             case SPLIFF_COIL -> {
@@ -85,7 +85,7 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
                 if (level > 0) {
                     float f = level / 15f;
                     int ember = type == ComponentType.ZEN_HITTER ? lerp(0x2E8A52, 0x9DFFC4, f) : lerp(0x8A2A10, 0xFFB060, f);
-                    box(pose, solid, glow, 6.5, 10.35, 2.7, 9.5, 10.5, 5.1, ember, LightTexture.FULL_BRIGHT);
+                    box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 6.5, 10.35, 2.7, 9.5, 10.5, 5.1, ember, LightTexture.FULL_BRIGHT);
                     VertexConsumer add = buffers.getBuffer(RenderType.lightning());
                     ring(pose, add, 7.3, 7.3, 6.7, 8.7, 8.7, 13.2, ember, 0.15f + 0.35f * f);
                 }
