@@ -50,7 +50,12 @@ public final class ModElectronics {
     public static final DeferredHolder<Block, RollingTrayBlock> ROLLING_TRAY = ModBlocks.BLOCKS.register("rolling_tray",
             () -> new RollingTrayBlock(BlockBehaviour.Properties.of().strength(0.8f).sound(SoundType.METAL)));
 
+    /** Nah, Skip Me, Bro: two wires crossing in one block without touching. */
+    public static final DeferredHolder<Block, HopBlock> SKIP_ME_BRO = ModBlocks.BLOCKS.register("skip_me_bro",
+            () -> new HopBlock(BlockBehaviour.Properties.of().strength(0.2f).sound(SoundType.WOOL).noOcclusion()));
+
     static {
+        ALL.add(ModItems.ITEMS.register("skip_me_bro", () -> new HopBlock.Item(SKIP_ME_BRO.get(), new Item.Properties())));
         ALL.add(ModItems.ITEMS.register("rolling_tray", () -> new BlockItem(ROLLING_TRAY.get(), new Item.Properties())));
         ALL.add(ModItems.ITEMS.register("hemp_thread", () -> new BlockItem(HEMP_THREAD.get(), new Item.Properties())));
         ALL.add(ModItems.ITEMS.register("eighth_ribbon", () -> new BlockItem(EIGHTH_RIBBON.get(), new Item.Properties())));
@@ -70,6 +75,9 @@ public final class ModElectronics {
 
     public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>, BlockEntityType<RibbonBlockEntity>> RIBBON_ENTITY =
             ModBlockEntities.BLOCK_ENTITIES.register("ribbon", () -> BlockEntityType.Builder.of(RibbonBlockEntity::new, EIGHTH_RIBBON.get(), ROACH_CLIP.get()).build(null));
+
+    public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>, BlockEntityType<HopBlockEntity>> HOP_ENTITY =
+            ModBlockEntities.BLOCK_ENTITIES.register("skip_me_bro", () -> BlockEntityType.Builder.of(HopBlockEntity::new, SKIP_ME_BRO.get()).build(null));
 
     /** Loads the class, so its registrations happen; call it before the registers go on the bus. */
     public static void init() {}

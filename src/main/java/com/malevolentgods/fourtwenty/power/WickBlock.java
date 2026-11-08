@@ -127,8 +127,17 @@ public class WickBlock extends Block {
         return Terminal.signOf(self) != null && Terminal.pluggable(neighbour, side.getOpposite()) ? Link.PLUG : Link.NONE;
     }
 
+    /** As {@link #link(BlockState, Direction, BlockState)}, and into a Nah, Skip Me, Bro whose wire this way is a Wick of this colour. */
+    private static Link link(BlockState self, Direction side, BlockState neighbour, net.minecraft.world.level.BlockGetter level, BlockPos neighbourPos) {
+        if (neighbour.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.HopBlock) {
+            var w = com.malevolentgods.fourtwenty.electronics.HopBlockEntity.facing(level, neighbourPos, side.getOpposite());
+            return w != null && !w.ribbon() && joins(self, w.state()) ? Link.WIRE : Link.NONE;
+        }
+        return link(self, side, neighbour);
+    }
+
     private BlockState linked(BlockState state, LevelAccessor level, BlockPos pos) {
-        for (Direction d : Direction.values()) state = state.setValue(SIDES.get(d), link(state, d, level.getBlockState(pos.relative(d))));
+        for (Direction d : Direction.values()) state = state.setValue(SIDES.get(d), link(state, d, level.getBlockState(pos.relative(d)), level, pos.relative(d)));
         return state;
     }
 
@@ -145,7 +154,7 @@ public class WickBlock extends Block {
 
     @Override protected @Nonnull BlockState updateShape(@Nonnull BlockState state, @Nonnull Direction direction, @Nonnull BlockState neighbour, @Nonnull LevelAccessor level,
                                                         @Nonnull BlockPos pos, @Nonnull BlockPos neighbourPos) {
-        return state.setValue(SIDES.get(direction), link(state, direction, neighbour));
+        return state.setValue(SIDES.get(direction), link(state, direction, neighbour, level, neighbourPos));
     }
 
     /** Use a dye on a Wick to colour it; it then joins only Wicks of that colour. */

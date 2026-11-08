@@ -140,7 +140,16 @@ public final class Network {
 
 
     /** One conductor of the wiring: a single Wick (WIRE), or one core of a two-core cable. */
-    enum Core { WIRE, PLUS, MINUS }
+    enum Core { WIRE, PLUS, MINUS, HOP0, HOP1 }
+
+    /** A Nah, Skip Me, Bro's wire {@code i} (0 or 1), as a conductor of its own. */
+    static Core hopCore(int i) { return i == 0 ? Core.HOP0 : Core.HOP1; }
+
+    /** Its wire {@code i}, once walked. */
+    record HopKey(BlockPos pos, int wire) {}
+
+    /** A Ribbon through a hop: its wires as RibbonKeys from here, ten apart for the hop's two (so they never meet). */
+    static final int HOP_BUS = 40;
 
     record Conductor(BlockPos pos, Core core) {
         String id() { return pos.asLong() + "/" + core.ordinal(); }
@@ -229,6 +238,19 @@ public final class Network {
             queue.add(new Object[]{at.immutable(), owner});
         };
         Map<Conductor, double[]> scales = new HashMap<>();
+        // Nah, Skip Me, Bro: each of its two wires walked on its own, along its own axis (a wire as a conductor, a Ribbon by union)
+        java.util.function.BiConsumer<BlockPos, Integer> hopWire = (at, i) -> {
+            if (!(level.getBlockEntity(at) instanceof com.malevolentgods.fourtwenty.electronics.HopBlockEntity hop) || hop.wire(i) == null || !seen.add(new HopKey(at.immutable(), i))) return;
+            Conductor c = new Conductor(at.immutable(), hopCore(i));
+            if (hop.wire(i).block() instanceof WickBlock wick && wickTiers.size() < MAX_WICKS) {
+                wickTiers.put(c, wick.tier());
+                if (wick.ohmsScale() != 1 || wick.ampsScale() != 1) scales.put(c, new double[]{wick.ohmsScale(), wick.ampsScale()});
+            }
+            queue.add(new Object[]{at.immutable(), null, "hopwire", i});
+        };
+        java.util.function.BiConsumer<BlockPos, Integer> hopRibbon = (at, i) -> {
+            if (seen.add(new HopKey(at.immutable(), i))) queue.add(new Object[]{at.immutable(), null, "hopribbon", i});
+        };
         java.util.function.BiConsumer<BlockPos, WickBlock> addWick = (at, wick) -> {
             Conductor c = new Conductor(at.immutable(), Core.WIRE);
             if (!wickTiers.containsKey(c) && wickTiers.size() < MAX_WICKS) {
@@ -283,6 +305,18 @@ public final class Network {
                     BlockPos next = at.relative(d);
                     if (!level.isLoaded(next)) continue;
                     var nextState = level.getBlockState(next);
+                    if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.HopBlock) {
+                        var w = com.malevolentgods.fourtwenty.electronics.HopBlockEntity.facing(level, next, d.getOpposite());
+                        int j = w == null ? -1 : ((com.malevolentgods.fourtwenty.electronics.HopBlockEntity) level.getBlockEntity(next)).along(d.getAxis());
+                        if (w != null && w.ribbon()) {
+                            for (int c = 0; c < bus; c++) union.join(new RibbonKey(at, c), new RibbonKey(next.immutable(), HOP_BUS + 10 * j + c));
+                            hopRibbon.accept(next, j);
+                        } else if (w != null && clip) {
+                            contacts.add(new Object[]{new RibbonKey(at, channel), new Conductor(next.immutable(), hopCore(j))});
+                            hopWire.accept(next, j);
+                        }
+                        continue;
+                    }
                     if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RibbonBlock) {
                         for (int c = 0; c < bus; c++) union.join(new RibbonKey(at, c), new RibbonKey(next.immutable(), c));
                         ribbon.accept(next);
@@ -311,6 +345,34 @@ public final class Network {
                             addWick.accept(next, wick);
                             queue.add(new Object[]{next.immutable(), null});
                         }
+                    }
+                }
+                continue;
+            }
+            if (item.length == 4 && "hopribbon".equals(item[2])) {
+                int j = (Integer) item[3];
+                if (!(level.getBlockEntity(at) instanceof com.malevolentgods.fourtwenty.electronics.HopBlockEntity hop) || hop.wire(j) == null) continue;
+                for (Direction d : com.malevolentgods.fourtwenty.electronics.HopBlockEntity.ends(hop.wire(j).axis())) {
+                    BlockPos next = at.relative(d);
+                    if (!level.isLoaded(next)) continue;
+                    var nextState = level.getBlockState(next);
+                    if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RibbonBlock) {
+                        for (int c = 0; c < bus; c++) union.join(new RibbonKey(at, HOP_BUS + 10 * j + c), new RibbonKey(next.immutable(), c));
+                        ribbon.accept(next);
+                        continue;
+                    }
+                    int first = com.malevolentgods.fourtwenty.electronics.ComponentBlock.busAt(nextState, d.getOpposite());
+                    if (first >= 0) {
+                        for (int c = 0; c < bus; c++) union.join(new RibbonKey(at, HOP_BUS + 10 * j + c), new PinKey(next.immutable(), first + c));
+                        component.accept(next);
+                        continue;
+                    }
+                    if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.HopBlock) {
+                        var w = com.malevolentgods.fourtwenty.electronics.HopBlockEntity.facing(level, next, d.getOpposite());
+                        if (w == null || !w.ribbon()) continue;
+                        int k = ((com.malevolentgods.fourtwenty.electronics.HopBlockEntity) level.getBlockEntity(next)).along(d.getAxis());
+                        for (int c = 0; c < bus; c++) union.join(new RibbonKey(at, HOP_BUS + 10 * j + c), new RibbonKey(next.immutable(), HOP_BUS + 10 * k + c));
+                        hopRibbon.accept(next, k);
                     }
                 }
                 continue;
@@ -439,6 +501,18 @@ public final class Network {
                     BlockPos next = at.relative(d);
                     if (!level.isLoaded(next)) continue;
                     var nextState = level.getBlockState(next);
+                    if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.HopBlock) {
+                        var w = com.malevolentgods.fourtwenty.electronics.HopBlockEntity.facing(level, next, d.getOpposite());
+                        int j = w == null ? -1 : ((com.malevolentgods.fourtwenty.electronics.HopBlockEntity) level.getBlockEntity(next)).along(d.getAxis());
+                        if (w != null && w.ribbon() && width == bus) {
+                            for (int c = 0; c < bus; c++) union.join(new PinKey(at, pin + c), new RibbonKey(next.immutable(), HOP_BUS + 10 * j + c));
+                            hopRibbon.accept(next, j);
+                        } else if (w != null && !w.ribbon() && width == 1) {
+                            contacts.add(new Object[]{new PinKey(at, pin), new Conductor(next.immutable(), hopCore(j))});
+                            hopWire.accept(next, j);
+                        }
+                        continue;
+                    }
                     if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RibbonBlock) {
                         if (width == bus) {
                             for (int c = 0; c < bus; c++) union.join(new PinKey(at, pin + c), new RibbonKey(next.immutable(), c));
@@ -529,12 +603,33 @@ public final class Network {
                 }
                 continue;
             }
-            if (!(here.getBlock() instanceof WickBlock)) continue;
+            Conductor self;
+            Direction[] dirs;
+            if (item.length == 4 && "hopwire".equals(item[2])) {
+                int j = (Integer) item[3];
+                if (!(level.getBlockEntity(at) instanceof com.malevolentgods.fourtwenty.electronics.HopBlockEntity hop) || hop.wire(j) == null || hop.wire(j).ribbon()) continue;
+                here = hop.wire(j).state();
+                self = new Conductor(at, hopCore(j));
+                dirs = com.malevolentgods.fourtwenty.electronics.HopBlockEntity.ends(hop.wire(j).axis());
+            } else {
+                if (!(here.getBlock() instanceof WickBlock)) continue;
+                self = new Conductor(at, Core.WIRE);
+                dirs = Direction.values();
+            }
             Terminals.Sign mine = Terminal.signOf(here);
-            for (Direction d : Direction.values()) {
+            for (Direction d : dirs) {
                 BlockPos next = at.relative(d);
                 if (!level.isLoaded(next)) continue;
                 var nextState = level.getBlockState(next);
+                if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.HopBlock) {
+                    // a hop: the wire of it running this way, if it's a Wick of this colour
+                    var w = com.malevolentgods.fourtwenty.electronics.HopBlockEntity.facing(level, next, d.getOpposite());
+                    if (w == null || w.ribbon() || !WickBlock.joins(here, w.state())) continue;
+                    int j = ((com.malevolentgods.fourtwenty.electronics.HopBlockEntity) level.getBlockEntity(next)).along(d.getAxis());
+                    edge.accept(self, new Conductor(next.immutable(), hopCore(j)));
+                    hopWire.accept(next, j);
+                    continue;
+                }
                 if (nextState.getBlock() instanceof CableBlock) {
                     // a single Wick meets a cable only red or black
                     if (CableBlock.takesWick(here) && seen.add(next.immutable())) queue.add(new Object[]{next.immutable(), null});
@@ -542,7 +637,7 @@ public final class Network {
                 }
                 if (nextState.getBlock() instanceof WickBlock wick) {
                     if (!WickBlock.joins(here, nextState)) continue;
-                    edge.accept(new Conductor(at, Core.WIRE), new Conductor(next.immutable(), Core.WIRE));
+                    edge.accept(self, new Conductor(next.immutable(), Core.WIRE));
                     if (wickTiers.size() < MAX_WICKS && seen.add(next.immutable())) {
                         addWick.accept(next, wick);
                         queue.add(new Object[]{next.immutable(), null});
@@ -550,7 +645,7 @@ public final class Network {
                     continue;
                 }
                 if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RoachClipBlock) {
-                    contacts.add(new Object[]{new RibbonKey(next.immutable(), com.malevolentgods.fourtwenty.electronics.RoachClipBlock.channel(nextState)), new Conductor(at, Core.WIRE)});
+                    contacts.add(new Object[]{new RibbonKey(next.immutable(), com.malevolentgods.fourtwenty.electronics.RoachClipBlock.channel(nextState)), self});
                     ribbon.accept(next);
                     continue;
                 }
@@ -565,7 +660,7 @@ public final class Network {
                 if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlock) {
                     int pin = com.malevolentgods.fourtwenty.electronics.ComponentBlock.singlePinAt(nextState, d.getOpposite());
                     if (pin >= 0) {
-                        contacts.add(new Object[]{new PinKey(next.immutable(), pin), new Conductor(at, Core.WIRE)});
+                        contacts.add(new Object[]{new PinKey(next.immutable(), pin), self});
                         component.accept(next);
                     }
                     continue;
@@ -573,7 +668,7 @@ public final class Network {
                 if (mine == null || !Terminal.pluggable(nextState, d.getOpposite())) continue;
                 BINode owner = ownerOnFace(level, next, d.getOpposite());
                 if (owner == null) continue;
-                contacts.add(new Object[]{Terminal.of(owner, mine), new Conductor(at, Core.WIRE)});
+                contacts.add(new Object[]{Terminal.of(owner, mine), self});
                 device.accept(next, owner);
             }
         }
@@ -1411,7 +1506,9 @@ public final class Network {
         for (BlockPos pos : burn) {
             burnTimers.remove(pos);
             var b = level.getBlockState(pos).getBlock();
-            if (b instanceof WickBlock || b instanceof CableBlock || b instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlock) BurnOut.burn(level, pos);
+            if (b instanceof WickBlock || b instanceof CableBlock || b instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlock || b instanceof com.malevolentgods.fourtwenty.electronics.HopBlock) {
+                BurnOut.burn(level, pos);
+            }
         }
     }
 

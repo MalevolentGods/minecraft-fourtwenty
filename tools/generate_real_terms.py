@@ -64,6 +64,7 @@ REAL = {
     'eighth_ribbon': 'Ribbon cable (8-bit bus)',
     'roach_clip': 'Bus tap',
     'rolling_tray': 'Backplane (PCB)',
+    'skip_me_bro': 'Jumper (crossover)',
     'puff_pass_nug': 'Shift register, serial in, parallel out (74HC595)',
     'pack_nug': 'Shift register, parallel in, serial out (74HC165)',
     'sampler_nug': 'Multiplexer, 8 to 1',

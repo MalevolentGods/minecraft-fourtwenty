@@ -89,6 +89,7 @@ public class ModClientEvents {
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModBlockEntities.CURING_RACK.get(), CuringRackRenderer::new);
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModBlockEntities.LAMP.get(), LampHaloRenderer::new);
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.electronics.ModElectronics.COMPONENT_ENTITY.get(), ComponentRenderer::new);
+        event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.electronics.ModElectronics.HOP_ENTITY.get(), HopRenderer::new);
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModPower.SUPPLY_ENTITY.get(), BenchRigRenderer::new);
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.electronics.ModElectronics.RIBBON_ENTITY.get(), RibbonRenderer::new);
         event.registerEntityRenderer(com.malevolentgods.fourtwenty.registry.ModEntities.BUZZ_BOT.get(), BuzzBotRenderer::new);

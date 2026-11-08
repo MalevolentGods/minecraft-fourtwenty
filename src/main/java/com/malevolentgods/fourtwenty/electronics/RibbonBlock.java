@@ -76,8 +76,17 @@ public class RibbonBlock extends Block implements net.minecraft.world.level.bloc
         return neighbour.getBlock() instanceof RibbonBlock || ComponentBlock.busAt(neighbour, side.getOpposite()) >= 0;
     }
 
+    /** As {@link #links(Direction, BlockState)}, and into a Nah, Skip Me, Bro whose Ribbon runs this way. */
+    public static boolean links(Direction side, BlockState neighbour, net.minecraft.world.level.BlockGetter level, BlockPos neighbourPos) {
+        if (neighbour.getBlock() instanceof HopBlock) {
+            var w = HopBlockEntity.facing(level, neighbourPos, side.getOpposite());
+            return w != null && w.ribbon();
+        }
+        return links(side, neighbour);
+    }
+
     private BlockState linked(BlockState state, LevelAccessor level, BlockPos pos) {
-        for (Direction d : Direction.values()) state = state.setValue(SIDES.get(d), links(d, level.getBlockState(pos.relative(d))));
+        for (Direction d : Direction.values()) state = state.setValue(SIDES.get(d), links(d, level.getBlockState(pos.relative(d)), level, pos.relative(d)));
         return state.setValue(VAXIS, vaxis(state, level, pos));
     }
 

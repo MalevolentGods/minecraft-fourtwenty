@@ -524,7 +524,7 @@ def thread():
 
 
 def data():
-    ids = ['hemp_thread', 'eighth_ribbon', 'roach_clip', 'rolling_tray'] + [cid for cid, _, _, _ in TYPES]
+    ids = ['hemp_thread', 'eighth_ribbon', 'roach_clip', 'rolling_tray', 'skip_me_bro'] + [cid for cid, _, _, _ in TYPES]
     for cid in ids:
         write(DATA / f'fourtwenty/loot_table/blocks/{cid}.json', {'type': 'minecraft:block', 'pools': [{'rolls': 1, 'entries': [
             {'type': 'minecraft:item', 'name': f'fourtwenty:{cid}'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
@@ -578,6 +578,12 @@ def data():
     lang['message.fourtwenty.rolling_tray.channel'] = 'Rolling Tray: channel %s'
     lang['gui.fourtwenty.key_label.number'] = 'Dankoder number: %s'
     lang['gui.fourtwenty.key_label.number_auto'] = 'Dankoder number: its place'
+    lang['block.fourtwenty.skip_me_bro'] = 'Nah, Skip Me, Bro'
+    lang['tooltip.fourtwenty.item.skip_me_bro'] = ('Two wires across one block without touching, one hopping over the other. Use it on a straight Wick, Hemp Thread or Eighth Ribbon to put '
+        'that wire through it; use another wire on it to lay that one through too, along the face you use it on. Broken, it gives back both.')
+    lang['message.fourtwenty.skip_me_bro.taken'] = 'A wire already runs that way through it'
+    lang['message.fourtwenty.skip_me_bro.full'] = 'It already holds two wires'
+    lang['message.fourtwenty.skip_me_bro.straight'] = 'Only a straight wire can be skipped over'
     lang['gui.fourtwenty.key_label'] = 'Key Label'
     lang['gui.fourtwenty.key_label.text'] = 'Up to 4 characters on its face'
     lang['gui.fourtwenty.key_label.no_glow'] = 'No glow: plain ink'

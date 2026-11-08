@@ -26,9 +26,12 @@ public class ModCreativeTabs {
                 output.accept(ModItems.TRIM_TRAY.get());
                 output.accept(ModItems.CURING_RACK.get());
                 com.malevolentgods.fourtwenty.registry.ModPower.ITEMS.forEach(item -> output.accept(item.get()));
-                // the red (+) and black (−) Wicks of each tier, as their dye recipes make them
-                for (var wick : java.util.List.of(ModPower.HEMP_WICK, ModPower.ROLLED_WICK, ModPower.GLASS_WICK, ModPower.GOLD_WICK)) {
-                    for (var colour : java.util.List.of(com.malevolentgods.fourtwenty.power.WickBlock.Colour.RED, com.malevolentgods.fourtwenty.power.WickBlock.Colour.BLACK)) {
+                // every colour of each Wick and of Hemp Thread (undyed is listed with its block): red is +, black −, and only a wire of
+                // the same colour joins, so neighbouring signals can run side by side in different colours
+                for (var wick : java.util.List.<java.util.function.Supplier<? extends net.minecraft.world.level.block.Block>>of(ModPower.HEMP_WICK, ModPower.ROLLED_WICK,
+                        ModPower.GLASS_WICK, ModPower.GOLD_WICK, com.malevolentgods.fourtwenty.electronics.ModElectronics.HEMP_THREAD)) {
+                    for (var colour : com.malevolentgods.fourtwenty.power.WickBlock.Colour.values()) {
+                        if (colour == com.malevolentgods.fourtwenty.power.WickBlock.Colour.NONE) continue;
                         ItemStack stack = new ItemStack(wick.get());
                         stack.set(net.minecraft.core.component.DataComponents.BLOCK_STATE,
                                 net.minecraft.world.item.component.BlockItemStateProperties.EMPTY.with(com.malevolentgods.fourtwenty.power.WickBlock.COLOUR, colour));
