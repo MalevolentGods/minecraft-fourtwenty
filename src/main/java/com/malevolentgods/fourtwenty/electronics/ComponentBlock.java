@@ -137,7 +137,7 @@ public class ComponentBlock extends Block implements EntityBlock {
         // a mounted key, sneaking: its label screen, not a press
         if (type.key() && state.getValue(MOUNTED) && player.isShiftKeyDown()) {
             if (level.isClientSide && level.getBlockEntity(pos) instanceof ComponentBlockEntity be) {
-                com.malevolentgods.fourtwenty.client.KeyLabelScreen.open(pos, be.label(), be.glow());
+                com.malevolentgods.fourtwenty.client.KeyLabelScreen.open(pos, be.label(), be.glow(), (int) Math.round(be.value()));
             }
             return InteractionResult.SUCCESS;
         }

@@ -41,6 +41,19 @@ public class ComponentBlockEntity extends ShowingBlockEntity {
         return index;
     }
 
+    /** Sets it to {@code value}, if that's one of its type's values. */
+    public void select(double value) {
+        ComponentType t = type();
+        if (t == null) return;
+        for (int i = 0; i < t.values.size(); i++) {
+            if (Math.abs(t.values.get(i) - value) < 1e-9) {
+                index = i;
+                setChanged();
+                return;
+            }
+        }
+    }
+
     public void step(int by) {
         ComponentType t = type();
         if (t == null || t.values.isEmpty()) return;

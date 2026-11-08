@@ -14,24 +14,32 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import javax.annotation.Nonnull;
 
 /**
- * A mounted key's label (KeyLabels): up to four characters for its face, and the colour they glow in, or plain ink. A preview shows it
- * as it will look.
+ * A mounted key's label (KeyLabels): up to four characters for its face, the colour they glow in (or plain ink), and the number a
+ * Dankoder reads it as. A preview shows the face as it will look.
  */
 public class KeyLabelScreen extends Screen {
     private static final int SWATCH = 12, GAP = 3;
     private final BlockPos pos;
     private final String start;
-    private int glow;
+    private int glow, number;
     private EditBox box;
 
-    private KeyLabelScreen(BlockPos pos, String label, int glow) {
+    private KeyLabelScreen(BlockPos pos, String label, int glow, int number) {
         super(Component.translatable("gui.fourtwenty.key_label"));
         this.pos = pos;
         this.start = label;
         this.glow = glow;
+        this.number = number;
     }
 
-    public static void open(BlockPos pos, String label, int glow) { Minecraft.getInstance().setScreen(new KeyLabelScreen(pos, label, glow)); }
+    public static void open(BlockPos pos, String label, int glow, int number) {
+        Minecraft.getInstance().setScreen(new KeyLabelScreen(pos, label, glow, number));
+    }
+
+    private static Component numberText(int n) {
+        return n < 0 ? Component.translatable("gui.fourtwenty.key_label.number_auto")
+                : Component.translatable("gui.fourtwenty.key_label.number", Integer.toHexString(n).toUpperCase(java.util.Locale.ROOT));
+    }
 
     @Override protected void init() {
         int x = width / 2 - 60, y = height / 2 - 20;
@@ -40,7 +48,12 @@ public class KeyLabelScreen extends Screen {
         box.setValue(start);
         addRenderableWidget(box);
         setInitialFocus(box);
-        addRenderableWidget(Button.builder(Component.translatable("gui.done"), b -> done()).bounds(x, y + 58, 120, 20).build());
+        // its number for a Dankoder: its place on the board, then 0 to F; click to step on, sneak-click (shift) to step back
+        addRenderableWidget(Button.builder(numberText(number), b -> {
+            number = Math.floorMod(number + 1 + (hasShiftDown() ? -1 : 1), 17) - 1;
+            b.setMessage(numberText(number));
+        }).bounds(x, y + 58, 120, 20).build());
+        addRenderableWidget(Button.builder(Component.translatable("gui.done"), b -> done()).bounds(x, y + 82, 120, 20).build());
     }
 
     /** The swatches' row: no glow, then the sixteen dyes. */
@@ -60,7 +73,7 @@ public class KeyLabelScreen extends Screen {
     }
 
     private void done() {
-        PacketDistributor.sendToServer(new KeyLabels.SetLabel(pos, KeyLabels.clean(box.getValue()), glow));
+        PacketDistributor.sendToServer(new KeyLabels.SetLabel(pos, KeyLabels.clean(box.getValue()), glow, number));
         onClose();
     }
 

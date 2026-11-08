@@ -29,23 +29,8 @@ public class TwisterItem extends Item {
         Direction face = context.getClickedFace();
         // looking at a face, clockwise is the negative turn about its outward axis for faces pointing the positive way, and the reverse
         boolean clockwise = (face.getAxisDirection() == Direction.AxisDirection.POSITIVE) != (context.getPlayer() != null && context.getPlayer().isSecondaryUseActive());
-        // a part mounted on a Rolling Tray faces out from it: there's no other way for it to turn. A key's number (for a Dankoder) is set
-        // with it instead: 0 to F, or its place on the board
-        if (state.hasProperty(ComponentBlock.MOUNTED) && state.getValue(ComponentBlock.MOUNTED)) {
-            if (!(state.getBlock() instanceof ComponentBlock cb) || !cb.type().key() || !(level.getBlockEntity(pos) instanceof ComponentBlockEntity be)) {
-                return InteractionResult.PASS;
-            }
-            be.step(context.getPlayer() != null && context.getPlayer().isSecondaryUseActive() ? -1 : 1);
-            BIGrid.changed(level);
-            level.sendBlockUpdated(pos, state, state, 2);
-            int key = (int) Math.round(be.value());
-            if (context.getPlayer() != null) {
-                context.getPlayer().displayClientMessage(key < 0 ? net.minecraft.network.chat.Component.translatable("message.fourtwenty.dankoder.auto")
-                        : net.minecraft.network.chat.Component.translatable("message.fourtwenty.dankoder.key", Integer.toHexString(key).toUpperCase(java.util.Locale.ROOT)), true);
-            }
-            level.playSound(null, pos, SoundEvents.LANTERN_PLACE, SoundSource.BLOCKS, 0.5f, 1.9f);
-            return InteractionResult.SUCCESS;
-        }
+        // a part mounted on a Rolling Tray faces out from it: there's no other way for it to turn
+        if (state.hasProperty(ComponentBlock.MOUNTED) && state.getValue(ComponentBlock.MOUNTED)) return InteractionResult.PASS;
         BlockState turned = turn(state, face.getAxis(), clockwise);
         level.setBlock(pos, turned, 3);
         BIGrid.changed(level);

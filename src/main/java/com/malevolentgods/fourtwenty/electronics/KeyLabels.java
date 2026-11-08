@@ -12,8 +12,9 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import javax.annotation.Nonnull;
 
 /**
- * Key labels: a short text on the face of a Puff Button or Toggle Joint mounted on a Rolling Tray, and the colour it glows (or none).
- * Set in its screen (sneak and use it with an empty hand); the client asks, the server checks and keeps it.
+ * Key labels: a short text on the face of a Puff Button or Toggle Joint mounted on a Rolling Tray, the colour it glows (or none), and
+ * the number a Dankoder reads it as (its place on the board, or 0 to F). Set in its screen (sneak and use it with an empty hand); the
+ * client asks, the server checks and keeps it.
  */
 public final class KeyLabels {
     private KeyLabels() {}
@@ -23,14 +24,15 @@ public final class KeyLabels {
     /** How near the player has to be, squared. */
     private static final double REACH = 64;
 
-    /** A label and its glow: a dye's id, or -1 for none. */
-    public record SetLabel(BlockPos pos, String label, int glow) implements CustomPacketPayload {
+    /** A label, its glow (a dye's id, or -1 for none) and its number (-1 for its place on the board, else 0 to 15). */
+    public record SetLabel(BlockPos pos, String label, int glow, int number) implements CustomPacketPayload {
         public static final Type<SetLabel> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("fourtwenty", "key_label"));
         public static final StreamCodec<FriendlyByteBuf, SetLabel> CODEC = StreamCodec.ofMember((m, buf) -> {
             buf.writeBlockPos(m.pos);
             buf.writeUtf(m.label, 32);
             buf.writeVarInt(m.glow);
-        }, buf -> new SetLabel(buf.readBlockPos(), buf.readUtf(32), buf.readVarInt()));
+            buf.writeVarInt(m.number + 1);
+        }, buf -> new SetLabel(buf.readBlockPos(), buf.readUtf(32), buf.readVarInt(), buf.readVarInt() - 1));
 
         @Override public @Nonnull Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
@@ -51,6 +53,12 @@ public final class KeyLabels {
                     if (!(state.getBlock() instanceof ComponentBlock cb) || !cb.type().key() || ComponentBlock.mountedOn(state) == null) return;
                     if (!(p.level().getBlockEntity(m.pos) instanceof ComponentBlockEntity be)) return;
                     be.label(clean(m.label), glow(m.glow));
+                    int number = m.number < 0 || m.number > 15 ? -1 : m.number;
+                    if ((int) Math.round(be.value()) != number) {
+                        be.select(number);
+                        // a new number is a new circuit
+                        com.malevolentgods.fourtwenty.power.BIGrid.changed(p.level());
+                    }
                     p.level().sendBlockUpdated(m.pos, state, state, 2);
                 })));
     }
