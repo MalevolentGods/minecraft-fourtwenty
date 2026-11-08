@@ -71,6 +71,7 @@ REAL = {
     'stacker_nug': '8-bit adder / subtractor',
     'scale_nug': 'Magnitude comparator',
     'jar_nug': '8-bit register (74HC574)',
+    'numb_nug': '7-segment display',
 }
 
 

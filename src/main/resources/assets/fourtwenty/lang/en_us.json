@@ -2120,6 +2120,8 @@
   "tooltip.fourtwenty.item.twister": "Turns a component a quarter turn about the face you use it on; sneak to turn it back. Any way a part can point is a few twists away, and it never flips or steps what it turns.",
   "block.fourtwenty.slow_burner": "Slow Burner",
   "tooltip.fourtwenty.item.slow_burner": "Lets through a steady current, its setting, whatever the voltage across it once that is a Kb or so: a Kief Cap fills or drains at a steady rate through it. It makes no current of its own; a supply drives it. Use it to step its current (sneak to step back). Two pins, back and front: any Wick or Hemp Thread on either end joins it.",
+  "block.fourtwenty.numb_nug": "Numb Nug",
+  "tooltip.fourtwenty.item.numb_nug": "A digit of a display: a byte, 0 to 255, in decimal or 00 to FF in hex. Use its back to switch. The one with power and data sets the whole row. A byte in on the bus face at the back (an Eighth Ribbon), VDD on top, GND underneath. Numb Nugs side by side, facing the same way, are one display: only one of them needs power and a Ribbon.",
   "tooltip.fourtwenty.real.weed_bong": "Generator",
   "tooltip.fourtwenty.real.double_hose": "Generator",
   "tooltip.fourtwenty.real.big_bertha": "Generator",
@@ -2191,5 +2193,6 @@
   "tooltip.fourtwenty.real.blend_nug": "Bitwise logic unit",
   "tooltip.fourtwenty.real.stacker_nug": "8-bit adder / subtractor",
   "tooltip.fourtwenty.real.scale_nug": "Magnitude comparator",
-  "tooltip.fourtwenty.real.jar_nug": "8-bit register (74HC574)"
+  "tooltip.fourtwenty.real.jar_nug": "8-bit register (74HC574)",
+  "tooltip.fourtwenty.real.numb_nug": "7-segment display"
 }

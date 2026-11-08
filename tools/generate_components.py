@@ -52,6 +52,7 @@ TYPES = [
     ('stacker_nug', 'Stacker Nug', 'stacker', 'ADD'),
     ('scale_nug', 'Scale Nug', 'scale', 'CMP'),
     ('jar_nug', 'Jar Nug', 'jar', 'REG'),
+    ('numb_nug', 'Numb Nug', 'display', 'NUM'),
 ]
 
 # the resistor colour code for channels 0 to 7, the carry grey: an Eighth Ribbon's stripes and a Roach Clip's band
@@ -73,6 +74,7 @@ TOOLTIPS = {
     'stacker': 'Bus A at the back, bus B on the left, carry in on the right, the result in front with the carry out on its C wire. VDD on top, GND underneath.',
     'scale': 'Bus A at the back, bus B on the left; in front, channel 0 is A < B, 1 is A = B, 2 is A > B. VDD on top, GND underneath.',
     'jar': 'Bus in at the back, clock on the left, release on the right, bus out in front. VDD on top, GND underneath.',
+    'display': 'A byte in on the bus face at the back (an Eighth Ribbon), VDD on top, GND underneath. Numb Nugs side by side, facing the same way, are one display: only one of them needs power and a Ribbon.',
 }
 EXTRA = {
     'resinator': 'A resistor, rated 10 W: past that it burns out in smoke. Use it to step its value (sneak to step back).',
@@ -97,6 +99,7 @@ EXTRA = {
     'blend_nug': 'Bitwise logic on two buses, all nine wires at once: AND, OR, XOR, NAND, NOR, XNOR, NOT A or A. Use it to step the operation.',
     'stacker_nug': 'Adds two bytes and the carry in (or subtracts B and the borrow from A), the carry (or borrow) out on the C wire, so two make 16 bits. Use it to switch add and subtract.',
     'scale_nug': 'Weighs two bytes against each other: exactly one of its outputs is high.',
+    'numb_nug': 'A digit of a display: a byte, 0 to 255, in decimal or 00 to FF in hex. Use its back to switch. The one with power and data sets the whole row.',
     'jar_nug': 'Keeps a byte (nine bits): takes its inputs on each rising clock and drives them out until release is 1, when it lets go, so several can share one bus.',
     'hype_amp': 'An op-amp: drives its output to 100,000 times the difference of its inputs, as far as its supply allows. With Resinators for feedback it amplifies by their ratio.',
 }
@@ -226,7 +229,8 @@ PINS = {'two': [('back', 'in'), ('front', 'in')], 'one': [('top', 'vdd'), ('bott
         'blend': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'bus'), ('front', 'bus')],
         'stacker': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'bus'), ('right', 'in'), ('front', 'bus')],
         'scale': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'bus'), ('front', 'bus')],
-        'jar': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'in'), ('right', 'in'), ('front', 'bus')], 'none': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out')]}
+        'jar': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus'), ('left', 'in'), ('right', 'in'), ('front', 'bus')],
+        'display': [('top', 'vdd'), ('bottom', 'gnd'), ('back', 'bus')], 'none': [('top', 'vdd'), ('bottom', 'gnd'), ('front', 'out')]}
 
 
 def component(cid, layout, look):

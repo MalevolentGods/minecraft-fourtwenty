@@ -1005,6 +1005,7 @@ public final class Network {
                         java.util.Arrays.copyOfRange(p, 21, 29), p[29]);
                 case COMPARE -> net.comparator(p[0], p[1], java.util.Arrays.copyOfRange(p, 2, 10), java.util.Arrays.copyOfRange(p, 11, 19), p[20], p[21], p[22]);
                 case REGISTER -> net.register(p[0], p[1], java.util.Arrays.copyOfRange(p, 2, 11), p[11], p[12], java.util.Arrays.copyOfRange(p, 13, 22));
+                case DISPLAY -> net.display(p[0], p[1], java.util.Arrays.copyOfRange(p, 2, 10));
                 case DEMUX -> net.dealer(p[0], p[1], p[2], java.util.Arrays.copyOfRange(p, 3, 6), java.util.Arrays.copyOfRange(p, 12, 20));
             };
             reactive |= c.type().part == com.malevolentgods.fourtwenty.electronics.ComponentType.Part.CAPACITOR
@@ -1091,7 +1092,11 @@ public final class Network {
         double across = p.length >= 2 ? live.volts(p[0]) - live.volts(p[1]) : 0;
         int bits = 0, levelShown = 0;
         boolean active, hot = false;
-        if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Chips.Chip chip) {
+        if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Chips.Display display) {
+            active = across >= com.malevolentgods.fourtwenty.domain.electronics.Logic.MIN_SUPPLY;
+            bits = display.read(live.analysis());
+            levelShown = active ? com.malevolentgods.fourtwenty.domain.electronics.Shown.LEVELS : 0;
+        } else if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Chips.Chip chip) {
             for (int k = 0; k < chip.outputs(); k++) if (chip.output(k) == com.malevolentgods.fourtwenty.domain.electronics.Logic.Out.HIGH) bits |= 1 << k;
             active = across >= com.malevolentgods.fourtwenty.domain.electronics.Logic.MIN_SUPPLY;
             levelShown = active ? com.malevolentgods.fourtwenty.domain.electronics.Shown.LEVELS : 0;

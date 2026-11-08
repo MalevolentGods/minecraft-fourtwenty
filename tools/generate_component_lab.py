@@ -296,6 +296,17 @@ def hype_amp():
     return composite(solid, glass, {'plaque': 'fourtwenty:block/component/lab_plaque_hype_amp'})
 
 
+def numb_nug():
+    """A digit: a steel bezel the full width of its space (so a row sits flush as one screen), dark glass in front; its segments, and the
+    lever of the hex/decimal toggle on its back, are the renderer's. Power top and bottom, an IDC header on its back."""
+    solid = [box([0, 2, 5], [16, 14, 12], '#body'), box([0, 2, 4.3], [16, 3, 5], '#trim'), box([0, 13, 4.3], [16, 14, 5], '#trim'),
+             box([0, 3, 4.8], [16, 13, 5], '#screen'), flat_face(box([2.5, 6, 12], [14.5, 10, 16], '#dark'), 'south', '#header'),
+             box([6.6, 10.6, 12], [9.4, 13.6, 12.4], '#dark')]
+    solid += gland('top', 'vdd', 2) + gland('bottom', 'gnd', 2)
+    glass = [box([0, 3, 4.4], [16, 13, 4.6], '#glass', faces=('north',))]
+    return composite(solid, glass, {'header': 'fourtwenty:block/component/lab_header', 'screen': 'fourtwenty:block/component/lab_screen'})
+
+
 def family_textures():
     header_texture()
     for cid, (layout, kind) in NUGS.items():
@@ -515,6 +526,7 @@ def main():
     LAB['sativa_fet'] = lambda: fet('sativa_fet')
     LAB['indica_fet'] = lambda: fet('indica_fet')
     LAB['hype_amp'] = hype_amp
+    LAB['numb_nug'] = numb_nug
     save(rgb('#6FD38A')[None, None, :].repeat(S, 0).repeat(S, 1) + RNG.normal(0, 6, (S, S, 1)), 'lab_zen')
     for cid, make in LAB.items():
         model = make()

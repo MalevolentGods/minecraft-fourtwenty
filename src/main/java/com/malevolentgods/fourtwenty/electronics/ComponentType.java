@@ -43,13 +43,14 @@ public enum ComponentType {
     BLEND_NUG("blend_nug", Part.BITWISE, Layout.BLEND, "", List.of(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0), 0),
     STACKER_NUG("stacker_nug", Part.ARITH, Layout.STACKER, "", List.of(0.0, 1.0), 0),
     SCALE_NUG("scale_nug", Part.COMPARE, Layout.SCALE, "", List.of(), 0),
-    JAR_NUG("jar_nug", Part.REGISTER, Layout.JAR, "", List.of(), 0);
+    JAR_NUG("jar_nug", Part.REGISTER, Layout.JAR, "", List.of(), 0),
+    NUMB_NUG("numb_nug", Part.DISPLAY, Layout.DISPLAY, "", List.of(0.0, 1.0), 0);
 
     /** Wires on a bus face, and in an Eighth Ribbon: channels 0 to 7, then the carry. */
     public static final int BUS = 9;
 
     /** What the block is in the circuit. */
-    public enum Part { RESISTOR, CAPACITOR, INDUCTOR, DIODE, ZENER, TOGGLE, REDSTONE_SWITCH, BUTTON, REGULATOR, GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, NMOS, PMOS, OPAMP, SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER }
+    public enum Part { RESISTOR, CAPACITOR, INDUCTOR, DIODE, ZENER, TOGGLE, REDSTONE_SWITCH, BUTTON, REGULATOR, GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, NMOS, PMOS, OPAMP, SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER, DISPLAY }
 
     /** A pin's face, relative to the block's front. */
     public enum Face { FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM }
@@ -77,7 +78,8 @@ public enum ComponentType {
         BLEND(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), bus(Face.LEFT), bus(Face.FRONT))),
         STACKER(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), bus(Face.LEFT), new Face[]{Face.RIGHT}, bus(Face.FRONT))),
         SCALE(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), bus(Face.LEFT), bus(Face.FRONT))),
-        JAR(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), new Face[]{Face.LEFT, Face.RIGHT}, bus(Face.FRONT)));
+        JAR(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), new Face[]{Face.LEFT, Face.RIGHT}, bus(Face.FRONT))),
+        DISPLAY(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK)));
 
         public final List<Face> pins;
 
@@ -130,7 +132,7 @@ public enum ComponentType {
     /** A chip with a bus face: a shift register or a multiplexer. */
     public boolean chip() {
         return switch (part) {
-            case SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER -> true;
+            case SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER, DISPLAY -> true;
             default -> false;
         };
     }
@@ -149,6 +151,7 @@ public enum ComponentType {
                 default -> "A";
             };
             case ARITH -> value > 0.5 ? "subtract" : "add";
+            case DISPLAY -> value > 0.5 ? "hex" : "decimal";
             default -> ComponentBlockEntity.format(value, unit);
         };
     }

@@ -356,6 +356,23 @@ public final class Chips {
         public int value() { return q; }
     }
 
+    /**
+     * The Numb Nug (a 7-segment display's driver): it reads a byte on its eight inputs against its own supply, with the Nugs' thresholds,
+     * and drives nothing; what it shows is drawn from what it reads.
+     */
+    public static final class Display extends Chip {
+        Display(int vdd, int gnd, int[] in) { super(vdd, gnd, in, 0); }
+
+        /** The byte it reads now (0 if unpowered). */
+        public int read(Analysis an) { return powered(an) ? bits(an, 0, inputs.length) : 0; }
+
+        @Override Logic.Out[] evaluate(Analysis an) { return new Logic.Out[0]; }
+
+        @Override double[] registers() { return new double[0]; }
+
+        @Override void registers(double[] r) {}
+    }
+
     static int[] concat(int[] a, int[] b) {
         int[] out = Arrays.copyOf(a, a.length + b.length);
         System.arraycopy(b, 0, out, a.length, b.length);

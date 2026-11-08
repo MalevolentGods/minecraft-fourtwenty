@@ -98,6 +98,7 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
                 box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 6.7, 6.7, 3.0, 9.3, 9.3, 3.6, cherry,
                         level > 0 ? LightTexture.FULL_BRIGHT : light);
             }
+            case NUMB_NUG -> digit(be, pose, buffers, light, time);
             case SATIVA_FET, INDICA_FET -> {
                 // the resin core glows with the channel current: green for N, purple for P
                 float f = level / 15f;
@@ -196,6 +197,74 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
             }
         }
         pose.popPose();
+    }
+
+    /** Segments a to g for 0-9 and A-F (a top, b top right, c bottom right, d bottom, e bottom left, f top left, g middle). */
+    private static final int[] GLYPHS = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71};
+    /** Each segment as (left, bottom, right, top) in voxels as you face the display: a digit 7 wide and 9 high. */
+    private static final double[][] SEGMENTS = {{5.1, 11.4, 10.9, 12.5}, {10.4, 8.3, 11.5, 11.6}, {10.4, 4.4, 11.5, 7.7}, {5.1, 3.5, 10.9, 4.6},
+            {4.5, 4.4, 5.6, 7.7}, {4.5, 8.3, 5.6, 11.6}, {5.1, 7.45, 10.9, 8.55}, {12.3, 3.5, 13.2, 4.4}};
+
+    /**
+     * A Numb Nug's digit. Numb Nugs side by side, facing the same way, are one display: the first of them that's powered gives the
+     * value (its byte) and the mode (its back toggle), the rest need nothing. The value is right-aligned, the most significant digit on
+     * the left as you face it; a row too short for it shows its lowest digits and lights the leftmost point. Its back toggle shows the mode.
+     */
+    private static void digit(ComponentBlockEntity be, PoseStack pose, MultiBufferSource buffers, int light, float time) {
+        var level = be.getLevel();
+        var state = be.getBlockState();
+        net.minecraft.core.Direction facing = state.getValue(ComponentBlock.FACING);
+        int spin = state.getValue(ComponentBlock.SPIN);
+        net.minecraft.core.Direction left = com.malevolentgods.fourtwenty.electronics.Orientation.toWorld(facing, spin, ComponentType.Face.LEFT);
+        // the row, left to right as you face it
+        java.util.List<ComponentBlockEntity> row = new java.util.ArrayList<>();
+        net.minecraft.core.BlockPos start = be.getBlockPos();
+        for (int i = 0; i < 8 && same(level, start.relative(left), state); i++) start = start.relative(left);
+        for (int i = 0; i < 9; i++) {
+            net.minecraft.core.BlockPos at = start.relative(left.getOpposite(), i);
+            if (!same(level, at, state) || !(level.getBlockEntity(at) instanceof ComponentBlockEntity d)) break;
+            row.add(d);
+        }
+        int place = row.indexOf(be), n = row.size();
+        ComponentBlockEntity source = null;
+        // the source: the first that's powered with something plugged into its back (a Ribbon, or a bus face)
+        for (ComponentBlockEntity d : row) if (Shown.active(d.shown()) && fed(level, d)) { source = d; break; }
+        // the back toggle: up for hex, down for decimal
+        boolean hex = be.value() > 0.5;
+        box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("infuser/steel_trim"), 7.6, hex ? 12.2 : 10.9, 12.4, 8.4, hex ? 13.4 : 12.1, 13.4, 0xFFFFFF, light);
+        String text = "";
+        boolean overflow = false;
+        if (source != null) {
+            int value = Shown.bits(source.shown()) & 0xFF;
+            text = source.value() > 0.5 ? Integer.toHexString(value).toUpperCase(java.util.Locale.ROOT) : Integer.toString(value);
+            if (text.length() > n) {
+                text = text.substring(text.length() - n);
+                overflow = true;
+            }
+        }
+        int at = place - (n - text.length());
+        int glyph = at >= 0 && at < text.length() ? GLYPHS[Character.digit(text.charAt(at), 16)] : 0;
+        boolean point = overflow && place == 0;
+        for (int k = 0; k < 8; k++) {
+            boolean on = k < 7 ? (glyph >> k & 1) != 0 : point;
+            double[] s = SEGMENTS[k];
+            // as you face it, its left is the model's east: x runs the other way
+            box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("component/lab_glow"), 16 - s[2], s[1], 4.7, 16 - s[0], s[3], 4.8,
+                    on ? LIME : source != null ? 0x1E2A14 : 0x161A12, on ? LightTexture.FULL_BRIGHT : light);
+        }
+    }
+
+    private static boolean fed(net.minecraft.world.level.Level level, ComponentBlockEntity d) {
+        var s = d.getBlockState();
+        net.minecraft.core.Direction back = com.malevolentgods.fourtwenty.electronics.Orientation.toWorld(s.getValue(ComponentBlock.FACING), s.getValue(ComponentBlock.SPIN), ComponentType.Face.BACK);
+        var behind = level.getBlockState(d.getBlockPos().relative(back));
+        return behind.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RibbonBlock || ComponentBlock.busAt(behind, back.getOpposite()) >= 0;
+    }
+
+    private static boolean same(net.minecraft.world.level.Level level, net.minecraft.core.BlockPos at, net.minecraft.world.level.block.state.BlockState like) {
+        var s = level.getBlockState(at);
+        return s.getBlock() == like.getBlock() && s.getValue(ComponentBlock.FACING) == like.getValue(ComponentBlock.FACING)
+                && s.getValue(ComponentBlock.SPIN) == like.getValue(ComponentBlock.SPIN);
     }
 
     /**

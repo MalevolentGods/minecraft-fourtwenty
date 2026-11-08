@@ -412,4 +412,23 @@ public final class ElectronicsGameTests {
             h.succeed();
         });
     }
+
+    /** A Numb Nug fed by a Roach Clip on channel 2, under a red Wick: it reads 4, and shows it powered. */
+    @GameTest(template = "long", timeoutTicks = 100)
+    public static void aNumbNugReadsARibbon(GameTestHelper h) {
+        var l = new Ladder(h, 2, 0).rails(ModPower.HEMP_WICK.get(), 1, 8);
+        l.hookah(1, ModBlocks.WEED_BONG.get());
+        BlockPos digit = new BlockPos(5, 2, 5);
+        place(h, digit, ComponentType.NUMB_NUG, Direction.EAST);
+        for (int z = 0; z <= 5; z++) red(h, 5, 3, z);
+        for (int z = 0; z <= 5; z++) red(h, 4, 3, z);
+        for (int z = 2; z <= 5; z++) black(h, 5, 1, z);
+        h.setBlock(new BlockPos(4, 2, 5), ModElectronics.ROACH_CLIP.get().defaultBlockState().setValue(com.malevolentgods.fourtwenty.electronics.RoachClipBlock.CHANNEL, 2));
+        h.runAfterDelay(20, () -> {
+            int shown = ((ComponentBlockEntity) h.getBlockEntity(digit)).shown();
+            h.assertTrue(com.malevolentgods.fourtwenty.domain.electronics.Shown.active(shown), "powered");
+            h.assertTrue(com.malevolentgods.fourtwenty.domain.electronics.Shown.bits(shown) == 4, "reads 4: " + com.malevolentgods.fourtwenty.domain.electronics.Shown.bits(shown));
+            h.succeed();
+        });
+    }
 }

@@ -245,6 +245,9 @@ public final class Netlist {
     /** A register as wide as {@code d}: takes it on the clock's rising edge, drives {@code q} unless released. */
     public Chips.Register register(int vdd, int gnd, int[] d, int clock, int release, int[] q) { return chip(new Chips.Register(vdd, gnd, d, clock, release), q); }
 
+    /** A Numb Nug: reads a byte on {@code in}. */
+    public Chips.Display display(int vdd, int gnd, int[] in) { return add(new Chips.Display(vdd, gnd, in)); }
+
     /** A Dealer Nug: one input, three select bits, eight outputs. */
     public Chips.Dealer dealer(int vdd, int gnd, int in, int[] select, int[] outs) { return chip(new Chips.Dealer(vdd, gnd, in, select), outs); }
 

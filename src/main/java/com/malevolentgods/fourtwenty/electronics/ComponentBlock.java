@@ -109,6 +109,14 @@ public class ComponentBlock extends Block implements EntityBlock {
                 level.scheduleTick(pos, this, BUTTON_TICKS);
             }
             case REDSTONE_SWITCH -> player.displayClientMessage(Component.translatable("message.fourtwenty.component.redstone"), true);
+            case DISPLAY -> {
+                Direction back = Orientation.toWorld(state.getValue(FACING), state.getValue(SPIN), ComponentType.Face.BACK);
+                if (hit.getDirection() != back) return InteractionResult.PASS;
+                be.step(1);
+                BIGrid.changed(level);
+                level.sendBlockUpdated(pos, state, state, 2);
+                level.playSound(null, pos, net.minecraft.sounds.SoundEvents.LEVER_CLICK, net.minecraft.sounds.SoundSource.BLOCKS, 0.3f, be.value() > 0.5 ? 0.9f : 0.75f);
+            }
             default -> {
                 if (type.values.isEmpty()) return InteractionResult.PASS;
                 be.step(player.isShiftKeyDown() ? -1 : 1);
