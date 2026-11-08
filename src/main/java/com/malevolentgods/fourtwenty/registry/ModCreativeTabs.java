@@ -29,7 +29,8 @@ public class ModCreativeTabs {
                 // every colour of each Wick and of Hemp Thread (undyed is listed with its block): red is +, black −, and only a wire of
                 // the same colour joins, so neighbouring signals can run side by side in different colours
                 for (var wick : java.util.List.<java.util.function.Supplier<? extends net.minecraft.world.level.block.Block>>of(ModPower.HEMP_WICK, ModPower.ROLLED_WICK,
-                        ModPower.GLASS_WICK, ModPower.GOLD_WICK, com.malevolentgods.fourtwenty.electronics.ModElectronics.HEMP_THREAD)) {
+                        ModPower.GLASS_WICK, ModPower.GOLD_WICK, com.malevolentgods.fourtwenty.electronics.ModElectronics.HEMP_THREAD,
+                        com.malevolentgods.fourtwenty.electronics.ModElectronics.EIGHTH_RIBBON)) {
                     for (var colour : com.malevolentgods.fourtwenty.power.WickBlock.Colour.values()) {
                         if (colour == com.malevolentgods.fourtwenty.power.WickBlock.Colour.NONE) continue;
                         ItemStack stack = new ItemStack(wick.get());

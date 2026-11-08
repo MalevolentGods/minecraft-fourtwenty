@@ -33,19 +33,21 @@ public class RibbonBlock extends Block implements net.minecraft.world.level.bloc
      */
     public static final net.minecraft.world.level.block.state.properties.EnumProperty<Direction.Axis> VAXIS =
             net.minecraft.world.level.block.state.properties.EnumProperty.create("vaxis", Direction.Axis.class, Direction.Axis.X, Direction.Axis.Z);
+    /** Undyed or one of the 16 dyes: a Ribbon joins only Ribbons of its colour, as Wicks do (Roach Clips, bus faces and trays take any). */
+    public static final net.minecraft.world.level.block.state.properties.EnumProperty<com.malevolentgods.fourtwenty.power.WickBlock.Colour> COLOUR = com.malevolentgods.fourtwenty.power.WickBlock.COLOUR;
     private final Map<BlockState, VoxelShape> shapes = new IdentityHashMap<>();
 
     public RibbonBlock(Properties properties) {
         super(properties);
         BlockState state = stateDefinition.any();
         for (BooleanProperty side : SIDES.values()) state = state.setValue(side, false);
-        registerDefaultState(state.setValue(VAXIS, Direction.Axis.X));
+        registerDefaultState(state.setValue(VAXIS, Direction.Axis.X).setValue(COLOUR, com.malevolentgods.fourtwenty.power.WickBlock.Colour.NONE));
         for (BlockState s : stateDefinition.getPossibleStates()) shapes.put(s, shapeOf(s));
     }
 
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         SIDES.values().forEach(builder::add);
-        builder.add(VAXIS);
+        builder.add(VAXIS, COLOUR);
     }
 
     /** Its wires' bits, for the glow (RibbonBlockEntity). */
@@ -69,24 +71,31 @@ public class RibbonBlock extends Block implements net.minecraft.world.level.bloc
         return shapes.getOrDefault(state, core());
     }
 
-    /** Whether a Ribbon reaches toward {@code neighbour} on {@code side}: another Ribbon or Roach Clip, or a chip's bus face. */
-    public static boolean links(Direction side, BlockState neighbour) {
+    /** Two Ribbons join: one is a Roach Clip (it takes any colour), or they're one colour. */
+    public static boolean joins(BlockState a, BlockState b) {
+        if (!(a.getBlock() instanceof RibbonBlock) || !(b.getBlock() instanceof RibbonBlock)) return false;
+        return a.getBlock() instanceof RoachClipBlock || b.getBlock() instanceof RoachClipBlock || a.getValue(COLOUR) == b.getValue(COLOUR);
+    }
+
+    /** Whether a Ribbon ({@code self}) reaches toward {@code neighbour} on {@code side}: a Ribbon it joins, a Roach Clip, or a bus face. */
+    public static boolean links(BlockState self, Direction side, BlockState neighbour) {
         // a Rolling Tray takes a Ribbon on any face but its front: on its back for its part, else on the board's bus
         if (neighbour.getBlock() instanceof RollingTrayBlock) return RollingTrayBlock.front(neighbour) != side.getOpposite();
-        return neighbour.getBlock() instanceof RibbonBlock || ComponentBlock.busAt(neighbour, side.getOpposite()) >= 0;
+        if (neighbour.getBlock() instanceof RibbonBlock) return joins(self, neighbour);
+        return ComponentBlock.busAt(neighbour, side.getOpposite()) >= 0;
     }
 
     /** As {@link #links(Direction, BlockState)}, and into a Nah, Skip Me, Bro whose Ribbon runs this way. */
-    public static boolean links(Direction side, BlockState neighbour, net.minecraft.world.level.BlockGetter level, BlockPos neighbourPos) {
+    public static boolean links(BlockState self, Direction side, BlockState neighbour, net.minecraft.world.level.BlockGetter level, BlockPos neighbourPos) {
         if (neighbour.getBlock() instanceof HopBlock) {
             var w = HopBlockEntity.facing(level, neighbourPos, side.getOpposite());
-            return w != null && w.ribbon();
+            return w != null && w.ribbon() && (self.getBlock() instanceof RoachClipBlock || w.colour() == self.getValue(COLOUR));
         }
-        return links(side, neighbour);
+        return links(self, side, neighbour);
     }
 
     private BlockState linked(BlockState state, LevelAccessor level, BlockPos pos) {
-        for (Direction d : Direction.values()) state = state.setValue(SIDES.get(d), links(d, level.getBlockState(pos.relative(d)), level, pos.relative(d)));
+        for (Direction d : Direction.values()) state = state.setValue(SIDES.get(d), links(state, d, level.getBlockState(pos.relative(d)), level, pos.relative(d)));
         return state.setValue(VAXIS, vaxis(state, level, pos));
     }
 
@@ -98,13 +107,37 @@ public class RibbonBlock extends Block implements net.minecraft.world.level.bloc
         if (ew) return Direction.Axis.Z;
         for (Direction d : new Direction[]{Direction.DOWN, Direction.UP}) {
             BlockState next = level.getBlockState(pos.relative(d));
-            if (state.getValue(SIDES.get(d)) && next.getBlock() instanceof RibbonBlock) return next.getValue(VAXIS);
+            if (state.getValue(SIDES.get(d)) && joins(state, next)) return next.getValue(VAXIS);
         }
         return Direction.Axis.X;
     }
 
     @Override public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
-        return linked(defaultBlockState(), context.getLevel(), context.getClickedPos());
+        return linked(defaultBlockState().setValue(COLOUR, com.malevolentgods.fourtwenty.power.WickBlock.colourOf(context.getItemInHand())), context.getLevel(), context.getClickedPos());
+    }
+
+    /** Use a dye on a Ribbon to colour it; it then joins only Ribbons of that colour. */
+    @Override protected @Nonnull net.minecraft.world.ItemInteractionResult useItemOn(@Nonnull net.minecraft.world.item.ItemStack stack, @Nonnull BlockState state,
+            @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull net.minecraft.world.entity.player.Player player, @Nonnull net.minecraft.world.InteractionHand hand,
+            @Nonnull net.minecraft.world.phys.BlockHitResult hit) {
+        if (this instanceof RoachClipBlock || !(stack.getItem() instanceof net.minecraft.world.item.DyeItem dye)) {
+            return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+        var colour = com.malevolentgods.fourtwenty.power.WickBlock.Colour.of(dye.getDyeColor());
+        if (state.getValue(COLOUR) == colour) return net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        if (!level.isClientSide) {
+            BlockState next = linked(state.setValue(COLOUR, colour), level, pos);
+            level.setBlock(pos, next, 3);
+            for (Direction d : Direction.values()) {
+                BlockPos at = pos.relative(d);
+                BlockState around = level.getBlockState(at);
+                BlockState updated = around.updateShape(d.getOpposite(), next, level, at, pos);
+                if (updated != around) level.setBlock(at, updated, 3);
+            }
+            BIGrid.changed(level);
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+        }
+        return net.minecraft.world.ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override protected @Nonnull BlockState updateShape(@Nonnull BlockState state, @Nonnull Direction side, @Nonnull BlockState neighbour, @Nonnull LevelAccessor level,

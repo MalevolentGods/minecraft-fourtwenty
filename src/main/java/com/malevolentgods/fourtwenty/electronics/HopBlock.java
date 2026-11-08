@@ -145,7 +145,7 @@ public class HopBlock extends Block implements EntityBlock {
             }
             if (axis == null) axis = context.getClickedFace().getAxis();
             if (level.isClientSide) return InteractionResult.SUCCESS;
-            WickBlock.Colour colour = wick ? wire.getValue(WickBlock.COLOUR) : WickBlock.Colour.NONE;
+            WickBlock.Colour colour = wire.getValue(WickBlock.COLOUR);
             BlockState hopState = getBlock().defaultBlockState();
             level.setBlock(pos, hopState, 3);
             if (level.getBlockEntity(pos) instanceof HopBlockEntity hop) hop.add(new HopBlockEntity.Wire(wire.getBlock(), colour, axis));

@@ -34,6 +34,7 @@ public class HopBlockEntity extends BlockEntity {
                 s = s.setValue(WickBlock.COLOUR, colour);
                 for (Direction d : ends(axis)) s = s.setValue(WickBlock.SIDES.get(d), WickBlock.Link.WIRE);
             } else if (block instanceof RibbonBlock) {
+                s = s.setValue(RibbonBlock.COLOUR, colour);
                 for (Direction d : ends(axis)) s = s.setValue(RibbonBlock.SIDES.get(d), true);
             }
             return s;
@@ -42,7 +43,7 @@ public class HopBlockEntity extends BlockEntity {
         /** The item it was placed from, to give back. */
         public ItemStack item() {
             ItemStack stack = new ItemStack(block);
-            if (block instanceof WickBlock && colour != WickBlock.Colour.NONE) {
+            if (colour != WickBlock.Colour.NONE) {
                 stack.set(net.minecraft.core.component.DataComponents.BLOCK_STATE,
                         net.minecraft.world.item.component.BlockItemStateProperties.EMPTY.with(WickBlock.COLOUR, colour));
             }

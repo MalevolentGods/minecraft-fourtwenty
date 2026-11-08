@@ -24,9 +24,14 @@ public class RibbonRenderer implements BlockEntityRenderer<RibbonBlockEntity> {
     public RibbonRenderer(BlockEntityRendererProvider.Context context) {}
 
     @Override public void render(@Nonnull RibbonBlockEntity be, float partialTick, @Nonnull PoseStack pose, @Nonnull MultiBufferSource buffers, int light, int overlay) {
+        var state = be.getBlockState();
+        // a dyed Ribbon: its colour along both jacket edges, so runs of different colours (which don't join) read apart
+        if (state.hasProperty(com.malevolentgods.fourtwenty.power.WickBlock.COLOUR)) {
+            var dye = state.getValue(com.malevolentgods.fourtwenty.power.WickBlock.COLOUR).dye();
+            if (dye != null) edges(pose, buffers, state, dye.getTextureDiffuseColor() & 0xFFFFFF, light);
+        }
         int bits = Shown.bits(be.shown());
         if (bits == 0) return;
-        var state = be.getBlockState();
         boolean n = on(state, Direction.NORTH), s = on(state, Direction.SOUTH), e = on(state, Direction.EAST), w = on(state, Direction.WEST);
         boolean ns = n || s, ew = e || w, up = on(state, Direction.UP), down = on(state, Direction.DOWN);
         boolean zWide = state.getValue(RibbonBlock.VAXIS) == Direction.Axis.Z;
@@ -58,6 +63,31 @@ public class RibbonRenderer implements BlockEntityRenderer<RibbonBlockEntity> {
             // the core: along whichever run goes straight through (flat corners fold, and keep their own look)
             if (n && s || ns && !ew || !ns && !ew) ComponentRenderer.ring(pose, add, a, 6.95, 3, b, 9.05, 14, c, 0.5f);
             else if (e && w || ew && !ns) ComponentRenderer.ring(pose, add, 3, 6.95, a, 14, 9.05, b, c, 0.5f);
+        }
+    }
+
+    /** Thin coloured strips along the jacket's two edges (pixels 3 and 13), over every arm and through the core, top and bottom. */
+    private static void edges(PoseStack pose, MultiBufferSource buffers, net.minecraft.world.level.block.state.BlockState state, int rgb, int light) {
+        var sprite = net.minecraft.client.Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS)
+                .apply(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("fourtwenty", "block/component/lab_glow"));
+        boolean n = on(state, Direction.NORTH), s = on(state, Direction.SOUTH), e = on(state, Direction.EAST), w = on(state, Direction.WEST);
+        boolean up = on(state, Direction.UP), down = on(state, Direction.DOWN);
+        boolean zWide = state.getValue(RibbonBlock.VAXIS) == Direction.Axis.Z;
+        java.util.function.Consumer<double[]> strip = q -> ComponentRenderer.box(pose,
+                buffers.getBuffer(RenderType.entityCutoutNoCull(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS)), sprite, q[0], q[1], q[2], q[3], q[4], q[5], rgb, light);
+        for (double[] edge : new double[][]{{3, 3.9}, {13.1, 14}}) {
+            double a = edge[0], b = edge[1];
+            // along z (north-south arms, and the core when they run through)
+            double z0 = n ? 0 : 3, z1 = s ? 16 : 14;
+            if (n || s || !e && !w && !up && !down) strip.accept(new double[]{a, 6.94, z0, b, 9.06, z1});
+            double x0 = w ? 0 : 3, x1 = e ? 16 : 14;
+            if (e || w) strip.accept(new double[]{x0, 6.94, a, x1, 9.06, b});
+            // upright: the run stood on edge, its edges up its sides
+            double y0 = down ? 0 : 7, y1 = up ? 16 : 9;
+            if (up || down) {
+                if (zWide) strip.accept(new double[]{6.94, y0, a, 9.06, y1, b});
+                else strip.accept(new double[]{a, y0, 6.94, b, y1, 9.06});
+            }
         }
     }
 

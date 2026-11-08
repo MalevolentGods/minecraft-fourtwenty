@@ -309,7 +309,7 @@ public final class Network {
                     if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.HopBlock) {
                         var w = com.malevolentgods.fourtwenty.electronics.HopBlockEntity.facing(level, next, d.getOpposite());
                         int j = w == null ? -1 : ((com.malevolentgods.fourtwenty.electronics.HopBlockEntity) level.getBlockEntity(next)).along(d.getAxis());
-                        if (w != null && w.ribbon()) {
+                        if (w != null && w.ribbon() && (clip || w.colour() == here.getValue(com.malevolentgods.fourtwenty.electronics.RibbonBlock.COLOUR))) {
                             for (int c = 0; c < bus; c++) union.join(new RibbonKey(at, c), new RibbonKey(next.immutable(), HOP_BUS + 10 * j + c));
                             hopRibbon.accept(next, j);
                         } else if (w != null && clip) {
@@ -319,6 +319,7 @@ public final class Network {
                         continue;
                     }
                     if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RibbonBlock) {
+                        if (!com.malevolentgods.fourtwenty.electronics.RibbonBlock.joins(here, nextState)) continue;
                         for (int c = 0; c < bus; c++) union.join(new RibbonKey(at, c), new RibbonKey(next.immutable(), c));
                         ribbon.accept(next);
                         continue;
@@ -358,6 +359,7 @@ public final class Network {
                     if (!level.isLoaded(next)) continue;
                     var nextState = level.getBlockState(next);
                     if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RibbonBlock) {
+                        if (!com.malevolentgods.fourtwenty.electronics.RibbonBlock.joins(hop.wire(j).state(), nextState)) continue;
                         for (int c = 0; c < bus; c++) union.join(new RibbonKey(at, HOP_BUS + 10 * j + c), new RibbonKey(next.immutable(), c));
                         ribbon.accept(next);
                         continue;
@@ -370,7 +372,7 @@ public final class Network {
                     }
                     if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.HopBlock) {
                         var w = com.malevolentgods.fourtwenty.electronics.HopBlockEntity.facing(level, next, d.getOpposite());
-                        if (w == null || !w.ribbon()) continue;
+                        if (w == null || !w.ribbon() || w.colour() != hop.wire(j).colour()) continue;
                         int k = ((com.malevolentgods.fourtwenty.electronics.HopBlockEntity) level.getBlockEntity(next)).along(d.getAxis());
                         for (int c = 0; c < bus; c++) union.join(new RibbonKey(at, HOP_BUS + 10 * j + c), new RibbonKey(next.immutable(), HOP_BUS + 10 * k + c));
                         hopRibbon.accept(next, k);

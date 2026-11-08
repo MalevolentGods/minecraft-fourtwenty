@@ -46,7 +46,7 @@ public final class WickColours {
         }, ModPower.HEMP_WICK.get(), ModPower.ROLLED_WICK.get(), ModPower.GLASS_WICK.get(), ModPower.GOLD_WICK.get(),
                 ModPower.HEMP_TWIN_WICK.get(), ModPower.ROLLED_TWIN_WICK.get(), ModPower.GLASS_TWIN_WICK.get(), ModPower.GOLD_TWIN_WICK.get(),
                 ModPower.HEMP_DAISY_WICK.get(), ModPower.ROLLED_DAISY_WICK.get(), ModPower.GLASS_DAISY_WICK.get(), ModPower.GOLD_DAISY_WICK.get(),
-                com.malevolentgods.fourtwenty.electronics.ModElectronics.HEMP_THREAD.get());
+                com.malevolentgods.fourtwenty.electronics.ModElectronics.HEMP_THREAD.get(), com.malevolentgods.fourtwenty.electronics.ModElectronics.EIGHTH_RIBBON.get());
     }
 
     @SubscribeEvent
