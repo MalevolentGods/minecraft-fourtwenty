@@ -30,35 +30,26 @@ from the delayed key-down pulse) carries over.
    - The board is planar: traces on the chips' own level, VDD a level above (risers), GND the floor below.
    - The check rebuilds every net as the game does, hops and colours included.
 
-## × and ÷: one sequential core
+## × and ÷: two big chips (user, 2026-11-08)
 
-Both run MSB first, one bit per clock, 16 clocks from a Ticker (2 ms): about 32 ms, effectively instant.
+The sequential core (16 clocked steps, about 110 more chips) was dropped for two new parts, as real calculators use arithmetic chips:
 
-- Multiply, P = A × X: `P ← 2P + (X[i] ? A : 0)` for i = 15 … 0. A carry out of 16 bits anywhere sets the error flag.
-- Divide, Q = A ÷ X: `T ← 2R + A[i]; if T ≥ X: R ← T − X, Q ← 2Q + 1 else R ← T, Q ← 2Q`. X = 0 sets the error flag first.
+- **Manyfier** (a 16 × 16-bit multiplier): A × B, the 32-bit product on two bus pairs, the low byte's carry high past 65,535.
+- **Fewinator** (a 16-bit divider): A ÷ B, quotient and remainder, the low byte's carry high on ÷ 0.
 
-Datapath (16-bit pairs throughout):
+Both stand two blocks tall (`BigChipBlock`): a bus face on every side of each block, the lower block the low byte and the upper the high;
+A at the back, B on the left, the result in front, its second half on the right; VDD on the upper block's top, GND under the lower.
 
-| Block | Parts |
-|---|---|
-| W1 (P or R), W2 (Q), the step counter i | Jar Nug pairs; i a 4-bit Jar + Stacker (−1) loop |
-| 2·W1 (+ A[i] on the carry in when dividing) | Stacker pair |
-| bit i of X, bit i of A | two Sampler Nugs per bus, the high select bit choosing between them |
-| + A masked by X[i] (×) | Blend AND pair against a mask fan of X[i], then a Stacker pair |
-| T − X and its borrow (÷) | Stacker pair, subtract |
-| W1's next value: ×: the sum; ÷: T − X or T | staging Jars on a shared bus, released by the operation and the borrow |
-| 2·W2 + (T ≥ X) | Stacker pair, the carry in |
+In the calculator: the Manyfier's and Fewinator's front pairs (A op X) go through staging Jar pairs onto the S bus beside the
+adder's, each released unless its operation is chosen, so `=` loads X from the one chosen. Their flags, and the adder's carry out of 16
+bits (X can be up to 65,535 after a ×), set an error flip-flop on `=`; it drives the display's low-byte carry (`E`) until C. The result's
+sign is the xor of A's and X's. The router places a big chip as two stacked cells (its upper block on the bridge layer).
 
-Sequencer: `=` after × or ÷ loads W1 = W2 = 0 (staging all released) and i = 15, sets RUN; the Ticker clocks the datapath while RUN; i
-wrapping past 0 clears RUN and pulses DONE, which loads X from W1 (×) or W2 (÷) through one more staging pair. The error flip-flop is
-cleared by C and any load of X but DONE.
-
-The operation register widens from one bit (+/−) to two (+, −, ×, ÷); ± and the signs apply to × and ÷ as to + and − (the result's sign
-the xor of A's and X's).
+The operation register widens from one bit (+/−) to two (+, −, ×, ÷); ± and the signs apply to × and ÷ as to + and −.
 
 ## Order of work
 
 1. Dankoder to 24 keys; Numb Nug E. Unit and game tests. (Mod change: needs a jar on server and client.)
 2. Router v2 with colours and hops, proved on the v1 machine (same logic, flat board): smaller and faster to route.
-3. The × / ÷ core, built and game-tested on its own (CalculatorCore tests), then joined to the keypad machine.
+3. The Manyfier and Fewinator (done, 8bcc6a09), then joined to the keypad machine: 4×5 keypad, two-bit operation, error flip-flop.
 4. The building on the new site: the board under glass with a walkway round it, the keypad and display at the front.
