@@ -174,7 +174,8 @@ def toggle_joint():
 
 def puff_button():
     """A steel housing, a collar on top the mushroom button (the renderer's) sinks into."""
-    solid = [box([5, 5, 4], [11, 9, 12], '#body'), box([4.5, 9, 3.5], [11.5, 9.6, 12.5], '#trim'), box([6.4, 9.6, 6.4], [9.6, 10, 9.6], '#dark')]
+    # the trim stops at the housing's ends, short of the glands (their tops are level with it)
+    solid = [box([5, 5, 4], [11, 9, 12], '#body'), box([4.5, 9, 4], [11.5, 9.6, 12], '#trim'), box([6.4, 9.6, 6.4], [9.6, 10, 9.6], '#dark')]
     solid += gland('front', 'in', 4) + gland('back', 'in', 4)
     return composite(solid, [])
 
@@ -184,7 +185,8 @@ def kill_switch():
     solid = [box([5, 5, 4], [11, 5.8, 12], '#body'), box([6, 5.8, 5], [8.2, 9, 11], '#coil'), box([9.6, 5.8, 9.6], [10.4, 8.0, 10.4], '#brass'),
              box([9.2, 5.8, 5], [10.4, 9.6, 5.8], '#brass')]
     solid += gland('front', 'in', 4) + gland('back', 'in', 4)
-    glass = [box([4.8, 5.8, 4], [11.2, 11.2, 12], '#glass')]
+    # no floor: the steel base is the floor, and the coil and contact stand on it
+    glass = [box([4.8, 5.8, 4], [11.2, 11.2, 12], '#glass', faces=('north', 'south', 'east', 'west', 'up'))]
     return composite(solid, glass, {'coil': 'fourtwenty:block/component/lab_coil'})
 
 
@@ -266,6 +268,16 @@ def supplies():
     write(ASSETS / 'models/item/bench_rig.json', {'parent': 'fourtwenty:block/bench_rig_lit'})
 
 
+def check(name, model):
+    """No two faces in the same plane overlapping (they flicker as they fight): fail the build, not the player's eyes."""
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from generate_processing import coplanar
+    elements = [e for child in model.get('children', {}).values() for e in child['elements'] if 'rotation' not in e]
+    clash = coplanar(elements)
+    assert not clash, f'{name} z-fights: {clash}'
+
+
 def write(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=1) + '\n', encoding='utf-8')
@@ -276,6 +288,7 @@ def main():
     save(rgb('#6FD38A')[None, None, :].repeat(S, 0).repeat(S, 1) + RNG.normal(0, 6, (S, S, 1)), 'lab_zen')
     for cid, make in LAB.items():
         model = make()
+        check(cid, model)
         write(ASSETS / f'models/block/component/{cid}.json', model)
         on = ASSETS / f'models/block/component/{cid}_on.json'
         if on.exists():
