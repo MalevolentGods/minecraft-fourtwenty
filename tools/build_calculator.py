@@ -192,7 +192,6 @@ gate('R1', 'and_nug', 4, 3, 'DIG', 'BIG4', 'r1')
 gate('R2', 'and_nug', 5, 3, 'OPK', 'BIG5', 'r2')
 gate('REF', 'or_nug', 6, 3, 'r1', 'r2', 'REF')
 inv('NREF', 7, 3, 'REF', 'NREF')
-gate('OVF', 'and_nug', 8, 3, ('tap', 'K', 8, 'STB'), 'REF', 'OVF')
 # X >= 1000 (0x03E8) and X >= 10000 (0x2710): high byte greater, or equal and the low byte not less
 for i, (big, hi, lo, k0) in enumerate((('BIG4', 0x03, 0xE8, 0), ('BIG5', 0x27, 0x10, 5))):
     sh, sl = f'SH{i}', f'SL{i}'
@@ -222,6 +221,10 @@ jar16('JS1', 4, 1, 'R1L', 'R1H', 'CLK1', 'RS1', 'SL', 'SH')
 jar16('JS2', 4, 2, 'R2L', 'R2H', 'CLK1', 'RS2', 'SL', 'SH')
 # A - X borrows: its borrow wire, tapped where it goes into S1's high Jar
 clip(step(AP(3, 4), 'W'), 'R1H', 8, 'NEG')
+# the display's high byte, its carry wire set while the result is negative: the Numb Nugs draw a minus in front
+SIGN_AT = (316, Y, ROW(0))      # near the display (deeper in, the room's too crowded to route its buses)
+chip('SIGN', 'blend_nug', SIGN_AT, {'W': bus('XH'), 'S': bus('MASKS'), 'E': bus('DH')}, '{value:2}')
+clip(step(SIGN_AT, 'S'), 'MASKS', 8, 'NEGQ')
 # the supply: a Bottomless Stash in the room's far corner
 comp('STASH', 'bottomless_stash_puff[facing=north]', (COL(8), Y, ROW(5)),
      {'E': one('VDD'), 'D': one('GND'), 'W': NONE_ONE, 'N': NONE_ONE, 'S': NONE_ONE, 'U': NONE_ONE})
@@ -241,11 +244,8 @@ for r, row in enumerate(LAYOUT):
 # five digits, x 319 to 323: the low byte fed at the right, the high byte two to its left; lamps: overflow left, negative and minus right
 for c in range(5):
     TRAYS[(KX - 1 + c, DISPLAY_Y, ZP)] = ('digit', c)
-TRAYS[(KX - 2, DISPLAY_Y, ZP)] = ('lamp', 'OVF')
-TRAYS[(KX + 4, DISPLAY_Y, ZP)] = ('lamp', 'NEGQ')
-TRAYS[(KX + 5, DISPLAY_Y, ZP)] = ('lamp', 'OP')
-FEED = {(KX + 3, DISPLAY_Y, ZP): bus('XL'), (KX + 1, DISPLAY_Y, ZP): bus('XH'), (KX + 2, DISPLAY_Y, ZP): one('VDD'), (KX, DISPLAY_Y, ZP): one('GND'),
-        (KX - 2, DISPLAY_Y, ZP): one('OVF'), (KX + 4, DISPLAY_Y, ZP): one('NEGQ'), (KX + 5, DISPLAY_Y, ZP): one('OP')}
+FEED = {(KX + 3, DISPLAY_Y, ZP): bus('XL'), (KX + 1, DISPLAY_Y, ZP): bus('DH'), (KX + 2, DISPLAY_Y, ZP): one('VDD'), (KX, DISPLAY_Y, ZP): one('GND')}
+# lime lamp trim either side of the display, flat on the wall: decoration
 # behind the panel nothing but its feeds and the Dankoder: a wire on a tray's back would be its signal or its power
 for x in range(KX - 5, KX + 9):
     for y in range(Y - 1, Y + 8):
@@ -263,8 +263,8 @@ for pos, (what, v) in TRAYS.items():
         panel.append((front, 'puff_button[facing=south,mounted=true]', f'{{value:{NUMBER[v] + 1},label:"{LABEL.get(v, v)}",glow:{GLOW[v]}}}'))
     elif what == 'digit':
         panel.append((front, 'numb_nug[facing=south,mounted=true]', ''))
-    else:
-        panel.append((front, {'OVF': 'red_lamp', 'NEGQ': 'lime_lamp', 'OP': 'orange_lamp'}[v], ''))
+for x in (KX - 2, KX + 4, KX + 5):
+    panel.append(((x, DISPLAY_Y, ZP + 1), 'lamp_trim_pin_lim_pin[facing=north]', ''))
 
 for p, n in list(reserved.items()):
     if n is not None and p not in grid:
@@ -505,7 +505,7 @@ if len(sys.argv) > 1 and sys.argv[1] == 'java':
     print('    private CalculatorLayout() {}' + NL)
     print('    /** Register X\'s two Jar Nugs (the entry, as shown), low and high byte; the lamps. */')
     print(f'    static final int[] XL = {rel(named["JXL"])}, XH = {rel(named["JXH"])};')
-    print(f'    static final int[] OVERFLOW = {rel((KX - 2, DISPLAY_Y, ZP + 1))}, NEGATIVE = {rel((KX + 4, DISPLAY_Y, ZP + 1))};')
+    print(f'    static final int[] SIGN = {rel(named["SIGN"])};')
     print('    static final Map<String, int[]> KEYS = new HashMap<>();' + NL)
     print('    static {')
     print(NL.join(keys))

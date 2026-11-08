@@ -51,7 +51,8 @@ public class ComponentBlock extends Block implements EntityBlock {
         PLATES.put(Direction.DOWN, Block.box(0, 0, 0, 16, 4, 16));
         PLATES.put(Direction.UP, Block.box(0, 12, 0, 16, 16, 16));
     }
-    public static final int BUTTON_TICKS = 20;
+    /** How long a Puff Button stays down: long enough for a busy circuit (it can wait up to Network.MAX_WAIT ticks) to see it. */
+    public static final int BUTTON_TICKS = 8;
 
     private final ComponentType type;
 

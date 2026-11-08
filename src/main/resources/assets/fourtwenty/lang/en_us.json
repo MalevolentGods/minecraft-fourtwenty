@@ -2048,7 +2048,7 @@
   "block.fourtwenty.kill_switch": "Kill Switch",
   "tooltip.fourtwenty.item.kill_switch": "A switch closed while it has a redstone signal. Two pins, back and front: any Wick or Hemp Thread on either end joins it.",
   "block.fourtwenty.puff_button": "Puff Button",
-  "tooltip.fourtwenty.item.puff_button": "A button: closed for a second when used. Mounted on a Rolling Tray, sneak-use it with an empty hand to give it a label, a glow and the number a Dankoder reads it as (shown on its cap until it has a label). Two pins, back and front: any Wick or Hemp Thread on either end joins it.",
+  "tooltip.fourtwenty.item.puff_button": "A button: closed for a moment (0.4 s) when used. Mounted on a Rolling Tray, sneak-use it with an empty hand to give it a label, a glow and the number a Dankoder reads it as (shown on its cap until it has a label). Two pins, back and front: any Wick or Hemp Thread on either end joins it.",
   "block.fourtwenty.not_nug": "NOT Nug",
   "tooltip.fourtwenty.item.not_nug": "Input at the back, output in front; VDD on top, GND underneath. Logic at the supply it gets: 30% and 70% of it are its thresholds.",
   "block.fourtwenty.buffer_nug": "Buffer Nug",

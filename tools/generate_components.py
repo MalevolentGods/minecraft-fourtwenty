@@ -87,7 +87,7 @@ EXTRA = {
     'zen_hitter': 'A Zener diode: wired banded end to +, it holds its voltage. Use it to step its voltage.',
     'toggle_joint': 'A switch: use it to flip it. Mounted on a Rolling Tray, sneak-use it with an empty hand to give it a label, a glow and the number a Dankoder reads it as.',
     'kill_switch': 'A switch closed while it has a redstone signal.',
-    'puff_button': 'A button: closed for a second when used. Mounted on a Rolling Tray, sneak-use it with an empty hand to give it a label, a glow and the number a Dankoder reads it as (shown on its cap until it has a label).',
+    'puff_button': 'A button: closed for a moment (0.4 s) when used. Mounted on a Rolling Tray, sneak-use it with an empty hand to give it a label, a glow and the number a Dankoder reads it as (shown on its cap until it has a label).',
     'dankoder': 'A keypad encoder: while a key is down it gives that key\'s number; let go, it keeps the last one. Two down, the lower wins. Against a board of Rolling Trays it numbers the buttons and toggles on it in reading order, top row first, left to right; each key\'s own screen (sneak-use it with an empty hand) can give it any number 0 to F instead.',
     'slow_burner': 'Lets through a steady current, its setting, whatever the voltage across it once that is a Kb or so: a Kief Cap fills or drains at a steady rate through it. It makes no current of its own; a supply drives it. Use it to step its current (sneak to step back).',
     'tri_state_nug': 'Left is A, right is enable: passes A while enabled, lets go of its output otherwise.',

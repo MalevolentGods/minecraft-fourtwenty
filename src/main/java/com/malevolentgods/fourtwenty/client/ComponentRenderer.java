@@ -333,19 +333,21 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
             // the byte and the carry (a sum to 510); or, with a high byte fed too, sixteen bits (to 65535)
             int value = high == null ? Shown.bits(source.shown()) & 0x1FF : (Shown.bits(high.shown()) & 0xFF) << 8 | Shown.bits(source.shown()) & 0xFF;
             text = source.value() > 0.5 ? Integer.toHexString(value).toUpperCase(java.util.Locale.ROOT) : Integer.toString(value);
+            // reading sixteen bits, the high byte's carry wire is the sign: a minus in front
+            if (high != null && (Shown.bits(high.shown()) & 0x100) != 0) text = "-" + text;
             if (text.length() > n) {
                 text = text.substring(text.length() - n);
                 overflow = true;
             }
         }
         int at = place - (n - text.length());
-        int glyph = at >= 0 && at < text.length() ? GLYPHS[Character.digit(text.charAt(at), 16)] : 0;
+        int glyph = at >= 0 && at < text.length() ? text.charAt(at) == '-' ? 0x40 : GLYPHS[Character.digit(text.charAt(at), 16)] : 0;
         boolean point = overflow && place == 0;
         for (int k = 0; k < 8; k++) {
             boolean on = k < 7 ? (glyph >> k & 1) != 0 : point;
             double[] s = SEGMENTS[k];
             // as you face it, its left is the model's east: x runs the other way
-            box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("component/lab_glow"), 16 - s[2], s[1], 4.7 + dz, 16 - s[0], s[3], 4.8 + dz,
+            box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("component/lab_glow"), 16 - s[2], s[1], (on ? 4.7 : 4.74) + dz, 16 - s[0], s[3], 4.8 + dz,
                     on ? LIME : source != null ? 0x1E2A14 : 0x161A12, on ? LightTexture.FULL_BRIGHT : light);
         }
     }
