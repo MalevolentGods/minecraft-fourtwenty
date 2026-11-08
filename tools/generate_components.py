@@ -99,7 +99,7 @@ EXTRA = {
     'blend_nug': 'Bitwise logic on two buses, all nine wires at once: AND, OR, XOR, NAND, NOR, XNOR, NOT A or A. Use it to step the operation.',
     'stacker_nug': 'Adds two bytes and the carry in (or subtracts B and the borrow from A), the carry (or borrow) out on the C wire, so two make 16 bits. Use it to switch add and subtract.',
     'scale_nug': 'Weighs two bytes against each other: exactly one of its outputs is high.',
-    'numb_nug': 'A digit of a display: a byte, 0 to 255, in decimal or 00 to FF in hex. Use its back to switch. The one with power and data sets the whole row.',
+    'numb_nug': 'A digit of a display: the nine wires of a Ribbon, the byte and its carry, 0 to 511 in decimal or 000 to 1FF in hex. Use its back to switch. The one with power and data sets the whole row.',
     'jar_nug': 'Keeps a byte (nine bits): takes its inputs on each rising clock and drives them out until release is 1, when it lets go, so several can share one bus.',
     'hype_amp': 'An op-amp: drives its output to 100,000 times the difference of its inputs, as far as its supply allows. With Resinators for feedback it amplifies by their ratio.',
 }

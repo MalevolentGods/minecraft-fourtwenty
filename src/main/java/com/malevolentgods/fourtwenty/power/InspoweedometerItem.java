@@ -142,7 +142,7 @@ public class InspoweedometerItem extends Item {
                     case COMPARE -> text.append("A ").append(word.apply(2, 8)).append(" · B ").append(word.apply(11, 8)).append(" · < ").append(bit.apply(20))
                             .append(" = ").append(bit.apply(21)).append(" > ").append(bit.apply(22));
                     case DISPLAY -> text.append(type.describe(level.getBlockEntity(pos) instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity be ? be.value() : 0))
-                            .append(" · in ").append(word.apply(2, 8));
+                            .append(" · in ").append(word.apply(2, 9));
                     case REGISTER -> text.append("in ").append(word.apply(2, 9)).append(" · clk ").append(bit.apply(11)).append(" release ").append(bit.apply(12))
                             .append(" · out ").append(word.apply(13, 9));
                     default -> text.append("in ").append(bit.apply(2)).append(" · select ").append(word.apply(3, 3)).append(" · out ").append(word.apply(12, 8));

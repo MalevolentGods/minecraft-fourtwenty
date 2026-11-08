@@ -238,12 +238,12 @@ class ByteChipsTest {
         assertEquals(20, reg.value() & 0xFF);
     }
 
-    /** A Numb Nug reads every byte on its inputs; unpowered, it reads nothing. */
+    /** A Numb Nug reads all nine wires, the byte and the carry: 0 to 511. */
     @Test void aNumbNugReadsItsByte() {
         Board b = new Board();
-        int[] in = b.inputs(8);
+        int[] in = b.inputs(9);
         var display = b.n.display(b.vdd, b.gnd, in);
-        for (int value : new int[]{0, 1, 42, 128, 255, 0b1010_0101}) {
+        for (int value : new int[]{0, 1, 42, 128, 255, 256, 510, 511, 0b1010_0101}) {
             b.set(in, value);
             b.run();
             assertEquals(value, display.read(b.n.analysis()), "reads " + value);

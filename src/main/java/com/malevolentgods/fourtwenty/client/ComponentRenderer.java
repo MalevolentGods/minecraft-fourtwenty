@@ -235,7 +235,7 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
         String text = "";
         boolean overflow = false;
         if (source != null) {
-            int value = Shown.bits(source.shown()) & 0xFF;
+            int value = Shown.bits(source.shown()) & 0x1FF;   // the byte and the carry: a sum to 510
             text = source.value() > 0.5 ? Integer.toHexString(value).toUpperCase(java.util.Locale.ROOT) : Integer.toString(value);
             if (text.length() > n) {
                 text = text.substring(text.length() - n);

@@ -357,8 +357,8 @@ public final class Chips {
     }
 
     /**
-     * The Numb Nug (a 7-segment display's driver): it reads a byte on its eight inputs against its own supply, with the Nugs' thresholds,
-     * and drives nothing; what it shows is drawn from what it reads.
+     * The Numb Nug (a 7-segment display's driver): it reads the nine wires of a bus (a byte and the carry, 0 to 511) against its own
+     * supply, with the Nugs' thresholds, and drives nothing; what it shows is drawn from what it reads.
      */
     public static final class Display extends Chip {
         Display(int vdd, int gnd, int[] in) { super(vdd, gnd, in, 0); }
