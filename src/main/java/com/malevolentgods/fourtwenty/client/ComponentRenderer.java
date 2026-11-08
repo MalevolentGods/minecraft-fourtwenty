@@ -99,7 +99,7 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
                 pose.translate(8 / 16f, 11 / 16f, 8 / 16f);
                 pose.mulPose(Axis.XP.rotationDegrees(-32 + 64 * (1 - m)));
                 pose.translate(-8 / 16f, -11 / 16f, -8 / 16f);
-                box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("infuser/steel_trim"), 7.45, 11, 7.45, 8.55, 15, 8.55, 0xFFFFFF, light);
+                box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("infuser/steel_trim"), 7.45, 10.2, 7.45, 8.55, 15, 8.55, 0xFFFFFF, light);
                 box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("component/lab_brass"), 7, 14.6, 7, 9, 16, 9, 0xFFFFFF, light);
                 pose.popPose();
                 boolean closed = be.getBlockState().getValue(ComponentBlock.ON);

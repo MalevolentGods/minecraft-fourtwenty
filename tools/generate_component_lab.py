@@ -167,7 +167,7 @@ def hitter(band):
 
 def toggle_joint():
     """A steel housing between the glands, a trim plate on top; its brass lever (the renderer's) swings over the pivot."""
-    solid = [box([5, 5, 4], [11, 10, 12], '#body'), box([4.5, 10, 3.5], [11.5, 10.6, 12.5], '#trim'), box([7, 10.6, 7], [9, 11, 9], '#dark')]
+    solid = [box([5, 5, 4], [11, 10, 12], '#body'), box([4.5, 10, 3.5], [11.5, 10.6, 12.5], '#trim'), box([6.4, 10.6, 6.9], [9.6, 11.6, 9.1], '#dark')]
     solid += gland('front', 'in', 4) + gland('back', 'in', 4)
     return composite(solid, [])
 
