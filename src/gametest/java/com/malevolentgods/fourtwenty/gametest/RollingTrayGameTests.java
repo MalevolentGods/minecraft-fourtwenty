@@ -114,6 +114,38 @@ public final class RollingTrayGameTests {
         });
     }
 
+    /**
+     * A Dankoder against the board, behind tray 5, no wiring: it numbers the keys in reading order as you face the board (from the
+     * north, so x 6 first): the toggle at 6 (relabelled A with the Twister's setting), the buttons at 4 and 3, 1 and 2.
+     */
+    @GameTest(template = "long", timeoutTicks = 200)
+    public static void aDankoderReadsItsBoard(GameTestHelper h) {
+        board(h);
+        BlockPos toggle = mount(h, 6, ComponentType.TOGGLE_JOINT);
+        mount(h, 4, ComponentType.PUFF_BUTTON);
+        BlockPos two = mount(h, 3, ComponentType.PUFF_BUTTON);
+        ((ComponentBlockEntity) h.getBlockEntity(toggle)).step(11);   // -1, 0, ... : the 12th number is A
+        BlockPos dk = new BlockPos(5, 2, Z + 1);
+        h.setBlock(dk, ModElectronics.COMPONENTS.get(ComponentType.DANKODER).get().defaultBlockState().setValue(ComponentBlock.FACING, Direction.SOUTH));
+        java.util.function.IntSupplier out = () -> com.malevolentgods.fourtwenty.domain.electronics.Shown.bits(((ComponentBlockEntity) h.getBlockEntity(dk)).shown());
+        h.runAfterDelay(20, () -> {
+            h.assertTrue((out.getAsInt() & 0x100) == 0, "nothing down: no carry, read " + out.getAsInt());
+            ((ComponentBlockEntity) h.getBlockEntity(two)).closed(true);
+            h.runAfterDelay(10, () -> {
+                h.assertTrue(out.getAsInt() == (0x100 | 2), "the button at x 3 is key 2, carry high: read " + out.getAsInt());
+                ((ComponentBlockEntity) h.getBlockEntity(two)).closed(false);
+                h.runAfterDelay(10, () -> {
+                    h.assertTrue(out.getAsInt() == 2, "let go: 2 held, carry low: read " + out.getAsInt());
+                    ((ComponentBlockEntity) h.getBlockEntity(toggle)).closed(true);
+                    h.runAfterDelay(10, () -> {
+                        h.assertTrue(out.getAsInt() == (0x100 | 0xA), "the toggle stands for A: read " + out.getAsInt());
+                        h.succeed();
+                    });
+                });
+            });
+        });
+    }
+
     /** A mounted part falls off when its tray goes. */
     @GameTest(template = "long", timeoutTicks = 40)
     public static void aMountedPartFallsOffWithoutItsTray(GameTestHelper h) {

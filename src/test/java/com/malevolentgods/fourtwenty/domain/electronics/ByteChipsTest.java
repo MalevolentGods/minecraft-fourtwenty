@@ -190,6 +190,42 @@ class ByteChipsTest {
         assertEquals(0x15A, b.word(q), "and it still remembers");
     }
 
+    /**
+     * The Dankoder: each key drives its own number, the carry high while it's down; let go, the number stays and the carry falls; two
+     * down, the lower number wins; a key can stand for any number, not its place.
+     */
+    @Test void theDankoderEncodesKeys() {
+        var b = new Board();
+        int[] keys = b.inputs(16), out = b.nodes(9);
+        int[] codes = new int[16];
+        for (int i = 0; i < 16; i++) codes[i] = i;
+        codes[15] = 3;   // key 15 relabelled 3
+        var dk = b.n.dankoder(b.vdd, b.gnd, keys, codes, out);
+        int[] number = java.util.Arrays.copyOf(out, 8);
+        b.run();
+        assertEquals(0, b.bit(out[8]), "nothing down: no carry");
+        for (int k : new int[]{0, 7, 9, 14}) {
+            b.set(keys[k], true);
+            b.run();
+            assertEquals(k, b.word(number), "key " + k + " down");
+            assertEquals(1, b.bit(out[8]), "carry high while key " + k + " is down");
+            b.set(keys[k], false);
+            b.run();
+            assertEquals(k, b.word(number), "key " + k + " let go: its number stays");
+            assertEquals(0, b.bit(out[8]), "carry falls when key " + k + " is let go");
+        }
+        b.set(keys[12], true);
+        b.set(keys[5], true);
+        b.run();
+        assertEquals(5, b.word(number), "5 and 12 down: the lower wins");
+        b.set(keys[12], false);
+        b.set(keys[5], false);
+        b.set(keys[15], true);
+        b.run();
+        assertEquals(3, b.word(number), "key 15 stands for 3");
+        assertEquals(3, dk.code());
+    }
+
     /** Two registers on one shared bus, taking turns: whichever isn't released drives it, and each reads back its own byte. */
     @Test void twoRegistersShareABus() {
         Board b = new Board();

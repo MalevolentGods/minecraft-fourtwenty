@@ -373,6 +373,43 @@ public final class Chips {
         @Override void registers(double[] r) {}
     }
 
+    /**
+     * The Dankoder (a keypad encoder, a 74C922's kind): sixteen key inputs, each with the number it stands for. While a key is down it
+     * drives that number on outputs 0 to 3 (the lowest number if several are down) and the carry, output 8, high; let go, the carry
+     * falls and the number stays, the last key pressed. Outputs 4 to 7 are always 0.
+     */
+    public static final class Encoder extends Chip {
+        private final int[] codes;
+        private int code;
+
+        Encoder(int vdd, int gnd, int[] keys, int[] codes) {
+            super(vdd, gnd, keys, ComponentBus.WIDTH);
+            this.codes = codes.clone();
+        }
+
+        @Override Logic.Out[] evaluate(Analysis an) {
+            int down = -1;
+            for (int i = 0; i < inputs.length; i++) if (bit(an, i) == 1 && (down < 0 || codes[i] < down)) down = codes[i];
+            if (down >= 0) code = down;
+            Logic.Out[] out = new Logic.Out[pins.length];
+            for (int k = 0; k < 8; k++) out[k] = level(k < 4 ? (code >> k) & 1 : 0);
+            out[8] = level(down >= 0 ? 1 : 0);
+            return out;
+        }
+
+        @Override double[] registers() { return new double[]{code}; }
+
+        @Override void registers(double[] r) { code = (int) r[0]; }
+
+        /** The number it holds: the key down, or the last one pressed. */
+        public int code() { return code; }
+    }
+
+    /** A bus's width: eight wires and the carry. */
+    static final class ComponentBus {
+        static final int WIDTH = 9;
+    }
+
     static int[] concat(int[] a, int[] b) {
         int[] out = Arrays.copyOf(a, a.length + b.length);
         System.arraycopy(b, 0, out, a.length, b.length);

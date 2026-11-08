@@ -86,6 +86,9 @@ public final class Network {
     List<RibbonAt> ribbons = List.of();
     /** The lamps on it (a lamp is a small load from its signal to its −, lit while its signal is a 1). */
     List<LampAt> lamps = List.of();
+    /** Each Dankoder's sixteen keys' numbers; and each key on a board a Dankoder reads, its number (shown on its cap). */
+    Map<BlockPos, int[]> dankoderCodes = Map.of();
+    Map<BlockPos, Integer> keyNumbers = Map.of();
 
     private Network(int version, long walkedAt, List<Member> members, List<Wick> wicks, List<Run> runs, int nodes, Map<BlockPos, DaisyLine.Reason> daisyFailed,
                     List<BINode[]> couplings, List<Placed> placed) {
@@ -165,6 +168,41 @@ public final class Network {
     private static boolean pushes(BINode owner) { return owner.canExtract(); }
 
     /**
+     * The keys on the board (Rolling Trays touching) that {@code tray} is on, in reading order as you face it (top row first, left to
+     * right), at most sixteen: Puff Buttons and Toggle Joints mounted on its trays' fronts.
+     */
+    static List<BlockPos> boardKeys(Level level, BlockPos tray) {
+        java.util.ArrayDeque<BlockPos> queue = new java.util.ArrayDeque<>(List.of(tray.immutable()));
+        Set<BlockPos> met = new HashSet<>(queue);
+        List<BlockPos> keys = new ArrayList<>();
+        Direction facing = null;
+        while (!queue.isEmpty() && met.size() < 1024) {
+            BlockPos t = queue.poll();
+            var state = level.getBlockState(t);
+            if (!(state.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock)) continue;
+            Direction front = com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.front(state);
+            BlockPos part = t.relative(front);
+            var partState = level.getBlockState(part);
+            if (partState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlock cb && cb.type().key() && com.malevolentgods.fourtwenty.electronics.ComponentBlock.mountedOn(partState) == front.getOpposite()) {
+                keys.add(part.immutable());
+                if (facing == null) facing = front;
+            }
+            for (Direction d : Direction.values()) {
+                BlockPos next = t.relative(d);
+                if (level.isLoaded(next) && level.getBlockState(next).getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock && met.add(next.immutable())) queue.add(next.immutable());
+            }
+        }
+        if (facing == null) return keys;
+        // as you face the board: its up, and your right
+        Direction up = facing.getAxis().isHorizontal() ? Direction.UP : Direction.NORTH;
+        Direction right = facing.getAxis().isHorizontal() ? facing.getCounterClockWise() : facing == Direction.UP ? Direction.EAST : Direction.WEST;
+        java.util.function.ToIntFunction<BlockPos> along = p -> p.getX() * right.getStepX() + p.getY() * right.getStepY() + p.getZ() * right.getStepZ();
+        java.util.function.ToIntFunction<BlockPos> height = p -> p.getX() * up.getStepX() + p.getY() * up.getStepY() + p.getZ() * up.getStepZ();
+        keys.sort(java.util.Comparator.comparingInt((BlockPos p) -> -height.applyAsInt(p)).thenComparingInt(along));
+        return keys.size() > 16 ? keys.subList(0, 16) : keys;
+    }
+
+    /**
      * Walks out from a BI block (its node, at {@code pos}) through its two terminals: along Wicks of one colour, and into the terminals of
      * the blocks they touch, and on through those blocks' other terminals. A terminal touching a Wick joins its centre through half the
      * Wick's resistance; two terminals facing each other join directly. Two-core cables (specs/009-twin-daisy-wicks) are walked the same
@@ -218,6 +256,8 @@ public final class Network {
             if (seen.add(at.immutable())) queue.add(new Object[]{at.immutable(), null, "tray"});
         };
         Set<BlockPos> lampsMet = new java.util.LinkedHashSet<>();
+        Map<BlockPos, int[]> codesOf = new HashMap<>();
+        Map<BlockPos, Integer> numbers = new HashMap<>();
         java.util.function.Consumer<BlockPos> lamp = at -> {
             if (seen.add(at.immutable())) {
                 lampsMet.add(at.immutable());
@@ -292,6 +332,14 @@ public final class Network {
                         else if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.block.LampBlock) lamp.accept(next);
                         continue;
                     }
+                    // a Dankoder with its back on this tray reads the board
+                    if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlock dk
+                            && dk.type() == com.malevolentgods.fourtwenty.electronics.ComponentType.DANKODER
+                            && com.malevolentgods.fourtwenty.electronics.Orientation.toWorld(nextState.getValue(com.malevolentgods.fourtwenty.electronics.ComponentBlock.FACING),
+                            nextState.getValue(com.malevolentgods.fourtwenty.electronics.ComponentBlock.SPIN), com.malevolentgods.fourtwenty.electronics.ComponentType.Face.BACK) == d.getOpposite()) {
+                        component.accept(next);
+                        continue;
+                    }
                     if (nextState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock) {
                         union.join(new RibbonKey(at, plus), new RibbonKey(next.immutable(), plus));
                         union.join(new RibbonKey(at, minus), new RibbonKey(next.immutable(), minus));
@@ -353,6 +401,33 @@ public final class Network {
                 for (int i = 0; i < type.layout.pins.size(); i++) union.join(new PinKey(at, i), new RibbonKey(trayAt, type.mountWire(i)));
                 if (level.isLoaded(trayAt) && level.getBlockState(trayAt).getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock) tray.accept(trayAt);
                 continue;
+            }
+            if (item.length == 3 && components.get(at) == com.malevolentgods.fourtwenty.electronics.ComponentType.DANKODER) {
+                // a Dankoder: its keys are its bus pins, and, with its back on a Rolling Tray (not that tray's front), every key on the board
+                int[] codes = new int[16];
+                for (int i = 0; i < 16; i++) codes[i] = i;
+                Direction back = com.malevolentgods.fourtwenty.electronics.Orientation.toWorld(here.getValue(com.malevolentgods.fourtwenty.electronics.ComponentBlock.FACING), here.getValue(com.malevolentgods.fourtwenty.electronics.ComponentBlock.SPIN),
+                        com.malevolentgods.fourtwenty.electronics.ComponentType.Face.BACK);
+                BlockPos behind = at.relative(back);
+                var trayState = level.isLoaded(behind) ? level.getBlockState(behind) : null;
+                if (trayState != null && trayState.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock && com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.front(trayState) != back.getOpposite()) {
+                    List<BlockPos> keys = boardKeys(level, behind);
+                    for (int i = 0; i < keys.size(); i++) {
+                        BlockPos key = keys.get(i);
+                        BlockPos keyTray = key.relative(com.malevolentgods.fourtwenty.electronics.ComponentBlock.mountedOn(level.getBlockState(key)));
+                        int label = level.getBlockEntity(key) instanceof com.malevolentgods.fourtwenty.electronics.ComponentBlockEntity kb ? (int) Math.round(kb.value()) : -1;
+                        codes[i] = label >= 0 ? label : i;
+                        numbers.put(key, codes[i]);
+                        union.join(new PinKey(at, com.malevolentgods.fourtwenty.electronics.ComponentType.dankoderKey(i)), new RibbonKey(keyTray, 0));
+                    }
+                    // and its power from the board's rails
+                    union.join(new PinKey(at, 0), new RibbonKey(behind, com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.PLUS));
+                    union.join(new PinKey(at, 1), new RibbonKey(behind, com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.MINUS));
+                    tray.accept(behind);
+                }
+                codesOf.put(at.immutable(), codes);
+                // then its faces as any component's
+                item = new Object[]{at, null, "faces"};
             }
             if (item.length == 3) {
                 // a component: each pin face, to the Wick or Hemp Thread there, or straight into another component's pin; a bus face to
@@ -642,6 +717,8 @@ public final class Network {
         Network made = new Network(BIGrid.version(level), level.getGameTime(), members, new ArrayList<>(wicks.values()), runs, count[0], daisyFailed, couplings, placed);
         made.ribbons = ribbonsAt;
         made.lamps = lampsAt;
+        made.dankoderCodes = codesOf;
+        made.keyNumbers = numbers;
         return made;
     }
 
@@ -973,7 +1050,14 @@ public final class Network {
                 high = supply >= com.malevolentgods.fourtwenty.domain.electronics.Logic.MIN_SUPPLY && live.volts(p[2]) - live.volts(p[1]) > supply / 2;
             } else if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Active.Mosfet) high = Math.abs(live.current(part)) >= 1e-3;
             else if (part instanceof com.malevolentgods.fourtwenty.domain.electronics.Chips.Chip chip) high = chip.anyHigh();
-            be.show(shownFor(i, high));
+            int shown = shownFor(i, high);
+            // a key on a board a Dankoder reads shows its number on its cap: carried in its bits, one more than the number
+            Integer number = keyNumbers.get(pos);
+            if (number != null) {
+                shown = com.malevolentgods.fourtwenty.domain.electronics.Shown.pack(number + 1, com.malevolentgods.fourtwenty.domain.electronics.Shown.level(shown),
+                        com.malevolentgods.fourtwenty.domain.electronics.Shown.active(shown), com.malevolentgods.fourtwenty.domain.electronics.Shown.hot(shown));
+            }
+            be.show(shown);
             if (high != null) {
                 var state = level.getBlockState(pos);
                 if (state.hasProperty(com.malevolentgods.fourtwenty.electronics.ComponentBlock.ON)
@@ -1124,6 +1208,16 @@ public final class Network {
                 case REGISTER -> net.register(p[0], p[1], java.util.Arrays.copyOfRange(p, 2, 11), p[11], p[12], java.util.Arrays.copyOfRange(p, 13, 22));
                 case DISPLAY -> net.display(p[0], p[1], java.util.Arrays.copyOfRange(p, 2, 11));
                 case DEMUX -> net.dealer(p[0], p[1], p[2], java.util.Arrays.copyOfRange(p, 3, 6), java.util.Arrays.copyOfRange(p, 12, 20));
+                case ENCODER -> {
+                    int[] keys = new int[16];
+                    for (int k = 0; k < 16; k++) keys[k] = p[com.malevolentgods.fourtwenty.electronics.ComponentType.dankoderKey(k)];
+                    int[] codes = dankoderCodes.getOrDefault(c.pos(), null);
+                    if (codes == null) {
+                        codes = new int[16];
+                        for (int k = 0; k < 16; k++) codes[k] = k;
+                    }
+                    yield net.dankoder(p[0], p[1], keys, codes, java.util.Arrays.copyOfRange(p, 20, 29));
+                }
             };
             reactive |= c.type().part == com.malevolentgods.fourtwenty.electronics.ComponentType.Part.CAPACITOR
                     || c.type().part == com.malevolentgods.fourtwenty.electronics.ComponentType.Part.INDUCTOR;

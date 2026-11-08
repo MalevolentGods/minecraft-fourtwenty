@@ -167,7 +167,8 @@ public class ComponentBlock extends Block implements EntityBlock {
                 if (state.hasProperty(ResinatorBlock.VALUE)) level.setBlock(pos, state.setValue(ResinatorBlock.VALUE, be.index()), 3);
             }
         }
-        if (!type.values.isEmpty()) {
+        // a key's number is set with the Twister, not shown on every press
+        if (!type.values.isEmpty() && !type.key()) {
             player.displayClientMessage(Component.translatable("message.fourtwenty.component.value",
                     Component.translatable("block.fourtwenty." + type.id), type.describe(be.value())), true);
         }

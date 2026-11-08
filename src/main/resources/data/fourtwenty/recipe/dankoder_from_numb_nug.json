@@ -3,11 +3,11 @@
  "category": "redstone",
  "ingredients": [
   {
-   "item": "fourtwenty:puff_button"
+   "item": "fourtwenty:numb_nug"
   }
  ],
  "result": {
-  "id": "fourtwenty:resinator",
+  "id": "fourtwenty:dankoder",
   "count": 1
  }
 }

@@ -52,7 +52,7 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
         TextureAtlasSprite glow = sprite("lab_glow");
         boolean mounted = be.getBlockState().getValue(ComponentBlock.MOUNTED);
         if (mounted && type.part != ComponentType.Part.DISPLAY) {
-            mounted(be, type, pose, buffers, light, glow);
+            mounted(be, type, pose, buffers, light, glow, shown);
             pose.popPose();
             return;
         }
@@ -209,15 +209,19 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
      * A switch mounted on a Rolling Tray, its plate against the tray (z 13 to 16): a Puff Button's cap stands out of its collar and pushes
      * in, glowing while held; a Toggle Joint's lever, on its boss, flips up for on and down for off, a lime lamp beside it while on.
      */
-    private static void mounted(ComponentBlockEntity be, ComponentType type, PoseStack pose, MultiBufferSource buffers, int light, TextureAtlasSprite glow) {
+    private static void mounted(ComponentBlockEntity be, ComponentType type, PoseStack pose, MultiBufferSource buffers, int light, TextureAtlasSprite glow, int shown) {
         boolean closed = be.getBlockState().getValue(ComponentBlock.ON);
+        // on a board a Dankoder reads, a key's number, one more than it, is in its bits
+        int number = Shown.bits(shown) - 1;
         if (type == ComponentType.PUFF_BUTTON) {
             float m = motion(be, 22f, 6f);
             double in = 0.9 * m;
             box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("component/lab_brass"), 5.6, 5.6, 10.4 + in, 10.4, 10.4, 11.95,
                     0xFFFFFF, light);
+            int lens = number >= 0 ? closed ? 0x3A5A20 : 0x141A10 : closed ? LIME : 0x6A7A40;
             box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 6.3, 6.3, 10.3 + in, 9.7, 9.7, 10.4 + in,
-                    closed ? LIME : 0x6A7A40, closed ? LightTexture.FULL_BRIGHT : light);
+                    lens, closed || number >= 0 ? LightTexture.FULL_BRIGHT : light);
+            if (number >= 0) glyph(pose, buffers, number, 6.6, 6.0, 9.4, 10.0, 10.2 + in, closed ? 0xE8FFB0 : LIME);
             return;
         }
         if (type == ComponentType.TOGGLE_JOINT) {
@@ -231,6 +235,21 @@ public class ComponentRenderer implements BlockEntityRenderer<ComponentBlockEnti
             pose.popPose();
             box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), glow, 11.6, 11.6, 12.85, 12.8, 12.8, 12.95,
                     closed ? LIME : LIME_OFF, closed ? LightTexture.FULL_BRIGHT : light);
+            if (number >= 0) glyph(pose, buffers, number, 2.0, 2.0, 4.6, 5.6, 12.85, LIME);
+        }
+    }
+
+    /** A hex digit in seven segments over the box (left, bottom, right, top) as you face it, at depth {@code z}: a key's label. */
+    private static void glyph(PoseStack pose, MultiBufferSource buffers, int number, double x0, double y0, double x1, double y1, double z, int colour) {
+        int glyph = GLYPHS[number & 15];
+        double w = x1 - x0, h = y1 - y0;
+        for (int k = 0; k < 7; k++) {
+            if ((glyph >> k & 1) == 0) continue;
+            double[] seg = SEGMENTS[k];
+            // the digit's 7 by 9 box (4.5 to 11.5 across, 3.5 to 12.5 up), into this one; as you face it, its left is the model's east
+            double l = (seg[0] - 4.5) / 7 * w, rt = (seg[2] - 4.5) / 7 * w, b = (seg[1] - 3.5) / 9 * h, t = (seg[3] - 3.5) / 9 * h;
+            box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite("component/lab_glow"), x1 - rt, y0 + b, z, x1 - l, y0 + t, z + 0.1,
+                    colour, LightTexture.FULL_BRIGHT);
         }
     }
 

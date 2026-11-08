@@ -253,6 +253,7 @@ CHIPS = {
     'stacker_nug': ({'front': 'bus', 'back': 'bus', 'left': 'bus', 'right': 'in'}, 'ADD'),
     'scale_nug': ({'front': 'bus', 'back': 'bus', 'left': 'bus'}, 'CMP'),
     'jar_nug': ({'front': 'bus', 'back': 'bus', 'left': 'in', 'right': 'in'}, 'REG'),
+    'dankoder': ({'front': 'bus', 'left': 'bus', 'right': 'bus', 'back': 'board'}, 'KEYPAD'),
 }
 
 
@@ -274,6 +275,10 @@ def chip(cid, faces, label):
              flat_face(box([10.6, 10.2, 4], [12.4, 10.5, 12], '#dark'), 'up', '#label')]
     solid += gland('top', 'vdd', 5.8) + gland('bottom', 'gnd', 4)
     for face, role in faces.items():
+        if role == 'board':
+            # a brass contact plate on its back, where it presses against a Rolling Tray
+            solid.append(box([4.5, 5, 13], [11.5, 9, 16], '#brass', faces=('south', 'east', 'west', 'up', 'down')))
+            continue
         solid += [header(face)] if role == 'bus' else gland(face, role, 3)
     glass = [box([3.6, 10.2, 4], [5.4, 10.9, 12], '#glass')]
     return composite(solid, glass, {'header': 'fourtwenty:block/component/lab_header', 'label': f'fourtwenty:block/component/lab_label_{cid}'})

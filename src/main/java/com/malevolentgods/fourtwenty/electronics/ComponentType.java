@@ -16,9 +16,9 @@ public enum ComponentType {
     SPLIFF_COIL("spliff_coil", Part.INDUCTOR, Layout.TWO_PIN, "Ma", series(1e-3, 10), 1),
     ONE_HITTER("one_hitter", Part.DIODE, Layout.TWO_PIN, "", List.of(), 0),
     ZEN_HITTER("zen_hitter", Part.ZENER, Layout.TWO_PIN, "Kb", List.of(2.4, 3.3, 4.2, 5.1, 6.8, 9.1, 12.0, 24.0, 42.0), 4.2),
-    TOGGLE_JOINT("toggle_joint", Part.TOGGLE, Layout.TWO_PIN, "", List.of(), 0),
+    TOGGLE_JOINT("toggle_joint", Part.TOGGLE, Layout.TWO_PIN, "", Keys.NUMBERS, -1),
     KILL_SWITCH("kill_switch", Part.REDSTONE_SWITCH, Layout.TWO_PIN, "", List.of(), 0),
-    PUFF_BUTTON("puff_button", Part.BUTTON, Layout.TWO_PIN, "", List.of(), 0),
+    PUFF_BUTTON("puff_button", Part.BUTTON, Layout.TWO_PIN, "", Keys.NUMBERS, -1),
     SLOW_BURNER("slow_burner", Part.REGULATOR, Layout.TWO_PIN, "Ig",
             List.of(1e-4, 2.2e-4, 4.7e-4, 1e-3, 2.2e-3, 4.7e-3, 0.01, 0.022, 0.047, 0.1, 0.22, 0.47, 1.0), 1e-3),
     NOT_NUG("not_nug", Part.GATE, Layout.ONE_INPUT, "", List.of(), 0, Logic.Kind.NOT),
@@ -44,13 +44,25 @@ public enum ComponentType {
     STACKER_NUG("stacker_nug", Part.ARITH, Layout.STACKER, "", List.of(0.0, 1.0), 0),
     SCALE_NUG("scale_nug", Part.COMPARE, Layout.SCALE, "", List.of(), 0),
     JAR_NUG("jar_nug", Part.REGISTER, Layout.JAR, "", List.of(), 0),
-    NUMB_NUG("numb_nug", Part.DISPLAY, Layout.DISPLAY, "", List.of(0.0, 1.0), 0);
+    NUMB_NUG("numb_nug", Part.DISPLAY, Layout.DISPLAY, "", List.of(0.0, 1.0), 0),
+    DANKODER("dankoder", Part.ENCODER, Layout.DANKODER, "", List.of(), 0);
+
+    /** A key's number on a Dankoder: -1 for its place on the board (reading order), else 0 to F, set with the Twister. */
+    private static final class Keys {
+        static final List<Double> NUMBERS;
+
+        static {
+            java.util.List<Double> keys = new java.util.ArrayList<>();
+            for (int k = -1; k < 16; k++) keys.add((double) k);
+            NUMBERS = List.copyOf(keys);
+        }
+    }
 
     /** Wires on a bus face, and in an Eighth Ribbon: channels 0 to 7, then the carry. */
     public static final int BUS = 9;
 
     /** What the block is in the circuit. */
-    public enum Part { RESISTOR, CAPACITOR, INDUCTOR, DIODE, ZENER, TOGGLE, REDSTONE_SWITCH, BUTTON, REGULATOR, GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, NMOS, PMOS, OPAMP, SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER, DISPLAY }
+    public enum Part { RESISTOR, CAPACITOR, INDUCTOR, DIODE, ZENER, TOGGLE, REDSTONE_SWITCH, BUTTON, REGULATOR, GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, NMOS, PMOS, OPAMP, SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER, DISPLAY, ENCODER }
 
     /** A pin's face, relative to the block's front. */
     public enum Face { FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM }
@@ -79,7 +91,9 @@ public enum ComponentType {
         STACKER(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), bus(Face.LEFT), new Face[]{Face.RIGHT}, bus(Face.FRONT))),
         SCALE(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), bus(Face.LEFT), bus(Face.FRONT))),
         JAR(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK), new Face[]{Face.LEFT, Face.RIGHT}, bus(Face.FRONT))),
-        DISPLAY(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK)));
+        DISPLAY(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.BACK))),
+        /** The Dankoder: keys 0 to 7 on the left bus (its carry wire unused), 8 to F on the right, the number out in front; its back reads a board. */
+        DANKODER(cat(new Face[]{Face.TOP, Face.BOTTOM}, bus(Face.LEFT), bus(Face.RIGHT), bus(Face.FRONT)));
 
         public final List<Face> pins;
 
@@ -124,7 +138,7 @@ public enum ComponentType {
     /** A powered part read as bits: the Nugs and the Ticker. */
     public boolean logic() {
         return switch (part) {
-            case GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER -> true;
+            case GATE, TRI_STATE, LATCH, FLIP_FLOP, TICKER, SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER, ENCODER -> true;
             default -> false;
         };
     }
@@ -132,7 +146,7 @@ public enum ComponentType {
     /** A chip with a bus face: a shift register or a multiplexer. */
     public boolean chip() {
         return switch (part) {
-            case SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER, DISPLAY -> true;
+            case SHIFT_OUT, SHIFT_IN, MUX, DEMUX, BITWISE, ARITH, COMPARE, REGISTER, DISPLAY, ENCODER -> true;
             default -> false;
         };
     }
@@ -155,6 +169,12 @@ public enum ComponentType {
             default -> ComponentBlockEntity.format(value, unit);
         };
     }
+
+    /** A key a Dankoder reads: a Puff Button or a Toggle Joint. */
+    public boolean key() { return part == Part.BUTTON || part == Part.TOGGLE; }
+
+    /** The Dankoder pin for key {@code i} (0 to 15): the left bus's channels 0 to 7, then the right's. */
+    public static int dankoderKey(int i) { return i < 8 ? 2 + i : 11 + (i - 8); }
 
     /** A part people touch or read, that mounts flush on a Rolling Tray: a Puff Button, a Toggle Joint, a Numb Nug. */
     public boolean mountable() { return part == Part.BUTTON || part == Part.TOGGLE || part == Part.DISPLAY; }

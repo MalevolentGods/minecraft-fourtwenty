@@ -248,6 +248,9 @@ public final class Netlist {
     /** A Numb Nug: reads a byte on {@code in}. */
     public Chips.Display display(int vdd, int gnd, int[] in) { return add(new Chips.Display(vdd, gnd, in)); }
 
+    /** A Dankoder: sixteen keys, each standing for {@code codes[i]}; {@code out} the number on 0 to 3, 4 to 7 low, the carry key-down. */
+    public Chips.Encoder dankoder(int vdd, int gnd, int[] keys, int[] codes, int[] out) { return chip(new Chips.Encoder(vdd, gnd, keys, codes), out); }
+
     /** A Dealer Nug: one input, three select bits, eight outputs. */
     public Chips.Dealer dealer(int vdd, int gnd, int in, int[] select, int[] outs) { return chip(new Chips.Dealer(vdd, gnd, in, select), outs); }
 

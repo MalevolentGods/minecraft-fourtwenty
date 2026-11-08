@@ -2044,11 +2044,11 @@
   "block.fourtwenty.zen_hitter": "Zen Hitter",
   "tooltip.fourtwenty.item.zen_hitter": "A Zener diode: wired banded end to +, it holds its voltage. Use it to step its voltage. Two pins, back and front: any Wick or Hemp Thread on either end joins it.",
   "block.fourtwenty.toggle_joint": "Toggle Joint",
-  "tooltip.fourtwenty.item.toggle_joint": "A switch: use it to flip it. Two pins, back and front: any Wick or Hemp Thread on either end joins it.",
+  "tooltip.fourtwenty.item.toggle_joint": "A switch: use it to flip it. Mounted on a Rolling Tray, the Twister sets the number a Dankoder reads it as. Two pins, back and front: any Wick or Hemp Thread on either end joins it.",
   "block.fourtwenty.kill_switch": "Kill Switch",
   "tooltip.fourtwenty.item.kill_switch": "A switch closed while it has a redstone signal. Two pins, back and front: any Wick or Hemp Thread on either end joins it.",
   "block.fourtwenty.puff_button": "Puff Button",
-  "tooltip.fourtwenty.item.puff_button": "A button: closed for a second when used. Two pins, back and front: any Wick or Hemp Thread on either end joins it.",
+  "tooltip.fourtwenty.item.puff_button": "A button: closed for a second when used. Mounted on a Rolling Tray, the Twister sets the number a Dankoder reads it as (shown on its cap). Two pins, back and front: any Wick or Hemp Thread on either end joins it.",
   "block.fourtwenty.not_nug": "NOT Nug",
   "tooltip.fourtwenty.item.not_nug": "Input at the back, output in front; VDD on top, GND underneath. Logic at the supply it gets: 30% and 70% of it are its thresholds.",
   "block.fourtwenty.buffer_nug": "Buffer Nug",
@@ -2126,6 +2126,10 @@
   "tooltip.fourtwenty.item.rolling_tray": "A panel board. Put a Puff Button, Toggle Joint or Numb Nug on its front and it mounts flush, no poles needed; a lamp in front of it is its lamp. Trays side by side share power: a red Wick on any feeds them all, a black their return. Each part's signal comes out of its own tray's back (a Wick or Hemp Thread, or a Ribbon for a Numb Nug), so a grid of parts is still wired one by one. Use it to put its part on a channel of the board's bus too (sneak to step back).",
   "message.fourtwenty.rolling_tray.channel": "Rolling Tray: channel %s",
   "message.fourtwenty.rolling_tray.no_channel": "Rolling Tray: no channel",
+  "message.fourtwenty.dankoder.key": "Key: %s",
+  "message.fourtwenty.dankoder.auto": "Key: its place on the board",
+  "block.fourtwenty.dankoder": "Dankoder",
+  "tooltip.fourtwenty.item.dankoder": "A keypad encoder: while a key is down it gives that key's number; let go, it keeps the last one. Two down, the lower wins. Against a board of Rolling Trays it numbers the buttons and toggles on it in reading order, top row first, left to right; the Twister on a key gives it any number 0 to F. Keys 0 to 7 on the bus face on the left, 8 to F on the right; the number out in front (channels 0 to 3), the carry high while a key is down. Its back on a Rolling Tray reads the whole board instead, power and all. VDD on top, GND underneath.",
   "tooltip.fourtwenty.real.weed_bong": "Generator",
   "tooltip.fourtwenty.real.double_hose": "Generator",
   "tooltip.fourtwenty.real.big_bertha": "Generator",
@@ -2199,5 +2203,6 @@
   "tooltip.fourtwenty.real.stacker_nug": "8-bit adder / subtractor",
   "tooltip.fourtwenty.real.scale_nug": "Magnitude comparator",
   "tooltip.fourtwenty.real.jar_nug": "8-bit register (74HC574)",
-  "tooltip.fourtwenty.real.numb_nug": "7-segment display"
+  "tooltip.fourtwenty.real.numb_nug": "7-segment display",
+  "tooltip.fourtwenty.real.dankoder": "Keypad encoder (74C922)"
 }
