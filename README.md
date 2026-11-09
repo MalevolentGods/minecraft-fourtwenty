@@ -4,6 +4,14 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.23.0
+
+- **A real climb up the weed ladder:** each strain family has its own buds per harvest (Landrace 1, up to 4–5 for Golden God), its own potency (stronger, longer highs) and rarer seeds the higher it goes, paced for about 60 hours.
+- **Grow Op plots give extra seeds**, 10% to 50% by tier.
+- **New players get four Landrace seeds**, with MineColonies.
+- **Animal pens hold their animals** in every Sensi Heights animal hut.
+- **Servers:** edit the five seed-chance settings listed in the changelog. Saved configs keep their old values.
+
 ## What's new in 0.22.1
 
 - **Sensi Heights:**
