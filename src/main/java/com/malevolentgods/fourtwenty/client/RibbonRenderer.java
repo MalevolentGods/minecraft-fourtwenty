@@ -75,18 +75,20 @@ public class RibbonRenderer implements BlockEntityRenderer<RibbonBlockEntity> {
         boolean zWide = state.getValue(RibbonBlock.VAXIS) == Direction.Axis.Z;
         java.util.function.Consumer<double[]> strip = q -> ComponentRenderer.box(pose,
                 buffers.getBuffer(RenderType.entityCutoutNoCull(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS)), sprite, q[0], q[1], q[2], q[3], q[4], q[5], rgb, light);
-        for (double[] edge : new double[][]{{3, 3.9}, {13.1, 14}}) {
+        // each set of strips a little proud of the jacket and of the others (north-south, east-west and upright each their own height), so
+        // no two faces share a plane where they cross: coplanar faces flicker as they fight
+        for (double[] edge : new double[][]{{2.88, 3.9}, {13.1, 14.12}}) {
             double a = edge[0], b = edge[1];
             // along z (north-south arms, and the core when they run through)
-            double z0 = n ? 0 : 3, z1 = s ? 16 : 14;
-            if (n || s || !e && !w && !up && !down) strip.accept(new double[]{a, 6.94, z0, b, 9.06, z1});
-            double x0 = w ? 0 : 3, x1 = e ? 16 : 14;
-            if (e || w) strip.accept(new double[]{x0, 6.94, a, x1, 9.06, b});
+            double z0 = n ? 0.01 : 2.9, z1 = s ? 15.99 : 14.1;
+            if (n || s || !e && !w && !up && !down) strip.accept(new double[]{a, 6.9, z0, b, 9.1, z1});
+            double x0 = w ? 0.02 : 2.92, x1 = e ? 15.98 : 14.08;
+            if (e || w) strip.accept(new double[]{x0, 6.86, a + 0.14, x1, 9.14, b - 0.14});
             // upright: the run stood on edge, its edges up its sides
-            double y0 = down ? 0 : 7, y1 = up ? 16 : 9;
+            double y0 = down ? 0.03 : 6.8, y1 = up ? 15.97 : 9.2;
             if (up || down) {
-                if (zWide) strip.accept(new double[]{6.94, y0, a, 9.06, y1, b});
-                else strip.accept(new double[]{a, y0, 6.94, b, y1, 9.06});
+                if (zWide) strip.accept(new double[]{6.82, y0, a + 0.24, 9.18, y1, b - 0.24});
+                else strip.accept(new double[]{a + 0.24, y0, 6.82, b - 0.24, y1, 9.18});
             }
         }
     }

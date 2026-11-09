@@ -29,14 +29,14 @@ public class HopRenderer implements BlockEntityRenderer<HopBlockEntity> {
             over = null;
         }
         if (under == null) return;
-        blocks.renderSingleBlock(under.state(), pose, buffers, light, overlay);
+        blocks.renderSingleBlock(shaped(be, under), pose, buffers, light, overlay);
         if (over == null) return;
         // the axis neither runs along: the way the second hops
         Direction.Axis lift = Direction.Axis.Y;
         for (Direction.Axis a : Direction.Axis.values()) if (a != under.axis() && a != over.axis()) lift = a;
         pose.pushPose();
         pose.translate(lift == Direction.Axis.X ? RAISE / 16 : 0, lift == Direction.Axis.Y ? RAISE / 16 : 0, lift == Direction.Axis.Z ? RAISE / 16 : 0);
-        blocks.renderSingleBlock(over.state(), pose, buffers, light, overlay);
+        blocks.renderSingleBlock(shaped(be, over), pose, buffers, light, overlay);
         pose.popPose();
         // the risers: at each end, from the wire's own level up to the raised one, in its texture and colour
         var state = over.state();
@@ -58,5 +58,21 @@ public class HopRenderer implements BlockEntityRenderer<HopBlockEntity> {
             ComponentRenderer.box(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS)), sprite, min[0], min[1], min[2], max[0], max[1], max[2],
                     rgb, light);
         }
+    }
+
+    /**
+     * A wire as drawn: an upright Ribbon turned as the Ribbon above or below it is (RibbonBlock's VAXIS), so its stripes run on in the
+     * same order instead of reversing.
+     */
+    private static net.minecraft.world.level.block.state.BlockState shaped(HopBlockEntity be, HopBlockEntity.Wire wire) {
+        var state = wire.state();
+        if (!wire.ribbon() || wire.axis() != Direction.Axis.Y || be.getLevel() == null) return state;
+        for (Direction d : new Direction[]{Direction.DOWN, Direction.UP}) {
+            var next = be.getLevel().getBlockState(be.getBlockPos().relative(d));
+            if (next.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RibbonBlock && next.hasProperty(com.malevolentgods.fourtwenty.electronics.RibbonBlock.VAXIS)) {
+                return state.setValue(com.malevolentgods.fourtwenty.electronics.RibbonBlock.VAXIS, next.getValue(com.malevolentgods.fourtwenty.electronics.RibbonBlock.VAXIS));
+            }
+        }
+        return state;
     }
 }

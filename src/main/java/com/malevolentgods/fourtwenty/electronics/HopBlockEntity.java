@@ -110,6 +110,9 @@ public class HopBlockEntity extends BlockEntity {
             Direction.Axis axis = Direction.Axis.byName(w.getString("axis"));
             if (axis != null) wires[i] = new Wire(block, colour, axis);
         }
+        // loaded into a hop already in the world (a command or structure setting its wires, not a chunk loading): its neighbours look again,
+        // so a Wick or thread beside it reaches in, as it would had the wire been laid by hand
+        if (level != null && !level.isClientSide) HopBlock.changed(level, worldPosition, getBlockState());
     }
 
     @Override public @Nonnull CompoundTag getUpdateTag(@Nonnull HolderLookup.Provider registries) { return saveWithoutMetadata(registries); }

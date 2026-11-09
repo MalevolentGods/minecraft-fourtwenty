@@ -377,11 +377,22 @@ def rolling_tray():
         d.ellipse([x - 6 + 6, y - 6 + 6, x + 6 + 6, y + 6 + 6], fill=(150, 154, 160))
     d.rectangle([0, 0, 255, 255], outline=(110, 114, 122), width=4)
     front.save(TEX / 'rolling_tray_front.png', optimize=True)
-    side = Image.fromarray(np.clip(brushed('#5A5E66', 12), 0, 255).astype(np.uint8))
-    d = ImageDraw.Draw(side)
-    d.rectangle([0, 92, 255, 104], fill=(208, 40, 40))
-    d.rectangle([0, 152, 255, 164], fill=(24, 24, 28))
-    d.rectangle([0, 0, 255, 255], outline=(110, 114, 122), width=4)
+    # the rails: a red line and a black at fixed depths from the front (z 92-104 and 152-164 of 256), run round every side face so they
+    # meet the next tray's, above, below and beside (the user, 2026-11-08): upright on the east and west faces, across the top and
+    # bottom; drawn over the border, so nothing breaks them at the block's edge. Each face's own uv (block/cube's defaults): east
+    # u = 16 - z, west u = z, up v = z, down v = 16 - z.
+    base = np.clip(brushed('#5A5E66', 12), 0, 255).astype(np.uint8)
+    rails = ((92, 104, (208, 40, 40)), (152, 164, (24, 24, 28)))
+    for name, upright, flip in (('east', True, True), ('west', True, False), ('up', False, False), ('down', False, True)):
+        side = Image.fromarray(base.copy())
+        d = ImageDraw.Draw(side)
+        d.rectangle([0, 0, 255, 255], outline=(110, 114, 122), width=4)
+        for z0, z1, colour in rails:
+            a, b = (255 - z1, 255 - z0) if flip else (z0, z1)
+            d.rectangle([a, 0, b, 255] if upright else [0, a, 255, b], fill=colour)
+        side.save(TEX / f'rolling_tray_side_{name}.png', optimize=True)
+    side = Image.fromarray(base.copy())
+    ImageDraw.Draw(side).rectangle([0, 0, 255, 255], outline=(110, 114, 122), width=4)
     side.save(TEX / 'rolling_tray_side.png', optimize=True)
     code = [0x1E1E1E, 0x7A4A21, 0xD02020, 0xF08020, 0xF0D020, 0x30A040, 0x2050D0, 0x8040C0, 0x808080]
     for k in list(range(9)) + [None]:
@@ -397,8 +408,8 @@ def rolling_tray():
         name = 'rolling_tray_back' + ('' if k is None else f'_c{k}')
         back.save(TEX / f'{name}.png', optimize=True)
         tex = {'north': 'fourtwenty:block/component/rolling_tray_front', 'south': f'fourtwenty:block/component/{name}',
-               'east': 'fourtwenty:block/component/rolling_tray_side', 'west': 'fourtwenty:block/component/rolling_tray_side',
-               'up': 'fourtwenty:block/component/rolling_tray_side', 'down': 'fourtwenty:block/component/rolling_tray_side',
+               'east': 'fourtwenty:block/component/rolling_tray_side_east', 'west': 'fourtwenty:block/component/rolling_tray_side_west',
+               'up': 'fourtwenty:block/component/rolling_tray_side_up', 'down': 'fourtwenty:block/component/rolling_tray_side_down',
                'particle': 'fourtwenty:block/component/rolling_tray_side'}
         write(ASSETS / f'models/block/{name.replace("_back", "")}.json', {'parent': 'minecraft:block/cube', 'textures': tex})
     turns = {'north': {}, 'east': {'y': 90}, 'south': {'y': 180}, 'west': {'y': 270}, 'up': {'x': 270}, 'down': {'x': 90}}
