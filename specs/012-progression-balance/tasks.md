@@ -12,11 +12,11 @@
 
 ## Phase 1: Setup
 
-- [ ] T001 Write the progression model skeleton in `tools/progression_model.py`:
+- [X] T001 Write the progression model skeleton in `tools/progression_model.py`:
   - read the default numbers from `specs/012-progression-balance/contracts/config.md`, or a server toml given with `--config`;
   - work out one crop's minutes at each growth speed from the random-tick rate (3 per chunk section per tick, 4,096 blocks, weed at `cropSpeed` 0.5, grade speeds 1, 1, 0.7, 0.5, 0.35, 0.25, plot speeds 1.5, 2, 3, 5, 8);
   - print a table of minutes per crop per family and plot tier.
-- [ ] T002 [P] Add the model's self-check to `tools/progression_model.py`: with today's numbers (Landrace 1–3 buds, 25% seed), it reports the seed stock growing about 1.5× per crop, matching the user's 17 buds giving 12 seeds.
+- [X] T002 [P] Add the model's self-check to `tools/progression_model.py`: with today's numbers (Landrace 1–3 buds, 25% seed), it reports the seed stock growing about 1.5× per crop, matching the user's 17 buds giving 12 seeds.
 
 ## Phase 2: Foundational (blocks every story)
 
