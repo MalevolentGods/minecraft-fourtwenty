@@ -4,6 +4,13 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.22.1
+
+- **Sensi Heights:**
+  - **Farm:** the Farmer's hut in five levels, from a timber shed with a kitchen garden to a modern greenhouse.
+  - **Grow field:** a new field.
+  - **Hall of Operations:** the keypad calculator, as a decoration.
+
 ## What's new in 0.22.0
 
 - **Inspoweednetics, real electronics:**
