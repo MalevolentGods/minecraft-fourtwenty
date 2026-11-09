@@ -13,6 +13,9 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - **New players get four Landrace seeds** with MineColonies, once each.
 - **Tooltips** show a strain's buds, potency and growth.
 
+### Fixed
+- **Animal pens hold their animals** (Sensi Heights pack v97): hay, composters, cauldrons and azaleas in the Cowhand, Swineherd, Shepherd, Chicken Herder, Rabbit Hutch and Beekeeper pens sat against the fence, so animals climbed onto them and out. They now stand a block in, and hay is never stacked.
+
 ### Servers: edit these settings
 Saved configs keep their old values. In `fourtwenty-processing-server.toml`, set:
 

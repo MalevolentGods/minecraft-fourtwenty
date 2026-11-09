@@ -127,7 +127,7 @@
   - "servers: edit these settings", copying the changed-defaults table from `contracts/config.md`.
 - [X] T027 [P] Update `README.md`'s growing section with the per-family table and the plot seed chances.
 - [X] T028 Edit the saved toml on the local test server (`C:\Users\Ignus\mc-local-server\config`) and the game-test run dir (`.compat/runs/beds-dev/config`) to the new defaults. Leave Hera and flatworld for release day (contracts/config.md lists them).
-- [ ] T029 Run the full checks:
+- [X] T029 Run the full checks:
   - `./gradlew test`;
   - the game tests (only the known `malformedAndFutureSavesFailClosed` failure);
   - the model;
