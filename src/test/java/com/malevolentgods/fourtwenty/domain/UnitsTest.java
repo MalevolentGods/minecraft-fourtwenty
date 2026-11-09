@@ -33,4 +33,11 @@ class UnitsTest {
         assertEquals("0 Ig", Units.format(0, Units.AMPS));
         assertEquals("-1.50 Ig", Units.format(-1.5, Units.AMPS));
     }
+
+    /** Below the smallest prefix is rounding noise: it reads 0, not a string of zeros. */
+    @org.junit.jupiter.api.Test void tooSmallForAPrefixIsZero() {
+        org.junit.jupiter.api.Assertions.assertEquals("0 Ig", Units.format(1.67e-25, "Ig"));
+        org.junit.jupiter.api.Assertions.assertEquals("0 W", Units.format(-7.2e-30, "W"));
+        org.junit.jupiter.api.Assertions.assertEquals("1.11 nKb", Units.format(1.11e-9, "Kb"));
+    }
 }

@@ -19,8 +19,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Two banks, one for each way power can go through it, so what came in on one side can't bounce straight back. A face only takes power
- * when something past the other side can use it: otherwise a Stash would empty itself into the box with nowhere for the power to go.
+ * The transformer: two windings, solved with both their circuits as one two-port (docs/electronics/audit-and-plan.md 2.1), turns ratio the
+ * two tiers' voltages, loss its winding resistance. It stores nothing; what goes in one side comes out the other, less its loss, in the
+ * same tick. (Its old banks are kept only so saves load.)
  */
 public class HitBoxBlockEntity extends BIBlockEntity implements MenuProvider {
     private static final long BUFFER = 24_576;
@@ -49,21 +50,18 @@ public class HitBoxBlockEntity extends BIBlockEntity implements MenuProvider {
         @Override public long capacity() { return in().capacity(); }
         @Override public long receive(long amount) { return in().receive(amount); }
         @Override public long extract(long amount) { return out().extract(amount); }
-        @Override public boolean canReceive() { return true; }
+        // a winding: passive, its power flows straight through the two-port the circuit solves (Network: coupled windings)
+        @Override public boolean canReceive() { return false; }
         @Override public boolean canExtract() { return false; }
         @Override public void overload(long now) { down.overload(now); }
         @Override public boolean overloaded(long now) { return down.overloaded(now); }
-        @Override public double efficiency() { return 1 - com.malevolentgods.fourtwenty.processing.ProcessingConfig.circuit().hitBoxLoss(); }
-        @Override public double sourceWatts() { return rate(); }
-        @Override public boolean sourceReady() { return out().stored() > 0; }
-        @Override public double demandWatts() { return in().stored() < in().capacity() ? rate() : 0; }
-
-        @Override public Role role() {
-            if (level == null || level.isClientSide) return Role.NONE;
-            if (out().stored() > 0 && Circuits.demandBeyond(level, this, worldPosition) > 0) return Role.SOURCE;
-            if (in().stored() < in().capacity() && Circuits.demandBeyond(level, other(), worldPosition) > 0) return Role.LOAD;
-            return Role.NONE;
-        }
+        @Override public double efficiency() { return 1; }
+        @Override public double sourceWatts() { return 0; }
+        @Override public boolean sourceReady() { return false; }
+        @Override public double demandWatts() { return 0; }
+        @Override public Role role() { return Role.NONE; }
+        @Override public BINode coupled() { return other(); }
+        @Override public boolean primary() { return high; }
     }
 
     private final BIBuffer down = new BIBuffer(BIRules.Tier.RIP, BUFFER, true, true, this::setChanged);
@@ -100,8 +98,7 @@ public class HitBoxBlockEntity extends BIBlockEntity implements MenuProvider {
             return;
         }
         Circuits.tick(level, highFace, worldPosition);
-        Circuits.tick(level, lowFace, worldPosition);
-        lit(down.stored() > 0 || up.stored() > 0);
+        lit(Circuits.meter(level, highFace, worldPosition)[1] > 1e-6);
     }
 
     @Override public @Nonnull Component getDisplayName() { return getBlockState().getBlock().getName(); }

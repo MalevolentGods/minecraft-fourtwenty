@@ -105,6 +105,7 @@ runs {
     gameTestServer {
         if (project.hasProperty('dispensaryLifecycleStage')) systemProperty 'fourtwenty.dispensaryLifecycleStage', project.property('dispensaryLifecycleStage')
         if (project.hasProperty('persistenceStage')) systemProperty 'fourtwenty.persistenceStage', project.property('persistenceStage')
+        if (project.hasProperty('profile')) systemProperty 'fourtwenty.profile', 'true'
         if (compatProfile != 'baseline') modSources.add('fourtwenty_tests', project.sourceSets.gametest)
         if (compatProfile in ['colony', 'full']) modSources.add('fourtwenty_colonytests', project.sourceSets.colonytest)
         if (compatProfile == 'full') modSources.add('fourtwenty_packtests', project.sourceSets.packtest)

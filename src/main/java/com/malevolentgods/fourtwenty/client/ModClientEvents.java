@@ -22,6 +22,12 @@ public class ModClientEvents {
             event.getToolTip().add(1, net.minecraft.network.chat.Component.translatable("tooltip.fourtwenty.wick." + role,
                     net.minecraft.network.chat.Component.translatable("color.minecraft." + colour.dye().getName())).withStyle(net.minecraft.ChatFormatting.AQUA));
         }
+        // what it really is, in electronics, quietly under its name
+        String real = "tooltip.fourtwenty.real." + id.getPath();
+        if (net.minecraft.client.resources.language.I18n.exists(real)) {
+            event.getToolTip().add(Math.min(1, event.getToolTip().size()), net.minecraft.network.chat.Component.translatable(real)
+                    .withStyle(net.minecraft.ChatFormatting.DARK_GRAY, net.minecraft.ChatFormatting.ITALIC));
+        }
         if (!net.minecraft.client.resources.language.I18n.exists(key)) return;
         var font = net.minecraft.client.Minecraft.getInstance().font;
         for (var line : font.getSplitter().splitLines(net.minecraft.network.chat.Component.translatable(key), 200, net.minecraft.network.chat.Style.EMPTY.withColor(net.minecraft.ChatFormatting.GRAY))) {
@@ -30,6 +36,29 @@ public class ModClientEvents {
     }
 
     
+    /** The Inspoweedometer's held reading, a line above the live one on the action bar. */
+    @SubscribeEvent
+    public static void registerLayers(net.neoforged.neoforge.client.event.RegisterGuiLayersEvent event) {
+        event.registerAbove(net.neoforged.neoforge.client.gui.VanillaGuiLayers.OVERLAY_MESSAGE,
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("fourtwenty", "meter_held"), (graphics, delta) -> {
+                    var mc = net.minecraft.client.Minecraft.getInstance();
+                    if (mc.player == null || mc.options.hideGui) return;
+                    var main = mc.player.getMainHandItem();
+                    var stack = main.getItem() instanceof com.malevolentgods.fourtwenty.power.InspoweedometerItem ? main : mc.player.getOffhandItem();
+                    if (!(stack.getItem() instanceof com.malevolentgods.fourtwenty.power.InspoweedometerItem)) return;
+                    String held = com.malevolentgods.fourtwenty.power.InspoweedometerItem.held(stack);
+                    if (held == null) return;
+                    // drawn as the action bar draws the live reading (Gui.renderOverlayMessage), one line above it
+                    var text = net.minecraft.network.chat.Component.translatable("message.fourtwenty.meter.held", held)
+                            .withStyle(s -> s.withColor(com.malevolentgods.fourtwenty.power.InspoweedometerItem.heldColour(stack)));
+                    int width = mc.font.width(text);
+                    graphics.pose().pushPose();
+                    graphics.pose().translate(graphics.guiWidth() / 2f, graphics.guiHeight() - 68 - 12, 0);
+                    graphics.drawStringWithBackdrop(mc.font, text, -width / 2, -4, width, 0xFFFFFFFF);
+                    graphics.pose().popPose();
+                });
+    }
+
     @SubscribeEvent
     public static void registerKeys(net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent event) { PavePenClient.registerKeys(event); }
 
@@ -59,6 +88,10 @@ public class ModClientEvents {
     public static void registerRenderers(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModBlockEntities.CURING_RACK.get(), CuringRackRenderer::new);
         event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModBlockEntities.LAMP.get(), LampHaloRenderer::new);
+        event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.electronics.ModElectronics.COMPONENT_ENTITY.get(), ComponentRenderer::new);
+        event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.electronics.ModElectronics.HOP_ENTITY.get(), HopRenderer::new);
+        event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.registry.ModPower.SUPPLY_ENTITY.get(), BenchRigRenderer::new);
+        event.registerBlockEntityRenderer(com.malevolentgods.fourtwenty.electronics.ModElectronics.RIBBON_ENTITY.get(), RibbonRenderer::new);
         event.registerEntityRenderer(com.malevolentgods.fourtwenty.registry.ModEntities.BUZZ_BOT.get(), BuzzBotRenderer::new);
         event.registerEntityRenderer(com.malevolentgods.fourtwenty.registry.ModEntities.SEAT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
     }
@@ -92,6 +125,7 @@ public class ModClientEvents {
         RoadModel.replace(event);
         SunkModel.wrap(event);
         PortModel.wrap(event);
+        ComponentModel.wrap(event);
     }
 
     @SubscribeEvent

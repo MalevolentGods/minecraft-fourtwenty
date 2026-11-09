@@ -1,0 +1,80 @@
+{
+ "parent": "block/block",
+ "render_type": "minecraft:cutout",
+ "textures": {
+  "edge": "fourtwenty:block/component/ribbon_edge",
+  "ns": "fourtwenty:block/component/ribbon",
+  "ew": "fourtwenty:block/component/ribbon_ew",
+  "particle": "fourtwenty:block/component/ribbon"
+ },
+ "elements": [
+  {
+   "from": [
+    14,
+    7,
+    3
+   ],
+   "to": [
+    16,
+    9,
+    14
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      14,
+      7,
+      16,
+      9
+     ],
+     "texture": "#edge"
+    },
+    "south": {
+     "uv": [
+      14,
+      7,
+      16,
+      9
+     ],
+     "texture": "#edge"
+    },
+    "east": {
+     "uv": [
+      3,
+      7,
+      14,
+      9
+     ],
+     "texture": "#edge"
+    },
+    "west": {
+     "uv": [
+      3,
+      7,
+      14,
+      9
+     ],
+     "texture": "#edge"
+    },
+    "up": {
+     "uv": [
+      14,
+      3,
+      16,
+      14
+     ],
+     "texture": "#ew"
+    },
+    "down": {
+     "uv": [
+      14,
+      3,
+      16,
+      14
+     ],
+     "texture": "#ew"
+    }
+   }
+  }
+ ]
+}

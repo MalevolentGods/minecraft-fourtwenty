@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "on=false": {
+   "model": "fourtwenty:block/component/pack_nug"
+  },
+  "on=true": {
+   "model": "fourtwenty:block/component/pack_nug_on"
+  }
+ }
+}

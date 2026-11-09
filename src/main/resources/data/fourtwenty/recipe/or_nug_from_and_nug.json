@@ -1,0 +1,13 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:and_nug"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:or_nug",
+  "count": 1
+ }
+}

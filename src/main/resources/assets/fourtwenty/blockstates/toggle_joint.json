@@ -1,0 +1,16 @@
+{
+ "variants": {
+  "mounted=false,on=false": {
+   "model": "fourtwenty:block/component/toggle_joint"
+  },
+  "mounted=false,on=true": {
+   "model": "fourtwenty:block/component/toggle_joint_on"
+  },
+  "mounted=true,on=false": {
+   "model": "fourtwenty:block/component/toggle_joint_mounted"
+  },
+  "mounted=true,on=true": {
+   "model": "fourtwenty:block/component/toggle_joint_mounted"
+  }
+ }
+}

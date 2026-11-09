@@ -1,0 +1,13 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:latch_nug"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:flip_flop_nug",
+  "count": 1
+ }
+}

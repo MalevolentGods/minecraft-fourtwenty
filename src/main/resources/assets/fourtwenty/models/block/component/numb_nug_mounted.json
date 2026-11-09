@@ -1,0 +1,295 @@
+{
+ "parent": "minecraft:block/block",
+ "loader": "neoforge:composite",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "fourtwenty:block/infuser/steel_body",
+  "body": "fourtwenty:block/infuser/steel_body",
+  "dark": "fourtwenty:block/infuser/steel_dark",
+  "trim": "fourtwenty:block/infuser/steel_trim",
+  "glass": "fourtwenty:block/infuser/steel_glass",
+  "brass": "fourtwenty:block/component/lab_brass",
+  "lead_in": "fourtwenty:block/component/lead_in",
+  "lead_out": "fourtwenty:block/component/lead_out",
+  "lead_vdd": "fourtwenty:block/component/lead_vdd",
+  "lead_gnd": "fourtwenty:block/component/lead_gnd",
+  "lead_gate": "fourtwenty:block/component/lead_gate",
+  "screen": "fourtwenty:block/component/lab_screen"
+ },
+ "children": {
+  "machine": {
+   "parent": "minecraft:block/block",
+   "render_type": "minecraft:cutout_mipped",
+   "ambientocclusion": false,
+   "textures": {
+    "particle": "fourtwenty:block/infuser/steel_body",
+    "body": "fourtwenty:block/infuser/steel_body",
+    "dark": "fourtwenty:block/infuser/steel_dark",
+    "trim": "fourtwenty:block/infuser/steel_trim",
+    "glass": "fourtwenty:block/infuser/steel_glass",
+    "brass": "fourtwenty:block/component/lab_brass",
+    "lead_in": "fourtwenty:block/component/lead_in",
+    "lead_out": "fourtwenty:block/component/lead_out",
+    "lead_vdd": "fourtwenty:block/component/lead_vdd",
+    "lead_gnd": "fourtwenty:block/component/lead_gnd",
+    "lead_gate": "fourtwenty:block/component/lead_gate",
+    "screen": "fourtwenty:block/component/lab_screen"
+   },
+   "elements": [
+    {
+     "from": [
+      0,
+      0,
+      12
+     ],
+     "to": [
+      16,
+      16,
+      16
+     ],
+     "faces": {
+      "north": {
+       "uv": [
+        0,
+        0,
+        16,
+        16
+       ],
+       "texture": "#body"
+      },
+      "south": {
+       "uv": [
+        0,
+        0,
+        16,
+        16
+       ],
+       "texture": "#body"
+      },
+      "east": {
+       "uv": [
+        0,
+        0,
+        4,
+        16
+       ],
+       "texture": "#body"
+      },
+      "west": {
+       "uv": [
+        12,
+        0,
+        16,
+        16
+       ],
+       "texture": "#body"
+      },
+      "up": {
+       "uv": [
+        0,
+        12,
+        16,
+        16
+       ],
+       "texture": "#body"
+      },
+      "down": {
+       "uv": [
+        0,
+        0,
+        16,
+        4
+       ],
+       "texture": "#body"
+      }
+     }
+    },
+    {
+     "from": [
+      0,
+      15,
+      11.3
+     ],
+     "to": [
+      16,
+      16,
+      12
+     ],
+     "faces": {
+      "north": {
+       "uv": [
+        0,
+        0,
+        16,
+        1
+       ],
+       "texture": "#trim"
+      },
+      "east": {
+       "uv": [
+        4,
+        0,
+        4.699999999999999,
+        1
+       ],
+       "texture": "#trim"
+      },
+      "west": {
+       "uv": [
+        11.3,
+        0,
+        12,
+        1
+       ],
+       "texture": "#trim"
+      },
+      "up": {
+       "uv": [
+        0,
+        11.3,
+        16,
+        12
+       ],
+       "texture": "#trim"
+      },
+      "down": {
+       "uv": [
+        0,
+        4,
+        16,
+        4.699999999999999
+       ],
+       "texture": "#trim"
+      }
+     }
+    },
+    {
+     "from": [
+      0,
+      0,
+      11.3
+     ],
+     "to": [
+      16,
+      1,
+      12
+     ],
+     "faces": {
+      "north": {
+       "uv": [
+        0,
+        15,
+        16,
+        16
+       ],
+       "texture": "#trim"
+      },
+      "east": {
+       "uv": [
+        4,
+        15,
+        4.699999999999999,
+        16
+       ],
+       "texture": "#trim"
+      },
+      "west": {
+       "uv": [
+        11.3,
+        15,
+        12,
+        16
+       ],
+       "texture": "#trim"
+      },
+      "up": {
+       "uv": [
+        0,
+        11.3,
+        16,
+        12
+       ],
+       "texture": "#trim"
+      },
+      "down": {
+       "uv": [
+        0,
+        4,
+        16,
+        4.699999999999999
+       ],
+       "texture": "#trim"
+      }
+     }
+    },
+    {
+     "from": [
+      0,
+      1,
+      11.8
+     ],
+     "to": [
+      16,
+      15,
+      12
+     ],
+     "faces": {
+      "north": {
+       "uv": [
+        0,
+        1,
+        16,
+        15
+       ],
+       "texture": "#screen"
+      }
+     }
+    }
+   ]
+  },
+  "glass": {
+   "parent": "minecraft:block/block",
+   "render_type": "minecraft:translucent",
+   "ambientocclusion": false,
+   "textures": {
+    "particle": "fourtwenty:block/infuser/steel_body",
+    "body": "fourtwenty:block/infuser/steel_body",
+    "dark": "fourtwenty:block/infuser/steel_dark",
+    "trim": "fourtwenty:block/infuser/steel_trim",
+    "glass": "fourtwenty:block/infuser/steel_glass",
+    "brass": "fourtwenty:block/component/lab_brass",
+    "lead_in": "fourtwenty:block/component/lead_in",
+    "lead_out": "fourtwenty:block/component/lead_out",
+    "lead_vdd": "fourtwenty:block/component/lead_vdd",
+    "lead_gnd": "fourtwenty:block/component/lead_gnd",
+    "lead_gate": "fourtwenty:block/component/lead_gate",
+    "screen": "fourtwenty:block/component/lab_screen"
+   },
+   "elements": [
+    {
+     "from": [
+      0,
+      1,
+      11.4
+     ],
+     "to": [
+      16,
+      15,
+      11.6
+     ],
+     "faces": {
+      "north": {
+       "uv": [
+        0,
+        1,
+        16,
+        15
+       ],
+       "texture": "#glass"
+      }
+     }
+    }
+   ]
+  }
+ }
+}

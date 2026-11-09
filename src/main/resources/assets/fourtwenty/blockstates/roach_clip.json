@@ -1,0 +1,443 @@
+{
+ "multipart": [
+  {
+   "apply": {
+    "model": "fourtwenty:block/roach_clip_core"
+   }
+  },
+  {
+   "when": {
+    "OR": [
+     {
+      "north": "false",
+      "east": "false",
+      "south": "false",
+      "west": "false",
+      "up": "true",
+      "vaxis": "x",
+      "twist": "false"
+     },
+     {
+      "north": "false",
+      "east": "false",
+      "south": "false",
+      "west": "false",
+      "down": "true",
+      "vaxis": "x",
+      "twist": "false"
+     }
+    ]
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_vertical_x"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "true",
+    "down": "true",
+    "vaxis": "x",
+    "twist": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_twist_x"
+   }
+  },
+  {
+   "when": {
+    "OR": [
+     {
+      "north": "false",
+      "east": "false",
+      "south": "false",
+      "west": "false",
+      "up": "true",
+      "vaxis": "z",
+      "twist": "false"
+     },
+     {
+      "north": "false",
+      "east": "false",
+      "south": "false",
+      "west": "false",
+      "down": "true",
+      "vaxis": "z",
+      "twist": "false"
+     }
+    ]
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_vertical_z"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "true",
+    "down": "true",
+    "vaxis": "z",
+    "twist": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_twist_z"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_none"
+   }
+  },
+  {
+   "when": {
+    "OR": [
+     {
+      "north": "true",
+      "east": "false",
+      "south": "false",
+      "west": "false",
+      "up": "true"
+     },
+     {
+      "north": "true",
+      "east": "false",
+      "south": "false",
+      "west": "false",
+      "down": "true"
+     }
+    ]
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_bend_n"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_n"
+   }
+  },
+  {
+   "when": {
+    "OR": [
+     {
+      "north": "false",
+      "east": "true",
+      "south": "false",
+      "west": "false",
+      "up": "true"
+     },
+     {
+      "north": "false",
+      "east": "true",
+      "south": "false",
+      "west": "false",
+      "down": "true"
+     }
+    ]
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_bend_e"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "false",
+    "west": "false",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_e"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "false",
+    "west": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_ne"
+   }
+  },
+  {
+   "when": {
+    "OR": [
+     {
+      "north": "false",
+      "east": "false",
+      "south": "true",
+      "west": "false",
+      "up": "true"
+     },
+     {
+      "north": "false",
+      "east": "false",
+      "south": "true",
+      "west": "false",
+      "down": "true"
+     }
+    ]
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_bend_s"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "true",
+    "west": "false",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_s"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "true",
+    "west": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_ns"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "true",
+    "west": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_es"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "true",
+    "west": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_nes"
+   }
+  },
+  {
+   "when": {
+    "OR": [
+     {
+      "north": "false",
+      "east": "false",
+      "south": "false",
+      "west": "true",
+      "up": "true"
+     },
+     {
+      "north": "false",
+      "east": "false",
+      "south": "false",
+      "west": "true",
+      "down": "true"
+     }
+    ]
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_bend_w"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "true",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_w"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "false",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_nw"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "false",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_ew"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "false",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_new"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "true",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_sw"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "true",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_nsw"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "true",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_esw"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "true",
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_nesw"
+   }
+  },
+  {
+   "when": {
+    "north": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_north"
+   }
+  },
+  {
+   "when": {
+    "east": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_east"
+   }
+  },
+  {
+   "when": {
+    "south": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_south"
+   }
+  },
+  {
+   "when": {
+    "west": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_west"
+   }
+  },
+  {
+   "when": {
+    "up": "true",
+    "vaxis": "x",
+    "twist": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_up_x"
+   }
+  },
+  {
+   "when": {
+    "up": "true",
+    "vaxis": "z",
+    "twist": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_up_z"
+   }
+  },
+  {
+   "when": {
+    "down": "true",
+    "vaxis": "x",
+    "twist": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_down_x"
+   }
+  },
+  {
+   "when": {
+    "down": "true",
+    "vaxis": "z",
+    "twist": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_down_z"
+   }
+  }
+ ]
+}

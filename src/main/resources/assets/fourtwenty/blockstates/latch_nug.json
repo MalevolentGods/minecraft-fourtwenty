@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "on=false": {
+   "model": "fourtwenty:block/component/latch_nug"
+  },
+  "on=true": {
+   "model": "fourtwenty:block/component/latch_nug_on"
+  }
+ }
+}

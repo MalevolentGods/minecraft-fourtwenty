@@ -1,0 +1,19 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "tools",
+ "ingredients": [
+  {
+   "item": "minecraft:iron_ingot"
+  },
+  {
+   "item": "minecraft:iron_ingot"
+  },
+  {
+   "item": "fourtwenty:hemp_thread"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:twister",
+  "count": 1
+ }
+}

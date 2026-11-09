@@ -1,0 +1,16 @@
+{
+ "variants": {
+  "mounted=false,on=false": {
+   "model": "fourtwenty:block/component/numb_nug"
+  },
+  "mounted=false,on=true": {
+   "model": "fourtwenty:block/component/numb_nug_on"
+  },
+  "mounted=true,on=false": {
+   "model": "fourtwenty:block/component/numb_nug_mounted"
+  },
+  "mounted=true,on=true": {
+   "model": "fourtwenty:block/component/numb_nug_mounted"
+  }
+ }
+}

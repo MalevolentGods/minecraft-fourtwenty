@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "on=false": {
+   "model": "fourtwenty:block/component/indica_fet"
+  },
+  "on=true": {
+   "model": "fourtwenty:block/component/indica_fet_on"
+  }
+ }
+}

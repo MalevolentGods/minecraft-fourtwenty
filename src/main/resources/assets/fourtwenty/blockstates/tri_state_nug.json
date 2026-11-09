@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "on=false": {
+   "model": "fourtwenty:block/component/tri_state_nug"
+  },
+  "on=true": {
+   "model": "fourtwenty:block/component/tri_state_nug_on"
+  }
+ }
+}

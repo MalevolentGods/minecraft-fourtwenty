@@ -34,8 +34,8 @@ Power MUST NOT be reimplemented per machine.
 
 ### IV. Failure Is Safe
 
-Only wire breaks: a Wick carrying more than twice a Hookah's current of its tier, or on a line above its
-insulation rating, MUST burn out in a cloud of smoke and leave ash. A block fed a voltage above its tier's MUST NOT break: it overloads, stops, and its screen
+Only wire, and a Resinator, breaks: a Wick carrying more than twice a Hookah's current of its tier, or on a line above its
+insulation rating, MUST burn out in a cloud of smoke and leave ash, and so MUST a Resinator dissipating more than its power rating. A block fed a voltage above its tier's MUST NOT break: it overloads, stops, and its screen
 turns green and smoky until the higher tier is gone. Nothing explodes.
 Flying MUST NOT kill the wearer: a Puff Plate wearer who sobers up or runs out of BI mid-flight is
 lowered gently to the ground. Moon Boots get no such rule. Gear works only while the wearer is high

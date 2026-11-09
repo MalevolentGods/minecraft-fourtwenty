@@ -28,6 +28,8 @@ public final class Units {
                 scaled *= 1000;
                 prefix = SMALL[i];
             }
+            // smaller than the smallest prefix: rounding noise, not a reading
+            if (Math.abs(scaled) < 1) return "0 " + unit;
         } else if (abs >= 10_000) {
             for (int i = 0; i < LARGE.length && Math.abs(scaled) >= 1000; i++) {
                 scaled /= 1000;

@@ -251,6 +251,39 @@ Two-core cables that do the routine wiring for you. Each carries a + core and a 
 
 The Inspoweedometer reads a Twin Wick's voltage between its cores and the current on each, and a Daisy Wick's string current and voltage there.
 
+## Electronics
+
+Real components on the same circuits as everything else, solved the way SPICE solves them: Kirchhoff's laws, Newton's method for the parts that aren't linear, and time steps for the parts that store energy. Units: Willards (W), Ignus (Ig), Kerberos (Kb), Phus (Φ), Garcias (Ga, capacitance) and Marleys (Ma, inductance). The full design is in [docs/electronics/audit-and-plan.md](docs/electronics/audit-and-plan.md).
+
+**Wiring.** Components have pins on fixed faces, shown by their coloured leads: two-pin parts run back to front; logic parts take inputs at the back or on their left and right, give their output in front, and are powered by VDD on top (red lead) and GND underneath (black lead). Any Wick, or the thin **Hemp Thread**, on a pin face joins that pin, and two pin faces touching join directly. (Machines are different: a red Wick is + and a black Wick is − on any side.)
+
+| Part | What it is |
+|---|---|
+| Resinator | A resistor, 1 Φ to 1 MΦ, rated 10 W: past that it burns out in smoke |
+| Kief Cap | A capacitor, 1 µGa to 1 Ga |
+| Spliff Coil | An inductor, 1 mMa to 10 Ma |
+| One-Hitter | A diode: current flows from its back to its banded front |
+| Zen Hitter | A Zener diode, 2.4 to 42 Kb: banded end to +, it holds its voltage |
+| Toggle Joint, Kill Switch, Puff Button | A switch you flip, a switch closed by redstone, a button closed for a second |
+| NOT, Buffer, AND, OR, NAND, NOR, XOR, XNOR Nug | Logic gates |
+| Tri-State, Latch, Flip-Flop Nug | A tri-state buffer, an SR latch, a D flip-flop |
+| Ticker | A clock, 2 ms to 10 s |
+| Sativa FET, Indica FET | N- and P-channel MOSFETs: source at the back, drain in front, gate on the left (green lead). Build your own CMOS logic from them |
+| Puff-Pass Nug | A shift register: data in at the back, clock on the left, latch on the right, 8 outputs and a carry on its bus face in front. Chain them, carry to data, for 16 bits or more |
+| Pack Nug | A shift register the other way: 8 inputs on its bus face, load and clock, out one wire, bit 7 first |
+| Sampler Nug, Dealer Nug | An 8-to-1 multiplexer and a 1-to-8 demultiplexer, selected by channels 0 to 2 of a bus on their left |
+| Blend Nug | Bitwise logic on two buses, all nine wires at once: AND, OR, XOR, NAND, NOR, XNOR, NOT A or A (use it to step) |
+| Stacker Nug | Adds two bytes and a carry in, or subtracts; carry (or borrow) out on the C wire, so two make 16 bits |
+| Scale Nug | Compares two bytes: channel 0 is A < B, 1 is A = B, 2 is A > B |
+| Jar Nug | Keeps a byte: takes its inputs on each rising clock, drives them out until release is 1, so several can share one bus |
+| Eighth Ribbon | Nine signal wires in one flat cable: channels 0 to 7 (striped in the resistor colour code) and the carry (grey). It joins other Ribbons, Roach Clips and bus faces |
+| Roach Clip | A piece of Ribbon that clips one channel out to a Wick, Hemp Thread or single pin; use it to pick the channel |
+| Hype Amp | An op-amp: + on the left, − on the right, output in front, powered like a Nug; with Resinators for feedback it amplifies by their ratio |
+
+Every electrical item shows its real-world name, quietly, under its name in its tooltip (a Puff-Pass Nug is a shift register, a Hookah a generator, the Inspoweedometer a multimeter, with the units' real names too). Use a part to step its value (sneak to step back). Logic reads its inputs against its own supply (below 30% is a 0, above 70% a 1), drives its output through a real output resistance, lets it float with no power, and answers 1 ms after its inputs change, so logic of any depth settles inside a tick and an oscillator runs at the rate its gates allow. The Inspoweedometer reads whatever you look at, live, while you hold it; use it to hold a reading above the live one to compare. It reads a part's value, voltage, current and power, or a logic part's pins and the bits they read as, a FET's gate and drain voltages and its current, or a Hype Amp's inputs and output, or a chip's buses as bits (bit 7 first). Circuits keep their state through chunk reloads and restarts, and share a time budget each tick: past it, they wait rather than slow the server.
+
+**Test supplies** (creative): a **Bottomless Stash** of each tier, which never runs dry, and the **Bench Rig**, a variable DC supply (use it to step its voltage from 0.5 to 4,200 Kb, sneak-use to step its current limit).
+
 ## Lit Bits and the Weedweeno
 
 Programmable RGB lamps, part of Inspoweednetics. Nothing here needs MineColonies.

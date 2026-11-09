@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "on=false": {
+   "model": "fourtwenty:block/component/one_hitter"
+  },
+  "on=true": {
+   "model": "fourtwenty:block/component/one_hitter"
+  }
+ }
+}

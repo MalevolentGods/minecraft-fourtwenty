@@ -88,6 +88,11 @@ public class WickBlock extends Block {
 
     public BIRules.Tier tier() { return tier; }
 
+    /** This wire's resistance and current rating against a Wick of its tier (Hemp Thread is thin). */
+    public double ohmsScale() { return 1; }
+
+    public double ampsScale() { return 1; }
+
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         SIDES.values().forEach(builder::add);
         builder.add(LIT, COLOUR);
@@ -106,12 +111,33 @@ public class WickBlock extends Block {
     private static Link link(BlockState self, Direction side, BlockState neighbour) {
         if (neighbour.getBlock() instanceof WickBlock) return joins(self, neighbour) ? Link.WIRE : Link.NONE;
         if (neighbour.getBlock() instanceof CableBlock) return CableBlock.takesWick(self) ? Link.WIRE : Link.NONE;
+        // any colour of Wick or Hemp Thread plugs into a component's pin face
+        if (com.malevolentgods.fourtwenty.electronics.ComponentBlock.singlePinAt(neighbour, side.getOpposite()) >= 0) return Link.PLUG;
+        // and into a Roach Clip, on its channel
+        if (neighbour.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RoachClipBlock) return Link.PLUG;
+        // a Rolling Tray: any Wick or thread on its back (its part's signal), red and black on its other faces (its rails); none on its front
+        if (neighbour.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock) {
+            net.minecraft.core.Direction front = com.malevolentgods.fourtwenty.electronics.RollingTrayBlock.front(neighbour);
+            if (side.getOpposite() == front) return Link.NONE;
+            return side == front || Terminal.signOf(self) != null ? Link.PLUG : Link.NONE;
+        }
+        // a lamp: any Wick or thread is its signal, a black Wick its −
+        if (neighbour.getBlock() instanceof com.malevolentgods.fourtwenty.block.LampBlock) return Link.PLUG;
         // only red (+) and black (−) Wicks plug into blocks, on any face
         return Terminal.signOf(self) != null && Terminal.pluggable(neighbour, side.getOpposite()) ? Link.PLUG : Link.NONE;
     }
 
+    /** As {@link #link(BlockState, Direction, BlockState)}, and into a Nah, Skip Me, Bro whose wire this way is a Wick of this colour. */
+    private static Link link(BlockState self, Direction side, BlockState neighbour, net.minecraft.world.level.BlockGetter level, BlockPos neighbourPos) {
+        if (neighbour.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.HopBlock) {
+            var w = com.malevolentgods.fourtwenty.electronics.HopBlockEntity.facing(level, neighbourPos, side.getOpposite());
+            return w != null && !w.ribbon() && joins(self, w.state()) ? Link.WIRE : Link.NONE;
+        }
+        return link(self, side, neighbour);
+    }
+
     private BlockState linked(BlockState state, LevelAccessor level, BlockPos pos) {
-        for (Direction d : Direction.values()) state = state.setValue(SIDES.get(d), link(state, d, level.getBlockState(pos.relative(d))));
+        for (Direction d : Direction.values()) state = state.setValue(SIDES.get(d), link(state, d, level.getBlockState(pos.relative(d)), level, pos.relative(d)));
         return state;
     }
 
@@ -128,7 +154,7 @@ public class WickBlock extends Block {
 
     @Override protected @Nonnull BlockState updateShape(@Nonnull BlockState state, @Nonnull Direction direction, @Nonnull BlockState neighbour, @Nonnull LevelAccessor level,
                                                         @Nonnull BlockPos pos, @Nonnull BlockPos neighbourPos) {
-        return state.setValue(SIDES.get(direction), link(state, direction, neighbour));
+        return state.setValue(SIDES.get(direction), link(state, direction, neighbour, level, neighbourPos));
     }
 
     /** Use a dye on a Wick to colour it; it then joins only Wicks of that colour. */
@@ -155,6 +181,11 @@ public class WickBlock extends Block {
 
     @Override protected void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState old, boolean moved) {
         if (!old.is(this)) BIGrid.changed(level);
+        // placed some other way than by hand (a command, a paste): reach toward its neighbours now, as it would have when placed
+        if (!level.isClientSide && !old.is(this)) {
+            BlockState linked = linked(state, level, pos);
+            if (linked != state) level.setBlock(pos, linked, 2);
+        }
     }
 
     @Override protected void onRemove(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState next, boolean moved) {

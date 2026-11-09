@@ -51,7 +51,8 @@ public final class HotboxGameTests {
             h.assertTrue(box.ticksLeft() < HotboxRules.HOLD_TICKS && box.ticksLeft() > 0, "Counting down with the player away");
             h.assertTrue(level.getBlockState(pos).getValue(HotboxBlock.LIT), "Still holding");
             h.assertTrue(held(level, pos), "Still held");
-            level.getServer().getPlayerList().remove(player);
+            // everyone off, not only this test's player: another test's mock player still about would keep it holding
+            for (var p : java.util.List.copyOf(level.getServer().getPlayerList().getPlayers())) level.getServer().getPlayerList().remove(p);
         });
         h.runAfterDelay(190, () -> {
             h.assertTrue(!level.getBlockState(pos).getValue(HotboxBlock.LIT), "Lets go with nobody online");

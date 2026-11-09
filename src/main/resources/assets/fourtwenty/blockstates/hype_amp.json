@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "on=false": {
+   "model": "fourtwenty:block/component/hype_amp"
+  },
+  "on=true": {
+   "model": "fourtwenty:block/component/hype_amp_on"
+  }
+ }
+}

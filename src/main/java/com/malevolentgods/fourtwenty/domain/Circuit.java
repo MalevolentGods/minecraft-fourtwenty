@@ -23,11 +23,8 @@ import java.util.List;
  * specs/007-polarity-circuits/research.md R1.
  */
 public final class Circuit {
-    /** Past a current limit a source still gives a little with the voltage, at its internal conductance over STIFF, so a node never floats. */
-    private static final double GMIN = 1e-12, TOLERANCE = 1e-9, STEP = 0.25, STIFF = 1e5, PROBE = 1e-6, OPEN = 1e-4;
-    private static final int ITERATIONS = 60;
+    private static final double GMIN = 1e-12, STEP = 0.25, PROBE = 1e-6, OPEN = 1e-4;
     private static final double MIN_STEP = 1.0 / 4096;
-    private static final int CV = 0, CC_OUT = 1, CC_IN = 2;
 
     /** What became of a load: running, in a brownout, with no closed loop through it, or wired backwards. */
     public static final int OK = 0, BROWNOUT = 1, NO_LOOP = 2, REVERSED = 3;
@@ -38,8 +35,10 @@ public final class Circuit {
     private record Conductor(int a, int b, double ohms) {}
     private record Source(int plus, int minus, double emf, double ohms, double maxOut, double maxIn) {}
     private record Load(int plus, int minus, double watts, double minVolts) {}
+    /** A transformer: primary p1-m1, secondary p2-m2, turns ratio V1/V2, referred through its winding resistance. */
+    private record Coupling(int p1, int m1, int p2, int m2, double ratio, double ohms) {}
     /** An LED behind a constant-current driver: dark below {@code forward}, rising to {@code setAmps} at {@code rated}, held above. */
-    private record Led(int plus, int minus, double setAmps, double forward, double rated) {
+    private record Led(int plus, int minus, double setAmps, double forward, double rated, double channelAmps) {
         double amps(double volts) {
             if (volts <= forward) return 0;
             return setAmps * (rated <= forward ? 1 : Math.min(1, (volts - forward) / (rated - forward)));
@@ -51,6 +50,7 @@ public final class Circuit {
     private final List<Source> sources = new ArrayList<>();
     private final List<Load> loads = new ArrayList<>();
     private final List<Led> leds = new ArrayList<>();
+    private final List<Coupling> couplings = new ArrayList<>();
     /** Each LED's status from the probe: OK, NO_LOOP or REVERSED. */
     private int[] ledStatus = new int[0];
     /** Each load's status from the probe: OK, NO_LOOP or REVERSED. */
@@ -92,8 +92,19 @@ public final class Circuit {
 
     /** An LED across {@code plus} and {@code minus} (Lit Bits: domain/LedRules); returns its index. */
     public int led(int plus, int minus, double setAmps, double forward, double rated) {
-        leds.add(new Led(plus, minus, Math.max(0, setAmps), Math.max(0, forward), Math.max(forward, rated)));
+        return led(plus, minus, setAmps, forward, rated, LedRules.Numbers.DEFAULT.channelAmps());
+    }
+
+    /** An RGB LED (a Lit Bit): {@code setAmps} at full brightness, each channel {@code channelAmps} at {@code rated} volts. */
+    public int led(int plus, int minus, double setAmps, double forward, double rated, double channelAmps) {
+        leds.add(new Led(plus, minus, Math.max(0, setAmps), Math.max(0, forward), Math.max(forward, rated), Math.max(channelAmps, 1e-9)));
         return leds.size() - 1;
+    }
+
+    /** A transformer between two windings, turns ratio {@code ratio} = V1/V2, losing through {@code ohms} on its primary; returns its index. */
+    public int transformer(int p1, int m1, int p2, int m2, double ratio, double ohms) {
+        couplings.add(new Coupling(p1, m1, p2, m2, ratio, Math.max(ohms, 1e-12)));
+        return couplings.size() - 1;
     }
 
     /**
@@ -102,7 +113,8 @@ public final class Circuit {
      * {@code loadStatus} says, for each load, OK, BROWNOUT, NO_LOOP or REVERSED.
      */
     public record Solution(double[] volts, double[] conductorAmps, double[] sourceAmps, double[] sourceWatts, double[] loadWatts,
-                           double[] loadAmps, double losses, double share, boolean converged, int[] loadStatus, double[] ledAmps, int[] ledStatus) {
+                           double[] loadAmps, double losses, double share, boolean converged, int[] loadStatus, double[] ledAmps, int[] ledStatus,
+                           double[] transformerAmps) {
         /** The voltage across a load, + minus −. */
         public double loadVolts(double[] v, int plus, int minus) { return at(v, plus) - at(v, minus); }
     }
@@ -112,28 +124,108 @@ public final class Circuit {
         if (nodes == 0 || scale <= 0) return dead();
         double[] v = probe(scale);
         if (v == null) return dead();
-        int[] mode = new int[sources.size()];
-        double[] direct = v.clone();
-        int[] directMode = mode.clone();
-        if (newton(1, direct, directMode, scale) && new Attempt(1, direct, directMode, true).healthy()) return new Attempt(1, direct, directMode, true).solution();
-        if (!newton(0, v, mode, scale)) return new Attempt(0, v, mode, false).solution();
-        // continuation: raise the loads from nothing, each step starting from the last answer, so the solve follows the high-voltage
-        // branch; the furthest it gets with every load above its minimum is the brownout share
+        // the rest runs on the SPICE-style engine (domain/electronics), starting from the probe's voltages so it takes the high-voltage
+        // branch; if it can't settle at full load, the loads are raised from nothing in steps and the furthest it gets is the share
+        Engine full = new Engine(1, v);
+        if (full.converged) return full.solution();
         double share = 0, step = 0.25;
+        Engine best = new Engine(0, v);
+        if (!best.converged) return best.solution();
         while (share < 1 && step >= MIN_STEP) {
             double next = Math.min(1, share + step);
-            double[] trial = v.clone();
-            int[] trialMode = mode.clone();
-            if (newton(next, trial, trialMode, scale) && new Attempt(next, trial, trialMode, true).healthy()) {
+            Engine trial = new Engine(next, best.volts());
+            if (trial.converged) {
                 share = next;
-                v = trial;
-                mode = trialMode;
+                best = trial;
                 step = Math.min(step * 2, 0.5);
             } else {
                 step /= 2;
             }
         }
-        return new Attempt(share, v, mode, true).solution();
+        return best.solution();
+    }
+
+    /** One solve of this circuit by the electronics engine, at a load share, from a guess. */
+    private final class Engine {
+        final double share;
+        final boolean converged;
+        final com.malevolentgods.fourtwenty.domain.electronics.Netlist net = new com.malevolentgods.fourtwenty.domain.electronics.Netlist();
+        final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.Resistor> wires = new ArrayList<>();
+        final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.LimitedSource> supplies = new ArrayList<>();
+        final List<com.malevolentgods.fourtwenty.domain.electronics.Parts.Transformer> windings = new ArrayList<>();
+        final com.malevolentgods.fourtwenty.domain.electronics.Parts.PowerLoad[] machines = new com.malevolentgods.fourtwenty.domain.electronics.Parts.PowerLoad[loads.size()];
+        final com.malevolentgods.fourtwenty.domain.electronics.Parts.RgbLed[] lamps = new com.malevolentgods.fourtwenty.domain.electronics.Parts.RgbLed[leds.size()];
+
+        Engine(double share, double[] guess) {
+            this.share = share;
+            double scale = sources.stream().mapToDouble(Source::emf).max().orElse(1);
+            for (int i = 0; i < nodes; i++) net.node();
+            for (Conductor c : conductors) wires.add(net.resistor(c.a(), c.b(), c.ohms()));
+            for (Source s : sources) supplies.add(net.limitedSource(s.plus(), s.minus(), s.emf(), s.ohms(), s.maxOut(), s.maxIn()));
+            for (int i = 0; i < loads.size(); i++) {
+                if (!active(i)) continue;
+                Load l = loads.get(i);
+                machines[i] = net.powerLoad(l.plus(), l.minus(), l.watts(), l.minVolts());
+                machines[i].share(share);
+            }
+            for (int i = 0; i < leds.size(); i++) {
+                if (ledStatus[i] != OK) continue;
+                Led l = leds.get(i);
+                lamps[i] = net.rgbLed(l.plus(), l.minus(), l.setAmps() / l.channelAmps(), l.forward(), l.rated(), l.channelAmps());
+            }
+            for (Coupling k : couplings) windings.add(net.transformer(k.p1(), k.m1(), k.p2(), k.m2(), k.ratio(), k.ohms()));
+            net.guess(guess);
+            net.stepLimit(STEP * scale);
+            // as tight as the old solver: energy is moved from these numbers every tick, so they must balance
+            net.tolerance(1e-9);
+            converged = net.operatingPoint();
+        }
+
+        double[] volts() {
+            double[] v = new double[nodes];
+            for (int i = 0; i < nodes; i++) v[i] = net.volts(i);
+            return v;
+        }
+
+        Solution solution() {
+            double[] v = volts();
+            double[] cAmps = new double[conductors.size()];
+            double losses = 0;
+            for (int i = 0; i < cAmps.length; i++) {
+                cAmps[i] = net.current(wires.get(i));
+                losses += cAmps[i] * cAmps[i] * conductors.get(i).ohms();
+            }
+            double[] sAmps = new double[sources.size()], sWatts = new double[sources.size()];
+            for (int i = 0; i < sAmps.length; i++) {
+                Source s = sources.get(i);
+                double across = at(v, s.plus()) - at(v, s.minus());
+                sAmps[i] = net.current(supplies.get(i));
+                sWatts[i] = across * sAmps[i] + sAmps[i] * sAmps[i] * s.ohms();
+                losses += sAmps[i] * sAmps[i] * s.ohms();
+            }
+            double[] lWatts = new double[loads.size()], lAmps = new double[loads.size()];
+            int[] out = status.clone();
+            for (int i = 0; i < lWatts.length; i++) {
+                if (machines[i] == null) continue;
+                Load l = loads.get(i);
+                double volts = at(v, l.plus()) - at(v, l.minus());
+                lWatts[i] = machines[i].wattsAt(volts);
+                lAmps[i] = machines[i].ampsAt(volts);
+                if (share < 1) out[i] = BROWNOUT;
+            }
+            double[] ledAmps = new double[leds.size()];
+            for (int i = 0; i < leds.size(); i++) {
+                if (lamps[i] == null) continue;
+                Led l = leds.get(i);
+                ledAmps[i] = lamps[i].ampsAt(at(v, l.plus()) - at(v, l.minus()));
+            }
+            double[] tAmps = new double[couplings.size()];
+            for (int i = 0; i < tAmps.length; i++) {
+                tAmps[i] = net.current(windings.get(i));
+                losses += tAmps[i] * tAmps[i] * couplings.get(i).ohms();
+            }
+            return new Solution(v, cAmps, sAmps, sWatts, lWatts, lAmps, losses, share, converged, out, ledAmps, ledStatus.clone(), tAmps);
+        }
     }
 
     private Solution dead() {
@@ -142,7 +234,7 @@ public final class Circuit {
         int[] ledOut = new int[leds.size()];
         Arrays.fill(ledOut, NO_LOOP);
         return new Solution(new double[nodes], new double[conductors.size()], new double[sources.size()], new double[sources.size()],
-                new double[loads.size()], new double[loads.size()], 0, 0, true, out, new double[leds.size()], ledOut);
+                new double[loads.size()], new double[loads.size()], 0, 0, true, out, new double[leds.size()], ledOut, new double[couplings.size()]);
     }
 
     /**
@@ -162,6 +254,7 @@ public final class Circuit {
             inject(b, s.plus(), s.minus(), s.emf() / s.ohms());
         }
         for (Load l : loads) if (l.watts() > 0) between(sparse, l.plus(), l.minus(), PROBE * l.watts() / (scale * scale));
+        for (Coupling k : couplings) couple(sparse, k);
         for (Led l : leds) between(sparse, l.plus(), l.minus(), PROBE * Math.max(l.setAmps(), 1e-9) / scale);
         double[] v = sparse.solve(b);
         if (v == null) return null;
@@ -213,6 +306,10 @@ public final class Circuit {
         for (int i = 0; i < leds.size(); i++) {
             if (probing || ledStatus[i] == OK) join.accept(leds.get(i).plus(), leds.get(i).minus());
         }
+        for (Coupling k : couplings) {
+            join.accept(k.p1(), k.m1());
+            join.accept(k.p2(), k.m2());
+        }
         List<Integer> out = new ArrayList<>();
         for (int i = 0; i < nodes; i++) if (find.applyAsInt(i) == i && !grounded[i]) out.add(i);
         return out;
@@ -222,148 +319,22 @@ public final class Circuit {
         for (int r : references(probing)) add(sparse, r, r, 1);
     }
 
-    private final class Attempt {
-        final double share;
-        final double[] v;
-        final int[] mode;
-        final boolean converged;
-
-        Attempt(double share, double[] v, int[] mode, boolean converged) {
-            this.share = share;
-            this.v = v;
-            this.mode = mode;
-            this.converged = converged;
-        }
-
-        boolean healthy() { return converged; }
-
-        Solution solution() {
-            double[] cAmps = new double[conductors.size()];
-            double losses = 0;
-            for (int i = 0; i < cAmps.length; i++) {
-                Conductor c = conductors.get(i);
-                cAmps[i] = (at(v, c.a()) - at(v, c.b())) / c.ohms();
-                losses += cAmps[i] * cAmps[i] * c.ohms();
-            }
-            double[] sAmps = new double[sources.size()], sWatts = new double[sources.size()];
-            for (int i = 0; i < sAmps.length; i++) {
-                Source s = sources.get(i);
-                double across = across(v, s);
-                sAmps[i] = sourceAmps(s, mode[i], across);
-                sWatts[i] = across * sAmps[i] + sAmps[i] * sAmps[i] * s.ohms();
-                losses += sAmps[i] * sAmps[i] * s.ohms();
-            }
-            double[] lWatts = new double[loads.size()], lAmps = new double[loads.size()];
-            int[] out = status.clone();
-            for (int i = 0; i < lWatts.length; i++) {
-                if (!active(i)) continue;
-                Load l = loads.get(i);
-                double volts = across(v, l), want = l.watts() * share;
-                lWatts[i] = volts >= l.minVolts() ? want : volts * volts * want / (l.minVolts() * l.minVolts());
-                lAmps[i] = volts > 0 ? lWatts[i] / volts : 0;
-                if (share < 1) out[i] = BROWNOUT;
-            }
-            double[] ledAmps = new double[leds.size()];
-            for (int i = 0; i < leds.size(); i++) {
-                if (ledStatus[i] != OK) continue;
-                Led l = leds.get(i);
-                ledAmps[i] = l.amps(at(v, l.plus()) - at(v, l.minus()));
-            }
-            return new Solution(v, cAmps, sAmps, sWatts, lWatts, lAmps, losses, share, converged, out, ledAmps, ledStatus.clone());
-        }
-    }
-
     private static double at(double[] v, int node) { return node == GROUND ? 0 : v[node]; }
 
     private static double across(double[] v, Load l) { return at(v, l.plus()) - at(v, l.minus()); }
 
     private static double across(double[] v, Source s) { return at(v, s.plus()) - at(v, s.minus()); }
 
-    /** Which part of its line a source is on at this voltage across it: holding its voltage, or at a current limit. */
-    private static int modeAt(Source s, double volts) {
-        return volts < outEdge(s) ? CC_OUT : volts > inEdge(s) ? CC_IN : CV;
-    }
-
-    private static double outEdge(Source s) { return s.emf() - s.maxOut() * s.ohms(); }
-
-    private static double inEdge(Source s) { return s.emf() + s.maxIn() * s.ohms(); }
-
-    private static double sourceAmps(Source s, int mode, double volts) {
-        double soft = 1 / (s.ohms() * STIFF);
-        return switch (mode) {
-            case CC_OUT -> s.maxOut() + soft * (outEdge(s) - volts);
-            case CC_IN -> -s.maxIn() + soft * (inEdge(s) - volts);
-            default -> (s.emf() - volts) / s.ohms();
-        };
-    }
-
-    /** Relaxation steps at this load share from {@code v}, in place; true when it settles. */
-    private boolean newton(double share, double[] v, int[] mode, double scale) {
-        for (int iteration = 0; iteration < ITERATIONS; iteration++) {
-            for (int i = 0; i < mode.length; i++) mode[i] = modeAt(sources.get(i), across(v, sources.get(i)));
-            Sparse sparse = new Sparse(nodes);
-            double[] b = new double[nodes];
-            for (int i = 0; i < nodes; i++) add(sparse, i, i, GMIN);
-            reference(sparse, false);
-            for (Conductor c : conductors) between(sparse, c.a(), c.b(), 1 / c.ohms());
-            for (int i = 0; i < mode.length; i++) {
-                Source s = sources.get(i);
-                double soft = 1 / (s.ohms() * STIFF);
-                switch (mode[i]) {
-                    case CC_OUT -> {
-                        between(sparse, s.plus(), s.minus(), soft);
-                        inject(b, s.plus(), s.minus(), s.maxOut() + soft * outEdge(s));
-                    }
-                    case CC_IN -> {
-                        between(sparse, s.plus(), s.minus(), soft);
-                        inject(b, s.plus(), s.minus(), -s.maxIn() + soft * inEdge(s));
-                    }
-                    default -> {
-                        between(sparse, s.plus(), s.minus(), 1 / s.ohms());
-                        inject(b, s.plus(), s.minus(), s.emf() / s.ohms());
-                    }
-                }
-            }
-            for (int li = 0; li < loads.size(); li++) {
-                Load l = loads.get(li);
-                if (!active(li)) continue;
-                // with no share yet, a load is still a whisper of a conductance, so the loops through it stay joined
-                double p = Math.max(l.watts() * share, PROBE * l.watts());
-                // the load is the resistance it had at the last voltage (V² / P), never below its minimum: a relaxation that always moves
-                // the line the way a real one settles, where Newton's method would follow a constant-power load's negative slope
-                double volts = Math.max(across(v, l), l.minVolts());
-                between(sparse, l.plus(), l.minus(), p / (volts * volts));
-            }
-            for (int li = 0; li < leds.size(); li++) {
-                if (ledStatus[li] != OK) continue;
-                Led l = leds.get(li);
-                // the conductance that carries its current at the last voltage (I / V), and a whisper when it's dark, so the loop stays joined
-                double volts = Math.max(at(v, l.plus()) - at(v, l.minus()), 1e-9);
-                between(sparse, l.plus(), l.minus(), Math.max(l.amps(volts) / volts, PROBE * Math.max(l.setAmps(), 1e-9) / scale));
-            }
-            double[] x = sparse.solve(b);
-            if (x == null) return false;
-            // step toward x, but stop just past the first current limit any source crosses: its mode changes there (breakpoint stepping)
-            double alpha = 1;
-            for (Source src : sources) {
-                double from = across(v, src), to = at(x, src.plus()) - at(x, src.minus());
-                for (double edge : new double[]{outEdge(src), inEdge(src)}) {
-                    if ((from - edge) * (to - edge) < 0) alpha = Math.min(alpha, (edge - from) / (to - from) + 1e-7);
-                }
-            }
-            double delta = 0;
-            for (int i = 0; i < nodes; i++) {
-                double d = Math.max(-STEP * scale, Math.min(STEP * scale, alpha * (x[i] - v[i])));
-                if (!Double.isFinite(d)) return false;
-                v[i] += d;
-                delta = Math.max(delta, Math.abs(d));
-            }
-            if (alpha >= 1 && delta < TOLERANCE * scale) {
-                for (int i = 0; i < mode.length; i++) mode[i] = modeAt(sources.get(i), across(v, sources.get(i)));
-                return true;
-            }
+    /** A transformer's symmetric block: I1 = (V1 − n·V2)/R into the primary, n times that out of the secondary. */
+    private static void couple(Sparse sparse, Coupling k) {
+        double g = 1 / k.ohms(), n = k.ratio();
+        between(sparse, k.p1(), k.m1(), g);
+        between(sparse, k.p2(), k.m2(), n * n * g);
+        int[][] cross = {{k.p1(), k.p2(), 1}, {k.p1(), k.m2(), -1}, {k.m1(), k.p2(), -1}, {k.m1(), k.m2(), 1}};
+        for (int[] c : cross) {
+            add(sparse, c[0], c[1], -n * g * c[2]);
+            add(sparse, c[1], c[0], -n * g * c[2]);
         }
-        return false;
     }
 
     private static void add(Sparse sparse, int r, int c, double value) {

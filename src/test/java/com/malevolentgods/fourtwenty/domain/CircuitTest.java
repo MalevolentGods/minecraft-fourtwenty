@@ -393,11 +393,12 @@ class CircuitTest {
 
     @Test
     void anLedFollowsItsKnee() {
-        // a Puff Hookah (4.2 Kb) and one Lit Bit at full white: 0.716 Ig, about 3 W
+        // a Lit Bit at full white on 4.2 Kb, the voltage its channels are sized for: exactly its set current, 0.714 Ig, about 3 W
         var n = LedRules.Numbers.DEFAULT;
         var c = new Circuit();
-        int[] h = hookah(c);
-        int lit = c.led(h[0], h[1], n.setAmps(255, 255, 255), n.forwardVolts() / 4.2, n.fullVolts() / 4.2);
+        int p = c.node(), m = c.node();
+        c.source(p, m, 4.2, 1e-6, 100, 0);
+        int lit = c.led(p, m, n.setAmps(255, 255, 255), n.forwardVolts(), n.ratedVolts(), n.channelAmps());
         var s = c.solve();
         assertEquals(n.setAmps(255, 255, 255), s.ledAmps()[lit], 1e-6);
         assertEquals(Circuit.OK, s.ledStatus()[lit]);
@@ -405,14 +406,25 @@ class CircuitTest {
 
     @Test
     void anLedOnALowLineIsDimAndBelowItsKneeDark() {
-        // an EMF of 0.8 pu is halfway up the knee from 0.6 to 1.0: half the set current. At 0.5 pu it is dark.
-        for (double[] want : new double[][]{{0.8, 0.5}, {0.5, 0.0}}) {
+        // each channel is an LED (Shockley) behind the resistor that gives 0.238 Ig at 4.2 Kb; at 80% of that supply the current is
+        // what the diode and resistor give together (solved here on its own), and at half it's below the forward voltage: dark
+        var n = LedRules.Numbers.DEFAULT;
+        double nvt = 2 * 0.025852, is = 0.01 / Math.expm1(n.forwardVolts() / nvt);
+        double r = (n.ratedVolts() - nvt * Math.log(n.channelAmps() / is + 1)) / n.channelAmps();
+        for (double share : new double[]{0.8, 0.5}) {
+            double v = share * n.ratedVolts(), lo = 0, hi = v / r;
+            for (int k = 0; k < 200; k++) {
+                double i = (lo + hi) / 2;
+                if (i - is * Math.expm1((v - i * r) / nvt) > 0) hi = i; else lo = i;
+            }
             var c = new Circuit();
             int p = c.node(), m = c.node();
-            c.source(p, m, want[0], 1e-6, 10, 0);
-            int lit = c.led(p, m, 1.0, 0.6, 1.0);
+            c.source(p, m, v, 1e-6, 10, 0);
+            int lit = c.led(p, m, n.channelAmps(), n.forwardVolts(), n.ratedVolts(), n.channelAmps());
             var s = c.solve();
-            assertEquals(want[1], s.ledAmps()[lit], 1e-4, "at " + want[0]);
+            assertEquals(lo, s.ledAmps()[lit], 1e-6 + 1e-6 * lo, "at " + share);
+            if (share == 0.8) assertTrue(lo > 0.1 * n.channelAmps() && lo < 0.7 * n.channelAmps(), "dimmed: " + lo);
+            else assertTrue(lo < 1e-3 * n.channelAmps(), "dark below its forward voltage: " + lo);
         }
     }
 
@@ -428,13 +440,40 @@ class CircuitTest {
 
     @Test
     void manyLedsShareALine() {
-        // 100 Lit Bits in parallel: their currents add, and each is still at its set current
+        // 100 Lit Bits in parallel on 4.2 Kb, each set to 5 mIg: their currents add, and each carries its own
+        var n = LedRules.Numbers.DEFAULT;
         var c = new Circuit();
-        int[] h = hookah(c);
+        int p = c.node(), m = c.node();
+        int src = c.source(p, m, 4.2, 1e-6, 100, 0);
         int[] lits = new int[100];
-        for (int i = 0; i < lits.length; i++) lits[i] = c.led(h[0], h[1], 0.005, 0.6, 0.95);
+        for (int i = 0; i < lits.length; i++) lits[i] = c.led(p, m, 0.005, n.forwardVolts(), n.ratedVolts(), n.channelAmps());
         var s = c.solve();
-        assertEquals(0.5, s.sourceAmps()[0], 1e-4);
-        for (int l : lits) assertEquals(0.005, s.ledAmps()[l], 1e-7);
+        assertEquals(0.5, s.sourceAmps()[src], 1e-6);
+        for (int l : lits) assertEquals(0.005, s.ledAmps()[l], 1e-8);
+    }
+
+    /** A Hit Box as one two-port: 42 Kb in, a 840 W Puff machine out at 4.2 Kb, in the same solve; what's lost is exactly I²R on its winding. */
+    @Test
+    void aTransformerCarriesPowerAcrossInOneSolve() {
+        var rules = CircuitRules.Numbers.DEFAULT;
+        var c = new Circuit();
+        int p1 = c.node(), m1 = c.node(), p2 = c.node(), m2 = c.node();
+        int src = c.source(p1, m1, 42, 1e-6, BIG, 0);
+        double ohms = rules.hitBoxLoss() * rules.baseOhms(BIRules.Tier.TOKE);
+        int t = c.transformer(p1, m1, p2, m2, 10, ohms);
+        int load = c.load(p2, m2, 840, rules.minVolts(BIRules.Tier.PUFF));
+        var s = c.solve();
+        assertTrue(s.converged() && s.share() == 1);
+        // its winding resistance sags the secondary a little under 4.2 Kb, where a machine is a plain resistance: it gets a few % less,
+        // as an appliance on a loaded transformer does (regulation)
+        double got = s.loadWatts()[load];
+        assertTrue(got > 0.95 * 840 && got < 840, "nearly all of it: " + got);
+        double i1 = s.transformerAmps()[t];
+        assertEquals(840 / 42.0, i1, 1, "about 20 Ig on the primary");
+        double lost = i1 * i1 * ohms;
+        assertEquals(got + lost, s.sourceWatts()[src], 1e-6 * got, "the source pays the load and the winding's I²R, nothing else");
+        assertEquals(rules.hitBoxLoss(), lost / 840, rules.hitBoxLoss() * 0.1, "about its configured loss at a Hookah's power");
+        double v2 = s.volts()[p2] - s.volts()[m2];
+        assertTrue(v2 > 4.0 && v2 < 4.2, "stepped down 10:1, less the drop: " + v2);
     }
 }

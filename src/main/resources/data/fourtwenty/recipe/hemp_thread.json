@@ -1,0 +1,13 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:hemp_wick"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:hemp_thread",
+  "count": 4
+ }
+}

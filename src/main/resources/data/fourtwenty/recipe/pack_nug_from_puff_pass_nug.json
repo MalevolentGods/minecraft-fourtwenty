@@ -1,0 +1,13 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "redstone",
+ "ingredients": [
+  {
+   "item": "fourtwenty:puff_pass_nug"
+  }
+ ],
+ "result": {
+  "id": "fourtwenty:pack_nug",
+  "count": 1
+ }
+}

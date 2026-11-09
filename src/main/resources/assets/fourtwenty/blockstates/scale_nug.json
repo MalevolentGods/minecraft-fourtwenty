@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "on=false": {
+   "model": "fourtwenty:block/component/scale_nug"
+  },
+  "on=true": {
+   "model": "fourtwenty:block/component/scale_nug_on"
+  }
+ }
+}

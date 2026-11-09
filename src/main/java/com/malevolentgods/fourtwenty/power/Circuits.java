@@ -5,7 +5,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.WeakHashMap;
@@ -102,6 +104,60 @@ public final class Circuits {
         return a.getBlock() instanceof CableBlock ? CableBlock.takesWick(b) : CableBlock.takesWick(a);
     }
 
+    /** A component's reading: each pin's voltage, and the current through it (a logic part's supply current). */
+    public record ComponentReading(double[] pins, double amps) {}
+
+    /** What the Inspoweedometer reads at a component: found from the Wick or Hemp Thread on any of its pin faces. */
+    public static Optional<ComponentReading> componentReading(Level level, BlockPos at) {
+        var state = level.getBlockState(at);
+        List<BlockPos> wires = new ArrayList<>();
+        for (Direction d : Direction.values()) {
+            if (com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(state, d) >= 0) wires.add(at.relative(d));
+        }
+        // a big chip: read as one part, keyed on its lower block, found from the Wicks on either block
+        BlockPos pos = at;
+        if (state.getBlock() instanceof com.malevolentgods.fourtwenty.electronics.BigChipBlock) {
+            BlockPos partner = at.relative(com.malevolentgods.fourtwenty.electronics.BigChipBlock.toPartner(state));
+            var other = level.getBlockState(partner);
+            for (Direction d : Direction.values()) {
+                if (com.malevolentgods.fourtwenty.electronics.ComponentBlock.pinAt(other, d) >= 0) wires.add(partner.relative(d));
+            }
+            pos = com.malevolentgods.fourtwenty.electronics.BigChipBlock.lower(state, at);
+        }
+        // a part mounted on a Rolling Tray: the Wicks on its board, found through the trays beside its own
+        Direction back = com.malevolentgods.fourtwenty.electronics.ComponentBlock.mountedOn(state);
+        if (back != null) {
+            java.util.ArrayDeque<BlockPos> trays = new java.util.ArrayDeque<>(List.of(pos.relative(back)));
+            java.util.Set<BlockPos> met = new java.util.HashSet<>(trays);
+            while (!trays.isEmpty() && met.size() < 256) {
+                BlockPos t = trays.poll();
+                if (!(level.getBlockState(t).getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock)) continue;
+                for (Direction d : Direction.values()) {
+                    BlockPos next = t.relative(d);
+                    if (level.getBlockState(next).getBlock() instanceof com.malevolentgods.fourtwenty.electronics.RollingTrayBlock) {
+                        if (met.add(next)) trays.add(next);
+                    } else {
+                        wires.add(next);
+                    }
+                }
+            }
+        }
+        for (BlockPos wire : wires) {
+            if (!(level.getBlockState(wire).getBlock() instanceof WickBlock)) continue;
+            for (Object[] found : terminalOnLine(level, wire).stream().toList()) {
+                Network net = network(level, (BINode) found[0], (BlockPos) found[1]);
+                double[] pins = net.pinVolts(pos);
+                if (pins == null) {
+                    // just rebuilt and not run yet: run its tick now, as the other readings do
+                    net.tick(level, of(level).burnTimers);
+                    pins = net.pinVolts(pos);
+                }
+                if (pins != null) return Optional.of(new ComponentReading(pins, net.componentAmps(pos)));
+            }
+        }
+        return Optional.empty();
+    }
+
     /** Why the Daisy line through the cable at {@code pos} carries nothing, if it can't be ordered. */
     public static Optional<com.malevolentgods.fourtwenty.domain.DaisyLine.Reason> daisyFailure(Level level, BlockPos pos) {
         if (!(level.getBlockState(pos).getBlock() instanceof CableBlock)) return Optional.empty();
@@ -157,7 +213,7 @@ public final class Circuits {
                     if (!w.pos().equals(pos)) continue;
                     var rules = com.malevolentgods.fourtwenty.processing.ProcessingConfig.circuit();
                     double v = net.volts(w), a = net.amps(w);
-                    return Optional.of(new Reading(v, a, rules.wickOhms(w.tier()), v * a, true, rules.wickAmps(w.tier()), rules.wickVolts(w.tier()), net.wickLoss(w), com.malevolentgods.fourtwenty.domain.Circuit.OK));
+                    return Optional.of(new Reading(v, a, rules.wickOhms(w.tier()) * w.ohmsScale(), v * a, true, rules.wickAmps(w.tier()) * w.ampsScale(), rules.wickVolts(w.tier()), net.wickLoss(w), com.malevolentgods.fourtwenty.domain.Circuit.OK));
                 }
             }
             BIRules.Tier tier = wick.tier();
