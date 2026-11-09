@@ -2,6 +2,14 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [0.22.1]
+
+### Added
+- **Sensi Heights pack v96**:
+  - **Farm:** the Farmer's hut in five levels, a timber shed and kitchen garden growing into a modern greenhouse.
+  - **Field 1:** a grow field.
+  - **Hall of Operations:** the keypad calculator, as a decoration.
+
 ## [0.22.0]
 
 ### Added
