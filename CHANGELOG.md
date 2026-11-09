@@ -9,8 +9,19 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - **Bottomless Stashes** (one per tier) and the **Bench Rig**, a variable DC supply, for testing circuits in creative.
 - **Real names**: every electrical item's tooltip shows what it really is (resistor, shift register, transformer, multimeter...) under its name.
 - **Lit Bits are real RGB LEDs**: each channel a diode behind its resistor, dimming along the diode's curve as the supply sags.
+- **The Slow Burner** (a current regulator) and the **Numb Nug**, a 7-segment digit: Numb Nugs side by side are one display, reading a byte, or 16 bits from two Ribbons with a minus sign and an E for errors.
+- **Rolling Tray panel boards**: Puff Buttons, Toggle Joints and Numb Nugs mount flush on their fronts, trays side by side share power and a bus, and each part is wired from its own tray's back, so grids of keys and displays stay tidy. Any Four Twenty lamp in front of a tray, or on a Wick, lights from the circuit.
+- **The Dankoder**, a keypad encoder: against a board of Rolling Trays it reads up to 24 keys in reading order and gives the number of the key pressed. Sneak-use a mounted key with an empty hand to give it a label of up to four characters, a glow, and its Dankoder number.
+- **Nah, Skip Me, Bro**: a wire hop. Two wires (Wicks, Hemp Thread or Eighth Ribbons) cross in one block without touching.
+- **The Manyfier and the Fewinator**: two-block-tall chips that multiply and divide 16-bit numbers, with a flag when a product passes 65,535 or a division is by zero.
+- **Dyeable Eighth Ribbons**, and every colour of every Wick, Hemp Thread and Ribbon in the creative menu.
+- **The Kush Suit** has its painted armour.
+- **The creative menu is seven tabs**: Four Twenty, Strains, Hemp & Terpenes, Boundless Inspiration, Inspoweednetics, Kush Suit and Décor.
 
 ### Changed
+- **Eighth Ribbons shape themselves**: their stripes line up block to block, a vertical run twists a quarter turn where it has to, and where runs meet they feed into a small connector box.
+- **Puff Buttons** spring back in 0.4 s.
+- **Circuits solve about ten times faster**: each network works out how to solve its circuit once and reuses it, and a network can now hold 16,384 wires.
 - **The Inspoweedometer reads live**: hold it and look at a block for its reading on the action bar; use it to hold a reading above the live one. It no longer works the block it reads (it used to step a Resinator or flip a switch).
 - **A SPICE-style circuit engine** runs every Wick network: Newton–Raphson with companion models, SPICE's convergence safeguards, and exact answers to 1e-9. Nothing you've built changes.
 - **Wicks placed by a command or a paste** reach toward their neighbours as hand-placed ones do.
