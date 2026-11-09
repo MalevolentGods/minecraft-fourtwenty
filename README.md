@@ -4,6 +4,32 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.22.0
+
+- **Inspoweednetics, real electronics:**
+  - **Parts:**
+    - resistors, capacitors, coils, diodes and switches;
+    - logic gates, latches and flip-flops;
+    - transistors and an op-amp;
+    - shift registers, multiplexers, adders, comparators and registers;
+    - a 7-segment display.
+  - **Wiring and solving:** wired with Hemp Thread and the 9-wire Eighth Ribbon, and solved like SPICE, with real gate delays.
+  - **Big chips:** the Manyfier and the Fewinator multiply and divide 16-bit numbers.
+- **Panels:**
+  - **Rolling Tray boards:** buttons, toggles and displays mount flush.
+  - **The Dankoder:** reads a whole keypad.
+  - **Key labels:** each key can carry a short label and a glow.
+  - **Lamps:** any Four Twenty lamp lights from a circuit.
+- **Nah, Skip Me, Bro:** two wires cross in one block without touching.
+- **Seven creative tabs:**
+  - Four Twenty
+  - Strains
+  - Hemp & Terpenes
+  - Boundless Inspiration
+  - Inspoweednetics
+  - Kush Suit
+  - Décor
+
 ## What's new in 0.21.0
 
 - **Real circuits, red and black:** power flows only around closed loops. A red Wick on any side of a block is +, a black Wick is −; other colours only join Wicks of their own colour. The Hit Box is a real transformer with two isolated windings.
