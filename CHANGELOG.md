@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.22.1]
 
 ### Added
 - **Sensi Heights pack v96**:
