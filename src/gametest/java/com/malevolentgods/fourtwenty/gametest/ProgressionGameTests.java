@@ -102,4 +102,29 @@ public final class ProgressionGameTests {
         }
         h.succeed();
     }
+
+    /** A Grow Op's extra seed by tier: about half the time on a Cosmic Kush Pod (tier 5), about one in ten on a Closet Grow (tier 1), never on soil. */
+    @GameTest(template = "empty")
+    public static void plotsGiveExtraSeedsByTier(GameTestHelper h) {
+        var crop = mature(Strain.LANDRACE);
+        int[] tiers = {5, 1, 0};
+        net.minecraft.world.level.block.Block[] under = {com.malevolentgods.fourtwenty.registry.ModPower.COSMIC_KUSH_POD.get(),
+                com.malevolentgods.fourtwenty.registry.ModPower.CLOSET_GROW.get(), net.minecraft.world.level.block.Blocks.FARMLAND};
+        int[][] bounds = {{80, 120}, {8, 32}, {0, 0}};
+        for (int i = 0; i < tiers.length; i++) {
+            var pos = new BlockPos(1 + 2 * i, 2, 2);
+            h.setBlock(pos.below(), under[i]);
+            h.setBlock(pos, crop);
+            int extra = 0;
+            for (int k = 0; k < 200; k++) {
+                var seed = com.malevolentgods.fourtwenty.power.GrowOps.extraSeed(crop, h.getLevel(), h.absolutePos(pos));
+                if (seed != null) {
+                    h.assertTrue(seed.is(ModItems.WEED_SEEDS.get()) && ModDataComponents.strain(seed) == Strain.LANDRACE, "a seed of the crop's strain");
+                    extra++;
+                }
+            }
+            h.assertTrue(extra >= bounds[i][0] && extra <= bounds[i][1], "tier " + tiers[i] + ": " + extra + " extra seeds in 200 harvests");
+        }
+        h.succeed();
+    }
 }

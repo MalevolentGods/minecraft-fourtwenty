@@ -87,9 +87,9 @@
 **Goal**: an extra seed by plot tier on every harvest.
 **Independent test**: harvests on a tier-5 plot give an extra seed about half the time; tiers 4–5 keep big harvests and replanting.
 
-- [ ] T018 [US3] Add `GrowOps.extraSeed(ServerLevel, BlockPos, List<ItemStack> drops)` in `J/power/GrowOps.java`. If the crop stands on a `GrowOpBlock` of tier t and `StrainStats.extraSeed(t, roll)` passes, it adds one seed with the crop's strain and traits.
-- [ ] T019 [US3] Call `extraSeed` from `GrowOps.onDrops` (break harvests, before the tier-4/5 replant takes its seed) and from `J/block/WeedCropBlock.java`'s right-click harvest. Pot Pots stay unchanged; they aren't Grow Ops.
-- [ ] T020 [P] [US3] Add game tests to `GT/ProgressionGameTests.java`:
+- [X] T018 [US3] Add `GrowOps.extraSeed(ServerLevel, BlockPos, List<ItemStack> drops)` in `J/power/GrowOps.java`. If the crop stands on a `GrowOpBlock` of tier t and `StrainStats.extraSeed(t, roll)` passes, it adds one seed with the crop's strain and traits.
+- [X] T019 [US3] Call `extraSeed` from `GrowOps.onDrops` (break harvests, before the tier-4/5 replant takes its seed) and from `J/block/WeedCropBlock.java`'s right-click harvest. Pot Pots stay unchanged; they aren't Grow Ops.
+- [X] T020 [P] [US3] Add game tests to `GT/ProgressionGameTests.java`:
   - Landrace on a tier-5 plot over 200 harvests gives between 40% and 60% extra seeds;
   - on a tier-1 plot, between 4% and 16%;
   - tier-5 harvests still replant and give ×1.5 buds.
