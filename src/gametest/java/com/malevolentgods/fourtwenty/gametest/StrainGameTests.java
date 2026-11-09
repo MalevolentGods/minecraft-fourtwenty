@@ -198,8 +198,9 @@ public final class StrainGameTests {
         StrainEffects.apply(h.getLevel(), strong, Strain.CHERRY_PIE, new Traits(5, 2, 5));
         var a = plain.getEffect(MobEffects.DAMAGE_BOOST);
         var b = strong.getEffect(MobEffects.DAMAGE_BOOST);
-        h.assertTrue(a.getAmplifier() == 0 && a.getDuration() == 2400, "a 2 changes nothing: " + a);
-        h.assertTrue(b.getAmplifier() == 2 && b.getDuration() == 7200, "a 5 adds two levels and triples it: " + b);
+        // Cherry Pie is Warm, potency 2 (specs/012-progression-balance): 10% longer than its own two minutes, no extra level
+        h.assertTrue(a.getAmplifier() == 0 && a.getDuration() == 2640, "a plain seed: the family's potency only: " + a);
+        h.assertTrue(b.getAmplifier() == 2 && b.getDuration() == 7920, "trait 5 adds two levels and triples it, on top: " + b);
         h.succeed();
     }
 }

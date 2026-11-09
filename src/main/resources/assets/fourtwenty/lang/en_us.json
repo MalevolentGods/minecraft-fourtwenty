@@ -2224,5 +2224,10 @@
   "itemGroup.fourtwenty.boundless_inspiration": "Boundless Inspiration",
   "itemGroup.fourtwenty.inspoweednetics": "Inspoweednetics",
   "itemGroup.fourtwenty.kush_suit": "Kush Suit",
-  "itemGroup.fourtwenty.decor": "Décor"
+  "itemGroup.fourtwenty.decor": "Décor",
+  "tooltip.fourtwenty.strain_stats": "Harvest %s buds · Potency %s · Growth %s",
+  "tooltip.fourtwenty.growth.normal": "normal",
+  "tooltip.fourtwenty.growth.slower": "slower",
+  "tooltip.fourtwenty.growth.slow": "slow",
+  "tooltip.fourtwenty.growth.slowest": "slowest"
 }

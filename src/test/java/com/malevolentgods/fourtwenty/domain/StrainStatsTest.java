@@ -74,4 +74,14 @@ class StrainStatsTest {
         assertEquals(1, bad.plotSeedChance(2));
         assertEquals(StrainStats.DEFAULT.yieldOf(Strain.Family.CROSS), bad.yieldOf(Strain.Family.CROSS), "a missing family falls back to the default");
     }
+
+    /** A Golden God high against a Landrace one, on the same three-minute level-0 effect. */
+    @Test void potencyOnASampleHigh() {
+        int ticks = 3 * 1200, level = 0;
+        assertEquals(ticks, (int) (ticks * StrainStats.potencyLength(S.potency(Strain.Family.LANDRACE))));
+        assertEquals(level, level + StrainStats.potencyLevels(S.potency(Strain.Family.LANDRACE)));
+        assertEquals(5040, (int) Math.round(ticks * StrainStats.potencyLength(S.potency(Strain.Family.GOLDEN))));
+        assertEquals(2, level + StrainStats.potencyLevels(S.potency(Strain.Family.GOLDEN)));
+        assertEquals(1, StrainStats.potencyLevels(S.potency(Strain.Family.COOL)), "Cool's potency 3 adds a level");
+    }
 }

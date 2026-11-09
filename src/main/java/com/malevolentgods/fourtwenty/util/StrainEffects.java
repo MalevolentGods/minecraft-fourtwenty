@@ -1,6 +1,7 @@
 package com.malevolentgods.fourtwenty.util;
 
 import com.malevolentgods.fourtwenty.domain.Strain;
+import com.malevolentgods.fourtwenty.domain.StrainStats;
 import com.malevolentgods.fourtwenty.domain.Traits;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
@@ -62,8 +63,16 @@ public final class StrainEffects {
     }
 
     /** A strain's helpful effect, as strong and as long as the smoke's traits make it. */
+    /** The potency of the strain being smoked (specs/012-progression-balance), set by {@link #apply} on the server thread. */
+    private static int potency = 1;
+    /** The strongest a high's effect gets with potency and traits on top (level IV). */
+    static final int MAX_AMPLIFIER = 3;
+
     private static void give(Player player, Traits t, Holder<MobEffect> effect, int ticks, int level) {
-        player.addEffect(quiet(effect, (int) (ticks * t.lengthFactor()), Math.max(0, level + t.potencyBonus())));
+        // the family's potency and the seed's trait on top of the strain's own level, the boost capped at level IV (a strain's own
+        // level is never cut, a poor trait still lowers it)
+        int amplifier = Math.min(Math.max(MAX_AMPLIFIER, level), level + StrainStats.potencyLevels(potency) + t.potencyBonus());
+        player.addEffect(quiet(effect, (int) (ticks * t.lengthFactor() * StrainStats.potencyLength(potency)), Math.max(0, amplifier)));
     }
 
     private static void noPhantoms(Player player) {
@@ -75,6 +84,15 @@ public final class StrainEffects {
     }
 
     public static void apply(ServerLevel level, Player player, Strain strain, Traits t) {
+        potency = com.malevolentgods.fourtwenty.processing.ProcessingConfig.strainStats().potency(strain.family());
+        try {
+            effects(level, player, strain, t);
+        } finally {
+            potency = 1;
+        }
+    }
+
+    private static void effects(ServerLevel level, Player player, Strain strain, Traits t) {
         SmokeEvents.smoked(player);
         switch (strain) {
             case LANDRACE -> {

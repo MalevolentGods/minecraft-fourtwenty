@@ -74,4 +74,32 @@ public final class ProgressionGameTests {
         h.assertTrue(!StarterSeeds.give(player, 4), "never twice");
         h.succeed();
     }
+
+    /** Up the ladder, more buds: Golden God gives 4 or 5 every time, a Cross 2 or 3 (about 2.5), a poor yield trait never less than 1. */
+    @GameTest(template = "empty")
+    public static void familiesYieldTheirRange(GameTestHelper h) {
+        var pos = new BlockPos(2, 2, 2);
+        var abs = h.absolutePos(pos);
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        for (int i = 0; i < 50; i++) {
+            int golden = count(Block.getDrops(mature(Strain.GOLDEN_GOD), h.getLevel(), abs, null, player, ItemStack.EMPTY), ModItems.ROUGH_BUD.get());
+            h.assertTrue(golden >= 4 && golden <= 5, "Golden God buds: " + golden);
+        }
+        int total = 0;
+        for (int i = 0; i < 200; i++) total += count(Block.getDrops(mature(Strain.TROPICAL_THUNDER), h.getLevel(), abs, null, player, ItemStack.EMPTY), ModItems.ROUGH_BUD.get());
+        h.assertTrue(total >= 440 && total <= 560, "a Cross averages about 2.5 buds: " + total / 200.0);
+        h.setBlock(pos, mature(Strain.LANDRACE));
+        var crop = (com.malevolentgods.fourtwenty.block.WeedCropBlockEntity) h.getBlockEntity(pos);
+        var tag = new net.minecraft.nbt.CompoundTag();
+        tag.putInt("Potency", 2);
+        tag.putInt("Yield", 1);
+        tag.putInt("Length", 2);
+        crop.loadWithComponents(tag, h.getLevel().registryAccess());
+        h.assertTrue(crop.traits().yield() == 1, "the crop's yield trait is 1");
+        for (int i = 0; i < 20; i++) {
+            int buds = count(Block.getDrops(h.getBlockState(pos), h.getLevel(), abs, crop, player, ItemStack.EMPTY), ModItems.ROUGH_BUD.get());
+            h.assertTrue(buds == 1, "a poor yield trait on Landrace still gives one: " + buds);
+        }
+        h.succeed();
+    }
 }
