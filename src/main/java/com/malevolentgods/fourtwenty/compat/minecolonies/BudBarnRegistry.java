@@ -64,7 +64,8 @@ public final class BudBarnRegistry {
                 event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
                         ENTITY.get(), (tile, side) -> tile.getItemHandlerCap(side)));
         bus.addListener((net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent event) -> {
-            if (event.getTabKey() == net.minecraft.world.item.CreativeModeTabs.FUNCTIONAL_BLOCKS) event.accept(ITEM.get());
+            if (event.getTabKey() == net.minecraft.world.item.CreativeModeTabs.FUNCTIONAL_BLOCKS
+                    || event.getTabKey() == com.malevolentgods.fourtwenty.registry.ModCreativeTabs.FOUR_TWENTY_TAB.getKey()) event.accept(ITEM.get());
         });
     }
 

@@ -9,7 +9,8 @@
       "south": "false",
       "west": "false",
       "up": "true",
-      "vaxis": "x"
+      "vaxis": "x",
+      "twist": "false"
      },
      {
       "north": "false",
@@ -17,12 +18,28 @@
       "south": "false",
       "west": "false",
       "down": "true",
-      "vaxis": "x"
+      "vaxis": "x",
+      "twist": "false"
      }
     ]
    },
    "apply": {
     "model": "fourtwenty:block/eighth_ribbon_core_vertical_x"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "true",
+    "down": "true",
+    "vaxis": "x",
+    "twist": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_twist_x"
    }
   },
   {
@@ -34,7 +51,8 @@
       "south": "false",
       "west": "false",
       "up": "true",
-      "vaxis": "z"
+      "vaxis": "z",
+      "twist": "false"
      },
      {
       "north": "false",
@@ -42,12 +60,28 @@
       "south": "false",
       "west": "false",
       "down": "true",
-      "vaxis": "z"
+      "vaxis": "z",
+      "twist": "false"
      }
     ]
    },
    "apply": {
     "model": "fourtwenty:block/eighth_ribbon_core_vertical_z"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "true",
+    "down": "true",
+    "vaxis": "z",
+    "twist": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_twist_z"
    }
   },
   {
@@ -363,7 +397,8 @@
   {
    "when": {
     "up": "true",
-    "vaxis": "x"
+    "vaxis": "x",
+    "twist": "false"
    },
    "apply": {
     "model": "fourtwenty:block/eighth_ribbon_up_x"
@@ -372,7 +407,8 @@
   {
    "when": {
     "up": "true",
-    "vaxis": "z"
+    "vaxis": "z",
+    "twist": "false"
    },
    "apply": {
     "model": "fourtwenty:block/eighth_ribbon_up_z"
@@ -381,7 +417,8 @@
   {
    "when": {
     "down": "true",
-    "vaxis": "x"
+    "vaxis": "x",
+    "twist": "false"
    },
    "apply": {
     "model": "fourtwenty:block/eighth_ribbon_down_x"
@@ -390,7 +427,8 @@
   {
    "when": {
     "down": "true",
-    "vaxis": "z"
+    "vaxis": "z",
+    "twist": "false"
    },
    "apply": {
     "model": "fourtwenty:block/eighth_ribbon_down_z"

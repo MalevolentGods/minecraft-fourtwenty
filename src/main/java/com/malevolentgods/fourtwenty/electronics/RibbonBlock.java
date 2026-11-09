@@ -33,6 +33,11 @@ public class RibbonBlock extends Block implements net.minecraft.world.level.bloc
      */
     public static final net.minecraft.world.level.block.state.properties.EnumProperty<Direction.Axis> VAXIS =
             net.minecraft.world.level.block.state.properties.EnumProperty.create("vaxis", Direction.Axis.class, Direction.Axis.X, Direction.Axis.Z);
+    /**
+     * A one-block vertical run between two Ribbons turned different ways (one out of a north-south run, one into an east-west): it twists a
+     * quarter turn, as ribbon cable does, from its own VAXIS at the bottom to the other at the top.
+     */
+    public static final BooleanProperty TWIST = BooleanProperty.create("twist");
     /** Undyed or one of the 16 dyes: a Ribbon joins only Ribbons of its colour, as Wicks do (Roach Clips, bus faces and trays take any). */
     public static final net.minecraft.world.level.block.state.properties.EnumProperty<com.malevolentgods.fourtwenty.power.WickBlock.Colour> COLOUR = com.malevolentgods.fourtwenty.power.WickBlock.COLOUR;
     private final Map<BlockState, VoxelShape> shapes = new IdentityHashMap<>();
@@ -41,13 +46,13 @@ public class RibbonBlock extends Block implements net.minecraft.world.level.bloc
         super(properties);
         BlockState state = stateDefinition.any();
         for (BooleanProperty side : SIDES.values()) state = state.setValue(side, false);
-        registerDefaultState(state.setValue(VAXIS, Direction.Axis.X).setValue(COLOUR, com.malevolentgods.fourtwenty.power.WickBlock.Colour.NONE));
+        registerDefaultState(state.setValue(VAXIS, Direction.Axis.X).setValue(TWIST, false).setValue(COLOUR, com.malevolentgods.fourtwenty.power.WickBlock.Colour.NONE));
         for (BlockState s : stateDefinition.getPossibleStates()) shapes.put(s, shapeOf(s));
     }
 
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         SIDES.values().forEach(builder::add);
-        builder.add(VAXIS, COLOUR);
+        builder.add(VAXIS, TWIST, COLOUR);
     }
 
     /** Its wires' bits, for the glow (RibbonBlockEntity). */
@@ -96,7 +101,17 @@ public class RibbonBlock extends Block implements net.minecraft.world.level.bloc
 
     private BlockState linked(BlockState state, LevelAccessor level, BlockPos pos) {
         for (Direction d : Direction.values()) state = state.setValue(SIDES.get(d), links(state, d, level.getBlockState(pos.relative(d)), level, pos.relative(d)));
-        return state.setValue(VAXIS, vaxis(state, level, pos));
+        state = state.setValue(VAXIS, vaxis(state, level, pos));
+        return state.setValue(TWIST, twist(state, level, pos));
+    }
+
+    /** A vertical run's block whose Ribbon above is turned the other way from it (it took its turn from below): a twist. */
+    private static boolean twist(BlockState state, LevelAccessor level, BlockPos pos) {
+        for (Direction d : new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST}) if (state.getValue(SIDES.get(d))) return false;
+        if (!state.getValue(SIDES.get(Direction.UP)) || !state.getValue(SIDES.get(Direction.DOWN))) return false;
+        BlockState above = level.getBlockState(pos.above()), below = level.getBlockState(pos.below());
+        if (!joins(state, below) || !joins(state, above) || below.getValue(VAXIS) != state.getValue(VAXIS)) return false;
+        return above.getValue(VAXIS) != state.getValue(VAXIS);
     }
 
     /** A vertical run's turn: from its own horizontal arms if it has any (east-west wide along z), else from the Ribbon above or below. */

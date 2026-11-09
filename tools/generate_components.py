@@ -395,6 +395,18 @@ def ribbons():
         for side, (y0, y1) in (('up', (9, 16)), ('down', (0, 7))):
             model(f'eighth_ribbon_{side}_{axis}', [upright(y0, y1, axis)])
         model(f'eighth_ribbon_core_vertical_{axis}', [upright(7, 9, axis)])
+        # a quarter twist (RibbonBlock.TWIST), from this axis at the bottom to the other at the top: five slices, each turned 22.5 degrees
+        # more about the middle (an element turns at most 45, so the top two are the other axis turned back); turning the x-wide ribbon
+        # by -90 lays channel k at z = 4 + k, as the z-wide one has it, so the stripes run on without reversing
+        other = 'z' if axis == 'x' else 'x'
+        steps = [(axis, 0), (axis, -22.5), (axis, -45), (other, 22.5), (other, 0)] if axis == 'x' else [(axis, 0), (axis, 22.5), (axis, 45), (other, -22.5), (other, 0)]
+        slices = []
+        for i, (ax, angle) in enumerate(steps):
+            e = upright(16 * i / 5, 16 * (i + 1) / 5, ax)
+            if angle:
+                e['rotation'] = {'origin': [8, 8, 8], 'axis': 'y', 'angle': angle}
+            slices.append(e)
+        model(f'eighth_ribbon_twist_{axis}', slices)
     # a bend from flat to upright: the flat part only from its arm to the middle, where the upright part leaves (no stub past the bend)
     for side, (f, t, top) in {'n': ([R0, 7, R0], [R1, 9, 9], '#ns'), 's': ([R0, 7, 7], [R1, 9, R1], '#ns'),
                               'e': ([7, 7, R0], [R1, 9, R1], '#ew'), 'w': ([R0, 7, R0], [9, 9, R1], '#ew')}.items():
@@ -432,8 +444,10 @@ def ribbons():
                 if m == 0:
                     # nothing level with it: stood on edge (turned its run's way) if it runs up or down, else lying north to south
                     for axis in ('x', 'z'):
-                        parts.append({'when': {'OR': [{**when, 'up': 'true', 'vaxis': axis}, {**when, 'down': 'true', 'vaxis': axis}]},
+                        parts.append({'when': {'OR': [{**when, 'up': 'true', 'vaxis': axis, 'twist': 'false'}, {**when, 'down': 'true', 'vaxis': axis, 'twist': 'false'}]},
                                       'apply': {'model': f'fourtwenty:block/eighth_ribbon_core_vertical_{axis}'}})
+                        parts.append({'when': {**when, 'up': 'true', 'down': 'true', 'vaxis': axis, 'twist': 'true'},
+                                      'apply': {'model': f'fourtwenty:block/eighth_ribbon_twist_{axis}'}})
                     parts.append({'when': {**when, 'up': 'false', 'down': 'false'}, 'apply': {'model': 'fourtwenty:block/eighth_ribbon_core_none'}})
                     continue
                 if sum(mask) == 1:
@@ -448,7 +462,7 @@ def ribbons():
             parts.append({'when': {side: 'true'}, 'apply': {'model': f'fourtwenty:block/eighth_ribbon_{side}'}})
         for side in ('up', 'down'):
             for axis in ('x', 'z'):
-                parts.append({'when': {side: 'true', 'vaxis': axis}, 'apply': {'model': f'fourtwenty:block/eighth_ribbon_{side}_{axis}'}})
+                parts.append({'when': {side: 'true', 'vaxis': axis, 'twist': 'false'}, 'apply': {'model': f'fourtwenty:block/eighth_ribbon_{side}_{axis}'}})
         write(ASSETS / f'blockstates/{cid}.json', {'multipart': parts})
     write(ASSETS / 'models/item/eighth_ribbon.json', {'parent': 'block/block', 'textures': base,
           'display': {'gui': {'rotation': [30, 45, 0], 'scale': [0.8, 0.8, 0.8]}}, 'elements': [flat([R0, 7, 0], [R1, 9, 16], '#ns')]})

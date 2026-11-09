@@ -272,7 +272,7 @@ public final class ModTerpenes {
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.fourtwenty.hemp_and_terpenes"))
                     .icon(() -> new ItemStack(TERPINATOR_ITEM.get()))
-                    .withTabsBefore(ModCreativeTabs.FOUR_TWENTY_TAB.getKey())
+                    .withTabsBefore(ModCreativeTabs.STRAINS_TAB.getKey())
                     .displayItems((parameters, output) -> {
                         output.accept(TERPINATOR_ITEM.get());
                         output.accept(TERPINATOR_LAB_ITEM.get());
@@ -285,22 +285,7 @@ public final class ModTerpenes {
                         all.forEach(h -> output.accept(h.items().get(0).get()));
                         all.forEach(h -> output.accept(h.items().get(1).get()));
                         all.forEach(h -> output.accept(h.items().get(2).get()));
-                        RUGS.values().forEach(b -> output.accept(b.get()));
-                        COUCHES.values().forEach(b -> output.accept(b.get()));
-                        POT_POTS.values().forEach(b -> output.accept(b.get()));
-                        POTTED_POT_POTS.values().forEach(b -> output.accept(b.get()));
-                        for (int t = 0; t < 3; t++) {
-                            output.accept(PATHS.get(t).get());
-                            output.accept(PATH_SLABS.get(t).get());
-                            output.accept(PATH_STAIRS.get(t).get());
-                        }
-                        CONCRETE.values().forEach(b -> output.accept(b.get()));
-                        CONCRETE_POWDER.values().forEach(b -> output.accept(b.get()));
-                        GLASS.values().forEach(b -> output.accept(b.get()));
-                        GLASS_PANES.values().forEach(b -> output.accept(b.get()));
-                        LAMPS.values().forEach(b -> output.accept(b.get()));
-                        INVERTED_LAMPS.values().forEach(b -> output.accept(b.get()));
-                        LAMP_TRIMS.values().forEach(b -> output.accept(b.get()));
+                        // rugs, couches, Pot Pots, paths, concrete, glass and lamps: in the Décor tab (ModCreativeTabs)
                     })
                     .build());
 

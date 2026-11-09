@@ -31,7 +31,8 @@ public class RibbonRenderer implements BlockEntityRenderer<RibbonBlockEntity> {
             if (dye != null) edges(pose, buffers, state, dye.getTextureDiffuseColor() & 0xFFFFFF, light);
         }
         int bits = Shown.bits(be.shown());
-        if (bits == 0) return;
+        // a twist's glow would run straight through its turn: it stays dark
+        if (bits == 0 || state.getValue(RibbonBlock.TWIST)) return;
         boolean n = on(state, Direction.NORTH), s = on(state, Direction.SOUTH), e = on(state, Direction.EAST), w = on(state, Direction.WEST);
         boolean ns = n || s, ew = e || w, up = on(state, Direction.UP), down = on(state, Direction.DOWN);
         boolean zWide = state.getValue(RibbonBlock.VAXIS) == Direction.Axis.Z;
@@ -86,7 +87,7 @@ public class RibbonRenderer implements BlockEntityRenderer<RibbonBlockEntity> {
             if (e || w) strip.accept(new double[]{x0, 6.86, a + 0.14, x1, 9.14, b - 0.14});
             // upright: the run stood on edge, its edges up its sides
             double y0 = down ? 0.03 : 6.8, y1 = up ? 15.97 : 9.2;
-            if (up || down) {
+            if ((up || down) && !state.getValue(RibbonBlock.TWIST)) {
                 if (zWide) strip.accept(new double[]{6.82, y0, a + 0.24, 9.18, y1, b - 0.24});
                 else strip.accept(new double[]{a + 0.24, y0, 6.82, b - 0.24, y1, 9.18});
             }

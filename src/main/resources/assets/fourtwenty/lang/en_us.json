@@ -2219,5 +2219,10 @@
   "tooltip.fourtwenty.real.numb_nug": "7-segment display",
   "tooltip.fourtwenty.real.dankoder": "Keypad encoder (74C922 / 74C923)",
   "tooltip.fourtwenty.real.manyfier": "16 x 16-bit multiplier",
-  "tooltip.fourtwenty.real.fewinator": "16-bit divider (quotient and remainder)"
+  "tooltip.fourtwenty.real.fewinator": "16-bit divider (quotient and remainder)",
+  "itemGroup.fourtwenty.strains": "Strains",
+  "itemGroup.fourtwenty.boundless_inspiration": "Boundless Inspiration",
+  "itemGroup.fourtwenty.inspoweednetics": "Inspoweednetics",
+  "itemGroup.fourtwenty.kush_suit": "Kush Suit",
+  "itemGroup.fourtwenty.decor": "Décor"
 }
