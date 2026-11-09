@@ -434,8 +434,43 @@ def ribbons():
     write(ASSETS / 'models/block/roach_clip_core.json', {'parent': 'block/block', 'textures': clip_tex,
           'elements': [box([3.4, 9.3, 3.4], [12.6, 10.4, 12.6], '#clip'), box([3.4, 5.6, 3.4], [12.6, 6.7, 12.6], '#clip'),
                        box([12.6, 5.6, 5.4], [13.6, 6.8, 10.6], '#clip'), box([12.6, 9.2, 5.4], [13.6, 10.4, 10.6], '#clip'), spring]})
+    # a junction (the user, 2026-11-08): where runs meet (a corner, a T, a cross, a bend up or down) the Ribbons don't fold or lie over
+    # one another; each arm runs into a small connector box in the middle of the block
+    junction = Image.new('RGB', (64, 64), (46, 49, 56))
+    jd = ImageDraw.Draw(junction)
+    jd.rectangle([0, 0, 63, 63], outline=(112, 116, 124), width=4)
+    jd.rectangle([10, 10, 53, 53], outline=(70, 74, 82), width=2)
+    for y in (24, 31, 38):
+        jd.rectangle([18, y, 45, y + 2], fill=(28, 30, 35))
+    save(junction, TEX / 'ribbon_junction.png')
+    model('eighth_ribbon_junction', [box([2, 5, 2], [15, 11, 15], '#junction')], {'junction': 'fourtwenty:block/component/ribbon_junction'})
     sides = ('north', 'east', 'south', 'west')
-    for cid in ('eighth_ribbon', 'roach_clip'):
+    # the Eighth Ribbon's core, by its six neighbours: alone, an end, a straight run (flat or upright, or a twist) keep their own look;
+    # anything else is a junction
+    parts = []
+    for m in range(64):
+        mask = tuple(bool(m >> i & 1) for i in range(4))
+        up, down = bool(m >> 4 & 1), bool(m >> 5 & 1)
+        when = {side: str(on).lower() for side, on in zip(sides, mask)}
+        when.update({'up': str(up).lower(), 'down': str(down).lower()})
+        flats, name = sum(mask), mask_name(mask)
+        if flats == 0 and (up or down):
+            for axis in ('x', 'z'):
+                parts.append({'when': {**when, 'vaxis': axis, 'twist': 'false'}, 'apply': {'model': f'fourtwenty:block/eighth_ribbon_core_vertical_{axis}'}})
+                if up and down:
+                    parts.append({'when': {**when, 'vaxis': axis, 'twist': 'true'}, 'apply': {'model': f'fourtwenty:block/eighth_ribbon_twist_{axis}'}})
+            continue
+        if not up and not down and (flats <= 1 or name in ('ns', 'ew')):
+            parts.append({'when': when, 'apply': {'model': f'fourtwenty:block/eighth_ribbon_core_{name}'}})
+            continue
+        parts.append({'when': when, 'apply': {'model': 'fourtwenty:block/eighth_ribbon_junction'}})
+    for side in sides:
+        parts.append({'when': {side: 'true'}, 'apply': {'model': f'fourtwenty:block/eighth_ribbon_{side}'}})
+    for side in ('up', 'down'):
+        for axis in ('x', 'z'):
+            parts.append({'when': {side: 'true', 'vaxis': axis, 'twist': 'false'}, 'apply': {'model': f'fourtwenty:block/eighth_ribbon_{side}_{axis}'}})
+    write(ASSETS / 'blockstates/eighth_ribbon.json', {'multipart': parts})
+    for cid in ('roach_clip',):
         parts = [{'apply': {'model': 'fourtwenty:block/roach_clip_core'}}] if cid == 'roach_clip' else []
         if True:
             for m in range(16):

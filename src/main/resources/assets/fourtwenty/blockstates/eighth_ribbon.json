@@ -2,26 +2,672 @@
  "multipart": [
   {
    "when": {
-    "OR": [
-     {
-      "north": "false",
-      "east": "false",
-      "south": "false",
-      "west": "false",
-      "up": "true",
-      "vaxis": "x",
-      "twist": "false"
-     },
-     {
-      "north": "false",
-      "east": "false",
-      "south": "false",
-      "west": "false",
-      "down": "true",
-      "vaxis": "x",
-      "twist": "false"
-     }
-    ]
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_none"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_n"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "false",
+    "west": "false",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_e"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "false",
+    "west": "false",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "true",
+    "west": "false",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_s"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "true",
+    "west": "false",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_ns"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "true",
+    "west": "false",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "true",
+    "west": "false",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "true",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_w"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "false",
+    "west": "true",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "false",
+    "west": "true",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_ew"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "false",
+    "west": "true",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "true",
+    "west": "true",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "true",
+    "west": "true",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "true",
+    "west": "true",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "true",
+    "west": "true",
+    "up": "false",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "true",
+    "down": "false",
+    "vaxis": "x",
+    "twist": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_vertical_x"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "true",
+    "down": "false",
+    "vaxis": "z",
+    "twist": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_vertical_z"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "false",
+    "west": "false",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "false",
+    "west": "false",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "true",
+    "west": "false",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "true",
+    "west": "false",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "true",
+    "west": "false",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "true",
+    "west": "false",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "true",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "false",
+    "west": "true",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "false",
+    "west": "true",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "false",
+    "west": "true",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "true",
+    "west": "true",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "true",
+    "west": "true",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "true",
+    "west": "true",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "true",
+    "west": "true",
+    "up": "true",
+    "down": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "false",
+    "down": "true",
+    "vaxis": "x",
+    "twist": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_vertical_x"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "false",
+    "down": "true",
+    "vaxis": "z",
+    "twist": "false"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_core_vertical_z"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "false",
+    "west": "false",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "false",
+    "west": "false",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "true",
+    "west": "false",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "true",
+    "west": "false",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "true",
+    "west": "false",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "true",
+    "west": "false",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "true",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "false",
+    "west": "true",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "false",
+    "west": "true",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "false",
+    "west": "true",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "true",
+    "west": "true",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "false",
+    "south": "true",
+    "west": "true",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "true",
+    "south": "true",
+    "west": "true",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "true",
+    "east": "true",
+    "south": "true",
+    "west": "true",
+    "up": "false",
+    "down": "true"
+   },
+   "apply": {
+    "model": "fourtwenty:block/eighth_ribbon_junction"
+   }
+  },
+  {
+   "when": {
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "true",
+    "down": "true",
+    "vaxis": "x",
+    "twist": "false"
    },
    "apply": {
     "model": "fourtwenty:block/eighth_ribbon_core_vertical_x"
@@ -44,26 +690,14 @@
   },
   {
    "when": {
-    "OR": [
-     {
-      "north": "false",
-      "east": "false",
-      "south": "false",
-      "west": "false",
-      "up": "true",
-      "vaxis": "z",
-      "twist": "false"
-     },
-     {
-      "north": "false",
-      "east": "false",
-      "south": "false",
-      "west": "false",
-      "down": "true",
-      "vaxis": "z",
-      "twist": "false"
-     }
-    ]
+    "north": "false",
+    "east": "false",
+    "south": "false",
+    "west": "false",
+    "up": "true",
+    "down": "true",
+    "vaxis": "z",
+    "twist": "false"
    },
    "apply": {
     "model": "fourtwenty:block/eighth_ribbon_core_vertical_z"
@@ -86,74 +720,15 @@
   },
   {
    "when": {
-    "north": "false",
-    "east": "false",
-    "south": "false",
-    "west": "false",
-    "up": "false",
-    "down": "false"
-   },
-   "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_none"
-   }
-  },
-  {
-   "when": {
-    "OR": [
-     {
-      "north": "true",
-      "east": "false",
-      "south": "false",
-      "west": "false",
-      "up": "true"
-     },
-     {
-      "north": "true",
-      "east": "false",
-      "south": "false",
-      "west": "false",
-      "down": "true"
-     }
-    ]
-   },
-   "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_bend_n"
-   }
-  },
-  {
-   "when": {
     "north": "true",
     "east": "false",
     "south": "false",
     "west": "false",
-    "up": "false",
-    "down": "false"
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_n"
-   }
-  },
-  {
-   "when": {
-    "OR": [
-     {
-      "north": "false",
-      "east": "true",
-      "south": "false",
-      "west": "false",
-      "up": "true"
-     },
-     {
-      "north": "false",
-      "east": "true",
-      "south": "false",
-      "west": "false",
-      "down": "true"
-     }
-    ]
-   },
-   "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_bend_e"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
@@ -162,11 +737,11 @@
     "east": "true",
     "south": "false",
     "west": "false",
-    "up": "false",
-    "down": "false"
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_e"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
@@ -174,33 +749,12 @@
     "north": "true",
     "east": "true",
     "south": "false",
-    "west": "false"
+    "west": "false",
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_ne"
-   }
-  },
-  {
-   "when": {
-    "OR": [
-     {
-      "north": "false",
-      "east": "false",
-      "south": "true",
-      "west": "false",
-      "up": "true"
-     },
-     {
-      "north": "false",
-      "east": "false",
-      "south": "true",
-      "west": "false",
-      "down": "true"
-     }
-    ]
-   },
-   "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_bend_s"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
@@ -209,11 +763,11 @@
     "east": "false",
     "south": "true",
     "west": "false",
-    "up": "false",
-    "down": "false"
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_s"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
@@ -221,10 +775,12 @@
     "north": "true",
     "east": "false",
     "south": "true",
-    "west": "false"
+    "west": "false",
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_ns"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
@@ -232,10 +788,12 @@
     "north": "false",
     "east": "true",
     "south": "true",
-    "west": "false"
+    "west": "false",
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_es"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
@@ -243,33 +801,12 @@
     "north": "true",
     "east": "true",
     "south": "true",
-    "west": "false"
+    "west": "false",
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_nes"
-   }
-  },
-  {
-   "when": {
-    "OR": [
-     {
-      "north": "false",
-      "east": "false",
-      "south": "false",
-      "west": "true",
-      "up": "true"
-     },
-     {
-      "north": "false",
-      "east": "false",
-      "south": "false",
-      "west": "true",
-      "down": "true"
-     }
-    ]
-   },
-   "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_bend_w"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
@@ -278,11 +815,11 @@
     "east": "false",
     "south": "false",
     "west": "true",
-    "up": "false",
-    "down": "false"
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_w"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
@@ -290,10 +827,12 @@
     "north": "true",
     "east": "false",
     "south": "false",
-    "west": "true"
+    "west": "true",
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_nw"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
@@ -301,10 +840,12 @@
     "north": "false",
     "east": "true",
     "south": "false",
-    "west": "true"
+    "west": "true",
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_ew"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
@@ -312,10 +853,12 @@
     "north": "true",
     "east": "true",
     "south": "false",
-    "west": "true"
+    "west": "true",
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_new"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
@@ -323,10 +866,12 @@
     "north": "false",
     "east": "false",
     "south": "true",
-    "west": "true"
+    "west": "true",
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_sw"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
@@ -334,10 +879,12 @@
     "north": "true",
     "east": "false",
     "south": "true",
-    "west": "true"
+    "west": "true",
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_nsw"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
@@ -345,10 +892,12 @@
     "north": "false",
     "east": "true",
     "south": "true",
-    "west": "true"
+    "west": "true",
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_esw"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
@@ -356,10 +905,12 @@
     "north": "true",
     "east": "true",
     "south": "true",
-    "west": "true"
+    "west": "true",
+    "up": "true",
+    "down": "true"
    },
    "apply": {
-    "model": "fourtwenty:block/eighth_ribbon_core_nesw"
+    "model": "fourtwenty:block/eighth_ribbon_junction"
    }
   },
   {
