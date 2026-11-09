@@ -29,7 +29,7 @@ import java.util.Set;
  * interpolated along it. See specs/006-circuit-solver/research.md R8 and R9.
  */
 public final class Network {
-    static final int MAX_WICKS = 4096;
+    static final int MAX_WICKS = 16384;
     private static final int GLOW = 10;
 
     /** A BI block on the network: its node object, where it is, and the circuit nodes of its + and − terminals. */
@@ -767,7 +767,14 @@ public final class Network {
                     along.add(ohms);
                     Conductor back = prev, here = at;
                     // a plain conductor has exactly two neighbours: go on to the one we didn't come from
-                    at = wickEdges.get(here).stream().filter(p -> !p.equals(back)).findFirst().orElseThrow();
+                    // (one past the walk's limit isn't known: the run ends here)
+                    Conductor next = wickEdges.get(here).stream().filter(p -> !p.equals(back) && wickTiers.containsKey(p)).findFirst().orElse(null);
+                    if (next == null) {
+                        chain.remove(chain.size() - 1);
+                        along.remove(along.size() - 1);
+                        break;
+                    }
+                    at = next;
                     prev = here;
                 }
                 if (!walked.add(keyOf(w, first, at, prev))) continue;
