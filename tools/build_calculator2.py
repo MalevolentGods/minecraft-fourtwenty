@@ -4,7 +4,8 @@ every chip on one level, every signal a coloured trace beside it, crossings by N
     python tools/build_calculator2.py X0 Z0 > cmds            the machine, its keypad's bottom-left key at (X0, -59, Z0)
     python tools/build_calculator2.py X0 Z0 java > Layout     the same, for the game test (relative to its corner)
 
-Stage 2 of the plan: the v1 machine (keypad, + and -, signs, back, clear, 5-digit display) on the flat board, to prove the router.
+Stage 3 of the plan: v1's machine (keypad, + and -, signs, back, clear, 5-digit display) with × and ÷ by a Manyfier and a Fewinator,
+a 4×5 keypad, and an error flip-flop that shows E (× past 65,535, ÷ by 0, + past 65,535) until C.
 """
 import os
 import sys
@@ -70,6 +71,18 @@ def jar16(name, inL, inH, clk, rel, outL, outH):
         chip(name + s, 'jar_nug', {'W': bus(i), 'S': one(clk), 'N': one(rel) if rel else NONE1, 'E': bus(o)})
 
 
+def bigchip(name, block, aL, aH, bL, bH, outL, outH):
+    """A big chip (Manyfier, Fewinator) on its side at the next slot: front E, its top north (spin 1), so its upper block is the cell
+    north of the lower; A at the back (W), B on its left (up, through the VDD level to the bridge layer), the result in front, its right
+    (down) unused; GND out of the lower block's bottom (S), VDD out of the upper's top (N)."""
+    pos = place()
+    up = (pos[0], pos[1], pos[2] - 1)
+    for at, half, a, bb, o, power in ((pos, 'false', aL, bL, outL, ('S', 'GND')), (up, 'true', aH, bH, outH, ('N', 'VDD'))):
+        pins = {'W': bus(a), 'U': bus(bb), 'E': bus(o), 'D': NONEB, power[0]: one(power[1])}
+        b.comp(name + ('H' if half == 'true' else 'L'), f'{block}[facing=east,spin=1,upper={half}]', at, pins)
+    return pos
+
+
 def const(pos, name, value):
     """A constant byte into the B face (S) of the chip at pos: Roach Clips in a row on the board running south from that face, one per
     set channel, each tapping VDD (the VDD level lies right above them)."""
@@ -94,12 +107,24 @@ for chain, (src, dst) in enumerate((('STB', 'CLK1'), ('CLK1', 'CLK2'))):
 b.bounds = ((X0 - 3, X0 + SP * COLS + 14), b.bounds[1], b.bounds[2])
 
 gate('OR1', 'or_nug', ('tap', 'K', 1, 'B1'), ('tap', 'K', 2, 'B2'), 'n1')
-gate('AND1', 'and_nug', ('tap', 'K', 3, 'B3'), 'n1', 'CMD')
+gate('AND1', 'and_nug', ('tap', 'K', 3, 'B3'), 'n1', 'CMD0')
+gate('CMDOR', 'or_nug', 'CMD0', ('tap', 'K', 4, 'B4'), 'CMD')
 inv('NOT1', 'CMD', 'DIG')
 inv('NOT3', 'DIG', 'RSD')
 gate('AND2', 'and_nug', 'CLK1', 'DIG', 'CLKP')
 chip('DEAL', 'dealer_nug', {'W': ('tap', 'K', 3, 'B3'), 'S': bus('K'), 'E': bus('DEC')})
-gate('OR2', 'or_nug', ('tap', 'DEC', 3, 'MINUS'), ('tap', 'DEC', 2, 'PLUS'), 'OPK')
+gate('OR2', 'or_nug', ('tap', 'DEC', 3, 'MINUS'), ('tap', 'DEC', 2, 'PLUS'), 'OPK0')
+gate('OPKOR', 'or_nug', 'OPK0', ('tap', 'K', 4, 'B4'), 'OPK')
+# × (16) and ÷ (17): a second Dealer on bit 4; the mode latches: MD (× or ÷ rather than + or −) and DV (÷ rather than ×)
+chip('DEAL2', 'dealer_nug', {'W': ('tap', 'K', 4, 'B4'), 'S': bus('K'), 'E': bus('DEC2')})
+gate('MDL', 'latch_nug', ('tap', 'K', 4, 'B4'), 'OPK0', 'MD')
+gate('DVL', 'latch_nug', ('tap', 'DEC2', 1, 'DIV'), ('tap', 'DEC2', 0, 'MUL'), 'DV')
+inv('NMD', 'MD', 'NMD')
+inv('NDV', 'DV', 'NDV')
+gate('EQA', 'and_nug', ('tap', 'DEC', 5, 'EQ'), 'NMD', 'EQA')
+gate('EQM', 'and_nug', ('tap', 'DEC', 5, 'EQ'), 'MD', 'EQM')
+gate('RELM', 'nand_nug', 'EQM', 'NDV', 'RSM')
+gate('RELD', 'nand_nug', 'EQM', 'DV', 'RSDV')
 gate('LATCH', 'latch_nug', ('tap', 'DEC', 3, 'MINUS'), ('tap', 'DEC', 2, 'PLUS'), 'OP')
 inv('NOTEFF', 'EFF', 'NEFF')
 gate('AND3', 'and_nug', 'CLK1', 'OPK', 'CLKA0')
@@ -108,8 +133,8 @@ inv('NOT2', ('tap', 'DEC', 7, 'PM'), 'NPM')
 gate('AND4', 'and_nug', 'CLK2', 'NREF', 'CLKS')
 gate('ANDX', 'and_nug', 'CLKS', 'NPM', 'CLKX')
 inv('NOT5', ('tap', 'DEC', 6, 'BKS'), 'RP')
-gate('EQOP', 'and_nug', ('tap', 'DEC', 5, 'EQ'), 'EFF', 'EQOP')
-gate('RELA', 'nand_nug', ('tap', 'DEC', 5, 'EQ'), 'NEFF', 'RSA')
+gate('EQOP', 'and_nug', 'EQA', 'EFF', 'EQOP')
+gate('RELA', 'nand_nug', 'EQA', 'NEFF', 'RSA')
 inv('NOTNEG', 'NEG', 'NNEG')
 gate('REL1', 'nand_nug', 'EQOP', 'NNEG', 'RS1')
 gate('SELNEG', 'and_nug', 'EQOP', 'NEG', 'SELNEG')
@@ -136,7 +161,11 @@ gate('KEEP', 'or_nug', 'DIG', ('tap', 'DEC', 6, 'BKS'), 'KEEP')
 gate('K1', 'and_nug', 'KEEP', 'SX', 'K1')
 inv('NSX', 'SX', 'NSX')
 gate('F1', 'and_nug', ('tap', 'DEC', 7, 'PM'), 'NSX', 'F1')
-gate('Q1', 'and_nug', ('tap', 'DEC', 5, 'EQ'), 'RSIGN', 'Q1')
+# × and ÷: the result's sign is A's xor X's
+gate('RSM1', 'and_nug', 'MD', 'SAX', 'RSM1')
+gate('RSM0', 'and_nug', 'NMD', 'RSIGN', 'RSM0')
+gate('RSG2', 'or_nug', 'RSM1', 'RSM0', 'RSIGN2')
+gate('Q1', 'and_nug', ('tap', 'DEC', 5, 'EQ'), 'RSIGN2', 'Q1')
 gate('O1', 'or_nug', 'K1', 'F1', 'O1')
 gate('SXD', 'or_nug', 'O1', 'Q1', 'SXD')
 gate('SAFF', 'flip_flop_nug', 'SX', 'CLKA', 'SA')
@@ -164,25 +193,47 @@ b.reserved.pop(step(p, 'W'), None)
 b.reserved[step(p, 'W')] = 'R2H'
 p1 = [q for q, c in b.comps if c['name'] == 'JS1H'][0]
 b.clip(step(p1, 'W'), 'R1H', 8, 'NEG')
+# × and ÷: A × X and A ÷ X, each through its own staging pair onto the S bus
+bigchip('MUL', 'manyfier', 'AL', 'AH', 'XL', 'XH', 'ML', 'MH')
+bigchip('DIV', 'fewinator', 'AL', 'AH', 'XL', 'XH', 'QL', 'QH')
+jar16('JM', 'ML', 'MH', 'CLK1', 'RSM', 'SL', 'SH')
+jar16('JQ', 'QL', 'QH', 'CLK1', 'RSDV', 'SL', 'SH')
+# the error flip-flop, clocked on every key: set by = when the chosen operation fails, kept until C
+gate('MF', 'and_nug', 'NDV', ('tap', 'ML', 8, 'MULF'), 'MF')
+gate('DF', 'and_nug', 'DV', ('tap', 'QL', 8, 'DIVF'), 'DF')
+gate('MDE', 'or_nug', 'MF', 'DF', 'MDE')
+gate('C1', 'and_nug', 'MD', 'MDE', 'C1')
+gate('AE0', 'and_nug', 'NEFF', ('tap', 'RAH', 8, 'ADDC'), 'AE0')
+gate('AE', 'and_nug', 'NMD', 'AE0', 'AE')
+gate('COND', 'or_nug', 'C1', 'AE', 'COND')
+gate('E1', 'and_nug', ('tap', 'DEC', 5, 'EQ'), 'COND', 'E1')
+inv('NCLR', ('tap', 'DEC', 4, 'CLR'), 'NCLR')
+gate('HOLD', 'and_nug', 'ERR', 'NCLR', 'HOLD')
+gate('ERRD', 'or_nug', 'E1', 'HOLD', 'ERRD')
+gate('ERRFF', 'flip_flop_nug', 'ERRD', 'CLK1', 'ERR')
+# the display's low byte: X's, its carry wire (an adder's inner carry, on the way in) replaced by the error: E
+gate('XE', 'xor_nug', ('tap', 'XL', 8, 'XL8'), 'ERR', 'XE')
+p = chip('DLOW', 'blend_nug', {'W': bus('XL'), 'S': bus('MASKL'), 'E': bus('DL')}, '{value:2}')
+b.clip(step(p, 'S'), 'MASKL', 8, 'XE')
 p = chip('SIGN', 'blend_nug', {'W': bus('XH'), 'S': bus('MASKS'), 'E': bus('DH')}, '{value:2}')
 b.clip(step(p, 'S'), 'MASKS', 8, 'SX')
 p = place()
 b.comp('STASH', 'bottomless_stash_puff[facing=north]', p, {'E': one('VDD'), 'D': one('GND'), 'W': NONE1, 'N': NONE1, 'S': NONE1, 'U': NONE1})
 
 # ---- the panel: trays in the wall, facing south; keys at y -59 to -56; the display row at -55 ----------------------------------------
-LAYOUT = [['7', '8', '9', 'C'], ['4', '5', '6', '-'], ['1', '2', '3', '+'], ['<', '0', '±', '=']]
-NUMBER = {**{str(d): d for d in range(10)}, '+': 10, '-': 11, 'C': 12, '=': 13, '<': 14, '±': 15}
+LAYOUT = [['7', '8', '9', '÷', 'C'], ['4', '5', '6', '×', '<'], ['1', '2', '3', '-', '±'], [None, '0', None, '+', '=']]
+NUMBER = {**{str(d): d for d in range(10)}, '+': 10, '-': 11, 'C': 12, '=': 13, '<': 14, '±': 15, '×': 16, '÷': 17}
 LABEL = {'<': '←', '-': '−'}
-GLOW = {**{str(d): 0 for d in range(10)}, '+': 5, '-': 5, '=': 13, 'C': 14, '<': 1, '±': 5}
+GLOW = {**{str(d): 0 for d in range(10)}, '+': 5, '-': 5, '×': 5, '÷': 5, '=': 13, 'C': 14, '<': 1, '±': 5}
 DY = Y + 4
 panel = []
 trays = {}
 for r, row in enumerate(LAYOUT):
     for c, k in enumerate(row):
-        trays[(KX + c, Y + 3 - r, ZP)] = ('key', k)
+        trays[(KX + c, Y + 3 - r, ZP)] = ('key', k) if k else ('blank', None)
 for c in range(5):
-    trays[(KX - 1 + c, DY, ZP)] = ('digit', c)
-feed = {(KX + 3, DY, ZP): bus('XL'), (KX + 1, DY, ZP): bus('DH'), (KX + 2, DY, ZP): one('VDD'), (KX, DY, ZP): one('GND')}
+    trays[(KX + c, DY, ZP)] = ('digit', c)
+feed = {(KX + 4, DY, ZP): bus('DL'), (KX + 2, DY, ZP): bus('DH'), (KX + 3, DY, ZP): one('VDD'), (KX + 1, DY, ZP): one('GND')}
 for x in range(KX - 4, KX + 8):
     for y in range(Y - 1, Y + 7):
         b.reserved[(x, y, ZP - 1)] = None
@@ -195,7 +246,7 @@ for pos, (what, v) in trays.items():
     f = (pos[0], pos[1], pos[2] + 1)
     if what == 'key':
         panel.append((f, 'fourtwenty:puff_button[facing=south,mounted=true]', f'{{value:{NUMBER[v] + 1},label:"{LABEL.get(v, v)}",glow:{GLOW[v]}}}'))
-    else:
+    elif what == 'digit':
         panel.append((f, 'fourtwenty:numb_nug[facing=south,mounted=true]', ''))
 
 attempt = b.route(attempts=int(os.environ.get("ATTEMPTS", "80")))
@@ -223,18 +274,27 @@ if len(sys.argv) > 3 and sys.argv[3] == 'java':
     print('/** The v2 calculator on its two-layer board (tools/build_calculator2.py): every block relative to its corner. Generated. */')
     print('final class CalculatorBoardLayout {')
     print('    private CalculatorBoardLayout() {}' + NL)
-    print(f'    static final int[] XL = {rel(named["JXL"])}, XH = {rel(named["JXH"])}, SIGN = {rel(named["SIGN"])};')
+    print(f'    static final int[] XL = {rel(named["JXL"])}, XH = {rel(named["JXH"])}, SIGN = {rel(named["SIGN"])}, DLOW = {rel(named["DLOW"])};')
     print('    static final Map<String, int[]> KEYS = new HashMap<>();' + NL)
     print('    static {')
     for pos, (what, v) in trays.items():
         if what == 'key':
             print(f'        KEYS.put("{v}", new int[]{rel((pos[0], pos[1], pos[2] + 1))});')
     print('    }' + NL)
-    print('    static final String[] BLOCKS = {')
+    # in chunks, each its own method: one array initialiser this long is past a method's 64 KB of code
+    lines = []
     for p, s, n in sorted(blocks, key=lambda m: (m[1] != 'fourtwenty:skip_me_bro' and 'skip_me_bro' not in m[1], m[0][1], m[0][0], m[0][2])):
-        body = f'{p[0] - ox} {p[1] - (Y - 2)} {p[2] - oz} {s}{n}'.replace(chr(92), chr(92) * 2).replace('"', chr(92) + '"')
-        print(f'            "{body}",')
-    print('    };')
+        lines.append(f'{p[0] - ox} {p[1] - (Y - 2)} {p[2] - oz} {s}{n}'.replace(chr(92), chr(92) * 2).replace('"', chr(92) + '"'))
+    chunks = [lines[i:i + 1000] for i in range(0, len(lines), 1000)]
+    print('    static final String[] BLOCKS = java.util.stream.Stream.of(' + ', '.join(f'part{i}()' for i in range(len(chunks)))
+          + ').flatMap(java.util.Arrays::stream).toArray(String[]::new);' + NL)
+    for i, chunk in enumerate(chunks):
+        print(f'    private static String[] part{i}() {{')
+        print('        return new String[]{')
+        for body in chunk:
+            print(f'            "{body}",')
+        print('        };')
+        print('    }' + NL)
     print('}')
 else:
     print(chr(10).join(f'setblock {p[0]} {p[1]} {p[2]} {s}{n}' for p, s, n in blocks))

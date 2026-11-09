@@ -12,7 +12,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 /**
  * The keypad calculator built on flatworld (CalculatorBoardLayout, from tools/build_calculator.py), driven as a player would, key by key:
  * 1234 + 8765 = 9999; C, 9999 + 9999 = 19998; C, 5 - 8 = -3 (3, the display's minus on); C, 1 2 3 4 5 holds 1234 (the fifth digit
- * refused); C, 7 5 back = 7; then signed entries (+/-). Register X, its two Jar Nugs, is what the display shows.
+ * refused); C, 7 5 back = 7; then signed entries (+/-); then × and ÷, with E for a result past 65,535 or ÷ 0, until C. Register X,
+ * its two Jar Nugs, is what the display shows.
  */
 @GameTestHolder("fourtwenty_tests")
 @PrefixGameTestTemplate(false)
@@ -31,6 +32,45 @@ public final class CalculatorBoardGameTests {
     /** The display's minus: the sign Blend Nug's carry wire out. */
     private static boolean negative(GameTestHelper h) {
         return (com.malevolentgods.fourtwenty.domain.electronics.Shown.bits(((ComponentBlockEntity) h.getBlockEntity(at(CalculatorBoardLayout.SIGN))).shown()) & 0x100) != 0;
+    }
+
+    /** The display's E: the low-byte Blend Nug's carry wire out. */
+    private static boolean error(GameTestHelper h) {
+        return (com.malevolentgods.fourtwenty.domain.electronics.Shown.bits(((ComponentBlockEntity) h.getBlockEntity(at(CalculatorBoardLayout.DLOW))).shown()) & 0x100) != 0;
+    }
+
+    private static String shows(GameTestHelper h) { return x(h) + (negative(h) ? " negative" : "") + (error(h) ? " E" : ""); }
+
+    /** × and ÷: products and quotients, their signs, and E past 65,535 or for ÷ 0, cleared by C. */
+    private static void timesAndDivide(GameTestHelper h, Runnable then) {
+        type(h, "C12×34=", () -> {
+            h.assertTrue(x(h) == 408 && !negative(h) && !error(h), "12 × 34 = 408: " + shows(h));
+            type(h, "C9999×6=", () -> {
+                h.assertTrue(x(h) == 59994 && !error(h), "9999 × 6 = 59994: " + shows(h));
+                type(h, "C300×300=", () -> {
+                    h.assertTrue(error(h), "300 × 300 is past 65,535: E: " + shows(h));
+                    type(h, "C", () -> {
+                        h.assertTrue(!error(h), "C clears E: " + shows(h));
+                        type(h, "100÷7=", () -> {
+                            h.assertTrue(x(h) == 14 && !error(h), "100 ÷ 7 = 14: " + shows(h));
+                            type(h, "C5÷0=", () -> {
+                                h.assertTrue(error(h), "5 ÷ 0: E: " + shows(h));
+                                type(h, "C6±×7=", () -> {
+                                    h.assertTrue(x(h) == 42 && negative(h) && !error(h), "-6 × 7 = -42: " + shows(h));
+                                    type(h, "C84÷4±=", () -> {
+                                        h.assertTrue(x(h) == 21 && negative(h), "84 ÷ -4 = -21: " + shows(h));
+                                        type(h, "C200+100=", () -> {
+                                            h.assertTrue(x(h) == 300 && !error(h), "200 + 100 = 300, no E from the inner carry: " + shows(h));
+                                            then.run();
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
     }
 
     /** Presses each key of {@code keys} in turn (down 4 ticks, up 4), then runs {@code then}. */
@@ -61,7 +101,7 @@ public final class CalculatorBoardGameTests {
         });
     }
 
-    @GameTest(template = "long", batch = "calculator_board", timeoutTicks = 2400)
+    @GameTest(template = "long", batch = "calculator_board", timeoutTicks = 4800)
     public static void theBoardCalculatorCalculates(GameTestHelper h) {
         var blocks = h.getLevel().holderLookup(Registries.BLOCK);
         // the machine reaches far past the test's own structure: keep all of its chunks loaded and ticking while it runs
@@ -83,7 +123,7 @@ public final class CalculatorBoardGameTests {
             }
         }
         h.runAfterDelay(20, () -> type(h, "1234+8765=", () -> {
-            h.assertTrue(x(h) == 9999, "1234 + 8765 = 9999: " + x(h));
+            h.assertTrue(x(h) == 9999 && !error(h), "1234 + 8765 = 9999: " + shows(h));
             type(h, "C9999+9999=", () -> {
                 h.assertTrue(x(h) == 19998, "9999 + 9999 = 19998: " + x(h));
                 type(h, "C5-8=", () -> {
@@ -94,10 +134,10 @@ public final class CalculatorBoardGameTests {
                             h.assertTrue(x(h) == 7, "C, 7 5 back = 7: " + x(h));
                             type(h, "C50-8=", () -> {
                                 h.assertTrue(x(h) == 42 && !negative(h), "50 - 8 = 42: " + x(h));
-                                signed(h, () -> {
-                                for (var c : forced) h.getLevel().setChunkForced(c.x, c.z, false);
-                                h.succeed();
-                                });
+                                signed(h, () -> timesAndDivide(h, () -> {
+                                    for (var c : forced) h.getLevel().setChunkForced(c.x, c.z, false);
+                                    h.succeed();
+                                }));
                             });
                         });
                     });
