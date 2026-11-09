@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.22.0]
 
 ### Added
 - **Electronics**: Resinators, Kief Caps, Spliff Coils, One-Hitters and Zen Hitters, Toggle Joints, Kill Switches and Puff Buttons, the eight logic Nugs, the Tri-State, Latch and Flip-Flop Nugs, the Ticker, Sativa and Indica FETs (N- and P-channel MOSFETs), the Hype Amp (an op-amp), the Puff-Pass and Pack Nugs (shift registers), the Sampler and Dealer Nugs (multiplexers), the Blend, Stacker, Scale and Jar Nugs (bitwise logic, adder, comparator, register: enough for an 8-bit calculator or CPU), the Eighth Ribbon (a 9-wire bus cable) and the Roach Clip, wired by their pin faces with Wicks or the new Hemp Thread, and solved like SPICE: real time steps for capacitors and inductors, real diode and transistor physics, and logic with real gate delays inside each tick.
