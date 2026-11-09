@@ -40,6 +40,9 @@ RANDOM_TICK_SPEED, SECTION = 3, 4096
 GROWTH = 8.0                                        # vanilla getGrowthSpeed on a good, wet field
 STAGES = 7
 STOCK = 16                                          # plants of a strain before the player moves on with it
+BONE_MEAL_STAGES = 3.5                              # stages one bone meal adds to a crop (2 to 5)
+BONE_MEAL_GRADE = 1                                 # bone meal works up to this grade (WeedCropBlock.isValidBonemealTarget)
+BONE_MEAL = 30.0                                    # bone meal a player spends an hour (a few skeletons' bones, or a composter; --bonemeal)
 
 TODAY = {   # before 012: every family 1-3 buds (avg 2), the old trimming chances, no plot seeds, potency from traits only
     'yield': {f: (1, 3) for f in FAMILIES},
@@ -111,10 +114,17 @@ def growth(numbers, family, plot):
 
 
 def stocking(numbers, family, plot, start=1):
-    """Hours from `start` seeds to STOCK plants of the family on a plot tier."""
+    """Hours from `start` seeds to STOCK plants of the family on a plot tier, crop by crop: every seed is planted in the next
+    crop. Bone meal (grade 1 and under) adds its stages on top of natural growth, the hour's budget shared among the plants."""
     m = growth(numbers, family, plot)
-    crops = math.ceil(math.log(STOCK / start) / math.log(m)) if start < STOCK else 0
-    return crops * crop_minutes(family, plot) / 60, crops
+    natural = STAGES / (crop_minutes(family, plot) / 60)      # stages an hour per plant
+    meal = BONE_MEAL if GRADE[family] <= BONE_MEAL_GRADE else 0
+    plants, hours, crops = float(start), 0.0, 0
+    while plants < STOCK - 1e-9:
+        hours += STAGES / (natural + meal * BONE_MEAL_STAGES / plants)
+        plants *= m
+        crops += 1
+    return hours, crops
 
 
 def run(numbers):
@@ -155,7 +165,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--today', action='store_true')
     ap.add_argument('--config')
+    ap.add_argument('--bonemeal', type=float, default=30.0, help='bone meal a player spends an hour')
     a = ap.parse_args()
+    global BONE_MEAL
+    BONE_MEAL = a.bonemeal
     numbers = TODAY if a.today else defaults()
     if a.config:
         numbers = from_toml(a.config, numbers)
