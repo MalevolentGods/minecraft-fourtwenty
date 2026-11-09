@@ -68,17 +68,17 @@
 **Goal**: family yields, potency and tooltips.
 **Independent test**: plain-trait harvests of each family average their table yield; a high-potency strain's high is stronger and longer; tooltips show the stats.
 
-- [ ] T014 [US2] In `J/util/StrainEffects.java`, scale every effect `give(...)` applies by the smoked strain's family potency:
+- [X] T014 [US2] In `J/util/StrainEffects.java`, scale every effect `give(...)` applies by the smoked strain's family potency:
   - level plus `StrainStats.potencyLevels(p)`;
   - duration times `StrainStats.potencyLength(p)`;
   - both on top of the trait's `potencyBonus` and `lengthFactor`;
   - Landrace (potency 1) unchanged.
-- [ ] T015 [US2] In `J/item/StrainItems.java`, add a line to seed, rough, trimmed and cured bud and joint tooltips: "Yield {min}–{max} · Potency {p} · Growth {normal|slower|slow|slowest}" (growth from the strain's grade). Add the lang keys to `src/main/resources/assets/fourtwenty/lang/en_us.json`.
-- [ ] T016 [P] [US2] Add game tests to `GT/ProgressionGameTests.java`:
+- [X] T015 [US2] In `J/item/StrainItems.java`, add a line to seed, rough, trimmed and cured bud and joint tooltips: "Yield {min}–{max} · Potency {p} · Growth {normal|slower|slow|slowest}" (growth from the strain's grade). Add the lang keys to `src/main/resources/assets/fourtwenty/lang/en_us.json`.
+- [X] T016 [P] [US2] Add game tests to `GT/ProgressionGameTests.java`:
   - a Golden God crop drops 4 or 5 rough buds every time;
   - a Cross crop averages between 2.2 and 2.8 over 200 harvests;
   - a yield-trait-1 Landrace still drops 1.
-- [ ] T017 [P] [US2] Add unit tests to `T/domain/StrainStatsTest.java` for the potency maths applied to a sample effect (level and ticks before and after).
+- [X] T017 [P] [US2] Add unit tests to `T/domain/StrainStatsTest.java` for the potency maths applied to a sample effect (level and ticks before and after).
 
 **Checkpoint**: US1 and US2 both work; tooltip and smoke checked in game (quickstart steps 3 and 5).
 
