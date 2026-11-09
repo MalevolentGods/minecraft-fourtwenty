@@ -64,11 +64,14 @@ GATES = {
 TARGETS = {'first joint': 1, 'first bred strain': 5, 'first Grow Op': 10, 'biome strains': 17.5, 'crosses': 27.5,
            'double crosses': 40, 'ultras': 50, 'Golden God': 60}
 
-# The colony: one joint (one cured bud) per adult citizen a day (20 minutes), at a typical citizen count by stage
+# The colony: one joint (one cured bud, two paper) per adult citizen a day (20 minutes), at a typical citizen count by stage. A
+# Farmer's field grows weed like a player's hand-tended one, without bone meal, and only strains that need no Grow Op (grade 1 and
+# under: Landrace, the accords, the biome strains), whatever the player has climbed to. The Sensi Heights field (Field 1) has 116
+# farmland; a colony gives weed one field until it outgrows it.
 COLONY = {'first bred strain': ('Neutrals', 6), 'first Grow Op': ('Neutrals', 10), 'biome strains': ('Biome', 14),
-          'crosses': ('Cross', 20), 'double crosses': ('DoubleCross', 26), 'ultras': ('Ultra', 32), 'Golden God': ('Golden', 40)}
-FIELD = 72               # a MineColonies field's plots (scarecrow radius 5 by 5... minus paths): what a Farmer tends per field
-FIELDS_PER_CITIZEN = 0.1  # fields a colony runs per citizen
+          'crosses': ('Biome', 20), 'double crosses': ('Biome', 26), 'ultras': ('Biome', 32), 'Golden God': ('Biome', 40)}
+FIELD = 116
+CITIZENS_PER_FIELD = 40   # a colony adds a weed field at about this many citizens
 
 
 def defaults():
@@ -150,14 +153,18 @@ def run(numbers):
 
 
 def colony(numbers):
-    """Each stage's daily joints asked for against what its fields grow, and the spare."""
+    """Each stage's daily joints asked for against what its weed fields grow (no bone meal), and the spare."""
     rows = []
-    for stage, (fam, citizens) in COLONY.items():
-        lo, hi = numbers['yield'][fam]
-        fields = max(1, round(citizens * FIELDS_PER_CITIZEN))
-        plot = GRADE_PLOT[GRADE[fam]]
-        per_day = fields * FIELD * (lo + hi) / 2 * 20 / crop_minutes(fam, plot)
-        rows.append((stage, fam, citizens, fields, citizens, per_day, per_day / citizens - 1))
+    global BONE_MEAL
+    meal, BONE_MEAL = BONE_MEAL, 0
+    try:
+        for stage, (fam, citizens) in COLONY.items():
+            lo, hi = numbers['yield'][fam]
+            fields = max(1, math.ceil(citizens / CITIZENS_PER_FIELD))
+            per_day = fields * FIELD * (lo + hi) / 2 * 20 / crop_minutes(fam, 0)
+            rows.append((stage, fam, citizens, fields, citizens, per_day, per_day / citizens - 1))
+    finally:
+        BONE_MEAL = meal
     return rows
 
 

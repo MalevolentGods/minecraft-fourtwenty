@@ -48,13 +48,13 @@ public final class ProgressionGameTests {
         h.succeed();
     }
 
-    /** About one Landrace bud in eight gives a seed when trimmed (12%, between 9% and 15% over a thousand). */
+    /** About one Landrace bud in seven gives a seed when trimmed (14%, between 11% and 17% over a thousand). */
     @GameTest(template = "empty")
     public static void landraceTrimsToASeedAboutOneInEight(GameTestHelper h) {
         var rng = h.getLevel().getRandom();
         int seeds = 0;
         for (int i = 0; i < 1000; i++) if (TrimRules.seeded(ProcessingConfig.chances(), Strain.LANDRACE, rng.nextDouble())) seeds++;
-        h.assertTrue(seeds >= 90 && seeds <= 150, "Landrace trimming seeds per thousand: " + seeds);
+        h.assertTrue(seeds >= 110 && seeds <= 170, "Landrace trimming seeds per thousand: " + seeds);
         h.succeed();
     }
 

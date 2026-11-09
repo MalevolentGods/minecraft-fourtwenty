@@ -6,10 +6,11 @@ Saved config files keep their old values, so these tables are the release notes'
 
 | Key | Old default | New default |
 |---|---|---|
-| `seedChanceLandrace` | 0.25 | 0.12 |
+| `seedChanceLandrace` | 0.25 | 0.14 |
 | `seedChanceNeutrals` | 0.25 | 0.15 |
 | `seedChanceCool` | 0.05 | 0.10 |
 | `seedChanceBiome` | 0.20 | 0.10 |
+| `seedChanceCross` | 0.04 | 0.08 |
 
 ## New keys
 
@@ -33,7 +34,7 @@ New keys are written automatically with their defaults; nothing to edit.
 
 ## Unchanged
 
-- Seed chances: `seedChanceWarm`, `seedChanceGreen`, `seedChanceCross`, `seedChanceDoubleCross`, `seedChanceUltra`, `seedChanceGolden`.
+- Seed chances: `seedChanceWarm`, `seedChanceGreen`, `seedChanceDoubleCross`, `seedChanceUltra`, `seedChanceGolden`.
 - Other settings: `cropSpeed`, `climateChance`, `pollenChance`, and every trim and cure setting.
 
 ## Servers to edit at release

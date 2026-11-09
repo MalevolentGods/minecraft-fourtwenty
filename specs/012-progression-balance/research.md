@@ -83,3 +83,27 @@ Following the spec's table:
 ### D8. What stays
 
 Growth speeds, plot requirements, breeding and recipes stay as they are (spec Assumptions). If the model shows a milestone missing its target by more than 25%, the first knobs to turn are, in order: seed chance, plot seed chance, then yield.
+
+### D9. Tuned on the model (2026-11-09)
+
+**What the model added:**
+- **Bone meal:** works on grade 1 and under, assumed at 30 an hour, which is a few skeletons' bones or a composter.
+- **Seeds compounding:** every seed is replanted the next crop.
+
+**The plan's numbers:** Golden God at 64 hours, with the first bred strain (6.7 h), the first Grow Op (12.9 h) and crosses (36.3 h) late.
+
+**Tuning:** following D8's order (seed chance first), Landrace 12% → 14% and Cross 4% → 8%. Every milestone now lands within 25%:
+
+| Joint | Bred | Grow Op | Biome | Cross | Double | Ultra | Golden God |
+|---|---|---|---|---|---|---|---|
+| 1.1 | 5.9 | 12.1 | 16.4 | 30.5 | 41.6 | 50.4 | 58.2 |
+
+**Caveat:** the gates (Terpinator, power, Pheno Chamber, plots) are guesses; play checks them.
+
+**The colony (US4): no rule changed, flagged for the user.**
+- **Fields:** a Farmer's field can only grow strains that need no Grow Op (grade 1 and under).
+- **Supply:** one 116-plot weed field (Field 1) grows 55 to 73 joints a day.
+- **Demand:** citizens ask for one joint a day each, so 6 to 40 citizens leave 80% to 800% spare.
+- **Why it isn't a seed or yield problem:** a field is the smallest unit, and the colony side is set by demand.
+- **Where the surplus goes:** the Dispensary sells to players and runs bong sessions.
+- **The levers, for the user to choose:** citizen demand (`demandIntervalTicks`) or how much a smoke uses.

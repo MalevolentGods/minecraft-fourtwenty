@@ -13,7 +13,7 @@ public final class TrimRules {
     /** A seed's chance per trimmed bud, by family. */
     public record Chances(double landrace, double neutrals, double warm, double green, double cool,
                           double biome, double cross, double doubleCross, double ultra, double golden) {
-        public static final Chances DEFAULT = new Chances(0.12, 0.15, 0.15, 0.10, 0.10, 0.10, 0.04, 0.02, 0.01, 0.005);
+        public static final Chances DEFAULT = new Chances(0.14, 0.15, 0.15, 0.10, 0.10, 0.10, 0.08, 0.02, 0.01, 0.005);
 
         public Chances(double landrace, double neutrals, double warm, double green, double cool) {
             this(landrace, neutrals, warm, green, cool, DEFAULT.biome, DEFAULT.cross, DEFAULT.doubleCross, DEFAULT.ultra, DEFAULT.golden);

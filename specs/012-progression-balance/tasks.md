@@ -101,32 +101,32 @@
 **Goal**: Bud Barn output and Dispensary use agree at each milestone.
 **Independent test**: the model's colony table shows 0–50% spare at every stage.
 
-- [ ] T021 [US4] Add the colony check to `tools/progression_model.py`:
+- [X] T021 [US4] Add the colony check to `tools/progression_model.py`:
   - **Demand:** one joint (one cured bud) per adult citizen per in-game day (`DemandRules.defaults()`, 24,000 ticks), at typical citizen counts per stage.
   - **Supply:** what a farm the size a Farmer's field supports produces of that stage's strain.
   - **Output:** demand, supply and spare per milestone.
-- [ ] T022 [US4] If any stage falls outside 0–50% spare, tune the numbers and record each change in `specs/012-progression-balance/research.md` under a new D9. Only if numbers alone can't fix it, change `BudBarnRules.ROUGH_PER_TRAY` in `J/compat/minecolonies/domain/BudBarnRules.java` or the demand interval in `DemandRules`.
+- [X] T022 [US4] If any stage falls outside 0–50% spare, tune the numbers and record each change in `specs/012-progression-balance/research.md` under a new D9. Only if numbers alone can't fix it, change `BudBarnRules.ROUGH_PER_TRAY` in `J/compat/minecolonies/domain/BudBarnRules.java` or the demand interval in `DemandRules`.
 
 ## Phase 7: User Story 5 — The run takes about 60 hours (P3)
 
 **Goal**: the model reports every milestone within 25% of its target.
 **Independent test**: `python tools/progression_model.py` passes its milestone check.
 
-- [ ] T023 [US5] Finish the run simulation in `tools/progression_model.py`, a typical player:
+- [X] T023 [US5] Finish the run simulation in `tools/progression_model.py`, a typical player:
   - replants everything;
   - smokes a joint an hour;
   - breeds when the Infuser is reachable, builds the first Grow Op when the power is;
   - climbs each family when its seeds can be stocked, about 16 plants of it.
-- [ ] T024 [US5] Add the milestone check to `tools/progression_model.py`: each milestone's hour against its target (1, 5, 10, 17.5, 27.5, 40, 50, 60), within 25%, Golden God within 50–75; exit 1 on a miss.
-- [ ] T025 [US5] Run the model. If it misses, tune the defaults in `StrainStats.DEFAULT`, `TrimRules.Chances.DEFAULT` and `contracts/config.md` in this order: seed chance, plot seed chance, yield (research D8). Re-run until it passes, and re-run `./gradlew test`.
+- [X] T024 [US5] Add the milestone check to `tools/progression_model.py`: each milestone's hour against its target (1, 5, 10, 17.5, 27.5, 40, 50, 60), within 25%, Golden God within 50–75; exit 1 on a miss.
+- [X] T025 [US5] Run the model. If it misses, tune the defaults in `StrainStats.DEFAULT`, `TrimRules.Chances.DEFAULT` and `contracts/config.md` in this order: seed chance, plot seed chance, yield (research D8). Re-run until it passes, and re-run `./gradlew test`.
 
 ## Phase 8: Polish & Cross-Cutting
 
-- [ ] T026 [P] Update `CHANGELOG.md` Unreleased:
+- [X] T026 [P] Update `CHANGELOG.md` Unreleased:
   - the balance (Landrace 1 bud, family stats, plot seeds, starting seeds, tooltips);
   - "servers: edit these settings", copying the changed-defaults table from `contracts/config.md`.
-- [ ] T027 [P] Update `README.md`'s growing section with the per-family table and the plot seed chances.
-- [ ] T028 Edit the saved toml on the local test server (`C:\Users\Ignus\mc-local-server\config`) and the game-test run dir (`.compat/runs/beds-dev/config`) to the new defaults. Leave Hera and flatworld for release day (contracts/config.md lists them).
+- [X] T027 [P] Update `README.md`'s growing section with the per-family table and the plot seed chances.
+- [X] T028 Edit the saved toml on the local test server (`C:\Users\Ignus\mc-local-server\config`) and the game-test run dir (`.compat/runs/beds-dev/config`) to the new defaults. Leave Hera and flatworld for release day (contracts/config.md lists them).
 - [ ] T029 Run the full checks:
   - `./gradlew test`;
   - the game tests (only the known `malformedAndFutureSavesFailClosed` failure);

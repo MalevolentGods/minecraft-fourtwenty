@@ -12,7 +12,7 @@ class TrimRulesTest {
     @Test
     void familiesGetRarer() {
         // specs/012-progression-balance: Landrace scarce, the bred families a little better, then rarer up the ladder
-        assertEquals(12, TrimRules.percent(C, Strain.LANDRACE));
+        assertEquals(14, TrimRules.percent(C, Strain.LANDRACE));
         assertEquals(15, TrimRules.percent(C, Strain.COUCHLOCK_HUM));
         assertEquals(15, TrimRules.percent(C, Strain.CHERRY_PIE));
         assertEquals(10, TrimRules.percent(C, Strain.STICKY_ICKY));
@@ -36,8 +36,8 @@ class TrimRulesTest {
 
     @Test
     void rollIsBelowTheChance() {
-        assertTrue(TrimRules.seeded(C, Strain.LANDRACE, 0.11));
-        assertFalse(TrimRules.seeded(C, Strain.LANDRACE, 0.12));
+        assertTrue(TrimRules.seeded(C, Strain.LANDRACE, 0.13));
+        assertFalse(TrimRules.seeded(C, Strain.LANDRACE, 0.14));
         assertFalse(TrimRules.seeded(C, Strain.BLUE_DREAM, 0.10));
     }
 }
