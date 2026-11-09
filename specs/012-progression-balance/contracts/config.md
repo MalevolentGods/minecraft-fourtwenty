@@ -29,7 +29,7 @@ New keys are written automatically with their defaults; nothing to edit.
 | `yieldGolden` | "4-5" | |
 | `potencyLandrace` … `potencyGolden` | 1, 2, 2, 2, 3, 3, 3, 4, 4, 5 | 1 to 5 |
 | `plotSeedChance1` … `plotSeedChance5` | 0.10, 0.20, 0.30, 0.40, 0.50 | 0 to 1 |
-| `starterSeeds` | 4 | 0 to 64 (0 turns it off; MineColonies only) |
+| `starterSeeds` (in `fourtwenty-dispensary-server.toml`) | 4 | 0 to 64 (0 turns it off; MineColonies only) |
 
 ## Unchanged
 

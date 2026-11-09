@@ -46,6 +46,9 @@ public final class DispensaryConfig {
     private static final ModConfigSpec.IntValue BUD_BARN_ROUGH = BUILDER
             .comment("Bud Barn: rough buds the hut keeps, and asks the colony for, per Trim Tray.")
             .defineInRange("budBarnRoughPerTray", com.malevolentgods.fourtwenty.compat.minecolonies.domain.BudBarnRules.ROUGH_PER_TRAY, 1, 64);
+    private static final ModConfigSpec.IntValue STARTER_SEEDS = BUILDER
+            .comment("Landrace seeds each player gets once, on their first login with MineColonies (0 for none).")
+            .defineInRange("starterSeeds", 4, 0, 64);
     public static final ModConfigSpec SPEC = BUILDER.build();
     private static java.util.Map<com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem, ModConfigSpec.IntValue> prices() {
         var prices = new java.util.EnumMap<com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem, ModConfigSpec.IntValue>(
@@ -80,6 +83,7 @@ public final class DispensaryConfig {
         return SPEC.isLoaded() ? BUD_BARN_TRIM_TICKS[i].get() : com.malevolentgods.fourtwenty.compat.minecolonies.domain.BudBarnRules.TRIM_TICKS[i];
     }
     public static int budBarnBuffer() { return SPEC.isLoaded() ? BUD_BARN_BUFFER.get() : com.malevolentgods.fourtwenty.compat.minecolonies.domain.BudBarnRules.BUFFER; }
+    public static int starterSeeds() { return SPEC.isLoaded() ? STARTER_SEEDS.get() : 4; }
     public static int budBarnRoughPerTray() { return SPEC.isLoaded() ? BUD_BARN_ROUGH.get() : com.malevolentgods.fourtwenty.compat.minecolonies.domain.BudBarnRules.ROUGH_PER_TRAY; }
     private static ModConfigSpec.IntValue duration(String name) {
         return BUILDER.comment("Elapsed simulation ticks. Changes affect future deadlines; existing deadlines are preserved.")

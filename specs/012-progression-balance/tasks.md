@@ -20,22 +20,22 @@
 
 ## Phase 2: Foundational (blocks every story)
 
-- [ ] T003 Create `J/domain/StrainStats.java`, pure, as in data-model.md:
+- [X] T003 Create `J/domain/StrainStats.java`, pure, as in data-model.md:
   - a record of yield min and max, potency per `Strain.Family`, and plot seed chances for tiers 1 to 5, with `DEFAULT`;
   - `rollYield(family, traits, roll)`, `potencyLevels(p)`, `potencyLength(p)`, `extraSeed(tier, roll)`;
   - clamping: max ≥ min, potency 1 to 5, chances 0 to 1.
-- [ ] T004 [P] Create `T/domain/StrainStatsTest.java`:
+- [X] T004 [P] Create `T/domain/StrainStatsTest.java`:
   - every default from the data-model.md table;
   - `rollYield` at roll 0 and just under 1 for each family;
   - the yield trait adding and subtracting, never below 1;
   - potency steps;
   - plot chances by tier, and no plot giving false;
   - clamping of a bad config.
-- [ ] T005 Change `TrimRules.Chances.DEFAULT` in `J/domain/TrimRules.java` to Landrace 0.12, Neutrals 0.15, Cool 0.10 and Biome 0.10. Update `T/domain/TrimRulesTest.java` if it pins the old values.
-- [ ] T006 Add the new config keys to `J/processing/ProcessingConfig.java`, per contracts/config.md:
+- [X] T005 Change `TrimRules.Chances.DEFAULT` in `J/domain/TrimRules.java` to Landrace 0.12, Neutrals 0.15, Cool 0.10 and Biome 0.10. Update `T/domain/TrimRulesTest.java` if it pins the old values.
+- [X] T006 Add the new config keys to `J/processing/ProcessingConfig.java`, per contracts/config.md:
   - `yield<Family>` (as "min-max"), `potency<Family>`, `plotSeedChance1`–`5`;
   - a `ProcessingConfig.strainStats()` accessor that builds `StrainStats` with clamping.
-- [ ] T007 Add `starterSeeds` (int, 0 to 64, default 4) to `J/compat/minecolonies/DispensaryConfig.java`, with its accessor.
+- [X] T007 Add `starterSeeds` (int, 0 to 64, default 4) to `J/compat/minecolonies/DispensaryConfig.java`, with its accessor.
 
 **Checkpoint**: `./gradlew test` passes; nothing in the world has changed yet.
 
