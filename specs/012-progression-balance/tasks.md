@@ -47,19 +47,19 @@
 - a mature Landrace crop drops 1 rough bud and 1 seed every time;
 - about 12% of trimmed Landrace buds give a seed.
 
-- [ ] T008 [US1] In `src/main/resources/data/fourtwenty/loot_table/blocks/weed_crop.json`, set the rough bud pool's count to a constant 1 (the family roll replaces the uniform 1 to 3).
-- [ ] T009 [US1] In `J/registry/ModStrainData.java`, change `CopyStrain.run` so a rough bud's count is `ProcessingConfig.strainStats().rollYield(strain.family(), traits, roll)`:
+- [X] T008 [US1] In `src/main/resources/data/fourtwenty/loot_table/blocks/weed_crop.json`, set the rough bud pool's count to a constant 1 (the family roll replaces the uniform 1 to 3).
+- [X] T009 [US1] In `J/registry/ModStrainData.java`, change `CopyStrain.run` so a rough bud's count is `ProcessingConfig.strainStats().rollYield(strain.family(), traits, roll)`:
   - the roll comes from `context.getRandom()`;
   - seeds and other drops are unchanged.
-- [ ] T010 [US1] Create `J/compat/minecolonies/StarterSeeds.java`:
+- [X] T010 [US1] Create `J/compat/minecolonies/StarterSeeds.java`:
   - on `PlayerEvent.PlayerLoggedInEvent`, if persistent data `fourtwenty.starterSeeds` is unset and `starterSeeds` > 0, give that many Landrace `weed_seeds` (strain set with `ModDataComponents.withStrain`);
   - drop them at the player if the inventory is full;
   - then set the flag.
-- [ ] T011 [US1] Register `StarterSeeds` from `J/compat/minecolonies/ColonyIntegration.java`'s `register` (MineColonies only).
-- [ ] T012 [P] [US1] Create `GT/ProgressionGameTests.java`:
+- [X] T011 [US1] Register `StarterSeeds` from `J/compat/minecolonies/ColonyIntegration.java`'s `register` (MineColonies only).
+- [X] T012 [P] [US1] Create `GT/ProgressionGameTests.java`:
   - a mature Landrace crop broken 50 times always drops exactly 1 rough bud and 1 Landrace seed;
   - 1,000 Landrace rough buds trimmed through `TrimRules` give between 9% and 15% seeds.
-- [ ] T013 [P] [US1] Add a game test in `GT/ProgressionGameTests.java` for the starter grant. A mock player's first login gives 4 Landrace seeds and the second gives none; this runs only when MineColonies is present (follow the existing colony test gating).
+- [X] T013 [P] [US1] Add a game test in `GT/ProgressionGameTests.java` for the starter grant. A mock player's first login gives 4 Landrace seeds and the second gives none; this runs only when MineColonies is present (follow the existing colony test gating).
 
 **Checkpoint**: US1 works on its own; check in game on the local test server (quickstart steps 1–2).
 

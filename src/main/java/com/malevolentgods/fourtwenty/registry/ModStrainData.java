@@ -48,7 +48,11 @@ public final class ModStrainData {
             BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
             if (state == null || !state.hasProperty(WeedCropBlock.STRAIN)) return stack;
             Traits traits = context.getParamOrNull(LootContextParams.BLOCK_ENTITY) instanceof WeedCropBlockEntity crop ? crop.traits() : Traits.DEFAULT;
-            if (stack.is(ModItems.ROUGH_BUD.get())) stack.setCount(Math.max(1, stack.getCount() + traits.yieldBonus()));
+            // a harvest's rough buds: the strain family's range (specs/012-progression-balance), plus the yield trait, at least 1
+            if (stack.is(ModItems.ROUGH_BUD.get())) {
+                stack.setCount(com.malevolentgods.fourtwenty.processing.ProcessingConfig.strainStats()
+                        .rollYield(state.getValue(WeedCropBlock.STRAIN).family(), traits, context.getRandom().nextDouble()));
+            }
             return ModDataComponents.withTraits(ModDataComponents.withStrain(stack, state.getValue(WeedCropBlock.STRAIN)), traits);
         }
 
