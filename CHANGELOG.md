@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.23.0]
 
 ### Changed
 - **The weed ladder is a real climb** (about 60 hours from four Landrace seeds to Golden God):
