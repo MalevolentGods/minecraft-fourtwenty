@@ -36,9 +36,28 @@ public final class GrowOps {
         }
     }
 
+    /** The plot tier under {@code pos}, 1 to 5, or 0 if it isn't on a Grow Op. */
+    public static int tier(BlockGetter level, BlockPos pos) {
+        return level.getBlockState(pos.below()).getBlock() instanceof GrowOpBlock plot ? plot.plotLevel() : 0;
+    }
+
+    /**
+     * A Grow Op's extra seed (specs/012-progression-balance): a mature weed crop on a plot of tier t has that tier's chance of one more
+     * seed of its strain and traits. Null if none.
+     */
+    public static @javax.annotation.Nullable ItemStack extraSeed(BlockState state, ServerLevel level, BlockPos pos) {
+        if (!(state.getBlock() instanceof com.malevolentgods.fourtwenty.block.WeedCropBlock weed) || !weed.isMaxAge(state)) return null;
+        if (!com.malevolentgods.fourtwenty.processing.ProcessingConfig.strainStats().extraSeed(tier(level, pos), level.getRandom().nextDouble())) return null;
+        return state.getCloneItemStack(new net.minecraft.world.phys.BlockHitResult(pos.getCenter(), net.minecraft.core.Direction.UP, pos, false), level, pos, null);
+    }
+
     private static void onDrops(BlockDropsEvent event) {
         BlockState state = event.getState();
         BlockPos pos = event.getPos();
+        ItemStack extra = extraSeed(state, event.getLevel(), pos);
+        if (extra != null) {
+            event.getDrops().add(new ItemEntity(event.getLevel(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, extra));
+        }
         if (!(state.getBlock() instanceof CropBlock crop) || !crop.isMaxAge(state) || !bigHarvest(event.getLevel(), pos)) return;
         var stacks = event.getDrops().stream().map(ItemEntity::getItem).toList();
         raise(state, event.getLevel(), pos, stacks);

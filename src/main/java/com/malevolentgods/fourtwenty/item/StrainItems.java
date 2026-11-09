@@ -42,6 +42,16 @@ public final class StrainItems {
         }
         var climate = stack.get(ModDataComponents.CLIMATE.get());
         if (climate != null) lines.add(Component.translatable("tooltip.fourtwenty.climate", Component.translatable(climate.translationKey())).withStyle(net.minecraft.ChatFormatting.GREEN));
+        // its family's stats (specs/012-progression-balance): rough buds a harvest, potency, how fast it grows
+        var stats = com.malevolentgods.fourtwenty.processing.ProcessingConfig.strainStats();
+        String growth = switch (strain.grade()) {
+            case 0, 1 -> "normal";
+            case 2 -> "slower";
+            case 3 -> "slow";
+            default -> "slowest";
+        };
+        lines.add(Component.translatable("tooltip.fourtwenty.strain_stats", stats.yieldOf(strain.family()).toString().replace("-", "–"),
+                stats.potency(strain.family()), Component.translatable("tooltip.fourtwenty.growth." + growth)).withStyle(net.minecraft.ChatFormatting.GRAY));
         Traits t = ModDataComponents.traits(stack);
         lines.add(Component.translatable("tooltip.fourtwenty.traits", t.potency(), t.yield(), t.length()).withStyle(net.minecraft.ChatFormatting.GRAY));
     }

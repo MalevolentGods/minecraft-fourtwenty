@@ -2,6 +2,37 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+- **The weed ladder is a real climb** (about 60 hours from four Landrace seeds to Golden God):
+  - **Buds per harvest:** each strain family has its own, from Landrace's 1 up to Golden God's 4–5.
+  - **Potency:** each family makes its high a little stronger and longer, up to two levels and ×1.4 at Golden God.
+  - **Trimming seed chances:** rarer up the ladder: Landrace 14%, Neutrals and Warm 15%, Green, Cool and Biome 10%, Cross 8%.
+- **Grow Op plots give an extra seed** at harvest: 10% on a Closet Grow, rising to 50% on a Cosmic Kush Pod.
+- **New players get four Landrace seeds** with MineColonies, once each.
+- **Tooltips** show a strain's buds, potency and growth.
+
+### Fixed
+- **Animal pens hold their animals** (Sensi Heights pack v97): hay, composters, cauldrons and azaleas in the Cowhand, Swineherd, Shepherd, Chicken Herder, Rabbit Hutch and Beekeeper pens sat against the fence, so animals climbed onto them and out. They now stand a block in, and hay is never stacked.
+
+### Servers: edit these settings
+Saved configs keep their old values. In `fourtwenty-processing-server.toml`, set:
+
+| Setting | Old | New |
+|---|---|---|
+| `seedChanceLandrace` | 0.25 | 0.14 |
+| `seedChanceNeutrals` | 0.25 | 0.15 |
+| `seedChanceCool` | 0.05 | 0.10 |
+| `seedChanceBiome` | 0.20 | 0.10 |
+| `seedChanceCross` | 0.04 | 0.08 |
+
+New settings appear by themselves with their defaults:
+- **Yields:** `yield<Family>`.
+- **Potency:** `potency<Family>`.
+- **Plot seeds:** `plotSeedChance1`–`5`.
+- **Starting seeds:** `starterSeeds`, in `fourtwenty-dispensary-server.toml`.
+
 ## [0.22.1]
 
 ### Added

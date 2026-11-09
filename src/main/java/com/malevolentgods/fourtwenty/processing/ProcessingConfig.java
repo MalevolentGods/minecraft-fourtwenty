@@ -65,6 +65,15 @@ public final class ProcessingConfig {
     private static final com.malevolentgods.fourtwenty.domain.CircuitRules.Numbers C = com.malevolentgods.fourtwenty.domain.CircuitRules.Numbers.DEFAULT;
     private static final ModConfigSpec.DoubleValue[] CIRCUIT = circuitValues();
     private static final ModConfigSpec.IntValue BURN_TICKS = BUILDER.comment("Circuit: ticks a Wick stays over a rating before it burns out.").defineInRange("circuit.burnTicks", C.burnTicks(), 1, 1200);
+    // specs/012-progression-balance: each family's rough buds per harvest ("min-max") and potency, and the Grow Op plots' extra seeds
+    private static final com.malevolentgods.fourtwenty.domain.StrainStats STATS = com.malevolentgods.fourtwenty.domain.StrainStats.DEFAULT;
+    private static final java.util.Map<Strain.Family, ModConfigSpec.ConfigValue<String>> YIELDS = familyValues(f -> BUILDER
+            .comment("Rough buds a harvest of a " + f.name() + " strain gives before seed traits, as min-max (rolled each harvest).")
+            .define("yield" + key(f), STATS.yieldOf(f).toString()));
+    private static final java.util.Map<Strain.Family, ModConfigSpec.IntValue> POTENCY = familyValues(f -> BUILDER
+            .comment("Potency of " + f.name() + " strains, 1 to 5: each step makes a high a little stronger and longer (1 is plain).")
+            .defineInRange("potency" + key(f), STATS.potency(f), 1, 5));
+    private static final ModConfigSpec.DoubleValue[] PLOT_SEED = plotSeeds();
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     private static volatile TrimRules.Chances chancesOverride;
@@ -142,6 +151,47 @@ public final class ProcessingConfig {
         var override = crossTicksOverride;
         if (override != null) return override;
         return (int) Math.ceil(com.malevolentgods.fourtwenty.domain.Crosses.ticks(grade) * (SPEC.isLoaded() ? CROSS_TIME.get() : 1));
+    }
+
+    private static String key(Strain.Family f) {
+        StringBuilder out = new StringBuilder();
+        for (String part : f.name().toLowerCase(java.util.Locale.ROOT).split("_")) out.append(Character.toUpperCase(part.charAt(0))).append(part.substring(1));
+        return out.toString();
+    }
+
+    private static <V> java.util.Map<Strain.Family, V> familyValues(java.util.function.Function<Strain.Family, V> make) {
+        java.util.Map<Strain.Family, V> out = new java.util.EnumMap<>(Strain.Family.class);
+        for (Strain.Family f : Strain.Family.values()) out.put(f, make.apply(f));
+        return out;
+    }
+
+    private static ModConfigSpec.DoubleValue[] plotSeeds() {
+        ModConfigSpec.DoubleValue[] out = new ModConfigSpec.DoubleValue[com.malevolentgods.fourtwenty.domain.StrainStats.PLOT_TIERS];
+        for (int t = 1; t <= out.length; t++) {
+            out[t - 1] = BUILDER.comment("Grow Op tier " + t + ": chance of an extra seed at each harvest on it.")
+                    .defineInRange("plotSeedChance" + t, STATS.plotSeedChance(t), 0, 1);
+        }
+        return out;
+    }
+
+    private static volatile com.malevolentgods.fourtwenty.domain.StrainStats statsOverride;
+
+    public static void overrideStrainStats(com.malevolentgods.fourtwenty.domain.StrainStats stats) { statsOverride = stats; }
+
+    /** Each family's yield and potency and the plots' extra seeds, from the config (the defaults before it has loaded). */
+    public static com.malevolentgods.fourtwenty.domain.StrainStats strainStats() {
+        var override = statsOverride;
+        if (override != null) return override;
+        if (!SPEC.isLoaded()) return STATS;
+        java.util.Map<Strain.Family, com.malevolentgods.fourtwenty.domain.StrainStats.Yield> yields = new java.util.EnumMap<>(Strain.Family.class);
+        java.util.Map<Strain.Family, Integer> potency = new java.util.EnumMap<>(Strain.Family.class);
+        for (Strain.Family f : Strain.Family.values()) {
+            yields.put(f, com.malevolentgods.fourtwenty.domain.StrainStats.Yield.parse(YIELDS.get(f).get(), STATS.yieldOf(f)));
+            potency.put(f, POTENCY.get(f).get());
+        }
+        double[] plots = new double[PLOT_SEED.length];
+        for (int i = 0; i < plots.length; i++) plots[i] = PLOT_SEED[i].get();
+        return new com.malevolentgods.fourtwenty.domain.StrainStats(yields, potency, plots);
     }
 
     public static TrimRules.Chances chances() {

@@ -109,7 +109,44 @@ The Rosin Rig refines Cured Buds into extracts that burn longer in a Hookah and 
 
 Find wild weed in Plains, Savanna, Grove, and Meadow biomes, collect its seeds, and plant them on farmland. Cannabis grows through eight stages and responds to normal crop conditions and bone meal.
 
-Breaking an immature crop returns one seed. A mature crop drops one seed and 1–3 Rough Buds. Right-clicking a mature crop resets it to age zero and retains one seed for replanting; the remaining harvest drops normally. Right-clicking an immature crop does nothing.
+Breaking an immature crop returns one seed. A mature crop drops its seed back and its strain family's Rough Buds:
+
+| Family | Buds a harvest | Potency | Trimming seed chance |
+|---|---|---|---|
+| Landrace | 1 | 1 | 14% |
+| Neutrals, Warm | 1–2 | 2 | 15% |
+| Green | 2 | 2 | 10% |
+| Cool, Biome | 2 | 3 | 10% |
+| Cross | 2–3 | 3 | 8% |
+| Double Cross | 3 | 4 | 2% |
+| Ultra | 3–4 | 4 | 1% |
+| Golden God | 4–5 | 5 | 0.5% |
+
+**Seed traits** (yield, potency, length) add on top of the family's numbers.
+
+**Potency** makes a high a little stronger and longer:
+
+| Potency | Extra effect levels | Lasts |
+|---|---|---|
+| 1 | none | as normal |
+| 2 | none | ×1.1 |
+| 3 | +1 | ×1.2 |
+| 4 | +1 | ×1.3 |
+| 5 | +2 | ×1.4 |
+
+**Grow Op plots** add an extra-seed chance at every harvest:
+
+| Plot | Extra-seed chance |
+|---|---|
+| Closet Grow | 10% |
+| Grow Tent | 20% |
+| Hydro Bed | 30% |
+| Aero Pod | 40% |
+| Cosmic Kush Pod | 50% |
+
+**Starting seeds:** with MineColonies, each new player gets four Landrace seeds once. **Tooltips:** a seed's or bud's tooltip shows its family's buds, potency and growth.
+
+The whole ladder, from four Landrace seeds to Golden God, is paced for about 60 hours of play. Right-clicking a mature crop resets it to age zero and retains one seed for replanting; the remaining harvest drops normally. Right-clicking an immature crop does nothing.
 
 MineColonies farmers recognize the crop and its seeds through their native farming support. Actually Harvest uses its configured harvesting, replanting, tool-area, and XP behavior. With both installed, FourTwenty checks colony permissions for every cannabis crop in an area harvest. Datapacks can override the loot and additive tags.
 
