@@ -4,6 +4,10 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.24.1
+
+- **Colonists walk on your roads:** Four Twenty's roads, slabs and stairs count as paths for MineColonies, so colonists use them instead of cutting across.
+
 ## What's new in 0.24.0
 
 - **Gear runs free while you're high**, like the machines: the Kush Suit and Blazer use no charge while you're high, and run on their stored BI when you're sober.

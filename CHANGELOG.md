@@ -2,6 +2,11 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [0.24.1]
+
+### Fixed
+- **Colonists walk on Four Twenty roads:** Cobble Path, Paved Road and Yellow Brick Road, with their slabs and stairs, now count as paths for MineColonies, so colonists prefer them the way they prefer dirt paths and bricks, instead of cutting across them.
+
 ## [0.24.0]
 
 ### Added
