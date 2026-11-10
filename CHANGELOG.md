@@ -2,6 +2,11 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [0.24.2]
+
+### Fixed
+- **Builders leave your roads alone:** where a blueprint has a solid-fill placeholder, a Builder kept full blocks but dug up Four Twenty roads, slabs and stairs and put dirt down. Roads now count as good ground, like farmland, and stay. Roads already swapped for dirt need re-laying.
+
 ## [0.24.1]
 
 ### Fixed
