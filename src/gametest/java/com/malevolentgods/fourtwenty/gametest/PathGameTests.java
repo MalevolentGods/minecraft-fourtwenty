@@ -47,6 +47,21 @@ public final class PathGameTests {
         return speed;
     }
 
+    /** Builders keep a road under a solid-fill placeholder instead of digging it up for dirt: every road, slab and stair counts as good ground. */
+    @GameTest(template = "empty")
+    public static void everyRoadIsGoodGroundForPlaceholders(GameTestHelper h) {
+        var goodGround = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("structurize", "good_solid_for_placeholder"));
+        java.util.List<String> missing = new java.util.ArrayList<>();
+        for (var list : java.util.List.of(ModTerpenes.PATHS, ModTerpenes.PATH_SLABS, ModTerpenes.PATH_STAIRS)) {
+            for (var road : list) {
+                if (!road.get().defaultBlockState().is(goodGround)) missing.add(road.getId().toString());
+            }
+        }
+        h.assertTrue(missing.isEmpty(), "dug up under placeholders: " + missing);
+        h.succeed();
+    }
+
     /** Colonists prefer MineColonies' path blocks (a sixth of the walking cost): every road, slab and stair is one. */
     @GameTest(template = "empty")
     public static void everyRoadIsAColonyPath(GameTestHelper h) {
