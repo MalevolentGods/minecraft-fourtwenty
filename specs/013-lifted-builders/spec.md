@@ -26,6 +26,15 @@ This has to be confirmed in game before it is patched.
 
 This feature first fixes walking Builders. It then adds the fun part: a Builder who smokes a joint becomes **Lifted**, flies, and builds the **Higher Ground** way. That gives colonies a use for their spare weed.
 
+## Clarifications
+
+### Session 2026-11-09
+
+- Q: Does Lifted also make her place blocks faster? → A: Yes, modestly: about 25% faster for Landrace, rising with potency up to about 50% for Golden God (in the config).
+- Q: When joints are short, who gets them first: citizens' daily joints or Lifted builders? → A: Citizens first; a Builder's joint request is only filled from stock above what citizens are owed today.
+- Q: What happens to the contents of a storage block that an upgrade removes? → A: She takes them and delivers them to the colony's Warehouse (her own hut if there is none); whatever doesn't fit drops at her hut.
+- Q: Does "fly when Lifted" start on or off? → A: On by default, for new huts and for existing colonies after the update (safe because builders only get spare joints).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Builders keep their pace (Priority: P1)
@@ -88,6 +97,7 @@ A colony with weed to spare lets its Builders smoke on the job.
 ### User Story 4 - Higher Ground: building that makes sense (Priority: P2)
 
 A Lifted Builder builds the Higher Ground way:
+- **Speed:** she places blocks about 25% faster on Landrace, up to about 50% faster on Golden God.
 - **Reach:** her reach is longer, about 8-10 blocks instead of 4-5.
 - **Hover points:** she picks a spot above or beside the work and places everything she can reach from there before she moves on.
 - **Upgrades:** she first removes what is changing, from the top down, and then builds the new level from the bottom up. She is never working inside a half-old building.
@@ -100,8 +110,9 @@ A Lifted Builder builds the Higher Ground way:
 
 1. **Given** a Lifted Builder, **When** she builds, **Then** she places every block within her Higher Ground reach of her hover point before flying to the next one.
 2. **Given** a Lifted Builder upgrading a building, **When** she starts, **Then** she first removes the blocks that the new level changes or no longer has, from the top down, and only then builds the new level from the bottom up.
-3. **Given** a block that holds items (a rack, a chest) that the upgrade keeps, **When** she clears for the upgrade, **Then** it is left in place with its contents. A storage block that the upgrade does remove keeps its contents safe, as MineColonies does when it replaces such a block.
-4. **Given** the hut block, **When** she clears, **Then** it is never removed.
+3. **Given** a block that holds items (a rack, a chest) that the upgrade keeps, **When** she clears for the upgrade, **Then** it is left in place with its contents.
+4. **Given** a storage block with items that the upgrade removes, **When** she clears it, **Then** she takes the items and delivers them to the colony's Warehouse (her own hut if there is none), and anything that doesn't fit drops at her hut. Nothing spills where the block was.
+5. **Given** the hut block, **When** she clears, **Then** it is never removed.
 
 ---
 
@@ -133,12 +144,13 @@ Keeping a Builder Lifted takes a fair amount of weed, without being crazy:
   - Lifted is separate from the normal high.
   - Joints a Builder smokes as an ordinary citizen (Dispensary demand) don't make her Lifted.
   - Smoking for Lifted also counts as having smoked for the colony's happiness and demand, the same as any citizen joint, so she isn't double-billed.
+- **Short of joints:** when the stock only covers what citizens are owed today, the Builder's request waits. She builds walking until spare joints turn up, and the colony's happiness never suffers for her flight.
 - **Getting there:** flying never takes her through solid blocks. If no flight path exists, she falls back to walking, and the watchdog covers her.
 - **Hover points:** a hover point inside the building's footprint must not end up sealed in as the building rises. She moves to her next point before the blocks around her close up.
 - **Leaving the site:** flying is only for her own build site and the trip there. She never flies off to restaurants, homes or elsewhere.
 - **Other workers:** only Builders can become Lifted, and no other worker is affected.
 - **Without MineColonies:** nothing changes.
-- **Old saves:** a colony from before this feature loads unchanged. "Fly when Lifted" starts off, so nobody's weed is spent without the player choosing it.
+- **Old saves:** a colony from before this feature loads unchanged, except that its Builders' huts get "fly when Lifted" switched on. They only ever take spare joints (citizens first), so nobody's daily joint is spent on flight.
 
 ## Requirements *(mandatory)*
 
@@ -159,8 +171,8 @@ Keeping a Builder Lifted takes a fair amount of weed, without being crazy:
 
 **Part 2: Lifted and Higher Ground**
 
-- **FR-009**: Each Builder's hut MUST have a "fly when Lifted" switch, off by default.
-- **FR-010**: With the switch on, a Builder MUST ask for joints through the colony's normal requests, as she does for food, so that a Dispensary, a Warehouse or the player can fill them. Joints are the only thing she smokes for Lifted.
+- **FR-009**: Each Builder's hut MUST have a "fly when Lifted" switch, on by default, both for new huts and for huts in colonies from before the update.
+- **FR-010**: With the switch on, a Builder MUST ask for joints through the colony's normal requests, as she does for food, so that a Dispensary, a Warehouse or the player can fill them. Joints are the only thing she smokes for Lifted. Citizens come first: a Dispensary or Warehouse MUST fill a Builder's request only from joints above what the colony's citizens are still owed today. A player can always hand her joints directly.
 - **FR-011**: A Builder with the switch on and a joint MUST smoke one and become Lifted:
   - **When:** when she starts building, and when her Lifted buff runs out while she is still building.
   - **How long:** the Lifted time is longer than a normal high: about five minutes for Landrace by default, longer for better families and higher potency. All times are in the config.
@@ -172,24 +184,25 @@ Keeping a Builder Lifted takes a fair amount of weed, without being crazy:
 - **FR-015**: A Lifted Builder MUST use Higher Ground:
   1. a reach of about 8-10 blocks (in the config);
   2. hover points from which she places everything within reach before moving on;
-  3. on upgrades, removing what is changing from the top down before building bottom-up.
+  3. on upgrades, removing what is changing from the top down before building bottom-up;
+  4. faster placing: blocks go down about 25% faster for Landrace, rising with the smoked strain's potency to about 50% for Golden God. Both ends are in the config.
 - **FR-016**: Higher Ground MUST keep everything MineColonies' Builder already protects:
   - the hut block;
   - blocks the blueprint says to keep (placeholders, keep-terrain);
   - blocks that already match the blueprint;
-  - the contents of storage blocks.
+  - storage blocks the new level keeps, with their contents.
 
-  It MUST also need the same materials as an ordinary build.
+  It MUST also need the same materials as an ordinary build. When the Higher Ground clearing step removes a storage block that holds items, she MUST take the items and deliver them to the colony's Warehouse (her own hut if there is none). Anything that doesn't fit drops at her hut, never where the block stood.
 - **FR-017**: A Lifted Builder with no joint left when her buff ends MUST land and carry on building as an ordinary walking Builder, with Part 1's fixes.
 - **FR-018**: A joint smoked for Lifted MUST also count as a citizen joint for the colony's happiness and demand.
-- **FR-019**: The config MUST hold the Lifted times by family and potency and an on/off switch for Lifted as a whole. The defaults MUST be checked with the balance model (FR-020).
+- **FR-019**: The config MUST hold the Lifted times by family and potency, the placing speed boost (lowest and highest), and an on/off switch for Lifted as a whole. The defaults MUST be checked with the balance model (FR-020).
 - **FR-020**: The balance model MUST include Lifted Builders' joint use in the colony's daily demand, and show the spare left with two busy Lifted Builders.
 
 ### Key Entities
 
 - **Builder watch:** for each Builder, what she is doing, when the build last moved on, her pace, and any rescues made. It is not saved, because it starts fresh after a restart.
 - **Lifted:** a Builder-only buff with the strain smoked and the time left. While it lasts she flies and builds the Higher Ground way. It is saved with the citizen, so a restart lands her and resumes the time left.
-- **Fly when Lifted:** a setting on each Builder's hut, off by default.
+- **Fly when Lifted:** a setting on each Builder's hut, on by default.
 - **Lifted times:** config values for the Lifted time by family and potency, and the master switch.
 
 ## Success Criteria *(mandatory)*

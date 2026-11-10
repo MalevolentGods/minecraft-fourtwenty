@@ -38,4 +38,4 @@
   - Builders only;
   - one spec;
   - the green shimmer as a see-through green Golden God.
-- **Default chosen here:** "fly when Lifted" is off by default, so no colony's weed is spent without the player choosing it. Revisit in /speckit-clarify if wanted.
+- **Clarified 2026-11-09:** "fly when Lifted" is on by default (the user's choice), made safe by the citizens-first rule.
