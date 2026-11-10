@@ -47,6 +47,21 @@ public final class PathGameTests {
         return speed;
     }
 
+    /** Colonists prefer MineColonies' path blocks (a sixth of the walking cost): every road, slab and stair is one. */
+    @GameTest(template = "empty")
+    public static void everyRoadIsAColonyPath(GameTestHelper h) {
+        var colonyPaths = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecolonies", "pathblocks"));
+        java.util.List<String> missing = new java.util.ArrayList<>();
+        for (var list : java.util.List.of(ModTerpenes.PATHS, ModTerpenes.PATH_SLABS, ModTerpenes.PATH_STAIRS)) {
+            for (var road : list) {
+                if (!road.get().defaultBlockState().is(colonyPaths)) missing.add(road.getId().toString());
+            }
+        }
+        h.assertTrue(missing.isEmpty(), "not colony paths: " + missing);
+        h.succeed();
+    }
+
     @GameTest(template = "empty", timeoutTicks = 100)
     public static void roadsMakeWalkersFiveTenAndFifteenPercentFaster(GameTestHelper h) {
         double base = walk(h, Blocks.STONE, 0);
