@@ -18,6 +18,7 @@ This is a new file, only registered when MineColonies is present. Every value ha
 | `slowSeconds` | 20 | 5-300 | Window over which a slow pace is judged |
 | `slowFraction` | 0.33 | 0.05-0.9 | Below this share of her expected placing rate counts as slow |
 | `stuckSeconds` | 45 | 10-600 | No progress for this long while building counts as stuck; also the time between escalation steps |
+| `rescueRadius` | 4 | 1-16 | How far from her next block a rescue looks for a standing spot |
 | `fixStepAside` | true | bool | The R1 fix: forget the standing spot after a step-aside |
 
 ### `[lifted]`
@@ -33,6 +34,10 @@ This is a new file, only registered when MineColonies is present. Every value ha
 | `flightRadius` | 24 | 8-48 | How far the flight planner searches |
 | `stash` | 3 | 1-16 | Joints a Builder asks for at most |
 | `clearFirst` | true | bool | Higher Ground clears changing blocks top-down before building an upgrade |
+| `landingSpeed` | 0.15 | 0.05-0.5 | Blocks a tick she descends when landing (no fall damage at any value) |
+| `requestIntervalTicks` | 100 | 20-1200 | How often a Builder checks the spare and opens or cancels her joint request |
+| `hoverLookahead` | 64 | 8-256 | How many upcoming blocks Higher Ground considers when choosing a hover point |
+| `hoverGrid` | 3 | 1-6 | Spacing of candidate hover points around the work |
 
 ## Builder hut setting
 
@@ -42,6 +47,7 @@ This is a new file, only registered when MineColonies is present. Every value ha
 
 - **Where it shows:** in the Builder's existing Settings tab, beside "Construction Strategy".
 - **Off:** she neither asks for nor smokes joints for Lifted, and lands if she's in the air (FR-014).
+- **Joints from the player:** joints a player drops in the Builder's hut are always hers to smoke; the citizens-first rule applies only to the colony's Dispensary and Warehouse stock.
 
 ## Payload: `fourtwenty:lifted` (server → client)
 

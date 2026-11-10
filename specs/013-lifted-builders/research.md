@@ -47,7 +47,7 @@
 
 **Decision.** Escalation, one step per check while the problem lasts:
 1. **SLOW:** clear `workFrom` (and any running path job), so she picks a fresh spot. This is what the player's shove does today.
-2. **STUCK:** teleport to a free standing spot (solid below, two air above) within 4 blocks of her next block, the one nearest open sky first.
+2. **STUCK:** teleport to a free standing spot (solid below, two air above) within `rescueRadius` (4) blocks of her next block, the one nearest open sky first.
 3. **Still stuck after another stuck window:** teleport to the nearest standing spot just outside the building's corners.
 4. **Still stuck:** recall to the hut, with MineColonies' own recall.
 
@@ -75,7 +75,7 @@
 - **Opening a request:** when the switch is on and she has no joint, the Builder opens an ordinary `Stack` request for joints, as MineColonies does for her materials. It opens only while `SpareJoints` says the colony has spare.
 - **What spare means:** joints in the Dispensaries and Warehouses, minus one per citizen still due today (`JointService.due`). The request asks for at most that spare, capped at a small stash (3).
 - **When there's no spare:** an open request is cancelled.
-- **The player:** can always hand her joints through the hut's request.
+- **The player:** joints a player drops in the Builder's hut skip the gate entirely; she takes them from her hut's storage when she lights up. The citizens-first rule only governs the colony's stock.
 
 **Alternative considered:** a custom resolver that knows about demand. Rejected: the request system API is large, and gating the request achieves the same.
 
@@ -86,7 +86,7 @@
 - **Waypoints:** come from `FlightPlanner`, a bounded 3D A* over cells where she fits (two air cells high) within 24 blocks.
   - **Destinations:** hover points from `HoverCover` (R8), or the build site from her hut.
   - **If there's no route:** she lands and walks, and the watchdog covers her.
-- **Landing:** she descends at up to 0.15 blocks a tick, with fall distance reset every tick. She lands at the nearest open standing spot outside the building's footprint, or straight down if she's already outside it.
+- **Landing:** she descends at up to `landingSpeed` (0.15) blocks a tick, with fall distance reset every tick. She lands at the nearest open standing spot outside the building's footprint, or straight down if she's already outside it.
 - **When she lands:** the buff ends, the switch goes off, the job ends, she leaves the `WORKING` or building states, or her chunk is about to unload.
 - **After a restart:** a Lifted Builder loads on the ground. If her saved position is in the air, she is moved down to the first standing spot below.
 
@@ -102,7 +102,7 @@
   - **What it leaves:** keep-terrain placeholders match anything during a builder's build (`SubstitutionPlacementHandler`: `fancyPlacement() || equals`), and solid fill matches any good floor block. The hut is in `DONT_TOUCH`.
   - **Not undone:** a stage list chosen while Lifted stays even if she lands mid-job. Clearing on foot is what new builds do anyway.
 - **Reach:** in `walkToConstructionSite`, when she is Lifted, the 5-block check becomes the configured reach (default 9). Her standing spot becomes the hover point `HoverCover` picked: the free cell above or beside the work that covers the most of the next N blocks of the iterator within reach.
-- **Speed:** `HigherGroundDelayMixin` scales the delay set at the end of `structureStep` by `LiftedRules.delayFactor(strain)`. That's 1/1.25 for Landrace, down to 1/1.5 for Golden God.
+- **Speed:** `BuilderPlacementMixin` scales the delay set at the end of `structureStep` by `LiftedRules.delayFactor(strain)`. That's 1/1.25 for Landrace, down to 1/1.5 for Golden God.
 - **Storage contents:** `HigherGroundStorageMixin` acts before `CLEAR` breaks a block with an item handler. It moves the contents into her hut's storage, and the hut's normal pickup sends spare items to the Warehouse. Whatever doesn't fit drops at the hut. Nothing drops where the block was.
 
 **Alternative considered:** a new AI class for Lifted Builders. Rejected, because it duplicates MineColonies' builder and breaks with every update.
@@ -119,7 +119,7 @@
   - Golden 10.
 - **Potency** (spec 012) adds up to 10%.
 - **Speed boost** (`LiftedRules.speed`): runs linearly from Landrace 1.25 to Golden God 1.5 by grade.
-- **The model:** gains a "Lifted Builders" column, counting each busy Builder as building 12 of a day's 20 minutes, so about 2.4 Landrace joints a day; colonies on better strains need fewer. SC-006 is checked against it.
+- **The model:** gains a "Lifted Builders" column, counting each busy Builder as building 18 of a day's 20 minutes, so about 3.6 Landrace joints a day (the spec's 3-4); colonies on better strains need fewer. SC-006 is checked against it.
 
 **Alternative considered:** charging by blocks placed. Rejected as harder to explain, and it rewards slow builders.
 

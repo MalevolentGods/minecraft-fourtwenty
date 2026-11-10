@@ -70,7 +70,7 @@
 | III. The Power Rule | ✅ | Nothing is powered. |
 | IV. Failure Is Safe | ✅ | Flying never kills: any end of Lifted lands her gently (FR-014). The principle's flight clause is about the Puff Plate wearer; this extends the same rule to citizens. Nothing explodes. |
 | V. Approved Names | ✅ | "Lifted" and "Higher Ground" were approved 2026-11-09. The hut switch's label "Fly when Lifted" uses the approved name. |
-| VI. Rules Are Pure And Tested | ✅ | `domain/` pure classes with JUnit tests: `BuilderWatchRules`, `LiftedRules`, `FlightPlanner`, `HoverCover`, `SpareJoints`. Every number is in the config (contracts/config.md). |
+| VI. Rules Are Pure And Tested | ✅ with one recorded exception | `domain/` pure classes with JUnit tests: `BuilderWatchRules`, `LiftedRules`, `FlightPlanner`, `HoverCover`, `SpareJoints`, `StandingSpot`. Game tests cover what runs without a live colony: flight planning, landing, rescue spots, storage transfer, `LiftedSavedData`. Every gameplay number is in the config (contracts/config.md). The live colony AI (the walking fix, the watchdog's decisions, clear-first) can't run in a game test; see Complexity Tracking. |
 | VII. Milestones Prove Themselves In Game | ✅ | Five milestones, each tested on flatworld and committed before the next (see Milestones). |
 | Constraints: same jar, payloads guarded | ✅ | One new payload (`fourtwenty:lifted`), sent only to connections with the channel, as `GoldenGod.Shine` is. No registry changes. |
 
@@ -118,13 +118,15 @@ src/main/java/com/malevolentgods/fourtwenty/
 │       ├── BuilderWalkMixin.java        # EntityAIStructureBuilder.walkToConstructionSite: forget workFrom after a step-aside; Higher Ground reach/fly
 │       ├── BuilderStepAsideMixin.java   # BuildingStructureHandler.prePlacementLogic: mark the step-aside
 │       ├── HigherGroundStageMixin.java  # AbstractEntityAIStructure.loadStructure: CLEAR first on upgrades when Lifted
-│       ├── HigherGroundDelayMixin.java  # AbstractEntityAIStructure.structureStep: shorter delay when Lifted
+│       ├── BuilderPlacementMixin.java   # AbstractEntityAIStructure.structureStep: placement log (US1), shorter delay when Lifted (US4)
 │       ├── HigherGroundStorageMixin.java# contents of storage the CLEAR removes → her hut
 │       └── BuilderSettingsMixin.java    # BuildingEntry.produceBuilding: add the hut setting to Builders
 src/test/java/com/malevolentgods/fourtwenty/domain/
 │   ├── BuilderWatchRulesTest.java, LiftedRulesTest.java, SpareJointsTest.java,
 │   └── FlightPlannerTest.java, HoverCoverTest.java
-src/gametest/java/.../LiftedFlightGameTests.java   # planner on real blocks, landing safety
+src/gametest/java/.../LiftedFlightGameTests.java   # planner on real blocks, landing safety, LiftedSavedData round trip
+src/gametest/java/.../BuilderRescueGameTests.java  # StandingSpot rescue targets in real blocks
+src/gametest/java/.../StorageTransferGameTests.java # storage contents moved, overflow dropped at the hut
 src/main/resources/fourtwenty.minecolonies.mixins.json   # the six mixins added
 src/main/resources/assets/fourtwenty/lang/en_us.json     # setting label, log/status strings
 tools/progression_model.py                               # Lifted demand in the colony table
@@ -152,7 +154,13 @@ Each is tested in game on flatworld and committed before the next starts (Princi
 
 ## Complexity Tracking
 
-No constitution violations. Two risks are worth recording:
+One accepted exception to Principle VI:
+
+| Exception | Why | What covers it instead |
+|---|---|---|
+| The MineColonies-driven behaviour (step-aside fix, watchdog decisions on a live Builder, Lifted joint requests, clear-first on an upgrade) has no game test. | Game tests run without a live colony, citizens or work orders; MineColonies' AI can't be started in the game-test harness. | The pure rules behind each are JUnit-tested, the world parts are game-tested (rescue spots, landing, storage transfer, saved data), and each milestone is tested on a real colony on flatworld with the results recorded (Principle VII). |
+
+Two risks are worth recording:
 
 | Risk | Mitigation |
 |---|---|

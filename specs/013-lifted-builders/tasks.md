@@ -23,7 +23,7 @@
 
 - [ ] T001 Create the builder config `MC/builder/BuilderConfig.java`:
   - **Contents:** a `ModConfigSpec` with sections `[diagnostics]`, `[watchdog]` and `[lifted]`, every key, default and range exactly as in contracts/config.md.
-  - **Accessors:** typed ones (`logBuilderPathing()`, `watchdogEnabled()`, `slowTicks()`, `slowFraction()`, `stuckTicks()`, `fixStepAside()`, `liftedEnabled()`, `liftedMinutes(String family)`, `potencyBonus()`, `speedLowest()`, `speedHighest()`, `reach()`, `flightRadius()`, `stash()`, `clearFirst()`).
+  - **Accessors:** typed ones (`logBuilderPathing()`, `watchdogEnabled()`, `slowTicks()`, `slowFraction()`, `stuckTicks()`, `fixStepAside()`, `liftedEnabled()`, `liftedMinutes(String family)`, `potencyBonus()`, `speedLowest()`, `speedHighest()`, `reach()`, `flightRadius()`, `stash()`, `clearFirst()`, `rescueRadius()`, `landingSpeed()`, `requestIntervalTicks()`, `hoverLookahead()`, `hoverGrid()`).
 - [ ] T002 Register `BuilderConfig.SPEC` as a SERVER config named `fourtwenty-builders-server.toml` in `MC/ColonyIntegration.java#register`, next to the Dispensary config.
 - [ ] T003 [P] Add the en_us strings to `src/main/resources/assets/fourtwenty/lang/en_us.json`:
   - `com.minecolonies.coremod.setting.fourtwenty:flywhenlifted` = "Fly when Lifted:";
@@ -70,8 +70,8 @@
   - **At HEAD:** if a step-aside is pending and `fixStepAside()` is on, clear `workFrom`, `prevBlockPosition` and any `gotoPath` through `BuilderAIAccessor`, log `workfrom ... why=stepaside`, and clear the flag.
   - **Diagnostics:** wrap `setPathJob` with `@WrapOperation` to log `path`, and log `workfrom` changes by comparing before/after at RETURN.
   - **Off switch:** with `fixStepAside()` off, it only logs. This is the M1 baseline.
-- [ ] T010 [US1] Log `placed` from `MC/mixin/HigherGroundDelayMixin.java`, created now with only this part: inject into `com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure#structureStep` before the `setDelay` call, and log the placement for Builders.
-- [ ] T011 [US1] Register `BuilderStepAsideMixin`, `BuilderWalkMixin` and `HigherGroundDelayMixin` in `src/main/resources/fourtwenty.minecolonies.mixins.json`.
+- [ ] T010 [US1] Log `placed` from `MC/mixin/BuilderPlacementMixin.java` (US4's T039 extends it with the Lifted speed): inject into `com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure#structureStep` before the `setDelay` call, and log the placement for Builders.
+- [ ] T011 [US1] Register `BuilderStepAsideMixin`, `BuilderWalkMixin` and `BuilderPlacementMixin` in `src/main/resources/fourtwenty.minecolonies.mixins.json`.
 - [ ] T012 [US1] **In game (M1):** build, deploy to flatworld, and set `logBuilderPathing=true`, `fixStepAside=false`. Run the Warehouse 2→3 upgrade (and a Tavern upgrade) per quickstart M1.
   - **Record:** the observed log signature and the verdict in `specs/013-lifted-builders/research.md` R1 ("Confirmed in game:" + date).
   - **If the cause differs:** stop and revise T009 before going on.
@@ -107,7 +107,7 @@
   - **Rules:** build a `Sample` and run `BuilderWatchRules.next`.
   - **Rescues:**
     - FRESH_SPOT → `BuilderAccess.clearWorkFrom`;
-    - NEAR_BLOCK → teleport to the nearest standing spot (solid below, two air above, open sky preferred) within 4 blocks of the current block (`getPosToWorkAt`);
+    - NEAR_BLOCK → teleport to the nearest standing spot (solid below, two air above, open sky preferred) within `rescueRadius()` blocks of the current block (`getPosToWorkAt`);
     - OUTSIDE → the nearest standing spot just outside `buildingCorners`;
     - RECALL → `BuilderAccess.recall`.
   - **Log:** each rescue with `BuilderLog` (`rescue <step> ...`).
@@ -118,9 +118,11 @@
   - **Check:** print the before/after and verify with `tools/check_hut_levels.py craftsmanship/storage/warehouse` (no new problems).
   - **Record:** bump `pack.json` to 100, add a BUILDINGS.md Warehouse note, and commit in sensi-heights.
 - [ ] T019 [US2] Import the pack into the mod: `python tools/import_sensi_heights.py`, then check `git diff --stat src/main/resources/blueprints/fourtwenty/sensiheights` shows pack v100 and the 4 Warehouse files. The pack now includes v98 Woodcutter/Sawmill and v99 Mine too.
+- [ ] T019a [P] [US2] Write `G/BuilderRescueGameTests.java`: build a small maze of real blocks and check `StandingSpot` picks a spot with solid below and two air above, within `rescueRadius()`, and outside a given footprint for the OUTSIDE step.
 - [ ] T020 [US2] **In game (M2 steps 2-4):**
   - trap test (SC-002);
   - a full day with mealtimes, night and `NEEDS_ITEM` waits, with no rescues (SC-003);
+  - a raid on the colony (`/mc raid` on flatworld), with no rescue of a fleeing Builder (SC-003);
   - the pocket check.
 
   Record the results in quickstart.md under M2.
@@ -159,20 +161,20 @@
   - **Register** the mixin.
   - **Check in game:** the switch shows in the Settings tab, and in an old colony it reads on.
 - [ ] T028 [US3] Create `MC/builder/LiftedService.java`.
-  - **Asking for joints:** every 100 ticks per Builder with the switch on and `liftedEnabled()`, compute stock (joints in the colony's Dispensaries' and Warehouses' item handlers) and owed (count of citizens with `JointService.due`).
+  - **Asking for joints:** every `requestIntervalTicks()` per Builder with the switch on and `liftedEnabled()`, compute stock (joints in the colony's Dispensaries' and Warehouses' item handlers) and owed (count of citizens with `JointService.due`).
     - **Spare:** open a `Stack(fourtwenty:joint, min 1, count)` request via `citizenData.createRequestAsync` when the spare is positive and she has fewer than `stash()` joints.
     - **No spare:** cancel an open joint request; she shows `fourtwenty.lifted.waiting` as her status.
   - **Lighting up** (`tryLightUp(EntityCitizen)`):
-    - take one joint from her inventory;
+    - take one joint from her inventory, or else from her hut's storage. Joints a player drops in the Builder's hut skip the citizens-first rule (FR-010);
     - `Lifted.start` with `LiftedRules.ticks` of its strain;
     - count it as a citizen dose with `JointService.consume`/the same `DispensarySavedData` call a Dispensary visit makes (FR-018);
     - smoke particles and sound;
     - log `lifted`.
   - **When it's called:** when the watchdog tick sees her enter building, and when her Lifted ends while she's still building.
   - **Ending:** `end(EntityCitizen, reason)` → landing (T029) + log `landed`.
-- [ ] T029 [US3] Create `MC/builder/LiftedFlight.java`, run per tick for Lifted Builders from `BuilderWatchdog`'s tick (every tick for Lifted ones).
-  - **Flying (building and Lifted):** `setNoGravity(true)`, stop the navigator, follow `FlightPlanner` waypoints to the current target at walking speed, set `fallDistance = 0`.
-  - **Otherwise, LANDING:** descend at ≤ 0.15 blocks/tick to the target from `StandingSpot` (outside the footprint, or straight down when already outside), then restore gravity.
+- [ ] T029 [US3] Create `MC/builder/LiftedFlight.java`, with its own `ServerTickEvent.Post` handler that runs every tick for Lifted Builders only. The watchdog keeps its 20-tick cadence.
+  - **Flying (building, Lifted, the hut switch on and `liftedEnabled()`):** `setNoGravity(true)`, stop the navigator, follow `FlightPlanner` waypoints to the current target at walking speed, set `fallDistance = 0`.
+  - **Otherwise, LANDING:** descend at ≤ `landingSpeed()` blocks/tick to the target from `StandingSpot` (outside the footprint, or straight down when already outside), then restore gravity.
   - **Chunk unload:** an `EntityLeaveLevelEvent` listener lands her instantly at the first standing spot below.
   - **Load:** an `EntityJoinLevelEvent` listener moves a Lifted Builder whose saved position is in the air to the first standing spot below.
 - [ ] T030 [US3] Create `MC/builder/LiftedPayload.java` (`fourtwenty:lifted`, entity VarInt + on bool). Register it in the payload registrar used by `GoldenGod` (play to client).
@@ -184,7 +186,8 @@
 - [ ] T032 [P] [US3] Create `G/LiftedFlightGameTests.java`:
   - the planner finds a path over a built wall and none into a sealed box;
   - the `StandingSpot` landing target is outside a given footprint;
-  - an entity flagged landing from 10 blocks takes no damage (use an armour stand or zombie with the same landing code path factored into `LiftedFlight.land(Mob, BlockPos)`).
+  - an entity flagged landing from 10 blocks takes no damage (use an armour stand or zombie with the same landing code path factored into `LiftedFlight.land(Mob, BlockPos)`);
+  - `LiftedSavedData` round trip: save, reload, and the strain and ticks left survive, keyed by colony and citizen (as `DemandPersistenceGameTests` does for the Dispensary).
 - [ ] T033 [US3] **In game (M3):** quickstart M3 steps 1-4, all five landing cases (SC-005), and a second client seeing the shimmer. Record the results in quickstart.md.
 
 **Checkpoint**: Builders fly on spare joints and always land safely. Commit.
@@ -200,11 +203,12 @@
 - [ ] T034 [P] [US4] Write `T/HoverCoverTest.java`:
   - picks the candidate covering most of the next N blocks within reach;
   - ties go to the higher point;
-  - never a candidate inside the next blocks' columns;
+  - never a candidate whose own cell or the cell above holds one of the next blocks (she would be built in);
   - an empty candidate list gives none.
-- [ ] T035 [US4] Create `J/domain/HoverCover.java`: `choose(List<BlockPos> candidates, List<BlockPos> nextBlocks, int reach)`. Make T034 pass.
+- [ ] T035 [US4] Create `J/domain/HoverCover.java`: `choose(List<BlockPos> candidates, List<BlockPos> nextBlocks, int reach)`. Reject candidates whose cell or the cell above is among `nextBlocks`. Make T034 pass.
 - [ ] T036 [US4] Extend `MC/mixin/BuilderWalkMixin.java`. When the Builder is Lifted and flying is on, cancel at HEAD and return our own result:
-  - **Choosing a spot:** if she has no hover point or the current block is beyond `reach()`, choose a new hover point with `HoverCover`. The candidates are free cells within `reach()` of the current block, scanned on a 3-block grid around and above it. The next blocks are the following up to 64 positions from the structure iterator (read them through `BuilderAccess.peekNext(EntityCitizen, 64)`, iterating a copy of the placer iterator).
+  - **Choosing a spot:** if she has no hover point or the current block is beyond `reach()`, choose a new hover point with `HoverCover`. The candidates are free cells within `reach()` of the current block, scanned on a `hoverGrid()`-block grid around and above it. The next blocks are the following up to `hoverLookahead()` positions from the structure iterator (read them through `BuilderAccess.peekNext(EntityCitizen, hoverLookahead())`, iterating a copy of the placer iterator).
+  - **Never built in:** before each placement, if the block goes in her own cell or the cell above, choose a new hover point first.
   - **Getting there:** fly there with `LiftedFlight`.
   - **Return value:** `true` once she is within `reach()` of the current block.
 - [ ] T037 [US4] Create `MC/mixin/HigherGroundStageMixin.java` on `AbstractEntityAIStructure#loadStructure`.
@@ -215,11 +219,14 @@
   - **Where:** before Structurize/MineColonies breaks a block during CLEAR (target `AbstractEntityAIStructure` BLOCK_REMOVAL / `mineBlock` path; find the exact call in `$TEMP/mcsrc/AbstractEntityAIStructure.java`).
   - **What:** if the block entity has an item handler capability with items, move them into the Builder's hut (`building.getItemHandlerCap()`); whatever doesn't fit drops at the hut position. The block then breaks empty.
   - **Register** the mixin.
-- [ ] T039 [US4] Extend `MC/mixin/HigherGroundDelayMixin.java`: when the worker is Lifted, multiply the `setDelay` argument by `LiftedRules.delayFactor(strain)` (`@ModifyArg`).
+  - **Testable core:** factor the transfer into `MC/builder/StorageTransfer.move(IItemHandler from, IItemHandler to, Level, BlockPos dropAt)`.
+- [ ] T038a [P] [US4] Write `G/StorageTransferGameTests.java`: a chest with items is emptied into a second container; the overflow drops at the given position and nothing drops at the source.
+- [ ] T039 [US4] Extend `MC/mixin/BuilderPlacementMixin.java`: when the worker is Lifted, multiply the `setDelay` argument by `LiftedRules.delayFactor(strain)` (`@ModifyArg`).
 - [ ] T040 [US4] **In game (M4):** quickstart M4:
   - the Lifted Warehouse 2→3 clears top-down, then builds;
   - time it against T013's walking run (SC-004);
-  - the chest-contents test.
+  - the chest-contents test;
+  - a Lifted Warehouse upgrade keeps its keep-terrain courier zones, the nested Courier's Huts and the hut block untouched (FR-016).
 
   Record the results.
 
@@ -234,7 +241,7 @@
 **Independent test**: quickstart.md M5 model run.
 
 - [ ] T041 [US5] Extend `tools/progression_model.py`.
-  - **Model:** add a `LIFTED` table mirroring the config defaults, and `builder_joints_per_day(family) = 12 / lifted_minutes(family)` (12 building minutes a day).
+  - **Model:** add a `LIFTED` table mirroring the config defaults, and `builder_joints_per_day(family) = 18 / lifted_minutes(family)` (18 building minutes of a 20-minute day, so 3.6 Landrace joints).
   - **Colony table:** add two busy Builders' joints to "asked" and print a "Lifted Builders" column. Keep `--today` unchanged.
 - [ ] T042 [US5] Run `python tools/progression_model.py`, and check every colony stage still shows a positive spare with two Lifted Builders (SC-006). If not, raise the Lifted minutes in `BuilderConfig` defaults and contracts/config.md together, and re-run.
 
@@ -243,8 +250,9 @@
 ## Phase 8: Polish & Cross-Cutting
 
 - [ ] T043 [P] README.md "What's new": Lifted Builders, Higher Ground and the Builder fixes, for players, with the hut switch and the config file named.
-- [ ] T044 [P] CHANGELOG.md: an Unreleased entry for spec 013.
+- [ ] T044 [P] CHANGELOG.md: an Unreleased entry for spec 013, also noting the Sensi Heights pack v98-v100 (Woodcutter, Sawmill, Mine, Warehouse pockets) that ride along.
 - [ ] T045 Without MineColonies, run the client and server with no compat mods, and check Four Twenty loads and plays (SC-007). `./gradlew build` and the game tests pass (the known-flaky `thecalculatorcalculates` only with no client running).
+- [ ] T045a On flatworld with 10 Builders (5 Lifted), measure the server tick cost of `BuilderWatchdog`, `LiftedFlight` and `LiftedService` with a timing log over 5 minutes. It must stay under 0.5 ms per tick on average (plan Performance Goals).
 - [ ] T046 Update memory (`project_fourtwenty_*`) with what shipped and what was seen in game. Mark every task [X] in this file.
 - [ ] T047 PR from `013-lifted-builders` to `main`. Merge, release and server updates wait for the user's go.
 
@@ -268,9 +276,9 @@ Setup → Foundational → US1 (gate T012) → US2 → US3 → US4 → US5 → P
 
 - **Phase 1:** T003 alongside T001-T002.
 - **Phase 2:** T006 alongside T004-T005.
-- **US2:** T014 and T017 together; then T018-T019 (sensi-heights) alongside T015-T016.
+- **US2:** T014, T017 and T019a together; then T018-T019 (sensi-heights) alongside T015-T016.
 - **US3:** T021, T022 and T023 (tests) together; T031 (client) alongside T028-T029; T032 alongside T030.
-- **US4:** T034 alongside T036-T038 setup reading.
+- **US4:** T034 alongside T036-T038 setup reading; T038a after T038.
 - **Polish:** T043 and T044 together.
 
 ## Implementation Strategy

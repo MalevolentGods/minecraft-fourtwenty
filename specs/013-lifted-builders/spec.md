@@ -172,7 +172,7 @@ Keeping a Builder Lifted takes a fair amount of weed, without being crazy:
 **Part 2: Lifted and Higher Ground**
 
 - **FR-009**: Each Builder's hut MUST have a "fly when Lifted" switch, on by default, both for new huts and for huts in colonies from before the update.
-- **FR-010**: With the switch on, a Builder MUST ask for joints through the colony's normal requests, as she does for food, so that a Dispensary, a Warehouse or the player can fill them. Joints are the only thing she smokes for Lifted. Citizens come first: a Dispensary or Warehouse MUST fill a Builder's request only from joints above what the colony's citizens are still owed today. A player can always hand her joints directly.
+- **FR-010**: With the switch on, a Builder MUST ask for joints through the colony's normal requests, as she does for food, so that a Dispensary, a Warehouse or the player can fill them. Joints are the only thing she smokes for Lifted. Citizens come first: a Dispensary or Warehouse MUST fill a Builder's request only from joints above what the colony's citizens are still owed today. Joints a player drops in the Builder's hut are always hers to smoke; the citizens-first rule applies only to the colony's Dispensary and Warehouse stock.
 - **FR-011**: A Builder with the switch on and a joint MUST smoke one and become Lifted:
   - **When:** when she starts building, and when her Lifted buff runs out while she is still building.
   - **How long:** the Lifted time is longer than a normal high: about five minutes for Landrace by default, longer for better families and higher potency. All times are in the config.
@@ -209,7 +209,7 @@ Keeping a Builder Lifted takes a fair amount of weed, without being crazy:
 
 ### Measurable Outcomes
 
-- **SC-001**: In a Warehouse 2 to 3 upgrade and a Tavern upgrade on the test server, a walking Builder with the fix keeps a pace within 25% of her skill's normal placing rate for the whole job, with no player help. Before the fix, the crawl is about one block every few seconds.
+- **SC-001**: In a Warehouse 2 to 3 upgrade and a Tavern upgrade on the test server, a walking Builder with the fix keeps a pace within 25% of her skill's normal placing rate (MineColonies' own placing delay for her skills and research; see research R3) for the whole job, with no player help. Before the fix, the crawl is about one block every few seconds.
 - **SC-002**: A Builder trapped in a sealed box while building is building again within the stuck time plus 10 seconds.
 - **SC-003**: Over a full in-game day of normal colony life on the test server, the watchdog acts on zero Builders who were eating, sleeping, at the restaurant, fetching materials or in a raid.
 - **SC-004**: A Lifted Builder finishes the Warehouse 2 to 3 upgrade at least twice as fast as a walking Builder with the same skills, and never stalls.
