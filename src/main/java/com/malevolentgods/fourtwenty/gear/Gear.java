@@ -41,10 +41,10 @@ public final class Gear {
         return piece(stack).isPresent() && GearRules.powered(StrainEffects.isHigh(player), charge(stack), cost);
     }
 
-    /** Pays {@code cost}; true if it could. Creative players pay nothing. */
+    /** Pays {@code cost}; true if it could. A high wearer, like a creative player, pays nothing. */
     public static boolean spend(Player player, ItemStack stack, int cost) {
         if (!powered(player, stack, cost)) return false;
-        if (!player.getAbilities().instabuild) set(stack, state(stack).withCharge(GearRules.spend(charge(stack), cost)));
+        if (!player.getAbilities().instabuild && GearRules.pays(StrainEffects.isHigh(player))) set(stack, state(stack).withCharge(GearRules.spend(charge(stack), cost)));
         return true;
     }
 

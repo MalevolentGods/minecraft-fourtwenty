@@ -59,16 +59,25 @@ public final class GearGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void soberGearDoesNothingAndSpendsNothing(GameTestHelper h) {
+    public static void soberGearRunsOnItsChargeOrNotAtAll(GameTestHelper h) {
         var p = wearer(h);
+        // sober and empty: nothing
+        p.setItemSlot(EquipmentSlot.HEAD, charged(ModGear.HOTBOX_HELM.get(), 0));
+        p.setItemSlot(EquipmentSlot.FEET, charged(ModGear.MOON_BOOTS.get(), 0));
+        GearPowers.tickPlayer(p, true);
+        h.assertFalse(p.hasEffect(MobEffects.NIGHT_VISION), "no night vision sober and empty");
+        var fall = new LivingFallEvent(p, 20, 1);
+        GearPowers.fall(fall);
+        h.assertTrue(fall.getDamageMultiplier() == 1, "sober, empty boots don't soften a fall");
+        // sober and charged: it runs on its charge, and pays
         p.setItemSlot(EquipmentSlot.HEAD, charged(ModGear.HOTBOX_HELM.get(), 10_000));
         p.setItemSlot(EquipmentSlot.FEET, charged(ModGear.MOON_BOOTS.get(), 10_000));
         GearPowers.tickPlayer(p, true);
-        h.assertFalse(p.hasEffect(MobEffects.NIGHT_VISION), "no night vision sober");
-        var fall = new LivingFallEvent(p, 20, 1);
-        GearPowers.fall(fall);
-        h.assertTrue(fall.getDamageMultiplier() == 1, "sober boots don't soften a fall");
-        h.assertTrue(Gear.charge(p.getItemBySlot(EquipmentSlot.HEAD)) == 10_000 && Gear.charge(p.getItemBySlot(EquipmentSlot.FEET)) == 10_000, "nothing spent");
+        h.assertTrue(p.hasEffect(MobEffects.NIGHT_VISION), "sober, night vision on its charge");
+        var fall2 = new LivingFallEvent(p, 20, 1);
+        GearPowers.fall(fall2);
+        h.assertTrue(fall2.getDamageMultiplier() == 0, "sober, charged boots soften the fall");
+        h.assertTrue(Gear.charge(p.getItemBySlot(EquipmentSlot.HEAD)) < 10_000 && Gear.charge(p.getItemBySlot(EquipmentSlot.FEET)) < 10_000, "and both paid");
         h.succeed();
     }
 
@@ -81,13 +90,14 @@ public final class GearGameTests {
         StrainEffects.markHigh(p, 2000);
         GearPowers.tickPlayer(p, true);
         h.assertTrue(p.hasEffect(MobEffects.NIGHT_VISION), "night vision");
-        h.assertTrue(Gear.charge(p.getItemBySlot(EquipmentSlot.HEAD)) < 10_000, "and the Helm paid for it");
+        h.assertTrue(Gear.charge(p.getItemBySlot(EquipmentSlot.HEAD)) == 10_000, "free while high, like the machines");
         var fall = new LivingFallEvent(p, 20, 1);
         GearPowers.fall(fall);
         h.assertTrue(fall.getDamageMultiplier() == 0, "the boots soak up the fall");
         var knock = new LivingKnockBackEvent(p, 1, 1, 0);
         GearPowers.knockback(knock);
         h.assertTrue(knock.isCanceled(), "the greaves stop knockback");
+        h.assertTrue(Gear.charge(p.getItemBySlot(EquipmentSlot.FEET)) == 10_000 && Gear.charge(p.getItemBySlot(EquipmentSlot.LEGS)) == 10_000, "none of it paid");
         StrainEffects.forget(p);
         h.succeed();
     }
@@ -108,15 +118,19 @@ public final class GearGameTests {
         p.setItemSlot(EquipmentSlot.CHEST, charged(ModGear.PUFF_PLATE.get(), 100_000));
         StrainEffects.markHigh(p, 2000);
         GearPowers.tickPlayer(p, false);
-        h.assertTrue(p.getAbilities().mayfly, "high and charged, the Plate lends flight");
+        h.assertTrue(p.getAbilities().mayfly, "high, the Plate lends flight");
         p.getAbilities().flying = true;
         p.teleportTo(p.getX(), p.getY() + 30, p.getZ());
         p.setOnGround(false);
         GearPowers.tickPlayer(p, false);
-        h.assertTrue(Gear.charge(p.getItemBySlot(EquipmentSlot.CHEST)) < 100_000, "flying costs BI");
+        h.assertTrue(Gear.charge(p.getItemBySlot(EquipmentSlot.CHEST)) == 100_000, "flying is free while high");
         StrainEffects.forget(p);
         GearPowers.tickPlayer(p, false);
-        h.assertFalse(p.getAbilities().mayfly || p.getAbilities().flying, "sober, the flight is taken back");
+        h.assertTrue(p.getAbilities().mayfly, "sober, it flies on its charge");
+        h.assertTrue(Gear.charge(p.getItemBySlot(EquipmentSlot.CHEST)) < 100_000, "and pays for it");
+        Gear.set(p.getItemBySlot(EquipmentSlot.CHEST), Gear.state(p.getItemBySlot(EquipmentSlot.CHEST)).withCharge(0));
+        GearPowers.tickPlayer(p, false);
+        h.assertFalse(p.getAbilities().mayfly || p.getAbilities().flying, "sober and empty, the flight is taken back");
         h.assertTrue(p.hasEffect(MobEffects.SLOW_FALLING), "and they float down");
         h.succeed();
     }
@@ -131,7 +145,11 @@ public final class GearGameTests {
             p.getAbilities().flying = true;
             p.teleportTo(p.getX(), p.getY() + 30, p.getZ());
             p.setOnGround(false);
-            if (path == 0) Gear.set(p.getItemBySlot(EquipmentSlot.CHEST), Gear.state(p.getItemBySlot(EquipmentSlot.CHEST)).withCharge(0));
+            if (path == 0) {
+                // sober and empty: nothing pays for it any more
+                Gear.set(p.getItemBySlot(EquipmentSlot.CHEST), Gear.state(p.getItemBySlot(EquipmentSlot.CHEST)).withCharge(0));
+                StrainEffects.forget(p);
+            }
             else p.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
             GearPowers.tickPlayer(p, false);
             h.assertFalse(p.getAbilities().mayfly, (path == 0 ? "empty" : "removed") + ": flight taken back");
@@ -200,8 +218,11 @@ public final class GearGameTests {
         var hit = new BlockHitResult(Vec3.atCenterOf(h.absolutePos(centre)), Direction.NORTH, h.absolutePos(centre), false);
         h.assertTrue(BlazerItem.bore(p, blazer, hit), "it bored");
         for (int x = 1; x <= 3; x++) for (int y = 2; y <= 4; y++) h.assertBlockPresent(Blocks.AIR, new BlockPos(x, y, 2));
-        h.assertTrue(Gear.charge(blazer) == 100_000 - 9 * Gear.cost(blazer, "bore_toke"), "nine blocks paid for");
+        h.assertTrue(Gear.charge(blazer) == 100_000, "free while high");
         StrainEffects.forget(p);
+        for (int x = 1; x <= 3; x++) for (int y = 2; y <= 4; y++) h.setBlock(new BlockPos(x, y, 2), Blocks.STONE);
+        h.assertTrue(BlazerItem.bore(p, blazer, hit), "sober, it bores on its charge");
+        h.assertTrue(Gear.charge(blazer) == 100_000 - 9 * Gear.cost(blazer, "bore_toke"), "nine blocks paid for");
         h.succeed();
     }
 

@@ -2,6 +2,11 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+- **Gear runs free while you're high**, like the machines: the Kush Suit and Blazer use no charge while their wearer is high. Sober, they run on their stored BI until it's gone. Only the wearer's own high counts.
+
 ## [0.23.0]
 
 ### Changed

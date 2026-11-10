@@ -1,6 +1,8 @@
 <!--
 Sync Impact Report
-Version change: 2.0.0 → 2.0.1 (Principle IV in circuit terms: current and insulation ratings, user's real-cable choice, 2026-11-04)
+Version change: 2.0.1 → 3.0.0 (Principle IV's gear clause redefined at the user's request, 2026-11-06: gear follows the
+power rule for its wearer, free while high, otherwise on its own stored BI)
+Earlier: 2.0.0 → 2.0.1 (Principle IV in circuit terms: current and insulation ratings, user's real-cable choice, 2026-11-04)
 Earlier: 1.0.0 → 2.0.0 (Principle IV redefined at the user's request: blocks overload, only wire breaks)
 Modified principles: all template placeholders replaced
 Added sections: Core Principles I-VII, Technical Constraints, Development Workflow, Governance
@@ -37,9 +39,10 @@ Power MUST NOT be reimplemented per machine.
 Only wire, and a Resinator, breaks: a Wick carrying more than twice a Hookah's current of its tier, or on a line above its
 insulation rating, MUST burn out in a cloud of smoke and leave ash, and so MUST a Resinator dissipating more than its power rating. A block fed a voltage above its tier's MUST NOT break: it overloads, stops, and its screen
 turns green and smoky until the higher tier is gone. Nothing explodes.
-Flying MUST NOT kill the wearer: a Puff Plate wearer who sobers up or runs out of BI mid-flight is
-lowered gently to the ground. Moon Boots get no such rule. Gear works only while the wearer is high
-AND has stored BI.
+Flying MUST NOT kill the wearer: a Puff Plate wearer whose flight ends mid-air (sober with its BI
+run out, or the Plate taken off) is lowered gently to the ground. Moon Boots get no such rule. Gear
+follows the power rule for its wearer alone: free while the wearer is high, otherwise it draws its
+own stored BI, and with neither it does nothing.
 
 ### V. Approved Names
 
@@ -83,4 +86,4 @@ versioning: MAJOR for a removed or redefined principle, MINOR for a new principl
 for wording. Every plan MUST pass its Constitution Check, and any accepted violation MUST be recorded
 with its reason in that plan.
 
-**Version**: 2.0.1 | **Ratified**: 2026-10-31 | **Last Amended**: 2026-11-04
+**Version**: 3.0.0 | **Ratified**: 2026-10-31 | **Last Amended**: 2026-11-06

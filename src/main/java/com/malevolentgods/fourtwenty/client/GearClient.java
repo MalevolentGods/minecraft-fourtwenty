@@ -57,7 +57,7 @@ public final class GearClient {
     }
 
     /** The Helm's own check, as far as the client can tell: high and some charge. The server still decides what it pays for. */
-    private static boolean helmOn() { return !helm().isEmpty() && StrainTint.high() && Gear.charge(helm()) > 0; }
+    private static boolean helmOn() { return !helm().isEmpty() && (StrainTint.high() || Gear.charge(helm()) > 0); }
 
     private static void zoom(ComputeFovModifierEvent event) {
         if (ZOOM.isDown() && helmOn() && Gear.has(helm(), "zoom")) event.setNewFovModifier(event.getNewFovModifier() * 0.3f);
