@@ -2,7 +2,13 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.24.0]
+
+### Added
+- **Sensi Heights pack v99:**
+  - **Woodcutter**, levels 1-5, with a **Sawmill** nested beside it from level 2. The Woodcutter keeps the Sawmill's plot as open ground with its hut in place, and your Builder builds and upgrades the Sawmill as its own job.
+  - **Mine**, levels 1-5: a shed and headframe over the shaft, with the ladder and cobblestone markers the Miner needs, and the Miner's **mineshaft pieces in cobblestone**, so digging to bedrock costs stone, not hundreds of logs.
+  - **Farm:** its stair seats are real seats.
 
 ### Changed
 - **Gear runs free while you're high**, like the machines: the Kush Suit and Blazer use no charge while their wearer is high. Sober, they run on their stored BI until it's gone. Only the wearer's own high counts.
