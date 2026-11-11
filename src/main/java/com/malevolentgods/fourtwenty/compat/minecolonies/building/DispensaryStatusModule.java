@@ -48,7 +48,7 @@ public final class DispensaryStatusModule extends AbstractBuildingModule {
         if (available == 0) conditions.add("empty");
         boolean request = hut.getOpenRequestsByRequestableType().values().stream().flatMap(java.util.Collection::stream).distinct()
                 .map(hut.getColony().getRequestManager()::getRequestForToken)
-                .anyMatch(r -> r != null && r.getRequest() instanceof Stack stack && stack.matches(new ItemStack(ModItems.WEED_JOINT.get())));
+                .anyMatch(r -> r != null && r.getRequest() instanceof Stack stack && JointService.menuItem(stack.getStack()) != null);
         if (request) conditions.add("request");
         // The rest of the menu: stock against target, and any ingredient the hut has none of.
         var sources = new ArrayList<IItemHandler>();

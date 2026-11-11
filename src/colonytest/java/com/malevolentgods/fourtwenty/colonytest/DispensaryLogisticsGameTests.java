@@ -24,6 +24,9 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 @GameTestHolder("fourtwenty_logisticstests")
 @PrefixGameTestTemplate(false)
 public final class DispensaryLogisticsGameTests {
+    private static java.util.List<ItemStack> contents(net.neoforged.neoforge.items.IItemHandler handler) {
+        return java.util.stream.IntStream.range(0,handler.getSlots()).mapToObj(handler::getStackInSlot).filter(stack->!stack.isEmpty()).toList();
+    }
     @GameTest(template="production",timeoutTicks=12000,batch="dispensary_logistics")
     public static void courierSuppliesAutonomousBudtender(GameTestHelper h) throws Exception {
         var world=h.getLevel();
@@ -47,6 +50,14 @@ public final class DispensaryLogisticsGameTests {
         }
         var hut=(DispensaryBuilding)colony.getServerBuildingManager().addNewBuilding((TileEntityColonyBuilding)world.getBlockEntity(pos),world);
         hut.setBuildingLevel(1);hut.onUpgradeComplete(null,1);
+        // This fixture covers production logistics, not customer sessions. A visiting courier would
+        // otherwise count as a customer and move one reserved bud into the service bong.
+        for(var at:BlockPos.betweenClosed(hut.getCorners().getA(),hut.getCorners().getB())) {
+            if(world.getBlockEntity(at) instanceof com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity) {
+                world.setBlockAndUpdate(at,Blocks.AIR.defaultBlockState());
+            }
+        }
+        ItemHandlerHelper.insertItemStacked(hut.getItemHandlerCap(),new ItemStack(ModItems.WEED_BUD.get(),4),false);
         hut.getModule(DispensaryRegistry.WORK).setHiringMode(com.minecolonies.api.colony.buildings.HiringMode.MANUAL);
         var warehousePos=origin.offset(22,0,6);
         world.setBlockAndUpdate(warehousePos,com.minecolonies.api.blocks.ModBlocks.blockHutWareHouse.defaultBlockState());
@@ -86,15 +97,22 @@ public final class DispensaryLogisticsGameTests {
             moved[1]|=courier.position().distanceTo(startCourier)>3;
             int joints=InventoryUtils.getItemCountInItemHandler(hut.getItemHandlerCap(),s->s.is(ModItems.WEED_JOINT.get()));
             if(h.getTick()%1000==0) com.mojang.logging.LogUtils.getLogger().info("DISPENSARY_LOGISTICS tick={} joints={} worker={} courier={} workerState={} courierState={} requests={}",h.getTick(),joints,worker.position(),courier.position(),worker.getCitizenAI().getState(),courier.getCitizenAI().getState(),DispensaryProductionGameTests.requests(hut));
-            if(h.getTick()%1000==0) com.mojang.logging.LogUtils.getLogger().info("DISPENSARY_DETAIL level={} workers={} recipes={} total={} workerInv={} workAI={} courierAI={} rack={}",hut.getBuildingLevel(),hut.getAllAssignedCitizen().size(),hut.getModule(DispensaryRegistry.CRAFT).getRecipes().size(),InventoryUtils.getCountFromBuilding(hut,s->s.is(ModItems.WEED_JOINT.get())),java.util.stream.IntStream.range(0,worker.getInventoryCitizen().getSlots()).mapToObj(n->worker.getInventoryCitizen().getStackInSlot(n)).filter(st->!st.isEmpty()).toList(),((BudtenderJob)worker.getCitizenData().getJob()).getWorkerAI().getState(),((com.minecolonies.core.colony.jobs.JobDeliveryman)courier.getCitizenData().getJob()).getWorkerAI().getState(),rack.getItemHandlerCap().getStackInSlot(0));
-            if(joints==16) {
+            if(h.getTick()%1000==0) com.mojang.logging.LogUtils.getLogger().info("DISPENSARY_DETAIL level={} workers={} recipes={} total={} workerInv={} workAI={} courierAI={} courierInv={} hutInv={} rack={}",hut.getBuildingLevel(),hut.getAllAssignedCitizen().size(),hut.getModule(DispensaryRegistry.CRAFT).getRecipes().size(),InventoryUtils.getCountFromBuilding(hut,s->s.is(ModItems.WEED_JOINT.get())),contents(worker.getInventoryCitizen()),((BudtenderJob)worker.getCitizenData().getJob()).getWorkerAI().getState(),((com.minecolonies.core.colony.jobs.JobDeliveryman)courier.getCitizenData().getJob()).getWorkerAI().getState(),contents(courier.getInventoryCitizen()),contents(hut.getItemHandlerCap()),contents(rack.getItemHandlerCap()));
+            int openRequests=(int)hut.getOpenRequestsByRequestableType().values().stream().flatMap(java.util.Collection::stream).distinct().count();
+            boolean suppliesInTransit=InventoryUtils.getItemCountInItemHandler(rack.getItemHandlerCap(),s->s.is(ModItems.WEED_BUD.get())||s.is(Items.PAPER))>0
+                    || InventoryUtils.getItemCountInItemHandler(courier.getInventoryCitizen(),s->s.is(ModItems.WEED_BUD.get())||s.is(Items.PAPER))>0;
+            if(joints>=16 && openRequests==0 && !suppliesInTransit) {
                 h.assertTrue(moved[0] && moved[1],"Both workers navigated naturally");
-                h.assertTrue(InventoryUtils.getItemCountInItemHandler(rack.getItemHandlerCap(),s->s.is(ModItems.WEED_BUD.get())||s.is(Items.PAPER))==0,"All 16 buds + 32 paper were delivered");
-                int leftovers=0;
-                for(var handler:hut.getHandlers()) leftovers+=InventoryUtils.getItemCountInItemHandler(handler,s->s.is(ModItems.WEED_BUD.get())||s.is(Items.PAPER));
-                leftovers+=InventoryUtils.getItemCountInItemHandler(courier.getInventoryCitizen(),s->s.is(ModItems.WEED_BUD.get())||s.is(Items.PAPER));
-                h.assertTrue(leftovers==0,"Exact material conservation after native delivery/crafting");
-                com.mojang.logging.LogUtils.getLogger().info("DISPENSARY_LOGISTICS PASS: courier delivered 16 buds + 32 paper; Budtender produced and stored 16 joints at tick {}",h.getTick());
+                h.assertTrue(InventoryUtils.getItemCountInItemHandler(rack.getItemHandlerCap(),s->s.is(ModItems.WEED_BUD.get())||s.is(Items.PAPER))==0,"All 16 warehouse buds + 32 paper were delivered");
+                int leftoverBuds=0,leftoverPaper=0;
+                for(var handler:hut.getHandlers()) {
+                    leftoverBuds+=InventoryUtils.getItemCountInItemHandler(handler,s->s.is(ModItems.WEED_BUD.get()));
+                    leftoverPaper+=InventoryUtils.getItemCountInItemHandler(handler,s->s.is(Items.PAPER));
+                }
+                leftoverBuds+=InventoryUtils.getItemCountInItemHandler(courier.getInventoryCitizen(),s->s.is(ModItems.WEED_BUD.get()));
+                leftoverPaper+=InventoryUtils.getItemCountInItemHandler(courier.getInventoryCitizen(),s->s.is(Items.PAPER));
+                h.assertTrue(leftoverBuds==4 && leftoverPaper==0,"16 buds became joints and the 4-bud reserve remains; leftoverBuds="+leftoverBuds+" leftoverPaper="+leftoverPaper);
+                com.mojang.logging.LogUtils.getLogger().info("DISPENSARY_LOGISTICS PASS: 4 reserve buds plus 16 warehouse buds and 32 paper produced and stored 16 joints with a 4-bud reserve at tick {}",h.getTick());
                 worker.discard();courier.discard();IColonyManager.getInstance().deleteColonyByWorld(colony.getID(),false,world);
                 forced.forEach(c->world.setChunkForced(c.x,c.z,false));
                 world.setDayTime(originalTime);

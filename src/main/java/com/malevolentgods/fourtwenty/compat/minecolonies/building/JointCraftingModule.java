@@ -68,8 +68,8 @@ public final class JointCraftingModule extends AbstractCraftingBuildingModule.Cr
 
     /**
      * Balanced production (see {@link ProductionRules#next}): one small batch at a time for the menu
-     * item least stocked against its target, crafted only from buds above the raw bud reserve, and
-     * buds requested from the colony to keep the reserve plus the next batch on hand.
+     * item least stocked against its target. The output request starts the native ingredient tree
+     * even when buds are missing; {@link BudtenderAI} protects the raw bud reserve while crafting.
      */
     @Override public void onColonyTick(IColony colony) {
         if (!WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition())) return;
@@ -90,11 +90,15 @@ public final class JointCraftingModule extends AbstractCraftingBuildingModule.Cr
         boolean budRequestOpen = open.stream().anyMatch(request -> request != null && request.getRequest() instanceof Stack stack && stack.matches(bud));
         var step = ProductionRules.next(building.getBuildingLevel(), held, count(ModItems.WEED_BUD.get()), productionOpen, budRequestOpen);
         if (step.budsToRequest() > 0) {
-            building.createRequest(new Stack(bud.copy(), step.budsToRequest(), 1), true);
+            var request = new Stack(bud.copy(), step.budsToRequest(), step.budsToRequest());
+            // Existing local stock must not satisfy a request for additional stock.
+            request.setCanBeResolvedByBuilding(false);
+            building.createRequest(request, true);
         }
         if (step.item() != null && held.containsKey(step.item())) {
             var request = new Stack(new ItemStack(item(step.item())), step.count(), step.count());
-            // Existing local stock must not satisfy a request for additional stock.
+            // Existing local stock must not satisfy a request for additional stock. Full batches also
+            // keep partial local ingredients from closing a child request before the reserve is safe.
             request.setCanBeResolvedByBuilding(false);
             building.createRequest(request, true);
         }

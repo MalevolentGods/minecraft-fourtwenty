@@ -50,21 +50,27 @@ public final class ProductionRules {
         return completedLevel < 1 || completedLevel > 5 ? 0 : new int[]{0, 4, 6, 8, 12, 16}[completedLevel];
     }
 
+    /** How many requested items can be crafted without dipping into the raw-bud reserve. */
+    public static int craftableCount(int completedLevel, int requested, int buds) {
+        return Math.min(Math.max(0, requested), Math.max(0, buds - budReserve(completedLevel)));
+    }
+
     /** Small batches so stock is shared out between the menu items. */
     public static int smallBatch(MenuItem item) {
         return switch (item) { case JOINT -> 8; case COOKIE, BROWNIE -> 4; case PIPE -> 2; };
     }
 
     /**
-     * The next production step: {@code item} x {@code count} to craft (null when nothing should
-     * start), and {@code budsToRequest} raw buds to ask the colony for.
+     * The next production step: {@code item} x {@code count} to request (null when nothing is
+     * needed), and {@code budsToRequest} raw buds to ask the colony for.
      */
     public record Step(MenuItem item, int count, int budsToRequest) {}
 
     /**
      * Balanced production. One batch at a time, always for the menu item least stocked relative to
-     * its target, sized to use only buds above the reserve (each menu recipe uses one bud). Buds are
-     * requested up to the reserve plus the next batch.
+     * its target. Requests do not wait for local buds: the native request tree must be able to ask
+     * for every ingredient. The reserve is enforced when each item is crafted. Direct top-ups cover
+     * what the native ingredient request will not supply and restart production at the reserve.
      */
     public static Step next(int completedLevel, java.util.Map<MenuItem, Integer> held, int buds,
                             boolean productionOpen, boolean budRequestOpen) {
@@ -79,9 +85,14 @@ public final class ProductionRules {
         }
         int reserve = budReserve(completedLevel);
         int want = neediest == null ? 0 : Math.min(smallBatch(neediest), target(neediest, completedLevel) - held.getOrDefault(neediest, 0));
-        int budsWanted = reserve + (productionOpen ? 0 : want);
+        // With less local stock than a full batch, the native child bud request obtains the missing
+        // buds externally. Otherwise it can use local stock and we top up the reserve too.
+        boolean nativeRequestSuppliesBatch = !productionOpen && neediest != null && buds < want;
+        int budsWanted = productionOpen
+                ? (buds == reserve ? reserve + want : reserve)
+                : reserve + (nativeRequestSuppliesBatch ? 0 : want);
         int budsToRequest = budRequestOpen ? 0 : Math.max(0, budsWanted - buds);
-        int count = productionOpen || neediest == null ? 0 : Math.min(want, Math.max(0, buds - reserve));
+        int count = productionOpen || neediest == null ? 0 : want;
         return new Step(count > 0 ? neediest : null, count, budsToRequest);
     }
 

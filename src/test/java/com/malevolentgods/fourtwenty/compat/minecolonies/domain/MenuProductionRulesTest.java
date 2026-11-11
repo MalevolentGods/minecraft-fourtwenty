@@ -37,22 +37,35 @@ class MenuProductionRulesTest {
         var noBrownieNeed = Map.of(MenuItem.JOINT, 48, MenuItem.COOKIE, 8, MenuItem.PIPE, 4, MenuItem.BROWNIE, 16);
         assertEquals(MenuItem.COOKIE, ProductionRules.next(4, noBrownieNeed, 40, false, false).item());
     }
-    @Test void theBudReserveIsNeverCraftedAndIsToppedUp() {
+    @Test void missingBudsDoNotSuppressProductionOrOtherIngredientRequests() {
         var empty = Map.<MenuItem, Integer>of();
         var onlyReserve = ProductionRules.next(4, empty, 12, false, false);
-        assertNull(onlyReserve.item(), "only the reserve left: wait for buds");
+        assertEquals(MenuItem.JOINT, onlyReserve.item(), "request production while waiting for bud delivery");
+        assertEquals(8, onlyReserve.count());
         assertEquals(8, onlyReserve.budsToRequest(), "ask for the next batch (8 joints)");
         var some = ProductionRules.next(4, empty, 15, false, false);
-        assertEquals(3, some.count(), "craft only the 3 buds above the reserve");
+        assertEquals(8, some.count(), "the native request tree obtains the whole batch's ingredients");
+        assertEquals(5, some.budsToRequest(), "top up the reserve when the child request uses local buds");
         var none = ProductionRules.next(4, empty, 0, false, false);
-        assertEquals(12 + 8, none.budsToRequest());
+        assertEquals(MenuItem.JOINT, none.item(), "an empty hut still requests joints and their ingredients");
+        assertEquals(8, none.count());
+        assertEquals(12, none.budsToRequest(), "the native child request obtains the batch; the direct request covers only the reserve");
         assertEquals(0, ProductionRules.next(4, empty, 0, false, true).budsToRequest(), "a bud request is already open");
     }
-    @Test void oneBatchAtATimeButTheReserveIsStillKept() {
+    @Test void theRawBudReserveIsEnforcedAtCraftTime() {
+        assertEquals(0, ProductionRules.craftableCount(4, 8, 12));
+        assertEquals(3, ProductionRules.craftableCount(4, 8, 15));
+        assertEquals(8, ProductionRules.craftableCount(4, 8, 20));
+        assertEquals(0, ProductionRules.craftableCount(4, 0, 20));
+    }
+    @Test void oneBatchAtATimeAndAnOpenProductionRestartsAtTheReserve() {
         var empty = Map.<MenuItem, Integer>of();
         var busy = ProductionRules.next(5, empty, 3, true, false);
         assertNull(busy.item());
-        assertEquals(16 - 3, busy.budsToRequest(), "while crafting, keep requesting the reserve");
+        assertEquals(16 - 3, busy.budsToRequest(), "restore a depleted reserve while production is open");
+        var resolutionOrder = ProductionRules.next(4, empty, 12, true, false);
+        assertEquals(8, resolutionOrder.budsToRequest(), "a local child that closed at the reserve cannot strand production");
+        assertEquals(0, ProductionRules.next(4, empty, 13, true, false).budsToRequest());
         var full = Map.of(MenuItem.JOINT, 128, MenuItem.COOKIE, 32, MenuItem.PIPE, 12, MenuItem.BROWNIE, 32);
         var done = ProductionRules.next(5, full, 16, false, false);
         assertNull(done.item());

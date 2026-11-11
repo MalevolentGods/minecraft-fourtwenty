@@ -736,3 +736,8 @@ Solution: Delete runs/client/config/ directory and regenerate
 ---
 
 *World generation and PowerShell sections added based on implementation experience. Update as new patterns emerge.*
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->

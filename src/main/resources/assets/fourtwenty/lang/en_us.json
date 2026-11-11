@@ -392,7 +392,7 @@
   "fourtwenty.dispensary.status.condition.buds": "Production needs cured buds.",
   "fourtwenty.dispensary.status.condition.paper": "Production needs two paper per joint.",
   "fourtwenty.dispensary.status.condition.empty": "No joints available in the shop.",
-  "fourtwenty.dispensary.status.condition.request": "Joint production request pending.",
+  "fourtwenty.dispensary.status.condition.request": "Production request pending.",
   "fourtwenty.dispensary.status.condition.ready": "Stock and staff are in the shop.",
   "fourtwenty.dispensary.sales.title": "Dispensary menu",
   "fourtwenty.dispensary.sales.come_in": "Come into the shop to buy.",

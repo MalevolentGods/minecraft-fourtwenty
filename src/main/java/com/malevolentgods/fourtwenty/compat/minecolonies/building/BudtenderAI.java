@@ -1,5 +1,7 @@
 package com.malevolentgods.fourtwenty.compat.minecolonies.building;
 
+import com.malevolentgods.fourtwenty.compat.minecolonies.domain.ProductionRules;
+import com.malevolentgods.fourtwenty.registry.ModItems;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
 
 /** Native request queue, ingredient pickup, work-position navigation, crafting and inventory dumping. */
@@ -75,8 +77,17 @@ public final class BudtenderAI extends AbstractEntityAICrafting<BudtenderJob, Di
         return super.afterDump();
     }
 
-    /** Do not consume ingredients when the native output insertion would have no room. */
+    /** Protect the raw bud reserve and do not consume ingredients when the output has no room. */
     @Override public com.minecolonies.api.entity.ai.statemachine.states.IAIState executeCraftingAction(int toolSlot) {
+        if (currentRecipeStorage != null && currentRecipeStorage.getCleanedInput().stream()
+                .anyMatch(input -> input.getItemStack().is(ModItems.WEED_BUD.get()))) {
+            int buds = building.getHandlers().stream().mapToInt(handler -> com.minecolonies.api.util.InventoryUtils
+                    .getItemCountInItemHandler(handler, stack -> stack.is(ModItems.WEED_BUD.get()))).sum();
+            if (ProductionRules.craftableCount(building.getBuildingLevel(), 1, buds) == 0) {
+                setDelay(100);
+                return com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.START_WORKING;
+            }
+        }
         if (currentRecipeStorage != null && !net.neoforged.neoforge.items.ItemHandlerHelper.insertItemStacked(
                 worker.getInventoryCitizen(), currentRecipeStorage.getPrimaryOutput().copy(), true).isEmpty()) {
             return com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.INVENTORY_FULL;

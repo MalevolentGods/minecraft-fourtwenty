@@ -53,6 +53,25 @@ public final class TrimDaddyAI extends AbstractEntityAIInteract<TrimDaddyJob, Bu
 
     @Override protected int getActionsDoneUntilDumping() { return DUMP_AFTER; }
 
+    /** Couriers cannot see tail-end output left in the worker's pockets. */
+    @Override protected boolean wantInventoryDumped() {
+        return super.wantInventoryDumped() || outputCount(worker.getInventoryCitizen()) > 0;
+    }
+
+    /** Do not leave a small final dump waiting several colony days for the native pickup cooldown. */
+    @Override public IAIState afterDump() {
+        if (isAfterDumpPickupAllowed() && building.getPickUpPriority() > 0 && outputCount(building.getItemHandlerCap()) > 0) {
+            building.pickUpDay = building.getColony().getDay();
+            building.createPickupRequest(building.getPickUpPriority());
+        }
+        return super.afterDump();
+    }
+
+    private static int outputCount(net.neoforged.neoforge.items.IItemHandler inventory) {
+        return inventory == null ? 0 : InventoryUtils.getItemCountInItemHandler(inventory,
+                stack -> stack.is(ModItems.WEED_BUD.get()) || stack.is(ModItems.WEED_SEEDS.get()));
+    }
+
     private IAIState decide() {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         var snapshot = building.snapshot(worker.getInventoryCitizen());
