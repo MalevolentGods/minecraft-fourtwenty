@@ -2,6 +2,13 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [0.24.3]
+
+### Fixed
+- **Budtenders request everything on the menu:** production now starts even when buds are missing, so couriers can fetch paper and every other ingredient for joints, cookies, pipes and brownies. Full-batch top-ups keep production moving after short deliveries, and the raw-bud reserve stays safe while crafting.
+- **Couriers collect Trim Daddy output:** cured buds and seeds no longer stay in the Trim Daddy's pockets. Small final batches request pickup immediately at the hut's configured priority.
+- **Dispensary status:** pending production requests for every menu item now appear, not only joints.
+
 ## [0.24.2]
 
 ### Fixed
