@@ -4,6 +4,10 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.25.0
+
+- **Sensi Heights University**, in five levels.
+
 ## What's new in 0.24.3
 
 - **Budtenders request every menu ingredient:** production no longer stops when buds are missing. Couriers can supply every recipe, and the raw-bud reserve stays safe.
