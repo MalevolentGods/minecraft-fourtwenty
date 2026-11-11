@@ -109,9 +109,20 @@ public final class DispensaryProductionGameTests {
                 h.assertTrue(requests(building)==1,"Saved request prevents duplication after building reload");
                 var kept=new ArrayList<ItemStorage>();
                 h.assertTrue(building.buildingRequiresCertainAmountOfItem(new ItemStack(ModItems.WEED_JOINT.get(),20),kept,false,null)==4,"Courier leaves 16-joint target");
-                h.assertTrue(building.buildingRequiresCertainAmountOfItem(new ItemStack(ModItems.WEED_BUD.get(),20),new ArrayList<>(),false,null)==4,"Courier retains batch of buds");
+                h.assertTrue(building.buildingRequiresCertainAmountOfItem(new ItemStack(ModItems.WEED_BUD.get(),20),new ArrayList<>(),false,null)==0,"Courier retains 16 crafting buds plus the 4-bud reserve");
                 h.assertTrue(building.buildingRequiresCertainAmountOfItem(new ItemStack(Items.PAPER,40),new ArrayList<>(),false,null)==8,"Courier retains two papers per joint");
             }
+            var jointRequest = request(first, new ItemStack(ModItems.WEED_JOINT.get()));
+            for (int n=0;n<20 && !hasIngredientRequest(colony,jointRequest,new ItemStack(Items.PAPER));n++) colony.getRequestManager().tick();
+            h.assertTrue(hasIngredientRequest(colony,jointRequest,new ItemStack(Items.PAPER)),
+                    "An empty Dispensary's joint request also asks for paper");
+            h.assertTrue(((com.minecolonies.api.colony.requestsystem.requestable.Stack)jointRequest.getRequest()).getMinimumCount()==8,
+                    "Partial local ingredients cannot close a full production batch");
+            var budRequest = request(first, new ItemStack(ModItems.WEED_BUD.get()));
+            h.assertTrue(budRequest!=null && !((com.minecolonies.api.colony.requestsystem.requestable.Stack)budRequest.getRequest()).canBeResolvedByBuilding(),
+                    "Additional bud requests cannot fulfil themselves from existing hut stock");
+            h.assertTrue(((com.minecolonies.api.colony.requestsystem.requestable.Stack)budRequest.getRequest()).getMinimumCount()==4,
+                    "A short direct top-up stays open until the whole reserve arrives");
             h.assertTrue(first.getAllAssignedCitizen().iterator().next()!=second.getAllAssignedCitizen().iterator().next(),"Distinct staff");
             ItemHandlerHelper.insertItemStacked(first.getItemHandlerCap(),new ItemStack(ModItems.WEED_JOINT.get()),false);
             h.assertTrue(InventoryUtils.getItemCountInItemHandler(second.getItemHandlerCap(),s->s.is(ModItems.WEED_JOINT.get()))==0,"Distinct stock");
@@ -121,6 +132,53 @@ public final class DispensaryProductionGameTests {
     static int requests(DispensaryBuilding building) {
         return (int)building.getOpenRequestsByRequestableType().values().stream().flatMap(java.util.Collection::stream).distinct()
                 .map(building.getColony().getRequestManager()::getRequestForToken).filter(r->r!=null && r.getRequest() instanceof com.minecolonies.api.colony.requestsystem.requestable.Stack s && s.matches(new ItemStack(ModItems.WEED_JOINT.get()))).count();
+    }
+    private static com.minecolonies.api.colony.requestsystem.request.IRequest<?> request(DispensaryBuilding building, ItemStack sample) {
+        return building.getOpenRequestsByRequestableType().values().stream().flatMap(java.util.Collection::stream).distinct()
+                .map(building.getColony().getRequestManager()::getRequestForToken)
+                .filter(r->r!=null && r.getRequest() instanceof com.minecolonies.api.colony.requestsystem.requestable.Stack s && s.matches(sample))
+                .findFirst().orElse(null);
+    }
+    private static boolean hasIngredientRequest(IColony colony, com.minecolonies.api.colony.requestsystem.request.IRequest<?> request, ItemStack sample) {
+        if (request==null) return false;
+        for (var token:request.getChildren()) {
+            var child=colony.getRequestManager().getRequestForToken(token);
+            if (child!=null && child.getRequest() instanceof com.minecolonies.api.colony.requestsystem.requestable.Stack stack && stack.matches(sample)) return true;
+            if (hasIngredientRequest(colony,child,sample)) return true;
+        }
+        return false;
+    }
+    @GameTest(template="empty", batch="dispensary_requests")
+    public static void everyMenuItemRequestsItsIngredients(GameTestHelper h) {
+        var colony=colony(h);
+        try {
+            for(int level=2;level<=4;level++) {
+                var expected=switch(level) {
+                    case 2 -> com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem.COOKIE;
+                    case 3 -> com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem.PIPE;
+                    default -> com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem.BROWNIE;
+                };
+                var building=hut(h,colony,h.absolutePos(new BlockPos(level*3,1,1)));
+                building.setBuildingLevel(level);building.onUpgradeComplete(null,level);
+                var citizen=colony.getCitizenManager().createAndRegisterCivilianData();citizen.setIsChild(false);
+                h.assertTrue(building.getModule(DispensaryRegistry.WORK).assignCitizen(citizen),"Menu worker at level "+level);
+                for(var item:com.malevolentgods.fourtwenty.compat.minecolonies.domain.MenuItem.menu(level)) {
+                    if(item!=expected) ItemHandlerHelper.insertItemStacked(building.getItemHandlerCap(),
+                            new ItemStack(com.malevolentgods.fourtwenty.compat.minecolonies.service.JointService.item(item),
+                                    com.malevolentgods.fourtwenty.compat.minecolonies.domain.ProductionRules.target(item,level)),false);
+                }
+                building.getModule(DispensaryRegistry.CRAFT).onColonyTick(colony);
+                var output=request(building,new ItemStack(com.malevolentgods.fourtwenty.compat.minecolonies.service.JointService.item(expected)));
+                h.assertTrue(output!=null,"Production requested for "+expected);
+                for(int n=0;n<20;n++) colony.getRequestManager().tick();
+                for(var input:com.malevolentgods.fourtwenty.compat.minecolonies.domain.ProductionRules.recipe(expected)) {
+                    if(input.itemId().equals("fourtwenty:weed_bud")) continue;
+                    var ingredient=new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.minecraft.resources.ResourceLocation.parse(input.itemId())));
+                    h.assertTrue(hasIngredientRequest(colony,output,ingredient),"Ingredient requested for "+expected+": "+input.itemId());
+                }
+            }
+            h.succeed();
+        } finally {delete(h,colony);}
     }
     @GameTest(template="empty", batch="dispensary_recipe")
     public static void recipeUsesExactMaterialsWithoutImprovement(GameTestHelper h) {
@@ -179,6 +237,11 @@ public final class DispensaryProductionGameTests {
             inventory.setStackInSlot(1,new ItemStack(Items.PAPER,64));
             h.assertTrue(ai.executeCraftingAction(-1)==com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.INVENTORY_FULL,"Full worker output waits for storage");
             h.assertTrue(inventory.getStackInSlot(0).getCount()==64 && inventory.getStackInSlot(1).getCount()==64,"No ingredients consumed without output capacity");
+            for(int slot=0;slot<inventory.getSlots();slot++) inventory.setStackInSlot(slot,ItemStack.EMPTY);
+            inventory.setStackInSlot(0,new ItemStack(ModItems.WEED_BUD.get(),4));
+            inventory.setStackInSlot(1,new ItemStack(Items.PAPER,8));
+            h.assertTrue(ai.executeCraftingAction(-1)==com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.START_WORKING,"Crafting waits when only the raw bud reserve remains");
+            h.assertTrue(inventory.getStackInSlot(0).getCount()==4 && inventory.getStackInSlot(1).getCount()==8,"The raw bud reserve and paper are untouched");
             h.succeed();
         } finally {if(actor!=null)actor.discard();delete(h,colony);}
     }
