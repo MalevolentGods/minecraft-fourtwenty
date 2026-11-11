@@ -2,6 +2,11 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [0.25.0]
+
+### Added
+- **Sensi Heights pack v100: the University**, levels 1-5, with bookshelves (8 at level 1, 63 at level 5) and seats for its researchers on lecture benches and couches.
+
 ## [0.24.3]
 
 ### Fixed
