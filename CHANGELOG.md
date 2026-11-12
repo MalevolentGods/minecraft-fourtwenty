@@ -2,6 +2,11 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [0.25.1]
+
+### Fixed
+- **Players and colonists climb MineColonies racks:** racks now behave like ladders, so Builders no longer get stuck on three-high rack stacks. Vanilla ladders still work when MineColonies is not installed.
+
 ## [0.25.0]
 
 ### Added
