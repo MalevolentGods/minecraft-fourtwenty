@@ -50,7 +50,10 @@ public final class LiftedClient {
     public static void addLayers(EntityRenderersEvent.AddLayers event) {
         if (ModEntities.CITIZEN == null) return;
         var renderer = event.getRenderer(ModEntities.CITIZEN);
-        if (renderer instanceof LivingEntityRenderer living) living.addLayer(new Glow(living));
+        if (renderer instanceof LivingEntityRenderer living) {
+            living.addLayer(new Glow(living));
+            living.addLayer(new BoomboxLayer(living));   // the Midnight Machine (spec 014)
+        }
     }
 
     private static void tick(ClientTickEvent.Post event) {

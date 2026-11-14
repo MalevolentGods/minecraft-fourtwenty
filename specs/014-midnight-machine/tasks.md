@@ -92,11 +92,11 @@
   - **On each:** shoulder straps, the album-art panel and emissive trim.
   - **Renders:** each on a citizen-sized stand-in, from front, back, three-quarter and side.
 - [X] T016 [US2] (Published 2026-11-14: https://claude.ai/artifact/KvisK9PFzG5gYpBD9SES3j. **The user picked B, Synth Machine**, with VU bars driven by the music.) Run it, publish the renders as one artifact page for the user, and **stop for the user's pick** (gate).
-- [ ] T017 [US2] Write `tools/generate_midnight_machine_model.py` for the chosen design:
+- [X] T017 [US2] Write `tools/generate_midnight_machine_model.py` for the chosen design:
   - **Models:** `A/models/midnight_machine/body.json` and `bar.json` (one VU bar, scaled per band) (cuboid elements, at most 16 px per axis per element).
   - **Textures:** in `A/textures/entity/midnight_machine/`: the shell, the glow, and a 32×32 album-art panel cut from `ALBUM/MM.png`, quantised to the palette.
   - **Check:** run `tools/check_model_overlaps.py` on the output.
-- [ ] T018 [US2] Create `MC/client/BoomboxLayer.java`, a `RenderLayer` on the citizen renderer, added in `LiftedClient.addLayers`:
+- [X] T018 [US2] Create `MC/client/BoomboxLayer.java`, a `RenderLayer` on the citizen renderer, added in `LiftedClient.addLayers`:
   - **Placement:** while she's Lifted (from the payload's `lifted`), draw `body` on her back by following `model.body`'s pose.
   - **Glow:** full-bright.
   - **VU bars:** draw the six VU bars with heights from `trackN.bands` at the player's playback position (interpolated between frames). With no music playing, follow the dance beat instead.
