@@ -137,22 +137,22 @@
 
 **Independent test**: quickstart.md M3.
 
-- [ ] T021 [P] [US3] Write `T/LiftedRulesTest.java`:
+- [X] T021 [P] [US3] Write `T/LiftedRulesTest.java`:
   - Landrace 5 min = 6000 ticks;
   - each family's minutes from the config map;
   - potency 1 adds 0 and potency 5 adds `potencyBonus`;
   - speed from `speedLowest` at grade 0 to `speedHighest` at Golden God, linear by grade;
   - the delay factor is 1/speed.
-- [ ] T022 [P] [US3] Write `T/SpareJointsTest.java`: spare = max(0, stock − owed); request size = min(stash, spare); zero spare means no request (and an open one cancels).
-- [ ] T023 [P] [US3] Write `T/FlightPlannerTest.java`, against a fake grid predicate:
+- [X] T022 [P] [US3] Write `T/SpareJointsTest.java`: spare = max(0, stock − owed); request size = min(stash, spare); zero spare means no request (and an open one cancels).
+- [X] T023 [P] [US3] Write `T/FlightPlannerTest.java`, against a fake grid predicate:
   - a straight path in open air;
   - around a wall;
   - over a roof;
   - none when the goal is sealed;
   - stops at `maxCells`;
   - every cell has two free cells for her height.
-- [ ] T024 [US3] Create `J/domain/LiftedRules.java` (pure; `ticks(Strain, int potency, Config)`, `speed(Strain, Config)`, `delayFactor`) and `J/domain/SpareJoints.java`. Make T021 and T022 pass. Family and grade come from `Strain`/`StrainStats`.
-- [ ] T025 [US3] Create `J/domain/FlightPlanner.java`, a bounded 3D A* (26-neighbour, cost √ distance) over `Predicate<BlockPos> fits`, where she fits if two cells are free. It returns a waypoint list or empty. Make T023 pass.
+- [X] T024 [US3] Create `J/domain/LiftedRules.java` (pure; `ticks(Strain, int potency, Config)`, `speed(Strain, Config)`, `delayFactor`) and `J/domain/SpareJoints.java`. Make T021 and T022 pass. Family and grade come from `Strain`/`StrainStats`.
+- [X] T025 [US3] Create `J/domain/FlightPlanner.java`, a bounded 3D A* (26-neighbour, cost √ distance) over `Predicate<BlockPos> fits`, where she fits if two cells are free. It returns a waypoint list or empty. Make T023 pass.
 - [ ] T026 [US3] Create `MC/builder/Lifted.java`, a `LiftedSavedData` (per level, `computeIfAbsent` on the overworld data storage like `DispensarySavedData`).
   - **Records:** `(colonyId, citizenId) → (Strain, ticksLeft)`, with save/load.
   - **API:** `get`, `start(…)`, `tick(…)` (decrements only when told she's building), `end(…)`.
