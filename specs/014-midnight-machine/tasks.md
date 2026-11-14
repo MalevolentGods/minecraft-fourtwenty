@@ -112,13 +112,13 @@
 **Goal:** beat-synced dancing that never changes her building (FR-009 to FR-011).
 **Test:** quickstart M3.
 
-- [ ] T020 [US3] Write `tools/beatmap_album.py` (numpy, scipy), following research R4:
+- [X] T020 [US3] Write `tools/beatmap_album.py` (numpy, scipy), following research R4:
   - **Analysis:** onset strength, then tempo, then dynamic-programming beats, then accents (top 12%).
   - **Output:** write `bpm`, `beats_ms` and `accents_ms` into `album.json`.
   - **VU bands:** also measure six frequency bands (bass to treble, log-spaced, roughly 40-12,000 Hz) every 50 ms, normalised per track, and write them as `A/midnight_machine/trackN.bands` (6 bytes a frame, 0-255).
   - **Clicks:** write `out/clicks/trackN_clicks.wav` (gitignored), and print the tempo and beat count per track.
   - **Overrides:** honour `tools/beatmap_overrides.json` (`bpm`, `offset_ms` per track).
-- [ ] T021 [US3] Run it. Listen to each click track (the user can spot-check), fix any track with an override, and commit `album.json`.
+- [ ] T021 [US3] (Ran 2026-11-14: 95.7, 90.7, 172.3, 178.2, 166.7, 166.7 and 95.7 BPM; beat spacing tight (9-42 ms spread). Tracks 3-6 may be double-time, so dancing bobs every other beat above 140 BPM. Click tracks are in %TEMP%\mm_clicks for the user to spot-check.) Run it. Listen to each click track (the user can spot-check), fix any track with an override, and commit `album.json`.
 - [ ] T022 [P] [US3] Write `T/DanceRulesTest.java`:
   - the bob peaks on each beat (±1 frame);
   - a spin starts on an accent and lasts 0.4 s, with no second spin within the cooldown;
