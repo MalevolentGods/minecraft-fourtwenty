@@ -35,7 +35,7 @@ public final class LiftedClient {
 
     private static final Set<Integer> LIFTED = new HashSet<>();
     /** The glow shells, faintest outermost: ARGB. */
-    private static final int[] GLOW = {0x50AAFF60, 0x34AAFF60, 0x1C9CFF50};
+    private static final int[] GLOW = {0x40AAFF60, 0x28AAFF60, 0x149CFF50};
     private static final float GLOW_STEP = 0.1f;
 
     public static void install() {
@@ -68,6 +68,29 @@ public final class LiftedClient {
         }
     }
 
+    private static java.lang.reflect.Field childrenField;
+
+    /** Hides a part's visible children (hat brim, feather) for one draw; returns them to show again. */
+    @SuppressWarnings("unchecked")
+    private static List<ModelPart> hideChildren(ModelPart part) {
+        try {
+            if (childrenField == null) {
+                childrenField = ModelPart.class.getDeclaredField("children");
+                childrenField.setAccessible(true);
+            }
+            var hidden = new java.util.ArrayList<ModelPart>();
+            for (ModelPart child : ((java.util.Map<String, ModelPart>) childrenField.get(part)).values()) {
+                if (child.visible) {
+                    child.visible = false;
+                    hidden.add(child);
+                }
+            }
+            return hidden;
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return List.of();
+        }
+    }
+
     private static final class Glow extends RenderLayer<AbstractEntityCitizen, CitizenModel<AbstractEntityCitizen>> {
         Glow(RenderLayerParent<AbstractEntityCitizen, CitizenModel<AbstractEntityCitizen>> parent) { super(parent); }
 
@@ -81,9 +104,10 @@ public final class LiftedClient {
             int tint = ((int) (70 * pulse) << 24) | 0x9CFF60;
             model.renderToBuffer(pose, buffers.getBuffer(RenderType.entityTranslucentEmissive(getTextureLocation(citizen))),
                     LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, tint);
-            // The shells use her own texture, tinted: see-through pixels (the hat brim, the feather) stay see-through.
-            // An untextured halo turned those flat, mostly transparent parts into solid green slabs (seen in game).
-            var glow = buffers.getBuffer(RenderType.entityTranslucentEmissive(getTextureLocation(citizen)));
+            // Bright additive shells, as the Golden God's. Parts hung off the body (a citizen's hat brim and feather) are
+            // flat and mostly see-through, and an untextured shell turns them into solid green slabs (seen in game), so
+            // they're hidden while the shells draw.
+            var glow = buffers.getBuffer(com.malevolentgods.fourtwenty.client.LampHaloRenderer.HaloRenderType.HALO);
             for (ModelPart part : List.of(model.head, model.body, model.leftArm, model.rightArm, model.leftLeg, model.rightLeg)) {
                 for (int i = 0; i < GLOW.length; i++) {
                     float size = 1 + GLOW_STEP * (i + 1);
@@ -91,7 +115,9 @@ public final class LiftedClient {
                     part.xScale *= size;
                     part.yScale *= size;
                     part.zScale *= size;
+                    var hidden = hideChildren(part);
                     part.render(pose, glow, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, colour);
+                    hidden.forEach(child -> child.visible = true);
                     part.xScale /= size;
                     part.yScale /= size;
                     part.zScale /= size;
