@@ -135,6 +135,7 @@ public final class LiftedFlight {
     /** One tick of a gentle landing; true once she's down. */
     private static boolean descend(ServerLevel level, EntityCitizen citizen, Flight flight) {
         if (citizen.onGround() && !citizen.isNoGravity()) return true;
+        citizen.getNavigation().stop();   // her own walking waits until she's down
         if (flight.landAt == null) flight.landAt = landingSpot(level, citizen);
         if (flight.landAt == null) {   // nowhere to stand within reach: straight down, slowly, until she touches something
             citizen.setNoGravity(true);
@@ -162,32 +163,14 @@ public final class LiftedFlight {
         return false;
     }
 
-    /** Where to come down: outside the building's footprint if she's over it, otherwise the first floor straight below. */
+    /**
+     * Where to come down: the first floor straight below her. (Seen in game 2026-11-14: steering her to a spot outside the
+     * footprint flew her into the building's own walls and she never landed. Down is always clear: she flew there, and
+     * once on the floor MineColonies walks her out, with the watchdog behind it.)
+     */
     @Nullable
     private static BlockPos landingSpot(ServerLevel level, EntityCitizen citizen) {
         BlockPos at = citizen.blockPosition();
-        var corners = BuilderAccess.siteCorners(citizen);
-        if (corners != null) {
-            var a = corners.getA();
-            var b = corners.getB();
-            boolean over = at.getX() >= Math.min(a.getX(), b.getX()) && at.getX() <= Math.max(a.getX(), b.getX())
-                    && at.getZ() >= Math.min(a.getZ(), b.getZ()) && at.getZ() <= Math.max(a.getZ(), b.getZ());
-            if (over) {
-                var box = new StandingSpot.Box(Math.min(a.getX(), b.getX()), level.getMinBuildHeight(), Math.min(a.getZ(), b.getZ()),
-                        Math.max(a.getX(), b.getX()), level.getMaxBuildHeight(), Math.max(a.getZ(), b.getZ()));
-                int cx = Math.clamp(at.getX(), box.minX() - 1, box.maxX() + 1);
-                int cz = Math.clamp(at.getZ(), box.minZ() - 1, box.maxZ() + 1);
-                int west = at.getX() - box.minX(), east = box.maxX() - at.getX(), north = at.getZ() - box.minZ(), south = box.maxZ() - at.getZ();
-                int least = Math.min(Math.min(west, east), Math.min(north, south));
-                if (least == west) cx = box.minX() - 1;
-                else if (least == east) cx = box.maxX() + 1;
-                else if (least == north) cz = box.minZ() - 1;
-                else cz = box.maxZ() + 1;
-                var spot = StandingSpot.nearest(cx, at.getY(), cz, 8,
-                        (x, y, z) -> BuilderWatchdog.solid(level, x, y, z), (x, y, z) -> BuilderWatchdog.free(level, x, y, z), box, 6);
-                if (spot.isPresent()) return new BlockPos(spot.get().x(), spot.get().y(), spot.get().z());
-            }
-        }
         return StandingSpot.below(at.getX(), at.getY(), at.getZ(), 64,
                         (x, y, z) -> BuilderWatchdog.solid(level, x, y, z), (x, y, z) -> BuilderWatchdog.free(level, x, y, z))
                 .map(s -> new BlockPos(s.x(), s.y(), s.z())).orElse(null);
