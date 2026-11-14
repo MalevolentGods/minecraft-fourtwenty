@@ -87,21 +87,21 @@
 
 **Independent test**: quickstart.md M2 steps 2-4.
 
-- [ ] T014 [P] [US2] Write `T/BuilderWatchRulesTest.java`. Cover:
+- [X] T014 [P] [US2] Write `T/BuilderWatchRulesTest.java`. Cover:
   - OK while progress changes;
   - SLOW when placements over the window fall under `slowFraction` × expected;
   - STUCK after `stuckTicks` with no progress;
   - escalation NONE→FRESH_SPOT→NEAR_BLOCK→OUTSIDE→RECALL, one step per stuck window;
   - reset to NONE on progress;
   - reset when not building.
-- [ ] T015 [US2] Create `J/domain/BuilderWatchRules.java`, a pure class.
+- [X] T015 [US2] Create `J/domain/BuilderWatchRules.java`, a pure class.
   - **`record Sample(long time, boolean building, Long progressKey, boolean placed)`;**
   - **`enum Verdict {OK, SLOW, STUCK}`** and **`enum Step {NONE, FRESH_SPOT, NEAR_BLOCK, OUTSIDE, RECALL}`;**
   - **`State`:** last progress, last progress time, a ring of placement times, the step;
   - **`next(State, Sample, double expectedPerTick, Config)`** returns the new state and the rescue to apply now (or none).
 
   Make T014 pass.
-- [ ] T016 [US2] Create `MC/builder/BuilderWatchdog.java`, registered from `ColonyIntegration` on `ServerTickEvent.Post`. Every 20 ticks, when `watchdogEnabled()`:
+- [X] T016 [US2] Create `MC/builder/BuilderWatchdog.java`, registered from `ColonyIntegration` on `ServerTickEvent.Post`. Every 20 ticks, when `watchdogEnabled()`:
   - **Which Builders:** each loaded `EntityCitizen` whose data `BuilderAccess.isBuilder`.
   - **Building:** means `citizenState == CitizenAIState.WORKING` and `workerState` is `AIWorkerState.BUILDING_STEP` or `MINE_BLOCK`.
   - **Rules:** build a `Sample` and run `BuilderWatchRules.next`.
@@ -112,7 +112,7 @@
     - RECALL → `BuilderAccess.recall`.
   - **Log:** each rescue with `BuilderLog` (`rescue <step> ...`).
   - **Memory:** watch state in a `Map<UUID, State>`, cleared for citizens no longer present.
-- [ ] T017 [P] [US2] Create `J/domain/StandingSpot.java`, a pure search for the nearest standing spot. It takes a `Predicate<BlockPos> solid` and `Predicate<BlockPos> free`, a centre, a radius and an optional exclusion box (footprint). Test it in `T/StandingSpotTest.java`.
+- [X] T017 [P] [US2] Create `J/domain/StandingSpot.java`, a pure search for the nearest standing spot. It takes a `Predicate<BlockPos> solid` and `Predicate<BlockPos> free`, a centre, a radius and an optional exclusion box (footprint). Test it in `T/StandingSpotTest.java`.
 - [ ] T018 [US2] Fill the Warehouse pockets. Create `C:\Users\Ignus\sensi-heights\tools\fill_warehouse_pockets.py`. For `craftsmanship/storage/warehouse1-4.blueprint`, it sets every air cell under a centre-stair step at (9..11, 1, 12) and (9..11, 1, 20) to the blueprint's solid block used at (9,1,12).
   - **Scope:** only cells that are air with a stair directly above.
   - **Check:** print the before/after and verify with `tools/check_hut_levels.py craftsmanship/storage/warehouse` (no new problems).
