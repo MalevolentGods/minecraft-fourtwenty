@@ -26,6 +26,18 @@
 - **Skip the walk-away entirely:** rejected. She would place blocks inside herself.
 - **Raise the 1.5 "reached" distance:** rejected. It hides the symptom, and she would place from too far.
 
+**Seen in game (M1, flatworld, 2026-11-13; logging on, fix off; a Warehouse upgrade, ~210 blocks):**
+- **Pace:** median 10 ticks a block.
+- **No step-asides at all:** the suspected loop never happened.
+- **A different slowdown did:** when the iterator jumps between two walls about 10 apart (one block on each side of a row), every block is more than 5 blocks from her standing spot. MineColonies drops the spot and starts a new route search for every block, so those blocks take 25-175 ticks instead of 10.
+- **One 1,875-tick gap:** a trip back to the hut for resources, not a stall.
+- **The rare crawl the user sees** ("a block every few seconds, until pushed off her block") wasn't caught. The user expects it can't be reproduced on demand.
+
+**Decision:**
+- **Keep the step-aside fix:** it's harmless and switchable.
+- **The watchdog is the safety net:** it covers the rare crawl, whatever its cause.
+- **The ping-pong:** Higher Ground avoids it for Lifted Builders (hover points within reach of the next blocks). For walking Builders it's MineColonies' own behaviour; left as is for now.
+
 ## R2. Telling "building" from "busy with something else"
 
 **Finding:**

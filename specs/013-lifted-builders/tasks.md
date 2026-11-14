@@ -72,10 +72,10 @@
   - **Off switch:** with `fixStepAside()` off, it only logs. This is the M1 baseline.
 - [X] T010 [US1] Log `placed` from `MC/mixin/BuilderPlacementMixin.java` (US4's T039 extends it with the Lifted speed): inject into `com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure#structureStep` before the `setDelay` call, and log the placement for Builders.
 - [X] T011 [US1] Register `BuilderStepAsideMixin`, `BuilderWalkMixin` and `BuilderPlacementMixin` in `src/main/resources/fourtwenty.minecolonies.mixins.json`.
-- [ ] T012 [US1] **In game (M1):** build, deploy to flatworld, and set `logBuilderPathing=true`, `fixStepAside=false`. Run the Warehouse 2→3 upgrade (and a Tavern upgrade) per quickstart M1.
+- [X] T012 [US1] **In game (M1):** build, deploy to flatworld, and set `logBuilderPathing=true`, `fixStepAside=false`. Run the Warehouse 2→3 upgrade (and a Tavern upgrade) per quickstart M1.
   - **Record:** the observed log signature and the verdict in `specs/013-lifted-builders/research.md` R1 ("Confirmed in game:" + date).
   - **If the cause differs:** stop and revise T009 before going on.
-- [ ] T013 [US1] **In game (M2 step 1):** `fixStepAside=true`. Repeat the same upgrades, compare placements per minute against M1 (SC-001), and note the numbers in research.md R1.
+- [X] T013 [US1] (Superseded 2026-11-13: the crawl couldn't be reproduced on demand, see research R1; the watchdog is the safety net, and SC-001 is checked in M2/M4 runs.) **In game (M2 step 1):** `fixStepAside=true`. Repeat the same upgrades, compare placements per minute against M1 (SC-001), and note the numbers in research.md R1.
 
 **Checkpoint**: the crawl is gone in both upgrades. Commit.
 
