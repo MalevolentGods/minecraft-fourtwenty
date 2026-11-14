@@ -16,11 +16,11 @@
 
 ## Phase 1: Setup
 
-- [ ] T001 Write `tools/convert_album.py`:
+- [X] T001 Write `tools/convert_album.py`:
   - **Conversion:** for each `ALBUM/N - Title.wav`, run `ffmpeg -ac 1 -ar 44100 -c:a libvorbis -q:a 4` to `A/sounds/midnight_machine/trackN.ogg`.
   - **Manifest:** write `A/midnight_machine/album.json` with `title`, `artist` and `tracks[{id, title, length_ms}]` (length from the WAV header).
   - **Check:** print sizes, and fail if the total is over 20 MB.
-- [ ] T002 Run `tools/convert_album.py`; commit the 7 OGGs and `album.json`; add the 7 events to `A/sounds.json` as in contracts/assets-and-sync.md (`category: record`, `stream: true`, `attenuation_distance: 24`).
+- [X] T002 Run `tools/convert_album.py`; commit the 7 OGGs and `album.json`; add the 7 events to `A/sounds.json` as in contracts/assets-and-sync.md (`category: record`, `stream: true`, `attenuation_distance: 24`).
 - [ ] T003 [P] Add a `[music]` section to `MC/builder/BuilderConfig.java`: `enabled` (true), `fallbackBpm` (100, 40-200), `danceBob` (0.12, 0-0.5) and `spinCooldownSeconds` (2, 0.5-30), with typed accessors.
 
 ## Phase 2: Foundational

@@ -2233,5 +2233,13 @@
   "com.minecolonies.coremod.setting.fourtwenty:flywhenlifted": "Fly when Lifted:",
   "com.minecolonies.coremod.setting.fourtwenty:flywhenlifted.tooltip": "When on, this Builder smokes spare colony joints to become Lifted: she flies and builds the Higher Ground way.",
   "fourtwenty.lifted.status": "Lifted",
-  "fourtwenty.lifted.waiting": "Waiting for spare joints"
+  "fourtwenty.lifted.waiting": "Waiting for spare joints",
+  "subtitles.fourtwenty.midnight_machine.track1": "Midnight Machine plays “Rise and Peak”",
+  "subtitles.fourtwenty.midnight_machine.track2": "Midnight Machine plays “Smoke and Mirrors”",
+  "subtitles.fourtwenty.midnight_machine.track3": "Midnight Machine plays “Listen and Learn”",
+  "subtitles.fourtwenty.midnight_machine.track4": "Midnight Machine plays “Awake and Adapt”",
+  "subtitles.fourtwenty.midnight_machine.track5": "Midnight Machine plays “Beauty and Light”",
+  "subtitles.fourtwenty.midnight_machine.track6": "Midnight Machine plays “Far and Away”",
+  "subtitles.fourtwenty.midnight_machine.track7": "Midnight Machine plays “Man and Machine”",
+  "fourtwenty.midnight_machine": "Midnight Machine"
 }

@@ -1,0 +1,41 @@
+{
+  "title": "Midnight Machine",
+  "artist": "ATLemental",
+  "tracks": [
+    {
+      "id": "track1",
+      "title": "Rise and Peak",
+      "length_ms": 265640
+    },
+    {
+      "id": "track2",
+      "title": "Smoke and Mirrors",
+      "length_ms": 315960
+    },
+    {
+      "id": "track3",
+      "title": "Listen and Learn",
+      "length_ms": 206920
+    },
+    {
+      "id": "track4",
+      "title": "Awake and Adapt",
+      "length_ms": 95893
+    },
+    {
+      "id": "track5",
+      "title": "Beauty and Light",
+      "length_ms": 250000
+    },
+    {
+      "id": "track6",
+      "title": "Far and Away",
+      "length_ms": 195598
+    },
+    {
+      "id": "track7",
+      "title": "Man and Machine",
+      "length_ms": 251705
+    }
+  ]
+}
