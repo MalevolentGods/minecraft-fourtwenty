@@ -113,4 +113,11 @@ public final class BuilderConfig {
     public static int requestIntervalTicks() { return get(REQUEST_INTERVAL, 100); }
     public static int hoverLookahead() { return get(HOVER_LOOKAHEAD, 64); }
     public static int hoverGrid() { return get(HOVER_GRID, 3); }
+
+    /** The Lifted numbers as the pure rules take them. */
+    public static com.malevolentgods.fourtwenty.domain.LiftedRules.Tuning liftedTuning() {
+        var minutes = new java.util.HashMap<String, Double>();
+        for (String family : FAMILIES) minutes.put(family, liftedMinutes(family));
+        return new com.malevolentgods.fourtwenty.domain.LiftedRules.Tuning(minutes, potencyBonus(), speedLowest(), speedHighest());
+    }
 }

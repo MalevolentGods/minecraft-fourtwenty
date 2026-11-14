@@ -153,14 +153,14 @@
   - every cell has two free cells for her height.
 - [X] T024 [US3] Create `J/domain/LiftedRules.java` (pure; `ticks(Strain, int potency, Config)`, `speed(Strain, Config)`, `delayFactor`) and `J/domain/SpareJoints.java`. Make T021 and T022 pass. Family and grade come from `Strain`/`StrainStats`.
 - [X] T025 [US3] Create `J/domain/FlightPlanner.java`, a bounded 3D A* (26-neighbour, cost √ distance) over `Predicate<BlockPos> fits`, where she fits if two cells are free. It returns a waypoint list or empty. Make T023 pass.
-- [ ] T026 [US3] Create `MC/builder/Lifted.java`, a `LiftedSavedData` (per level, `computeIfAbsent` on the overworld data storage like `DispensarySavedData`).
+- [X] T026 [US3] Create `MC/builder/Lifted.java`, a `LiftedSavedData` (per level, `computeIfAbsent` on the overworld data storage like `DispensarySavedData`).
   - **Records:** `(colonyId, citizenId) → (Strain, ticksLeft)`, with save/load.
   - **API:** `get`, `start(…)`, `tick(…)` (decrements only when told she's building), `end(…)`.
-- [ ] T027 [US3] Create `MC/builder/LiftedSetting.java`, holding `SettingKey<BoolSetting> FLY_WHEN_LIFTED = new SettingKey<>(BoolSetting.class, ResourceLocation("fourtwenty","flywhenlifted"))` and `boolean on(IBuilding)`. Create `MC/mixin/BuilderSettingsMixin.java`:
+- [X] T027 [US3] Create `MC/builder/LiftedSetting.java`, holding `SettingKey<BoolSetting> FLY_WHEN_LIFTED = new SettingKey<>(BoolSetting.class, ResourceLocation("fourtwenty","flywhenlifted"))` and `boolean on(IBuilding)`. Create `MC/mixin/BuilderSettingsMixin.java`:
   - **Hook:** inject at RETURN of `com.minecolonies.api.colony.buildings.registry.BuildingEntry#produceBuilding`. When the entry's registry name is `minecolonies:builder`, get its `ISettingsModule` and add `FLY_WHEN_LIFTED` with `new BoolSetting(true)`.
   - **Register** the mixin.
   - **Check in game:** the switch shows in the Settings tab, and in an old colony it reads on.
-- [ ] T028 [US3] Create `MC/builder/LiftedService.java`.
+- [X] T028 [US3] Create `MC/builder/LiftedService.java`.
   - **Asking for joints:** every `requestIntervalTicks()` per Builder with the switch on and `liftedEnabled()`, compute stock (joints in the colony's Dispensaries' and Warehouses' item handlers) and owed (count of citizens with `JointService.due`).
     - **Spare:** open a `Stack(fourtwenty:joint, min 1, count)` request via `citizenData.createRequestAsync` when the spare is positive and she has fewer than `stash()` joints.
     - **No spare:** cancel an open joint request; she shows `fourtwenty.lifted.waiting` as her status.
@@ -172,18 +172,18 @@
     - log `lifted`.
   - **When it's called:** when the watchdog tick sees her enter building, and when her Lifted ends while she's still building.
   - **Ending:** `end(EntityCitizen, reason)` → landing (T029) + log `landed`.
-- [ ] T029 [US3] Create `MC/builder/LiftedFlight.java`, with its own `ServerTickEvent.Post` handler that runs every tick for Lifted Builders only. The watchdog keeps its 20-tick cadence.
+- [X] T029 [US3] Create `MC/builder/LiftedFlight.java`, with its own `ServerTickEvent.Post` handler that runs every tick for Lifted Builders only. The watchdog keeps its 20-tick cadence.
   - **Flying (building, Lifted, the hut switch on and `liftedEnabled()`):** `setNoGravity(true)`, stop the navigator, follow `FlightPlanner` waypoints to the current target at walking speed, set `fallDistance = 0`.
   - **Otherwise, LANDING:** descend at ≤ `landingSpeed()` blocks/tick to the target from `StandingSpot` (outside the footprint, or straight down when already outside), then restore gravity.
   - **Chunk unload:** an `EntityLeaveLevelEvent` listener lands her instantly at the first standing spot below.
   - **Load:** an `EntityJoinLevelEvent` listener moves a Lifted Builder whose saved position is in the air to the first standing spot below.
-- [ ] T030 [US3] Create `MC/builder/LiftedPayload.java` (`fourtwenty:lifted`, entity VarInt + on bool). Register it in the payload registrar used by `GoldenGod` (play to client).
+- [X] T030 [US3] Create `MC/builder/LiftedPayload.java` (`fourtwenty:lifted`, entity VarInt + on bool). Register it in the payload registrar used by `GoldenGod` (play to client).
   - **Sending:** to players tracking her, only where the connection `hasChannel`, on start, end, `StartTracking` and login.
-- [ ] T031 [P] [US3] Create `MC/client/LiftedClient.java`.
+- [X] T031 [P] [US3] Create `MC/client/LiftedClient.java`.
   - **Glow:** in `EntityRenderersEvent.AddLayers`, get the renderer for MineColonies' citizen entity type and add a `LiftedGlowLayer`. It's a copy of `GoldenGodClient.Shine`'s shells only: colours `{0x40AAFF60, 0x28AAFF60, 0x149CFF50}`, alpha × (0.8 + 0.2·sin(time/10)), and no body recolour.
   - **Smoke:** a client tick spawns 1 campfire smoke particle every 6 ticks at her feet for each Lifted citizen in view.
   - **Lifted set:** kept from `LiftedPayload`, cleared on level change.
-- [ ] T032 [P] [US3] Create `G/LiftedFlightGameTests.java`:
+- [X] T032 [P] [US3] Create `G/LiftedFlightGameTests.java`:
   - the planner finds a path over a built wall and none into a sealed box;
   - the `StandingSpot` landing target is outside a given footprint;
   - an entity flagged landing from 10 blocks takes no damage (use an armour stand or zombie with the same landing code path factored into `LiftedFlight.land(Mob, BlockPos)`);

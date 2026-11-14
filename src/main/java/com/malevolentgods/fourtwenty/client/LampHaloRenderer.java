@@ -107,8 +107,8 @@ public class LampHaloRenderer implements BlockEntityRenderer<LampBlockEntity> {
     }
 
     /** Position-colour quads, additive (lightning) blending, no depth write: ProjectRed's halo pass. */
-    static final class HaloRenderType extends RenderType {
-        static final RenderType HALO = create("fourtwenty:lamp_halo", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS,
+    public static final class HaloRenderType extends RenderType {
+        public static final RenderType HALO = create("fourtwenty:lamp_halo", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS,
                 2048, false, true, CompositeState.builder()
                         .setShaderState(POSITION_COLOR_SHADER)
                         .setTransparencyState(LIGHTNING_TRANSPARENCY)

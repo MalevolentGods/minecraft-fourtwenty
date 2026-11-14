@@ -19,6 +19,10 @@ public final class ColonyIntegration {
         container.registerConfig(ModConfig.Type.SERVER, com.malevolentgods.fourtwenty.compat.minecolonies.builder.BuilderConfig.SPEC, "fourtwenty-builders-server.toml");
         NeoForge.EVENT_BUS.addListener(ColonyIntegration::tick);
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.builder.BuilderWatchdog::tick);
+        com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedPayload.register(bus);
+        NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedFlight::tick);
+        NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedFlight::leave);
+        NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedFlight::join);
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.service.PlayerSales::interact);
         NeoForge.EVENT_BUS.addListener(DispensaryCommands::register);
         NeoForge.EVENT_BUS.addListener(StarterSeeds::loggedIn);

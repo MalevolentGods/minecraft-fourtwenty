@@ -136,6 +136,13 @@ public final class BuilderAccess {
         return site == null ? null : site.getCorners();
     }
 
+    /** A citizen can stand at the spot: solid underfoot, nothing solid where her feet and head go. Unloaded counts as fine. */
+    public static boolean standable(net.minecraft.world.level.Level level, BlockPos spot) {
+        if (!level.isLoaded(spot)) return true;
+        return level.getBlockState(spot.below()).blocksMotion() && !level.getBlockState(spot).blocksMotion()
+                && !level.getBlockState(spot.above()).blocksMotion();
+    }
+
     /** MineColonies' own recall: back to her hut. */
     public static boolean recall(EntityCitizen citizen) {
         var hut = hut(citizen);

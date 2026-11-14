@@ -28,7 +28,8 @@ public final class BuilderWatchdog {
 
     public static void tick(LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel level) || level.getGameTime() % EVERY != 0) return;
-        if (!BuilderConfig.watchdogEnabled() || !level.tickRateManager().runsNormally()) return;
+        if (!level.tickRateManager().runsNormally()) return;
+        boolean watching = BuilderConfig.watchdogEnabled();
         var cfg = new BuilderWatchRules.Config(BuilderConfig.slowTicks(), BuilderConfig.slowFraction(), BuilderConfig.stuckTicks());
         Set<UUID> seen = new HashSet<>();
         for (var colony : IColonyManager.getInstance().getColonies(level)) {
@@ -40,6 +41,8 @@ public final class BuilderWatchdog {
                 var state = WATCHES.computeIfAbsent(citizen.getUUID(), id -> new BuilderWatchRules.State());
                 var sample = new BuilderWatchRules.Sample(level.getGameTime(), BuilderAccess.building(citizen),
                         BuilderAccess.progressKey(citizen), BuilderDiagnostics.placements(citizen));
+                LiftedService.tick(level, colony, citizen, EVERY);
+                if (!watching) continue;
                 var decision = BuilderWatchRules.next(state, sample, BuilderAccess.expectedTicksPerBlock(citizen), cfg);
                 if (decision.rescue() != Step.NONE) rescue(level, colony.getID(), citizen, decision.rescue());
             }

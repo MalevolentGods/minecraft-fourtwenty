@@ -33,6 +33,8 @@
 - **One 1,875-tick gap:** a trip back to the hut for resources, not a stall.
 - **The rare crawl the user sees** ("a block every few seconds, until pushed off her block") wasn't caught. The user expects it can't be reproduced on demand.
 
+**Caught in game later the same day:** a real stall. She was BUILDING_STEP for 7+ minutes with no placements and no log lines, standing a block from her standing spot (-251, -62, 82), which she had **built over**: that cell was now part of the wall layer. MineColonies drops a standing spot only when she's on its column, her navigator reports stuck, or the block is over 5 away, so a spot that became solid is kept forever. This matches "fixed by pushing her right off" (more than 5 away drops it). **Fix:** before each block, drop a standing spot that's no longer standable (BuilderWalkMixin, `why=blocked` in the log).
+
 **Decision:**
 - **Keep the step-aside fix:** it's harmless and switchable.
 - **The watchdog is the safety net:** it covers the rare crawl, whatever its cause.

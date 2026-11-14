@@ -34,6 +34,7 @@ public final class BuilderHookGameTests {
                 {"com.minecolonies.core.entity.ai.workers.builder.EntityAIStructureBuilder", "fourtwenty$afterWalk"},
                 {"com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler", "fourtwenty$noteStepAside"},
                 {"com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure", "fourtwenty$placed"},
+                {"com.minecolonies.api.colony.buildings.registry.BuildingEntry", "fourtwenty$flyWhenLifted"},
         };
         for (String[] hook : hooks) {
             try {
