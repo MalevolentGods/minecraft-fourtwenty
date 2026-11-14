@@ -83,7 +83,7 @@
 **Goal:** an awesome Midnight Machine on her back, chosen by the user (FR-007, FR-008).
 **Test:** quickstart M2.
 
-- [ ] T015 [US2] Write `tools/render_midnight_machine_concepts.py` for Blender 5.1 (`"C:\Program Files\Blender Foundation\Blender 5.1\blender.exe" -b -P`):
+- [X] T015 [US2] Write `tools/render_midnight_machine_concepts.py` for Blender 5.1 (`"C:\Program Files\Blender Foundation\Blender 5.1\blender.exe" -b -P`):
   - **Designs:** 4 cuboid-only concepts in the album's palette, sampled from `MM.png`/`Art.png`. Themes:
     - a retro twin-cone boombox with a carry handle and cassette door;
     - a synth/machine panel with VU meters;
@@ -91,7 +91,7 @@
     - a slim neon "midnight" deck.
   - **On each:** shoulder straps, the album-art panel and emissive trim.
   - **Renders:** each on a citizen-sized stand-in, from front, back, three-quarter and side.
-- [ ] T016 [US2] Run it, publish the renders as one artifact page for the user, and **stop for the user's pick** (gate).
+- [ ] T016 [US2] (Published 2026-11-14: https://claude.ai/artifact/KvisK9PFzG5gYpBD9SES3j, waiting for the user's pick.) Run it, publish the renders as one artifact page for the user, and **stop for the user's pick** (gate).
 - [ ] T017 [US2] Write `tools/generate_midnight_machine_model.py` for the chosen design:
   - **Models:** `A/models/midnight_machine/body.json` and `cones.json` (cuboid elements, at most 16 px per axis per element).
   - **Textures:** in `A/textures/entity/midnight_machine/`: the shell, the glow, and a 32×32 album-art panel cut from `ALBUM/MM.png`, quantised to the palette.
