@@ -240,10 +240,10 @@
 
 **Independent test**: quickstart.md M5 model run.
 
-- [ ] T041 [US5] Extend `tools/progression_model.py`.
+- [X] T041 [US5] Extend `tools/progression_model.py`.
   - **Model:** add a `LIFTED` table mirroring the config defaults, and `builder_joints_per_day(family) = 18 / lifted_minutes(family)` (18 building minutes of a 20-minute day, so 3.6 Landrace joints).
   - **Colony table:** add two busy Builders' joints to "asked" and print a "Lifted Builders" column. Keep `--today` unchanged.
-- [ ] T042 [US5] Run `python tools/progression_model.py`, and check every colony stage still shows a positive spare with two Lifted Builders (SC-006). If not, raise the Lifted minutes in `BuilderConfig` defaults and contracts/config.md together, and re-run.
+- [X] T042 [US5] Run `python tools/progression_model.py`, and check every colony stage still shows a positive spare with two Lifted Builders (SC-006). If not, raise the Lifted minutes in `BuilderConfig` defaults and contracts/config.md together, and re-run.
 
 ---
 

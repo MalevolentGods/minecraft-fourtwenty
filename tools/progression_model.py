@@ -71,6 +71,17 @@ TARGETS = {'first joint': 1, 'first bred strain': 5, 'first Grow Op': 10, 'biome
 COLONY = {'first bred strain': ('Neutrals', 6), 'first Grow Op': ('Neutrals', 10), 'biome strains': ('Biome', 14),
           'crosses': ('Biome', 20), 'double crosses': ('Biome', 26), 'ultras': ('Biome', 32), 'Golden God': ('Biome', 40)}
 FIELD = 116
+
+# Lifted Builders (spec 013): minutes a joint keeps a Builder Lifted, by family (the builder config's defaults), and the
+# building minutes of a 20-minute day a busy Builder spends Lifted. Two busy Builders are added to each stage's demand.
+LIFTED_MINUTES = {'Landrace': 5.0, 'Neutrals': 5.5, 'Warm': 5.5, 'Green': 6.0, 'Cool': 6.0, 'Biome': 6.0,
+                  'Cross': 7.0, 'DoubleCross': 8.0, 'Ultra': 9.0, 'Golden': 10.0}
+BUILDING_MINUTES = 18
+LIFTED_BUILDERS = 2
+
+
+def builder_joints_per_day(family):
+    return BUILDING_MINUTES / LIFTED_MINUTES[family]
 CITIZENS_PER_FIELD = 40   # a colony adds a weed field at about this many citizens
 
 
@@ -162,7 +173,9 @@ def colony(numbers):
             lo, hi = numbers['yield'][fam]
             fields = max(1, math.ceil(citizens / CITIZENS_PER_FIELD))
             per_day = fields * FIELD * (lo + hi) / 2 * 20 / crop_minutes(fam, 0)
-            rows.append((stage, fam, citizens, fields, citizens, per_day, per_day / citizens - 1))
+            builders = LIFTED_BUILDERS * builder_joints_per_day(fam)
+            asked = citizens + builders
+            rows.append((stage, fam, citizens, fields, asked, per_day, per_day / asked - 1, builders))
     finally:
         BONE_MEAL = meal
     return rows
@@ -203,9 +216,10 @@ def main():
         within = abs(h - target) <= 0.25 * target if name != 'Golden God' else 50 <= h <= 75
         ok &= within
         print(f'  {name:18} {h:6.1f}   target {target:5.1f}   {"ok" if within else "MISS"}')
-    print('\nThe colony (joints a day: asked, grown, spare):')
-    for stage, fam, citizens, fields, asked, grown, spare in colony(numbers):
-        print(f'  {stage:18} {fam:12} {citizens:3} citizens, {fields} field(s): {asked:4.0f} asked, {grown:6.0f} grown, spare {spare:+.0%}')
+    print(f'\nThe colony (joints a day: asked, incl. {LIFTED_BUILDERS} busy Lifted Builders; grown; spare):')
+    for stage, fam, citizens, fields, asked, grown, spare, builders in colony(numbers):
+        print(f'  {stage:18} {fam:12} {citizens:3} citizens + Lifted {builders:4.1f}, {fields} field(s): {asked:4.0f} asked, {grown:6.0f} grown, spare {spare:+.0%}')
+        ok &= spare > 0
     return 0 if ok else 1
 
 
