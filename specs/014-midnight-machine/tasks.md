@@ -91,15 +91,15 @@
     - a slim neon "midnight" deck.
   - **On each:** shoulder straps, the album-art panel and emissive trim.
   - **Renders:** each on a citizen-sized stand-in, from front, back, three-quarter and side.
-- [ ] T016 [US2] (Published 2026-11-14: https://claude.ai/artifact/KvisK9PFzG5gYpBD9SES3j, waiting for the user's pick.) Run it, publish the renders as one artifact page for the user, and **stop for the user's pick** (gate).
+- [X] T016 [US2] (Published 2026-11-14: https://claude.ai/artifact/KvisK9PFzG5gYpBD9SES3j. **The user picked B, Synth Machine**, with VU bars driven by the music.) Run it, publish the renders as one artifact page for the user, and **stop for the user's pick** (gate).
 - [ ] T017 [US2] Write `tools/generate_midnight_machine_model.py` for the chosen design:
-  - **Models:** `A/models/midnight_machine/body.json` and `cones.json` (cuboid elements, at most 16 px per axis per element).
+  - **Models:** `A/models/midnight_machine/body.json` and `bar.json` (one VU bar, scaled per band) (cuboid elements, at most 16 px per axis per element).
   - **Textures:** in `A/textures/entity/midnight_machine/`: the shell, the glow, and a 32×32 album-art panel cut from `ALBUM/MM.png`, quantised to the palette.
   - **Check:** run `tools/check_model_overlaps.py` on the output.
 - [ ] T018 [US2] Create `MC/client/BoomboxLayer.java`, a `RenderLayer` on the citizen renderer, added in `LiftedClient.addLayers`:
   - **Placement:** while she's Lifted (from the payload's `lifted`), draw `body` on her back by following `model.body`'s pose.
   - **Glow:** full-bright.
-  - **Cones:** draw `cones` scaled by `1 + 0.15 × beatEnvelope`.
+  - **VU bars:** draw the six VU bars with heights from `trackN.bands` at the player's playback position (interpolated between frames). With no music playing, follow the dance beat instead.
   - **Model loading:** register the models with `ModelEvent.RegisterAdditional`.
 - [ ] T019 [US2] **In game (M2):** quickstart M2, and the user approves the look (SC-005).
 
@@ -115,6 +115,7 @@
 - [ ] T020 [US3] Write `tools/beatmap_album.py` (numpy, scipy), following research R4:
   - **Analysis:** onset strength, then tempo, then dynamic-programming beats, then accents (top 12%).
   - **Output:** write `bpm`, `beats_ms` and `accents_ms` into `album.json`.
+  - **VU bands:** also measure six frequency bands (bass to treble, log-spaced, roughly 40-12,000 Hz) every 50 ms, normalised per track, and write them as `A/midnight_machine/trackN.bands` (6 bytes a frame, 0-255).
   - **Clicks:** write `out/clicks/trackN_clicks.wav` (gitignored), and print the tempo and beat count per track.
   - **Overrides:** honour `tools/beatmap_overrides.json` (`bpm`, `offset_ms` per track).
 - [ ] T021 [US3] Run it. Listen to each click track (the user can spot-check), fix any track with an override, and commit `album.json`.

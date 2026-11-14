@@ -14,6 +14,12 @@
 - **The art:** the album art goes on the boombox's front.
 - **The look:** a big design effort, with concept renders first for the user to pick from.
 
+## Clarifications
+
+### Session 2026-11-14
+
+- Q: Which boombox concept? → A: **B, Synth Machine** (a tall rack, the album art up top, six VU bars, three knobs, an antenna with a glowing tip), on the condition that the VU bars are really driven by the music. They are: six frequency bands (bass to treble) are measured ahead of time for each track and shipped with it, and each bar shows its band at the moment of the song the player is hearing.
+
 ## The album
 
 **ATLemental – Midnight Machine**: the user's own music, 7 tracks, 26.4 minutes in all.
@@ -66,7 +72,7 @@ While Lifted she wears the Midnight Machine on her back:
 
 1. **Given** the design work starts, **When** concepts are ready, **Then** the user sees at least three rendered options and picks one (or asks for changes) before the in-game model is made.
 2. **Given** a Lifted Builder, **When** players look at her back, **Then** they see the chosen boombox with the album art on its front panel, glowing.
-3. **Given** the music is playing, **When** the beat lands, **Then** the speaker cones visibly pulse with it.
+3. **Given** the music is playing, **When** the song's bass, mids and highs change, **Then** the six VU bars rise and fall with them: the bass bar with the kick, the top bars with the hi-hats, all of them low in quiet passages.
 4. **Given** she isn't Lifted, **When** players look at her, **Then** she has no boombox.
 
 ---
@@ -116,7 +122,7 @@ While the music plays she dances in time with it:
 
 **The boombox**
 - **FR-007**: The boombox's design MUST be chosen by the user from at least three rendered concepts before the in-game model is made.
-- **FR-008**: While Lifted, a Builder MUST wear the Midnight Machine on her back, showing the album art on its front, glowing, with speaker cones that pulse with the music. When she isn't Lifted it MUST not show.
+- **FR-008**: While Lifted, a Builder MUST wear the Midnight Machine (concept B, Synth Machine) on her back, showing the album art at the top, glowing, with six VU-meter bars driven by the music: each bar's height follows its own frequency band (bass on the left to treble on the right) at the moment of the song the player is hearing. When she isn't Lifted it MUST not show.
 
 **Dancing**
 - **FR-009**: While the music plays she MUST dance in time with it, with the moves keyed to beats worked out ahead of time for each track and shipped with the music:
@@ -134,6 +140,7 @@ While the music plays she dances in time with it:
 
 - **Album:** the 7 tracks in order, each with its length and its beat map.
 - **Beat map (per track):** the times of each beat and of marked accents (big hits), worked out ahead of time.
+- **Band levels (per track):** six frequency-band levels (bass to treble), measured about 20 times a second ahead of time, for the VU bars.
 - **Album position (per Builder):** her track and how far into it she is. Saved, so it survives landing and restarts.
 - **Midnight Machine:** the boombox's look: model, album-art panel, glow, speaker cones.
 
