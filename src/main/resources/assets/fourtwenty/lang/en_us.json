@@ -2229,5 +2229,9 @@
   "tooltip.fourtwenty.growth.normal": "normal",
   "tooltip.fourtwenty.growth.slower": "slower",
   "tooltip.fourtwenty.growth.slow": "slow",
-  "tooltip.fourtwenty.growth.slowest": "slowest"
+  "tooltip.fourtwenty.growth.slowest": "slowest",
+  "com.minecolonies.coremod.setting.fourtwenty:flywhenlifted": "Fly when Lifted:",
+  "com.minecolonies.coremod.setting.fourtwenty:flywhenlifted.tooltip": "When on, this Builder smokes spare colony joints to become Lifted: she flies and builds the Higher Ground way.",
+  "fourtwenty.lifted.status": "Lifted",
+  "fourtwenty.lifted.waiting": "Waiting for spare joints"
 }

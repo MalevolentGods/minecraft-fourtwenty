@@ -21,11 +21,11 @@
 
 ## Phase 1: Setup
 
-- [ ] T001 Create the builder config `MC/builder/BuilderConfig.java`:
+- [X] T001 Create the builder config `MC/builder/BuilderConfig.java`:
   - **Contents:** a `ModConfigSpec` with sections `[diagnostics]`, `[watchdog]` and `[lifted]`, every key, default and range exactly as in contracts/config.md.
   - **Accessors:** typed ones (`logBuilderPathing()`, `watchdogEnabled()`, `slowTicks()`, `slowFraction()`, `stuckTicks()`, `fixStepAside()`, `liftedEnabled()`, `liftedMinutes(String family)`, `potencyBonus()`, `speedLowest()`, `speedHighest()`, `reach()`, `flightRadius()`, `stash()`, `clearFirst()`, `rescueRadius()`, `landingSpeed()`, `requestIntervalTicks()`, `hoverLookahead()`, `hoverGrid()`).
-- [ ] T002 Register `BuilderConfig.SPEC` as a SERVER config named `fourtwenty-builders-server.toml` in `MC/ColonyIntegration.java#register`, next to the Dispensary config.
-- [ ] T003 [P] Add the en_us strings to `src/main/resources/assets/fourtwenty/lang/en_us.json`:
+- [X] T002 Register `BuilderConfig.SPEC` as a SERVER config named `fourtwenty-builders-server.toml` in `MC/ColonyIntegration.java#register`, next to the Dispensary config.
+- [X] T003 [P] Add the en_us strings to `src/main/resources/assets/fourtwenty/lang/en_us.json`:
   - `com.minecolonies.coremod.setting.fourtwenty:flywhenlifted` = "Fly when Lifted:";
   - its `.tooltip`: "When on, this Builder smokes spare colony joints to become Lifted: she flies and builds the Higher Ground way.";
   - `fourtwenty.lifted.status` = "Lifted";
@@ -33,7 +33,7 @@
 
 ## Phase 2: Foundational (blocks every story)
 
-- [ ] T004 Create `MC/builder/BuilderAccess.java`, the only class that reaches into MineColonies internals.
+- [X] T004 Create `MC/builder/BuilderAccess.java`, the only class that reaches into MineColonies internals.
   - **Builder lookup:** `isBuilder(ICitizenData)`, `builderAI(EntityCitizen)` (from `getCitizenJobHandler().getColonyJob()` → `getWorkerAI()`, as `EntityAIStructureBuilder`).
   - **States:** `citizenState(EntityCitizen)` (`getCitizenAI().getState()`), `workerState(EntityCitizen)`.
   - **Progress:** `progressKey(EntityCitizen)` (the builder building's `getProgress()` position + stage as a long/record, or null).
@@ -42,8 +42,8 @@
   - **Expected rate:** `expectedTicksPerBlock(EntityCitizen)`, with the R3 formula using `getPlaceSpeedLevel()` and the `BLOCK_PLACE_SPEED` research effect.
   - **Recall:** `recall(EntityCitizen)`, MineColonies' own recall (`EntityCitizen.callForHelp`/`TeleportHelper.homeTeleport`, whichever 1.1.1343 has; check against `$TEMP/mcsrc`).
   - **Missed hooks:** `missing(String)` warns once per name.
-- [ ] T005 Create `MC/mixin/BuilderAIAccessor.java`, an `@Accessor`/`@Invoker` mixin on `com.minecolonies.core.entity.ai.workers.builder.EntityAIStructureBuilder` for `workFrom`, `prevBlockPosition` and `gotoPath`. Register it in `fourtwenty.minecolonies.mixins.json` `mixins`.
-- [ ] T006 [P] Create `MC/builder/BuilderLog.java`, which writes the INFO line formats of contracts/config.md "Log lines" with the logger name `FourTwenty/Builders`.
+- [X] T005 Create `MC/mixin/BuilderAIAccessor.java`, an `@Accessor`/`@Invoker` mixin on `com.minecolonies.core.entity.ai.workers.builder.EntityAIStructureBuilder` for `workFrom`, `prevBlockPosition` and `gotoPath`. Register it in `fourtwenty.minecolonies.mixins.json` `mixins`.
+- [X] T006 [P] Create `MC/builder/BuilderLog.java`, which writes the INFO line formats of contracts/config.md "Log lines" with the logger name `FourTwenty/Builders`.
 
 **Checkpoint**: `./gradlew build` passes; the game starts with and without MineColonies (`.compat/runs/beds-dev`, and a run without the compat mods).
 
@@ -55,23 +55,23 @@
 
 **Independent test**: quickstart.md M1, then M2 step 1.
 
-- [ ] T007 [US1] Create `MC/builder/BuilderDiagnostics.java`. When `logBuilderPathing()` is on, it logs (contracts "Diagnostics lines"):
+- [X] T007 [US1] Create `MC/builder/BuilderDiagnostics.java`. When `logBuilderPathing()` is on, it logs (contracts "Diagnostics lines"):
   - **path:** every route search (job type, target, from);
   - **stepaside:** every step-aside;
   - **workfrom:** every standing-spot change, with its reason;
   - **placed:** every placement, with ticks since the last one.
 
   It keeps a per-citizen last-placement time in a `WeakHashMap<EntityCitizen, Long>`.
-- [ ] T008 [US1] Create `MC/mixin/BuilderStepAsideMixin.java` on `com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler#prePlacementLogic`.
+- [X] T008 [US1] Create `MC/mixin/BuilderStepAsideMixin.java` on `com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler#prePlacementLogic`.
   - **Where:** inject before the `EntityNavigationUtils.walkAwayFrom` call (`@At(value="INVOKE", target=...walkAwayFrom)`, `require = 0`).
   - **What:** record the step-aside on the worker: a `@Unique` flag set through a small `StepAside` interface implemented by `EntityCitizen` via `MC/mixin/CitizenStepAsideMixin.java`, or a `WeakHashMap` in `BuilderDiagnostics`.
   - **Log:** `stepaside`.
-- [ ] T009 [US1] Create `MC/mixin/BuilderWalkMixin.java` on `EntityAIStructureBuilder#walkToConstructionSite(BlockPos)`.
+- [X] T009 [US1] Create `MC/mixin/BuilderWalkMixin.java` on `EntityAIStructureBuilder#walkToConstructionSite(BlockPos)`.
   - **At HEAD:** if a step-aside is pending and `fixStepAside()` is on, clear `workFrom`, `prevBlockPosition` and any `gotoPath` through `BuilderAIAccessor`, log `workfrom ... why=stepaside`, and clear the flag.
   - **Diagnostics:** wrap `setPathJob` with `@WrapOperation` to log `path`, and log `workfrom` changes by comparing before/after at RETURN.
   - **Off switch:** with `fixStepAside()` off, it only logs. This is the M1 baseline.
-- [ ] T010 [US1] Log `placed` from `MC/mixin/BuilderPlacementMixin.java` (US4's T039 extends it with the Lifted speed): inject into `com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure#structureStep` before the `setDelay` call, and log the placement for Builders.
-- [ ] T011 [US1] Register `BuilderStepAsideMixin`, `BuilderWalkMixin` and `BuilderPlacementMixin` in `src/main/resources/fourtwenty.minecolonies.mixins.json`.
+- [X] T010 [US1] Log `placed` from `MC/mixin/BuilderPlacementMixin.java` (US4's T039 extends it with the Lifted speed): inject into `com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure#structureStep` before the `setDelay` call, and log the placement for Builders.
+- [X] T011 [US1] Register `BuilderStepAsideMixin`, `BuilderWalkMixin` and `BuilderPlacementMixin` in `src/main/resources/fourtwenty.minecolonies.mixins.json`.
 - [ ] T012 [US1] **In game (M1):** build, deploy to flatworld, and set `logBuilderPathing=true`, `fixStepAside=false`. Run the Warehouse 2→3 upgrade (and a Tavern upgrade) per quickstart M1.
   - **Record:** the observed log signature and the verdict in `specs/013-lifted-builders/research.md` R1 ("Confirmed in game:" + date).
   - **If the cause differs:** stop and revise T009 before going on.
