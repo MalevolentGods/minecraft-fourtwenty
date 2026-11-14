@@ -2,6 +2,26 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- **Lifted Builders** (with MineColonies): a Builder who smokes a joint becomes **Lifted**. She flies to her work with a faint green glow and a little smoke trail, and builds the **Higher Ground** way:
+  - **Reach and placing:** she places from up to 9 blocks away, from a hover spot that reaches as much of the layer as it can.
+  - **Faster:** 25% faster on Landrace, up to 50% on Golden God.
+  - **Upgrades clear first:** she removes what's changing, from the top down, before building, instead of rebuilding inside the old level.
+  - **Storage kept:** a chest or rack she breaks sends its contents to her hut, not onto the ground.
+  - **Joints:** she asks for the colony's **spare** joints only (citizens always get theirs first), or takes ones you drop in her hut. A Landrace joint lasts 5 minutes, and better strains last longer.
+  - **Safe flying:** she always comes down gently, for meals, bedtime, when she runs out, or if you switch it off. A joint she smokes also counts as her daily joint.
+  - **Setting:** her hut has a **"Fly when Lifted"** setting, on by default.
+- **A Builder watchdog:** a Builder who stops making progress *while building* is rescued: first a fresh standing spot, then a spot near her block, then just outside the building, then back to her hut. It never acts while she's eating, sleeping, fetching materials or in a raid.
+
+### Fixed
+- **Builders no longer stand still beside a spot they've built over.** A Builder whose chosen standing spot became part of the wall used to wait there for good, until pushed away. She now picks a new spot.
+- **Warehouse levels 1-4** (Sensi Heights pack v101): the small air pockets under the top step of each centre staircase are filled.
+
+### Servers
+- **New file:** `fourtwenty-builders-server.toml` holds the watchdog and Lifted settings: on/off switches, times, reach, and minutes per family. The defaults need no changes.
+
 ## [0.25.1]
 
 ### Fixed

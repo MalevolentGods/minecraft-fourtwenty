@@ -249,8 +249,8 @@
 
 ## Phase 8: Polish & Cross-Cutting
 
-- [ ] T043 [P] README.md "What's new": Lifted Builders, Higher Ground and the Builder fixes, for players, with the hut switch and the config file named.
-- [ ] T044 [P] CHANGELOG.md: an Unreleased entry for spec 013, also noting Sensi Heights pack v101 (the Warehouse stair pockets).
+- [ ] T043 [P] (At the release bump, as every release does.) README.md "What's new": Lifted Builders, Higher Ground and the Builder fixes, for players, with the hut switch and the config file named.
+- [X] T044 [P] CHANGELOG.md: an Unreleased entry for spec 013, also noting Sensi Heights pack v101 (the Warehouse stair pockets).
 - [ ] T045 Without MineColonies, run the client and server with no compat mods, and check Four Twenty loads and plays (SC-007). `./gradlew build` and the game tests pass (the known-flaky `thecalculatorcalculates` only with no client running).
 - [ ] T045a On flatworld with 10 Builders (5 Lifted), measure the server tick cost of `BuilderWatchdog`, `LiftedFlight` and `LiftedService` with a timing log over 5 minutes. It must stay under 0.5 ms per tick on average (plan Performance Goals).
 - [ ] T046 Update memory (`project_fourtwenty_*`) with what shipped and what was seen in game. Mark every task [X] in this file.
