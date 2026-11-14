@@ -113,12 +113,12 @@
   - **Log:** each rescue with `BuilderLog` (`rescue <step> ...`).
   - **Memory:** watch state in a `Map<UUID, State>`, cleared for citizens no longer present.
 - [X] T017 [P] [US2] Create `J/domain/StandingSpot.java`, a pure search for the nearest standing spot. It takes a `Predicate<BlockPos> solid` and `Predicate<BlockPos> free`, a centre, a radius and an optional exclusion box (footprint). Test it in `T/StandingSpotTest.java`.
-- [ ] T018 [US2] Fill the Warehouse pockets. Create `C:\Users\Ignus\sensi-heights\tools\fill_warehouse_pockets.py`. For `craftsmanship/storage/warehouse1-4.blueprint`, it sets every air cell under a centre-stair step at (9..11, 1, 12) and (9..11, 1, 20) to the blueprint's solid block used at (9,1,12).
+- [X] T018 [US2] Fill the Warehouse pockets. Create `C:\Users\Ignus\sensi-heights\tools\fill_warehouse_pockets.py`. For `craftsmanship/storage/warehouse1-4.blueprint`, it sets every air cell under a centre-stair step at (9..11, 1, 12) and (9..11, 1, 20) to the blueprint's solid block used at (9,1,12).
   - **Scope:** only cells that are air with a stair directly above.
   - **Check:** print the before/after and verify with `tools/check_hut_levels.py craftsmanship/storage/warehouse` (no new problems).
   - **Record:** bump `pack.json` to 101 (v100 is the University, shipped in 0.25.0), add a BUILDINGS.md Warehouse note, and commit in sensi-heights.
-- [ ] T019 [US2] Import the pack into the mod: `python tools/import_sensi_heights.py`, then check `git diff --stat src/main/resources/blueprints/fourtwenty/sensiheights` shows pack v101 and the 4 Warehouse files. (v98-v100 already shipped in 0.24.0 and 0.25.0.)
-- [ ] T019a [P] [US2] Write `G/BuilderRescueGameTests.java`: build a small maze of real blocks and check `StandingSpot` picks a spot with solid below and two air above, within `rescueRadius()`, and outside a given footprint for the OUTSIDE step.
+- [X] T019 [US2] Import the pack into the mod: `python tools/import_sensi_heights.py`, then check `git diff --stat src/main/resources/blueprints/fourtwenty/sensiheights` shows pack v101 and the 4 Warehouse files. (v98-v100 already shipped in 0.24.0 and 0.25.0.)
+- [X] T019a [P] [US2] Write `G/BuilderRescueGameTests.java`: build a small maze of real blocks and check `StandingSpot` picks a spot with solid below and two air above, within `rescueRadius()`, and outside a given footprint for the OUTSIDE step.
 - [ ] T020 [US2] **In game (M2 steps 2-4):**
   - trap test (SC-002);
   - a full day with mealtimes, night and `NEEDS_ITEM` waits, with no rescues (SC-003);
