@@ -1,6 +1,5 @@
 package com.malevolentgods.fourtwenty.compat.minecolonies.client;
 
-import com.malevolentgods.fourtwenty.client.LampHaloRenderer;
 import com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedPayload;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -36,7 +35,7 @@ public final class LiftedClient {
 
     private static final Set<Integer> LIFTED = new HashSet<>();
     /** The glow shells, faintest outermost: ARGB. */
-    private static final int[] GLOW = {0x40AAFF60, 0x28AAFF60, 0x149CFF50};
+    private static final int[] GLOW = {0x50AAFF60, 0x34AAFF60, 0x1C9CFF50};
     private static final float GLOW_STEP = 0.1f;
 
     public static void install() {
@@ -82,7 +81,9 @@ public final class LiftedClient {
             int tint = ((int) (70 * pulse) << 24) | 0x9CFF60;
             model.renderToBuffer(pose, buffers.getBuffer(RenderType.entityTranslucentEmissive(getTextureLocation(citizen))),
                     LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, tint);
-            var glow = buffers.getBuffer(LampHaloRenderer.HaloRenderType.HALO);
+            // The shells use her own texture, tinted: see-through pixels (the hat brim, the feather) stay see-through.
+            // An untextured halo turned those flat, mostly transparent parts into solid green slabs (seen in game).
+            var glow = buffers.getBuffer(RenderType.entityTranslucentEmissive(getTextureLocation(citizen)));
             for (ModelPart part : List.of(model.head, model.body, model.leftArm, model.rightArm, model.leftLeg, model.rightLeg)) {
                 for (int i = 0; i < GLOW.length; i++) {
                     float size = 1 + GLOW_STEP * (i + 1);

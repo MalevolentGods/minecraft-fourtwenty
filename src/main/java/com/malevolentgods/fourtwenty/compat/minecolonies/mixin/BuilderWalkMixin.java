@@ -29,9 +29,13 @@ public abstract class BuilderWalkMixin {
         if (worker instanceof com.minecolonies.core.entity.citizen.EntityCitizen citizen
                 && com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedService.isLifted(citizen)
                 && com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedService.allowed(citizen)) {
-            callback.setReturnValue(com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedFlight.approach(
-                    citizen, currentBlock, com.malevolentgods.fourtwenty.compat.minecolonies.builder.BuilderConfig.reach(), null));
-            return;
+            Boolean flown = com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedFlight.approach(
+                    citizen, currentBlock, com.malevolentgods.fourtwenty.compat.minecolonies.builder.BuilderConfig.reach(), null);
+            if (flown != null) {
+                callback.setReturnValue(flown);
+                return;
+            }
+            // No flight route this step: she walks, the MineColonies way.
         }
         var access = (BuilderAIAccessor) self;
         if (BuilderDiagnostics.takeStepAside(worker) && BuilderConfig.fixStepAside() && access.fourtwenty$workFrom() != null) {

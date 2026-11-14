@@ -38,6 +38,7 @@ public final class LiftedFlight {
         BlockPos target;
         boolean landing;
         @Nullable BlockPos landAt;
+        long walkUntil;
     }
 
     private static final Map<UUID, Flight> FLIGHTS = new HashMap<>();
@@ -63,34 +64,67 @@ public final class LiftedFlight {
 
     /**
      * Higher Ground's walk-to-site: fly to a spot within {@code reach} of the block. True once she's there (she may
-     * place), false while she's on her way. With no route at all she lands and MineColonies walks her instead.
+     * place), false while she's on her way, null when she should walk this step instead (no flight route, or a
+     * failed search in the last few seconds). Trips longer than the planner's radius go in legs.
      */
-    public static boolean approach(EntityCitizen citizen, BlockPos block, int reach, @Nullable BlockPos hover) {
+    @Nullable
+    public static Boolean approach(EntityCitizen citizen, BlockPos block, int reach, @Nullable BlockPos hover) {
         if (!(citizen.level() instanceof ServerLevel level)) return true;
         var flight = FLIGHTS.computeIfAbsent(citizen.getUUID(), id -> new Flight());
+        long now = level.getGameTime();
+        if (now < flight.walkUntil) return null;
         flight.landing = false;
         if (citizen.position().distanceTo(Vec3.atCenterOf(block)) <= reach && (hover == null || flight.target == null || flight.target.equals(hover))) {
             hold(citizen);
             return true;
         }
         BlockPos goal = hover != null ? hover : spotNear(level, block, reach, citizen.blockPosition());
-        if (goal == null) {
-            land(citizen);
-            return false;
+        if (goal == null) return walk(citizen, flight, now);
+        BlockPos leg = goal;
+        int legMax = Math.max(4, BuilderConfig.flightRadius() - 4);
+        if (Math.sqrt(citizen.blockPosition().distSqr(goal)) > legMax) {
+            leg = waypoint(level, citizen.blockPosition(), goal, legMax);
+            if (leg == null) return walk(citizen, flight, now);
         }
-        if (!goal.equals(flight.target)) {
+        if (!leg.equals(flight.target)) {
             var start = new FlightPlanner.Cell(citizen.getBlockX(), Mth.floor(citizen.getY() + 0.01), citizen.getBlockZ());
-            var route = FlightPlanner.plan(start, new FlightPlanner.Cell(goal.getX(), goal.getY(), goal.getZ()),
+            var route = FlightPlanner.plan(start, new FlightPlanner.Cell(leg.getX(), leg.getY(), leg.getZ()),
                     (x, y, z) -> BuilderWatchdog.free(level, x, y, z), BuilderConfig.flightRadius(), MAX_CELLS);
-            if (route.isEmpty()) {
-                land(citizen);
-                return false;
-            }
+            if (route.isEmpty()) return walk(citizen, flight, now);
             flight.route = route;
             flight.next = 0;
-            flight.target = goal;
+            flight.target = leg;
+        }
+        if (flight.next >= flight.route.size() && !leg.equals(goal)) {
+            flight.target = null;   // this leg's done: the next call plans the next one from here
+            return false;
         }
         return citizen.position().distanceTo(Vec3.atCenterOf(block)) <= reach && flight.next >= flight.route.size();
+    }
+
+    /** No flight this step: come down, and walk for a few seconds before trying to fly again. */
+    @Nullable
+    private static Boolean walk(EntityCitizen citizen, Flight flight, long now) {
+        flight.landing = true;
+        flight.landAt = null;
+        flight.target = null;
+        flight.walkUntil = now + 100;
+        return null;
+    }
+
+    /** A cell she fits in about {@code distance} along the way to the goal, rising up to 8 blocks if that's blocked. */
+    @Nullable
+    private static BlockPos waypoint(ServerLevel level, BlockPos from, BlockPos goal, int distance) {
+        double d = Math.sqrt(from.distSqr(goal));
+        double t = distance / d;
+        int x = (int) Math.round(from.getX() + (goal.getX() - from.getX()) * t);
+        int y = (int) Math.round(from.getY() + (goal.getY() - from.getY()) * t);
+        int z = (int) Math.round(from.getZ() + (goal.getZ() - from.getZ()) * t);
+        FlightPlanner.Free free = (xx, yy, zz) -> BuilderWatchdog.free(level, xx, yy, zz);
+        for (int dy = 0; dy <= 8; dy++) for (int dx = -2; dx <= 2; dx++) for (int dz = -2; dz <= 2; dz++) {
+            if (FlightPlanner.fits(free, x + dx, y + dy, z + dz)) return new BlockPos(x + dx, y + dy, z + dz);
+        }
+        return null;
     }
 
     /** Bring her down gently from wherever she is (keeps her Lifted time; only flying stops). */
