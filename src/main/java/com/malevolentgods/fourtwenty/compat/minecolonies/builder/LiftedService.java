@@ -67,6 +67,7 @@ public final class LiftedService {
         }
 
         if (level.getGameTime() % BuilderConfig.requestIntervalTicks() < elapsed) manageRequest(level, colony, citizen);
+        MidnightMachineService.tick(level, colony, citizen, elapsed);
     }
 
     /** Smoke one joint (hers, or one a player left in her hut) and become Lifted. False with none to hand. */

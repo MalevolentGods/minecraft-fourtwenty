@@ -74,6 +74,7 @@ public class ModClientEvents {
         if (net.neoforged.fml.ModList.get().isLoaded("minecolonies")) {
             event.enqueueWork(com.malevolentgods.fourtwenty.compat.minecolonies.client.DispensaryClient::registerModel);
             com.malevolentgods.fourtwenty.compat.minecolonies.client.LiftedClient.install();
+            com.malevolentgods.fourtwenty.compat.minecolonies.client.MidnightMachineClient.install();
         }
         // Terpene names stay hidden until discovered; each discovery gets a toast.
         com.malevolentgods.fourtwenty.terpene.TerpeneKnowledge.installClient(key -> net.minecraft.client.Minecraft.getInstance().getToasts()

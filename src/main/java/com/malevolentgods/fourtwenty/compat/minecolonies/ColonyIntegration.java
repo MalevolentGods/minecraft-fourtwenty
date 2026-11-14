@@ -20,6 +20,8 @@ public final class ColonyIntegration {
         NeoForge.EVENT_BUS.addListener(ColonyIntegration::tick);
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.builder.BuilderWatchdog::tick);
         com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedPayload.register(bus);
+        com.malevolentgods.fourtwenty.compat.minecolonies.builder.MidnightMachinePayload.register(bus);
+        com.malevolentgods.fourtwenty.compat.minecolonies.builder.MidnightMachineService.register();
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedFlight::tick);
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedFlight::leave);
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedFlight::join);

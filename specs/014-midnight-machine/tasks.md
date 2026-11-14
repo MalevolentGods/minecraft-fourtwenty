@@ -50,28 +50,28 @@
 **Goal:** the album plays from a Lifted Builder, positional, on the Records slider, resuming and in sync (FR-001 to FR-006).
 **Test:** quickstart M1.
 
-- [ ] T008 [US1] Create `MC/builder/MidnightMachinePayload.java` (`fourtwenty:midnight_machine`: entity, playing, lifted, track, positionMs, sentAt) with `register(bus)` and `send(entity, ...)` to trackers that have the channel. Register it in `MC/ColonyIntegration.java`.
-- [ ] T009 [US1] Create `MC/builder/MidnightMachineService.java`:
+- [X] T008 [US1] Create `MC/builder/MidnightMachinePayload.java` (`fourtwenty:midnight_machine`: entity, playing, lifted, track, positionMs, sentAt) with `register(bus)` and `send(entity, ...)` to trackers that have the channel. Register it in `MC/ColonyIntegration.java`.
+- [X] T009 [US1] Create `MC/builder/MidnightMachineService.java`:
   - **Each sweep:** call it from `LiftedService.tick` (every 20 ticks). Playing = Lifted, flying (`LiftedFlight.inFlight`) and `[music] enabled`.
   - **While playing:** advance her `AlbumClock` position by the elapsed ms, and save it.
   - **Sending:** send the payload on start, stop, track change and every 30 s, and from `startTracking` too (as `LiftedPayload` does).
-- [ ] T010 [US1] Create `MC/client/SeekingOggStream.java`, an `AudioStream` over LWJGL `STBVorbis`:
+- [X] T010 [US1] Create `MC/client/SeekingOggStream.java`, an `AudioStream` over LWJGL `STBVorbis`:
   - **Opening:** read the resource into a direct buffer, call `stb_vorbis_open_memory`, then `stb_vorbis_seek` to the start sample.
   - **Format:** `getFormat()` is 44.1 kHz, 16-bit, mono.
   - **Reading:** `read(size)` fills from `stb_vorbis_get_samples_short_interleaved`.
   - **Closing:** `close()` frees the decoder and buffer.
-- [ ] T011 [US1] Create `MC/client/AlbumSoundInstance.java`, extending `AbstractTickableSoundInstance`:
+- [X] T011 [US1] Create `MC/client/AlbumSoundInstance.java`, extending `AbstractTickableSoundInstance`:
   - **Sound:** the track's event, on `SoundSource.RECORDS`, with `Attenuation.LINEAR`.
   - **Movement:** follows the entity every tick, and stops when she's removed.
   - **Stream:** `getStream` returns `SeekingOggStream` at the start ms.
-- [ ] T012 [US1] Create `MC/client/MidnightMachineClient.java`:
+- [X] T012 [US1] Create `MC/client/MidnightMachineClient.java`:
   - **Payload handling:** start, stop or restart her sound at position + (now − sentAt) × 50 ms.
   - **Clock:** keep a beat clock per Builder (track, start game-ms).
   - **Track end:** start the next track locally.
   - **Drift:** restart if more than 2 s off.
 
   Install it from `client/ModClientEvents.java` when MineColonies is loaded.
-- [ ] T013 [P] [US1] Write `CT/AlbumPositionGameTests.java`: positions survive a `Lifted` save and load, kept apart by colony and citizen, and an old save without positions loads.
+- [X] T013 [P] [US1] Write `CT/AlbumPositionGameTests.java`: positions survive a `Lifted` save and load, kept apart by colony and citizen, and an old save without positions loads.
 - [ ] T014 [US1] **In game (M1):** quickstart M1 steps 1-6 on flatworld, and record the results.
 
 **Checkpoint:** the music works in game. Commit.
