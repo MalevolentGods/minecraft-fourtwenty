@@ -188,7 +188,7 @@
   - the `StandingSpot` landing target is outside a given footprint;
   - an entity flagged landing from 10 blocks takes no damage (use an armour stand or zombie with the same landing code path factored into `LiftedFlight.land(Mob, BlockPos)`);
   - `LiftedSavedData` round trip: save, reload, and the strain and ticks left survive, keyed by colony and citizen (as `DemandPersistenceGameTests` does for the Dispensary).
-- [ ] T033 [US3] **In game (M3):** quickstart M3 steps 1-4, all five landing cases (SC-005), and a second client seeing the shimmer. Record the results in quickstart.md.
+- [ ] T033 [US3] (Seen in game 2026-11-14 on flatworld: lights up from hut joints, flies with the green glow and smoke, lands for material runs after two landing fixes, long trips in legs, hat-square glow fixed. Still to see: a joint request from spare stock, the switch-off and restart landings.) **In game (M3):** quickstart M3 steps 1-4, all five landing cases (SC-005), and a second client seeing the shimmer. Record the results in quickstart.md.
 
 **Checkpoint**: Builders fly on spare joints and always land safely. Commit.
 
@@ -251,7 +251,7 @@
 
 - [ ] T043 [P] (At the release bump, as every release does.) README.md "What's new": Lifted Builders, Higher Ground and the Builder fixes, for players, with the hut switch and the config file named.
 - [X] T044 [P] CHANGELOG.md: an Unreleased entry for spec 013, also noting Sensi Heights pack v101 (the Warehouse stair pockets).
-- [ ] T045 Without MineColonies, run the client and server with no compat mods, and check Four Twenty loads and plays (SC-007). `./gradlew build` and the game tests pass (the known-flaky `thecalculatorcalculates` only with no client running).
+- [X] T045 (2026-11-14: the standalone game-test server, which runs with no MineColonies, loads and passes everything new; only the long-standing malformedAndFutureSavesFailClosed fails.) Without MineColonies, run the client and server with no compat mods, and check Four Twenty loads and plays (SC-007). `./gradlew build` and the game tests pass (the known-flaky `thecalculatorcalculates` only with no client running).
 - [ ] T045a On flatworld with 10 Builders (5 Lifted), measure the server tick cost of `BuilderWatchdog`, `LiftedFlight` and `LiftedService` with a timing log over 5 minutes. It must stay under 0.5 ms per tick on average (plan Performance Goals).
 - [ ] T046 Update memory (`project_fourtwenty_*`) with what shipped and what was seen in game. Mark every task [X] in this file.
 - [ ] T047 PR from `013-lifted-builders` to `main`. Merge, release and server updates wait for the user's go.
