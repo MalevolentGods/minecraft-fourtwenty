@@ -116,8 +116,8 @@
 - [ ] T018 [US2] Fill the Warehouse pockets. Create `C:\Users\Ignus\sensi-heights\tools\fill_warehouse_pockets.py`. For `craftsmanship/storage/warehouse1-4.blueprint`, it sets every air cell under a centre-stair step at (9..11, 1, 12) and (9..11, 1, 20) to the blueprint's solid block used at (9,1,12).
   - **Scope:** only cells that are air with a stair directly above.
   - **Check:** print the before/after and verify with `tools/check_hut_levels.py craftsmanship/storage/warehouse` (no new problems).
-  - **Record:** bump `pack.json` to 100, add a BUILDINGS.md Warehouse note, and commit in sensi-heights.
-- [ ] T019 [US2] Import the pack into the mod: `python tools/import_sensi_heights.py`, then check `git diff --stat src/main/resources/blueprints/fourtwenty/sensiheights` shows pack v100 and the 4 Warehouse files. The pack now includes v98 Woodcutter/Sawmill and v99 Mine too.
+  - **Record:** bump `pack.json` to 101 (v100 is the University, shipped in 0.25.0), add a BUILDINGS.md Warehouse note, and commit in sensi-heights.
+- [ ] T019 [US2] Import the pack into the mod: `python tools/import_sensi_heights.py`, then check `git diff --stat src/main/resources/blueprints/fourtwenty/sensiheights` shows pack v101 and the 4 Warehouse files. (v98-v100 already shipped in 0.24.0 and 0.25.0.)
 - [ ] T019a [P] [US2] Write `G/BuilderRescueGameTests.java`: build a small maze of real blocks and check `StandingSpot` picks a spot with solid below and two air above, within `rescueRadius()`, and outside a given footprint for the OUTSIDE step.
 - [ ] T020 [US2] **In game (M2 steps 2-4):**
   - trap test (SC-002);
@@ -250,7 +250,7 @@
 ## Phase 8: Polish & Cross-Cutting
 
 - [ ] T043 [P] README.md "What's new": Lifted Builders, Higher Ground and the Builder fixes, for players, with the hut switch and the config file named.
-- [ ] T044 [P] CHANGELOG.md: an Unreleased entry for spec 013, also noting the Sensi Heights pack v98-v100 (Woodcutter, Sawmill, Mine, Warehouse pockets) that ride along.
+- [ ] T044 [P] CHANGELOG.md: an Unreleased entry for spec 013, also noting Sensi Heights pack v101 (the Warehouse stair pockets).
 - [ ] T045 Without MineColonies, run the client and server with no compat mods, and check Four Twenty loads and plays (SC-007). `./gradlew build` and the game tests pass (the known-flaky `thecalculatorcalculates` only with no client running).
 - [ ] T045a On flatworld with 10 Builders (5 Lifted), measure the server tick cost of `BuilderWatchdog`, `LiftedFlight` and `LiftedService` with a timing log over 5 minutes. It must stay under 0.5 ms per tick on average (plan Performance Goals).
 - [ ] T046 Update memory (`project_fourtwenty_*`) with what shipped and what was seen in game. Mark every task [X] in this file.
