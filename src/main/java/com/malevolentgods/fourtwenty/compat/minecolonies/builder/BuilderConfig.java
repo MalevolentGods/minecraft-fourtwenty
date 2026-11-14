@@ -34,6 +34,11 @@ public final class BuilderConfig {
     private static final ModConfigSpec.IntValue REQUEST_INTERVAL;
     private static final ModConfigSpec.IntValue HOVER_LOOKAHEAD;
     private static final ModConfigSpec.IntValue HOVER_GRID;
+    // [music]
+    private static final ModConfigSpec.BooleanValue MUSIC;
+    private static final ModConfigSpec.DoubleValue FALLBACK_BPM;
+    private static final ModConfigSpec.DoubleValue DANCE_BOB;
+    private static final ModConfigSpec.DoubleValue SPIN_COOLDOWN;
 
     /** Lifted minutes per joint by strain family (the keys match {@code StrainStats} family names). */
     public static final Map<String, Double> DEFAULT_MINUTES = Map.of(
@@ -78,6 +83,14 @@ public final class BuilderConfig {
         HOVER_LOOKAHEAD = B.comment("How many upcoming blocks Higher Ground considers when choosing a hover point.").defineInRange("hoverLookahead", 64, 8, 256);
         HOVER_GRID = B.comment("Spacing of candidate hover points around the work.").defineInRange("hoverGrid", 3, 1, 6);
         B.pop();
+
+        B.push("music");
+        MUSIC = B.comment("The Midnight Machine: a Lifted Builder plays the album from her boombox. Off keeps the boombox and dancing, without music.")
+                .define("enabled", true);
+        FALLBACK_BPM = B.comment("Dance tempo when the music is off.").defineInRange("fallbackBpm", 100.0, 40, 200);
+        DANCE_BOB = B.comment("How high she bobs on the beat, in blocks.").defineInRange("danceBob", 0.12, 0, 0.5);
+        SPIN_COOLDOWN = B.comment("Least seconds between spins on the big hits.").defineInRange("spinCooldownSeconds", 2.0, 0.5, 30);
+        B.pop();
     }
 
     public static final ModConfigSpec SPEC = B.build();
@@ -113,6 +126,10 @@ public final class BuilderConfig {
     public static int requestIntervalTicks() { return get(REQUEST_INTERVAL, 100); }
     public static int hoverLookahead() { return get(HOVER_LOOKAHEAD, 64); }
     public static int hoverGrid() { return get(HOVER_GRID, 3); }
+    public static boolean musicEnabled() { return get(MUSIC, true); }
+    public static double fallbackBpm() { return get(FALLBACK_BPM, 100.0); }
+    public static double danceBob() { return get(DANCE_BOB, 0.12); }
+    public static double spinCooldownSeconds() { return get(SPIN_COOLDOWN, 2.0); }
 
     /** The Lifted numbers as the pure rules take them. */
     public static com.malevolentgods.fourtwenty.domain.LiftedRules.Tuning liftedTuning() {

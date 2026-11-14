@@ -25,6 +25,8 @@ public final class Lifted extends SavedData {
     public record Buff(Strain strain, int ticksLeft) {}
 
     private final Map<Key, Buff> buffs = new HashMap<>();
+    /** Each Builder's place in the Midnight Machine album (spec 014): kept while she's down, so the music resumes. */
+    private final Map<Key, com.malevolentgods.fourtwenty.domain.AlbumClock.Position> positions = new HashMap<>();
 
     public static Lifted get(ServerLevel level) {
         return level.getServer().overworld().getDataStorage().computeIfAbsent(new Factory<>(Lifted::new, Lifted::load, null), ID);
@@ -65,7 +67,18 @@ public final class Lifted extends SavedData {
     }
 
     public void removeColony(int colony) {
-        if (buffs.keySet().removeIf(k -> k.colony() == colony)) setDirty();
+        boolean changed = buffs.keySet().removeIf(k -> k.colony() == colony);
+        changed |= positions.keySet().removeIf(k -> k.colony() == colony);
+        if (changed) setDirty();
+    }
+
+    public com.malevolentgods.fourtwenty.domain.AlbumClock.Position position(int colony, int citizen) {
+        return positions.getOrDefault(new Key(colony, citizen), com.malevolentgods.fourtwenty.domain.AlbumClock.start());
+    }
+
+    public void position(int colony, int citizen, com.malevolentgods.fourtwenty.domain.AlbumClock.Position pos) {
+        positions.put(new Key(colony, citizen), pos);
+        setDirty();
     }
 
     public Map<Key, Buff> all() {
@@ -84,6 +97,16 @@ public final class Lifted extends SavedData {
             list.add(tag);
         });
         root.put("buffs", list);
+        var places = new ListTag();
+        positions.forEach((key, pos) -> {
+            var tag = new CompoundTag();
+            tag.putInt("colony", key.colony());
+            tag.putInt("citizen", key.citizen());
+            tag.putInt("track", pos.track());
+            tag.putLong("ms", pos.ms());
+            places.add(tag);
+        });
+        root.put("album", places);
         return root;
     }
 
@@ -99,6 +122,11 @@ public final class Lifted extends SavedData {
             }
             int ticks = tag.getInt("ticks");
             if (ticks > 0) out.buffs.put(new Key(tag.getInt("colony"), tag.getInt("citizen")), new Buff(strain, ticks));
+        }
+        for (Tag t : root.getList("album", Tag.TAG_COMPOUND)) {
+            var tag = (CompoundTag) t;
+            out.positions.put(new Key(tag.getInt("colony"), tag.getInt("citizen")),
+                    new com.malevolentgods.fourtwenty.domain.AlbumClock.Position(tag.getInt("track"), tag.getLong("ms")));
         }
         return out;
     }

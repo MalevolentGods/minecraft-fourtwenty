@@ -21,25 +21,25 @@
   - **Manifest:** write `A/midnight_machine/album.json` with `title`, `artist` and `tracks[{id, title, length_ms}]` (length from the WAV header).
   - **Check:** print sizes, and fail if the total is over 20 MB.
 - [X] T002 Run `tools/convert_album.py`; commit the 7 OGGs and `album.json`; add the 7 events to `A/sounds.json` as in contracts/assets-and-sync.md (`category: record`, `stream: true`, `attenuation_distance: 24`).
-- [ ] T003 [P] Add a `[music]` section to `MC/builder/BuilderConfig.java`: `enabled` (true), `fallbackBpm` (100, 40-200), `danceBob` (0.12, 0-0.5) and `spinCooldownSeconds` (2, 0.5-30), with typed accessors.
+- [X] T003 [P] Add a `[music]` section to `MC/builder/BuilderConfig.java`: `enabled` (true), `fallbackBpm` (100, 40-200), `danceBob` (0.12, 0-0.5) and `spinCooldownSeconds` (2, 0.5-30), with typed accessors.
 
 ## Phase 2: Foundational
 
-- [ ] T004 [P] Write `T/AlbumClockTest.java`:
+- [X] T004 [P] Write `T/AlbumClockTest.java`:
   - advancing within a track;
   - rolling over into the next track, including across several short ones in one step;
   - looping after track 7;
   - pausing keeps the position;
   - a bad saved track or position is clamped back to a valid one.
-- [ ] T005 Create `J/domain/AlbumClock.java` (pure):
+- [X] T005 Create `J/domain/AlbumClock.java` (pure):
   - `record Position(int track, long ms)`;
   - `Position advance(Position, long ms, long[] lengths)`;
   - `Position start()`;
   - `Position clamp(Position, long[] lengths)`.
 
   Make T004 pass.
-- [ ] T006 Create `MC/builder/Album.java`: load `album.json` from the mod's resources on both sides (`ResourceManager`, or a classpath read) and expose `lengths()`, `title(i)` and `beatMap(i)` (`bpm`, `beats_ms`, `accents_ms`; empty until the beat maps exist).
-- [ ] T007 Save the album position with Lifted: add `AlbumClock.Position` to `MC/builder/Lifted.java`, in a separate map `positions` keyed like the buffs, with save/load. Old saves have none, so they start at track 0.
+- [X] T006 Create `MC/builder/Album.java`: load `album.json` from the mod's resources on both sides (`ResourceManager`, or a classpath read) and expose `lengths()`, `title(i)` and `beatMap(i)` (`bpm`, `beats_ms`, `accents_ms`; empty until the beat maps exist).
+- [X] T007 Save the album position with Lifted: add `AlbumClock.Position` to `MC/builder/Lifted.java`, in a separate map `positions` keyed like the buffs, with save/load. Old saves have none, so they start at track 0.
 
 **Checkpoint:** builds; the `AlbumClock` tests pass.
 
