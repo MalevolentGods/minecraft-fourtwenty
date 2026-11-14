@@ -74,11 +74,13 @@ public final class LiftedFlight {
         long now = level.getGameTime();
         if (now < flight.walkUntil) return null;
         flight.landing = false;
-        if (citizen.position().distanceTo(Vec3.atCenterOf(block)) <= reach && (hover == null || flight.target == null || flight.target.equals(hover))) {
-            hold(citizen);
+        BlockPos at = citizen.blockPosition();
+        boolean inTheWay = at.equals(block) || at.above().equals(block) || at.getX() == block.getX() && at.getZ() == block.getZ();
+        if (!inTheWay && citizen.position().distanceTo(Vec3.atCenterOf(block)) <= reach && (hover == null || flight.target == null || flight.target.equals(hover))) {
+            hold(citizen);   // Higher Ground: place everything in reach from here before moving on
             return true;
         }
-        BlockPos goal = hover != null ? hover : spotNear(level, block, reach, citizen.blockPosition());
+        BlockPos goal = hover != null ? hover : hoverPoint(level, citizen, block, reach);
         if (goal == null) return walk(citizen, flight, now);
         BlockPos leg = goal;
         int legMax = Math.max(4, BuilderConfig.flightRadius() - 4);
@@ -210,24 +212,35 @@ public final class LiftedFlight {
                 .map(s -> new BlockPos(s.x(), s.y(), s.z())).orElse(null);
     }
 
-    /** A free cell within reach of the block, preferring above it, then nearest her. */
+    /**
+     * Higher Ground's hover point (HoverCover): a free cell within reach of the block that also reaches the most of
+     * the layer she's building around it. The next blocks are taken as that layer (MineColonies builds layer by layer)
+     * rather than read from its iterator.
+     */
     @Nullable
-    private static BlockPos spotNear(ServerLevel level, BlockPos block, int reach, BlockPos from) {
-        BlockPos best = null;
-        double bestScore = Double.MAX_VALUE;
-        int r = Math.min(reach, 6);
-        for (int dy = r; dy >= -2; dy--) for (int dx = -r; dx <= r; dx++) for (int dz = -r; dz <= r; dz++) {
+    private static BlockPos hoverPoint(ServerLevel level, EntityCitizen citizen, BlockPos block, int reach) {
+        FlightPlanner.Free free = (x, y, z) -> BuilderWatchdog.free(level, x, y, z);
+        int grid = Math.max(1, BuilderConfig.hoverGrid());
+        var candidates = new java.util.ArrayList<com.malevolentgods.fourtwenty.domain.HoverCover.Pos>();
+        for (int dy = Math.min(reach, 5); dy >= -1; dy--) for (int dx = -reach; dx <= reach; dx += grid) for (int dz = -reach; dz <= reach; dz += grid) {
             int x = block.getX() + dx, y = block.getY() + dy, z = block.getZ() + dz;
-            if (dx * dx + dy * dy + dz * dz > reach * reach) continue;
-            if (dx == 0 && dz == 0 && dy <= 1) continue;   // never in the block's own column, right at it
-            if (!FlightPlanner.fits((xx, yy, zz) -> BuilderWatchdog.free(level, xx, yy, zz), x, y, z)) continue;
-            double score = from.distSqr(new BlockPos(x, y, z)) - dy * 2.0;
-            if (score < bestScore) {
-                bestScore = score;
-                best = new BlockPos(x, y, z);
-            }
+            if (FlightPlanner.fits(free, x, y, z)) candidates.add(new com.malevolentgods.fourtwenty.domain.HoverCover.Pos(x, y, z));
         }
-        return best;
+        var next = new java.util.ArrayList<com.malevolentgods.fourtwenty.domain.HoverCover.Pos>();
+        var corners = BuilderAccess.siteCorners(citizen);
+        int limit = BuilderConfig.hoverLookahead();
+        if (corners != null) {
+            var a = corners.getA();
+            var b = corners.getB();
+            int r = reach * 2;
+            for (int x = Math.max(Math.min(a.getX(), b.getX()), block.getX() - r); x <= Math.min(Math.max(a.getX(), b.getX()), block.getX() + r) && next.size() < limit; x++)
+                for (int z = Math.max(Math.min(a.getZ(), b.getZ()), block.getZ() - r); z <= Math.min(Math.max(a.getZ(), b.getZ()), block.getZ() + r) && next.size() < limit; z++)
+                    next.add(new com.malevolentgods.fourtwenty.domain.HoverCover.Pos(x, block.getY(), z));
+        }
+        var current = new com.malevolentgods.fourtwenty.domain.HoverCover.Pos(block.getX(), block.getY(), block.getZ());
+        if (next.isEmpty()) next.add(current);
+        return com.malevolentgods.fourtwenty.domain.HoverCover.choose(candidates, current, next, reach)
+                .map(p -> new BlockPos(p.x(), p.y(), p.z())).orElse(null);
     }
 
     private static void face(Mob mob, Vec3 step) {

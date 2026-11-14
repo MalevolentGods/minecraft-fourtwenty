@@ -200,28 +200,28 @@
 
 **Independent test**: quickstart.md M4.
 
-- [ ] T034 [P] [US4] Write `T/HoverCoverTest.java`:
+- [X] T034 [P] [US4] Write `T/HoverCoverTest.java`:
   - picks the candidate covering most of the next N blocks within reach;
   - ties go to the higher point;
   - never a candidate whose own cell or the cell above holds one of the next blocks (she would be built in);
   - an empty candidate list gives none.
-- [ ] T035 [US4] Create `J/domain/HoverCover.java`: `choose(List<BlockPos> candidates, List<BlockPos> nextBlocks, int reach)`. Reject candidates whose cell or the cell above is among `nextBlocks`. Make T034 pass.
-- [ ] T036 [US4] Extend `MC/mixin/BuilderWalkMixin.java`. When the Builder is Lifted and flying is on, cancel at HEAD and return our own result:
+- [X] T035 [US4] Create `J/domain/HoverCover.java`: `choose(List<BlockPos> candidates, List<BlockPos> nextBlocks, int reach)`. Reject candidates whose cell or the cell above is among `nextBlocks`. Make T034 pass.
+- [X] T036 [US4] (Built 2026-11-14 with one change: the next blocks are the building's current layer around the block, not a copy of MineColonies' iterator, which is fragile; MineColonies builds layer by layer.) Extend `MC/mixin/BuilderWalkMixin.java`. When the Builder is Lifted and flying is on, cancel at HEAD and return our own result:
   - **Choosing a spot:** if she has no hover point or the current block is beyond `reach()`, choose a new hover point with `HoverCover`. The candidates are free cells within `reach()` of the current block, scanned on a `hoverGrid()`-block grid around and above it. The next blocks are the following up to `hoverLookahead()` positions from the structure iterator (read them through `BuilderAccess.peekNext(EntityCitizen, hoverLookahead())`, iterating a copy of the placer iterator).
   - **Never built in:** before each placement, if the block goes in her own cell or the cell above, choose a new hover point first.
   - **Getting there:** fly there with `LiftedFlight`.
   - **Return value:** `true` once she is within `reach()` of the current block.
-- [ ] T037 [US4] Create `MC/mixin/HigherGroundStageMixin.java` on `AbstractEntityAIStructure#loadStructure`.
+- [X] T037 [US4] Create `MC/mixin/HigherGroundStageMixin.java` on `AbstractEntityAIStructure#loadStructure`.
   - **When:** the building's level > 0, the worker is a Builder, she's Lifted and `clearFirst()` is on.
   - **What:** prepend `BuildingProgressStage.CLEAR` to the upgrade stage array passed to `BuildingStructureHandler` (`@ModifyArg` on its constructor or the stages array).
   - **Register** the mixin.
-- [ ] T038 [US4] Create `MC/mixin/HigherGroundStorageMixin.java`.
+- [X] T038 [US4] Create `MC/mixin/HigherGroundStorageMixin.java`.
   - **Where:** before Structurize/MineColonies breaks a block during CLEAR (target `AbstractEntityAIStructure` BLOCK_REMOVAL / `mineBlock` path; find the exact call in `$TEMP/mcsrc/AbstractEntityAIStructure.java`).
   - **What:** if the block entity has an item handler capability with items, move them into the Builder's hut (`building.getItemHandlerCap()`); whatever doesn't fit drops at the hut position. The block then breaks empty.
   - **Register** the mixin.
   - **Testable core:** factor the transfer into `MC/builder/StorageTransfer.move(IItemHandler from, IItemHandler to, Level, BlockPos dropAt)`.
-- [ ] T038a [P] [US4] Write `G/StorageTransferGameTests.java`: a chest with items is emptied into a second container; the overflow drops at the given position and nothing drops at the source.
-- [ ] T039 [US4] Extend `MC/mixin/BuilderPlacementMixin.java`: when the worker is Lifted, multiply the `setDelay` argument by `LiftedRules.delayFactor(strain)` (`@ModifyArg`).
+- [X] T038a [P] [US4] Write `G/StorageTransferGameTests.java`: a chest with items is emptied into a second container; the overflow drops at the given position and nothing drops at the source.
+- [X] T039 [US4] Extend `MC/mixin/BuilderPlacementMixin.java`: when the worker is Lifted, multiply the `setDelay` argument by `LiftedRules.delayFactor(strain)` (`@ModifyArg`).
 - [ ] T040 [US4] **In game (M4):** quickstart M4:
   - the Lifted Warehouse 2→3 clears top-down, then builds;
   - time it against T013's walking run (SC-004);
