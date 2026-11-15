@@ -37,6 +37,8 @@ public final class BuilderConfig {
     private static final ModConfigSpec.DoubleValue FALLBACK_BPM;
     private static final ModConfigSpec.DoubleValue DANCE_BOB;
     private static final ModConfigSpec.IntValue SMOKE_SECONDS;
+    private static final ModConfigSpec.BooleanValue BODY_FLIGHT;
+    private static final ModConfigSpec.BooleanValue LIFTED_LOOK;
     private static final ModConfigSpec.DoubleValue SPIN_COOLDOWN;
 
     /** Lifted minutes per joint by strain family (the keys match {@code StrainStats} family names). */
@@ -74,6 +76,8 @@ public final class BuilderConfig {
         SPEED_HIGHEST = B.comment("Placing speed multiplier on Golden God (other families in between by grade).").defineInRange("speedHighest", 1.5, 1, 4);
         REACH = B.comment("Higher Ground reach in blocks.").defineInRange("reach", 9, 4, 16);
         FLIGHT_RADIUS = B.comment("How far the flight planner searches.").defineInRange("flightRadius", 24, 8, 48);
+        BODY_FLIGHT = B.comment("Every trip a Lifted Builder makes is flown (job, breaks, into buildings through doors). Off: only build-site trips fly, as in 0.26.0.").define("bodyFlight", true);
+        LIFTED_LOOK = B.comment("Lifted Builders are drawn in the Lifted look. Off: everyone sees them as in 0.26.0.").define("liftedLook", true);
         SMOKE_SECONDS = B.comment("Seconds a Builder smokes at her hut before she is Lifted.").defineInRange("smokeSeconds", 20, 2, 60);
         LANDING_SPEED = B.comment("Blocks a tick a Builder descends when landing (no fall damage at any value).").defineInRange("landingSpeed", 0.15, 0.05, 0.5);
         REQUEST_INTERVAL = B.comment("How often a Builder checks the colony's spare joints and opens or cancels her request.")
@@ -124,6 +128,8 @@ public final class BuilderConfig {
     public static int hoverGrid() { return get(HOVER_GRID, 3); }
     public static boolean musicEnabled() { return get(MUSIC, true); }
     public static double fallbackBpm() { return get(FALLBACK_BPM, 100.0); }
+    public static boolean bodyFlight() { return get(BODY_FLIGHT, true); }
+    public static boolean liftedLook() { return get(LIFTED_LOOK, true); }
     public static int smokeSeconds() { return get(SMOKE_SECONDS, 20); }
     public static double danceBob() { return get(DANCE_BOB, 0.12); }
     public static double spinCooldownSeconds() { return get(SPIN_COOLDOWN, 2.0); }

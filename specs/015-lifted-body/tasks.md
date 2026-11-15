@@ -16,16 +16,16 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty`, `MC` = `J/compat/min
 
 ## Phase 1: Setup
 
-- [ ] T001 Add the server switches `bodyFlight` and `liftedLook` (both default true) to the `[lifted]` section of `MC/builder/BuilderConfig.java`, with accessors, per contracts/config-and-ui.md.
-- [ ] T002 [P] Add the client setting `liftedLook` (default true) to `MC/client/MidnightMachineClientConfig.java` (config values only; no client classes, per the 0.26.0 dedicated-server fix).
+- [X] T001 Add the server switches `bodyFlight` and `liftedLook` (both default true) to the `[lifted]` section of `MC/builder/BuilderConfig.java`, with accessors, per contracts/config-and-ui.md.
+- [X] T002 [P] Add the client setting `liftedLook` (default true) to `MC/client/MidnightMachineClientConfig.java` (config values only; no client classes, per the 0.26.0 dedicated-server fix).
 
 ---
 
 ## Phase 2: Foundational (blocks US1 and US2)
 
-- [ ] T003 **Prove the takeover first (research R1).** Read MineColonies' `MinecoloniesAdvancedPathNavigate.setPathJob`, `isDone`, `tick`, `walkTo` and `EntityNavigationUtils.walkToPos/walkToBuilding` (javap on `.compat/dependencies/minecolonies-*.jar`) and record in research.md R1: what callers do with the returned `PathResult`, which result status makes them wait, and how arrival is judged. Decide the returned result (status, path) before writing the mixin.
-- [ ] T004 [P] Write `T/ErrandTest.java`: an errand is reached within the arrival distance; progress means getting at least 2 blocks closer within 30 s; a new destination replaces the old and resets progress; no progress for 30 s says "recall".
-- [ ] T005 Create `J/domain/Errand.java` (pure): destination, purpose (job or break), `reached(distance)`, `progress(distance, now)` with the 30 s rule (research R4). Make T004 pass.
+- [X] T003 **Prove the takeover first (research R1).** Read MineColonies' `MinecoloniesAdvancedPathNavigate.setPathJob`, `isDone`, `tick`, `walkTo` and `EntityNavigationUtils.walkToPos/walkToBuilding` (javap on `.compat/dependencies/minecolonies-*.jar`) and record in research.md R1: what callers do with the returned `PathResult`, which result status makes them wait, and how arrival is judged. Decide the returned result (status, path) before writing the mixin.
+- [X] T004 [P] Write `T/ErrandTest.java`: an errand is reached within the arrival distance; progress means getting at least 2 blocks closer within 30 s; a new destination replaces the old and resets progress; no progress for 30 s says "recall".
+- [X] T005 Create `J/domain/Errand.java` (pure): destination, purpose (job or break), `reached(distance)`, `progress(distance, now)` with the 30 s rule (research R4). Make T004 pass.
 
 **Checkpoint**: the takeover approach is proven on paper and the errand rule is tested.
 
@@ -43,10 +43,10 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty`, `MC` = `J/compat/min
 
 ### Implementation
 
-- [ ] T007 [US1] Create `MC/mixin/NavigatorTakeoverMixin.java` on `MinecoloniesAdvancedPathNavigate`, per T003: `setPathJob` HEAD records the destination as her errand via `LiftedFlight.errand(...)` and returns an in-progress result without a walking path; `isDone()` false while the errand flies, true once reached; `tick()` and `moveTo(...)` cancelled while an errand flies. Only for a Lifted Builder allowed to fly with `bodyFlight` on; `require = 0`. Register it in `src/main/resources/fourtwenty.minecolonies.mixins.json`.
-- [ ] T008 [US1] Add errands to `MC/builder/LiftedFlight.java`: `errand(citizen, destination, purpose)` flies to the destination in legs (reusing the home-flight machinery: routes, stalls, climb-over, landing), lands there, and reports reached; a new destination retargets; no progress for 30 s (`Errand`) recalls her (to her hut, or to the errand's building for a break). Spec 013's build-site `approach` keeps its own path.
-- [ ] T009 [US1] Breaks (research R3) in `MC/builder/LiftedFlight.java`: end any flight when she rides a seat or sleeps (`isPassenger()`, sleeping); land exactly at a bed or seat destination so MineColonies seats her or puts her to bed itself.
-- [ ] T010 [US1] Retire spec 013's separate rescues now covered by errands, in `MC/builder/LiftedService.java` and `MC/builder/LiftedFlight.java`: the stranded check and `walkIn` apply only with `bodyFlight` off.
+- [X] T007 [US1] Create `MC/mixin/NavigatorTakeoverMixin.java` on `MinecoloniesAdvancedPathNavigate`, per T003: `setPathJob` HEAD records the destination as her errand via `LiftedFlight.errand(...)` and returns an in-progress result without a walking path; `isDone()` false while the errand flies, true once reached; `tick()` and `moveTo(...)` cancelled while an errand flies. Only for a Lifted Builder allowed to fly with `bodyFlight` on; `require = 0`. Register it in `src/main/resources/fourtwenty.minecolonies.mixins.json`.
+- [X] T008 [US1] Add errands to `MC/builder/LiftedFlight.java`: `errand(citizen, destination, purpose)` flies to the destination in legs (reusing the home-flight machinery: routes, stalls, climb-over, landing), lands there, and reports reached; a new destination retargets; no progress for 30 s (`Errand`) recalls her (to her hut, or to the errand's building for a break). Spec 013's build-site `approach` keeps its own path.
+- [X] T009 [US1] Breaks (research R3) in `MC/builder/LiftedFlight.java`: end any flight when she rides a seat or sleeps (`isPassenger()`, sleeping); land exactly at a bed or seat destination so MineColonies seats her or puts her to bed itself.
+- [X] T010 [US1] Retire spec 013's separate rescues now covered by errands, in `MC/builder/LiftedService.java` and `MC/builder/LiftedFlight.java`: the stranded check and `walkIn` apply only with `bodyFlight` off.
 - [ ] T011 [US1] Log errands in `MC/builder/BuilderLog.java` (`errand citizen= purpose= to=`, `reached`, `recalled`) under `logBuilderPathing`, and show "Flying to dinner / bed / work" style detail on her high badge via `MC/builder/HighStatusPayload.java` and `MC/client/HighStatusClient.java` *(wording for the user to approve)*.
 - [ ] T012 [US1] **In game (M1 without doors):** quickstart M1 steps 1-3, 5-7 on flatworld; record the results.
 

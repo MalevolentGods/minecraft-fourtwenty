@@ -12,7 +12,11 @@
 
 **Rationale:** one hook sees job, unload, fetch, meal, bed and hospital walks alike, including states MineColonies adds later.
 **Alternatives:** a mixin per AI state (fragile, misses new states); replacing the navigator class (MineColonies constructs it internally per citizen; too invasive).
-**To prove first (P1 task 1):** what `setPathJob` callers do with the returned `PathResult`, and that a result in "computing/in progress" makes them wait rather than retry each tick.
+**Proven (T003, 2026-11-15, from the MineColonies 1.1.1343 bytecode):**
+- `EntityNavigationUtils.walkToPos(mob, pos, range, safe, speed)`: arrived (stop, true) when the navigator `isDone()`, its `getPathResult().getJob()` is a `PathJobMoveToLocation` for `pos` (`isJobFor`) and she's within `range`; or whenever she's within `REACHED_DIST`. Otherwise it calls `walkTo(pos, speed, safe)` and returns false (waiting).
+- `MinecoloniesAdvancedPathNavigate.isDone()`: true only when `pathResult` is null, or done and not in a following state, and the vanilla navigator is done.
+- `PathResult` has a public constructor, `setJob`, `setStatus` (`IN_PROGRESS_COMPUTING`, `IN_PROGRESS_FOLLOWING`, `CALCULATION_COMPLETE`, `COMPLETE`, `CANCELLED`) and `setPathReachesDestination`.
+- **So:** on `setPathJob` while Lifted, store and return our own `PathResult` holding MineColonies' own job, status `IN_PROGRESS_FOLLOWING` (callers see "the path for this target, under way" and wait; `isJobFor` matches), compute nothing, and start the errand flight to `dest`. `isDone()` false until she's there. `tick()` and `moveTo(...)` cancelled while it flies. `stop()` (MineColonies calls it on arrival) ends the errand and she lands. The navigator's `pathResult` field needs an accessor.
 
 ## R2. Doors and fence gates
 

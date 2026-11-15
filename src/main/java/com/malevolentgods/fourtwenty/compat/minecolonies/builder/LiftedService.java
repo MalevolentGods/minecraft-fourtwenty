@@ -189,6 +189,10 @@ public final class LiftedService {
      */
     private static void stranded(ServerLevel level, IColony colony, EntityCitizen citizen, boolean building, boolean isLifted) {
         var hut = BuilderAccess.hut(citizen);
+        if (BuilderConfig.bodyFlight() && isLifted && allowed(citizen)) {   // errands fly her and recall her themselves
+            HOMEWARD.remove(citizen.getUUID());
+            return;
+        }
         if (hut == null || building || onSmokeBreak(citizen) || LiftedFlight.flyingSomewhere(citizen) || !BuilderAccess.onTheJob(citizen)) {
             HOMEWARD.remove(citizen.getUUID());
             return;
