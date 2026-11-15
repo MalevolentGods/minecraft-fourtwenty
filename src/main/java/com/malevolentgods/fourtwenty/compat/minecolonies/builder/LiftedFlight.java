@@ -44,6 +44,8 @@ public final class LiftedFlight {
         int noProgress;   // ticks without getting closer to it
         int replans;      // stalls on this trip; too many and she walks
         long lastAsked;            // game time MineColonies last asked her to fly somewhere (approach)
+        @Nullable BlockPos home;   // flying home to her hut (her high ran out), and where she lands there
+        long homeUntil;
         @Nullable BlockPos goal;   // the hover point this trip is for; legs toward it are kept until each is flown
         @Nullable BlockPos hoverFor, hover;   // the hover point chosen for a block, kept while it still fits
         @Nullable BlockPos tripBlock;   // the block she's on her way to, for the progress backstop
@@ -104,6 +106,15 @@ public final class LiftedFlight {
             var entry = it.next();
             if (!(level.getEntity(entry.getKey()) instanceof EntityCitizen citizen) || !citizen.isAlive()) continue;
             var flight = entry.getValue();
+            if (flight.home != null) {
+                if (homeStep(level, citizen, flight)) {
+                    flight.home = null;
+                    flight.landing = true;
+                    flight.landAt = null;
+                    flight.descending = 0;
+                }
+                continue;
+            }
             boolean flying = !flight.landing && LiftedService.isLifted(citizen) && LiftedService.allowed(citizen) && BuilderAccess.building(citizen)
                     && level.getGameTime() - flight.lastAsked <= ASKED_WINDOW_TICKS
                     && level.getGameTime() >= WALK_UNTIL.getOrDefault(entry.getKey(), 0L);
@@ -271,6 +282,76 @@ public final class LiftedFlight {
         flight.landing = true;
         flight.landAt = null;
         flight.descending = 0;
+    }
+
+    /** How long a flight home may take before she's simply recalled to her hut. */
+    private static final long HOME_TICKS = 60 * 20;
+
+    /**
+     * Her high ran out: fly her home to her hut and land there, rather than drop where she is (the user, 2026-11-14:
+     * landing on the spot left her on a roof MineColonies' walking couldn't get her off). Without a high she flies plain,
+     * no glow or music. If no route home turns up, or it takes over a minute, she's recalled to her hut, as MineColonies
+     * does with a stuck citizen; she's never left stranded.
+     */
+    public static void flyHome(EntityCitizen citizen) {
+        if (!(citizen.level() instanceof ServerLevel level)) return;
+        var hut = BuilderAccess.hut(citizen);
+        if (hut == null) {
+            land(citizen);
+            return;
+        }
+        BlockPos h = hut.getPosition();
+        var spot = StandingSpot.nearest(h.getX(), h.getY(), h.getZ(), 6, (x, y, z) -> BuilderWatchdog.solid(level, x, y, z),
+                (x, y, z) -> flyFree(level, x, y, z), null, 6);
+        if (spot.isEmpty() || citizen.onGround() && !citizen.isNoGravity() && citizen.blockPosition().closerThan(h, 8)) {
+            land(citizen);   // nowhere open by her hut, or she's there already
+            return;
+        }
+        var flight = FLIGHTS.computeIfAbsent(citizen.getUUID(), id -> new Flight());
+        flight.home = new BlockPos(spot.get().x(), spot.get().y(), spot.get().z());
+        flight.homeUntil = level.getGameTime() + HOME_TICKS;
+        flight.landing = false;
+        flight.target = null;
+        flight.route = List.of();
+        flight.next = 0;
+        flight.replans = 0;
+        BuilderLog.diag("flyhome citizen={} from={} to={}", citizen.getName().getString(), citizen.blockPosition().toShortString(), flight.home.toShortString());
+    }
+
+    /** One tick of her flight home; true once she's there (or has been recalled), and she lands. */
+    private static boolean homeStep(ServerLevel level, EntityCitizen citizen, Flight flight) {
+        citizen.fallDistance = 0;
+        BlockPos home = flight.home;
+        if (citizen.position().distanceTo(Vec3.atBottomCenterOf(home)) < 1.0) return true;
+        if (level.getGameTime() > flight.homeUntil || flight.replans > MAX_REPLANS) return recallHome(citizen, "too long");
+        boolean legDone = flight.target != null && flight.next >= flight.route.size();
+        if (legDone && flight.target.equals(home)) return true;
+        if (flight.target == null || legDone) {
+            BlockPos leg = home;
+            int legMax = Math.max(4, BuilderConfig.flightRadius() - 4);
+            if (Math.sqrt(citizen.blockPosition().distSqr(home)) > legMax) {
+                leg = waypoint(level, citizen.blockPosition(), home, legMax);
+                if (leg == null) return recallHome(citizen, "no waypoint");
+            }
+            var route = FlightPlanner.plan(startCell(level, citizen), new FlightPlanner.Cell(leg.getX(), leg.getY(), leg.getZ()),
+                    (x, y, z) -> flyFree(level, x, y, z), BuilderConfig.flightRadius(), MAX_CELLS);
+            if (route.isEmpty()) return recallHome(citizen, "no route to " + leg.toShortString());
+            flight.route = route;
+            flight.next = 0;
+            flight.target = leg;
+            flight.bestToNext = Double.MAX_VALUE;
+            flight.noProgress = 0;
+        }
+        fly(citizen, flight);
+        return false;
+    }
+
+    private static boolean recallHome(EntityCitizen citizen, String why) {
+        BuilderLog.flightStall(citizen.getName().getString(), citizen.blockPosition(), "home: " + why + ", recalled");
+        citizen.setNoGravity(false);
+        citizen.fallDistance = 0;
+        BuilderAccess.recall(citizen);
+        return true;
     }
 
     /** Whether flight is looking after her at all (flying or landing). */

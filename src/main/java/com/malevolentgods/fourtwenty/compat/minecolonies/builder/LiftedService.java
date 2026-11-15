@@ -64,9 +64,9 @@ public final class LiftedService {
             endBreak(citizen);   // off to eat or sleep, or switched off: no joint smoked
         }
         if (isLifted && building && lifted.tick(colony.getID(), data.getId(), elapsed)) {
-            // Her buff ran out mid-job: come down, and if she has another joint, go and smoke it at her hut.
+            // Her buff ran out mid-job: fly home (not drop where she is), and if she has another joint, smoke it there.
             LiftedPayload.send(citizen, false);
-            LiftedFlight.land(citizen);
+            LiftedFlight.flyHome(citizen);
             BuilderLog.landed(colony.getID(), citizen.getName().getString(), "buff");
             if (hasJoint(citizen)) startBreak(level, citizen);
         } else if (!isLifted && building && allowed(citizen) && !onSmokeBreak(citizen) && hasJoint(citizen)) {
