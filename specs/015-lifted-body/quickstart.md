@@ -1,0 +1,20 @@
+# Quickstart: checking Lifted Body in game
+
+On flatworld, with a Builder's hut, a Warehouse at level 4 (closed, with its centre stairs), a restaurant and residences. Builder logging on (`logBuilderPathing = true`) while testing; back off after.
+
+## M1. Every trip flies (Stories 1-2)
+
+1. Give the Builder joints and the Warehouse 4→5 upgrade. She lights up at her hut and flies to it.
+2. Fill her inventory (or wait): she flies home, unloads, flies back. No landing on the roof, no walking.
+3. Empty her hut of a material she needs: she flies home for it when it arrives.
+4. Watch her work inside: she flies to a door, opens it, goes in, closes it; moves between floors up the stairwell; leaves the same way. Every door ends closed.
+5. Let her get hungry and wait for night: she flies to the restaurant and in, eats, flies back; at night she flies home to bed.
+6. Turn "Fly when Lifted" off mid-flight: she lands gently and walks.
+7. **Pass:** the log shows no `stranded`, `recalled` or `rescue` lines over the whole upgrade (SC-001), and no walking while Lifted outside her hut (SC-002).
+
+## M3. The look, polished (Story 3)
+
+1. Watch a long flight: no walking stride in the air (legs together, a slight recline, leaning into her way), easing to the dance when she hovers to build.
+2. A smoke break at her hut: the joint rises to her mouth between puffs.
+3. Time a stretch of building with the polish on and off (SC-004).
+4. Three Lifted Builders: check the server's tick time against the same colony sober (SC-006).

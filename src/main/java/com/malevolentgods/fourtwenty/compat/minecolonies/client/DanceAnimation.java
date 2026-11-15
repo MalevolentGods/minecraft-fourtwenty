@@ -47,24 +47,68 @@ public final class DanceAnimation {
     private static void pre(RenderLivingEvent.Pre<?, ?> event) {
         if (!(event.getEntity() instanceof AbstractEntityCitizen citizen)) return;
         var pose = current(citizen, event.getPartialTick());
-        if (pose == null) return;
+        float cruise = cruise(citizen);
+        if (pose == null && cruise < 0.01f) return;
         var stack = event.getPoseStack();
-        var body = pose.body();
         stack.pushPose();
-        stack.translate(0, pose.bob() + body.bob(), 0);
+        double lean = cruise * CRUISE_RECLINE, tilt = 0;
+        if (pose != null) {
+            var body = pose.body();
+            stack.translate(0, pose.bob() + body.bob(), 0);
+            lean += body.lean() * (1 - cruise);
+            tilt = body.tilt() * (1 - cruise);
+        }
         // lean and tilt round her waist, in her own frame (the renderer turns her to face her way after this)
-        if (body.lean() != 0 || body.tilt() != 0) {
+        if (lean != 0 || tilt != 0) {
             float facing = 180 - Mth.rotLerp(event.getPartialTick(), citizen.yBodyRotO, citizen.yBodyRot);
             stack.translate(0, WAIST, 0);
             stack.mulPose(Axis.YP.rotationDegrees(facing));
-            stack.mulPose(Axis.XP.rotationDegrees((float) -body.lean()));
-            stack.mulPose(Axis.ZP.rotationDegrees((float) body.tilt()));
+            stack.mulPose(Axis.XP.rotationDegrees((float) -lean));
+            stack.mulPose(Axis.ZP.rotationDegrees((float) tilt));
             stack.mulPose(Axis.YP.rotationDegrees(-facing));
             stack.translate(0, -WAIST, 0);
         }
         // turns round her own middle: the renderer's origin is her feet, centred
-        stack.mulPose(Axis.YP.rotationDegrees((float) -(pose.spinDeg() + pose.swayDeg() + body.turn())));
+        if (pose != null) stack.mulPose(Axis.YP.rotationDegrees((float) -(pose.spinDeg() + pose.swayDeg() + pose.body().turn())));
         PUSHED.add(citizen.getId());
+    }
+
+    /** How far back she reclines in the cruise, in degrees. */
+    private static final double CRUISE_RECLINE = 12;
+    /** How long the cruise takes to ease in or out, in seconds. */
+    private static final double CRUISE_EASE = 0.3;
+
+    private static final class Cruise {
+        float weight;
+        long at = System.nanoTime();
+    }
+
+    private static final java.util.Map<Integer, Cruise> CRUISES = new java.util.HashMap<>();
+
+    /**
+     * How much she's in her cruise pose (specs/015-lifted-body FR-009), 0..1, easing over CRUISE_EASE: a Lifted
+     * Builder flying from place to place holds still (legs together, a slight recline) instead of walking in the air;
+     * hovering to build or dance, the dance takes over. Read from her motion, no payload.
+     */
+    public static float cruise(AbstractEntityCitizen citizen) {
+        boolean flying = MidnightMachineClient.lifted(citizen.getId()) && citizen.isNoGravity() && !citizen.onGround();
+        double speed = Math.hypot(citizen.getX() - citizen.xo, citizen.getZ() - citizen.zo) + Math.abs(citizen.getY() - citizen.yo) * 0.5;
+        float target = flying && speed > 0.04 ? 1 : 0;
+        var c = CRUISES.get(citizen.getId());
+        if (c == null) {
+            if (target == 0) return 0;
+            c = new Cruise();
+            CRUISES.put(citizen.getId(), c);
+        }
+        long now = System.nanoTime();
+        double dt = Math.min(0.1, (now - c.at) / 1e9);
+        c.at = now;
+        c.weight += (float) ((target - c.weight) * Math.min(1, dt / CRUISE_EASE));
+        if (target == 0 && c.weight < 0.005f) {
+            CRUISES.remove(citizen.getId());
+            return 0;
+        }
+        return c.weight;
     }
 
     private static void post(RenderLivingEvent.Post<?, ?> event) {

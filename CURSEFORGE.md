@@ -53,6 +53,14 @@ Flying can't kill you, overloads burn out in smoke rather than explode, and fail
 
 ## Changelog
 
+### Unreleased
+
+- **Lifted Builders fly everywhere** (with MineColonies): while high, every trip is flown: home to unload or fetch materials, to her racks, and on breaks to the restaurant, bed or the hospital, landing close by.
+- **Through doors:** she opens wooden doors and fence gates as she reaches them and closes them behind her.
+- **A cruise pose** in flight (leaning back, legs together), and the joint raised to her mouth on a smoke break.
+- **Never stranded:** a trip that gets no closer for 30 seconds sends her back to her hut.
+- **Servers:** `bodyFlight` in `fourtwenty-builders-server.toml` (on by default).
+
 ### 0.26.0
 
 - **Lifted Builders** (with MineColonies): a Builder with a joint walks back to her hut for a smoke break, then **flies** to work with a faint green glow and builds the **Higher Ground** way: reach 9, 25-50% faster.

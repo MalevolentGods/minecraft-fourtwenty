@@ -48,6 +48,8 @@ public final class LiftedFlight {
         long homeUntil;
         boolean homeIsHut = true;  // false: flying to just outside a building she has to walk into
         int homeStalls;            // stalls on the way home seen so far (each one climbs before planning again)
+        @Nullable com.malevolentgods.fourtwenty.domain.Errand errand;   // a walk MineColonies asked of her, flown (spec 015)
+        boolean errandLanded;      // she's flown it and landed: the last few steps are MineColonies' own
         @Nullable BlockPos goal;   // the hover point this trip is for; legs toward it are kept until each is flown
         @Nullable BlockPos hoverFor, hover;   // the hover point chosen for a block, kept while it still fits
         @Nullable BlockPos tripBlock;   // the block she's on her way to, for the progress backstop
@@ -102,14 +104,23 @@ public final class LiftedFlight {
     /** Every tick, for Lifted Builders only. */
     public static void tick(LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel level) || !level.tickRateManager().runsNormally()) return;
+        Doorways.tick(level);   // close what Lifted Builders opened once they're through
         if (FLIGHTS.isEmpty()) return;
         var it = FLIGHTS.entrySet().iterator();
         while (it.hasNext()) {
             var entry = it.next();
             if (!(level.getEntity(entry.getKey()) instanceof EntityCitizen citizen) || !citizen.isAlive()) continue;
             var flight = entry.getValue();
+            if (citizen.isPassenger() || citizen.isSleeping()) {
+                // MineColonies seated her for a meal or put her to bed: flight lets go
+                citizen.setNoGravity(false);
+                citizen.fallDistance = 0;
+                it.remove();
+                continue;
+            }
             if (flight.home != null) {
                 if (homeStep(level, citizen, flight)) {
+                    if (flight.errand != null) flight.errandLanded = true;   // keep it: a repeated ask isn't a new trip
                     flight.home = null;
                     flight.landing = true;
                     flight.landAt = null;
@@ -129,7 +140,8 @@ public final class LiftedFlight {
             if (flying) {
                 fly(citizen, flight);
             } else if (descend(level, citizen, flight)) {
-                it.remove();
+                // down; a landed errand stays until MineColonies ends the walk, so asking again doesn't start a new hop
+                if (flight.errand == null || !flight.errandLanded) it.remove();
             }
         }
     }
@@ -190,7 +202,7 @@ public final class LiftedFlight {
         if (!leg.equals(flight.target)) {
             var start = startCell(level, citizen);
             var route = FlightPlanner.plan(start, new FlightPlanner.Cell(leg.getX(), leg.getY(), leg.getZ()),
-                    (x, y, z) -> flyFree(level, x, y, z), BuilderConfig.flightRadius(), MAX_CELLS);
+                    (x, y, z) -> flyFree(level, x, y, z), Doorways.of(level), BuilderConfig.flightRadius(), MAX_CELLS);
             if (route.isEmpty()) {
                 BuilderLog.flightStall(citizen.getName().getString(), citizen.blockPosition(), "no route to " + leg.toShortString() + ", walking in");
                 return walkIn(level, citizen, flight, now, block);
@@ -386,9 +398,24 @@ public final class LiftedFlight {
     private static boolean homeStep(ServerLevel level, EntityCitizen citizen, Flight flight) {
         citizen.fallDistance = 0;
         BlockPos home = flight.home;
+        if (flight.errand != null) {
+            var e = flight.errand;
+            double d = citizen.position().distanceTo(Vec3.atCenterOf(new BlockPos(e.x(), e.y(), e.z())));
+            switch (e.check(d, level.getGameTime())) {
+                case REACHED -> {
+                    BuilderLog.diag("reached citizen={} at={}", citizen.getName().getString(), citizen.blockPosition().toShortString());
+                    return true;
+                }
+                case RECALL -> {
+                    recallHome(citizen, "errand to " + e.x() + ", " + e.y() + ", " + e.z() + " made no progress");
+                    return true;
+                }
+                default -> { }
+            }
+        }
         if (citizen.position().distanceTo(Vec3.atBottomCenterOf(home)) < 1.0) return true;
-        if (level.getGameTime() > flight.homeUntil) return flight.homeIsHut ? recallHome(citizen, "over a minute") : true;
-        if (flight.replans > HOME_REPLANS) return flight.homeIsHut ? recallHome(citizen, flight.replans + " stalls") : true;
+        if (flight.errand == null && level.getGameTime() > flight.homeUntil) return flight.homeIsHut ? recallHome(citizen, "over a minute") : true;
+        if (flight.replans > HOME_REPLANS) return giveUp(citizen, flight, flight.replans + " stalls");
         if (flight.replans > flight.homeStalls) {
             // Snagged on something (a roof edge, a lamp, a parapet): go up and over before planning again.
             flight.homeStalls = flight.replans;
@@ -409,11 +436,11 @@ public final class LiftedFlight {
             int legMax = Math.max(4, BuilderConfig.flightRadius() - 4);
             if (Math.sqrt(citizen.blockPosition().distSqr(home)) > legMax) {
                 leg = waypoint(level, citizen.blockPosition(), home, legMax);
-                if (leg == null) return flight.homeIsHut ? recallHome(citizen, "no waypoint") : true;
+                if (leg == null) return giveUp(citizen, flight, "no waypoint");
             }
             var route = FlightPlanner.plan(startCell(level, citizen), new FlightPlanner.Cell(leg.getX(), leg.getY(), leg.getZ()),
-                    (x, y, z) -> flyFree(level, x, y, z), BuilderConfig.flightRadius(), MAX_CELLS);
-            if (route.isEmpty()) return flight.homeIsHut ? recallHome(citizen, "no route to " + leg.toShortString()) : true;
+                    (x, y, z) -> flyFree(level, x, y, z), Doorways.of(level), BuilderConfig.flightRadius(), MAX_CELLS);
+            if (route.isEmpty()) return giveUp(citizen, flight, "no route to " + leg.toShortString());
             flight.route = route;
             flight.next = 0;
             flight.target = leg;
@@ -422,6 +449,117 @@ public final class LiftedFlight {
         }
         fly(citizen, flight);
         return false;
+    }
+
+    /**
+     * A directed flight can't go on: home trips recall her; an errand hovers and tries again (its patience, 30 s
+     * without progress, recalls her); a trip to the outside of a building just lands her.
+     */
+    private static boolean giveUp(EntityCitizen citizen, Flight flight, String why) {
+        if (flight.homeIsHut) return recallHome(citizen, why);
+        if (flight.errand != null) {
+            hold(citizen);
+            flight.target = null;
+            flight.route = List.of();
+            flight.next = 0;
+            flight.replans = 0;
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Whether MineColonies' walking hands over to flight right now (spec 015 FR-001): a Lifted Builder allowed to fly,
+     * with body flight on, off the build (on it, the site flight drives her), not seated or in bed, and not on her way
+     * home after her high ran out.
+     */
+    public static boolean takesOverWalking(EntityCitizen citizen) {
+        return BuilderConfig.bodyFlight() && LiftedService.isLifted(citizen) && LiftedService.allowed(citizen)
+                && !BuilderAccess.building(citizen) && !citizen.isPassenger() && !citizen.isSleeping() && !flyingHome(citizen);
+    }
+
+    /** Fly her to where MineColonies is sending her (a walk it asked of her), landing there. */
+    public static void errand(EntityCitizen citizen, BlockPos destination) {
+        if (!(citizen.level() instanceof ServerLevel level)) return;
+        var flight = FLIGHTS.computeIfAbsent(citizen.getUUID(), id -> new Flight());
+        if (flight.errand != null && flight.errand.sameDestination(destination.getX(), destination.getY(), destination.getZ())
+                && (flight.home != null || flight.errandLanded)) return;
+        flight.errandLanded = false;
+        var purpose = BuilderAccess.onTheJob(citizen) ? com.malevolentgods.fourtwenty.domain.Errand.Purpose.JOB
+                : com.malevolentgods.fourtwenty.domain.Errand.Purpose.BREAK;
+        flight.errand = new com.malevolentgods.fourtwenty.domain.Errand(destination.getX(), destination.getY(), destination.getZ(), purpose);
+        BlockPos goal = nearestFit(level, destination);
+        flight.home = goal == null ? destination : goal;
+        flight.homeIsHut = false;
+        flight.homeUntil = Long.MAX_VALUE;   // the errand's own patience decides
+        flight.homeStalls = 0;
+        flight.replans = 0;
+        flight.landing = false;
+        flight.target = null;
+        flight.route = List.of();
+        flight.next = 0;
+        BuilderLog.diag("errand citizen={} purpose={} from={} to={}", citizen.getName().getString(), purpose,
+                citizen.blockPosition().toShortString(), destination.toShortString());
+    }
+
+    /**
+     * Keep MineColonies' walking out of the way of a flight. Not while she flies an errand: stopping the navigator is
+     * how MineColonies says a walk is over, so it ended every errand the moment it began (2026-11-15); the takeover
+     * already keeps the navigator from walking her.
+     */
+    private static void stopWalking(EntityCitizen citizen) {
+        if (!onErrand(citizen)) citizen.getNavigation().stop();
+    }
+
+    /** How close a landed errand must be for MineColonies to walk the last steps (a rack, a chest, a seat). */
+    private static final double LAST_STEPS = 4;
+
+    /**
+     * She's flown to this destination and landed within a few blocks: MineColonies' walking takes the last steps (a
+     * landing spot by a rack in a cramped hut can be just out of its reach, and asking again looped, 2026-11-15).
+     */
+    public static boolean lastSteps(EntityCitizen citizen, BlockPos destination) {
+        var f = FLIGHTS.get(citizen.getUUID());
+        return f != null && f.errand != null && f.errandLanded
+                && f.errand.sameDestination(destination.getX(), destination.getY(), destination.getZ())
+                && citizen.position().distanceTo(Vec3.atCenterOf(destination)) <= LAST_STEPS;
+    }
+
+    /** Whether she's flying an errand right now. */
+    public static boolean onErrand(LivingEntity citizen) {
+        var f = FLIGHTS.get(citizen.getUUID());
+        return f != null && f.errand != null && f.home != null;
+    }
+
+    /** MineColonies is done with the walk (it stopped the navigator): end the errand and land. */
+    public static void endErrand(LivingEntity citizen) {
+        var f = FLIGHTS.get(citizen.getUUID());
+        if (f == null || f.errand == null) return;
+        f.errand = null;
+        f.errandLanded = false;
+        if (f.home != null && !f.homeIsHut) {
+            f.home = null;
+            f.landing = true;
+            f.landAt = null;
+            f.descending = 0;
+        }
+    }
+
+    /** The open cell nearest a destination (a bed, a seat or a block in a wall isn't one), within 2 blocks. */
+    @Nullable
+    private static BlockPos nearestFit(ServerLevel level, BlockPos at) {
+        BlockPos best = null;
+        double bestD = Double.MAX_VALUE;
+        for (int dy = -1; dy <= 2; dy++) for (int dx = -2; dx <= 2; dx++) for (int dz = -2; dz <= 2; dz++) {
+            int x = at.getX() + dx, y = at.getY() + dy, z = at.getZ() + dz;
+            if (!FlightPlanner.fits((xx, yy, zz) -> flyFree(level, xx, yy, zz), x, y, z)) continue;
+            double d = dx * dx + dy * dy * 1.5 + dz * dz;
+            if (d < bestD) {
+                bestD = d;
+                best = new BlockPos(x, y, z);
+            }
+        }
+        return best;
     }
 
     /** Stalls on the way home before she's recalled instead; each one first climbs her up and over. */
@@ -470,8 +608,9 @@ public final class LiftedFlight {
     }
 
     private static void fly(EntityCitizen citizen, Flight flight) {
+        if (citizen.level() instanceof ServerLevel level) Doorways.openAhead(level, citizen, flight.route, flight.next);
         citizen.setNoGravity(true);
-        citizen.getNavigation().stop();
+        stopWalking(citizen);
         if (flight.next >= flight.route.size()) {
             hold(citizen);
             return;
@@ -490,7 +629,7 @@ public final class LiftedFlight {
             flight.bestToNext = distance;
             flight.noProgress = 0;
         } else if (++flight.noProgress > STALL_TICKS
-                || !FlightPlanner.fits((x, y, z) -> flyFree((ServerLevel) citizen.level(), x, y, z), cell.x(), cell.y(), cell.z())) {
+                || !FlightPlanner.fits((x, y, z) -> flyFree((ServerLevel) citizen.level(), x, y, z), Doorways.of((ServerLevel) citizen.level()), cell.x(), cell.y(), cell.z())) {
             // Blocked (a block she just placed, or one the plan misjudged): stop and plan again from here.
             BuilderLog.flightStall(citizen.getName().getString(), citizen.blockPosition(), new BlockPos(cell.x(), cell.y(), cell.z()));
             flight.replans++;
@@ -524,7 +663,7 @@ public final class LiftedFlight {
             citizen.fallDistance = 0;
             return true;
         }
-        citizen.getNavigation().stop();   // her own walking waits until she's down
+        stopWalking(citizen);   // her own walking waits until she's down
         if (flight.landAt == null) flight.landAt = landingSpot(level, citizen);
         if (flight.landAt == null) {   // nowhere to stand within reach: straight down, slowly, until she touches something
             citizen.setNoGravity(true);
