@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ITEMS = ROOT / 'src/main/resources/assets/fourtwenty/textures/item'
 SIZE = 256
 MARGIN = 0.04   # transparent border kept round each icon, as a share of SIZE
+RING = 8        # sheet pixels in from an icon's edge that get the magenta tint taken out
 
 # sheet name -> (columns, rows, item ids in reading order; None leaves a cell unused)
 SHEETS = {
@@ -52,8 +53,16 @@ def cut(cell, item):
     a = np.asarray(cell.convert('RGB')).astype(float)
     mag = magentaness(a)
     if item in WHITE_IS_CLEAR:
-        white = (a.min(axis=2) > 200) & (a.max(axis=2) - a.min(axis=2) < 30)
-        mag = np.where(white, 1.0, mag)
+        grey = a.max(axis=2) - a.min(axis=2) < 40
+        white = (a.min(axis=2) > 200) & grey
+        # only a big patch of white is background; the thin white shine lines on the art stay
+        labels, n = ndimage.label(white)
+        sizes = ndimage.sum(white, labels, range(1, n + 1))
+        clear = np.isin(labels, [k + 1 for k, size in enumerate(sizes) if size > 400])
+        # and the soft grey edge the white blends through into the outline
+        for _ in range(8):
+            clear |= ndimage.binary_dilation(clear) & grey & (a.min(axis=2) > 90)
+        mag = np.where(clear, 1.0, mag)
     # pieces touching the cell's edge belong to a neighbour that reaches over the grid line (the Dab Cell's cap
     # pokes up under the oil); everything else in the cell is this icon
     labels, n = ndimage.label(mag < 0.5)
@@ -71,6 +80,12 @@ def cut(cell, item):
     with np.errstate(divide='ignore', invalid='ignore'):
         rgb = np.where(alpha[..., None] > 0.05, (a - (1 - alpha[..., None]) * bg) / alpha[..., None], 0)
     rgb = np.clip(rgb, 0, 255)
+    # the outline still carries a purple tint from the magenta it was drawn against, and an item's edge pixels are
+    # what its sides show in the hand: near the edge, take out any red-and-blue standing above the green
+    ring = (alpha > 0.05) & (ndimage.distance_transform_edt(alpha > 0.05) <= RING)
+    spill = np.clip(np.minimum(rgb[..., 0], rgb[..., 2]) - rgb[..., 1], 0, None) * ring
+    rgb[..., 0] -= spill
+    rgb[..., 2] -= spill
     rgba = np.dstack([rgb, alpha * 255]).astype(np.uint8)
     icon = Image.fromarray(rgba, 'RGBA')
     w, h = icon.size
