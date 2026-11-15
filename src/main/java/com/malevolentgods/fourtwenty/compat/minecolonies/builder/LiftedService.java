@@ -82,6 +82,7 @@ public final class LiftedService {
         // Remind everyone watching whether she shimmers every 30 s, so a missed or out-of-order message (a relog,
         // a chunk reload) can't leave the glow off for good (it went missing in game, 2026-11-14).
         if (level.getGameTime() % 600 < elapsed) LiftedPayload.send(citizen, lifted.isLifted(colony.getID(), data.getId()));
+        stranded(level, colony, citizen, building, isLifted);
         if (level.getGameTime() % BuilderConfig.requestIntervalTicks() < elapsed) manageRequest(level, colony, citizen);
         if (level.getGameTime() % 40 < elapsed) sendStatus(level, colony, citizen);
         MidnightMachineService.tick(level, colony, citizen, elapsed);
@@ -169,6 +170,41 @@ public final class LiftedService {
         if (handler == null) return ItemStack.EMPTY;
         int slot = JointService.jointSlot(handler);
         return slot < 0 ? ItemStack.EMPTY : handler.getStackInSlot(slot);
+    }
+
+    /** Her way home, while she's off the build: the closest she's been to her hut, and since when. */
+    private record HomeWard(double best, long since) {}
+
+    private static final Map<UUID, HomeWard> HOMEWARD = new HashMap<>();
+    /** Getting no closer to her hut for this long, off the build, counts as stranded (30 s). */
+    private static final long STRANDED_TICKS = 30 * 20;
+
+    /**
+     * Stranded (the user, 2026-11-14, three times): when she lands to walk somewhere off the build she can come down on
+     * a roof, and MineColonies' walking can't get her off it, so she paces there. On the job, off the build, more than
+     * 10 blocks from her hut and no closer to it in 30 s: flown home if she's Lifted, otherwise recalled to her hut as
+     * MineColonies does with a stuck citizen. A long walk home that's getting closer is never touched.
+     */
+    private static void stranded(ServerLevel level, IColony colony, EntityCitizen citizen, boolean building, boolean isLifted) {
+        var hut = BuilderAccess.hut(citizen);
+        if (hut == null || building || onSmokeBreak(citizen) || LiftedFlight.flyingHome(citizen) || !BuilderAccess.onTheJob(citizen)) {
+            HOMEWARD.remove(citizen.getUUID());
+            return;
+        }
+        double d = Math.sqrt(citizen.blockPosition().distSqr(hut.getPosition()));
+        long now = level.getGameTime();
+        var seen = HOMEWARD.get(citizen.getUUID());
+        if (d <= 10) {
+            HOMEWARD.remove(citizen.getUUID());
+        } else if (seen == null || d < seen.best() - 2) {
+            HOMEWARD.put(citizen.getUUID(), new HomeWard(Math.min(d, seen == null ? d : seen.best()), now));
+        } else if (now - seen.since() >= STRANDED_TICKS) {
+            HOMEWARD.remove(citizen.getUUID());
+            BuilderLog.diag("stranded citizen={} at={} hut={} {}", citizen.getName().getString(), citizen.blockPosition().toShortString(),
+                    hut.getPosition().toShortString(), isLifted && allowed(citizen) ? "flying home" : "recalled");
+            if (isLifted && allowed(citizen)) LiftedFlight.flyHome(citizen);
+            else BuilderAccess.recall(citizen);
+        }
     }
 
     /** Her high, for the line on her citizen window (HighStatusPayload). */
