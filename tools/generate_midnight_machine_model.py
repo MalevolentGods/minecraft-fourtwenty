@@ -93,9 +93,11 @@ def model():
         els.append(element([x - 0.5, 5.2, -6.8], [x + 0.5, 6, -6], 'knob', name=f'knob{i}'))
     # the VU window: a dark recess the bars rise in (BoomboxLayer draws the bars)
     els.append(element([3.4, 0.6, -6.2], [12.6, 4.9, -6.0], 'strap', faces=('north',), name='vu_window'))
-    # antenna with a glowing tip
-    els.append(element([11.5, 13, -4], [12, 19, -3.5], 'antenna', name='antenna'))
-    els.append(element([11.25, 19, -4.25], [12.25, 20, -3.25], 'tip', lit=True, name='antenna_tip'))
+    # antenna with a glowing tip, on the back-right corner of the top: clear of her head (which reaches x 12 and
+    # z -4 in model space) on both sides, and with no faces lying on another face (they flickered)
+    sides = ('north', 'south', 'east', 'west')
+    els.append(element([12.5, 13, -5.75], [13, 19, -5.25], 'antenna', faces=sides, name='antenna'))
+    els.append(element([12.25, 19, -6.0], [13.25, 20, -5.0], 'tip', faces=sides + ('up',), lit=True, name='antenna_tip'))
     # shoulder straps: over the top of her body and down the chest (concept z -2.6..2.2 → model z -2.2..2.6)
     for i, x in enumerate((5, 9)):
         els.append(element([x, 11, -2.2], [x + 2, 12, 2.2], 'strap', name=f'strap_over{i}'))
