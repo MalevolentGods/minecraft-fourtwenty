@@ -44,6 +44,11 @@ public final class BuilderWatchdog {
                 LiftedService.tick(level, colony, citizen, EVERY);
                 if (!watching) continue;
                 var decision = BuilderWatchRules.next(state, sample, BuilderAccess.expectedTicksPerBlock(citizen), cfg);
+                if (BuilderConfig.logBuilderPathing() && level.getGameTime() % 200 < EVERY) {
+                    BuilderLog.diag("watch citizen={} building={} job={} progress={} placements={} verdict={} at={}", citizen.getName().getString(),
+                            sample.building(), BuilderAccess.jobState(citizen), sample.progressKey(), sample.placements(),
+                            decision.verdict() + "/" + decision.rescue(), citizen.blockPosition().toShortString());
+                }
                 if (decision.rescue() != Step.NONE) rescue(level, colony.getID(), citizen, decision.rescue());
             }
         }
