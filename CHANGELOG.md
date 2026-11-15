@@ -8,7 +8,6 @@ All notable changes to the FourTwenty mod will be documented in this file.
 - **Lifted Builders** (with MineColonies): a Builder who smokes a joint becomes **Lifted**. She flies to her work with a faint green glow and a little smoke trail, and builds the **Higher Ground** way:
   - **Reach and placing:** she places from up to 9 blocks away, from a hover spot that reaches as much of the layer as it can.
   - **Faster:** 25% faster on Landrace, up to 50% on Golden God.
-  - **Upgrades clear first:** she removes what's changing, from the top down, before building, instead of rebuilding inside the old level.
   - **Storage kept:** a chest or rack she breaks sends its contents to her hut, not onto the ground.
   - **Joints:** she asks for the colony's **spare** joints only (citizens always get theirs first), or takes ones you drop in her hut. A Landrace joint lasts 5 minutes, and better strains last longer.
   - **Safe flying:** she always comes down gently, for meals, bedtime, when she runs out, or if you switch it off. A joint she smokes also counts as her daily joint.

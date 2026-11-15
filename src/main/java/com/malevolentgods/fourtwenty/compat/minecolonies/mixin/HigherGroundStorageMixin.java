@@ -13,8 +13,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 /**
  * Before a Builder breaks a block that holds items, its contents go to her hut instead of spilling on the site
- * (specs/013-lifted-builders FR-016, clarification Q3). Runs for every block she mines, so it covers Higher Ground's
- * clear-first and MineColonies' own clearing alike.
+ * (specs/013-lifted-builders FR-016, clarification Q3). Runs for every block she mines.
  */
 @Mixin(value = AbstractEntityAIStructure.class, remap = false)
 public abstract class HigherGroundStorageMixin {

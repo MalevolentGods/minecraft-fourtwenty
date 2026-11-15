@@ -211,7 +211,7 @@
   - **Never built in:** before each placement, if the block goes in her own cell or the cell above, choose a new hover point first.
   - **Getting there:** fly there with `LiftedFlight`.
   - **Return value:** `true` once she is within `reach()` of the current block.
-- [X] T037 [US4] Create `MC/mixin/HigherGroundStageMixin.java` on `AbstractEntityAIStructure#loadStructure`.
+- [X] T037 [US4] ~~Create `MC/mixin/HigherGroundStageMixin.java`~~ (removed 2026-11-14: clear-first dropped, rebuild in place) on `AbstractEntityAIStructure#loadStructure`.
   - **When:** the building's level > 0, the worker is a Builder, she's Lifted and `clearFirst()` is on.
   - **What:** prepend `BuildingProgressStage.CLEAR` to the upgrade stage array passed to `BuildingStructureHandler` (`@ModifyArg` on its constructor or the stages array).
   - **Register** the mixin.

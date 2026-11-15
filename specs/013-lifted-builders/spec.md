@@ -30,6 +30,8 @@ This feature first fixes walking Builders. It then adds the fun part: a Builder 
 
 ### Session 2026-11-09
 
+- Q (2026-11-14, after in-game testing): Should Higher Ground clear an upgrade first? → A: **No.** Rebuilding in place is how MineColonies upgrades are meant to work. Clearing first was dropped: she flies and finds her own way, so the old building no longer traps her, and its long clearing stage kept a Warehouse upgrade from placing anything for hours. The clear-first acceptance scenarios and requirement below are withdrawn; the storage-contents rule still applies to any block she breaks.
+
 - Q: Does Lifted also make her place blocks faster? → A: Yes, modestly: about 25% faster for Landrace, rising with potency up to about 50% for Golden God (in the config).
 - Q: When joints are short, who gets them first: citizens' daily joints or Lifted builders? → A: Citizens first; a Builder's joint request is only filled from stock above what citizens are owed today.
 - Q: What happens to the contents of a storage block that an upgrade removes? → A: She takes them and delivers them to the colony's Warehouse (her own hut if there is none); whatever doesn't fit drops at her hut.

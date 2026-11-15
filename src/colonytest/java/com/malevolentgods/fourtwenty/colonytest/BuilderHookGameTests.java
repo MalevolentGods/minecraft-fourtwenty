@@ -38,7 +38,6 @@ public final class BuilderHookGameTests {
                 {"com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure", "fourtwenty$liftedSpeed"},
                 {"com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure", "fourtwenty$emptyFirst"},
                 {"com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure", "fourtwenty$mineFromHere"},
-                {"com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler", "fourtwenty$clearFirst"},
         };
         for (String[] hook : hooks) {
             try {

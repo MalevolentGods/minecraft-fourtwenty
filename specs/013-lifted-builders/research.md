@@ -111,7 +111,7 @@
 **Finding:** the upgrade stage list is fixed in `AbstractEntityAIStructure.loadStructure`. A building above level 0 skips `CLEAR`.
 
 **Decision:**
-- **Clearing first:** `HigherGroundStageMixin`, when she is Lifted at load time, puts `CLEAR` back at the front of an upgrade's stages.
+- **Clearing first (dropped 2026-11-14, see the spec's clarifications):** `HigherGroundStageMixin`, when she is Lifted at load time, puts `CLEAR` back at the front of an upgrade's stages.
   - **What it removes:** `CLEAR` already removes only non-matching blocks, from the top down.
   - **What it leaves:** keep-terrain placeholders match anything during a builder's build (`SubstitutionPlacementHandler`: `fancyPlacement() || equals`), and solid fill matches any good floor block. The hut is in `DONT_TOUCH`.
   - **Not undone:** a stage list chosen while Lifted stays even if she lands mid-job. Clearing on foot is what new builds do anyway.
