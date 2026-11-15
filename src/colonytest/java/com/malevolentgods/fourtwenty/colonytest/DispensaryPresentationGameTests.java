@@ -51,7 +51,7 @@ public final class DispensaryPresentationGameTests {
                 var name=entry.getList("tagNameList",10).getCompound(0).getString("tagName");
                 if (name.equals("sit_in")) {
                     seats++;
-                    h.assertTrue(bp.getBlockState(pos).getBlock() instanceof net.minecraft.world.level.block.StairBlock,"Seat state preserved");
+                    h.assertTrue(isSeat(bp.getBlockState(pos)),"Seat state preserved "+level+" "+transform+" "+pos+" "+bp.getBlockState(pos));
                     h.assertTrue(bp.getBlockState(pos.above()).isAir(),"Seat headroom");
                     boolean covered=false;
                     for(int y=pos.getY()+2;y<bp.getSizeY();y++) if(!bp.getBlockState(new BlockPos(pos.getX(),y,pos.getZ())).isAir()) covered=true;
@@ -68,6 +68,12 @@ public final class DispensaryPresentationGameTests {
             h.assertTrue(reachable.contains(anchor.offset(transform.applyToPos(new BlockPos(0,0,-1)))),"Counter reachable");
         }
         h.succeed();
+    }
+    /** A seat is any stair, vanilla or not: the pack seats citizens on Four Twenty's hemp and road stairs and on Domum
+     *  Ornamentum's stairs too, which aren't all StairBlocks but all carry the stair shape. */
+    private static boolean isSeat(net.minecraft.world.level.block.state.BlockState state) {
+        return state.getBlock() instanceof net.minecraft.world.level.block.StairBlock
+                || state.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.STAIRS_SHAPE);
     }
     /** Citizens sit, work and use racks from up to two blocks away (seats behind tables, racks behind counters). */
     private static boolean adjacent(Set<BlockPos> reachable,BlockPos pos) {

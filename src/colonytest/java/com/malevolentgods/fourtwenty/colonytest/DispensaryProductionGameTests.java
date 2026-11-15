@@ -250,12 +250,17 @@ public final class DispensaryProductionGameTests {
         try(var input=DispensaryBlock.class.getResourceAsStream("/blueprints/fourtwenty/sensiheights/craftsmanship/luxury/dispensary1.blueprint")) {
             var nbt=net.minecraft.nbt.NbtIo.readCompressed(input,net.minecraft.nbt.NbtAccounter.unlimitedHeap());
             var blueprint=com.ldtteam.structurize.blueprints.v1.BlueprintUtil.readBlueprintFromNBT(nbt,h.getLevel().registryAccess());
-            h.assertTrue(blueprint.getSizeX()==9 && blueprint.getSizeZ()==11,"Prototype footprint");
-            h.assertTrue(blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).is(DispensaryRegistry.HUT.get()),"Registered hut anchor");
-            var tile=nbt.getList("tile_entities",10).getCompound(0);
-            var tags=tile.getCompound("blueprintDataProvider").getList("posTagMap",10);
-            h.assertTrue(tags.size()==4,"Work, standing and two indoor seat markers");
-            h.assertTrue(blueprint.getBlockState(new BlockPos(2,1,8)).is(net.minecraft.world.level.block.Blocks.BARREL),"Storage barrel");
+            // Sensi Heights' Dispensary 1: one 15x28 footprint shared by all five levels (levels 4-5 grow into its back)
+            h.assertTrue(blueprint.getSizeX()==15 && blueprint.getSizeZ()==28,"Shared five-level footprint");
+            var anchor=blueprint.getPrimaryBlockOffset();
+            h.assertTrue(blueprint.getBlockState(anchor).is(DispensaryRegistry.HUT.get()),"Registered hut anchor");
+            var tags=blueprint.getBlockInfoAsMap().get(anchor).getTileEntityData().getCompound("blueprintDataProvider").getList("posTagMap",10);
+            var names=new java.util.ArrayList<String>();
+            for(var tag:tags) for(var n:((net.minecraft.nbt.CompoundTag)tag).getList("tagNameList",10)) names.add(((net.minecraft.nbt.CompoundTag)n).getString("tagName"));
+            h.assertTrue(names.contains("work") && names.contains("stand_in"),"Work and standing markers");
+            h.assertTrue(names.stream().filter("sit_in"::equals).count()>=2,"Indoor seat markers");
+            h.assertTrue(blueprint.getBlockState(new BlockPos(5,2,13)).getBlock() instanceof com.minecolonies.core.blocks.BlockMinecoloniesRack,"Stockroom rack");
+            h.assertTrue(blueprint.getBlockState(new BlockPos(9,2,13)).is(net.minecraft.world.level.block.Blocks.BARREL),"Storage barrel");
             h.succeed();
         }
     }
