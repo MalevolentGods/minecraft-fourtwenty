@@ -39,7 +39,8 @@ public final class BuilderWatchdog {
                 if (!BuilderAccess.isBuilder(citizen)) continue;
                 seen.add(citizen.getUUID());
                 var state = WATCHES.computeIfAbsent(citizen.getUUID(), id -> new BuilderWatchRules.State());
-                var sample = new BuilderWatchRules.Sample(level.getGameTime(), BuilderAccess.building(citizen),
+                // a smoke break is a break, not a stall
+                var sample = new BuilderWatchRules.Sample(level.getGameTime(), BuilderAccess.building(citizen) && !LiftedService.onSmokeBreak(citizen),
                         BuilderAccess.progressKey(citizen), BuilderDiagnostics.placements(citizen));
                 LiftedService.tick(level, colony, citizen, EVERY);
                 if (!watching) continue;

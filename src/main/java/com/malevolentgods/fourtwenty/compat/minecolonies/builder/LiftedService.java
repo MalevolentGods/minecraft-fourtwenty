@@ -21,7 +21,10 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import com.malevolentgods.fourtwenty.util.JointSmoke;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.HashMap;
@@ -55,15 +58,17 @@ public final class LiftedService {
             end(level, colony, citizen, "switch");
             isLifted = false;
         }
+        if (onSmokeBreak(citizen) && (!BuilderAccess.onTheJob(citizen) || !allowed(citizen))) {
+            endBreak(citizen);   // off to eat or sleep, or switched off: no joint smoked
+        }
         if (isLifted && building && lifted.tick(colony.getID(), data.getId(), elapsed)) {
-            // Her buff ran out mid-job: light another if she has one, otherwise come down and walk.
+            // Her buff ran out mid-job: come down, and if she has another joint, go and smoke it at her hut.
             LiftedPayload.send(citizen, false);
-            if (!tryLightUp(level, colony, citizen)) {
-                LiftedFlight.land(citizen);
-                BuilderLog.landed(colony.getID(), citizen.getName().getString(), "buff");
-            }
-        } else if (!isLifted && building && allowed(citizen)) {
-            tryLightUp(level, colony, citizen);
+            LiftedFlight.land(citizen);
+            BuilderLog.landed(colony.getID(), citizen.getName().getString(), "buff");
+            if (hasJoint(citizen)) startBreak(level, citizen);
+        } else if (!isLifted && building && allowed(citizen) && !onSmokeBreak(citizen) && hasJoint(citizen)) {
+            startBreak(level, citizen);
         }
 
         // Never left floating: gravity off with nothing flying or landing her means a lost flight; bring her down.
@@ -77,6 +82,90 @@ public final class LiftedService {
         if (level.getGameTime() % 600 < elapsed) LiftedPayload.send(citizen, lifted.isLifted(colony.getID(), data.getId()));
         if (level.getGameTime() % BuilderConfig.requestIntervalTicks() < elapsed) manageRequest(level, colony, citizen);
         MidnightMachineService.tick(level, colony, citizen, elapsed);
+    }
+
+    /**
+     * A smoke break (the user, 2026-11-14): a Builder about to be Lifted first walks back to her hut and smokes her joint
+     * there, and only then does the buff start (glow, boombox, music) and she flies back to work. She lit up wherever she
+     * was before, the moment a joint reached her hut.
+     */
+    private static final class SmokeBreak {
+        final long travelUntil;
+        long smokeStarted = -1;
+
+        SmokeBreak(long travelUntil) { this.travelUntil = travelUntil; }
+    }
+
+    private static final Map<UUID, SmokeBreak> BREAKS = new HashMap<>();
+    /** How long she tries to reach her hut before smoking wherever she is. */
+    private static final long BREAK_TRAVEL_TICKS = 60 * 20;
+
+    public static boolean onSmokeBreak(EntityCitizen citizen) {
+        return BREAKS.containsKey(citizen.getUUID());
+    }
+
+    private static void startBreak(ServerLevel level, EntityCitizen citizen) {
+        BREAKS.put(citizen.getUUID(), new SmokeBreak(level.getGameTime() + BREAK_TRAVEL_TICKS));
+        BuilderLog.diag("smokebreak citizen={} from={}", citizen.getName().getString(), citizen.blockPosition().toShortString());
+    }
+
+    private static void endBreak(EntityCitizen citizen) {
+        BREAKS.remove(citizen.getUUID());
+        if (citizen.getMainHandItem().is(JointService.item(MenuItem.JOINT))) citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+    }
+
+    /**
+     * Her break, from the Builder's walk-to-site step (so she builds nothing meanwhile): walk her to her hut, smoke there,
+     * then light up. True while the break goes on.
+     */
+    public static boolean smokeBreakStep(EntityCitizen citizen) {
+        var brk = BREAKS.get(citizen.getUUID());
+        if (brk == null || !(citizen.level() instanceof ServerLevel level)) return false;
+        var data = citizen.getCitizenData();
+        if (data == null) {
+            endBreak(citizen);
+            return false;
+        }
+        long now = level.getGameTime();
+        if (brk.smokeStarted < 0) {
+            var hut = BuilderAccess.hut(citizen);
+            boolean there = hut == null || now >= brk.travelUntil || EntityNavigationUtils.walkToBuilding(citizen, hut);
+            if (!there) return true;
+            citizen.getNavigation().stop();
+            brk.smokeStarted = now;
+            JointSmoke.puff(citizen, 2);
+        }
+        ItemStack joint = peekJoint(citizen);
+        if (joint.isEmpty()) {   // her joint went elsewhere meanwhile
+            endBreak(citizen);
+            return false;
+        }
+        long smoked = now - brk.smokeStarted;
+        citizen.setItemInHand(InteractionHand.MAIN_HAND, joint.copyWithCount(1));
+        if (smoked % 20 == 0) citizen.swing(InteractionHand.MAIN_HAND);
+        JointSmoke.tick(citizen, smoked, ModDataComponents.strain(joint));
+        if (smoked < BuilderConfig.smokeSeconds() * 20L) return true;
+        endBreak(citizen);
+        if (tryLightUp(level, data.getColony(), citizen)) JointSmoke.puff(citizen, 5, ModDataComponents.strain(joint));
+        return false;
+    }
+
+    private static boolean hasJoint(EntityCitizen citizen) {
+        return !peekJoint(citizen).isEmpty();
+    }
+
+    /** The joint she would smoke, without taking it: her own first, then one in her hut. */
+    private static ItemStack peekJoint(EntityCitizen citizen) {
+        ItemStack mine = peek(citizen.getInventoryCitizen());
+        if (!mine.isEmpty()) return mine;
+        var hut = BuilderAccess.hut(citizen);
+        return hut == null ? ItemStack.EMPTY : peek(hut.getItemHandlerCap());
+    }
+
+    private static ItemStack peek(IItemHandler handler) {
+        if (handler == null) return ItemStack.EMPTY;
+        int slot = JointService.jointSlot(handler);
+        return slot < 0 ? ItemStack.EMPTY : handler.getStackInSlot(slot);
     }
 
     /** Smoke one joint (hers, or one a player left in her hut) and become Lifted. False with none to hand. */

@@ -25,6 +25,12 @@ public abstract class BuilderWalkMixin {
     private void fourtwenty$beforeWalk(BlockPos currentBlock, CallbackInfoReturnable<Boolean> callback) {
         var self = (EntityAIStructureBuilder) (Object) this;
         var worker = ((AbstractEntityAIStructure<?, ?>) self).getWorker();
+        // On a smoke break she walks to her hut and smokes there, and builds nothing meanwhile.
+        if (worker instanceof com.minecolonies.core.entity.citizen.EntityCitizen smoker
+                && com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedService.smokeBreakStep(smoker)) {
+            callback.setReturnValue(false);
+            return;
+        }
         // A Lifted Builder flies to her work instead of walking (spec 013 US3/US4).
         if (worker instanceof com.minecolonies.core.entity.citizen.EntityCitizen citizen
                 && com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedService.isLifted(citizen)

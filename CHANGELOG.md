@@ -9,6 +9,7 @@ All notable changes to the FourTwenty mod will be documented in this file.
   - **Reach and placing:** she places from up to 9 blocks away, from a hover spot that reaches as much of the layer as it can.
   - **Faster:** 25% faster on Landrace, up to 50% on Golden God.
   - **Storage kept:** a chest or rack she breaks sends its contents to her hut, not onto the ground.
+  - **A smoke break first:** when she's due to light up, she walks back to her hut and smokes her joint there, then flies back to work.
   - **Joints:** she asks for the colony's **spare** joints only (citizens always get theirs first), or takes ones you drop in her hut. A Landrace joint lasts 5 minutes, and better strains last longer.
   - **Safe flying:** she always comes down gently, for meals, bedtime, when she runs out, or if you switch it off. A joint she smokes also counts as her daily joint.
   - **Setting:** her hut has a **"Fly when Lifted"** setting, on by default.
