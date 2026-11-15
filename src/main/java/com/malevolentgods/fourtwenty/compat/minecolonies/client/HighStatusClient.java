@@ -38,8 +38,8 @@ public final class HighStatusClient {
     private static final String ID = "fourtwentyHigh";
 
     /** The right-hand column of the citizen main page, under the happiness picture and above the seal. */
-    private static final int X = 140, Y = 134, WIDTH = 62, HEIGHT = 22;
-    private static final double SCALE = 0.75, DETAIL_SCALE = 0.6;
+    private static final int X = 143, Y = 137, WIDTH = 55, HEIGHT = 20;
+    private static final double SCALE = 0.62, DETAIL_SCALE = 0.52;
 
     // fill colours, ARGB
     private static final int GREEN = 0xFF2E7D32, MUTED_GREEN = 0xFF5F8A62, AMBER = 0xFFB7791F, SLATE = 0xFF4A5A6A,
@@ -76,10 +76,10 @@ public final class HighStatusClient {
         border.setGradientEnd(0x2B, 0x22, 0x18, 0xFF);
         fill.setPosition(X, Y);
         fill.setSize(WIDTH, HEIGHT);
-        text.setPosition(X, Y + 2);
-        text.setSize(WIDTH, 9);
-        detail.setPosition(X, Y + 12);
-        detail.setSize(WIDTH, 8);
+        text.setPosition(X, Y + 3);
+        text.setSize(WIDTH, 7);
+        detail.setPosition(X, Y + 11);
+        detail.setSize(WIDTH, 6);
         window.addChild(border);
         window.addChild(fill);
         window.addChild(text);
