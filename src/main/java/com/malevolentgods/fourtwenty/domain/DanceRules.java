@@ -9,13 +9,18 @@ package com.malevolentgods.fourtwenty.domain;
  *   <li>a full spin on the big hits (accents), 0.4 s long, never two within the cooldown;</li>
  *   <li>arms and a head nod on the beat, bigger while she's still (waiting, placing) than while she's moving.</li>
  * </ul>
- * With no beat map (music off, or a track without one) she dances to the fallback tempo, without spins. Pure.
+ * On top of that, each track's {@link Routine}: the move for the section playing (blended over {@link #BLEND_MS} when
+ * the section changes, smaller while she moves) and its flourishes, which take the place of the accent spins while they
+ * play. With no beat map (music off, or a track without one) she dances to the fallback tempo, without spins. Pure.
  */
 public final class DanceRules {
     private DanceRules() {}
 
     public static final long SPIN_MS = 400;
     public static final double DOUBLE_TIME_BPM = 140;
+    public static final long BLEND_MS = 500;
+    /** Her moves while she's flying or walking somewhere, against while she's still. */
+    static final double MOVING_ARMS = 0.6;
 
     public record Tuning(double bob, long spinCooldownMs, double fallbackBpm, double swayDeg,
                          double armMovingDeg, double armWaitingDeg, double headNodDeg) {
@@ -28,25 +33,53 @@ public final class DanceRules {
      * @param bob      how high she is drawn above her real place, in blocks
      * @param spinDeg  extra turn for a spin, 0..360
      * @param swayDeg  extra turn from side to side
-     * @param armPitch arms raised (degrees, forward and up)
-     * @param armRoll  arms out to the side (degrees)
-     * @param headNod  head nodded down (degrees)
+     * @param body     arms, head, legs, lean and tilt (plus a little extra bob and turn) from the move and flourish
      * @param envelope 0..1, 1 on the beat: for anything else that pulses with it
      */
-    public record Pose(double bob, double spinDeg, double swayDeg, double armPitch, double armRoll, double headNod, double envelope) {}
+    public record Pose(double bob, double spinDeg, double swayDeg, DanceMoves.Body body, double envelope) {}
 
     public static Pose pose(double bpm, long[] beatsMs, long[] accentsMs, long ms, boolean moving, Tuning t) {
+        return pose(bpm, beatsMs, accentsMs, ms, moving, t, Routine.NONE);
+    }
+
+    public static Pose pose(double bpm, long[] beatsMs, long[] accentsMs, long ms, boolean moving, Tuning t, Routine routine) {
         boolean mapped = bpm > 0 && beatsMs.length >= 2;
         double tempo = bpm > 0 ? bpm : t.fallbackBpm();
         double beats = mapped ? beatCount(beatsMs, ms, 60_000 / tempo) : ms / (60_000 / tempo);
         double danced = beats / (tempo > DOUBLE_TIME_BPM ? 2 : 1);
-        double phase = danced - Math.floor(danced);
-        double up = (Math.cos(2 * Math.PI * phase) + 1) / 2;
-        double pulse = up * up;   // sharper than a sine: a snap on the beat, easing off between
-        double side = Math.sin(Math.PI * danced);   // one way, then the other: two beats a sway
-        double arms = moving ? t.armMovingDeg() : t.armWaitingDeg();
-        double spin = mapped ? spin(accentsMs, ms, t.spinCooldownMs()) : 0;
-        return new Pose(t.bob() * pulse, spin, t.swayDeg() * side, arms * pulse, arms * 0.5 * side, t.headNodDeg() * pulse, pulse);
+        double pulse = DanceMoves.pulse(danced);   // a snap on the beat, easing off between
+        double side = DanceMoves.side(danced);     // one way, then the other: two beats a sway
+
+        DanceMoves.Body body;
+        int i = routine.sectionAt(ms);
+        if (i >= 0) {
+            body = section(routine, i, danced, ms);
+            if (i > 0 && ms - routine.sections().get(i).startMs() < BLEND_MS) {
+                double k = (ms - routine.sections().get(i).startMs()) / (double) BLEND_MS;
+                body = DanceMoves.Body.lerp(section(routine, i - 1, danced, ms), body, DanceMoves.ease(k));
+            }
+            if (moving) body = body.armsScaled(MOVING_ARMS);
+        } else {
+            double arms = moving ? t.armMovingDeg() : t.armWaitingDeg();
+            var arm = new DanceMoves.Limb(arms * pulse, 0, arms * 0.5 * side);
+            body = new DanceMoves.Body(arm, arm, new DanceMoves.Limb(t.headNodDeg() * pulse, 0, 0), 0, 0, 0, 0, 0, 0);
+        }
+
+        var flourish = routine.flourishAt(ms);
+        double spin = 0;
+        if (flourish != null) {
+            double s = (ms - flourish.ms()) / (double) DanceMoves.flourishMs(flourish.move());
+            body = body.plus(DanceMoves.flourish(flourish.move(), s));
+        } else if (mapped) {
+            spin = spin(accentsMs, ms, t.spinCooldownMs());
+        }
+        return new Pose(t.bob() * pulse, spin, t.swayDeg() * side, body, pulse);
+    }
+
+    private static DanceMoves.Body section(Routine routine, int i, double danced, long ms) {
+        var sec = routine.sections().get(i);
+        double progress = (ms - sec.startMs()) / (double) Math.max(1, sec.endMs() - sec.startMs());
+        return DanceMoves.move(sec.move(), danced, Math.max(0, Math.min(1, progress))).scale(sec.intensity());
     }
 
     /** Beats since the first one, fractional, following the map's own (slightly uneven) spacing. */

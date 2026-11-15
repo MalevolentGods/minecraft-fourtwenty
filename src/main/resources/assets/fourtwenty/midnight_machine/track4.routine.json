@@ -1,0 +1,45 @@
+{
+ "track": "track4",
+ "title": "Awake and Adapt",
+ "sections": [
+  {
+   "startMs": 0,
+   "endMs": 16614,
+   "label": "intro",
+   "move": "robot_pop",
+   "intensity": 0.6
+  },
+  {
+   "startMs": 16614,
+   "endMs": 32624,
+   "label": "build",
+   "move": "shoulder_shimmy",
+   "intensity": 0.8
+  },
+  {
+   "startMs": 32624,
+   "endMs": 95893,
+   "label": "drop",
+   "move": "step_touch",
+   "intensity": 1.0
+  }
+ ],
+ "flourishes": [
+  {
+   "ms": 16614,
+   "move": "double_pop"
+  },
+  {
+   "ms": 24950,
+   "move": "jump_kick"
+  },
+  {
+   "ms": 32961,
+   "move": "double_pop"
+  },
+  {
+   "ms": 65538,
+   "move": "jump_kick"
+  }
+ ]
+}

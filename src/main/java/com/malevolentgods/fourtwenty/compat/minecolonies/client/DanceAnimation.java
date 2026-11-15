@@ -5,6 +5,7 @@ import com.malevolentgods.fourtwenty.compat.minecolonies.builder.BuilderConfig;
 import com.malevolentgods.fourtwenty.domain.DanceRules;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.mojang.math.Axis;
+import net.minecraft.util.Mth;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
@@ -21,6 +22,8 @@ public final class DanceAnimation {
     private DanceAnimation() {}
 
     private static final Set<Integer> PUSHED = new HashSet<>();
+    /** Her waist, in blocks above her feet: what she leans and tilts round. */
+    private static final double WAIST = 0.75;
 
     public static void install() {
         NeoForge.EVENT_BUS.addListener(DanceAnimation::pre);
@@ -38,7 +41,7 @@ public final class DanceAnimation {
         var beats = track.beats();
         boolean moving = citizen.getDeltaMovement().horizontalDistanceSqr() > 0.0004 || Math.abs(citizen.getX() - citizen.xo) + Math.abs(citizen.getZ() - citizen.zo) > 0.02;
         var tuning = DanceRules.Tuning.of(BuilderConfig.danceBob(), BuilderConfig.spinCooldownSeconds(), BuilderConfig.fallbackBpm());
-        return DanceRules.pose(beats.bpm(), beats.beatsMs(), beats.accentsMs(), ms, moving, tuning);
+        return DanceRules.pose(beats.bpm(), beats.beatsMs(), beats.accentsMs(), ms, moving, tuning, Album.routine(MidnightMachineClient.track(id)));
     }
 
     private static void pre(RenderLivingEvent.Pre<?, ?> event) {
@@ -46,10 +49,21 @@ public final class DanceAnimation {
         var pose = current(citizen, event.getPartialTick());
         if (pose == null) return;
         var stack = event.getPoseStack();
+        var body = pose.body();
         stack.pushPose();
-        stack.translate(0, pose.bob(), 0);
-        // round her own middle: the renderer's origin is her feet, centred
-        stack.mulPose(Axis.YP.rotationDegrees((float) -(pose.spinDeg() + pose.swayDeg())));
+        stack.translate(0, pose.bob() + body.bob(), 0);
+        // lean and tilt round her waist, in her own frame (the renderer turns her to face her way after this)
+        if (body.lean() != 0 || body.tilt() != 0) {
+            float facing = 180 - Mth.rotLerp(event.getPartialTick(), citizen.yBodyRotO, citizen.yBodyRot);
+            stack.translate(0, WAIST, 0);
+            stack.mulPose(Axis.YP.rotationDegrees(facing));
+            stack.mulPose(Axis.XP.rotationDegrees((float) -body.lean()));
+            stack.mulPose(Axis.ZP.rotationDegrees((float) body.tilt()));
+            stack.mulPose(Axis.YP.rotationDegrees(-facing));
+            stack.translate(0, -WAIST, 0);
+        }
+        // turns round her own middle: the renderer's origin is her feet, centred
+        stack.mulPose(Axis.YP.rotationDegrees((float) -(pose.spinDeg() + pose.swayDeg() + body.turn())));
         PUSHED.add(citizen.getId());
     }
 

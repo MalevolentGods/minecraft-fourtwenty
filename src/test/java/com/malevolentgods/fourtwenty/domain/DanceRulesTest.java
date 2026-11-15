@@ -63,7 +63,7 @@ class DanceRulesTest {
     void waitingGivesBiggerArmsThanMoving() {
         var still = DanceRules.pose(120, BEATS_120, new long[0], 1000, false, T);
         var moving = DanceRules.pose(120, BEATS_120, new long[0], 1000, true, T);
-        assertTrue(still.armPitch() > moving.armPitch());
+        assertTrue(still.body().leftArm().pitch() > moving.body().leftArm().pitch());
     }
 
     @Test

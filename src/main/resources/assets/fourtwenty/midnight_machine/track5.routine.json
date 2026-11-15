@@ -1,0 +1,98 @@
+{
+ "track": "track5",
+ "title": "Beauty and Light",
+ "sections": [
+  {
+   "startMs": 0,
+   "endMs": 69300,
+   "label": "intro",
+   "move": "float",
+   "intensity": 0.68
+  },
+  {
+   "startMs": 69300,
+   "endMs": 95004,
+   "label": "verse",
+   "move": "wave_overhead",
+   "intensity": 0.76
+  },
+  {
+   "startMs": 95004,
+   "endMs": 137868,
+   "label": "drop",
+   "move": "reach_climb",
+   "intensity": 0.92
+  },
+  {
+   "startMs": 137868,
+   "endMs": 192157,
+   "label": "verse",
+   "move": "wave_overhead",
+   "intensity": 0.84
+  },
+  {
+   "startMs": 192157,
+   "endMs": 237865,
+   "label": "drop",
+   "move": "reach_climb",
+   "intensity": 1.0
+  },
+  {
+   "startMs": 237865,
+   "endMs": 250000,
+   "label": "outro",
+   "move": "float",
+   "intensity": 0.6
+  }
+ ],
+ "flourishes": [
+  {
+   "ms": 20004,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 34656,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 70008,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 95004,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 110005,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 119652,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 130009,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 162865,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 179653,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 192157,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 220009,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 232513,
+   "move": "big_spin_point"
+  }
+ ]
+}

@@ -1,0 +1,110 @@
+{
+ "track": "track2",
+ "title": "Smoke and Mirrors",
+ "sections": [
+  {
+   "startMs": 0,
+   "endMs": 24787,
+   "label": "intro",
+   "move": "float",
+   "intensity": 0.6
+  },
+  {
+   "startMs": 24787,
+   "endMs": 98836,
+   "label": "verse",
+   "move": "mirror",
+   "intensity": 0.84
+  },
+  {
+   "startMs": 98836,
+   "endMs": 172246,
+   "label": "verse",
+   "move": "shoulder_shimmy",
+   "intensity": 0.76
+  },
+  {
+   "startMs": 172246,
+   "endMs": 195942,
+   "label": "drop",
+   "move": "mirror",
+   "intensity": 1.0
+  },
+  {
+   "startMs": 195942,
+   "endMs": 303787,
+   "label": "drop",
+   "move": "shoulder_shimmy",
+   "intensity": 0.92
+  },
+  {
+   "startMs": 303787,
+   "endMs": 315960,
+   "label": "outro",
+   "move": "float",
+   "intensity": 0.68
+  }
+ ],
+ "flourishes": [
+  {
+   "ms": 24787,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 34017,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 46811,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 56030,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 65910,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 75453,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 85322,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 119269,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 132400,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 147215,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 178828,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 197254,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 223910,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 253504,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 306411,
+   "move": "slow_turn_open"
+  }
+ ]
+}

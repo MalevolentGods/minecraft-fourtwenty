@@ -119,15 +119,22 @@
   - **Clicks:** write `out/clicks/trackN_clicks.wav` (gitignored), and print the tempo and beat count per track.
   - **Overrides:** honour `tools/beatmap_overrides.json` (`bpm`, `offset_ms` per track).
 - [ ] T021 [US3] (Ran 2026-11-14: 95.7, 90.7, 172.3, 178.2, 166.7, 166.7 and 95.7 BPM; beat spacing tight (9-42 ms spread). Tracks 3-6 may be double-time, so dancing bobs every other beat above 140 BPM. Click tracks are in %TEMP%\mm_clicks for the user to spot-check.) Run it. Listen to each click track (the user can spot-check), fix any track with an override, and commit `album.json`.
-- [ ] T022 [P] [US3] Write `T/DanceRulesTest.java`:
+- [X] T022 [P] [US3] Write `T/DanceRulesTest.java`:
   - the bob peaks on each beat (±1 frame);
   - a spin starts on an accent and lasts 0.4 s, with no second spin within the cooldown;
   - the sway period is two beats;
   - waiting gives bigger arms than moving;
   - an empty beat map follows the fallback BPM.
-- [ ] T023 [US3] Create `J/domain/DanceRules.java` (pure): `Pose pose(BeatMap, long ms, boolean moving, Tuning)` gives `bob`, `spinDeg`, `swayDeg`, `armPitch`, `armRoll`, `headNod`, and `envelope` (for the cones). Make T022 pass.
-- [ ] T024 [US3] Create `MC/client/DanceAnimation.java`: on `RenderLivingEvent.Pre`, for a dancing Builder, translate by `bob` and rotate by `spinDeg` and `swayDeg` around her centre, then pop in `Post`.
-- [ ] T025 [US3] Create `MC/mixin/CitizenDanceMixin.java` (client), injecting at TAIL of MineColonies `CitizenModel.setupAnim`: add `armPitch`, `armRoll` and `headNod` for dancing Builders. Register it in the `client` list of `fourtwenty.minecolonies.mixins.json`.
+- [X] T023 [US3] Create `J/domain/DanceRules.java` (pure): `Pose pose(BeatMap, long ms, boolean moving, Tuning)` gives `bob`, `spinDeg`, `swayDeg`, `armPitch`, `armRoll`, `headNod`, and `envelope` (for the cones). Make T022 pass.
+- [X] T024 [US3] Create `MC/client/DanceAnimation.java`: on `RenderLivingEvent.Pre`, for a dancing Builder, translate by `bob` and rotate by `spinDeg` and `swayDeg` around her centre, then pop in `Post`.
+- [X] T025 [US3] Create `MC/mixin/CitizenDanceMixin.java` (client), injecting at TAIL of MineColonies `CitizenModel.setupAnim`: add `armPitch`, `armRoll` and `headNod` for dancing Builders. Register it in the `client` list of `fourtwenty.minecolonies.mixins.json`.
+**Bespoke routines (clarified 2026-11-14):**
+
+- [X] T031 [US3] Create `tools/choreograph_album.py`: from album.json beats and the trackN.bands files, find each track's sections (bar features, novelty between the 4 bars before and after, at least 8 bars a section), label them (intro, verse, build, drop, breakdown, outro) by energy and trend, give each the move its track's palette names for that label, and pick flourishes (section starts with a lift, the strongest accents, at least 8 s apart). Write `assets/fourtwenty/midnight_machine/trackN.routine.json`, never over a hand-edited file unless `--force`.
+- [X] T032 [P] [US3] Write `T/DanceMovesTest.java`: every move and flourish named in the palettes exists; every move stays within joint limits over a bar; flourishes start and end at rest; a section change blends over 500 ms; a routine lookup finds the section and flourish at a time.
+- [X] T033 [US3] Create `J/domain/DanceMoves.java` (pure): the move library (per-limb arms, head, legs, body lean and tilt, bob and turn) and the flourishes; `J/domain/Routine.java` (pure): sections and flourishes, looked up by time. Extend `DanceRules.pose` to layer the routine over the base bob, sway and spins.
+- [X] T034 [US3] Load each track's routine with the album (`Album.routine(track)`); `DanceAnimation` adds body lean and tilt around her waist; `CitizenDanceMixin` sets each arm, the head and (while she's still) the legs.
+- [X] T035 [US1] Three seconds of silence between tracks, on the server clock and the client (`Album.GAP_MS`); no dancing in the gap.
 - [ ] T026 [US3] **In game (M3):** quickstart M3, including the timing clip (SC-003) and build timing with dancing on and off (SC-004).
 
 **Checkpoint:** she dances in time. Commit.

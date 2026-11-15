@@ -1,0 +1,90 @@
+{
+ "track": "track3",
+ "title": "Listen and Learn",
+ "sections": [
+  {
+   "startMs": 0,
+   "endMs": 23127,
+   "label": "intro",
+   "move": "cupped_ear",
+   "intensity": 0.6
+  },
+  {
+   "startMs": 23127,
+   "endMs": 85113,
+   "label": "drop",
+   "move": "lean_pump",
+   "intensity": 0.92
+  },
+  {
+   "startMs": 85113,
+   "endMs": 127443,
+   "label": "verse",
+   "move": "conduct",
+   "intensity": 0.84
+  },
+  {
+   "startMs": 127443,
+   "endMs": 149525,
+   "label": "drop",
+   "move": "lean_pump",
+   "intensity": 1.0
+  },
+  {
+   "startMs": 149525,
+   "endMs": 193654,
+   "label": "build",
+   "move": "air_synth",
+   "intensity": 0.76
+  },
+  {
+   "startMs": 193654,
+   "endMs": 206920,
+   "label": "outro",
+   "move": "conduct",
+   "intensity": 0.68
+  }
+ ],
+ "flourishes": [
+  {
+   "ms": 23127,
+   "move": "ear_cup_freeze"
+  },
+  {
+   "ms": 36850,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 45314,
+   "move": "ear_cup_freeze"
+  },
+  {
+   "ms": 59408,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 76312,
+   "move": "ear_cup_freeze"
+  },
+  {
+   "ms": 103004,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 142002,
+   "move": "ear_cup_freeze"
+  },
+  {
+   "ms": 160009,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 172420,
+   "move": "ear_cup_freeze"
+  },
+  {
+   "ms": 183414,
+   "move": "big_spin_point"
+  }
+ ]
+}

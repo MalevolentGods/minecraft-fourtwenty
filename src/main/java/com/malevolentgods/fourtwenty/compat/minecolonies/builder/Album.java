@@ -67,6 +67,37 @@ public final class Album {
         return BANDS_CACHE[i];
     }
 
+    private static final com.malevolentgods.fourtwenty.domain.Routine[] ROUTINES = new com.malevolentgods.fourtwenty.domain.Routine[16];
+
+    /** One track's dance routine (trackN.routine.json, from tools/choreograph_album.py); none if missing or broken. */
+    public static synchronized com.malevolentgods.fourtwenty.domain.Routine routine(int track) {
+        int i = Math.floorMod(track, Math.max(1, tracks().size()));
+        if (ROUTINES[i] == null) ROUTINES[i] = loadRoutine(track(i).id());
+        return ROUTINES[i];
+    }
+
+    private static com.malevolentgods.fourtwenty.domain.Routine loadRoutine(String id) {
+        try (InputStream in = Album.class.getResourceAsStream("/assets/fourtwenty/midnight_machine/" + id + ".routine.json")) {
+            if (in == null) return com.malevolentgods.fourtwenty.domain.Routine.NONE;
+            var root = JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject();
+            var sections = new ArrayList<com.malevolentgods.fourtwenty.domain.Routine.Section>();
+            for (var e : root.getAsJsonArray("sections")) {
+                var o = e.getAsJsonObject();
+                sections.add(new com.malevolentgods.fourtwenty.domain.Routine.Section(o.get("startMs").getAsLong(), o.get("endMs").getAsLong(),
+                        o.get("label").getAsString(), o.get("move").getAsString(), o.has("intensity") ? o.get("intensity").getAsDouble() : 1));
+            }
+            var flourishes = new ArrayList<com.malevolentgods.fourtwenty.domain.Routine.Flourish>();
+            for (var e : root.getAsJsonArray("flourishes")) {
+                var o = e.getAsJsonObject();
+                flourishes.add(new com.malevolentgods.fourtwenty.domain.Routine.Flourish(o.get("ms").getAsLong(), o.get("move").getAsString()));
+            }
+            flourishes.sort(java.util.Comparator.comparingLong(com.malevolentgods.fourtwenty.domain.Routine.Flourish::ms));
+            return new com.malevolentgods.fourtwenty.domain.Routine(List.copyOf(sections), List.copyOf(flourishes));
+        } catch (Exception e) {
+            return com.malevolentgods.fourtwenty.domain.Routine.NONE;
+        }
+    }
+
     /** A band's level (0-1) at a time in a track, eased between frames. */
     public static float level(int track, int band, long ms) {
         byte[] b = bands(track);
