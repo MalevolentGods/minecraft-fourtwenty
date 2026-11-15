@@ -105,7 +105,8 @@ public final class LiftedFlight {
             if (!(level.getEntity(entry.getKey()) instanceof EntityCitizen citizen) || !citizen.isAlive()) continue;
             var flight = entry.getValue();
             boolean flying = !flight.landing && LiftedService.isLifted(citizen) && LiftedService.allowed(citizen) && BuilderAccess.building(citizen)
-                    && level.getGameTime() - flight.lastAsked <= ASKED_WINDOW_TICKS;
+                    && level.getGameTime() - flight.lastAsked <= ASKED_WINDOW_TICKS
+                    && level.getGameTime() >= WALK_UNTIL.getOrDefault(entry.getKey(), 0L);
             if (!flying && !flight.landing) {   // MineColonies walks her itself now: come down first
                 flight.landing = true;
                 flight.landAt = null;
@@ -128,10 +129,16 @@ public final class LiftedFlight {
     @Nullable
     public static Boolean approach(EntityCitizen citizen, BlockPos block, int reach, @Nullable BlockPos hover) {
         if (!(citizen.level() instanceof ServerLevel level)) return true;
-        var flight = FLIGHTS.computeIfAbsent(citizen.getUUID(), id -> new Flight());
         long now = level.getGameTime();
+        if (now < WALK_UNTIL.getOrDefault(citizen.getUUID(), 0L)) {
+            // Walking for now: no flight of her own, or a fresh one would hold her in the air and she never walked
+            // (seen stuck at her hut, 2026-11-14).
+            var walking = FLIGHTS.get(citizen.getUUID());
+            if (walking != null) walking.landing = true;
+            return null;
+        }
+        var flight = FLIGHTS.computeIfAbsent(citizen.getUUID(), id -> new Flight());
         flight.lastAsked = now;
-        if (now < WALK_UNTIL.getOrDefault(citizen.getUUID(), 0L)) return null;
         flight.landing = false;
         BlockPos at = citizen.blockPosition();
         boolean inTheWay = at.equals(block) || at.above().equals(block) || at.getX() == block.getX() && at.getZ() == block.getZ();
@@ -246,8 +253,11 @@ public final class LiftedFlight {
         double d = Math.sqrt(from.distSqr(goal));
         double t = distance / d;
         int x = (int) Math.round(from.getX() + (goal.getX() - from.getX()) * t);
-        int y = (int) Math.round(from.getY() + (goal.getY() - from.getY()) * t);
         int z = (int) Math.round(from.getZ() + (goal.getZ() - from.getZ()) * t);
+        // over whatever stands there, not inside it: a waypoint at ground height fell inside the town hall between
+        // her hut and the Warehouse, an enclosed room no route reaches (2026-11-14)
+        int y = Math.max((int) Math.round(from.getY() + (goal.getY() - from.getY()) * t),
+                level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, x, z));
         FlightPlanner.Free free = (xx, yy, zz) -> flyFree(level, xx, yy, zz);
         for (int dy = 0; dy <= 8; dy++) for (int dx = -2; dx <= 2; dx++) for (int dz = -2; dz <= 2; dz++) {
             if (FlightPlanner.fits(free, x + dx, y + dy, z + dz)) return new BlockPos(x + dx, y + dy, z + dz);
