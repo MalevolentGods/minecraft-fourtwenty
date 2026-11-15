@@ -39,7 +39,6 @@ public final class LiftedFlight {
         BlockPos target;
         boolean landing;
         @Nullable BlockPos landAt;
-        long walkUntil;
         int descending;   // ticks spent landing, for the backstop
         double bestToNext = Double.MAX_VALUE;   // closest she's got to the next cell of her route
         int noProgress;   // ticks without getting closer to it
@@ -89,6 +88,12 @@ public final class LiftedFlight {
     private static final int LANDING_BACKSTOP_TICKS = 100;
 
     private static final Map<UUID, Flight> FLIGHTS = new HashMap<>();
+    /**
+     * Until when each Builder walks before trying to fly again. Kept apart from her flight, which is dropped once she
+     * lands: with the wait inside it, landing wiped it and she replanned a route that wasn't there several times a
+     * second (seen boxed in, 2026-11-14: 400 failed searches in 4 minutes).
+     */
+    private static final Map<UUID, Long> WALK_UNTIL = new HashMap<>();
 
     /** Every tick, for Lifted Builders only. */
     public static void tick(LevelTickEvent.Post event) {
@@ -126,7 +131,7 @@ public final class LiftedFlight {
         var flight = FLIGHTS.computeIfAbsent(citizen.getUUID(), id -> new Flight());
         long now = level.getGameTime();
         flight.lastAsked = now;
-        if (now < flight.walkUntil) return null;
+        if (now < WALK_UNTIL.getOrDefault(citizen.getUUID(), 0L)) return null;
         flight.landing = false;
         BlockPos at = citizen.blockPosition();
         boolean inTheWay = at.equals(block) || at.above().equals(block) || at.getX() == block.getX() && at.getZ() == block.getZ();
@@ -227,7 +232,7 @@ public final class LiftedFlight {
         flight.landing = true;
         flight.landAt = null;
         flight.target = null;
-        flight.walkUntil = now + 100;
+        WALK_UNTIL.put(citizen.getUUID(), now + 100);
         flight.replans = 0;
         flight.tripBlock = null;
         flight.goal = null;
@@ -450,5 +455,6 @@ public final class LiftedFlight {
     /** For colonies being unloaded or deleted. */
     public static void forget(UUID citizen) {
         FLIGHTS.remove(citizen);
+        WALK_UNTIL.remove(citizen);
     }
 }
