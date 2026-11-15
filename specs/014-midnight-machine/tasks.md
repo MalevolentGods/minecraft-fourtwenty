@@ -143,8 +143,8 @@
 
 ## Phase 6: Polish
 
-- [ ] T027 [P] CHANGELOG `[Unreleased]`: the Midnight Machine. README "What's new" at the release bump.
-- [ ] T028 Without MineColonies, the standalone game tests pass (SC-007). Check the jar grew by 20 MB or less (SC-006).
+- [X] T027 [P] CHANGELOG `[Unreleased]`: the Midnight Machine. README "What's new" at the release bump. *(2026-11-14: CHANGELOG done; README at the release bump.)*
+- [X] T028 Without MineColonies, the standalone game tests pass (SC-007). Check the jar grew by 20 MB or less (SC-006). *(2026-11-14: standalone run: only the long-known `malformedAndFutureSavesFailClosed` fails; the album adds 15.2 MB. Colony run: no failures beyond those on main, across two runs; the colony profile also runs the standalone fixtures, which fail there on MineColonies' client payload to the fake player, on main too.)*
 - [ ] T029 Update memory (`project_fourtwenty_lifted_builders.md`, or a new `project_fourtwenty_midnight_machine.md`), and mark every task [X].
 - [ ] T030 PR(s) to `main` for spec 013 and spec 014, on the user's go. Release together.
 
