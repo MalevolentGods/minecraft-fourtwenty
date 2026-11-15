@@ -4,6 +4,14 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.27.0
+
+- **Lifted Builders fly everywhere** (with MineColonies): while high, every trip a Builder makes is flown, not just around the build: home to unload or fetch materials, to her racks, and on breaks to the restaurant, bed or the hospital. She lands close by and walks only the last steps.
+- **Through doors:** she opens wooden doors and fence gates as she reaches them and closes what she opened behind her. Doors you opened are left alone.
+- **A cruise pose:** in flight she leans back with her legs together instead of walking in mid-air, and on a smoke break she raises the joint to her mouth between puffs.
+- **Never stranded:** a trip that gets no closer for 30 seconds sends her back to her hut.
+- **Servers:** `bodyFlight` in `fourtwenty-builders-server.toml` (on by default); off keeps 0.26.0's movement.
+
 ## What's new in 0.26.0
 
 - **Lifted Builders** (with MineColonies): a Builder with a joint walks back to her hut for a smoke break, then **flies** to work with a faint green glow and builds the **Higher Ground** way:
