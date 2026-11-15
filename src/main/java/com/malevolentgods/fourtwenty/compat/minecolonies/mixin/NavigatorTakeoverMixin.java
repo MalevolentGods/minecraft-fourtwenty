@@ -38,7 +38,8 @@ public abstract class NavigatorTakeoverMixin {
     private void fourtwenty$fly(AbstractPathJob job, BlockPos destination, double speed, boolean safeDestination,
                                 CallbackInfoReturnable<PathResult<AbstractPathJob>> callback) {
         var citizen = fourtwenty$citizen();
-        if (citizen == null || !LiftedFlight.takesOverWalking(citizen)) {
+        if (citizen == null || !LiftedFlight.takesOverWalking(citizen)
+                || destination != null && LiftedFlight.lastSteps(citizen, destination)) {
             fourtwenty$flown = false;
             return;
         }

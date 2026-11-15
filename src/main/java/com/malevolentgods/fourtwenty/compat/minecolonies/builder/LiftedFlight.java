@@ -49,6 +49,7 @@ public final class LiftedFlight {
         boolean homeIsHut = true;  // false: flying to just outside a building she has to walk into
         int homeStalls;            // stalls on the way home seen so far (each one climbs before planning again)
         @Nullable com.malevolentgods.fourtwenty.domain.Errand errand;   // a walk MineColonies asked of her, flown (spec 015)
+        boolean errandLanded;      // she's flown it and landed: the last few steps are MineColonies' own
         @Nullable BlockPos goal;   // the hover point this trip is for; legs toward it are kept until each is flown
         @Nullable BlockPos hoverFor, hover;   // the hover point chosen for a block, kept while it still fits
         @Nullable BlockPos tripBlock;   // the block she's on her way to, for the progress backstop
@@ -118,7 +119,7 @@ public final class LiftedFlight {
             }
             if (flight.home != null) {
                 if (homeStep(level, citizen, flight)) {
-                    flight.errand = null;
+                    if (flight.errand != null) flight.errandLanded = true;   // keep it: a repeated ask isn't a new trip
                     flight.home = null;
                     flight.landing = true;
                     flight.landAt = null;
@@ -138,7 +139,8 @@ public final class LiftedFlight {
             if (flying) {
                 fly(citizen, flight);
             } else if (descend(level, citizen, flight)) {
-                it.remove();
+                // down; a landed errand stays until MineColonies ends the walk, so asking again doesn't start a new hop
+                if (flight.errand == null || !flight.errandLanded) it.remove();
             }
         }
     }
@@ -480,7 +482,8 @@ public final class LiftedFlight {
         if (!(citizen.level() instanceof ServerLevel level)) return;
         var flight = FLIGHTS.computeIfAbsent(citizen.getUUID(), id -> new Flight());
         if (flight.errand != null && flight.errand.sameDestination(destination.getX(), destination.getY(), destination.getZ())
-                && flight.home != null) return;
+                && (flight.home != null || flight.errandLanded)) return;
+        flight.errandLanded = false;
         var purpose = BuilderAccess.onTheJob(citizen) ? com.malevolentgods.fourtwenty.domain.Errand.Purpose.JOB
                 : com.malevolentgods.fourtwenty.domain.Errand.Purpose.BREAK;
         flight.errand = new com.malevolentgods.fourtwenty.domain.Errand(destination.getX(), destination.getY(), destination.getZ(), purpose);
@@ -498,6 +501,20 @@ public final class LiftedFlight {
                 citizen.blockPosition().toShortString(), destination.toShortString());
     }
 
+    /** How close a landed errand must be for MineColonies to walk the last steps (a rack, a chest, a seat). */
+    private static final double LAST_STEPS = 4;
+
+    /**
+     * She's flown to this destination and landed within a few blocks: MineColonies' walking takes the last steps (a
+     * landing spot by a rack in a cramped hut can be just out of its reach, and asking again looped, 2026-11-15).
+     */
+    public static boolean lastSteps(EntityCitizen citizen, BlockPos destination) {
+        var f = FLIGHTS.get(citizen.getUUID());
+        return f != null && f.errand != null && f.errandLanded
+                && f.errand.sameDestination(destination.getX(), destination.getY(), destination.getZ())
+                && citizen.position().distanceTo(Vec3.atCenterOf(destination)) <= LAST_STEPS;
+    }
+
     /** Whether she's flying an errand right now. */
     public static boolean onErrand(LivingEntity citizen) {
         var f = FLIGHTS.get(citizen.getUUID());
@@ -509,6 +526,7 @@ public final class LiftedFlight {
         var f = FLIGHTS.get(citizen.getUUID());
         if (f == null || f.errand == null) return;
         f.errand = null;
+        f.errandLanded = false;
         if (f.home != null && !f.homeIsHut) {
             f.home = null;
             f.landing = true;
