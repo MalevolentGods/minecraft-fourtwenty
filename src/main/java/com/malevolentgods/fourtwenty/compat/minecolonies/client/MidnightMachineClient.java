@@ -22,7 +22,7 @@ public final class MidnightMachineClient {
     private static final class Machine {
         boolean lifted, playing;
         int track;
-        long trackStartMs;            // client clock ms when the current track's 0 ms was
+        long trackStartMs;            // music clock (wall()) ms when the current track's 0 ms was
         AlbumSoundInstance sound;
     }
 
@@ -37,6 +37,26 @@ public final class MidnightMachineClient {
     }
 
     /** Client clock in ms, on the same game-time base as the server. */
+    /**
+     * The music's clock: real time, as the audio plays, less any time the game sat paused (the audio pauses too).
+     * The dance and VU bars read it. They followed the game's tick clock before, which falls behind real time whenever
+     * the client lags, so the dance slid behind the music until a 2 s resync (2026-11-15).
+     */
+    private static long pausedMs, lastRawMs = -1;
+
+    private static long wall() {
+        long raw = System.nanoTime() / 1_000_000;
+        long pausing = lastRawMs >= 0 && Minecraft.getInstance().isPaused() ? raw - lastRawMs : 0;
+        return raw - pausedMs - pausing;
+    }
+
+    private static void trackPause() {
+        long raw = System.nanoTime() / 1_000_000;
+        if (lastRawMs >= 0 && Minecraft.getInstance().isPaused()) pausedMs += raw - lastRawMs;
+        lastRawMs = raw;
+    }
+
+    /** The game's tick clock, for how long a server message took to arrive. */
     private static long now() {
         var level = Minecraft.getInstance().level;
         return level == null ? 0 : level.getGameTime() * 50L;
@@ -48,11 +68,11 @@ public final class MidnightMachineClient {
         long expected = p.positionMs() + Math.max(0, now() - p.sentAt() * 50L);
         boolean wasPlaying = m.playing;
         m.playing = p.playing() && p.lifted();
-        long ours = now() - m.trackStartMs;
+        long ours = wall() - m.trackStartMs;
         boolean resync = !wasPlaying || m.track != p.track() || Math.abs(ours - expected) > DRIFT_MS;
         if (resync) {
             m.track = p.track();
-            m.trackStartMs = now() - expected;
+            m.trackStartMs = wall() - expected;
         }
         if (!m.playing) {
             stopSound(m);
@@ -63,6 +83,7 @@ public final class MidnightMachineClient {
     }
 
     private static void tick(ClientTickEvent.Post event) {
+        trackPause();
         var mc = Minecraft.getInstance();
         if (mc.level == null) {
             MACHINES.values().forEach(MidnightMachineClient::stopSound);
@@ -80,11 +101,11 @@ public final class MidnightMachineClient {
             }
             if (!m.playing) continue;
             long slot = Album.slotMs(m.track);   // the track, then a few seconds of silence
-            long at = now() - m.trackStartMs;
+            long at = wall() - m.trackStartMs;
             if (at >= slot) {   // on to the next track (the server's next message confirms it)
                 m.trackStartMs += slot;
                 m.track = (m.track + 1) % Math.max(1, Album.tracks().size());
-                startSound(e.getKey(), m, now() - m.trackStartMs);
+                startSound(e.getKey(), m, wall() - m.trackStartMs);
             }
         }
     }
@@ -128,6 +149,6 @@ public final class MidnightMachineClient {
     public static long positionMs(int entityId, float partialTick) {
         var m = MACHINES.get(entityId);
         if (m == null) return 0;
-        return Math.max(0, now() + (long) (partialTick * 50) - m.trackStartMs);
+        return Math.max(0, wall() - m.trackStartMs);
     }
 }
