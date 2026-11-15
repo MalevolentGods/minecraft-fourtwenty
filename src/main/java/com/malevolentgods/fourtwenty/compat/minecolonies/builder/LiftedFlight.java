@@ -46,6 +46,7 @@ public final class LiftedFlight {
         long lastAsked;            // game time MineColonies last asked her to fly somewhere (approach)
         @Nullable BlockPos home;   // flying home to her hut (her high ran out), and where she lands there
         long homeUntil;
+        boolean homeIsHut = true;  // false: flying to just outside a building she has to walk into
         int homeStalls;            // stalls on the way home seen so far (each one climbs before planning again)
         @Nullable BlockPos goal;   // the hover point this trip is for; legs toward it are kept until each is flown
         @Nullable BlockPos hoverFor, hover;   // the hover point chosen for a block, kept while it still fits
@@ -172,7 +173,7 @@ public final class LiftedFlight {
                 flight.hover = goal;
             }
         }
-        if (goal == null) return walk(citizen, flight, now);
+        if (goal == null) return walkIn(level, citizen, flight, now, block);
         BlockPos leg = goal;
         int legMax = Math.max(4, BuilderConfig.flightRadius() - 4);
         if (goal.equals(flight.goal) && flight.target != null) {
@@ -191,8 +192,8 @@ public final class LiftedFlight {
             var route = FlightPlanner.plan(start, new FlightPlanner.Cell(leg.getX(), leg.getY(), leg.getZ()),
                     (x, y, z) -> flyFree(level, x, y, z), BuilderConfig.flightRadius(), MAX_CELLS);
             if (route.isEmpty()) {
-                BuilderLog.flightStall(citizen.getName().getString(), citizen.blockPosition(), "no route to " + leg.toShortString() + ", walking");
-                return walk(citizen, flight, now);
+                BuilderLog.flightStall(citizen.getName().getString(), citizen.blockPosition(), "no route to " + leg.toShortString() + ", walking in");
+                return walkIn(level, citizen, flight, now, block);
             }
             flight.route = route;
             flight.next = 0;
@@ -243,6 +244,66 @@ public final class LiftedFlight {
             if (FlightPlanner.fits((xx, yy, zz) -> flyFree(level, xx, yy, zz), x, y + dy, z)) return new FlightPlanner.Cell(x, y + dy, z);
         }
         return new FlightPlanner.Cell(x, y, z);
+    }
+
+    /** How long she walks after flying to the outside of a building, before flight tries again (30 s). */
+    private static final long WALK_IN_TICKS = 30 * 20;
+
+    /**
+     * The block is somewhere flight can't reach (inside a closed building: doors are shut, and she can't open them in
+     * the air). Fly her down to the ground just outside the building near it, and let MineColonies' walking take her
+     * in through a door; flight leaves her be for 30 s. Landing where she was put her on the roof, which walking can't
+     * leave, and she paced there (2026-11-14).
+     */
+    @Nullable
+    private static Boolean walkIn(ServerLevel level, EntityCitizen citizen, Flight flight, long now, BlockPos block) {
+        BlockPos spot = outsideSpot(level, citizen, block);
+        if (spot == null) return walk(citizen, flight, now);
+        WALK_UNTIL.put(citizen.getUUID(), now + WALK_IN_TICKS);
+        flight.replans = 0;
+        flight.tripBlock = null;
+        flight.goal = null;
+        flight.hoverFor = null;
+        if (citizen.onGround() && !citizen.isNoGravity() && citizen.blockPosition().closerThan(spot, 3)) {
+            flight.landing = true;   // already down outside: just walk in
+            return null;
+        }
+        flight.home = spot;
+        flight.homeIsHut = false;
+        flight.homeUntil = now + HOME_TICKS;
+        flight.homeStalls = 0;
+        flight.landing = false;
+        flight.target = null;
+        flight.route = List.of();
+        flight.next = 0;
+        BuilderLog.diag("walkin citizen={} from={} to={} for={}", citizen.getName().getString(), citizen.blockPosition().toShortString(),
+                spot.toShortString(), block.toShortString());
+        return null;
+    }
+
+    /** A standing spot on the ground just outside the building she's working on, nearest the block. */
+    @Nullable
+    private static BlockPos outsideSpot(ServerLevel level, EntityCitizen citizen, BlockPos block) {
+        var corners = BuilderAccess.siteCorners(citizen);
+        if (corners == null) return null;
+        var a = corners.getA();
+        var b = corners.getB();
+        var box = new StandingSpot.Box(Math.min(a.getX(), b.getX()), Math.min(a.getY(), b.getY()) - 1, Math.min(a.getZ(), b.getZ()),
+                Math.max(a.getX(), b.getX()), Math.max(a.getY(), b.getY()) + 1, Math.max(a.getZ(), b.getZ()));
+        int x = Math.clamp(block.getX(), box.minX() - 1, box.maxX() + 1);
+        int z = Math.clamp(block.getZ(), box.minZ() - 1, box.maxZ() + 1);
+        if (box.contains(x, block.getY(), z)) {
+            int west = x - box.minX(), east = box.maxX() - x, north = z - box.minZ(), south = box.maxZ() - z;
+            int least = Math.min(Math.min(west, east), Math.min(north, south));
+            if (least == west) x = box.minX() - 1;
+            else if (least == east) x = box.maxX() + 1;
+            else if (least == north) z = box.minZ() - 1;
+            else z = box.maxZ() + 1;
+        }
+        int ground = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, x, z);
+        return StandingSpot.nearest(x, ground, z, 6, (xx, yy, zz) -> BuilderWatchdog.solid(level, xx, yy, zz),
+                        (xx, yy, zz) -> BuilderWatchdog.free(level, xx, yy, zz), box, 6)
+                .map(sp -> new BlockPos(sp.x(), sp.y(), sp.z())).orElse(null);
     }
 
     /** No flight this step: come down, and walk for a few seconds before trying to fly again. */
@@ -310,6 +371,7 @@ public final class LiftedFlight {
         }
         var flight = FLIGHTS.computeIfAbsent(citizen.getUUID(), id -> new Flight());
         flight.home = new BlockPos(spot.get().x(), spot.get().y(), spot.get().z());
+        flight.homeIsHut = true;
         flight.homeUntil = level.getGameTime() + HOME_TICKS;
         flight.landing = false;
         flight.target = null;
@@ -325,8 +387,8 @@ public final class LiftedFlight {
         citizen.fallDistance = 0;
         BlockPos home = flight.home;
         if (citizen.position().distanceTo(Vec3.atBottomCenterOf(home)) < 1.0) return true;
-        if (level.getGameTime() > flight.homeUntil) return recallHome(citizen, "over a minute");
-        if (flight.replans > HOME_REPLANS) return recallHome(citizen, flight.replans + " stalls");
+        if (level.getGameTime() > flight.homeUntil) return flight.homeIsHut ? recallHome(citizen, "over a minute") : true;
+        if (flight.replans > HOME_REPLANS) return flight.homeIsHut ? recallHome(citizen, flight.replans + " stalls") : true;
         if (flight.replans > flight.homeStalls) {
             // Snagged on something (a roof edge, a lamp, a parapet): go up and over before planning again.
             flight.homeStalls = flight.replans;
@@ -347,11 +409,11 @@ public final class LiftedFlight {
             int legMax = Math.max(4, BuilderConfig.flightRadius() - 4);
             if (Math.sqrt(citizen.blockPosition().distSqr(home)) > legMax) {
                 leg = waypoint(level, citizen.blockPosition(), home, legMax);
-                if (leg == null) return recallHome(citizen, "no waypoint");
+                if (leg == null) return flight.homeIsHut ? recallHome(citizen, "no waypoint") : true;
             }
             var route = FlightPlanner.plan(startCell(level, citizen), new FlightPlanner.Cell(leg.getX(), leg.getY(), leg.getZ()),
                     (x, y, z) -> flyFree(level, x, y, z), BuilderConfig.flightRadius(), MAX_CELLS);
-            if (route.isEmpty()) return recallHome(citizen, "no route to " + leg.toShortString());
+            if (route.isEmpty()) return flight.homeIsHut ? recallHome(citizen, "no route to " + leg.toShortString()) : true;
             flight.route = route;
             flight.next = 0;
             flight.target = leg;
@@ -385,10 +447,16 @@ public final class LiftedFlight {
         return true;
     }
 
+    /** Whether she's on her way home after her high ran out (not on her way to the outside of a building). */
+    public static boolean flyingSomewhere(LivingEntity citizen) {
+        var f = FLIGHTS.get(citizen.getUUID());
+        return f != null && f.home != null;
+    }
+
     /** Whether she's on her way home after her high ran out. */
     public static boolean flyingHome(LivingEntity citizen) {
         var f = FLIGHTS.get(citizen.getUUID());
-        return f != null && f.home != null;
+        return f != null && f.home != null && f.homeIsHut;
     }
 
     /** Whether flight is looking after her at all (flying or landing). */
