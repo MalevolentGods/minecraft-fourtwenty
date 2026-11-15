@@ -62,14 +62,14 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty`, `MC` = `J/compat/min
 
 ### Tests
 
-- [ ] T013 [P] [US2] Write `T/FlightPlannerDoorsTest.java`: a route through a closed wooden door or gate cell exists at a small extra cost and marks the doorway cells; iron doors and trapdoors are walls; a route avoids a door when an open way is as short.
+- [X] T013 [P] [US2] Write `T/FlightPlannerDoorsTest.java`: a route through a closed wooden door or gate cell exists at a small extra cost and marks the doorway cells; iron doors and trapdoors are walls; a route avoids a door when an open way is as short.
 - [ ] T014 [P] [US2] Write `CT/DoorwaysGameTests.java`: a Lifted Builder flying a route through a closed door opens it as she reaches it and closes it once 2 blocks past; a door someone else opened is left alone; a fence gate the same.
 
 ### Implementation
 
-- [ ] T015 [US2] Teach `J/domain/FlightPlanner.java` doorways: a `Free` that can say "doorway" (a passable door or gate cell, extra cost), route cells flagged as doorways (research R2). Make T013 pass.
-- [ ] T016 [US2] Create `MC/builder/Doorways.java`: which blocks count (wooden doors and fence gates only, FR-004), open as she comes within 1.5 blocks of a doorway on her route, close what she opened once she's 2 blocks past and it's empty, upright and at door height through the doorway. Make T014 pass.
-- [ ] T017 [US2] Use doorways in `MC/builder/LiftedFlight.java`: the planner's free test includes doorways; `fly()` calls `Doorways` for doorway cells ahead; the build-site `approach` uses them too, so blocks inside closed buildings are reached by flying in (no more walk-in with `bodyFlight` on).
+- [X] T015 [US2] Teach `J/domain/FlightPlanner.java` doorways: a `Free` that can say "doorway" (a passable door or gate cell, extra cost), route cells flagged as doorways (research R2). Make T013 pass.
+- [X] T016 [US2] Create `MC/builder/Doorways.java`: which blocks count (wooden doors and fence gates only, FR-004), open as she comes within 1.5 blocks of a doorway on her route, close what she opened once she's 2 blocks past and it's empty, upright and at door height through the doorway. Make T014 pass.
+- [X] T017 [US2] Use doorways in `MC/builder/LiftedFlight.java`: the planner's free test includes doorways; `fly()` calls `Doorways` for doorway cells ahead; the build-site `approach` uses them too, so blocks inside closed buildings are reached by flying in (no more walk-in with `bodyFlight` on).
 - [ ] T018 [US2] Unreachable blocks (FR-006) in `MC/builder/LiftedFlight.java`: when no route reaches a block, place it from outside if it's in reach, otherwise let MineColonies move on to the next block; never stuck for good.
 - [ ] T019 [US2] **In game (M1 step 4):** an inside repair of the Warehouse with its doors shut; record which doors were used and that all ended closed.
 

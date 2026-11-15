@@ -104,6 +104,7 @@ public final class LiftedFlight {
     /** Every tick, for Lifted Builders only. */
     public static void tick(LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel level) || !level.tickRateManager().runsNormally()) return;
+        Doorways.tick(level);   // close what Lifted Builders opened once they're through
         if (FLIGHTS.isEmpty()) return;
         var it = FLIGHTS.entrySet().iterator();
         while (it.hasNext()) {
@@ -201,7 +202,7 @@ public final class LiftedFlight {
         if (!leg.equals(flight.target)) {
             var start = startCell(level, citizen);
             var route = FlightPlanner.plan(start, new FlightPlanner.Cell(leg.getX(), leg.getY(), leg.getZ()),
-                    (x, y, z) -> flyFree(level, x, y, z), BuilderConfig.flightRadius(), MAX_CELLS);
+                    (x, y, z) -> flyFree(level, x, y, z), Doorways.of(level), BuilderConfig.flightRadius(), MAX_CELLS);
             if (route.isEmpty()) {
                 BuilderLog.flightStall(citizen.getName().getString(), citizen.blockPosition(), "no route to " + leg.toShortString() + ", walking in");
                 return walkIn(level, citizen, flight, now, block);
@@ -438,7 +439,7 @@ public final class LiftedFlight {
                 if (leg == null) return giveUp(citizen, flight, "no waypoint");
             }
             var route = FlightPlanner.plan(startCell(level, citizen), new FlightPlanner.Cell(leg.getX(), leg.getY(), leg.getZ()),
-                    (x, y, z) -> flyFree(level, x, y, z), BuilderConfig.flightRadius(), MAX_CELLS);
+                    (x, y, z) -> flyFree(level, x, y, z), Doorways.of(level), BuilderConfig.flightRadius(), MAX_CELLS);
             if (route.isEmpty()) return giveUp(citizen, flight, "no route to " + leg.toShortString());
             flight.route = route;
             flight.next = 0;
@@ -607,6 +608,7 @@ public final class LiftedFlight {
     }
 
     private static void fly(EntityCitizen citizen, Flight flight) {
+        if (citizen.level() instanceof ServerLevel level) Doorways.openAhead(level, citizen, flight.route, flight.next);
         citizen.setNoGravity(true);
         stopWalking(citizen);
         if (flight.next >= flight.route.size()) {
@@ -627,7 +629,7 @@ public final class LiftedFlight {
             flight.bestToNext = distance;
             flight.noProgress = 0;
         } else if (++flight.noProgress > STALL_TICKS
-                || !FlightPlanner.fits((x, y, z) -> flyFree((ServerLevel) citizen.level(), x, y, z), cell.x(), cell.y(), cell.z())) {
+                || !FlightPlanner.fits((x, y, z) -> flyFree((ServerLevel) citizen.level(), x, y, z), Doorways.of((ServerLevel) citizen.level()), cell.x(), cell.y(), cell.z())) {
             // Blocked (a block she just placed, or one the plan misjudged): stop and plan again from here.
             BuilderLog.flightStall(citizen.getName().getString(), citizen.blockPosition(), new BlockPos(cell.x(), cell.y(), cell.z()));
             flight.replans++;
