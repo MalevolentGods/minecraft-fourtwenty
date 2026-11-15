@@ -74,7 +74,7 @@ public final class BuilderConfig {
         SPEED_HIGHEST = B.comment("Placing speed multiplier on Golden God (other families in between by grade).").defineInRange("speedHighest", 1.5, 1, 4);
         REACH = B.comment("Higher Ground reach in blocks.").defineInRange("reach", 9, 4, 16);
         FLIGHT_RADIUS = B.comment("How far the flight planner searches.").defineInRange("flightRadius", 24, 8, 48);
-        SMOKE_SECONDS = B.comment("Seconds a Builder smokes at her hut before she is Lifted.").defineInRange("smokeSeconds", 6, 2, 30);
+        SMOKE_SECONDS = B.comment("Seconds a Builder smokes at her hut before she is Lifted.").defineInRange("smokeSeconds", 20, 2, 60);
         LANDING_SPEED = B.comment("Blocks a tick a Builder descends when landing (no fall damage at any value).").defineInRange("landingSpeed", 0.15, 0.05, 0.5);
         REQUEST_INTERVAL = B.comment("How often a Builder checks the colony's spare joints and opens or cancels her request.")
                 .defineInRange("requestIntervalTicks", 100, 20, 1200);
@@ -124,7 +124,7 @@ public final class BuilderConfig {
     public static int hoverGrid() { return get(HOVER_GRID, 3); }
     public static boolean musicEnabled() { return get(MUSIC, true); }
     public static double fallbackBpm() { return get(FALLBACK_BPM, 100.0); }
-    public static int smokeSeconds() { return get(SMOKE_SECONDS, 6); }
+    public static int smokeSeconds() { return get(SMOKE_SECONDS, 20); }
     public static double danceBob() { return get(DANCE_BOB, 0.12); }
     public static double spinCooldownSeconds() { return get(SPIN_COOLDOWN, 2.0); }
 

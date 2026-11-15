@@ -46,6 +46,7 @@ public final class LiftedFlight {
         long lastAsked;            // game time MineColonies last asked her to fly somewhere (approach)
         @Nullable BlockPos home;   // flying home to her hut (her high ran out), and where she lands there
         long homeUntil;
+        int homeStalls;            // stalls on the way home seen so far (each one climbs before planning again)
         @Nullable BlockPos goal;   // the hover point this trip is for; legs toward it are kept until each is flown
         @Nullable BlockPos hoverFor, hover;   // the hover point chosen for a block, kept while it still fits
         @Nullable BlockPos tripBlock;   // the block she's on her way to, for the progress backstop
@@ -315,6 +316,7 @@ public final class LiftedFlight {
         flight.route = List.of();
         flight.next = 0;
         flight.replans = 0;
+        flight.homeStalls = 0;
         BuilderLog.diag("flyhome citizen={} from={} to={}", citizen.getName().getString(), citizen.blockPosition().toShortString(), flight.home.toShortString());
     }
 
@@ -323,7 +325,21 @@ public final class LiftedFlight {
         citizen.fallDistance = 0;
         BlockPos home = flight.home;
         if (citizen.position().distanceTo(Vec3.atBottomCenterOf(home)) < 1.0) return true;
-        if (level.getGameTime() > flight.homeUntil || flight.replans > MAX_REPLANS) return recallHome(citizen, "too long");
+        if (level.getGameTime() > flight.homeUntil) return recallHome(citizen, "over a minute");
+        if (flight.replans > HOME_REPLANS) return recallHome(citizen, flight.replans + " stalls");
+        if (flight.replans > flight.homeStalls) {
+            // Snagged on something (a roof edge, a lamp, a parapet): go up and over before planning again.
+            flight.homeStalls = flight.replans;
+            BlockPos up = climb(level, citizen);
+            if (up != null) {
+                flight.route = FlightPlanner.plan(startCell(level, citizen), new FlightPlanner.Cell(up.getX(), up.getY(), up.getZ()),
+                        (x, y, z) -> flyFree(level, x, y, z), 8, 200);
+                flight.next = 0;
+                flight.target = flight.route.isEmpty() ? null : up;
+                flight.bestToNext = Double.MAX_VALUE;
+                flight.noProgress = 0;
+            }
+        }
         boolean legDone = flight.target != null && flight.next >= flight.route.size();
         if (legDone && flight.target.equals(home)) return true;
         if (flight.target == null || legDone) {
@@ -344,6 +360,21 @@ public final class LiftedFlight {
         }
         fly(citizen, flight);
         return false;
+    }
+
+    /** Stalls on the way home before she's recalled instead; each one first climbs her up and over. */
+    private static final int HOME_REPLANS = 8;
+
+    /** The highest open cell up to six above her, to climb to after a stall. */
+    @Nullable
+    private static BlockPos climb(ServerLevel level, EntityCitizen citizen) {
+        var start = startCell(level, citizen);
+        BlockPos best = null;
+        for (int dy = 1; dy <= 6; dy++) {
+            if (!FlightPlanner.fits((x, y, z) -> flyFree(level, x, y, z), start.x(), start.y() + dy, start.z())) break;
+            best = new BlockPos(start.x(), start.y() + dy, start.z());
+        }
+        return best;
     }
 
     private static boolean recallHome(EntityCitizen citizen, String why) {
