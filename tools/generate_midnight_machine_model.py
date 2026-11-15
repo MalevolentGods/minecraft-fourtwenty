@@ -43,8 +43,9 @@ def textures():
     im = Image.new('RGB', (16, 16), PINK)
     ImageDraw.Draw(im).rectangle([5, 5, 10, 10], fill=(255, 190, 200))
     im.save(TEX / 'tip.png')
-    # the album art for the art window: Art.png at 32x32, sharpened so the phoenix still reads
-    art = Image.open(ALBUM / 'Art.png').convert('RGB').resize((32, 32), Image.LANCZOS).filter(ImageFilter.SHARPEN)
+    # the album art for the art window, at about the painted front's resolution (~38 texels a model pixel; the window
+    # is ~8.4 x 5.8 model pixels and shows the art's middle band), in a multiple of 16 for the block atlas
+    art = Image.open(ALBUM / 'Art.png').convert('RGB').resize((320, 320), Image.LANCZOS)
     art.save(TEX / 'art.png')
     Image.new('RGB', (16, 16), (255, 255, 255)).save(TEX / 'white.png')
 
