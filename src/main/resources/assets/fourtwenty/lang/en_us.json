@@ -2259,5 +2259,7 @@
   "fourtwenty.high.detail.asking": "asking for a joint",
   "fourtwenty.high.detail.nospare": "no spare joints",
   "fourtwenty.high.detail.off": "for this hut",
-  "fourtwenty.dispensary.affinity.profile.none": "(%s)"
+  "fourtwenty.dispensary.affinity.profile.none": "(%s)",
+  "fourtwenty.dispensary.happiness.uninterested": "Cannabis: not interested",
+  "fourtwenty.dispensary.happiness.uninterested.description": "I have tried it, and it is not for me. No cravings, and no effect on my happiness."
 }

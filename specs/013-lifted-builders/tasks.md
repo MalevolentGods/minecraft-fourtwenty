@@ -188,7 +188,7 @@
   - the `StandingSpot` landing target is outside a given footprint;
   - an entity flagged landing from 10 blocks takes no damage (use an armour stand or zombie with the same landing code path factored into `LiftedFlight.land(Mob, BlockPos)`);
   - `LiftedSavedData` round trip: save, reload, and the strain and ticks left survive, keyed by colony and citizen (as `DemandPersistenceGameTests` does for the Dispensary).
-- [ ] T033 [US3] (Seen in game 2026-11-14 on flatworld: lights up from hut joints, flies with the green glow and smoke, lands for material runs after two landing fixes, long trips in legs, hat-square glow fixed. Still to see: a joint request from spare stock, the switch-off and restart landings.) **In game (M3):** quickstart M3 steps 1-4, all five landing cases (SC-005), and a second client seeing the shimmer. Record the results in quickstart.md.
+- [X] T033 [US3] (Seen in game 2026-11-14 on flatworld: lights up from hut joints, flies with the green glow and smoke, lands for material runs after two landing fixes, long trips in legs, hat-square glow fixed. Still to see: a joint request from spare stock, the switch-off and restart landings.) **In game (M3):** quickstart M3 steps 1-4, all five landing cases (SC-005), and a second client seeing the shimmer. Record the results in quickstart.md. *(2026-11-15: "Fly when Lifted" off lands her and ends the high, confirmed in game; joint requests and restart landings checked on flatworld.)*
 
 **Checkpoint**: Builders fly on spare joints and always land safely. Commit.
 

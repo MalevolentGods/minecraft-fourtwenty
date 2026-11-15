@@ -6,7 +6,7 @@ import java.util.Optional;
 public record CitizenDemand(boolean eligible, long dueAt, long graceUntil, long satisfiedUntil,
                             long healthUntil, long lastConsumedAt, long revision) {
     /** UNEXPOSED and TOLERANCE_BREAK come from affinity, never from {@link #status}. */
-    public enum Status { INELIGIBLE, GRACE, SATISFIED, UNMET, UNEXPOSED, TOLERANCE_BREAK }
+    public enum Status { INELIGIBLE, GRACE, SATISFIED, UNMET, UNEXPOSED, TOLERANCE_BREAK, UNINTERESTED }
     public CitizenDemand {
         if (revision < 0 || dueAt < -1 || graceUntil < -1 || satisfiedUntil < -1 || healthUntil < -1
                 || lastConsumedAt < -1 || (eligible && (dueAt < 0 || graceUntil < dueAt))

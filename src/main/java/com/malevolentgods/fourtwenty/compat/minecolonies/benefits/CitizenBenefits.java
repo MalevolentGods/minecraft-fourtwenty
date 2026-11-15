@@ -27,6 +27,9 @@ public final class CitizenBenefits {
                 : com.malevolentgods.fourtwenty.compat.minecolonies.domain.Affinity.UNEXPOSED;
         var status = !affinity.exposed() ? CitizenDemand.Status.UNEXPOSED
                 : affinity.onBreak(now) ? CitizenDemand.Status.TOLERANCE_BREAK : state.status(now);
+        // No demand because she doesn't want it, not for want of a home: say so (a Builder with a fine home was told
+        // only colonists with a completed home have cravings, 2026-11-15).
+        if (status == CitizenDemand.Status.INELIGIBLE && ColonyIntegration.eligible(citizen)) status = CitizenDemand.Status.UNINTERESTED;
         double weight = switch (status) {
             case SATISFIED -> DispensaryConfig.satisfactionWeight();
             case UNMET -> DispensaryConfig.unmetDemandWeight();

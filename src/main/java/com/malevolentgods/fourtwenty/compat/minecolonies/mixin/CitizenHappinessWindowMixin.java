@@ -49,7 +49,7 @@ public abstract class CitizenHappinessWindowMixin {
 
     /** Appends "Smoker · daily" (preference and current frequency) once the citizen has been exposed. */
     private static MutableComponent fourtwenty$withProfile(MutableComponent description, CannabisHappinessModifier modifier) {
-        if (modifier.status() == Status.UNEXPOSED) return description;
+        if (modifier.status() == Status.UNEXPOSED || modifier.status() == Status.UNINTERESTED) return description;
         if (modifier.preference() == com.malevolentgods.fourtwenty.compat.minecolonies.domain.Preference.NONE) {
             // not interested: no frequency to speak of ("Not interested · four times a day" read as nonsense)
             return description.append(" ").append(Component.translatable("fourtwenty.dispensary.affinity.profile.none",

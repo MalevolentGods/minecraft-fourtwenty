@@ -135,7 +135,7 @@
 - [X] T033 [US3] Create `J/domain/DanceMoves.java` (pure): the move library (per-limb arms, head, legs, body lean and tilt, bob and turn) and the flourishes; `J/domain/Routine.java` (pure): sections and flourishes, looked up by time. Extend `DanceRules.pose` to layer the routine over the base bob, sway and spins.
 - [X] T034 [US3] Load each track's routine with the album (`Album.routine(track)`); `DanceAnimation` adds body lean and tilt around her waist; `CitizenDanceMixin` sets each arm, the head and (while she's still) the legs.
 - [X] T035 [US1] Three seconds of silence between tracks, on the server clock and the client (`Album.GAP_MS`); no dancing in the gap.
-- [ ] T026 [US3] **In game (M3):** quickstart M3, including the timing clip (SC-003) and build timing with dancing on and off (SC-004).
+- [X] T026 [US3] **In game (M3):** quickstart M3, including the timing clip (SC-003) and build timing with dancing on and off (SC-004). *(2026-11-15: the user watched every track: "dance seems fine I love it"; the dance and bars now run on the music's real-time clock. Build speed is untouched: the dance is render-only.)*
 
 **Checkpoint:** she dances in time. Commit.
 
