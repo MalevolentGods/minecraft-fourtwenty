@@ -73,6 +73,10 @@ public class ModItems {
         ITEMS.register("weed_pipe", () ->
             new WeedPipeItem(new Item.Properties().durability(4).stacksTo(1))); // 4 uses, doesn't stack
 
+    /** Loaded with Oil: one Oil is eight hits (domain/VapeRules). */
+    public static final DeferredHolder<Item, com.malevolentgods.fourtwenty.item.VapePenItem> VAPE_PEN =
+        ITEMS.register("vape_pen", () -> new com.malevolentgods.fourtwenty.item.VapePenItem(new Item.Properties().stacksTo(1)));
+
     /** Lays and upgrades our roads with weed; the Pro also lays and reshapes road slabs and stairs. */
     public static final DeferredHolder<Item, com.malevolentgods.fourtwenty.paving.PavePenItem> PAVE_PEN =
         ITEMS.register("pave_pen", () -> new com.malevolentgods.fourtwenty.paving.PavePenItem(false, new Item.Properties()));

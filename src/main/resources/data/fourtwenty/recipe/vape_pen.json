@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "G",
+    "O",
+    "I"
+  ],
+  "key": {
+    "G": {"item": "minecraft:glass_pane"},
+    "O": {"item": "fourtwenty:oil"},
+    "I": {"item": "minecraft:iron_ingot"}
+  },
+  "result": {"id": "fourtwenty:vape_pen", "count": 1},
+  "show_notification": true
+}
