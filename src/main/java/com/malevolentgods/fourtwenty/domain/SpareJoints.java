@@ -12,8 +12,12 @@ public final class SpareJoints {
         return Math.max(0, stock - Math.max(0, owed));
     }
 
-    /** How many to ask for: up to her stash, less what she carries, never more than the spare. Zero means no request. */
-    public static int request(int stash, int carrying, int spare) {
-        return Math.max(0, Math.min(stash - carrying, spare));
+    /**
+     * How many to ask for: one, only when she needs it (none left to smoke, and about to want one) and the colony has
+     * a spare. Zero means no request, and an open one is cancelled. She used to keep a stash of three on order whenever
+     * there were spares, and the requests ran all the time (the user, 2026-11-14: "shouldn't request until he needs one").
+     */
+    public static int request(boolean needSoon, int carrying, int spare) {
+        return needSoon && carrying <= 0 && spare > 0 ? 1 : 0;
     }
 }

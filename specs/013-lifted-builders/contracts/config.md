@@ -32,7 +32,6 @@ This is a new file, only registered when MineColonies is present. Every value ha
 | `speedHighest` | 1.5 | 1-4 | Placing speed multiplier for Golden God (others in between by grade) |
 | `reach` | 9 | 4-16 | Higher Ground reach in blocks |
 | `flightRadius` | 24 | 8-48 | How far the flight planner searches |
-| `stash` | 3 | 1-16 | Joints a Builder asks for at most |
 | `landingSpeed` | 0.15 | 0.05-0.5 | Blocks a tick she descends when landing (no fall damage at any value) |
 | `requestIntervalTicks` | 100 | 20-1200 | How often a Builder checks the spare and opens or cancels her joint request |
 | `hoverLookahead` | 64 | 8-256 | How many upcoming blocks Higher Ground considers when choosing a hover point |

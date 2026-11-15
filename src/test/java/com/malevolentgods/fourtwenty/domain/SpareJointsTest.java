@@ -14,11 +14,10 @@ class SpareJointsTest {
     }
 
     @Test
-    void sheAsksForHerStashLessWhatSheCarriesWithinTheSpare() {
-        assertEquals(3, SpareJoints.request(3, 0, 10));
-        assertEquals(1, SpareJoints.request(3, 2, 10));
-        assertEquals(2, SpareJoints.request(3, 0, 2), "never more than the spare");
-        assertEquals(0, SpareJoints.request(3, 0, 0), "no spare: no request (an open one cancels)");
-        assertEquals(0, SpareJoints.request(3, 5, 10), "carrying more than her stash: no request");
+    void sheAsksForOneJointOnlyWhenSheNeedsIt() {
+        assertEquals(1, SpareJoints.request(true, 0, 10), "none left and about to want one: one joint");
+        assertEquals(0, SpareJoints.request(true, 1, 10), "still has one to smoke: no request");
+        assertEquals(0, SpareJoints.request(false, 0, 10), "high for a while yet: no request");
+        assertEquals(0, SpareJoints.request(true, 0, 0), "no spare: no request (an open one cancels)");
     }
 }

@@ -28,7 +28,6 @@ public final class BuilderConfig {
     private static final ModConfigSpec.DoubleValue SPEED_HIGHEST;
     private static final ModConfigSpec.IntValue REACH;
     private static final ModConfigSpec.IntValue FLIGHT_RADIUS;
-    private static final ModConfigSpec.IntValue STASH;
     private static final ModConfigSpec.DoubleValue LANDING_SPEED;
     private static final ModConfigSpec.IntValue REQUEST_INTERVAL;
     private static final ModConfigSpec.IntValue HOVER_LOOKAHEAD;
@@ -75,7 +74,6 @@ public final class BuilderConfig {
         SPEED_HIGHEST = B.comment("Placing speed multiplier on Golden God (other families in between by grade).").defineInRange("speedHighest", 1.5, 1, 4);
         REACH = B.comment("Higher Ground reach in blocks.").defineInRange("reach", 9, 4, 16);
         FLIGHT_RADIUS = B.comment("How far the flight planner searches.").defineInRange("flightRadius", 24, 8, 48);
-        STASH = B.comment("Joints a Builder asks for at most.").defineInRange("stash", 3, 1, 16);
         SMOKE_SECONDS = B.comment("Seconds a Builder smokes at her hut before she is Lifted.").defineInRange("smokeSeconds", 6, 2, 30);
         LANDING_SPEED = B.comment("Blocks a tick a Builder descends when landing (no fall damage at any value).").defineInRange("landingSpeed", 0.15, 0.05, 0.5);
         REQUEST_INTERVAL = B.comment("How often a Builder checks the colony's spare joints and opens or cancels her request.")
@@ -120,7 +118,6 @@ public final class BuilderConfig {
     public static double speedHighest() { return get(SPEED_HIGHEST, 1.5); }
     public static int reach() { return get(REACH, 9); }
     public static int flightRadius() { return get(FLIGHT_RADIUS, 24); }
-    public static int stash() { return get(STASH, 3); }
     public static double landingSpeed() { return get(LANDING_SPEED, 0.15); }
     public static int requestIntervalTicks() { return get(REQUEST_INTERVAL, 100); }
     public static int hoverLookahead() { return get(HOVER_LOOKAHEAD, 64); }

@@ -40,6 +40,8 @@ public final class LiftedService {
     private LiftedService() {}
 
     private static final Map<UUID, IToken<?>> REQUESTS = new HashMap<>();
+    /** She asks for her next joint when her high has less than this left (a minute), or she isn't high. */
+    private static final int NEED_SOON_TICKS = 60 * 20;
 
     /** Whether this Builder may be Lifted at all right now: Lifted on in the config and on her hut. */
     public static boolean allowed(EntityCitizen citizen) {
@@ -250,7 +252,9 @@ public final class LiftedService {
             }
         }
         int carrying = count(citizen.getInventoryCitizen()) + count(hut.getItemHandlerCap());
-        int ask = allowed(citizen) ? SpareJoints.request(BuilderConfig.stash(), carrying, spare(colony)) : 0;
+        var buff = Lifted.get(level).get(colony.getID(), data.getId());
+        boolean needSoon = buff == null || buff.ticksLeft() < NEED_SOON_TICKS;
+        int ask = allowed(citizen) ? SpareJoints.request(needSoon, carrying, spare(colony)) : 0;
         if (ask <= 0) {
             if (open != null) {
                 manager.updateRequestState(open, RequestState.CANCELLED);
