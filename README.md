@@ -4,6 +4,22 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.26.0
+
+- **Lifted Builders** (with MineColonies): a Builder with a joint walks back to her hut for a smoke break, then **flies** to work with a faint green glow and builds the **Higher Ground** way:
+  - **Reach and speed:** she places from up to 9 blocks away, from a hover spot covering as much of the layer as it can, 25% faster on Landrace and up to 50% on Golden God.
+  - **Her high:** it counts down only while she builds. When it runs out, or her job is done, she flies home and lands by her hut. Her citizen window shows a badge with her strain and the time left.
+  - **Joints:** she asks for one of the colony's **spare** joints when she needs one (citizens always get theirs first), or smokes ones you leave in her hut. Every joint she smokes counts in the colony like anyone's.
+  - **Getting around:** she flies over walls and rooftops, walks into closed buildings from the ground outside, and is brought home if she's ever stranded. A **watchdog** rescues Builders stuck while building.
+  - **The switch:** her hut's **"Fly when Lifted"** setting, on by default.
+- **The Midnight Machine:** a Lifted Builder wears a glowing synth-rack boombox and plays **ATLemental's album *Midnight Machine***, track by track:
+  - **Heard from her:** loud close by, fading with distance (the highs first, so the bass carries), gone by about 48 blocks, on the Jukebox/Note Blocks slider.
+  - **Your volume and mute** are in the pause menu, under ModularCraft's button.
+  - **VU bars** on the boombox show the song as you hear it, and **she dances**: a bob on the beat, spins on the big hits, and a routine for each track.
+- **Racks are solid again**, and players and colonists climb their outside face like a ladder.
+- **Sensi Heights v101:** the air pockets under the Warehouse centre stairs are filled.
+- **Servers:** `fourtwenty-builders-server.toml` holds the Lifted, watchdog and music settings; the defaults need no changes.
+
 ## What's new in 0.25.1
 
 - **Racks work like ladders:** players and colonists can climb MineColonies racks, including three-high stacks that trapped Builders.
