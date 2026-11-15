@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.27.0]
 
 ### Added
 - **Lifted Builders fly everywhere** (with MineColonies): while high, every trip a Builder makes is flown, not just around the build: home to unload or fetch materials, to her racks, and on her breaks to the restaurant, home to bed or the hospital. She lands close by and walks just the last steps to a rack or seat. Waiting for materials, she hovers instead of wandering off.

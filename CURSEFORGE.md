@@ -53,7 +53,7 @@ Flying can't kill you, overloads burn out in smoke rather than explode, and fail
 
 ## Changelog
 
-### Unreleased
+### 0.27.0
 
 - **Lifted Builders fly everywhere** (with MineColonies): while high, every trip is flown: home to unload or fetch materials, to her racks, and on breaks to the restaurant, bed or the hospital, landing close by.
 - **Through doors:** she opens wooden doors and fence gates as she reaches them and closes them behind her.
