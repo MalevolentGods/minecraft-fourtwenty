@@ -50,8 +50,9 @@ public final class BoomboxLayer extends RenderLayer<AbstractEntityCitizen, Citiz
         pose.pushPose();
         getParentModel().body.translateAndRotate(pose);
 
-        // The model: x 3..13 (8 = her middle), y 0 = her body's bottom going up, z mirrored. The body part's space has
-        // y pointing down from her shoulders (12 px of body) and +z out of her back.
+        // The model: x 3..13 (8 = her middle), y 0 = her body's bottom going up (18 tall, so it rises behind her
+        // head), z mirrored. The body part's space has y pointing down from her shoulders (12 px of body) and +z out
+        // of her back.
         pose.pushPose();
         pose.translate(0, 12 * PX, 0);
         pose.mulPose(Axis.XP.rotationDegrees(180));
@@ -61,9 +62,9 @@ public final class BoomboxLayer extends RenderLayer<AbstractEntityCitizen, Citiz
                 1, 1, 1, light, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, Sheets.cutoutBlockSheet());
         pose.popPose();
 
-        // The VU bars, in the body part's pixel space: across x -4.5..4.3, rising from y 11.3 up (y points down here),
-        // just out from the meter window at z 6.2. Drawn solid and full-bright in the boombox's own pass: in the
-        // halo pass (no depth write, drawn first) the boombox painted over them and they never showed (2026-11-14).
+        // The VU bars, in the body part's pixel space (y points down here), inside the meter window painted on the
+        // front (model y 1.8..5.0, x 3.75..12.25; the front face is at body z 8.25): six bars across, rising from
+        // the window's floor.
         boolean playing = MidnightMachineClient.playing(id);
         int track = MidnightMachineClient.track(id);
         long ms = MidnightMachineClient.positionMs(id, partial);
@@ -73,11 +74,11 @@ public final class BoomboxLayer extends RenderLayer<AbstractEntityCitizen, Citiz
         for (int i = 0; i < 6; i++) {
             float level = playing ? Album.level(track, i, ms) : 0.12f + 0.08f * Mth.sin(age * 0.15f + i);
             int lit = Math.max(1, Math.round(level * SEGMENTS));
-            float x0 = (-4.5f + i * 1.5f) * PX, x1 = x0 + 0.8f * PX;
+            float x0 = (-3.9f + i * 1.39f) * PX, x1 = x0 + 0.85f * PX;
             for (int s = 0; s < lit; s++) {
-                float yBottom = (11.3f - s * 0.5f) * PX, yTop = yBottom - 0.4f * PX;
+                float yBottom = (9.95f - s * 0.36f) * PX, yTop = yBottom - 0.28f * PX;
                 int argb = 0xFF000000 | (s == lit - 1 ? brighten(BAR_COLOURS[i]) : BAR_COLOURS[i]);   // a peak light on top
-                box(bars, last, white, x0, yTop, 6.25f * PX, x1, yBottom, 6.45f * PX, argb);
+                box(bars, last, white, x0, yTop, 8.3f * PX, x1, yBottom, 8.45f * PX, argb);
             }
         }
         pose.popPose();
