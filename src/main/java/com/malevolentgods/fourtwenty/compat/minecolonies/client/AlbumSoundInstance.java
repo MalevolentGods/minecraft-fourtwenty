@@ -60,7 +60,7 @@ public final class AlbumSoundInstance extends AbstractTickableSoundInstance {
             double t = (FAR - d) / (FAR - FADE);
             gain *= t * t * (3 - 2 * t);
         }
-        return (float) (MAX_VOLUME * gain);
+        return (float) (MAX_VOLUME * gain * MidnightMachineSettings.gain());   // the player's own volume and mute
     }
 
     @Override

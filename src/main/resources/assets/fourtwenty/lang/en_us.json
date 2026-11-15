@@ -2241,5 +2241,8 @@
   "subtitles.fourtwenty.midnight_machine.track5": "Midnight Machine plays “Beauty and Light”",
   "subtitles.fourtwenty.midnight_machine.track6": "Midnight Machine plays “Far and Away”",
   "subtitles.fourtwenty.midnight_machine.track7": "Midnight Machine plays “Man and Machine”",
-  "fourtwenty.midnight_machine": "Midnight Machine"
+  "fourtwenty.midnight_machine": "Midnight Machine",
+  "fourtwenty.midnight_machine.volume": "Midnight Machine: %s%%",
+  "fourtwenty.midnight_machine.mute": "Mute the Midnight Machine",
+  "fourtwenty.midnight_machine.unmute": "Unmute the Midnight Machine"
 }

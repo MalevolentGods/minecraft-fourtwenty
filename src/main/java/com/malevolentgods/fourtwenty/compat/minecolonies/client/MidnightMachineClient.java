@@ -32,6 +32,7 @@ public final class MidnightMachineClient {
         MidnightMachinePayload.clientHandler = MidnightMachineClient::receive;
         NeoForge.EVENT_BUS.addListener(MidnightMachineClient::tick);
         DanceAnimation.install();
+        MidnightMachineSettings.install();
     }
 
     /** Client clock in ms, on the same game-time base as the server. */
