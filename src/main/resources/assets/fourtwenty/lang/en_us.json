@@ -408,7 +408,7 @@
   "fourtwenty.dispensary.happiness.unexposed.description": "I have never been around weed. A bong session or someone smoking near me would change that.",
   "fourtwenty.dispensary.happiness.tolerance_break": "Cannabis: tolerance break",
   "fourtwenty.dispensary.happiness.tolerance_break.description": "I overdid it and am taking a break. I feel a little off until it is over, then I will go back to my old habits.",
-  "fourtwenty.dispensary.affinity.profile": "(%s Â· %s)",
+  "fourtwenty.dispensary.affinity.profile": "(%s · %s)",
   "fourtwenty.dispensary.affinity.preference.smoke": "Smoker",
   "fourtwenty.dispensary.affinity.preference.edible": "Edibles only",
   "fourtwenty.dispensary.affinity.preference.both": "Smokes and edibles",
@@ -1030,7 +1030,7 @@
   "item.fourtwenty.terpene.unknown.resin": "Undiscovered Resin",
   "item.fourtwenty.terpene.unknown.hint": "Make one in a Terpinator, or get one from a friend, to learn its name.",
   "item.fourtwenty.terpene.roles": "Sets the family (%s), hue (%s) or tone (%s)",
-  "item.fourtwenty.terpene.accord": "Accord Â· %s. Finish it with a base in port 3.",
+  "item.fourtwenty.terpene.accord": "Accord · %s. Finish it with a base in port 3.",
   "item.fourtwenty.terpene.final": "Surround with 8 hemp blocks to dye them.",
   "gui.fourtwenty.guide.title": "Terpinator Guide",
   "gui.fourtwenty.guide.progress": "%s of %s terpenes discovered",
@@ -2258,5 +2258,6 @@
   "fourtwenty.high.detail.joints": "%s joint(s) ready",
   "fourtwenty.high.detail.asking": "asking for a joint",
   "fourtwenty.high.detail.nospare": "no spare joints",
-  "fourtwenty.high.detail.off": "for this hut"
+  "fourtwenty.high.detail.off": "for this hut",
+  "fourtwenty.dispensary.affinity.profile.none": "(%s)"
 }
