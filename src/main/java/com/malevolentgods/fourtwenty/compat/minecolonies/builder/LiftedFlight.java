@@ -501,6 +501,15 @@ public final class LiftedFlight {
                 citizen.blockPosition().toShortString(), destination.toShortString());
     }
 
+    /**
+     * Keep MineColonies' walking out of the way of a flight. Not while she flies an errand: stopping the navigator is
+     * how MineColonies says a walk is over, so it ended every errand the moment it began (2026-11-15); the takeover
+     * already keeps the navigator from walking her.
+     */
+    private static void stopWalking(EntityCitizen citizen) {
+        if (!onErrand(citizen)) citizen.getNavigation().stop();
+    }
+
     /** How close a landed errand must be for MineColonies to walk the last steps (a rack, a chest, a seat). */
     private static final double LAST_STEPS = 4;
 
@@ -599,7 +608,7 @@ public final class LiftedFlight {
 
     private static void fly(EntityCitizen citizen, Flight flight) {
         citizen.setNoGravity(true);
-        citizen.getNavigation().stop();
+        stopWalking(citizen);
         if (flight.next >= flight.route.size()) {
             hold(citizen);
             return;
@@ -652,7 +661,7 @@ public final class LiftedFlight {
             citizen.fallDistance = 0;
             return true;
         }
-        citizen.getNavigation().stop();   // her own walking waits until she's down
+        stopWalking(citizen);   // her own walking waits until she's down
         if (flight.landAt == null) flight.landAt = landingSpot(level, citizen);
         if (flight.landAt == null) {   // nowhere to stand within reach: straight down, slowly, until she touches something
             citizen.setNoGravity(true);
