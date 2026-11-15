@@ -60,6 +60,8 @@ public final class LiftedService {
             end(level, colony, citizen, "switch");
             isLifted = false;
         }
+        if (isLifted && jobDone(level, colony, citizen)) isLifted = false;
+        if (!isLifted) LIFTED_FOR.remove(citizen.getUUID());
         if (onSmokeBreak(citizen) && (!BuilderAccess.onTheJob(citizen) || !allowed(citizen))) {
             endBreak(citizen);   // off to eat or sleep, or switched off: no joint smoked
         }
@@ -241,11 +243,38 @@ public final class LiftedService {
         int ticks = LiftedRules.ticks(strain, potency, BuilderConfig.liftedTuning());
         var data = citizen.getCitizenData();
         Lifted.get(level).start(colony.getID(), data.getId(), strain, ticks);
+        LIFTED_FOR.put(citizen.getUUID(), workOrder(citizen));
         countDose(level, citizen);
         level.playSound(null, citizen.blockPosition(), SoundEvents.CAMPFIRE_CRACKLE, SoundSource.NEUTRAL, 0.8f, 1.2f);
         level.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, citizen.getX(), citizen.getEyeY(), citizen.getZ(), 6, 0.2, 0.2, 0.2, 0.01);
         LiftedPayload.send(citizen, true);
         BuilderLog.lifted(colony.getID(), citizen.getName().getString(), strain, ticks / (double) LiftedRules.TICKS_PER_MINUTE);
+        return true;
+    }
+
+    /** The job each Lifted Builder lit up for (its work order id); her high ends with it. */
+    private static final Map<UUID, Integer> LIFTED_FOR = new HashMap<>();
+
+    private static int workOrder(EntityCitizen citizen) {
+        var hut = BuilderAccess.hut(citizen);
+        var order = hut == null ? null : hut.getWorkOrder();
+        return order == null ? -1 : order.getID();
+    }
+
+    /**
+     * Her job's done (the user, 2026-11-14: "when he finishes a build and completes the job, his high should wear
+     * off"): the work order she lit up for is finished or she's on another, so her high ends and she flies home.
+     */
+    private static boolean jobDone(ServerLevel level, IColony colony, EntityCitizen citizen) {
+        int now = workOrder(citizen);
+        Integer lit = LIFTED_FOR.putIfAbsent(citizen.getUUID(), now);
+        if (lit == null || lit == now) return false;
+        LIFTED_FOR.remove(citizen.getUUID());
+        var data = citizen.getCitizenData();
+        Lifted.get(level).end(colony.getID(), data.getId());
+        LiftedPayload.send(citizen, false);
+        LiftedFlight.flyHome(citizen);
+        BuilderLog.landed(colony.getID(), citizen.getName().getString(), "done");
         return true;
     }
 
@@ -281,15 +310,17 @@ public final class LiftedService {
 
     /** A joint smoked for Lifted also satisfies her daily joint, if she's owed one (FR-018). */
     private static void countDose(ServerLevel level, EntityCitizen citizen) {
-        if (!JointService.due(citizen)) return;
         var data = citizen.getCitizenData();
-        var saved = DispensarySavedData.get(level);
-        long revision = saved.citizen(data.getColony().getID(), data.getUUID()).revision();
-        if (saved.recordConsumption(data.getColony().getID(), data.getUUID(), revision, ColonyIntegration.rules(data, saved))) {
-            Exposure.dose(level, data);
-            Exposure.secondhand(level, citizen);
-            com.malevolentgods.fourtwenty.compat.minecolonies.benefits.CitizenBenefits.refresh(data);
+        if (JointService.due(citizen)) {   // her joint for the day, if she's owed one
+            var saved = DispensarySavedData.get(level);
+            long revision = saved.citizen(data.getColony().getID(), data.getUUID()).revision();
+            saved.recordConsumption(data.getColony().getID(), data.getUUID(), revision, ColonyIntegration.rules(data, saved));
         }
+        // Every joint she smokes is a smoke in the colony, not just the day's one (the user, 2026-11-14): her taste
+        // drifts as anyone's does, colonists close by breathe it in, and her benefits catch up.
+        Exposure.dose(level, data);
+        Exposure.secondhand(level, citizen);
+        com.malevolentgods.fourtwenty.compat.minecolonies.benefits.CitizenBenefits.refresh(data);
     }
 
     /** Keep a joint request open for the colony's spare joints only; cancel it when there are none (citizens first). */

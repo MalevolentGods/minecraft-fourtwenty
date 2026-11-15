@@ -11,7 +11,8 @@ All notable changes to the FourTwenty mod will be documented in this file.
   - **Storage kept:** a chest or rack she breaks sends its contents to her hut, not onto the ground.
   - **A smoke break first:** when she's due to light up, she walks back to her hut and smokes her joint there, then flies back to work.
   - **Joints:** she asks for one of the colony's **spare** joints when she needs it (none left, and her high nearly done; citizens always get theirs first), or takes ones you drop in her hut. A Landrace joint lasts 5 minutes, and better strains last longer.
-  - **Home when it wears off:** when her high runs out mid-job she flies back to her hut and lands there, instead of dropping wherever she is.
+  - **Home when it wears off:** when her high runs out mid-job, or the job is done, she flies back to her hut and lands there, instead of dropping wherever she is.
+  - **Her smokes count:** every joint she smokes counts in the colony like anyone's: her taste drifts, colonists close by breathe it in, and it covers her joint for the day.
   - **Safe flying:** she always comes down gently, for meals, bedtime, when she runs out, or if you switch it off. A joint she smokes also counts as her daily joint.
   - **Setting:** her hut has a **"Fly when Lifted"** setting, on by default.
 - **The Midnight Machine** (with MineColonies): a Lifted Builder wears a glowing synth-rack boombox and plays **ATLemental's album *Midnight Machine*** from it, track by track, picking up where she left off:
