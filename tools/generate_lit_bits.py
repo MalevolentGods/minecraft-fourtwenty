@@ -113,7 +113,7 @@ def main():
     weedweeno()
     blockstates()
     icon('sticky_finger', finger)
-    icon('bit_chit', chit)
+    # bit_chit's icon is painted from a sheet by tools/import_item_sheet.py (the art pass): not drawn here any more
     print('wrote the Lit Bit art')
 
 
