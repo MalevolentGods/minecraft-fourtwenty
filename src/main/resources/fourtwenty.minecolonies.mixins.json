@@ -5,6 +5,6 @@
   "plugin": "com.malevolentgods.fourtwenty.compat.ColonyMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": ["CitizenAIMixin", "CitizenServiceMixin", "CitizenRemovalMixin", "CitizenHappinessMixin", "CitizenAttributesMixin", "HealthRecalculationMixin", "WorkerDumpMixin", "SkillBonusMixin", "CouchSittingMixin", "BuilderAIAccessor", "BuilderPathAccessor", "BuilderStepAsideMixin", "BuilderWalkMixin", "BuilderPlacementMixin", "BuilderSettingsMixin", "HigherGroundStorageMixin", "RackPathMixin"],
-  "client": ["CitizenHappinessWindowMixin", "CitizenGuideTabMixin", "CitizenDanceMixin"],
+  "client": ["CitizenHappinessWindowMixin", "CitizenGuideTabMixin", "CitizenDanceMixin", "SoundManagerAccessor", "SoundEngineAccessor", "ChannelAccessor"],
   "injectors": {"defaultRequire": 1}
 }

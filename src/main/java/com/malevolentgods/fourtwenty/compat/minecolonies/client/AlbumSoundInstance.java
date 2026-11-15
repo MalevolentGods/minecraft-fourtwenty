@@ -82,6 +82,64 @@ public final class AlbumSoundInstance extends AbstractTickableSoundInstance {
         }
         follow();
         volume = falloff();
+        var player = Minecraft.getInstance().player;
+        if (player != null) {
+            float hf = highs(Math.sqrt(player.distanceToSqr(x, y, z)));
+            if (Math.abs(hf - appliedHf) > 0.02f) applyHighs(hf);
+        }
+    }
+
+    /**
+     * Air takes the highs first (the user, 2026-11-14): far off you hear mostly the low end carrying. Nothing changes
+     * near or at middle distance, so close by it sounds as mixed; past {@link #HIGHS_FROM} blocks, where the volume is
+     * already fading, a gentle low-pass takes the highs down to a quarter by {@link #FAR}.
+     */
+    static final double HIGHS_FROM = 16;
+    static final float HIGHS_AT_FAR = 0.25f;
+    private float appliedHf = 1;
+
+    static float highs(double d) {
+        if (d <= HIGHS_FROM) return 1;
+        double t = Math.min(1, (d - HIGHS_FROM) / (FAR - HIGHS_FROM));
+        return (float) (1 - (1 - HIGHS_AT_FAR) * t);
+    }
+
+    private void applyHighs(float hf) {
+        var engine = ((com.malevolentgods.fourtwenty.compat.minecolonies.mixin.SoundManagerAccessor) Minecraft.getInstance().getSoundManager()).fourtwenty$engine();
+        var handle = ((com.malevolentgods.fourtwenty.compat.minecolonies.mixin.SoundEngineAccessor) engine).fourtwenty$channels().get(this);
+        if (handle == null) return;   // not playing yet: next tick
+        appliedHf = hf;
+        handle.execute(channel -> DistanceFilter.apply(((com.malevolentgods.fourtwenty.compat.minecolonies.mixin.ChannelAccessor) channel).fourtwenty$source(), hf));
+    }
+
+    /**
+     * One shared OpenAL low-pass filter (EFX), set and copied onto a source on the sound thread. Off for good if the
+     * device has no EFX; made again after a sound reload drops it. Dynamic Surroundings leaves this sound alone (it
+     * skips sounds with no attenuation of their own), so nothing else sets its filter.
+     */
+    private static final class DistanceFilter {
+        private static int filter;
+        private static boolean unavailable;
+
+        static void apply(int source, float hf) {
+            if (unavailable) return;
+            try {
+                if (!org.lwjgl.openal.AL.getCapabilities().ALC_EXT_EFX) {
+                    unavailable = true;
+                    return;
+                }
+                if (filter == 0 || !org.lwjgl.openal.EXTEfx.alIsFilter(filter)) {
+                    filter = org.lwjgl.openal.EXTEfx.alGenFilters();
+                    org.lwjgl.openal.EXTEfx.alFilteri(filter, org.lwjgl.openal.EXTEfx.AL_FILTER_TYPE, org.lwjgl.openal.EXTEfx.AL_FILTER_LOWPASS);
+                }
+                org.lwjgl.openal.EXTEfx.alFilterf(filter, org.lwjgl.openal.EXTEfx.AL_LOWPASS_GAIN, 1f);
+                org.lwjgl.openal.EXTEfx.alFilterf(filter, org.lwjgl.openal.EXTEfx.AL_LOWPASS_GAINHF, hf);
+                org.lwjgl.openal.AL10.alSourcei(source, org.lwjgl.openal.EXTEfx.AL_DIRECT_FILTER,
+                        hf >= 0.999f ? org.lwjgl.openal.EXTEfx.AL_FILTER_NULL : filter);
+            } catch (Throwable t) {
+                unavailable = true;
+            }
+        }
     }
 
     public void end() {
