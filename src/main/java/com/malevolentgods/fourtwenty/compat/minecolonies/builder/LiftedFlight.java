@@ -163,10 +163,13 @@ public final class LiftedFlight {
             return walk(citizen, flight, now);
         }
         if (!leg.equals(flight.target)) {
-            var start = new FlightPlanner.Cell(citizen.getBlockX(), Mth.floor(citizen.getY() + 0.01), citizen.getBlockZ());
+            var start = startCell(level, citizen);
             var route = FlightPlanner.plan(start, new FlightPlanner.Cell(leg.getX(), leg.getY(), leg.getZ()),
                     (x, y, z) -> flyFree(level, x, y, z), BuilderConfig.flightRadius(), MAX_CELLS);
-            if (route.isEmpty()) return walk(citizen, flight, now);
+            if (route.isEmpty()) {
+                BuilderLog.flightStall(citizen.getName().getString(), citizen.blockPosition(), "no route to " + leg.toShortString() + ", walking");
+                return walk(citizen, flight, now);
+            }
             flight.route = route;
             flight.next = 0;
             flight.target = leg;
@@ -203,6 +206,19 @@ public final class LiftedFlight {
             return walk(citizen, flight, now);
         }
         return false;
+    }
+
+    /**
+     * Where her route starts: the cell she's in, or the first open one up to two above it. Standing on a stair or slab
+     * puts her feet inside a cell that isn't open, and a route can't start there: she never took off again and walked
+     * the Warehouse's stairwell stairs, where MineColonies' walking sticks (2026-11-14).
+     */
+    private static FlightPlanner.Cell startCell(ServerLevel level, EntityCitizen citizen) {
+        int x = citizen.getBlockX(), z = citizen.getBlockZ(), y = Mth.floor(citizen.getY() + 0.01);
+        for (int dy = 0; dy <= 2; dy++) {
+            if (FlightPlanner.fits((xx, yy, zz) -> flyFree(level, xx, yy, zz), x, y + dy, z)) return new FlightPlanner.Cell(x, y + dy, z);
+        }
+        return new FlightPlanner.Cell(x, y, z);
     }
 
     /** No flight this step: come down, and walk for a few seconds before trying to fly again. */
