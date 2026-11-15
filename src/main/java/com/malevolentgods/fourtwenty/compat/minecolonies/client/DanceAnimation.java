@@ -1,0 +1,59 @@
+package com.malevolentgods.fourtwenty.compat.minecolonies.client;
+
+import com.malevolentgods.fourtwenty.compat.minecolonies.builder.Album;
+import com.malevolentgods.fourtwenty.compat.minecolonies.builder.BuilderConfig;
+import com.malevolentgods.fourtwenty.domain.DanceRules;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.mojang.math.Axis;
+import net.neoforged.neoforge.client.event.RenderLivingEvent;
+import net.neoforged.neoforge.common.NeoForge;
+
+import javax.annotation.Nullable;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * A Lifted Builder dancing to her music (specs/014-midnight-machine US3, T024). Only how she's drawn: her real place,
+ * facing and hitbox stay exactly where MineColonies and her flight put them, so the dance can't change where she
+ * builds or slow her down. Her whole body bobs, sways and spins here; {@code CitizenDanceMixin} adds the arms and head.
+ */
+public final class DanceAnimation {
+    private DanceAnimation() {}
+
+    private static final Set<Integer> PUSHED = new HashSet<>();
+
+    public static void install() {
+        NeoForge.EVENT_BUS.addListener(DanceAnimation::pre);
+        NeoForge.EVENT_BUS.addListener(DanceAnimation::post);
+    }
+
+    /** Her dance pose at this frame, or null when she isn't dancing (not playing). */
+    @Nullable
+    public static DanceRules.Pose current(AbstractEntityCitizen citizen, float partial) {
+        int id = citizen.getId();
+        if (!MidnightMachineClient.playing(id)) return null;
+        var track = Album.track(MidnightMachineClient.track(id));
+        long ms = MidnightMachineClient.positionMs(id, partial);
+        if (ms >= track.lengthMs()) return null;   // the silence between tracks: a breather
+        var beats = track.beats();
+        boolean moving = citizen.getDeltaMovement().horizontalDistanceSqr() > 0.0004 || Math.abs(citizen.getX() - citizen.xo) + Math.abs(citizen.getZ() - citizen.zo) > 0.02;
+        var tuning = DanceRules.Tuning.of(BuilderConfig.danceBob(), BuilderConfig.spinCooldownSeconds(), BuilderConfig.fallbackBpm());
+        return DanceRules.pose(beats.bpm(), beats.beatsMs(), beats.accentsMs(), ms, moving, tuning);
+    }
+
+    private static void pre(RenderLivingEvent.Pre<?, ?> event) {
+        if (!(event.getEntity() instanceof AbstractEntityCitizen citizen)) return;
+        var pose = current(citizen, event.getPartialTick());
+        if (pose == null) return;
+        var stack = event.getPoseStack();
+        stack.pushPose();
+        stack.translate(0, pose.bob(), 0);
+        // round her own middle: the renderer's origin is her feet, centred
+        stack.mulPose(Axis.YP.rotationDegrees((float) -(pose.spinDeg() + pose.swayDeg())));
+        PUSHED.add(citizen.getId());
+    }
+
+    private static void post(RenderLivingEvent.Post<?, ?> event) {
+        if (PUSHED.remove(event.getEntity().getId())) event.getPoseStack().popPose();
+    }
+}

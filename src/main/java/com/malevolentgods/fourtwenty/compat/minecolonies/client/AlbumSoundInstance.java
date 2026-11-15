@@ -17,7 +17,7 @@ import java.util.concurrent.CompletionException;
 
 /**
  * One album track playing from a Builder (specs/014-midnight-machine FR-002, FR-003): on the Jukebox/Note Blocks
- * slider, loud only close to her (a square falloff to silence at 20 blocks), following her as she flies, and
+ * slider, falling off with distance (inverse cube, silent past 48 blocks), following her as she flies, and
  * starting at {@code startMs} through {@link SeekingOggStream}.
  */
 public final class AlbumSoundInstance extends AbstractTickableSoundInstance {
@@ -41,17 +41,26 @@ public final class AlbumSoundInstance extends AbstractTickableSoundInstance {
         this.volume = falloff();
     }
 
-    /** Full volume within {@link #NEAR} blocks of her, falling off on a square curve to silence at {@link #FAR}. */
-    static final double NEAR = 2, FAR = 20;
-    /** Right beside her: loud, not full blast (the user, 2026-11-14). */
-    static final double MAX_VOLUME = 0.8;
+    /**
+     * Falling off faster than open air would (inverse-square intensity is SPL - 20 log10(r2/r1), -6 dB per doubling):
+     * inverse cube, -9 dB per doubling, so the gain goes with (NEAR/d)^1.5 (the user, 2026-11-14: inverse-square
+     * carried too far). Full volume within {@link #NEAR} blocks (capped at {@link #MAX_VOLUME}, so close up it sits
+     * under the player's other sounds), and a smooth fade to nothing from {@link #FADE} to {@link #FAR}.
+     */
+    static final double NEAR = 4, FADE = 36, FAR = 48;
+    static final double MAX_VOLUME = 0.6;
 
     private float falloff() {
         var player = Minecraft.getInstance().player;
         if (player == null) return 0;
         double d = Math.sqrt(player.distanceToSqr(x, y, z));
-        double t = Math.max(0, Math.min(1, (FAR - d) / (FAR - NEAR)));
-        return (float) (MAX_VOLUME * t * t);
+        if (d >= FAR) return 0;
+        double gain = Math.pow(NEAR / Math.max(NEAR, d), 1.5);   // inverse cube: -9 dB per doubling of distance
+        if (d > FADE) {
+            double t = (FAR - d) / (FAR - FADE);
+            gain *= t * t * (3 - 2 * t);
+        }
+        return (float) (MAX_VOLUME * gain);
     }
 
     @Override

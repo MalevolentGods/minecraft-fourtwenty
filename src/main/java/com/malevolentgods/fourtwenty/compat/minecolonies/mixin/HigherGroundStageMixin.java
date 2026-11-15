@@ -25,9 +25,16 @@ public abstract class HigherGroundStageMixin {
     @ModifyVariable(method = "<init>", at = @At("HEAD"), argsOnly = true, require = 0)
     private static BuildingProgressStage[] fourtwenty$clearFirst(BuildingProgressStage[] stages, Level world, IWorkOrder workOrder,
                                                                  AbstractEntityAIStructure<?, ?> ai) {
-        if (stages.length == 0 || stages[0] != BuildingProgressStage.BUILD_SOLID || !BuilderConfig.clearFirst()) return stages;
-        if (!(ai instanceof EntityAIStructureBuilder) || !(ai.getWorker() instanceof EntityCitizen citizen)) return stages;
-        if (!LiftedService.isLifted(citizen) || !LiftedService.allowed(citizen)) return stages;
+        try {
+            if (stages.length == 0 || stages[0] != BuildingProgressStage.BUILD_SOLID || !BuilderConfig.clearFirst()) return stages;
+            if (!(ai instanceof EntityAIStructureBuilder) || !(ai.getWorker() instanceof EntityCitizen citizen)) return stages;
+            if (!LiftedService.isLifted(citizen) || !LiftedService.allowed(citizen)) return stages;
+        } catch (Throwable t) {
+            // This runs inside MineColonies' structure loading, which swallows errors and then waits for ever in
+            // LOAD_STRUCTURE (seen 2026-11-14, cause not yet known): never let it fail here.
+            com.malevolentgods.fourtwenty.compat.minecolonies.builder.BuilderLog.missing("clear-first on " + Thread.currentThread().getName(), t);
+            return stages;
+        }
         var out = new BuildingProgressStage[stages.length + 1];
         out[0] = BuildingProgressStage.CLEAR;
         System.arraycopy(stages, 0, out, 1, stages.length);

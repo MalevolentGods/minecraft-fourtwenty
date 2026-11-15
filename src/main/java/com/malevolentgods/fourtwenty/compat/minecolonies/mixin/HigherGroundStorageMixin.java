@@ -30,4 +30,18 @@ public abstract class HigherGroundStorageMixin {
         StorageTransfer.move(contents, hut == null ? null : hut.getItemHandlerCap(), level, hut == null ? citizen.blockPosition() : hut.getPosition());
         return block;
     }
+
+    /**
+     * Higher Ground mines from wherever she's hovering: MineColonies then also walks her to her ground standing spot
+     * (and gives up past 12 blocks from it), which a flying Builder never reaches, so she hung in MINE_BLOCK for
+     * minutes (2026-11-14). Flight already brought her within reach of the block, so her spot is where she is.
+     */
+    @ModifyArg(method = "doMining", index = 1, require = 0, at = @At(value = "INVOKE",
+            target = "Lcom/minecolonies/core/entity/ai/workers/AbstractEntityAIStructure;mineBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;)Z"))
+    private BlockPos fourtwenty$mineFromHere(BlockPos safeStand) {
+        var self = (AbstractEntityAIStructure<?, ?>) (Object) this;
+        if (!(self instanceof EntityAIStructureBuilder) || !(self.getWorker() instanceof EntityCitizen citizen)) return safeStand;
+        if (!com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedFlight.inFlight(citizen)) return safeStand;
+        return citizen.blockPosition();
+    }
 }

@@ -35,7 +35,9 @@ public final class MidnightMachineService {
         var data = citizen.getCitizenData();
         if (data == null) return;
         boolean lifted = LiftedService.isLifted(citizen);
-        boolean playing = lifted && BuilderConfig.musicEnabled() && LiftedFlight.inFlight(citizen);
+        // On the job, flying or walking (mining, fetching); paused only for breaks: eating, sleeping, fleeing, and so on.
+        // Tying it to flight cut the album out every time she landed to walk (2026-11-14).
+        boolean playing = lifted && BuilderConfig.musicEnabled() && BuilderAccess.onTheJob(citizen);
         var store = Lifted.get(level);
         var pos = store.position(colony.getID(), data.getId());
         long[] lengths = Album.lengths();

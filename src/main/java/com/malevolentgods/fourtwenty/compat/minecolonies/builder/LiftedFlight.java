@@ -44,8 +44,12 @@ public final class LiftedFlight {
         double bestToNext = Double.MAX_VALUE;   // closest she's got to the next cell of her route
         int noProgress;   // ticks without getting closer to it
         int replans;      // stalls on this trip; too many and she walks
-        long notThereSince = -1;   // game time approach() started answering "not there yet", for the backstop
         long lastAsked;            // game time MineColonies last asked her to fly somewhere (approach)
+        @Nullable BlockPos goal;   // the hover point this trip is for; legs toward it are kept until each is flown
+        @Nullable BlockPos hoverFor, hover;   // the hover point chosen for a block, kept while it still fits
+        @Nullable BlockPos tripBlock;   // the block she's on her way to, for the progress backstop
+        double tripBest;
+        long tripSince;
     }
 
     /**
@@ -55,8 +59,12 @@ public final class LiftedFlight {
      */
     private static final int ASKED_WINDOW_TICKS = 60;
 
-    /** Flying that hasn't got her to her block in this long gives up and walks (10 s). */
-    private static final int ARRIVAL_BACKSTOP_TICKS = 200;
+    /**
+     * Flying that hasn't got her any closer to her block in this long gives up and walks (5 s). Measured as distance
+     * to the block itself: replanning restarts a route, which made every other measure look like progress and let her
+     * grind against a wall for half a minute (2026-11-14).
+     */
+    private static final int ARRIVAL_BACKSTOP_TICKS = 100;
 
     /** About a second without getting closer to the next cell of her route: something's in the way, plan again. */
     private static final int STALL_TICKS = 20;
@@ -124,17 +132,32 @@ public final class LiftedFlight {
         boolean inTheWay = at.equals(block) || at.above().equals(block) || at.getX() == block.getX() && at.getZ() == block.getZ();
         if (!inTheWay && citizen.position().distanceTo(Vec3.atCenterOf(block)) <= reach && (hover == null || flight.target == null || flight.target.equals(hover))) {
             hold(citizen);   // Higher Ground: place everything in reach from here before moving on
-            flight.notThereSince = -1;
+            flight.tripBlock = null;
             return true;
         }
-        BlockPos goal = hover != null ? hover : hoverPoint(level, citizen, block, reach);
+        BlockPos goal = hover;
+        if (goal == null) {
+            // Keep the point chosen for this block while it still fits her: choosing afresh each call could flip
+            // between equally good points and send her back and forth.
+            if (block.equals(flight.hoverFor) && flight.hover != null
+                    && FlightPlanner.fits((x, y, z) -> flyFree(level, x, y, z), flight.hover.getX(), flight.hover.getY(), flight.hover.getZ())) {
+                goal = flight.hover;
+            } else {
+                goal = hoverPoint(level, citizen, block, reach);
+                flight.hoverFor = block;
+                flight.hover = goal;
+            }
+        }
         if (goal == null) return walk(citizen, flight, now);
         BlockPos leg = goal;
         int legMax = Math.max(4, BuilderConfig.flightRadius() - 4);
-        if (Math.sqrt(citizen.blockPosition().distSqr(goal)) > legMax) {
+        if (goal.equals(flight.goal) && flight.target != null) {
+            leg = flight.target;   // the leg she's flying: finish it before working out the next
+        } else if (Math.sqrt(citizen.blockPosition().distSqr(goal)) > legMax) {
             leg = waypoint(level, citizen.blockPosition(), goal, legMax);
             if (leg == null) return walk(citizen, flight, now);
         }
+        flight.goal = goal;
         if (flight.replans > MAX_REPLANS) {
             flight.replans = 0;
             return walk(citizen, flight, now);
@@ -152,7 +175,6 @@ public final class LiftedFlight {
         }
         if (flight.next >= flight.route.size() && !leg.equals(goal)) {
             flight.replans = 0;
-            flight.notThereSince = -1;
             flight.target = null;   // this leg's done: the next call plans the next one from here
             return false;
         }
@@ -160,20 +182,24 @@ public final class LiftedFlight {
         // and measuring again from her feet (half a block lower) left her hovering on it for good (2026-11-14).
         boolean there = flight.next >= flight.route.size()
                 && (leg.equals(goal) || citizen.position().distanceTo(Vec3.atCenterOf(block)) <= reach);
-        return arrived(citizen, flight, now, there);
+        return arrived(citizen, flight, block, now, there);
     }
 
-    /** Remember how long she's been on her way; past the backstop, land and walk instead of hanging there. */
+    /** Keep track of her getting closer to the block; past the backstop without, land and walk instead of hanging there. */
     @Nullable
-    private static Boolean arrived(EntityCitizen citizen, Flight flight, long now, boolean there) {
+    private static Boolean arrived(EntityCitizen citizen, Flight flight, BlockPos block, long now, boolean there) {
         if (there) {
-            flight.notThereSince = -1;
+            flight.tripBlock = null;
             return true;
         }
-        if (flight.notThereSince < 0) flight.notThereSince = now;
-        if (now - flight.notThereSince > ARRIVAL_BACKSTOP_TICKS) {
-            BuilderLog.flightStall(citizen.getName().getString(), citizen.blockPosition(), "gave up, walking");
-            flight.notThereSince = -1;
+        double d = citizen.position().distanceTo(Vec3.atCenterOf(block));
+        if (!block.equals(flight.tripBlock) || d < flight.tripBest - 0.5) {
+            flight.tripBlock = block;
+            flight.tripBest = d;
+            flight.tripSince = now;
+        } else if (now - flight.tripSince > ARRIVAL_BACKSTOP_TICKS) {
+            BuilderLog.flightStall(citizen.getName().getString(), citizen.blockPosition(), "no closer to " + block.toShortString() + " in 5 s, walking");
+            flight.tripBlock = null;
             return walk(citizen, flight, now);
         }
         return false;
@@ -187,7 +213,9 @@ public final class LiftedFlight {
         flight.target = null;
         flight.walkUntil = now + 100;
         flight.replans = 0;
-        flight.notThereSince = -1;
+        flight.tripBlock = null;
+        flight.goal = null;
+        flight.hoverFor = null;
         return null;
     }
 
@@ -237,7 +265,6 @@ public final class LiftedFlight {
         double distance = delta.length();
         if (distance < 0.25) {
             flight.next++;
-            flight.notThereSince = -1;   // progress along the route: the arrival backstop starts over
             flight.bestToNext = Double.MAX_VALUE;
             flight.noProgress = 0;
             return;
@@ -352,9 +379,14 @@ public final class LiftedFlight {
                 .map(p -> new BlockPos(p.x(), p.y(), p.z())).orElse(null);
     }
 
+    private static final float TURN_DEGREES_PER_TICK = 12;
+
     private static void face(Mob mob, Vec3 step) {
         if (step.horizontalDistanceSqr() < 1e-6) return;
-        float yaw = (float) (Mth.atan2(step.z, step.x) * (180 / Math.PI)) - 90;
+        // Turn toward where she's going a little each tick: snapping to every cell of a zigzag route looked like a
+        // twitchy dance (2026-11-14).
+        float target = (float) (Mth.atan2(step.z, step.x) * (180 / Math.PI)) - 90;
+        float yaw = Mth.approachDegrees(mob.getYRot(), target, TURN_DEGREES_PER_TICK);
         mob.setYRot(yaw);
         mob.setYHeadRot(yaw);
         mob.yBodyRot = yaw;

@@ -34,10 +34,18 @@ public final class Album {
         return tracks;
     }
 
+    /** Silence after each track before the next starts (the user, 2026-11-14: "a few seconds of silence"). */
+    public static final long GAP_MS = 3000;
+
+    /** How long each track takes up on the album clock: the track and the silence after it. */
+    public static long slotMs(int track) {
+        return track(track).lengthMs() + GAP_MS;
+    }
+
     public static long[] lengths() {
         var t = tracks();
         long[] out = new long[t.size()];
-        for (int i = 0; i < out.length; i++) out[i] = t.get(i).lengthMs();
+        for (int i = 0; i < out.length; i++) out[i] = t.get(i).lengthMs() + GAP_MS;
         return out;
     }
 

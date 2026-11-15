@@ -31,6 +31,7 @@ public final class MidnightMachineClient {
     public static void install() {
         MidnightMachinePayload.clientHandler = MidnightMachineClient::receive;
         NeoForge.EVENT_BUS.addListener(MidnightMachineClient::tick);
+        DanceAnimation.install();
     }
 
     /** Client clock in ms, on the same game-time base as the server. */
@@ -76,10 +77,10 @@ public final class MidnightMachineClient {
                 continue;
             }
             if (!m.playing) continue;
-            long length = Album.track(m.track).lengthMs();
+            long slot = Album.slotMs(m.track);   // the track, then a few seconds of silence
             long at = now() - m.trackStartMs;
-            if (at >= length) {   // on to the next track (the server's next message confirms it)
-                m.trackStartMs += length;
+            if (at >= slot) {   // on to the next track (the server's next message confirms it)
+                m.trackStartMs += slot;
                 m.track = (m.track + 1) % Math.max(1, Album.tracks().size());
                 startSound(e.getKey(), m, now() - m.trackStartMs);
             }
@@ -91,6 +92,7 @@ public final class MidnightMachineClient {
         var mc = Minecraft.getInstance();
         var entity = mc.level == null ? null : mc.level.getEntity(entityId);
         if (entity == null || Album.tracks().isEmpty()) return;
+        if (atMs >= Album.track(m.track).lengthMs()) return;   // in the silence after it: the next track starts itself
         m.sound = new AlbumSoundInstance(entity, m.track, Album.track(m.track).id(), atMs);
         mc.getSoundManager().play(m.sound);
     }

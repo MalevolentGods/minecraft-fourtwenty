@@ -43,6 +43,16 @@ public final class BuilderAccess {
     }
 
     /** Working, and her own AI is building: placing, breaking a block in the way, or walking to the site. */
+    /** At work at all (any job state), not on a break: eating, sleeping, fleeing, sick, and so on. */
+    public static boolean onTheJob(EntityCitizen citizen) {
+        try {
+            return citizen.getCitizenAI().getState() == CitizenAIState.WORKING;
+        } catch (Throwable t) {
+            BuilderLog.missing("AI states", t);
+            return false;
+        }
+    }
+
     public static boolean building(EntityCitizen citizen) {
         var ai = ai(citizen);
         if (ai == null) return false;
