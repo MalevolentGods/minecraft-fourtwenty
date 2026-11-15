@@ -22,9 +22,14 @@ public abstract class CitizenDanceMixin {
     private void fourtwenty$dance(LivingEntity entity, float limb, float amount, float age, float yaw, float pitch, CallbackInfo ci) {
         if (!(entity instanceof AbstractEntityCitizen citizen)) return;
         float partial = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+        var model = (HumanoidModel<?>) (Object) this;
+        // The model never resets the head's roll itself (it sets only its pitch and yaw each frame), and one model
+        // draws every citizen: adding to it built up frame after frame until her head lay on her shoulder, and stayed
+        // there after the music stopped (2026-11-14). So it's set outright here, back to level for anyone not dancing.
+        model.head.zRot = 0;
+        model.hat.zRot = 0;
         var pose = DanceAnimation.current(citizen, partial);
         if (pose == null) return;
-        var model = (HumanoidModel<?>) (Object) this;
         var body = pose.body();
         // arms: pitch raises forward and up, yaw turns in, roll takes each one out to her own side
         model.leftArm.xRot -= (float) body.leftArm().pitch() * RAD;
@@ -37,7 +42,7 @@ public abstract class CitizenDanceMixin {
         }
         model.head.xRot += (float) body.head().pitch() * RAD;
         model.head.yRot += (float) body.head().yaw() * RAD;
-        model.head.zRot += (float) body.head().roll() * RAD;
+        model.head.zRot = (float) body.head().roll() * RAD;
         if (amount < 0.1f) {   // legs only while she stands still: walking keeps its own stride
             model.leftLeg.xRot -= (float) body.leftLeg() * RAD;
             model.rightLeg.xRot -= (float) body.rightLeg() * RAD;
