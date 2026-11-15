@@ -2,6 +2,19 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- **Lifted Builders fly everywhere** (with MineColonies): while high, every trip a Builder makes is flown, not just around the build: home to unload or fetch materials, to her racks, and on her breaks to the restaurant, home to bed or the hospital. She lands close by and walks just the last steps to a rack or seat. Waiting for materials, she hovers instead of wandering off.
+- **Through doors:** she flies into and out of closed buildings, opening wooden doors and fence gates as she reaches them and closing what she opened behind her. Doors you opened are left alone.
+- **A cruise pose:** flying from place to place she leans back, legs together, instead of walking in mid-air; on a smoke break she raises the joint to her mouth between puffs.
+
+### Changed
+- **Never stranded:** a trip that gets no closer for 30 seconds sends her back to her hut, as MineColonies does with a stuck citizen.
+
+### Servers
+- **New setting:** `bodyFlight` in `fourtwenty-builders-server.toml` (on by default). Off keeps 0.26.0's movement, where only build-site trips are flown.
+
 ## [0.26.0]
 
 ### Added

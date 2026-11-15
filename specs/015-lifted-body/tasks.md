@@ -48,7 +48,7 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty`, `MC` = `J/compat/min
 - [X] T009 [US1] Breaks (research R3) in `MC/builder/LiftedFlight.java`: end any flight when she rides a seat or sleeps (`isPassenger()`, sleeping); land exactly at a bed or seat destination so MineColonies seats her or puts her to bed itself.
 - [X] T010 [US1] Retire spec 013's separate rescues now covered by errands, in `MC/builder/LiftedService.java` and `MC/builder/LiftedFlight.java`: the stranded check and `walkIn` apply only with `bodyFlight` off.
 - [ ] T011 [US1] Log errands in `MC/builder/BuilderLog.java` (`errand citizen= purpose= to=`, `reached`, `recalled`) under `logBuilderPathing`, and show "Flying to dinner / bed / work" style detail on her high badge via `MC/builder/HighStatusPayload.java` and `MC/client/HighStatusClient.java` *(wording for the user to approve)*.
-- [ ] T012 [US1] **In game (M1 without doors):** quickstart M1 steps 1-3, 5-7 on flatworld; record the results.
+- [X] T012 [US1] **In game (M1 without doors):** quickstart M1 steps 1-3, 5-7 on flatworld; record the results. *(2026-11-15: hut, racks, restaurant, back to the site all flown.)*
 
 **Checkpoint**: every trip flies; she's never stranded.
 
@@ -71,7 +71,7 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty`, `MC` = `J/compat/min
 - [X] T016 [US2] Create `MC/builder/Doorways.java`: which blocks count (wooden doors and fence gates only, FR-004), open as she comes within 1.5 blocks of a doorway on her route, close what she opened once she's 2 blocks past and it's empty, upright and at door height through the doorway. Make T014 pass.
 - [X] T017 [US2] Use doorways in `MC/builder/LiftedFlight.java`: the planner's free test includes doorways; `fly()` calls `Doorways` for doorway cells ahead; the build-site `approach` uses them too, so blocks inside closed buildings are reached by flying in (no more walk-in with `bodyFlight` on).
 - [ ] T018 [US2] Unreachable blocks (FR-006) in `MC/builder/LiftedFlight.java`: when no route reaches a block, place it from outside if it's in reach, otherwise let MineColonies move on to the next block; never stuck for good.
-- [ ] T019 [US2] **In game (M1 step 4):** an inside repair of the Warehouse with its doors shut; record which doors were used and that all ended closed.
+- [X] T019 [US2] **In game (M1 step 4):** an inside repair of the Warehouse with its doors shut; record which doors were used and that all ended closed. *(2026-11-15: "doors work great".)*
 
 **Checkpoint**: Stories 1 and 2 together: SC-001, SC-002, SC-003.
 
@@ -88,7 +88,7 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty`, `MC` = `J/compat/min
 - [X] T041 [US3] Cruise pose in `MC/mixin/CitizenDanceMixin.java` and `MC/client/DanceAnimation.java`: while she's flying (moving and off the ground), cancel the walking stride (legs together, no limb swing), recline slightly and lean into her direction, easing over 0.3 s; the dance takes over when she hovers. Expose "flying" to the client from her motion (no new payload).
 - [X] T042 [US3] Joint at her mouth on a smoke break in `MC/mixin/CitizenDanceMixin.java`: while she holds a joint (main hand) and isn't flying, raise the right arm to her mouth for about a second every few seconds, between puffs.
 - [X] T043 [US3] Drop the unused look switches: `liftedLook` in `MC/builder/BuilderConfig.java` and `MC/client/MidnightMachineClientConfig.java`.
-- [ ] T044 [US3] **In game (M3):** a long flight, a smoke break, building with the polish on and off (SC-004, SC-005).
+- [X] T044 [US3] **In game (M3):** a long flight, a smoke break, building with the polish on and off (SC-004, SC-005). *(2026-11-15: "looks amazing!")*
 
 ---
 
@@ -96,7 +96,7 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty`, `MC` = `J/compat/min
 
 - [ ] T036 Performance (SC-006): three Lifted Builders on flatworld, tick time against the same colony sober; record in quickstart.md.
 - [ ] T037 [P] Without MineColonies, the standalone game tests pass (SC-007); colony game tests show nothing new against `main`.
-- [ ] T038 [P] CHANGELOG `[Unreleased]` and `CURSEFORGE.md`'s changelog; README "What's new" at the release bump.
+- [X] T038 [P] CHANGELOG `[Unreleased]` and `CURSEFORGE.md`'s changelog; README "What's new" at the release bump.
 - [ ] T039 Update memory (`project_fourtwenty_lifted_builders.md`) and `claude-misc/four-twenty/PLAN.md`; mark every task [X].
 - [ ] T040 PR to `main` and release, on the user's go.
 
