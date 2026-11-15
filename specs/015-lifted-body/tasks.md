@@ -85,8 +85,8 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty`, `MC` = `J/compat/min
 
 **Independent Test**: quickstart M3.
 
-- [ ] T041 [US3] Cruise pose in `MC/mixin/CitizenDanceMixin.java` and `MC/client/DanceAnimation.java`: while she's flying (moving and off the ground), cancel the walking stride (legs together, no limb swing), recline slightly and lean into her direction, easing over 0.3 s; the dance takes over when she hovers. Expose "flying" to the client from her motion (no new payload).
-- [ ] T042 [US3] Joint at her mouth on a smoke break in `MC/mixin/CitizenDanceMixin.java`: while she holds a joint (main hand) and isn't flying, raise the right arm to her mouth for about a second every few seconds, between puffs.
+- [X] T041 [US3] Cruise pose in `MC/mixin/CitizenDanceMixin.java` and `MC/client/DanceAnimation.java`: while she's flying (moving and off the ground), cancel the walking stride (legs together, no limb swing), recline slightly and lean into her direction, easing over 0.3 s; the dance takes over when she hovers. Expose "flying" to the client from her motion (no new payload).
+- [X] T042 [US3] Joint at her mouth on a smoke break in `MC/mixin/CitizenDanceMixin.java`: while she holds a joint (main hand) and isn't flying, raise the right arm to her mouth for about a second every few seconds, between puffs.
 - [X] T043 [US3] Drop the unused look switches: `liftedLook` in `MC/builder/BuilderConfig.java` and `MC/client/MidnightMachineClientConfig.java`.
 - [ ] T044 [US3] **In game (M3):** a long flight, a smoke break, building with the polish on and off (SC-004, SC-005).
 
