@@ -60,6 +60,19 @@ public class ModClientEvents {
     }
 
     @SubscribeEvent
+    public static void extraModels(net.neoforged.neoforge.client.event.ModelEvent.RegisterAdditional event) {
+        // The Midnight Machine boombox (spec 014): a standalone model, drawn on Lifted Builders' backs.
+        event.register(net.minecraft.client.resources.model.ModelResourceLocation.standalone(
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("fourtwenty", "midnight_machine/body")));
+    }
+
+    @SubscribeEvent
+    public static void layers(net.neoforged.neoforge.client.event.EntityRenderersEvent.AddLayers event) {
+        // Lifted Builders' green glow, on MineColonies' citizen renderer (spec 013).
+        if (net.neoforged.fml.ModList.get().isLoaded("minecolonies")) com.malevolentgods.fourtwenty.compat.minecolonies.client.LiftedClient.addLayers(event);
+    }
+
+    @SubscribeEvent
     public static void registerKeys(net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent event) { PavePenClient.registerKeys(event); }
 
     @SubscribeEvent
@@ -67,6 +80,8 @@ public class ModClientEvents {
         PavePenClient.install();
         if (net.neoforged.fml.ModList.get().isLoaded("minecolonies")) {
             event.enqueueWork(com.malevolentgods.fourtwenty.compat.minecolonies.client.DispensaryClient::registerModel);
+            com.malevolentgods.fourtwenty.compat.minecolonies.client.LiftedClient.install();
+            com.malevolentgods.fourtwenty.compat.minecolonies.client.MidnightMachineClient.install();
         }
         // Terpene names stay hidden until discovered; each discovery gets a toast.
         com.malevolentgods.fourtwenty.terpene.TerpeneKnowledge.installClient(key -> net.minecraft.client.Minecraft.getInstance().getToasts()

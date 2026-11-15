@@ -1,0 +1,86 @@
+{
+ "track": "track6",
+ "title": "Far and Away",
+ "sections": [
+  {
+   "startMs": 0,
+   "endMs": 17752,
+   "label": "intro",
+   "move": "horizon",
+   "intensity": 0.6
+  },
+  {
+   "startMs": 17752,
+   "endMs": 74896,
+   "label": "drop",
+   "move": "windmill",
+   "intensity": 0.92
+  },
+  {
+   "startMs": 74896,
+   "endMs": 92044,
+   "label": "verse",
+   "move": "float",
+   "intensity": 0.84
+  },
+  {
+   "startMs": 92044,
+   "endMs": 158116,
+   "label": "drop",
+   "move": "windmill",
+   "intensity": 1.0
+  },
+  {
+   "startMs": 158116,
+   "endMs": 175253,
+   "label": "verse",
+   "move": "float",
+   "intensity": 0.76
+  },
+  {
+   "startMs": 175253,
+   "endMs": 195598,
+   "label": "outro",
+   "move": "horizon",
+   "intensity": 0.68
+  }
+ ],
+ "flourishes": [
+  {
+   "ms": 17752,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 33820,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 47752,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 92752,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 112756,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 128464,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 145612,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 158465,
+   "move": "slow_turn_open"
+  },
+  {
+   "ms": 182753,
+   "move": "dip_and_rise"
+  }
+ ]
+}

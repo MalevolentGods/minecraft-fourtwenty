@@ -1,0 +1,116 @@
+{
+ "track": "track1",
+ "title": "Rise and Peak",
+ "sections": [
+  {
+   "startMs": 0,
+   "endMs": 37164,
+   "label": "intro",
+   "move": "groove",
+   "intensity": 0.66
+  },
+  {
+   "startMs": 37164,
+   "endMs": 119583,
+   "label": "drop",
+   "move": "lean_pump",
+   "intensity": 1.0
+  },
+  {
+   "startMs": 119583,
+   "endMs": 184622,
+   "label": "drop",
+   "move": "step_touch",
+   "intensity": 0.89
+  },
+  {
+   "startMs": 184622,
+   "endMs": 205148,
+   "label": "verse",
+   "move": "reach_climb",
+   "intensity": 0.83
+  },
+  {
+   "startMs": 205148,
+   "endMs": 220288,
+   "label": "verse",
+   "move": "step_touch",
+   "intensity": 0.77
+  },
+  {
+   "startMs": 220288,
+   "endMs": 235102,
+   "label": "breakdown",
+   "move": "float",
+   "intensity": 0.71
+  },
+  {
+   "startMs": 235102,
+   "endMs": 255373,
+   "label": "drop",
+   "move": "lean_pump",
+   "intensity": 0.94
+  },
+  {
+   "startMs": 255373,
+   "endMs": 265640,
+   "label": "outro",
+   "move": "wave_overhead",
+   "intensity": 0.6
+  }
+ ],
+ "flourishes": [
+  {
+   "ms": 6722,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 15685,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 37164,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 49946,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 59710,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 82500,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 117052,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 141050,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 156514,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 194107,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 213995,
+   "move": "big_spin_point"
+  },
+  {
+   "ms": 229100,
+   "move": "dip_and_rise"
+  },
+  {
+   "ms": 244622,
+   "move": "big_spin_point"
+  }
+ ]
+}

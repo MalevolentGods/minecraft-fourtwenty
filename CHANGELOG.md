@@ -2,6 +2,35 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- **Lifted Builders** (with MineColonies): a Builder who smokes a joint becomes **Lifted**. She flies to her work with a faint green glow and a little smoke trail, and builds the **Higher Ground** way:
+  - **Reach and placing:** she places from up to 9 blocks away, from a hover spot that reaches as much of the layer as it can.
+  - **Faster:** 25% faster on Landrace, up to 50% on Golden God.
+  - **Storage kept:** a chest or rack she breaks sends its contents to her hut, not onto the ground.
+  - **A smoke break first:** when she's due to light up, she walks back to her hut and smokes her joint there, then flies back to work.
+  - **Joints:** she asks for one of the colony's **spare** joints when she needs it (none left, and her high nearly done; citizens always get theirs first), or takes ones you drop in her hut. A Landrace joint lasts 5 minutes, and better strains last longer.
+  - **Home when it wears off:** when her high runs out mid-job, or the job is done, she flies back to her hut and lands there, instead of dropping wherever she is.
+  - **Her smokes count:** every joint she smokes counts in the colony like anyone's: her taste drifts, colonists close by breathe it in, and it covers her joint for the day.
+  - **Safe flying:** she always comes down gently, for meals, bedtime, when she runs out, or if you switch it off. A joint she smokes also counts as her daily joint.
+  - **Setting:** her hut has a **"Fly when Lifted"** setting, on by default.
+- **The Midnight Machine** (with MineColonies): a Lifted Builder wears a glowing synth-rack boombox and plays **ATLemental's album *Midnight Machine*** from it, track by track, picking up where she left off:
+  - **Heard from her:** the music follows her and fades with distance, loud only close by and gone by about 48 blocks, on the Jukebox/Note Blocks slider. A short silence sits between tracks.
+  - **Your own volume and mute:** in the pause menu, just under ModularCraft's button.
+  - **VU bars:** six bars on the boombox show the song's bass to treble as you hear it.
+  - **She dances:** a bob on the beat, a sway, and spins on the big hits, plus a routine made for each track: moves that change with the song's sections and a flourish now and then. It's only how she looks: she builds exactly as she would otherwise.
+  - **Servers:** `music.enabled` in `fourtwenty-builders-server.toml` turns the music off for everyone (the boombox and dancing stay).
+- **A Builder watchdog:** a Builder who stops making progress *while building* is rescued: first a fresh standing spot, then a spot near her block, then just outside the building, then back to her hut. It never acts while she's eating, sleeping, fetching materials or in a raid.
+
+### Fixed
+- **Racks are solid again, and climbed from the outside.** 0.25.1 made racks climbable by letting you walk into them; now nobody can stand inside a rack, and players and citizens climb its outside face like a ladder.
+- **Builders no longer stand still beside a spot they've built over.** A Builder whose chosen standing spot became part of the wall used to wait there for good, until pushed away. She now picks a new spot.
+- **Warehouse levels 1-4** (Sensi Heights pack v101): the small air pockets under the top step of each centre staircase are filled.
+
+### Servers
+- **New file:** `fourtwenty-builders-server.toml` holds the watchdog, Lifted and Midnight Machine settings: on/off switches, times, reach, and minutes per family. The defaults need no changes.
+
 ## [0.25.1]
 
 ### Fixed
