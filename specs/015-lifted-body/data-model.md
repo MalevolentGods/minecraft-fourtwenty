@@ -27,19 +27,8 @@ All state is in memory (server flight state, client render caches); nothing new 
 
 Gains a `doorway` flag: a passable door or gate cell, at a small extra cost.
 
-## Lifted look (client, per Builder)
-
-| Field | Meaning |
-|---|---|
-| skin | her MineColonies skin texture |
-| palette | hair, skin, cloth 1, cloth 2 colours (`SkinPalette`) |
-| texture | the composed Lifted texture for that palette (cached per skin) |
-| pose | current blend of cruise / hover / smoke / dance, with weights easing over 0.3-0.5 s |
-
 ## Settings
 
 | Where | Setting | Default |
 |---|---|---|
 | `fourtwenty-builders-server.toml` `[lifted]` | `bodyFlight` | true |
-| same | `liftedLook` | true |
-| `fourtwenty-midnight-machine-client.toml` | `liftedLook` (the player's own) | true |

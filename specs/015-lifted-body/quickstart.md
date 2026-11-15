@@ -12,16 +12,9 @@ On flatworld, with a Builder's hut, a Warehouse at level 4 (closed, with its cen
 6. Turn "Fly when Lifted" off mid-flight: she lands gently and walks.
 7. **Pass:** the log shows no `stranded`, `recalled` or `rescue` lines over the whole upgrade (SC-001), and no walking while Lifted outside her hut (SC-002).
 
-## M2. The design pass
+## M3. The look, polished (Story 3)
 
-1. Concept renders of three silhouettes; the user picks one.
-2. The user generates the texture sheet from the prompt; import it.
-
-## M3. The look (Story 3)
-
-1. Light her up: she changes to the Lifted model, in her own colours, with the boombox and glow; her name and status bubble still show.
-2. Watch her cruise (reclined, arm behind head, nodding), ease upright to build, smoke with the joint at her mouth, and dance with bending elbows and knees.
-3. Two Builders with different skins: same design, their own colours.
-4. Toggle "Lifted look" off in the pause menu: you see 0.26.0's look; another player still sees the new one.
-5. Time a stretch of building with the look on and off (SC-004).
-6. Three Lifted Builders: check the server's tick time against the same colony sober (SC-006).
+1. Watch a long flight: no walking stride in the air (legs together, a slight recline, leaning into her way), easing to the dance when she hovers to build.
+2. A smoke break at her hut: the joint rises to her mouth between puffs.
+3. Time a stretch of building with the polish on and off (SC-004).
+4. Three Lifted Builders: check the server's tick time against the same colony sober (SC-006).

@@ -77,40 +77,18 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty`, `MC` = `J/compat/min
 
 ---
 
-## Phase 5: The design pass (user, blocks US3's art)
+## Phase 5: User Story 3 - Her look, polished (Priority: P2)
 
-- [ ] T020 [US3] Create `tools/render_lifted_concepts.py` (Blender, headless, as `tools/render_midnight_machine_concepts.py`): three stylised silhouettes (for example lanky and loose, chunky and cute, sleek and tall) with the joints from FR-010, front, back and side, in the cruise and hover poses, wearing the boombox. Render to `%TEMP%` and show the user.
-- [ ] T021 [US3] **User picks a silhouette.** Record the choice and its proportions (part sizes) in research.md R8.
-- [ ] T022 [US3] Write the texture-sheet prompt for the picked model (each part's faces as panels on magenta, flat colour zones for hair, skin and two clothing colours, per contracts/config-and-ui.md), and give it to the user for one generation.
-- [ ] T023 [US3] Create `tools/import_lifted_sheet.py`: cut the sheet's panels, build the base texture and the four tint masks at sizes in multiples of 16, into `src/main/resources/assets/fourtwenty/textures/entity/lifted/`. Save the sheet as `tools/art/lifted_sheet.png`.
+*(Descoped 15 Nov: she keeps her look. The new model, per-Builder tint, design pass and look switches, the old T020-T035, are dropped.)*
 
----
-
-## Phase 6: User Story 3 - Her looks are ours while she's Lifted (Priority: P2)
-
-**Goal**: the Lifted model, tinted per Builder, with cruise, hover, smoking and dancing poses, the boombox, glow and props; MineColonies still draws her name and status; a player toggle; a safe fallback.
+**Goal**: a still cruise pose in flight and the joint at her mouth on a smoke break.
 
 **Independent Test**: quickstart M3.
 
-### Tests
-
-- [ ] T024 [P] [US3] Write `T/SkinPaletteTest.java`: hair, skin and two clothing colours come out as each region's dominant colour of a 64x64 skin; transparent and near-black pixels are ignored; a blank skin gives safe defaults.
-- [ ] T025 [P] [US3] Write `T/LiftedPoseTest.java`: each named pose's joints stay within limits; blending eases over 0.3-0.5 s with no jump; cruise nods on the beat; the dance bends elbows and knees.
-
-### Implementation
-
-- [ ] T026 [P] [US3] Create `J/domain/SkinPalette.java` (pure): regions of the standard citizen skin layout → hair, skin, cloth 1, cloth 2. Make T024 pass.
-- [ ] T027 [P] [US3] Create `J/domain/LiftedPose.java` (pure): named poses (cruise, hover, smoke, dance) as joint angles for the model's joints, blended by weights easing over time; the dance from `DanceRules`/`DanceMoves`, extended with elbow, knee and spine bends. Make T025 pass.
-- [ ] T028 [US3] Create `MC/client/LiftedModel.java`: the picked model as a `ModelPart` tree (torso upper/lower, neck, head, upper/lower arms, hands, upper/lower legs, feet) with a `LayerDefinition`, registered in `J/client/ModClientEvents.java` (`EntityRenderersEvent.RegisterLayerDefinitions`).
-- [ ] T029 [US3] Create `MC/client/LiftedSkins.java`: per distinct MineColonies skin, read it, `SkinPalette` it, compose base × tinted masks into a `DynamicTexture`, cache by skin, release unused ones.
-- [ ] T030 [US3] Create `MC/client/LiftedRenderer.java` on `RenderLivingEvent.Post` for Lifted Builders with the look on (server switch from the Lifted payload, player toggle): draw the model in her tinted texture with `LiftedPose` (cruise when flying, hover when placing, smoke on a smoke break, dance when playing), the joint as a prop in her hand while smoking, and the green glow; any exception or missing texture falls back for that Builder to 0.26.0's look (FR-012).
-- [ ] T031 [US3] Create `MC/mixin/CitizenModelHideMixin.java` (client): while `LiftedRenderer` draws her, hide MineColonies' body parts and held-item layer so only our model shows; her name and status bubble still draw. Register it in the client list of `fourtwenty.minecolonies.mixins.json`.
-- [ ] T032 [US3] Move the boombox, VU bars and smoke onto the new body in `MC/client/BoomboxLayer.java` and `MC/client/LiftedClient.java` (attach to the model's upper torso), keeping them on MineColonies' model for the fallback.
-- [ ] T033 [US3] The player toggle **"Lifted look"** *(name pending the user's approval)* in `MC/client/MidnightMachineSettings.java`, beside the volume and mute, shown only when the server has the look on; lang keys in `src/main/resources/assets/fourtwenty/lang/en_us.json`.
-- [ ] T034 [US3] Send the server's `liftedLook` switch to clients with the Lifted payload (`MC/builder/LiftedPayload.java`), so no client draws the look when the server has it off.
-- [ ] T035 [US3] **In game (M3):** quickstart M3 steps 1-5; the user judges the look (SC-005); build timing with the look on and off (SC-004).
-
-**Checkpoint**: Story 3 done.
+- [ ] T041 [US3] Cruise pose in `MC/mixin/CitizenDanceMixin.java` and `MC/client/DanceAnimation.java`: while she's flying (moving and off the ground), cancel the walking stride (legs together, no limb swing), recline slightly and lean into her direction, easing over 0.3 s; the dance takes over when she hovers. Expose "flying" to the client from her motion (no new payload).
+- [ ] T042 [US3] Joint at her mouth on a smoke break in `MC/mixin/CitizenDanceMixin.java`: while she holds a joint (main hand) and isn't flying, raise the right arm to her mouth for about a second every few seconds, between puffs.
+- [X] T043 [US3] Drop the unused look switches: `liftedLook` in `MC/builder/BuilderConfig.java` and `MC/client/MidnightMachineClientConfig.java`.
+- [ ] T044 [US3] **In game (M3):** a long flight, a smoke break, building with the polish on and off (SC-004, SC-005).
 
 ---
 
@@ -127,7 +105,7 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty`, `MC` = `J/compat/min
 ## Dependencies
 
 - Phase 1 → Phase 2 → US1 (Phase 3) → US2 (Phase 4): doors build on errands.
-- The design pass (Phase 5) can run alongside Phases 3-4 (it needs the user); US3 (Phase 6) needs Phase 5's art for T029-T030, but T024-T028 can start any time.
+- US3 (Phase 5) is independent and small; any time.
 - Polish last.
 
 ## Parallel
@@ -135,11 +113,10 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty`, `MC` = `J/compat/min
 - T001 with T002; T004 with T003.
 - T006 alongside T007-T008 (different files).
 - T013 with T014.
-- T024, T025, T026, T027 together; T020-T023 alongside Phases 3-4.
+- T041 and T042 touch the same mixin: one after the other.
 
 ## Strategy
 
 - **MVP:** Phases 1-3 (every trip flown). It fixes the stranding on its own.
 - **Then** Phase 4 (doors), proven in game.
-- **Meanwhile** the design pass with the user.
-- **Then** the look (Phase 6), proven in game; polish; release on the user's go.
+- **Then** the look polish (Phase 5), proven in game; polish; release on the user's go.

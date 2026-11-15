@@ -8,9 +8,9 @@
 While a Builder is Lifted, Four Twenty owns her body. Two independent halves:
 
 1. **Movement (server):** every walk MineColonies asks of her becomes a flight. Its navigator takes every walk as a destination (`setPathJob`) and judges arrival by distance, so one hook turns any walk request (job, hut, racks, restaurant, bed, hospital) into a flight to the same place, with the navigator reporting "still going" until she's there. The flight planner learns **doors and fence gates**: it routes through them, opens them as she reaches them and closes them once she's past. Building on spec 013's flight, legs, stall replans, landing and recall.
-2. **Looks (client):** a new stylised **Lifted model** (more joints: elbows, knees, spine, neck), drawn by our own render pass while MineColonies' renderer still draws her name and status. Its painted design (one texture sheet, made like the boombox's) is **tinted per Builder** from her MineColonies skin. Poses blend between a **laid-back cruise** in flight, upright hovering to build, smoking, and spec 014's dance. The boombox, glow, smoke and VU bars move onto the new body.
+2. **Looks (client), descoped 15 Nov:** she keeps her look. Two polishes in the existing pose code (`CitizenDanceMixin`, `DanceAnimation`): a still **cruise pose** in flight (no walking stride, legs together, slight recline, leaning into her way), and the **joint at her mouth** between puffs on a smoke break. The new model, its per-Builder tint and design pass are dropped.
 
-Switches: the server turns each half off separately; each player turns the look off in the pause menu. If the look can't be drawn, she falls back to 0.26.0's look.
+Switch: the server can turn the body flight off (0.26.0's movement).
 
 ## Technical Context
 
@@ -90,9 +90,8 @@ src/colonytest/java/...             # NavigatorTakeoverGameTests, DoorwaysGameTe
 ## Phases
 
 1. **P1 movement (Stories 1-2):** errands via the navigator hook, doors in the planner and on the way, breaks, the 30 s recall. In game: a Warehouse upgrade with no rescues (SC-001/002/003).
-2. **The design pass (Story 3, user):** concept renders of three silhouettes → the user picks → a texture-sheet prompt → the user's one generation → import.
-3. **P2 looks (Story 3):** the model, renderer, tints, poses, props, boombox on the new body, the toggle, fallback. In game: SC-004/005.
-4. **Polish:** switches, performance check (SC-006), standalone tests (SC-007), CHANGELOG, CURSEFORGE.md, README at release.
+2. **P2 the look polished (Story 3):** the cruise pose and the joint at her mouth. In game: SC-004/005.
+3. **Polish:** switches, performance check (SC-006), standalone tests (SC-007), CHANGELOG, CURSEFORGE.md, README at release.
 
 ## Complexity Tracking
 

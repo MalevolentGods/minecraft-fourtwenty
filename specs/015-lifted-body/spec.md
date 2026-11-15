@@ -21,6 +21,7 @@
 - Q: One Lifted look for everyone, or one per Builder? → A: **One painted design, tinted per Builder** from her own MineColonies skin (hair, skin tone, clothing colours), so each stays recognisable ("for now": painted variants may come later).
 - Q: How should she fly? → A: **A laid-back cruise**: reclined as if in a floating lounge chair, one arm behind her head, nodding to the music; upright when she hovers to build or dance.
 - Q: Can each player turn the new look off for themselves? → A: **Yes**: the server switch, plus each player's own on/off toggle in the pause menu beside the Midnight Machine volume.
+- Q (2026-11-15, after seeing every trip flown in game): Keep the new model? → A: **No.** The user loves her look as it is: she stays MineColonies' citizen with the boombox, glow and dance, polished: a still cruise pose in flight (no walking stride), and the joint held to her mouth while she smokes. The new stylised model, its per-Builder tint, its design pass and the look switches (the answers on the model, the tint and the toggle above) are dropped; a new model can come back as its own spec.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -59,23 +60,20 @@ When a Lifted Builder's work or trip is inside a closed building (doors shut, ro
 
 ---
 
-### User Story 3 - Her looks are ours while she's Lifted (Priority: P2)
+### User Story 3 - Her look, polished (Priority: P2)
 
-While Lifted, everything about how she looks is drawn by Four Twenty: a new, smoother **stylised model** with more joints and its own "Lifted" silhouette, the Midnight Machine boombox, the green glow, the smoke and the dance. Her moves can bend at elbows, knees and spine, she can hold props (a joint in hand while smoking), and her flying has its own poses (no walking legs in mid-air). Her real place, facing and hitbox never move for anything visual.
+She keeps her look (MineColonies' citizen with the Midnight Machine boombox, the green glow, the smoke and the dance), polished in two places: in flight she holds a still **cruise pose** (legs together, a slight recline, leaning into her way) instead of the walking stride, and on a smoke break she **holds the joint to her mouth** between puffs.
 
-**Why this priority**: today the dance is layered onto MineColonies' model, which has stiff limbs, and flight mixes with walking animations, which looks twitchy (seen in game 14 Nov). It makes her look right; Stories 1 and 2 make her work right.
+**Why this priority**: flight mixed with MineColonies' walking stride looks twitchy (seen in game 14 Nov), and the smoke break reads better with the joint at her mouth. Stories 1 and 2 make her work right; this tidies how she looks doing it.
 
-**Independent Test**: Watch a Lifted Builder through a smoke break, a flight to work, building, a dance flourish and a flight home, side by side with the same Builder sober; and check that her building speed and positions are the same with the new look on or off.
+**Independent Test**: Watch a Lifted Builder fly a long trip, smoke a joint at her hut, and dance while building; compare her building speed and positions with the polish on and off.
 
 **Acceptance Scenarios**:
 
-1. **Given** a Builder lighting up, **When** her high starts, **Then** she changes to the Lifted model (with the boombox and glow), still showing her name; when it ends she changes back to MineColonies' look.
-2. **Given** two Lifted Builders with different MineColonies skins, **When** you look at them, **Then** they share the Lifted design but each wears her own hair colour, skin tone and clothing colours, taken from her own skin.
-3. **Given** a Lifted Builder in flight, **When** she travels, **Then** she cruises laid back (reclined, one arm behind her head, nodding to the music; no walking stride), turning smoothly toward where she's going; **When** she stops to hover and build or dance, **Then** she eases upright.
-4. **Given** the dance, **When** a move calls for it, **Then** her arms and legs bend at the elbow and knee.
-5. **Given** a smoke break, **When** she smokes, **Then** she holds the joint to her mouth between puffs.
-6. **Given** the new look, **When** she builds, **Then** she places the same blocks from the same spots at the same speed as with it off.
-7. **Given** a sober Builder, **When** you look at her, **Then** she looks exactly as MineColonies draws her.
+1. **Given** a Lifted Builder flying, **When** she travels, **Then** her legs stay together without striding and she leans slightly into her way, turning smoothly; **When** she stops to hover and build or dance, **Then** the dance takes over as now.
+2. **Given** a smoke break, **When** she smokes, **Then** she raises the joint to her mouth between puffs, and lowers it after.
+3. **Given** the polish, **When** she builds, **Then** she places the same blocks from the same spots at the same speed as without it.
+4. **Given** a sober Builder, **When** you look at her, **Then** she looks exactly as MineColonies draws her.
 
 ---
 
@@ -87,9 +85,6 @@ While Lifted, everything about how she looks is drawn by Four Twenty: a new, smo
 - **Doors players care about:** she always closes what she opened; she never opens anything that isn't a door or gate (no trapdoors, chests or fences).
 - **Other citizens and players in her path:** she flies around them; nobody is pushed off a ledge.
 - **Chunks unloading under her:** she's set down on the ground below, as now.
-- **A player has turned the look off:** they see her in 0.26.0's look (MineColonies' citizen with the boombox, glow and dance); everyone else still sees the Lifted model.
-- **Another mod draws her too** (a shader, or a mod that changes citizen models): our look applies only while she's Lifted, and if it can't be drawn she falls back to MineColonies' look rather than vanishing.
-- **Players who don't have the mod's visuals** (server and client must match anyway): not supported.
 
 ## Requirements *(mandatory)*
 
@@ -103,22 +98,18 @@ While Lifted, everything about how she looks is drawn by Four Twenty: a new, smo
 - **FR-006**: When a block can't be reached at all, she MUST place it from outside if it's within her reach, otherwise move on to other blocks, so no job is stuck for good.
 - **FR-007**: When her high ends, she MUST finish the trip home by flight and land by her hut; only then does the MineColonies walking resume.
 - **FR-008**: A sober Builder's movement MUST be exactly MineColonies' own.
-- **FR-009**: While Lifted, her whole appearance MUST be drawn by Four Twenty with its own stylised model and art: her body, the boombox, the glow, the smoke and the dance, with poses for flying (a reclined, laid-back cruise), hovering upright while building, smoking and dancing, easing between them.
-- **FR-009a**: The Lifted design MUST be tinted per Builder from her own MineColonies skin: her hair colour, skin tone and main clothing colours, read from the skin itself, so any skin (including other mods' or players' custom citizen skins) works.
-- **FR-010**: The Lifted model MUST have more joints than MineColonies' citizen (at least elbows, knees, a bending spine and a turning neck) and hold props (at least a joint).
+- **FR-009**: In flight, a Lifted Builder MUST hold a still cruise pose (no walking stride: legs together, a slight recline, leaning into her way of travel), easing to the dance when she hovers.
+- **FR-010**: On a smoke break she MUST raise the joint to her mouth between puffs.
 - **FR-011**: Nothing visual MAY change where she is, which way she faces, her hitbox, or what she builds and how fast.
-- **FR-012**: If her Lifted look can't be drawn for any reason, she MUST fall back to MineColonies' own look, never disappear.
 - **FR-013**: A sober Builder MUST look exactly as MineColonies draws her.
 - **FR-014**: Flying MUST never kill or hurt her: every landing is gentle and every interruption sets her down safely.
 - **FR-015**: Everything here MUST work only with MineColonies installed, and Four Twenty MUST still load and play without it.
-- **FR-016**: The server MUST be able to switch the whole-body flight (FR-001 to FR-007) and the drawn look (FR-009 to FR-012) off separately, falling back to 0.26.0's behaviour.
-- **FR-017**: Each player MUST be able to turn the drawn look off for themselves with a toggle in the pause menu, beside the Midnight Machine volume; with it off they see Lifted Builders in 0.26.0's look. It's that player's own setting and never affects anyone else or anything she does.
+- **FR-016**: The server MUST be able to switch the whole-body flight (FR-001 to FR-007) off, falling back to 0.26.0's movement.
 
 ### Key Entities
 
 - **A trip:** where her job is sending her (the build, her hut, her racks), the route there, and whether it goes through a door.
 - **A doorway:** a door or gate she's passing through, its side of entry, and whether she opened it (so she closes it).
-- **Her look:** the pose she's in (flying, hovering, building, smoking, dancing) and its props.
 
 ## Success Criteria *(mandatory)*
 
@@ -127,22 +118,21 @@ While Lifted, everything about how she looks is drawn by Four Twenty: a new, smo
 - **SC-001**: Over a full Warehouse upgrade done Lifted, she is never stranded: zero rescues or recalls, and no step leaves her more than 30 seconds without progress.
 - **SC-002**: While Lifted she walks for 0 seconds outside her hut (watched over a full job).
 - **SC-003**: She completes an inside repair of a closed, multi-floor building without help, and every door she used is closed afterwards.
-- **SC-004**: Building speed and the blocks placed are the same with the drawn look on and off (within 5% on the same job).
-- **SC-005**: The user judges her flying, smoking and dancing look smooth and natural, with no twitching between walking and flying poses.
+- **SC-004**: Building speed and the blocks placed are the same with the polish on and off (within 5% on the same job).
+- **SC-005**: The user judges her flying and smoking look smooth and natural, with no walking stride in the air.
 - **SC-006**: With a colony of 3 Lifted Builders working, the server's tick time stays within 10% of the same colony with them sober.
 - **SC-007**: Four Twenty without MineColonies loads and passes its game tests as before.
 
 ## Assumptions
 
-- **Her skin:** the Lifted model has one painted design (concept first, as with the boombox, likely from one generated texture sheet), tinted per Builder from her MineColonies skin; that skin returns when she's sober. Painted variants are a later option.
 - **Her hut, not the Warehouse:** in MineColonies a Builder fetches materials from her own hut (couriers stock it), so "to the Warehouse" means her hut's racks unless MineColonies sends her elsewhere.
 - **Doors:** the doors and fence gates MineColonies' own walking uses count; trapdoors, iron doors needing redstone, and modded locked doors don't.
 - **Hidden route search cost:** flying routes are found within the existing flight search limits; long trips are flown in legs as now.
-- **Visual fallback:** if another mod replaces citizen rendering, our look may not show; she then looks as that mod draws her.
 - **Players** must run the same Four Twenty version as the server (already true).
 
 ## Out of Scope
 
 - A separate stand-in character (only if this approach hits a wall, and then in its own spec).
+- A new Lifted model with its own art (dropped 15 Nov; could return as its own spec).
 - Changing sober Builders, or any other colonist job.
 - New moves or routines for the dance beyond what the new body makes possible (bent limbs, props); the routines from spec 014 carry over.
