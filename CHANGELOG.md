@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.26.0]
 
 ### Added
 - **Lifted Builders** (with MineColonies): a Builder who smokes a joint becomes **Lifted**. She flies to her work with a faint green glow and a little smoke trail, and builds the **Higher Ground** way:
