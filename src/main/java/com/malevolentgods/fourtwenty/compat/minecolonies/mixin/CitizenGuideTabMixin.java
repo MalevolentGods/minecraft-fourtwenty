@@ -16,5 +16,6 @@ public abstract class CitizenGuideTabMixin {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void fourtwenty$guideTab(ICitizenDataView citizen, ResourceLocation ui, CallbackInfo ci) {
         BudtenderGuideWindow.addTab((AbstractWindowSkeleton) (Object) this, citizen);
+        com.malevolentgods.fourtwenty.compat.minecolonies.client.HighStatusClient.attach((AbstractWindowSkeleton) (Object) this, citizen);
     }
 }

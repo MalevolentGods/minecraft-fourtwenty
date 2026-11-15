@@ -354,6 +354,12 @@ public final class LiftedFlight {
         return true;
     }
 
+    /** Whether she's on her way home after her high ran out. */
+    public static boolean flyingHome(LivingEntity citizen) {
+        var f = FLIGHTS.get(citizen.getUUID());
+        return f != null && f.home != null;
+    }
+
     /** Whether flight is looking after her at all (flying or landing). */
     public static boolean tracked(LivingEntity citizen) {
         return FLIGHTS.containsKey(citizen.getUUID());

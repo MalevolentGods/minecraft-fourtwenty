@@ -33,6 +33,7 @@ public final class MidnightMachineClient {
         NeoForge.EVENT_BUS.addListener(MidnightMachineClient::tick);
         DanceAnimation.install();
         MidnightMachineSettings.install();
+        HighStatusClient.install();
     }
 
     /** Client clock in ms, on the same game-time base as the server. */

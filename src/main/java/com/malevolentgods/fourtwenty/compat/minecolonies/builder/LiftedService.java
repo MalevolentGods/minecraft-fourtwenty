@@ -83,6 +83,7 @@ public final class LiftedService {
         // a chunk reload) can't leave the glow off for good (it went missing in game, 2026-11-14).
         if (level.getGameTime() % 600 < elapsed) LiftedPayload.send(citizen, lifted.isLifted(colony.getID(), data.getId()));
         if (level.getGameTime() % BuilderConfig.requestIntervalTicks() < elapsed) manageRequest(level, colony, citizen);
+        if (level.getGameTime() % 40 < elapsed) sendStatus(level, colony, citizen);
         MidnightMachineService.tick(level, colony, citizen, elapsed);
     }
 
@@ -168,6 +169,30 @@ public final class LiftedService {
         if (handler == null) return ItemStack.EMPTY;
         int slot = JointService.jointSlot(handler);
         return slot < 0 ? ItemStack.EMPTY : handler.getStackInSlot(slot);
+    }
+
+    /** Her high, for the line on her citizen window (HighStatusPayload). */
+    private static void sendStatus(ServerLevel level, IColony colony, EntityCitizen citizen) {
+        var data = citizen.getCitizenData();
+        var buff = Lifted.get(level).get(colony.getID(), data.getId());
+        HighStatusPayload payload;
+        if (!allowed(citizen)) {
+            payload = new HighStatusPayload(citizen.getId(), HighStatusPayload.OFF, "", 0, false, 0, false, false);
+        } else if (buff != null) {
+            payload = new HighStatusPayload(citizen.getId(), HighStatusPayload.LIFTED, buff.strain().translationKey(), buff.ticksLeft(),
+                    BuilderAccess.building(citizen), 0, false, true);
+        } else if (onSmokeBreak(citizen)) {
+            payload = new HighStatusPayload(citizen.getId(), HighStatusPayload.SMOKE_BREAK, "", 0, false, 0, false, true);
+        } else if (LiftedFlight.flyingHome(citizen)) {
+            payload = new HighStatusPayload(citizen.getId(), HighStatusPayload.FLYING_HOME, "", 0, false, 0, false, true);
+        } else {
+            var hut = BuilderAccess.hut(citizen);
+            int joints = count(citizen.getInventoryCitizen()) + (hut == null ? 0 : count(hut.getItemHandlerCap()));
+            boolean asking = REQUESTS.containsKey(citizen.getUUID());
+            boolean spare = joints > 0 || asking || spare(colony) > 0;
+            payload = new HighStatusPayload(citizen.getId(), HighStatusPayload.SOBER, "", 0, false, joints, asking, spare);
+        }
+        HighStatusPayload.send(citizen, payload);
     }
 
     /** Smoke one joint (hers, or one a player left in her hut) and become Lifted. False with none to hand. */

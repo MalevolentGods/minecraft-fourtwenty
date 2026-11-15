@@ -2244,5 +2244,15 @@
   "fourtwenty.midnight_machine": "Midnight Machine",
   "fourtwenty.midnight_machine.volume": "Midnight Machine: %s%%",
   "fourtwenty.midnight_machine.mute": "Mute the Midnight Machine",
-  "fourtwenty.midnight_machine.unmute": "Unmute the Midnight Machine"
+  "fourtwenty.midnight_machine.unmute": "Unmute the Midnight Machine",
+  "fourtwenty.high.lifted": "Lifted on %s · %s left",
+  "fourtwenty.high.paused": "Lifted on %s · %s left (paused)",
+  "fourtwenty.high.smoke": "Having a smoke at the hut",
+  "fourtwenty.high.home": "High wore off · flying home",
+  "fourtwenty.high.joints": "Not high · %s joint(s) to smoke",
+  "fourtwenty.high.asking": "Not high · asking for a joint",
+  "fourtwenty.high.nospare": "Not high · no spare joints",
+  "fourtwenty.high.sober": "Not high",
+  "fourtwenty.high.off": "Lifted is off for this hut",
+  "fourtwenty.high.tooltip": "The high only counts down while building, and pauses for breaks, meals and supply runs."
 }
