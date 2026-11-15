@@ -35,7 +35,7 @@
       {
         "name": "fourtwenty:midnight_machine/track1",
         "stream": true,
-        "attenuation_distance": 24
+        "attenuation_distance": 20
       }
     ]
   },
@@ -46,7 +46,7 @@
       {
         "name": "fourtwenty:midnight_machine/track2",
         "stream": true,
-        "attenuation_distance": 24
+        "attenuation_distance": 20
       }
     ]
   },
@@ -57,7 +57,7 @@
       {
         "name": "fourtwenty:midnight_machine/track3",
         "stream": true,
-        "attenuation_distance": 24
+        "attenuation_distance": 20
       }
     ]
   },
@@ -68,7 +68,7 @@
       {
         "name": "fourtwenty:midnight_machine/track4",
         "stream": true,
-        "attenuation_distance": 24
+        "attenuation_distance": 20
       }
     ]
   },
@@ -79,7 +79,7 @@
       {
         "name": "fourtwenty:midnight_machine/track5",
         "stream": true,
-        "attenuation_distance": 24
+        "attenuation_distance": 20
       }
     ]
   },
@@ -90,7 +90,7 @@
       {
         "name": "fourtwenty:midnight_machine/track6",
         "stream": true,
-        "attenuation_distance": 24
+        "attenuation_distance": 20
       }
     ]
   },
@@ -101,7 +101,7 @@
       {
         "name": "fourtwenty:midnight_machine/track7",
         "stream": true,
-        "attenuation_distance": 24
+        "attenuation_distance": 20
       }
     ]
   }

@@ -17,7 +17,7 @@ import java.util.concurrent.CompletionException;
 
 /**
  * One album track playing from a Builder (specs/014-midnight-machine FR-002, FR-003): on the Jukebox/Note Blocks
- * slider, fading linearly to nothing at the event's 24-block attenuation distance, following her as she flies, and
+ * slider, loud only close to her (a square falloff to silence at 20 blocks), following her as she flies, and
  * starting at {@code startMs} through {@link SeekingOggStream}.
  */
 public final class AlbumSoundInstance extends AbstractTickableSoundInstance {
@@ -31,11 +31,32 @@ public final class AlbumSoundInstance extends AbstractTickableSoundInstance {
         this.builder = builder;
         this.track = track;
         this.startMs = Math.max(0, startMs);
-        this.attenuation = Attenuation.LINEAR;
+        // Our own steep falloff (below) instead of OpenAL's linear one, which still sounds loud halfway out; the
+        // source stays positioned, so it still pans and sounds like it comes from her.
+        this.attenuation = Attenuation.NONE;
         this.looping = false;
         this.relative = false;
-        this.volume = 1;
+        this.volume = 0;
         follow();
+        this.volume = falloff();
+    }
+
+    /** Full volume within {@link #NEAR} blocks of her, falling off on a square curve to silence at {@link #FAR}. */
+    static final double NEAR = 2, FAR = 20;
+    /** Right beside her: loud, not full blast (the user, 2026-11-14). */
+    static final double MAX_VOLUME = 0.8;
+
+    private float falloff() {
+        var player = Minecraft.getInstance().player;
+        if (player == null) return 0;
+        double d = Math.sqrt(player.distanceToSqr(x, y, z));
+        double t = Math.max(0, Math.min(1, (FAR - d) / (FAR - NEAR)));
+        return (float) (MAX_VOLUME * t * t);
+    }
+
+    @Override
+    public boolean canStartSilent() {
+        return true;   // she may start a track while you're out of earshot
     }
 
     private void follow() {
@@ -51,6 +72,7 @@ public final class AlbumSoundInstance extends AbstractTickableSoundInstance {
             return;
         }
         follow();
+        volume = falloff();
     }
 
     public void end() {

@@ -72,7 +72,7 @@
 
   Install it from `client/ModClientEvents.java` when MineColonies is loaded.
 - [X] T013 [P] [US1] Write `CT/AlbumPositionGameTests.java`: positions survive a `Lifted` save and load, kept apart by colony and citizen, and an old save without positions loads.
-- [ ] T014 [US1] **In game (M1):** quickstart M1 steps 1-6 on flatworld, and record the results.
+- [X] T014 [US1] **In game (M1):** quickstart M1 steps 1-6 on flatworld, and record the results. *(2026-11-14: plays from her and follows her; OpenAL's linear fade felt like "everywhere", replaced by our own square falloff, full within 2 blocks, silent at 20, capped at 80%. User: good.)*
 
 **Checkpoint:** the music works in game. Commit.
 
@@ -101,7 +101,7 @@
   - **Glow:** full-bright.
   - **VU bars:** draw the six VU bars with heights from `trackN.bands` at the player's playback position (interpolated between frames). With no music playing, follow the dance beat instead.
   - **Model loading:** register the models with `ModelEvent.RegisterAdditional`.
-- [ ] T019 [US2] **In game (M2):** quickstart M2, and the user approves the look (SC-005).
+- [X] T019 [US2] **In game (M2):** quickstart M2, and the user approves the look (SC-005). *(2026-11-14: VU bars first drawn in the halo pass were painted over by the boombox; now solid full-bright in its own pass and bouncing. User: "awesome".)*
 
 **Checkpoint:** the boombox is approved. Commit.
 

@@ -4,6 +4,7 @@ import com.malevolentgods.fourtwenty.domain.FlightPlanner;
 import com.malevolentgods.fourtwenty.domain.StandingSpot;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,7 +40,45 @@ public final class LiftedFlight {
         boolean landing;
         @Nullable BlockPos landAt;
         long walkUntil;
+        int descending;   // ticks spent landing, for the backstop
+        double bestToNext = Double.MAX_VALUE;   // closest she's got to the next cell of her route
+        int noProgress;   // ticks without getting closer to it
+        int replans;      // stalls on this trip; too many and she walks
+        long notThereSince = -1;   // game time approach() started answering "not there yet", for the backstop
+        long lastAsked;            // game time MineColonies last asked her to fly somewhere (approach)
     }
+
+    /**
+     * Flight only holds her while MineColonies keeps asking it to (3 s). Its other walking (mining a block out of the
+     * way, fetching) doesn't come through approach(), and holding her in the air then froze her mid-air in MINE_BLOCK
+     * for minutes (2026-11-14); after this long without a request she lands and walks the MineColonies way.
+     */
+    private static final int ASKED_WINDOW_TICKS = 60;
+
+    /** Flying that hasn't got her to her block in this long gives up and walks (10 s). */
+    private static final int ARRIVAL_BACKSTOP_TICKS = 200;
+
+    /** About a second without getting closer to the next cell of her route: something's in the way, plan again. */
+    private static final int STALL_TICKS = 20;
+    /** Stalls on one trip before she gives up flying it and walks. */
+    private static final int MAX_REPLANS = 3;
+
+    /**
+     * Free for flying: open (as the watchdog sees it) and with nothing from the block below rising into it. Walls,
+     * fences and gates stand 1.5 blocks tall, so the cell above them isn't really open (she flew into wall tops,
+     * 2026-11-14).
+     */
+    static boolean flyFree(ServerLevel level, int x, int y, int z) {
+        if (!BuilderWatchdog.free(level, x, y, z)) return false;
+        var pos = new BlockPos(x, y, z);
+        if (level.getBlockState(pos).getCollisionShape(level, pos).max(Direction.Axis.Y) > 0.2) return false;
+        var below = pos.below();
+        var shape = level.getBlockState(below).getCollisionShape(level, below);
+        return shape.isEmpty() || shape.max(Direction.Axis.Y) <= 1.0;
+    }
+
+    /** A landing that hasn't touched down by now snaps her to the ground below (5 s). */
+    private static final int LANDING_BACKSTOP_TICKS = 100;
 
     private static final Map<UUID, Flight> FLIGHTS = new HashMap<>();
 
@@ -52,7 +91,13 @@ public final class LiftedFlight {
             var entry = it.next();
             if (!(level.getEntity(entry.getKey()) instanceof EntityCitizen citizen) || !citizen.isAlive()) continue;
             var flight = entry.getValue();
-            boolean flying = !flight.landing && LiftedService.isLifted(citizen) && LiftedService.allowed(citizen) && BuilderAccess.building(citizen);
+            boolean flying = !flight.landing && LiftedService.isLifted(citizen) && LiftedService.allowed(citizen) && BuilderAccess.building(citizen)
+                    && level.getGameTime() - flight.lastAsked <= ASKED_WINDOW_TICKS;
+            if (!flying && !flight.landing) {   // MineColonies walks her itself now: come down first
+                flight.landing = true;
+                flight.landAt = null;
+                flight.descending = 0;
+            }
             citizen.fallDistance = 0;
             if (flying) {
                 fly(citizen, flight);
@@ -72,12 +117,14 @@ public final class LiftedFlight {
         if (!(citizen.level() instanceof ServerLevel level)) return true;
         var flight = FLIGHTS.computeIfAbsent(citizen.getUUID(), id -> new Flight());
         long now = level.getGameTime();
+        flight.lastAsked = now;
         if (now < flight.walkUntil) return null;
         flight.landing = false;
         BlockPos at = citizen.blockPosition();
         boolean inTheWay = at.equals(block) || at.above().equals(block) || at.getX() == block.getX() && at.getZ() == block.getZ();
         if (!inTheWay && citizen.position().distanceTo(Vec3.atCenterOf(block)) <= reach && (hover == null || flight.target == null || flight.target.equals(hover))) {
             hold(citizen);   // Higher Ground: place everything in reach from here before moving on
+            flight.notThereSince = -1;
             return true;
         }
         BlockPos goal = hover != null ? hover : hoverPoint(level, citizen, block, reach);
@@ -88,20 +135,48 @@ public final class LiftedFlight {
             leg = waypoint(level, citizen.blockPosition(), goal, legMax);
             if (leg == null) return walk(citizen, flight, now);
         }
+        if (flight.replans > MAX_REPLANS) {
+            flight.replans = 0;
+            return walk(citizen, flight, now);
+        }
         if (!leg.equals(flight.target)) {
             var start = new FlightPlanner.Cell(citizen.getBlockX(), Mth.floor(citizen.getY() + 0.01), citizen.getBlockZ());
             var route = FlightPlanner.plan(start, new FlightPlanner.Cell(leg.getX(), leg.getY(), leg.getZ()),
-                    (x, y, z) -> BuilderWatchdog.free(level, x, y, z), BuilderConfig.flightRadius(), MAX_CELLS);
+                    (x, y, z) -> flyFree(level, x, y, z), BuilderConfig.flightRadius(), MAX_CELLS);
             if (route.isEmpty()) return walk(citizen, flight, now);
             flight.route = route;
             flight.next = 0;
             flight.target = leg;
+            flight.bestToNext = Double.MAX_VALUE;
+            flight.noProgress = 0;
         }
         if (flight.next >= flight.route.size() && !leg.equals(goal)) {
+            flight.replans = 0;
+            flight.notThereSince = -1;
             flight.target = null;   // this leg's done: the next call plans the next one from here
             return false;
         }
-        return citizen.position().distanceTo(Vec3.atCenterOf(block)) <= reach && flight.next >= flight.route.size();
+        // At the end of the route to her hover point she's there: the point was chosen within reach of the block,
+        // and measuring again from her feet (half a block lower) left her hovering on it for good (2026-11-14).
+        boolean there = flight.next >= flight.route.size()
+                && (leg.equals(goal) || citizen.position().distanceTo(Vec3.atCenterOf(block)) <= reach);
+        return arrived(citizen, flight, now, there);
+    }
+
+    /** Remember how long she's been on her way; past the backstop, land and walk instead of hanging there. */
+    @Nullable
+    private static Boolean arrived(EntityCitizen citizen, Flight flight, long now, boolean there) {
+        if (there) {
+            flight.notThereSince = -1;
+            return true;
+        }
+        if (flight.notThereSince < 0) flight.notThereSince = now;
+        if (now - flight.notThereSince > ARRIVAL_BACKSTOP_TICKS) {
+            BuilderLog.flightStall(citizen.getName().getString(), citizen.blockPosition(), "gave up, walking");
+            flight.notThereSince = -1;
+            return walk(citizen, flight, now);
+        }
+        return false;
     }
 
     /** No flight this step: come down, and walk for a few seconds before trying to fly again. */
@@ -111,6 +186,8 @@ public final class LiftedFlight {
         flight.landAt = null;
         flight.target = null;
         flight.walkUntil = now + 100;
+        flight.replans = 0;
+        flight.notThereSince = -1;
         return null;
     }
 
@@ -122,7 +199,7 @@ public final class LiftedFlight {
         int x = (int) Math.round(from.getX() + (goal.getX() - from.getX()) * t);
         int y = (int) Math.round(from.getY() + (goal.getY() - from.getY()) * t);
         int z = (int) Math.round(from.getZ() + (goal.getZ() - from.getZ()) * t);
-        FlightPlanner.Free free = (xx, yy, zz) -> BuilderWatchdog.free(level, xx, yy, zz);
+        FlightPlanner.Free free = (xx, yy, zz) -> flyFree(level, xx, yy, zz);
         for (int dy = 0; dy <= 8; dy++) for (int dx = -2; dx <= 2; dx++) for (int dz = -2; dz <= 2; dz++) {
             if (FlightPlanner.fits(free, x + dx, y + dy, z + dz)) return new BlockPos(x + dx, y + dy, z + dz);
         }
@@ -134,6 +211,12 @@ public final class LiftedFlight {
         var flight = FLIGHTS.computeIfAbsent(citizen.getUUID(), id -> new Flight());
         flight.landing = true;
         flight.landAt = null;
+        flight.descending = 0;
+    }
+
+    /** Whether flight is looking after her at all (flying or landing). */
+    public static boolean tracked(LivingEntity citizen) {
+        return FLIGHTS.containsKey(citizen.getUUID());
     }
 
     public static boolean inFlight(LivingEntity citizen) {
@@ -154,6 +237,23 @@ public final class LiftedFlight {
         double distance = delta.length();
         if (distance < 0.25) {
             flight.next++;
+            flight.notThereSince = -1;   // progress along the route: the arrival backstop starts over
+            flight.bestToNext = Double.MAX_VALUE;
+            flight.noProgress = 0;
+            return;
+        }
+        if (distance < flight.bestToNext - 0.02) {
+            flight.bestToNext = distance;
+            flight.noProgress = 0;
+        } else if (++flight.noProgress > STALL_TICKS
+                || !FlightPlanner.fits((x, y, z) -> flyFree((ServerLevel) citizen.level(), x, y, z), cell.x(), cell.y(), cell.z())) {
+            // Blocked (a block she just placed, or one the plan misjudged): stop and plan again from here.
+            BuilderLog.flightStall(citizen.getName().getString(), citizen.blockPosition(), new BlockPos(cell.x(), cell.y(), cell.z()));
+            flight.replans++;
+            flight.target = null;
+            flight.route = List.of();
+            flight.next = 0;
+            hold(citizen);
             return;
         }
         Vec3 step = delta.scale(Math.min(SPEED, distance) / distance);
@@ -171,6 +271,15 @@ public final class LiftedFlight {
     /** One tick of a gentle landing; true once she's down. */
     private static boolean descend(ServerLevel level, EntityCitizen citizen, Flight flight) {
         if (citizen.onGround() && !citizen.isNoGravity()) return true;
+        if (citizen.onGround() || ++flight.descending > LANDING_BACKSTOP_TICKS) {
+            // Anything she's standing on will do (a slab above the spot we aimed for left her hovering on it with
+            // gravity off, 2026-11-14); and a landing that can't finish snaps her down rather than hang there.
+            if (!citizen.onGround()) snapDown(level, citizen);
+            citizen.setNoGravity(false);
+            citizen.setDeltaMovement(Vec3.ZERO);
+            citizen.fallDistance = 0;
+            return true;
+        }
         citizen.getNavigation().stop();   // her own walking waits until she's down
         if (flight.landAt == null) flight.landAt = landingSpot(level, citizen);
         if (flight.landAt == null) {   // nowhere to stand within reach: straight down, slowly, until she touches something

@@ -66,6 +66,15 @@ public final class LiftedService {
             tryLightUp(level, colony, citizen);
         }
 
+        // Never left floating: gravity off with nothing flying or landing her means a lost flight; bring her down.
+        if (citizen.isNoGravity() && !LiftedFlight.tracked(citizen)) {
+            LiftedFlight.land(citizen);
+            BuilderLog.landed(colony.getID(), citizen.getName().getString(), "orphan");
+        }
+
+        // Remind everyone watching whether she shimmers every 30 s, so a missed or out-of-order message (a relog,
+        // a chunk reload) can't leave the glow off for good (it went missing in game, 2026-11-14).
+        if (level.getGameTime() % 600 < elapsed) LiftedPayload.send(citizen, lifted.isLifted(colony.getID(), data.getId()));
         if (level.getGameTime() % BuilderConfig.requestIntervalTicks() < elapsed) manageRequest(level, colony, citizen);
         MidnightMachineService.tick(level, colony, citizen, elapsed);
     }

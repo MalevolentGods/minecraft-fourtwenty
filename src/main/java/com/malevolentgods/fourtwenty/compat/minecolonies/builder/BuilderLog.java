@@ -22,6 +22,10 @@ public final class BuilderLog {
         LOG.info(P + "landed colony={} citizen={} reason={}", colony, citizen, reason);
     }
 
+    public static void flightStall(String citizen, Object at, Object next) {
+        LOG.info(P + "flightstall citizen={} at={} next={}", citizen, at, next);
+    }
+
     public static void diag(String line, Object... args) {
         if (BuilderConfig.logBuilderPathing()) LOG.info(P + line, args);
     }

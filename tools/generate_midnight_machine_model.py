@@ -57,6 +57,8 @@ def textures():
     # the album art for the top panel: Art.png at 32x32, sharpened so the phoenix still reads
     art = Image.open(ALBUM / 'Art.png').convert('RGB').resize((32, 32), Image.LANCZOS).filter(ImageFilter.SHARPEN)
     art.save(TEX / 'art.png')
+    # plain white for the VU bar segments BoomboxLayer draws (it tints each one its band's colour)
+    Image.new('RGB', (16, 16), (255, 255, 255)).save(TEX / 'white.png')
     # a lit frame round the art
     im = Image.new('RGB', (16, 16), GOLD)
     im.save(TEX / 'frame.png')
