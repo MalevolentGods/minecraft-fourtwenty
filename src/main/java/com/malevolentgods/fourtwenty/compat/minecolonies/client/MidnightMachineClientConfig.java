@@ -18,7 +18,7 @@ public final class MidnightMachineClientConfig {
     static {
         var b = new ModConfigSpec.Builder();
         b.push("midnightMachine");
-        VOLUME = b.comment("The Midnight Machine's music, 0 to 1, on top of the Jukebox/Note Blocks slider.").defineInRange("volume", 1.0, 0, 1);
+        VOLUME = b.comment("The Midnight Machine's music, 0 to 1 (starts at 0.35), on top of the Jukebox/Note Blocks slider.").defineInRange("volume", 0.35, 0, 1);
         MUTED = b.comment("Mute the Midnight Machine for you (the boombox and dancing stay).").define("muted", false);
         b.pop();
         SPEC = b.build();
