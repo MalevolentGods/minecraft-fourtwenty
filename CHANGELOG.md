@@ -2,7 +2,7 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
-## [Unreleased]
+## [0.28.0]
 
 ### Added
 - **The Vape Pen:** load it with Oil (right-click Oil onto it). One Oil is 8 hits, each a full high with Oil's boost, and it holds 16, so Oil now lasts far longer than buds in a pipe. Crafted from a glass pane, an Oil and an iron ingot. Oil still burns in a Hookah and goes into the Blazer.
