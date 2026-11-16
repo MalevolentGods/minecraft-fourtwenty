@@ -2,6 +2,18 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [0.29.0]
+
+### Changed
+- **Sensi Heights v116** (with MineColonies), the new huts reworked:
+  - **Every hut its own shape:** the Fletcher's lean-to hall, the Bakery's shopfront, the Kitchen's smokehouse, the Alchemist's tower and greenhouse, the Dyer's pavilion, the Concrete Mixer's silo, the Stonemason's crane, the Crusher's water wheel, the Smeltery's clerestory, the Mechanic's garage, the Hospital's cross plan, the Library's gallery, the School's belfry, the Enchanter's tower, the Archery's watchtower, the Combat Academy's arena and more.
+  - **Working fireplaces:** every chimney from level 2 is dressed in panels and, against a building, is a real fireplace with a hearth and chimney breast inside.
+  - **The Weed Lab is the player's Four Twenty facility:** each level a tier further through the mod (Grow Tent to Cosmic Kush Pod, Snip Station to Trim Reaper, Hookah to Grand Hookah and The Vault), every level wired with a Twin Wick line per tier and a Hit Box ladder, so every machine runs on its own tier. Level 1 is rewired so its Hookah really powers the Terpinator and Infuser.
+  - **A colour per hut:** each hut's level 5 lamps and trim are its own Four Twenty colour.
+  - **Sealed buildings:** no gaps under roofs or in walls, doors kept clear.
+  - **The signature door** (stripped spruce and diorite) on every door from level 3.
+  - **Re-dressed MineColonies buildings** (Barracks, Gatehouse, Graveyard, Nether Mine, the Supply Ship) in Four Twenty's palette: our concrete and hemp for their bricks, hemp sails on the ship.
+
 ## [0.28.0]
 
 ### Added

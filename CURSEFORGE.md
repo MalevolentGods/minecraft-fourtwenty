@@ -53,6 +53,11 @@ Flying can't kill you, overloads burn out in smoke rather than explode, and fail
 
 ## Changelog
 
+### 0.29.0
+
+- **Sensi Heights:** every new hut its own shape, working fireplaces, a colour per hut at level 5, sealed walls and roofs, the signature door from level 3, and the re-dressed MineColonies buildings in Four Twenty's palette.
+- **The Weed Lab** grows through the mod's tiers, every level wired with the right power for every machine.
+
 ### 0.28.0
 
 - **The Vape Pen:** load it with Oil; one Oil is 8 hits, and it holds 16.
