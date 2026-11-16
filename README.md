@@ -4,6 +4,11 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.29.0
+
+- **Sensi Heights** (with MineColonies): every new hut has its own shape, chimneys are working fireplaces, each hut's level 5 lamps are its own colour, walls and roofs are sealed, and the signature door is on every door from level 3. The re-dressed MineColonies buildings now use Four Twenty's palette.
+- **The Weed Lab** is the player's Four Twenty facility: each level a tier further through the mod, every machine wired to power of its own tier.
+
 ## What's new in 0.28.0
 
 - **The Vape Pen:** load it with Oil (right-click Oil onto it). One Oil is 8 hits, each a full high, and it holds 16, so Oil lasts far longer than buds in a pipe.
