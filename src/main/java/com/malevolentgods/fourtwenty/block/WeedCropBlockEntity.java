@@ -41,8 +41,9 @@ public class WeedCropBlockEntity extends BlockEntity {
         if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
 
-    public static Traits at(BlockGetter level, BlockPos pos) {
-        return level.getBlockEntity(pos) instanceof WeedCropBlockEntity crop ? crop.traits : Traits.DEFAULT;
+    /** The crop's traits, or the defaults with no world: Structurize's build window asks for the clone item with a null level. */
+    public static Traits at(@Nullable BlockGetter level, BlockPos pos) {
+        return level != null && level.getBlockEntity(pos) instanceof WeedCropBlockEntity crop ? crop.traits : Traits.DEFAULT;
     }
 
     @Override protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
