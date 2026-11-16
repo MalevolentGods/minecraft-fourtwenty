@@ -2,6 +2,23 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- **The Vape Pen:** load it with Oil (right-click Oil onto it). One Oil is 8 hits, each a full high with Oil's boost, and it holds 16, so Oil now lasts far longer than buds in a pipe. Crafted from a glass pane, an Oil and an iron ingot. Oil still burns in a Hookah and goes into the Blazer.
+- **Sensi Heights: 34 more huts, all levels** (with MineColonies; pack v106, first drafts being play-tested):
+  - **Colony basics:** Hospital (a White Bed per level), Fisher (a shore shed and pier: place it by water), Courier, and the Supply Ship (16 weed seeds in its stores).
+  - **The crafters:** Fletcher, Bakery, Kitchen, Alchemist, Dyer, Glassblower, Concrete Mixer, Stonemason, Stone Smeltery, Crusher, Sifter, Blacksmith, Smeltery and Mechanic.
+  - **Farming:** Plantation, Composter, Florist, and all 8 plantation fields.
+  - **Education, military and mystic:** Library, School, Enchanter, Mystical Site, Archery, Combat Academy, Barracks and Barracks Tower, Gatehouse, Graveyard and Nether Mine.
+  - **The Weed Lab, levels 2-5:** a grow room, a chemistry bench, the Rosin Rig and Pheno Chamber, then a lounge with a Think Tank and a glass bong bar.
+
+### Changed
+- **New item art:** painted icons for Hash, Kief, Resin, Rosin, Oil, Ash, the Weed Brownie, the Dab Cell, the Bit Chit, Skip Me Bro and the Buzz Bot.
+
+### Fixed
+- Two Dispensary blueprint tests that still checked the first prototype now check today's Dispensary.
+
 ## [0.27.0]
 
 ### Added

@@ -190,7 +190,9 @@ def textures():
     for _ in range(26):
         ash.putpixel((rng.randint(3, 12), rng.randint(8, 13)), (rng.choice((64, 120, 150)),) * 3 + (255,))
     (ASSETS / 'textures/item').mkdir(exist_ok=True)
-    ash.save(ASSETS / 'textures/item/ash.png')
+    # painted from a sheet by tools/import_item_sheet.py (the art pass): not drawn here any more
+    if not (ASSETS / 'textures/item/ash.png').exists():
+        ash.save(ASSETS / 'textures/item/ash.png')
     write(ASSETS / 'models/item/ash.json', {'parent': 'item/generated', 'textures': {'layer0': 'fourtwenty:item/ash'}})
 
 
@@ -317,7 +319,9 @@ def extracts():
     for name, draw in shapes.items():
         icon = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
         draw(ImageDraw.Draw(icon))
-        icon.save(ASSETS / f'textures/item/{name}.png')
+        # painted from a sheet by tools/import_item_sheet.py (the art pass): not drawn here any more
+        if not (ASSETS / f'textures/item/{name}.png').exists():
+            icon.save(ASSETS / f'textures/item/{name}.png')
         write(ASSETS / f'models/item/{name}.json', {'parent': 'item/generated', 'textures': {'layer0': f'fourtwenty:item/{name}'}})
 
 

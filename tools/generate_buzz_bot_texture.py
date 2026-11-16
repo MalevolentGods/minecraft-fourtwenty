@@ -93,8 +93,7 @@ def main():
 
     (ASSETS / 'textures/entity').mkdir(exist_ok=True)
     out.save(ASSETS / 'textures/entity/buzz_bot.png', optimize=True)
-    icon = clear_black(sheet.crop(FACE_AND_ANTENNAE)).resize((64, 64), Image.BOX)
-    icon.save(ASSETS / 'textures/item/buzz_bot.png', optimize=True)
+    # the item icon is painted from a sheet by tools/import_item_sheet.py (the art pass): not drawn here any more
     print('ok')
 
 

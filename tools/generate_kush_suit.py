@@ -240,7 +240,7 @@ def stations():
 def main():
     armour_layers()
     for name, draw in (('hotbox_helm', helm), ('puff_plate', plate), ('couchlock_greaves', greaves), ('moon_boots', boots),
-                       ('blazer', blazer), ('dab_cell', dab_cell)):
+                       ('blazer', blazer)):   # dab_cell's icon is painted from a sheet by tools/import_item_sheet.py (the art pass): not drawn here any more
         icon(name, draw)
     stations()
     print('wrote the Kush Suit art')

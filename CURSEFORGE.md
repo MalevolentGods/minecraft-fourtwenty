@@ -53,6 +53,12 @@ Flying can't kill you, overloads burn out in smoke rather than explode, and fail
 
 ## Changelog
 
+### Unreleased
+
+- **The Vape Pen:** load it with Oil; one Oil is 8 hits, and it holds 16.
+- **New item art** for the extracts, Ash, the Weed Brownie, the Dab Cell, the Bit Chit, Skip Me Bro and the Buzz Bot.
+- **Sensi Heights: 34 more huts** with all their levels: Hospital, Fisher, Courier, the Supply Ship, the 14 crafters, Plantation and its fields, Composter, Florist, Library, School, Enchanter, Mystical Site, Archery, Combat Academy, Barracks, Gatehouse, Graveyard, Nether Mine, and Weed Lab levels 2-5.
+
 ### 0.27.0
 
 - **Lifted Builders fly everywhere** (with MineColonies): while high, every trip is flown: home to unload or fetch materials, to her racks, and on breaks to the restaurant, bed or the hospital, landing close by.
