@@ -53,7 +53,7 @@ Flying can't kill you, overloads burn out in smoke rather than explode, and fail
 
 ## Changelog
 
-### Unreleased
+### 0.28.0
 
 - **The Vape Pen:** load it with Oil; one Oil is 8 hits, and it holds 16.
 - **New item art** for the extracts, Ash, the Weed Brownie, the Dab Cell, the Bit Chit, Skip Me Bro and the Buzz Bot.

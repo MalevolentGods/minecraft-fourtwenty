@@ -4,6 +4,12 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 0.28.0
+
+- **The Vape Pen:** load it with Oil (right-click Oil onto it). One Oil is 8 hits, each a full high, and it holds 16, so Oil lasts far longer than buds in a pipe.
+- **New item art:** painted icons for Hash, Kief, Resin, Rosin, Oil, Ash, the Weed Brownie, the Dab Cell, the Bit Chit, Skip Me Bro and the Buzz Bot.
+- **Sensi Heights: 34 more huts** (with MineColonies), every level: Hospital, Fisher, Courier, the Supply Ship, the 14 crafters, Plantation and its 8 fields, Composter, Florist, Library, School, Enchanter, Mystical Site, Archery, Combat Academy, Barracks, Gatehouse, Graveyard, Nether Mine, and Weed Lab levels 2-5.
+
 ## What's new in 0.27.0
 
 - **Lifted Builders fly everywhere** (with MineColonies): while high, every trip a Builder makes is flown, not just around the build: home to unload or fetch materials, to her racks, and on breaks to the restaurant, bed or the hospital. She lands close by and walks only the last steps.
