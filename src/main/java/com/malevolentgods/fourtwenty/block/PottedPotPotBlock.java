@@ -27,8 +27,8 @@ import javax.annotation.Nonnull;
 /**
  * A Potted Pot Pot: a Pot Pot with a weed plant in it. Placed, it holds a sprout; the plant grows
  * through the crop's eight stages in the light (bone meal speeds it), and right-clicked when mature
- * it's harvested like a field crop (the crop's own loot, one seed kept back for the plant) and starts
- * again from a sprout. Breaking it gives back the Potted Pot Pot.
+ * it's harvested like a field crop (the crop's own loot, every seed included) and the plant comes out,
+ * leaving the empty Pot Pot of the same colour (weed doesn't regrow after a harvest, 1.0.2). Breaking it gives back the Potted Pot Pot.
  */
 public class PottedPotPotBlock extends Block implements BonemealableBlock {
     public static final IntegerProperty AGE = BlockStateProperties.AGE_7;
@@ -69,21 +69,20 @@ public class PottedPotPotBlock extends Block implements BonemealableBlock {
     }
 
     /** Harvest a mature plant like the field crop: its loot, one seed kept for the plant, which starts again. */
+    /** The empty Pot Pot of this one's colour. */
+    private Block emptyPot() {
+        String code = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(this).getPath().substring("potted_pot_pot_".length());
+        return com.malevolentgods.fourtwenty.registry.ModTerpenes.POT_POTS.get(code).get();
+    }
+
     @Override protected @Nonnull InteractionResult useWithoutItem(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos,
                                                                  @Nonnull Player player, @Nonnull BlockHitResult hit) {
         if (state.getValue(AGE) < MAX_AGE) return InteractionResult.PASS;
         if (level instanceof ServerLevel server) {
             BlockState crop = ModBlocks.WEED_CROP.get().getStateForAge(MAX_AGE);
             var drops = Block.getDrops(crop, server, pos, null, player, player.getMainHandItem());
-            level.setBlock(pos, state.setValue(AGE, 0), Block.UPDATE_ALL);
-            boolean kept = false;
-            for (ItemStack stack : drops) {
-                if (!kept && stack.is(ModItems.WEED_SEEDS.get()) && !stack.isEmpty()) {
-                    stack.shrink(1);
-                    kept = true;
-                }
-                popResource(level, pos, stack);
-            }
+            level.setBlock(pos, emptyPot().defaultBlockState(), Block.UPDATE_ALL);
+            for (ItemStack stack : drops) popResource(level, pos, stack);
             player.awardStat(Stats.BLOCK_MINED.get(ModBlocks.WEED_CROP.get()));
             player.causeFoodExhaustion(0.005f);
         }

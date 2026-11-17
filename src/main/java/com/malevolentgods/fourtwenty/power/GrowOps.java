@@ -13,7 +13,8 @@ import net.neoforged.neoforge.event.level.BlockDropsEvent;
 
 import java.util.List;
 
-/** The big harvests of the top plots: half as many again of everything but seed, and the crop replants itself. */
+/** The big harvests of the top plots: half as many again of everything but seed, and the crop replants itself (not weed:
+ * weed never regrows after a harvest, 1.0.2). */
 public final class GrowOps {
     private GrowOps() {}
 
@@ -61,6 +62,7 @@ public final class GrowOps {
         if (!(state.getBlock() instanceof CropBlock crop) || !crop.isMaxAge(state) || !bigHarvest(event.getLevel(), pos)) return;
         var stacks = event.getDrops().stream().map(ItemEntity::getItem).toList();
         raise(state, event.getLevel(), pos, stacks);
+        if (state.getBlock() instanceof com.malevolentgods.fourtwenty.block.WeedCropBlock) return;
         ItemStack seed = state.getCloneItemStack(new net.minecraft.world.phys.BlockHitResult(pos.getCenter(), net.minecraft.core.Direction.UP, pos, false), event.getLevel(), pos, null);
         for (ItemEntity drop : event.getDrops()) {
             if (!drop.getItem().is(seed.getItem())) continue;

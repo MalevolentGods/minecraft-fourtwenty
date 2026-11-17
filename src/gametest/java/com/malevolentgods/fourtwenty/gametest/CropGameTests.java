@@ -41,13 +41,14 @@ public final class CropGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void rightClickHarvestIsSingleAndReplants(GameTestHelper h) {
+    public static void rightClickHarvestIsSingleAndTakesThePlant(GameTestHelper h) {
         var pos = new BlockPos(2, 2, 2);
         h.setBlock(pos.below(), Blocks.FARMLAND);
         h.setBlock(pos, ModBlocks.WEED_CROP.get().getStateForAge(7));
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         h.useBlock(pos, player);
-        h.assertTrue(ModBlocks.WEED_CROP.get().getAge(h.getBlockState(pos)) == 0, "Harvest replants at zero");
+        h.assertTrue(h.getBlockState(pos).isAir(), "Harvest takes the plant up");
+        h.assertItemEntityPresent(ModItems.WEED_SEEDS.get(), pos, 3);
         h.assertItemEntityPresent(ModItems.ROUGH_BUD.get(), pos, 3);
         int before = h.getLevel().getEntitiesOfClass(ItemEntity.class, new net.minecraft.world.phys.AABB(h.absolutePos(pos)).inflate(3))
             .stream().mapToInt(e -> e.getItem().getCount()).sum();
