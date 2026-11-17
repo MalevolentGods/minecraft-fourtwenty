@@ -27,6 +27,11 @@ public final class MidnightMachineClient {
     }
 
     private static final Map<Integer, Machine> MACHINES = new HashMap<>();
+    /** The one boombox this player hears: the nearest playing one (1.0.3). A colony's Builders all play the same moment
+     * of the album, so the rest stay quiet here rather than echo it; walking between them hands the music over in place. */
+    private static int audible = -1;
+    /** How much nearer (blocks, squared) another boombox must be before the music moves to it, so it doesn't flicker. */
+    private static final double SWITCH_SQ = 16;
 
     public static void install() {
         MidnightMachinePayload.clientHandler = MidnightMachineClient::receive;
@@ -74,7 +79,7 @@ public final class MidnightMachineClient {
             m.track = p.track();
             m.trackStartMs = wall() - expected;
         }
-        if (!m.playing) {
+        if (!m.playing || p.entity() != audible) {
             stopSound(m);
         } else if (resync || m.sound == null) {
             startSound(p.entity(), m, expected);
@@ -90,6 +95,7 @@ public final class MidnightMachineClient {
             MACHINES.clear();
             return;
         }
+        pickAudible(mc);
         var it = MACHINES.entrySet().iterator();
         while (it.hasNext()) {
             var e = it.next();
@@ -100,14 +106,33 @@ public final class MidnightMachineClient {
                 continue;
             }
             if (!m.playing) continue;
+            if (e.getKey() != audible) stopSound(m);
+            else if (m.sound == null && wall() - m.trackStartMs < Album.track(m.track).lengthMs()) startSound(e.getKey(), m, wall() - m.trackStartMs);
             long slot = Album.slotMs(m.track);   // the track, then a few seconds of silence
             long at = wall() - m.trackStartMs;
             if (at >= slot) {   // on to the next track (the server's next message confirms it)
                 m.trackStartMs += slot;
                 m.track = (m.track + 1) % Math.max(1, Album.tracks().size());
-                startSound(e.getKey(), m, wall() - m.trackStartMs);
+                if (e.getKey() == audible) startSound(e.getKey(), m, wall() - m.trackStartMs);
             }
         }
+    }
+
+    /** The nearest playing boombox to the player, kept unless another is clearly nearer. */
+    private static void pickAudible(Minecraft mc) {
+        if (mc.player == null) { audible = -1; return; }
+        int best = -1;
+        double bestSq = Double.MAX_VALUE, currentSq = Double.MAX_VALUE;
+        for (var e : MACHINES.entrySet()) {
+            if (!e.getValue().playing) continue;
+            var entity = mc.level.getEntity(e.getKey());
+            if (entity == null) continue;
+            double sq = entity.distanceToSqr(mc.player);
+            if (e.getKey() == audible) currentSq = sq;
+            if (sq < bestSq) { bestSq = sq; best = e.getKey(); }
+        }
+        if (best == -1) audible = -1;
+        else if (currentSq == Double.MAX_VALUE || bestSq + SWITCH_SQ < currentSq) audible = best;
     }
 
     private static void startSound(int entityId, Machine m, long atMs) {
