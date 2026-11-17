@@ -96,6 +96,15 @@ public final class MidnightMachineClient {
             return;
         }
         pickAudible(mc);
+        // One colony, one album: every other boombox on the same track keeps the clock of the one being heard, so all
+        // the Builders dance on the same beat. Each used to keep its own clock, corrected only past 2 s of drift (1.0.4).
+        var heard = MACHINES.get(audible);
+        if (heard != null && heard.playing) {
+            for (var other : MACHINES.values()) {
+                if (other != heard && other.playing && other.track == heard.track
+                        && Math.abs(other.trackStartMs - heard.trackStartMs) < 10_000) other.trackStartMs = heard.trackStartMs;
+            }
+        }
         var it = MACHINES.entrySet().iterator();
         while (it.hasNext()) {
             var e = it.next();
