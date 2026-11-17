@@ -69,13 +69,10 @@ public final class PackGameTests {
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_HOE));
             var hit = new BlockHitResult(Vec3.atCenterOf(absolute), Direction.UP, absolute, false);
             player.gameMode.useItemOn(player, h.getLevel(), player.getMainHandItem(), InteractionHand.MAIN_HAND, hit);
-            int matureAfter = 0;
             for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
                 var state = h.getBlockState(center.offset(x, 0, z));
-                h.assertTrue(state.is(ModBlocks.WEED_CROP.get()), "Area harvest replants each cannabis block");
-                if (state.getValue(CropBlock.AGE) == 7) matureAfter++;
+                h.assertTrue(state.isAir(), "Area harvest takes up each cannabis plant (weed never replants): " + state);
             }
-            h.assertTrue(matureAfter == 0, "Hoe harvests the entire configured 3x3 area");
             var bounds = new net.minecraft.world.phys.AABB(absolute).inflate(4);
             int buds = h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, bounds).stream()
                 .filter(e -> e.getItem().is(ModItems.WEED_BUD.get())).mapToInt(e -> e.getItem().getCount()).sum();
@@ -86,7 +83,7 @@ public final class PackGameTests {
             player.gameMode.useItemOn(player, h.getLevel(), ItemStack.EMPTY, InteractionHand.OFF_HAND, hit);
             int after = h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, bounds).stream()
                 .filter(e -> e.getItem().is(ModItems.WEED_BUD.get())).mapToInt(e -> e.getItem().getCount()).sum();
-            h.assertTrue(after == buds, "Second-hand click on replanted crop cannot award another harvest");
+            h.assertTrue(after == buds, "Second-hand click on the bare ground cannot award another harvest");
             h.succeed();
         } finally { EffectGameTests.remove(player); }
     }

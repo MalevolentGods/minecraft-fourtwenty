@@ -25,15 +25,30 @@ public abstract class ActuallyHarvestPermissionMixin {
                 && !ColonyHarvestPermission.allows(player, level, pos, hand)) result.setReturnValue(false);
     }
 
-    /** The installed mod reserves a seed even when replanting is off. Keep FourTwenty's
-     * normal loot intact in that case; the original harvest still rolls and removes once. */
+    /** Weed never replants (1.0.2), whatever Actually Harvest's setting: it neither keeps a seed back nor sets the
+     * crop back to a sprout; the harvest rolls once and the plant comes out. */
+    @org.spongepowered.asm.mixin.Unique
+    private static final ThreadLocal<Boolean> fourtwenty$weed = ThreadLocal.withInitial(() -> false);
+
+    @Inject(method = "harvestAndReplant", at = @At("HEAD"), require = 1)
+    private static void fourtwenty$markWeed(Level level, BlockPos pos, net.minecraft.world.level.block.state.BlockState state,
+            LivingEntity entity, InteractionHand hand, boolean hoe, CallbackInfoReturnable<Boolean> result) {
+        fourtwenty$weed.set(state.is(ModBlocks.WEED_CROP.get()));
+    }
+
+    @org.spongepowered.asm.mixin.injection.Redirect(method = "harvestAndReplant", require = 1,
+            at = @At(value = "INVOKE", target = "Lactuallyharvest/config/ConfigHandler$Common;replantCrops()Z"))
+    private static boolean fourtwenty$noWeedReplant() {
+        return !fourtwenty$weed.get() && com.malevolentgods.fourtwenty.compat.ActuallyHarvestSettings.replants();
+    }
+
+    /** Weed: the seed Actually Harvest would reserve drops with the rest of the loot. */
     @Inject(method = "lambda$harvestAndReplant$0", at = @At("HEAD"), cancellable = true, require = 1)
     private static void fourtwenty$keepUnplantedSeed(net.minecraft.world.item.Item seed,
             org.apache.commons.lang3.mutable.MutableBoolean retained, Level level, BlockPos pos,
             net.minecraft.world.item.ItemStack drop, CallbackInfo callback) {
         if (seed == com.malevolentgods.fourtwenty.registry.ModItems.WEED_SEEDS.get()
-                && level.getBlockState(pos).is(ModBlocks.WEED_CROP.get())
-                && !com.malevolentgods.fourtwenty.compat.ActuallyHarvestSettings.replants()) {
+                && level.getBlockState(pos).is(ModBlocks.WEED_CROP.get())) {
             net.minecraft.world.level.block.Block.popResource(level, pos, drop);
             callback.cancel();
         }

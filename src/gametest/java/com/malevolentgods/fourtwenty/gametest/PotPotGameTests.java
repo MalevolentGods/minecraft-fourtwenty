@@ -40,9 +40,9 @@ public final class PotPotGameTests {
             block.performBonemeal(h.getLevel(), h.getLevel().getRandom(), h.absolutePos(pos), h.getBlockState(pos));
         }
         h.assertTrue(h.getBlockState(pos).getValue(PottedPotPotBlock.AGE) == PottedPotPotBlock.MAX_AGE, "bone meal didn't grow it");
-        // Harvest: buds drop, and the plant starts again from a sprout.
+        // Harvest: buds drop, and the plant comes out, leaving the empty pot.
         h.useBlock(pos, player);
-        h.assertTrue(h.getBlockState(pos).getValue(PottedPotPotBlock.AGE) == 0, "not reset after the harvest");
+        h.assertTrue(h.getBlockState(pos).is(ModTerpenes.POT_POTS.get(CODE).get()), "not emptied after the harvest: " + h.getBlockState(pos));
         h.assertItemEntityPresent(ModItems.ROUGH_BUD.get(), pos, 2.0);
         h.succeed();
     }

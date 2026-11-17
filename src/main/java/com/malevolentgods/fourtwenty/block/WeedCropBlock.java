@@ -100,7 +100,8 @@ public class WeedCropBlock extends CropBlock implements EntityBlock {
         return ModItems.WEED_SEEDS.get();
     }
 
-    /** Roll standard loot once, retaining one seed for the crop that remains planted. */
+    /** Roll standard loot once and take the plant up: weed doesn't regrow after a harvest (the user's call, 1.0.2),
+     * so every seed drops and the farmland is left bare for replanting. */
     @Override
     protected @Nonnull InteractionResult useWithoutItem(@Nonnull BlockState state, @Nonnull Level level,
             @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull BlockHitResult hit) {
@@ -115,15 +116,8 @@ public class WeedCropBlock extends CropBlock implements EntityBlock {
             if (extra != null) drops.add(extra);
             ItemStack crossed = Pollination.harvest(state, server, pos, level.getBlockEntity(pos) instanceof WeedCropBlockEntity crop ? crop : null);
             if (crossed != null) popResource(level, pos, crossed);
-            if (!level.setBlock(pos, atAge(state, 0), 3)) return InteractionResult.PASS;
-            boolean retainedSeed = false;
-            for (ItemStack stack : drops) {
-                if (!retainedSeed && stack.is(ModItems.WEED_SEEDS.get()) && !stack.isEmpty()) {
-                    stack.shrink(1);
-                    retainedSeed = true;
-                }
-                popResource(level, pos, stack);
-            }
+            if (!level.removeBlock(pos, false)) return InteractionResult.PASS;
+            for (ItemStack stack : drops) popResource(level, pos, stack);
             player.awardStat(Stats.BLOCK_MINED.get(this));
             player.causeFoodExhaustion(0.005f);
         }
