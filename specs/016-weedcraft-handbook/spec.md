@@ -180,6 +180,14 @@ Like the Boy Scout Handbook, the book gives the player things to do: six ranks e
 - **FR-028**: Requirements that need MineColonies MUST be hidden when it's absent; no rank may depend on MineColonies.
 - **FR-029**: The tone throughout (front matter, requirement wording, notices) MUST be the Scout handbook's earnest, helpful voice with light weed jargon and humour sprinkled in, never crude or heavy; in the mod's established voice.
 
+**The PDF edition** (the user, 2026-11-17)
+
+- **FR-030**: The same book MUST also come as a PDF, made from the same content (text, pictures, recipes, ranks, badges, glossary, index, translation table), so the two never disagree: when the in-game book changes, the PDF is rebuilt from it.
+- **FR-031**: The PDF MUST look like the in-game book (the cover art, the paper, the mod's palette and type), with a clickable contents page, clickable cross-links and index, and page numbers; item and recipe pictures in it MUST be drawn from the mod's own textures and recipe data.
+- **FR-032**: In the PDF, ranks and merit badges MUST appear as printable check-off pages (empty boxes to tick by hand), and colony (MineColonies) content MUST be included and marked as needing MineColonies, since a PDF can't know what the reader has installed; undiscovered terpenes MUST stay hidden there too (the PDF names none of them, pointing to discovery in game).
+- **FR-033**: The PDF MUST be kept in the repository, attached to every release on GitHub, and linked from the README and the CurseForge page. If CurseForge accepts it as a project file, it's uploaded there too; if not, the CurseForge description links to it.
+- **FR-034**: The PDF's build MUST fail on the same missing references as the in-game book (FR-009) and MUST be rebuilt for each release.
+
 ### Key Entities
 
 - **Handbook**: the item; opens the book; remembers the reading player's last page.
@@ -209,6 +217,7 @@ Like the Boy Scout Handbook, the book gives the player things to do: six ranks e
 - **SC-009**: At least 80% of all rank and badge requirements are tracked automatically (not honour).
 - **SC-010**: In a full playthrough, every tracked requirement ticks when its deed is done (zero missed ticks across the user's balance-testing run), within a second.
 - **SC-011**: A player following only the ranks reaches Golden Eagle having used every chapter's system at least once.
+- **SC-012**: For every release, the PDF and the in-game book have the same chapters, entries and wording (checked automatically), and the PDF is reachable from the README, the GitHub release and the CurseForge page.
 
 ## Assumptions
 
