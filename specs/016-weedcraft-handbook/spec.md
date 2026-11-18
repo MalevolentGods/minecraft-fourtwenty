@@ -180,6 +180,15 @@ Like the Boy Scout Handbook, the book gives the player things to do: six ranks e
 - **FR-028**: Requirements that need MineColonies MUST be hidden when it's absent; no rank may depend on MineColonies.
 - **FR-029**: The tone throughout (front matter, requirement wording, notices) MUST be the Scout handbook's earnest, helpful voice with light weed jargon and humour sprinkled in, never crude or heavy; in the mod's established voice.
 
+**The wearable Badge Sash** (the user, 2026-11-17)
+
+- **FR-035**: The mod MUST add a wearable **Badge Sash** (proposed name, for the user's approval): a Scout-style cloth sash worn across the chest, crafted in survival from early-game cloth (proposed: hemp fabric and string).
+- **FR-036**: Worn, the sash MUST show the wearer's earned merit badges as patches, in the order earned, on the player model, as the Badge Sash page does in the book; it updates the moment a badge is earned, and other players see it too.
+- **FR-037**: The sash MUST show the badges of whoever wears it (a sash lent to a friend shows the friend's badges), so it carries no data of its own and can't be traded to show off someone else's badges.
+- **FR-038**: When Curios is installed, the sash MUST go in a Curios accessory slot so it can be worn with armour; when Curios isn't installed, it MUST be wearable in the chest slot, giving no armour. Four Twenty MUST NOT need Curios.
+- **FR-039**: The sash MUST be purely cosmetic (no stats, no effects) and drawn so it reads clearly over common armour and with the Kush Suit; patches must be recognisable at normal viewing distance.
+- **FR-040**: The sash MUST be shown in the book (a Badge Sash entry with its recipe) and in the PDF.
+
 **The PDF edition** (the user, 2026-11-17)
 
 - **FR-030**: The same book MUST also come as a PDF, made from the same content (text, pictures, recipes, ranks, badges, glossary, index, translation table), so the two never disagree: when the in-game book changes, the PDF is rebuilt from it.
@@ -217,6 +226,7 @@ Like the Boy Scout Handbook, the book gives the player things to do: six ranks e
 - **SC-009**: At least 80% of all rank and badge requirements are tracked automatically (not honour).
 - **SC-010**: In a full playthrough, every tracked requirement ticks when its deed is done (zero missed ticks across the user's balance-testing run), within a second.
 - **SC-011**: A player following only the ranks reaches Golden Eagle having used every chapter's system at least once.
+- **SC-013**: Two players on a server each wearing a Badge Sash see each other's earned patches, matching each wearer's Badge Sash page, within a second of a new badge being earned.
 - **SC-012**: For every release, the PDF and the in-game book have the same chapters, entries and wording (checked automatically), and the PDF is reachable from the README, the GitHub release and the CurseForge page.
 
 ## Assumptions
