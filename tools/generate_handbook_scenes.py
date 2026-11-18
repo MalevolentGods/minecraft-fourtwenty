@@ -27,6 +27,7 @@ CROSS = ('crop', 'wild_weed', 'short_grass', 'fern', 'flower', 'sapling', 'poppy
 FLAT = ('_wick', 'carpet', 'rail', 'pressure_plate', 'lily_pad')
 WICK = {'red': (190, 40, 30), 'black': (40, 36, 34), 'none': (190, 170, 120), 'white': (230, 230, 230), 'lime': (120, 200, 60),
         'green': (60, 120, 40), 'blue': (50, 70, 190), 'yellow': (230, 200, 60), 'orange': (230, 130, 40), 'gray': (110, 110, 110)}
+UPSCALE = 4
 T = 16                      # texels per block face; the iso tile is 32 wide, 16 high on top, 18 for the sides
 
 
@@ -250,7 +251,9 @@ def main():
     for f in sorted(SCANS.glob('handbook_*.blueprint')):
         name = f.stem[len('handbook_'):]
         im = render(Scan(f))
-        im.save(OUT / f'{name}.png')
+        # 4x, each texture pixel a sharp 4x4 square: the book scales it down smoothly, so it stays crisp at any size
+        im = im.resize((im.width * UPSCALE, im.height * UPSCALE), Image.NEAREST)
+        im.save(OUT / f'{name}.png', optimize=True)
         print(name, im.size)
 
 

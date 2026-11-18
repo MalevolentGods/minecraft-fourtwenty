@@ -159,7 +159,11 @@ public final class PageRenderer {
                 int w = imageWidth(im.size(), width);
                 int h = wh == null ? 20 : Math.min(220, w * wh[1] / Math.max(1, wh[0]));
                 int ix = x + (width - w) / 2;
-                if (wh != null) g.blit(image(im.path()), ix, top, w, h, 0, 0, wh[0], wh[1], wh[0], wh[1]);
+                if (wh != null) {
+                    // smooth filtering: scenes are drawn large (4x) and scaled to the page, so they stay crisp at any book size
+                    Minecraft.getInstance().getTextureManager().getTexture(image(im.path())).setFilter(true, false);
+                    g.blit(image(im.path()), ix, top, w, h, 0, 0, wh[0], wh[1], wh[0], wh[1]);
+                }
                 g.renderOutline(ix - 1, top - 1, w + 2, h + 2, RULE);
                 int ty = top + h + 2;
                 for (FormattedCharSequence line : wrap(caption(im.caption()), width)) {
