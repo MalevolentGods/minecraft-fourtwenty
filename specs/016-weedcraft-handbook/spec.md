@@ -92,6 +92,25 @@ A player crafts the Handbook from simple early-game ingredients, can craft more 
 1. **Given** the recipe ingredients, **When** a player crafts it, **Then** they get the Handbook, named exactly *A Handbook of Weedcraft, Scouting, and Weed-craft*.
 2. **Given** a Sensi Heights Supply Ship or Supply Camp just placed, **When** the player opens its racks, **Then** one Handbook is there.
 
+### User Story 6 - Ranks and merit badges, marked off in the book (Priority: P2)
+
+Like the Boy Scout Handbook, the book gives the player things to do: six ranks earned in order, each a page of numbered requirements, and merit badges, one per system, each with its own requirement list. When the player does something the game can see (harvests a Cross strain, cures a bud, powers a machine from a Hookah, discovers a terpene, builds a working circuit), the requirement is ticked off in their book on its own; things the game can't see are signed on the player's honour, as a Scoutmaster would sign the real thing. Finishing a rank or badge is celebrated and shown in the book.
+
+**Why this priority**: It turns the book from a manual into a guided playthrough with goals, the way the Scout handbook works, and it's the user's ask. It needs the book (US1-US2) to exist first.
+
+**Independent Test**: A fresh player plays normally; each requirement they meet is ticked in the book within a moment; completing every requirement of a rank or badge marks it earned and announces it.
+
+**Acceptance Scenarios**:
+
+1. **Given** the Ranks section, **When** the player opens it, **Then** it shows the six ranks in order, each with numbered requirements ("1.", "2a.", "2b.") in the Scout handbook's style, ticked or open for that player, and which rank they hold.
+2. **Given** a requirement the game can detect, **When** the player does it, **Then** it's ticked in their book (and a small notice says so), with nothing to click.
+3. **Given** a requirement the game can't detect, **When** the player clicks its box, **Then** it asks them to sign on their honour and, once signed, stays ticked.
+4. **Given** every requirement of a rank is ticked and the rank before it is earned, **When** the last one is ticked, **Then** the rank is earned, announced, and its emblem appears in the book; ranks are earned only in order (badges in any order).
+5. **Given** a merit badge's requirements are all ticked, **When** the last one is ticked, **Then** the badge is earned and its patch appears on the player's badge sash page in the book.
+6. **Given** a multiplayer server, **When** players read their books, **Then** each sees only their own progress; it survives logging out, dying and server restarts.
+7. **Given** progress made before the Handbook existed (an old world), **When** the player first opens it, **Then** nothing is ticked retroactively except what the game can still see (for example items in their inventory, terpenes already discovered); the rest is earned going forward or signed on honour.
+8. **Given** MineColonies is absent, **When** the player views ranks and badges, **Then** colony badges and any colony requirement are hidden, and no rank needs MineColonies to be earned.
+
 ### Edge Cases
 
 - MineColonies not installed: its chapter and entries are absent; links to them are not shown; the Supply Ship/Camp copy is irrelevant (those are MineColonies pieces).
@@ -112,6 +131,7 @@ A player crafts the Handbook from simple early-game ingredients, can craft more 
 
 - **FR-001**: The mod MUST add the Handbook, an item named exactly **A Handbook of Weedcraft, Scouting, and Weed-craft**, that opens the book when used. Four Twenty MUST NOT need any other mod for it.
 - **FR-002**: The book MUST have its own look in the mod's style (cover, paper, Four Twenty palette and type), with two-page spreads, page turning, page numbers, and a bookmark that reopens the book where the player left it.
+- **FR-002a**: The cover and title page MUST use the user's cover art (`tools/art/handbook_cover.png`, 2026-11-17: the scout on the cliff over a psychedelic Minecraft vista) and credit its author as printed on it, **Simon Stalwart**.
 - **FR-003**: The book MUST open on a title page and include a contents page listing chapters and their entries, each clickable.
 - **FR-004**: Entries MUST support: formatted text (headings, bold, colour, lists), item and block pictures with their normal tooltips on hover, crafting and machine recipes drawn from the game's own recipe data, illustrated scene images, truth tables and simple tables, numbered steps, and clickable links to other entries.
 - **FR-005**: A back control MUST return the player to the page they came from after following a link or a contents/index entry.
@@ -146,6 +166,20 @@ A player crafts the Handbook from simple early-game ingredients, can craft more 
 - **FR-017**: The Handbook MUST be craftable in survival from early-game ingredients (proposed: a book and a weed bud), repeatably.
 - **FR-018**: One Handbook MUST sit in the racks of the Sensi Heights Supply Ship and the Supply Camp.
 
+**Ranks, merit badges and the Scout front matter** (the Boy Scout Handbook's format, with light weed jargon and humour, never heavy)
+
+- **FR-019**: The book MUST open its scouting part with front matter in the Scout handbook's style: an Oath, a Law (a short list of virtues), a Motto and a Slogan, each a gentle weed riff on the original. Proposed (for the user's approval): **Motto** "Be Prepared (Bring Snacks)"; **Slogan** "Pass It Left Daily"; **Oath** "On my honour I will do my best to grow my best, share my stash, keep my fire lit and my colony fed"; **Law** "A Weedcrafter is Chill, Generous, Patient, Curious, Tidy, Helpful, Respectful of Elders, Kind to Creepers (from a distance), Thrifty with Seeds, Prepared, Cheerful and Lifted".
+- **FR-020**: The book MUST hold six **ranks**, earned strictly in order, that follow the strain ladder (a rank per grade). Proposed names, riffing on Tenderfoot to Eagle (for the user's approval): **Tenderbud** (your first Landrace grow), **Second Toke** (a family strain), **First Hit** (a Cross), **Starseed** (a Double Cross), **High Life** (an Ultra), **Golden Eagle** (Golden God). Each rank page lists numbered requirements (with lettered sub-parts) that walk the player through the systems at that stage, not only the strain.
+- **FR-021**: The book MUST hold **merit badges**, earnable in any order, at least one per chapter's system. Proposed set (riffing on real badges; names for the user's approval): **Ganja Gardening** (growing), **Plant Breeding** (pollination, Pheno Chambers), **Bud Processing** (trimming and curing), **Kitchen Chemistry** (oil, rosin, the Vape Pen), **Munchies** (edibles), **Safe Sesh** (joints, pipes, bongs, the Hookah), **Colour Theory** (terpenes and the Inspiration Infuser), **Terpination** (the Terpinator), **Inspiration** (Boundless Inspiration power), **Inspoweednetics** (electronics, including building the book's example circuits), **Bits & Bytes** (binary, logic and the Weedweeno), **Hempcraft** (hemp blocks and colours), and, with MineColonies, **Community Sesh** (the Dispensary and Budtender) and **Lifted Building** (Lifted Builders and the Midnight Machine).
+- **FR-022**: Each rank and badge requirement MUST be one of: **tracked** (the game ticks it when the player does it: obtains, crafts, harvests, trims, cures, smokes, gets high on a strain, places or powers a block, discovers a terpene, wins an Infuser match, earns another badge, builds a working example circuit) or **honour** (the player ticks it and confirms "on my honour"). Most requirements MUST be tracked; honour is for what the game can't see (explain something to a friend, read a chapter).
+- **FR-023**: Tracked requirements MUST be ticked within a second of the deed, with a small on-screen notice naming the requirement, without opening the book.
+- **FR-024**: Each requirement on a rank or badge page MUST show its box (open, ticked, or signed on honour), and link to the book entry that teaches it.
+- **FR-025**: Earning a rank or badge MUST be announced to the player (a notice and a sound), shown in the book (the rank emblem on the Ranks page; the badge patch on a **Badge Sash** page that shows every badge, earned in colour and unearned greyed), and MAY be announced in chat to others on a server (a server setting, on by default).
+- **FR-026**: Progress MUST be kept per player, survive death, logout and restarts, and be shown only to that player.
+- **FR-027**: An operator MUST be able to reset a player's Handbook progress (all of it or one rank or badge), for balance testing and do-overs.
+- **FR-028**: Requirements that need MineColonies MUST be hidden when it's absent; no rank may depend on MineColonies.
+- **FR-029**: The tone throughout (front matter, requirement wording, notices) MUST be the Scout handbook's earnest, helpful voice with light weed jargon and humour sprinkled in, never crude or heavy; in the mod's established voice.
+
 ### Key Entities
 
 - **Handbook**: the item; opens the book; remembers the reading player's last page.
@@ -155,6 +189,10 @@ A player crafts the Handbook from simple early-game ingredients, can craft more 
 - **Glossary term**: term, one-line meaning, the entry it links to.
 - **Part translation**: a part's in-game name, its real-world term, and the units table.
 - **Example circuit**: name, goal, parts list, numbered steps with pictures, expected behaviour, and whether it's been checked in the game.
+- **Rank**: name, emblem, order (1-6), the strain grade it follows, its requirements.
+- **Merit badge**: name, patch, the system it covers, whether it needs MineColonies, its requirements.
+- **Requirement**: number (1, 2a, …), wording, tracked or honour, what the game watches for (and how many), the entry that teaches it.
+- **Player progress**: per player: which requirements are ticked (and whether on honour), counts toward counted requirements, ranks and badges earned and when.
 
 ## Success Criteria *(mandatory)*
 
@@ -168,6 +206,9 @@ A player crafts the Handbook from simple early-game ingredients, can craft more 
 - **SC-006**: Zero dead links, missing pictures or missing recipes in a released book (the build refuses to ship them).
 - **SC-007**: The book opens and turns pages with no visible delay on the user's machine.
 - **SC-008**: The user reads the finished book and calls it "very nice" (the bar the user set).
+- **SC-009**: At least 80% of all rank and badge requirements are tracked automatically (not honour).
+- **SC-010**: In a full playthrough, every tracked requirement ticks when its deed is done (zero missed ticks across the user's balance-testing run), within a second.
+- **SC-011**: A player following only the ranks reaches Golden Eagle having used every chapter's system at least once.
 
 ## Assumptions
 
@@ -180,4 +221,8 @@ A player crafts the Handbook from simple early-game ingredients, can craft more 
 - Example circuits use only parts a survival player can craft (no creative-only bench rig: the user's call that the Bench Rig isn't in survival).
 - Weed College and Tie Dye Shack (not built yet) are not covered; the Colony Life chapter grows when they ship.
 - The README and CurseForge text may later point to the book, but updating them isn't part of this feature.
+- Ranks and badges give recognition (emblems, the sash, notices), not items or stat boosts, so they don't move the balance the user is testing; real reward items can be added later if the user wants.
+- The names of ranks, badges and the Oath/Law/Motto/Slogan in FR-019 to FR-021 are proposals; every player-facing name needs the user's approval before it ships.
+- The rank and badge requirement lists themselves are drafted in planning (with the content) and reviewed by the user.
+- "Building a working example circuit" is tracked by watching for the circuit's outcome (for example a Lit Bit lit through an AND of two switches), not by matching an exact layout.
 - Seeds come from trimming and harvests take the plant up (1.0.2); the book describes the game as it is when the book ships, and later balance changes update the affected entries.

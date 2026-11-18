@@ -31,6 +31,7 @@
 
 ## Notes
 
+- Added 2026-11-17 (user): ranks and merit badges in the Boy Scout Handbook format with in-game tracking marked off in the book, light weed jargon and humour; the user's cover art (author Simon Stalwart). Names in FR-019 to FR-021 are proposals awaiting approval.
 - The user settled the four open choices before the spec (2026-11-17): own book (no book-mod dependency), title kept exactly, crafted + one copy in the Supply Ship and Supply Camp racks, mixed pictures (live game pictures + rendered scenes).
 - SC-008 ("very nice") is the user's own bar; it's checked by the user's review, not by a test.
 - The recipe (book + weed bud) is an assumption for review.
