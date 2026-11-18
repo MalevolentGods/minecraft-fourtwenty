@@ -58,7 +58,7 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty/`, `R` = `src/main/res
 - [X] T028 [P] [US2] Entries: Colony Life (`needs: minecolonies`) in `.../entries/colony/`
 - [X] T029 [US2] Spoiler guard: spoiler spans and terpene names hidden until discovered (reads TerpeneKnowledge) in `J/client/handbook/PageRenderer.java`
 - [X] T030 [US2] `needs` hiding for chapters, entries, links and index lines in `J/handbook/BookData.java`
-- [ ] T031 [US2] Build the scenes in the local world, scan them to `tools/art/handbook_scenes/*.blueprint`, render with `tools/generate_handbook_scenes.py` (port of the isometric renderer) to `R/assets/fourtwenty/textures/gui/handbook/scenes/`
+- [X] T031 [US2] Build the scenes in the local world, scan them to `tools/art/handbook_scenes/*.blueprint`, render with `tools/generate_handbook_scenes.py` (port of the isometric renderer) to `R/assets/fourtwenty/textures/gui/handbook/scenes/`
 - [ ] T032 [P] [US2] Game test: with MineColonies absent, no colony entry is reachable in `G/HandbookGameTests.java`
 - [ ] T033 [US2] In game (quickstart M2), commit, report
 

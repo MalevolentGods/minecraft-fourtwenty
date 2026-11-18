@@ -9,6 +9,8 @@ The **Terpinator** turns weed into terpenes. It comes in two finishes, **Steel**
 2. Add Cured Buds. **Two vials from every bud.**
 3. Press Start.
 
+{image:scenes/workshop|A workshop: Inspiration Infuser, Terpinator, Rosin Rig and Pheno Chamber|wide}
+
 # Which Weed
 The sixteen Minecraft colours take any weed. Each hemp colour needs weed of its own **family**: the screen tells you when the buds are the wrong kind.
 

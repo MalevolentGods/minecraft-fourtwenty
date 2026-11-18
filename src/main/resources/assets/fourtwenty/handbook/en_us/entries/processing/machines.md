@@ -12,6 +12,8 @@ Powered machines trim and cure faster, a whole batch at a time, and each tier is
 | 4 | Trim Reaper | The Humidor | Rip |
 {/table}
 
+{image:scenes/machines|A Hookah runs a Snip Station and a Dry Box: red Wick out, black Wick back, hoppers on top|wide}
+
 # Feeding Them
 Put buds in the left of the screen and take the results from the right. Better still, feed them with **hoppers** from the top or sides and empty them with a hopper underneath, or join them up with Transport Tubes. A trimmer's seeds come out with its buds.
 

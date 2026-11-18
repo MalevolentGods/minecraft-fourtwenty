@@ -11,6 +11,8 @@ Weed is a crop like wheat, with a few more needs, and it takes its time: about t
 4. Be patient. Bone meal hurries a Landrace along.
 5. When the plant is fully grown, right-click it to **harvest**.
 
+{image:scenes/first_grow|A first grow: wet farmland, water between the rows, and a lantern for the night|wide}
+
 {item:fourtwenty:rough_bud|A Rough Bud, fresh off the plant}
 
 A ripe plant gives you a **Rough Bud** (better strains give more) and its seed back. The plant itself comes up with the harvest, so replant the seed to keep your garden going.

@@ -14,6 +14,8 @@ A Grow Op is a plot that grows any farmland crop faster and keeps it watered. Ri
 | Cosmic Kush Pod | 8x | Blaze |
 {/table}
 
+{image:scenes/grow_ops|The ladder of plots, from the Closet Grow to the Cosmic Kush Pod|wide}
+
 # Upgrading
 Use the next tier's plot on the one you have: the crop stays right where it is.
 
