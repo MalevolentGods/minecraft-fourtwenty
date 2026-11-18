@@ -132,6 +132,7 @@ Like the Boy Scout Handbook, the book gives the player things to do: six ranks e
 - **FR-001**: The mod MUST add the Handbook, an item named exactly **A Handbook of Weedcraft, Scouting, and Weed-craft**, that opens the book when used. Four Twenty MUST NOT need any other mod for it.
 - **FR-002**: The book MUST have its own look in the mod's style (cover, paper, Four Twenty palette and type), with two-page spreads, page turning, page numbers, and a bookmark that reopens the book where the player left it.
 - **FR-002a**: The cover and title page MUST use the user's cover art (`tools/art/handbook_cover.png`, 2026-11-17: the scout on the cliff over a psychedelic Minecraft vista) and credit its author as printed on it, **Simon Stalwart**.
+- **FR-002b**: The inside cover (the page right after the cover, in the game and in the PDF) MUST carry only the motto, **DON'T PANIC**, in large, friendly letters, and nothing else (the user, 2026-11-17).
 - **FR-003**: The book MUST open on a title page and include a contents page listing chapters and their entries, each clickable.
 - **FR-004**: Entries MUST support: formatted text (headings, bold, colour, lists), item and block pictures with their normal tooltips on hover, crafting and machine recipes drawn from the game's own recipe data, illustrated scene images, truth tables and simple tables, numbered steps, and clickable links to other entries.
 - **FR-005**: A back control MUST return the player to the page they came from after following a link or a contents/index entry.
