@@ -24,7 +24,9 @@ import javax.annotation.Nonnull;
  */
 public class LitBitBlockEntity extends BIBlockEntity {
     private static final int LEVEL_EVERY = 10, FX_EVERY = 20, OVERLOAD_TICKS = 60;
-    private int id, colour, shown;
+    /** A new Lit Bit glows white until a show colours it (the user, 2026-11-18: so a first circuit lights with no Weedweeno). */
+    public static final int WHITE = 0xFFFFFF;
+    private int id, colour = WHITE, shown;
     private double brightness;
     private int status = Circuit.NO_LOOP;
     private long overloadedUntil, levelChangedAt = Long.MIN_VALUE / 2;
@@ -146,7 +148,7 @@ public class LitBitBlockEntity extends BIBlockEntity {
     @Override protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         id = tag.getInt("id");
-        colour = tag.getInt("colour");
+        colour = tag.contains("colour") ? tag.getInt("colour") : WHITE;
         if (tag.contains("shown")) shown = tag.getInt("shown");
     }
 

@@ -78,6 +78,8 @@ public class ModClientEvents {
     @SubscribeEvent
     public static void setup(net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) {
         PavePenClient.install();
+        com.malevolentgods.fourtwenty.handbook.HandbookItem.opener = com.malevolentgods.fourtwenty.client.handbook.HandbookScreen::open;
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.client.handbook.SceneRenderer::register);
         if (net.neoforged.fml.ModList.get().isLoaded("minecolonies")) {
             event.enqueueWork(com.malevolentgods.fourtwenty.compat.minecolonies.client.DispensaryClient::registerModel);
             com.malevolentgods.fourtwenty.compat.minecolonies.client.LiftedClient.install();
@@ -141,6 +143,12 @@ public class ModClientEvents {
         SunkModel.wrap(event);
         PortModel.wrap(event);
         ComponentModel.wrap(event);
+    }
+
+    /** The Handbook's text and chapters come from the resource packs (specs/016-weedcraft-handbook). */
+    @SubscribeEvent
+    public static void reloadListeners(net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(com.malevolentgods.fourtwenty.client.handbook.BookData.INSTANCE);
     }
 
     @SubscribeEvent

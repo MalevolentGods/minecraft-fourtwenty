@@ -29,7 +29,6 @@ public final class ColonyIntegration {
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedFlight::join);
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.service.PlayerSales::interact);
         NeoForge.EVENT_BUS.addListener(DispensaryCommands::register);
-        NeoForge.EVENT_BUS.addListener(StarterSeeds::loggedIn);
         com.malevolentgods.fourtwenty.util.SmokeEvents.smokedListener =
                 com.malevolentgods.fourtwenty.compat.minecolonies.service.Exposure::secondhand;
         com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.burningListener =

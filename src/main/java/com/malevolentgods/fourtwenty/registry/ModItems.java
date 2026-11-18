@@ -74,6 +74,9 @@ public class ModItems {
             new WeedPipeItem(new Item.Properties().durability(4).stacksTo(1))); // 4 uses, doesn't stack
 
     /** Loaded with Oil: one Oil is eight hits (domain/VapeRules). */
+    /** A Handbook of Weedcraft, Scouting, and Weed-craft (specs/016-weedcraft-handbook). */
+    public static final DeferredHolder<Item, com.malevolentgods.fourtwenty.handbook.HandbookItem> HANDBOOK =
+        ITEMS.register("handbook", () -> new com.malevolentgods.fourtwenty.handbook.HandbookItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, com.malevolentgods.fourtwenty.item.VapePenItem> VAPE_PEN =
         ITEMS.register("vape_pen", () -> new com.malevolentgods.fourtwenty.item.VapePenItem(new Item.Properties().stacksTo(1)));
 

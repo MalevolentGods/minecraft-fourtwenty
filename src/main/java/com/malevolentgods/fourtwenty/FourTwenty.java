@@ -37,6 +37,7 @@ public class FourTwenty {
         com.malevolentgods.fourtwenty.terpene.TerpeneNetwork.register(bus);
         ModBlocks.BLOCKS.register(bus);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.util.BongBuffs::tick);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.processing.StarterSeeds::loggedIn);
         com.malevolentgods.fourtwenty.gear.ModGear.register(bus);
         com.malevolentgods.fourtwenty.lights.ModLights.init();
         com.malevolentgods.fourtwenty.electronics.ModElectronics.init();

@@ -10,6 +10,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 LANG = ROOT / 'src/main/resources/assets/fourtwenty/lang/en_us.json'
+HANDBOOK = ROOT / 'src/main/resources/assets/fourtwenty/handbook/real_terms.json'
+# The meter's units beside the real ones (the Inspoweedometer reads in these).
+UNITS = [
+    {'symbol': 'Kb', 'measures': 'voltage', 'real': 'volt (V)'},
+    {'symbol': 'Ig', 'measures': 'current', 'real': 'ampere (A)'},
+    {'symbol': 'W', 'measures': 'power', 'real': 'watt (W)'},
+    {'symbol': 'Ws', 'measures': 'energy', 'real': 'watt-second, a joule (J)'},
+    {'symbol': 'Φ', 'measures': 'resistance', 'real': 'ohm (Ω)'},
+    {'symbol': 'Ga', 'measures': 'capacitance', 'real': 'farad (F)'},
+    {'symbol': 'Ma', 'measures': 'inductance', 'real': 'henry (H)'},
+]
 
 WIRE = 'Wire'
 TWIN = 'Two-core cable (parallel)'
@@ -88,6 +99,9 @@ def main():
         lang[f'tooltip.fourtwenty.real.{item}'] = real
     out = '{\n' + ',\n'.join(f'  {json.dumps(k, ensure_ascii=False)}: {json.dumps(v, ensure_ascii=False)}' for k, v in lang.items()) + '\n}\n'
     LANG.write_text(out, encoding='utf-8')
+    # The Handbook's translation table (specs/016-weedcraft-handbook FR-015): the same names, and the units.
+    HANDBOOK.parent.mkdir(parents=True, exist_ok=True)
+    HANDBOOK.write_text(json.dumps({'parts': REAL, 'units': UNITS}, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     print(f'wrote {len(REAL)} real names')
 
 
