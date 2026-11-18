@@ -18,7 +18,7 @@ GUI = ROOT / 'src/main/resources/assets/fourtwenty/textures/gui/handbook'
 ITEM = ROOT / 'src/main/resources/assets/fourtwenty/textures/item'
 COVER = ROOT / 'tools/art/handbook_cover.png'
 
-W, H = 360, 230            # the spread, in GUI pixels
+W, H = 540, 345            # the spread, in book units (drawn at a whole number of screen pixels each)
 LEATHER = (38, 58, 36)
 LEATHER_DARK = (24, 38, 23)
 STITCH = (196, 170, 104)
@@ -59,7 +59,7 @@ def flourish(d, x, y, sx, sy):
 
 
 def spread():
-    img = Image.new('RGBA', (512, 256), (0, 0, 0, 0))
+    img = Image.new('RGBA', (1024, 512), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
     # leather boards, rounded
     d.rounded_rectangle((0, 0, W - 1, H - 1), radius=8, fill=LEATHER + (255,))
@@ -99,16 +99,16 @@ def spread():
     flourish(d, W - 14, H - 15, -1, -1)
     # the ribbon: a tail hanging out below the gutter, clear of the text
     rx = W // 2 + 6
-    d.rectangle((rx, H - 12, rx + 5, 249), fill=RIBBON + (255,))
-    d.line((rx + 5, H - 12, rx + 5, 249), fill=RIBBON_DARK + (255,))
-    d.polygon([(rx, 250), (rx + 5, 250), (rx + 2, 246)], fill=(0, 0, 0, 0))
+    d.rectangle((rx, H - 12, rx + 7, H + 20), fill=RIBBON + (255,))
+    d.line((rx + 7, H - 12, rx + 7, H + 20), fill=RIBBON_DARK + (255,))
+    d.polygon([(rx, H + 21), (rx + 7, H + 21), (rx + 3, H + 16)], fill=(0, 0, 0, 0))
     # buttons below: next, previous (normal and hovered), back
-    arrow(d, 0, 232, False, False)
-    arrow(d, 23, 232, False, True)
-    arrow(d, 46, 232, True, False)
-    arrow(d, 69, 232, True, True)
-    back(d, 92, 232, False)
-    back(d, 107, 232, True)
+    arrow(d, 0, 400, False, False)
+    arrow(d, 23, 400, False, True)
+    arrow(d, 46, 400, True, False)
+    arrow(d, 69, 400, True, True)
+    back(d, 92, 400, False)
+    back(d, 107, 400, True)
     return img
 
 
@@ -130,8 +130,8 @@ def back(d, x, y, hover):
 
 def cover():
     src = Image.open(COVER).convert('RGBA')
-    # fit to 180x233 (the closed book shown on the screen) at a higher resolution for crispness
-    return src.resize((360, 466), Image.LANCZOS)
+    # the closed book is drawn 266x345 book units; twice that here for crispness
+    return src.resize((532, 690), Image.LANCZOS)
 
 
 def item():

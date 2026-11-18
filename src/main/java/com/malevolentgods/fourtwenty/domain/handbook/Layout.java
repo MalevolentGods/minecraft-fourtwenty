@@ -62,7 +62,7 @@ public final class Layout {
                 case Element.ListItems l -> items(c, e, l.items(), width - INDENT, pageHeight, m);
                 case Element.Steps s -> items(c, e, s.items(), width - INDENT, pageHeight, m);
                 default -> {
-                    int h = e instanceof Element.Heading hd ? m.lines(hd.spans(), width) * line : m.height(e, width);
+                    int h = m.height(e, width);
                     int need = e instanceof Element.Heading ? h + gap + 2 * line : h;    // keeps two lines of what follows
                     if (c.y + need > pageHeight && !c.page.isEmpty()) c.newPage();
                     c.page.add(new Placed(e, 0, 1, c.y, h));

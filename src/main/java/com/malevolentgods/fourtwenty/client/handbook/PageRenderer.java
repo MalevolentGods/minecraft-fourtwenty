@@ -91,11 +91,12 @@ public final class PageRenderer {
             case Element.Image im -> {
                 int[] wh = imageSize(im.path());
                 int w = imageWidth(im.size(), width);
-                int h = wh == null ? 20 : Math.min(140, w * wh[1] / Math.max(1, wh[0]));
+                int h = wh == null ? 20 : Math.min(220, w * wh[1] / Math.max(1, wh[0]));
                 yield h + (im.caption().isEmpty() ? 0 : wrap(caption(im.caption()), width).size() * LINE + 2);
             }
-            case Element.Table t -> t.special().isEmpty() ? t.rows().size() * LINE + 4 : 0;
-            case Element.Truth t -> (truth(t.gate()).size()) * LINE + 4;
+            case Element.Heading h -> headingLines(h, width).size() * LINE;
+            case Element.Table t -> t.special().isEmpty() ? tableHeight(t.rows(), width) : 0;
+            case Element.Truth t -> tableHeight(truth(t.gate()), width);
             default -> LINE;
         };
     }
@@ -111,8 +112,7 @@ public final class PageRenderer {
         int top = y + p.y();
         switch (p.element()) {
             case Element.Heading h -> {
-                for (FormattedCharSequence line : font.split(component(h.spans()).copy().withStyle(s -> s.withBold(true)
-                        .withColor(TextColor.fromRgb(HEADING & 0xFFFFFF))), width)) {
+                for (FormattedCharSequence line : headingLines(h, width)) {
                     text(g, line, x, top);
                     top += LINE;
                 }
@@ -157,7 +157,7 @@ public final class PageRenderer {
             case Element.Image im -> {
                 int[] wh = imageSize(im.path());
                 int w = imageWidth(im.size(), width);
-                int h = wh == null ? 20 : Math.min(140, w * wh[1] / Math.max(1, wh[0]));
+                int h = wh == null ? 20 : Math.min(220, w * wh[1] / Math.max(1, wh[0]));
                 int ix = x + (width - w) / 2;
                 if (wh != null) g.blit(image(im.path()), ix, top, w, h, 0, 0, wh[0], wh[1], wh[0], wh[1]);
                 g.renderOutline(ix - 1, top - 1, w + 2, h + 2, RULE);
@@ -175,24 +175,46 @@ public final class PageRenderer {
         }
     }
 
+    /** A heading is bold, so it wraps (and is measured) as bold. */
+    private List<FormattedCharSequence> headingLines(Element.Heading h, int width) {
+        return font.split(component(h.spans()).copy().withStyle(s -> s.withBold(true).withColor(TextColor.fromRgb(HEADING & 0xFFFFFF))), width);
+    }
+
+    private int tableHeight(List<List<String>> rows, int width) {
+        int cols = rows.stream().mapToInt(List::size).max().orElse(1), cw = width / Math.max(1, cols), h = 0;
+        for (List<String> row : rows) h += rowLines(row, cw) * LINE;
+        return h + 4;
+    }
+
+    private int rowLines(List<String> row, int cw) {
+        int n = 1;
+        for (String c : row) n = Math.max(n, font.split(Component.literal(c), cw - 4).size());
+        return n;
+    }
+
     private void text(GuiGraphics g, FormattedCharSequence line, int x, int y) {
         g.drawString(font, line, x, y, INK, false);
         lines.add(new DrawnLine(x, y, line));
     }
 
+    /** A table whose cells wrap rather than run off the page. */
     private void table(GuiGraphics g, List<List<String>> rows, int x, int y, int width) {
         if (rows.isEmpty()) return;
-        int cols = rows.stream().mapToInt(List::size).max().orElse(1), cw = width / cols;
+        int cols = rows.stream().mapToInt(List::size).max().orElse(1), cw = width / cols, ry = y + 2;
         for (int r = 0; r < rows.size(); r++) {
             List<String> row = rows.get(r);
             for (int c = 0; c < row.size(); c++) {
-                String cell = font.plainSubstrByWidth(row.get(c), cw - 3);
-                Component text = r == 0 ? Component.literal(cell).withStyle(s -> s.withBold(true)) : Component.literal(cell);
-                g.drawString(font, text, x + c * cw + 2, y + 2 + r * LINE, r == 0 ? HEADING : INK, false);
+                Component text = r == 0 ? Component.literal(row.get(c)).withStyle(s -> s.withBold(true)) : Component.literal(row.get(c));
+                int ly = ry;
+                for (FormattedCharSequence line : font.split(text, cw - 4)) {
+                    g.drawString(font, line, x + c * cw + 2, ly, r == 0 ? HEADING : INK, false);
+                    ly += LINE;
+                }
             }
-            if (r == 0) g.fill(x, y + LINE + 1, x + width, y + LINE + 2, RULE);
+            ry += rowLines(row, cw) * LINE;
+            if (r == 0) g.fill(x, ry - 1, x + width, ry, RULE);
         }
-        g.renderOutline(x, y, width, rows.size() * LINE + 3, RULE);
+        g.renderOutline(x, y, width, ry - y + 1, RULE);
     }
 
     /** The truth table of a gate: header, then every input combination. */

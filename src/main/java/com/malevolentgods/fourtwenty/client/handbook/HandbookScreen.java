@@ -32,8 +32,9 @@ import java.util.Map;
 public class HandbookScreen extends Screen {
     private static final ResourceLocation BOOK = ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/handbook/book.png");
     private static final ResourceLocation COVER = ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/handbook/cover.png");
-    static final int BOOK_W = 360, BOOK_H = 230, PAGE_W = 140, PAGE_H = 176, LEFT_X = 22, RIGHT_X = 198, PAGE_Y = 22;
-    private static final int COVER_W = 176, COVER_H = 228;
+    /** The spread in book units, each drawn as a whole number of screen pixels so the text stays crisp. */
+    static final int BOOK_W = 540, BOOK_H = 345, PAGE_W = 224, PAGE_H = 280, LEFT_X = 27, RIGHT_X = 289, PAGE_Y = 28;
+    private static final int COVER_W = 266, COVER_H = 345, TAB_H = 16, SHEET_W = 1024, SHEET_H = 512, BTN_V = 400;
 
     /** One page of the book. */
     sealed interface Page permits DontPanic, Title, Contents, EntryPage, Blank {}
@@ -67,9 +68,13 @@ public class HandbookScreen extends Screen {
     protected void init() {
         renderer = new PageRenderer(font);
         build();
-        scale = Math.min(1f, Math.min((width - 8) / (float) BOOK_W, (height - 8) / (float) (BOOK_H + 16)));
+        // As big as the screen allows, at a whole number of real pixels per book unit (the user, 2026-11-18: more resolution)
+        var window = minecraft.getWindow();
+        double gui = window.getGuiScale(), fit = Math.min(window.getWidth() * 0.96 / BOOK_W, window.getHeight() * 0.94 / (BOOK_H + TAB_H + 18));
+        double ppu = fit >= 1 ? Math.floor(fit) : fit;
+        scale = (float) (ppu / gui);
         left = (int) ((width - BOOK_W * scale) / 2);
-        top = (int) ((height - (BOOK_H + 16) * scale) / 2);
+        top = (int) ((height - (BOOK_H + TAB_H + 18) * scale) / 2 + TAB_H * scale);
         spread = Math.max(0, Math.min(Bookmark.spread(), spreads() - 1));
     }
 
@@ -144,18 +149,19 @@ public class HandbookScreen extends Screen {
         int mx = (int) ((mouseX - left) / scale), my = (int) ((mouseY - top) / scale);
         if (spread == 0) {
             int cx = (BOOK_W - COVER_W) / 2;           // the closed book: the user's cover art, at its own shape
-            g.blit(COVER, cx, 1, COVER_W, COVER_H, 0, 0, 360, 466, 360, 466);
+            g.blit(COVER, cx, 0, COVER_W, COVER_H, 0, 0, 532, 690, 532, 690);
             g.drawCenteredString(font, Component.translatable("handbook.fourtwenty.open"), BOOK_W / 2, BOOK_H + 4, 0xFFE8DDB5);
         } else {
-            g.blit(BOOK, 0, 0, 0, 0, BOOK_W, 256, 512, 256);
+            g.blit(BOOK, 0, 0, 0, 0, BOOK_W, BOOK_H + 22, SHEET_W, SHEET_H);
+            tabs(g, mx, my);
             int i = 2 * spread - 2;
             drawPage(g, pages.get(i), LEFT_X, i);
             if (i + 1 < pages.size()) drawPage(g, pages.get(i + 1), RIGHT_X, i + 1);
-            button(g, BOOK_W - 30, BOOK_H - 18, 0, 23, mx, my, spread < spreads() - 1);
-            button(g, 12, BOOK_H - 18, 46, 69, mx, my, true);
+            button(g, NEXT_X, BTN_Y, 0, 23, mx, my, spread < spreads() - 1);
+            button(g, PREV_X, BTN_Y, 46, 69, mx, my, true);
             if (!back.isEmpty()) {
-                boolean hover = in(mx, my, BOOK_W / 2 - 22, BOOK_H - 18, 13, 11);
-                g.blit(BOOK, BOOK_W / 2 - 22, BOOK_H - 18, hover ? 107 : 92, 232, 13, 11, 512, 256);
+                boolean hover = in(mx, my, BACK_X, BTN_Y, 13, 11);
+                g.blit(BOOK, BACK_X, BTN_Y, hover ? 107 : 92, BTN_V, 13, 11, SHEET_W, SHEET_H);
             }
         }
         for (PageRenderer.Hover h : renderer.hovers) {
@@ -169,33 +175,79 @@ public class HandbookScreen extends Screen {
 
     private void button(GuiGraphics g, int x, int y, int u, int uHover, int mx, int my, boolean shown) {
         if (!shown) return;
-        g.blit(BOOK, x, y, in(mx, my, x, y, 18, 10) ? uHover : u, 232, 18, 10, 512, 256);
+        g.blit(BOOK, x, y, in(mx, my, x, y, 18, 10) ? uHover : u, BTN_V, 18, 10, SHEET_W, SHEET_H);
+    }
+
+    private static final int NEXT_X = BOOK_W - 42, PREV_X = 24, BACK_X = BOOK_W / 2 - 34, BTN_Y = BOOK_H - 26;
+
+    /** The bookmark tabs over the right page: Contents, Glossary, Index, open from anywhere (the user, 2026-11-18). */
+    private record Tab(String key, int x, int w) {}
+    private final List<Tab> tabs = new ArrayList<>();
+
+    private void tabs(GuiGraphics g, int mx, int my) {
+        tabs.clear();
+        int x = RIGHT_X + 8;
+        for (String key : List.of("handbook.fourtwenty.contents", "handbook.fourtwenty.glossary", "handbook.fourtwenty.index")) {
+            Component label = Component.translatable(key);
+            int w = font.width(label) + 14;
+            boolean here = isAt(key), hover = in(mx, my, x, -TAB_H, w, TAB_H);
+            int body = here ? 0xFFF4EAD0 : hover ? 0xFFE8DCB8 : 0xFFD9C9A0;
+            g.fill(x, -TAB_H + (here ? 0 : 2), x + w, 6, body);
+            g.renderOutline(x, -TAB_H + (here ? 0 : 2), w, TAB_H + (here ? 6 : 4), 0xFF263A24);
+            g.drawString(font, label, x + 7, -TAB_H + (here ? 4 : 6), here ? PageRenderer.HEADING : PageRenderer.INK, false);
+            tabs.add(new Tab(key, x, w));
+            x += w + 4;
+        }
+    }
+
+    private boolean isAt(String tabKey) {
+        int i = 2 * spread - 2;
+        if (spread == 0 || i >= pages.size()) return false;
+        Page p = pages.get(i);
+        return switch (tabKey) {
+            case "handbook.fourtwenty.contents" -> p instanceof Contents;
+            case "handbook.fourtwenty.glossary" -> p instanceof EntryPage e && e.entry().equals(GLOSSARY);
+            default -> p instanceof EntryPage e && e.entry().equals(INDEX);
+        };
+    }
+
+    private void openTab(String key) {
+        switch (key) {
+            case "handbook.fourtwenty.contents" -> { back.push(spread); spread = 2; sound(); }
+            case "handbook.fourtwenty.glossary" -> go(GLOSSARY);
+            default -> go(INDEX);
+        }
     }
 
     private void drawPage(GuiGraphics g, Page page, int x, int index) {
         switch (page) {
             case DontPanic d -> {
                 // the motto, alone, in large friendly letters
-                Component text = Component.translatable("handbook.fourtwenty.dont_panic");
-                float s = 2.6f;
-                g.pose().pushPose();
-                g.pose().translate(x + PAGE_W / 2f, PAGE_Y + PAGE_H / 2f - 10, 0);
-                g.pose().scale(s, s, 1);
-                g.drawString(font, text, -font.width(text) / 2, 0, 0xFF2E7A1A, false);
-                g.pose().popPose();
+                String[] words = Component.translatable("handbook.fourtwenty.dont_panic").getString().split(" ");
+                int widest = 1;
+                for (String w : words) widest = Math.max(widest, font.width(w));
+                float s = Math.min(4.5f, PAGE_W * 0.9f / widest);
+                float y0 = PAGE_Y + PAGE_H / 2f - words.length * 10 * s / 2;
+                for (int k = 0; k < words.length; k++) {
+                    g.pose().pushPose();
+                    g.pose().translate(x + PAGE_W / 2f, y0 + k * 10 * s, 0);
+                    g.pose().scale(s, s, 1);
+                    g.drawString(font, words[k], -font.width(words[k]) / 2, 0, 0xFF2E7A1A, false);
+                    g.pose().popPose();
+                }
             }
             case Title t -> {
-                int y = PAGE_Y + 34;
+                int y = PAGE_Y + 60;
                 for (String key : List.of("handbook.fourtwenty.title.line1", "handbook.fourtwenty.title.line2", "handbook.fourtwenty.title.line3")) {
                     boolean big = key.endsWith("line2");
                     g.pose().pushPose();
-                    float s = big ? 2f : 1.2f;
                     Component c = Component.translatable(key);
+                    float s = Math.min(big ? 3f : 1.6f, PAGE_W * 0.94f / Math.max(1, font.width(c)));     // never past the page edge
                     g.pose().translate(x + PAGE_W / 2f, y, 0);
                     g.pose().scale(s, s, 1);
                     g.drawString(font, c, -font.width(c) / 2, 0, big ? 0xFF2F5A1A : PageRenderer.INK, false);
                     g.pose().popPose();
-                    y += big ? 24 : 16;
+                    y += (int) (10 * s) + 8;
                 }
                 g.fill(x + 30, y + 4, x + PAGE_W - 30, y + 5, PageRenderer.RULE);
                 Component by = Component.translatable("handbook.fourtwenty.author").withStyle(s -> s.withItalic(true));
@@ -237,10 +289,13 @@ public class HandbookScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         int mx = (int) ((mouseX - left) / scale), my = (int) ((mouseY - top) / scale);
-        if (spread == 0) { turn(1); return true; }
-        if (in(mx, my, BOOK_W - 30, BOOK_H - 18, 18, 10)) { turn(1); return true; }
-        if (in(mx, my, 12, BOOK_H - 18, 18, 10)) { turn(-1); return true; }
-        if (!back.isEmpty() && in(mx, my, BOOK_W / 2 - 22, BOOK_H - 18, 13, 11)) { goBack(); return true; }
+        if (spread == 0) { turn(1); return true; }      // the closed cover opens on a click
+        for (Tab t : tabs) {
+            if (in(mx, my, t.x(), -TAB_H, t.w(), TAB_H)) { openTab(t.key()); return true; }
+        }
+        if (in(mx, my, NEXT_X, BTN_Y, 18, 10)) { turn(1); return true; }
+        if (in(mx, my, PREV_X, BTN_Y, 18, 10)) { turn(-1); return true; }
+        if (!back.isEmpty() && in(mx, my, BACK_X, BTN_Y, 13, 11)) { goBack(); return true; }
         for (int i = 0; i < contentsHits.size(); i++) {
             int[] r = contentsHits.get(i);
             if (in(mx, my, r[0], r[1], r[2], r[3])) { go(contentsTargets.get(i)); return true; }
@@ -263,6 +318,9 @@ public class HandbookScreen extends Screen {
         if (key == GLFW.GLFW_KEY_RIGHT || key == GLFW.GLFW_KEY_PAGE_DOWN) { turn(1); return true; }
         if (key == GLFW.GLFW_KEY_LEFT || key == GLFW.GLFW_KEY_PAGE_UP) { turn(-1); return true; }
         if (key == GLFW.GLFW_KEY_BACKSPACE && !back.isEmpty()) { goBack(); return true; }
+        if (spread > 0 && key == GLFW.GLFW_KEY_HOME) { openTab("handbook.fourtwenty.contents"); return true; }
+        if (spread > 0 && key == GLFW.GLFW_KEY_G) { openTab("handbook.fourtwenty.glossary"); return true; }
+        if (spread > 0 && key == GLFW.GLFW_KEY_I) { openTab("handbook.fourtwenty.index"); return true; }
         return super.keyPressed(key, scan, mods);
     }
 
