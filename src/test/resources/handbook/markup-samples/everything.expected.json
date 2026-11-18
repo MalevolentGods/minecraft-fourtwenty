@@ -1,0 +1,155 @@
+{
+ "front": {
+  "title": "Your First Grow",
+  "icon": "fourtwenty:weed_seeds",
+  "terms": [
+   "starter seeds",
+   "farmland",
+   "light"
+  ],
+  "needs": null
+ },
+ "elements": [
+  {
+   "type": "heading",
+   "spans": [
+    {
+     "t": "Before You Plant"
+    }
+   ]
+  },
+  {
+   "type": "para",
+   "spans": [
+    {
+     "t": "Text with "
+    },
+    {
+     "t": "bold",
+     "b": true
+    },
+    {
+     "t": ", "
+    },
+    {
+     "t": "italic",
+     "i": true
+    },
+    {
+     "t": " and "
+    },
+    {
+     "t": "coloured",
+     "c": "lime"
+    },
+    {
+     "t": " words, carried on a second line. A "
+    },
+    {
+     "t": "link to the Trim Tray",
+     "link": "processing/trim_tray"
+    },
+    {
+     "t": " and a secret: "
+    },
+    {
+     "t": "this terpene smells of lavender",
+     "spoiler": "myr_lim_lav"
+    },
+    {
+     "t": "."
+    }
+   ]
+  },
+  {
+   "type": "list",
+   "items": [
+    [
+     {
+      "t": "a list item with "
+     },
+     {
+      "t": "weight",
+      "b": true
+     }
+    ],
+    [
+     {
+      "t": "another"
+     }
+    ]
+   ]
+  },
+  {
+   "type": "steps",
+   "start": 1,
+   "items": [
+    [
+     {
+      "t": "Till the dirt."
+     }
+    ],
+    [
+     {
+      "t": "Plant a seed."
+     }
+    ],
+    [
+     {
+      "t": "Wait for light."
+     }
+    ]
+   ]
+  },
+  {
+   "type": "item",
+   "id": "fourtwenty:weed_seeds",
+   "caption": "Your four starter seeds"
+  },
+  {
+   "type": "recipe",
+   "id": "fourtwenty:trim_tray"
+  },
+  {
+   "type": "image",
+   "path": "scenes/first_grow",
+   "caption": "A first grow by a window",
+   "size": "wide"
+  },
+  {
+   "type": "table",
+   "special": "",
+   "rows": [
+    [
+     "Tier",
+     "Power"
+    ],
+    [
+     "Puff",
+     "16 Kb"
+    ]
+   ]
+  },
+  {
+   "type": "truth",
+   "gate": "AND"
+  },
+  {
+   "type": "table",
+   "special": "parts",
+   "rows": []
+  },
+  {
+   "type": "page"
+  },
+  {
+   "type": "para",
+   "spans": [
+    {
+     "t": "Last words."
+    }
+   ]
+  }
+ ],
+ "errors": []
+}

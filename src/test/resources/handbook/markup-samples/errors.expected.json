@@ -1,0 +1,66 @@
+{
+ "front": {
+  "title": null,
+  "icon": "fourtwenty:weed_seeds",
+  "terms": [],
+  "needs": null
+ },
+ "elements": [
+  {
+   "type": "para",
+   "spans": [
+    {
+     "t": "An "
+    },
+    {
+     "t": "unclosed bold and a ",
+     "b": true
+    },
+    {
+     "t": "bad colour",
+     "b": true,
+     "c": "purple"
+    },
+    {
+     "t": ".",
+     "b": true
+    }
+   ]
+  },
+  {
+   "type": "truth",
+   "gate": "MAYBE"
+  },
+  {
+   "type": "table",
+   "special": "nope",
+   "rows": []
+  },
+  {
+   "type": "steps",
+   "start": 4,
+   "items": [
+    [
+     {
+      "t": "Steps can start anywhere."
+     }
+    ],
+    [
+     {
+      "t": "And keep counting."
+     }
+    ]
+   ]
+  }
+ ],
+ "errors": [
+  "unknown front matter key: colour",
+  "unknown colour: purple",
+  "unclosed **",
+  "unknown gate: MAYBE",
+  "unknown table: nope",
+  "unknown tag line: {wobble:1}",
+  "{/table} without {table}",
+  "no title"
+ ]
+}
