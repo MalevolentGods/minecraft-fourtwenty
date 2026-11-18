@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "minecraft:book" },
+    { "item": "fourtwenty:weed_bud" }
+  ],
+  "result": { "id": "fourtwenty:handbook", "count": 1 }
+}

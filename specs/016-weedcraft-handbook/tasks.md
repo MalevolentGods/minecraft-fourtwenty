@@ -21,9 +21,9 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty/`, `R` = `src/main/res
 - [X] T007 [P] Python reader of the same markup in `tools/handbook_markup.py`, run against the same samples by `tools/tests/test_handbook_markup.py`
 - [X] T008 [P] JUnit for pagination (elements never split except paragraphs/lists/steps; steps keep numbering) in `T/domain/handbook/LayoutTest.java`
 - [X] T009 Pure page layout over measured elements in `J/domain/handbook/Layout.java`
-- [ ] T010 Book data loader: `book.json` chapters, entries per language with en_us fallback, `needs` filtering, glossary file, as a client reload listener in `J/handbook/BookData.java`
-- [ ] T011 Content check (dead entry links, unknown items/recipes/images/terpene codes, missing icons, missing real terms, every obtainable item covered) in `tools/check_handbook.py`, wired as a Gradle task `checkHandbook` before `processResources` in `build.gradle`
-- [ ] T012 Generated book art (paper, page frame, ribbon, buttons, corner flourishes in the Four Twenty palette) in `tools/generate_handbook_art.py` → `R/assets/fourtwenty/textures/gui/handbook/`
+- [X] T010 Book data loader: `book.json` chapters, entries per language with en_us fallback, `needs` filtering, glossary file, as a client reload listener in `J/handbook/BookData.java`
+- [X] T011 Content check (dead entry links, unknown items/recipes/images/terpene codes, missing icons, missing real terms, every obtainable item covered) in `tools/check_handbook.py`, wired as a Gradle task `checkHandbook` before `processResources` in `build.gradle`
+- [X] T012 Generated book art (paper, page frame, ribbon, buttons, corner flourishes in the Four Twenty palette) in `tools/generate_handbook_art.py` → `R/assets/fourtwenty/textures/gui/handbook/`
 
 **Checkpoint**: markup parses identically in Java and Python; the check runs in the build.
 
@@ -32,20 +32,20 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty/`, `R` = `src/main/res
 **Goal**: the Handbook opens a beautiful, navigable book with Getting Started and Growing Weed.
 **Independent test**: quickstart M1.
 
-- [ ] T013 [US1] Handbook item (named via lang exactly "A Handbook of Weedcraft, Scouting, and Weed-craft"), opens the screen client-side, in `J/handbook/HandbookItem.java`; register in `J/registry/ModItems.java` and the creative tab in `J/registry/ModCreativeTabs.java`; item model and texture from `tools/generate_handbook_art.py`
-- [ ] T014 [US1] Book screen: cover (user art `tools/art/handbook_cover.png` copied to `R/assets/fourtwenty/textures/gui/handbook/cover.png`), DON'T PANIC page (alone, large friendly letters), title page (title, Simon Stalwart), contents, two-page spreads, page turn buttons and keys, page numbers, in `J/client/handbook/HandbookScreen.java`
-- [ ] T015 [US1] Element renderer (text spans with colours and bold, headings, lists, steps, items with tooltips, images, tables, truth tables generated from the gate) in `J/client/handbook/PageRenderer.java`
-- [ ] T016 [US1] Recipe view drawn from the client RecipeManager (shaped, shapeless, smelting, our machine recipes; "changed on this server" fallback) in `J/client/handbook/RecipeView.java`
-- [ ] T017 [US1] Links and the back stack; contents clicks; bookmark per world in `J/client/handbook/Bookmark.java` (config/fourtwenty-handbook.json)
-- [ ] T018 [P] [US1] Lang strings (item name, buttons, DON'T PANIC, title page) in `R/assets/fourtwenty/lang/en_us.json`
-- [ ] T019 [US1] `book.json` with all chapters declared and Getting Started + Growing Weed entries written (mod voice, light jargon) in `R/assets/fourtwenty/handbook/`
-- [ ] T020 [P] [US1] Game test: the Handbook item exists, has its name, and every entry in book.json parses with no errors in `G/HandbookGameTests.java`
+- [X] T013 [US1] Handbook item (named via lang exactly "A Handbook of Weedcraft, Scouting, and Weed-craft"), opens the screen client-side, in `J/handbook/HandbookItem.java`; register in `J/registry/ModItems.java` and the creative tab in `J/registry/ModCreativeTabs.java`; item model and texture from `tools/generate_handbook_art.py`
+- [X] T014 [US1] Book screen: cover (user art `tools/art/handbook_cover.png` copied to `R/assets/fourtwenty/textures/gui/handbook/cover.png`), DON'T PANIC page (alone, large friendly letters), title page (title, Simon Stalwart), contents, two-page spreads, page turn buttons and keys, page numbers, in `J/client/handbook/HandbookScreen.java`
+- [X] T015 [US1] Element renderer (text spans with colours and bold, headings, lists, steps, items with tooltips, images, tables, truth tables generated from the gate) in `J/client/handbook/PageRenderer.java`
+- [X] T016 [US1] Recipe view drawn from the client RecipeManager (shaped, shapeless, smelting, our machine recipes; "changed on this server" fallback) in `J/client/handbook/RecipeView.java`
+- [X] T017 [US1] Links and the back stack; contents clicks; bookmark per world in `J/client/handbook/Bookmark.java` (config/fourtwenty-handbook.json)
+- [X] T018 [P] [US1] Lang strings (item name, buttons, DON'T PANIC, title page) in `R/assets/fourtwenty/lang/en_us.json`
+- [X] T019 [US1] `book.json` with all chapters declared and Getting Started + Growing Weed entries written (mod voice, light jargon) in `R/assets/fourtwenty/handbook/`
+- [X] T020 [P] [US1] Game test: the Handbook item exists, has its name, and every entry in book.json parses with no errors in `G/HandbookGameTests.java`
 - [ ] T021 [US1] In game (quickstart M1), commit, report results
 
 ## Phase 4: US5 - Getting the book (P3, small, done with M1)
 
-- [ ] T022 [P] [US5] Recipe: book + weed bud, shapeless, in `R/data/fourtwenty/recipe/handbook.json` (user review of the recipe)
-- [ ] T023 [US5] Game test: crafting gives the Handbook in `G/HandbookGameTests.java`
+- [X] T022 [P] [US5] Recipe: book + weed bud, shapeless, in `R/data/fourtwenty/recipe/handbook.json` (user review of the recipe)
+- [X] T023 [US5] Game test: crafting gives the Handbook in `G/HandbookGameTests.java`
 
 ## Phase 5: US2 - Every system has a chapter (P1) · Milestone 2
 

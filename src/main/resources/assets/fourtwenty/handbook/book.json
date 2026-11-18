@@ -1,0 +1,17 @@
+{
+  "cover": "fourtwenty:textures/gui/handbook/cover.png",
+  "chapters": [
+    {
+      "id": "getting_started",
+      "title": "handbook.fourtwenty.chapter.getting_started",
+      "icon": "fourtwenty:weed_seeds",
+      "entries": ["welcome", "first_seeds", "first_grow", "first_smoke", "being_high"]
+    },
+    {
+      "id": "growing",
+      "title": "handbook.fourtwenty.chapter.growing",
+      "icon": "fourtwenty:rough_bud",
+      "entries": ["planting", "harvest", "strains", "seeds"]
+    }
+  ]
+}

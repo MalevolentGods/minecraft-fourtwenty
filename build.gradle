@@ -318,3 +318,17 @@ tasks.matching { it.name == 'runGameTestServer' }.configureEach {
         }
     }
 }
+
+// The Handbook's content check (specs/016-weedcraft-handbook FR-009): dead links, missing items, recipes and images
+// fail the build. Pass -PhandbookStrict for release builds (coverage and real names too).
+tasks.register('checkHandbook', Exec) {
+    group = 'verification'
+    description = 'Checks the Handbook entries, links, pictures and recipes.'
+    inputs.dir('src/main/resources/assets/fourtwenty/handbook')
+    inputs.file('src/main/resources/assets/fourtwenty/lang/en_us.json')
+    outputs.upToDateWhen { true }
+    def args = ['python3', 'tools/check_handbook.py']
+    if (providers.gradleProperty('handbookStrict').isPresent()) args << '--strict'
+    commandLine args
+}
+tasks.named('check') { dependsOn 'checkHandbook' }
