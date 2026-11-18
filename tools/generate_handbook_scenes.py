@@ -4,7 +4,10 @@
     python3 tools/generate_handbook_scenes.py
 
 Each scene is a build in the test world, scanned with Structurize to tools/art/handbook_scenes/handbook_<name>.blueprint.
-This draws it in isometric view with each block's own textures (from the mod and the Minecraft 1.21.1 client jar):
+Preferred: the game's own render of it (the user, 2026-11-18): in a dev client near the builds, with
+tools/art/handbook_scenes/scenes.json copied to config/fourtwenty-handbook-scenes.json, run /handbook_render, then crop
+and scale the PNGs from the game folder's handbook-renders/ into tools/art/handbook_scenes/renders/ (1200 wide). Without
+a render, this draws the scan in isometric view with each block's own textures (from the mod and the Minecraft 1.21.1 client jar):
 full cubes as textured cubes, crops and flowers standing up, Wicks flat on the ground in their colour. Writes
 textures/gui/handbook/scenes/<name>.png.
 """
@@ -246,10 +249,20 @@ def render(scan):
     return img.crop(box) if box else img
 
 
+RENDERS = SCANS / 'renders'
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     for f in sorted(SCANS.glob('handbook_*.blueprint')):
         name = f.stem[len('handbook_'):]
+        rendered = RENDERS / f'{name}.png'
+        if rendered.exists():
+            # the game's own render (/handbook_render in a dev client, scenes.json for the boxes), cropped and 1200 wide
+            im = Image.open(rendered).convert('RGBA')
+            im.crop(im.getbbox()).save(OUT / f'{name}.png', optimize=True)
+            print(name, 'game render', im.size)
+            continue
         im = render(Scan(f))
         # 4x, each texture pixel a sharp 4x4 square: the book scales it down smoothly, so it stays crisp at any size
         im = im.resize((im.width * UPSCALE, im.height * UPSCALE), Image.NEAREST)
