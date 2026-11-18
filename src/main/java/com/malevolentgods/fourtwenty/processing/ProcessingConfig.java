@@ -23,6 +23,7 @@ public final class ProcessingConfig {
     private static final ModConfigSpec.DoubleValue ULTRA = chance("seedChanceUltra", D.ultra());
     private static final ModConfigSpec.DoubleValue GOLDEN = chance("seedChanceGolden", D.golden());
     private static final ModConfigSpec.DoubleValue POLLEN_CHANCE = BUILDER.comment("Chance per harvest that Double Cross parents side by side give their hybrid's seed.").defineInRange("pollenChance", 0.05, 0, 1);
+    private static final ModConfigSpec.IntValue STARTER_SEEDS = BUILDER.comment("Landrace seeds each player gets once, on their first login (0 for none).").defineInRange("starterSeeds", 4, 0, 64);
     private static final ModConfigSpec.IntValue BOT_BUD_MINUTES = BUILDER.comment("How many minutes one Cured Bud runs a Buzz Bot.").defineInRange("botBudMinutes", 60, 1, 1440);
     private static final ModConfigSpec.IntValue BOT_CROSS_MINUTES = BUILDER.comment("How many minutes a Buzz Bot waits after one cross before the next.").defineInRange("botCrossMinutes", 5, 0, 1440);
     private static final ModConfigSpec.IntValue BOT_CHARGE_BI = BUILDER.comment("The Ws a Buzz Bot takes from a Stash for one bud's worth of power.").defineInRange("botChargeBI", 25_200, 1, 10_000_000);
@@ -208,6 +209,7 @@ public final class ProcessingConfig {
                 PAVE_TICKS_BASE.get(), PAVE_TICKS_HARDNESS.get(), PAVE_MAX_HARDNESS.get(), PAVE.upgradeCost(), PAVE.upgradeTicks(), PAVE.reshapeCost(), PAVE.reshapeTicks()) : PAVE;
     }
 
+    public static int starterSeeds() { return SPEC.isLoaded() ? STARTER_SEEDS.get() : 4; }
     public static double cropSpeed() { return SPEC.isLoaded() ? CROP_SPEED.get() : GrowRules.CROP_SPEED; }
 
     /** How fast a strain of this grade grows; grades 0 and 1 aren't slowed. */

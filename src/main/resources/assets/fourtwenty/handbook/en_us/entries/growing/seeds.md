@@ -3,7 +3,7 @@ title: Seeds and Where They Come From
 icon: fourtwenty:weed_seeds
 terms: [seed chance, trimming seeds, more seeds]
 ---
-A harvest gives each plant's seed back, and no more. To **grow your stock**, you trim.
+A harvest gives each plant's seed back, and in plain farmland no more. To **grow your stock**, you trim.
 
 Every time you trim a Rough Bud, a seed of its strain may fall out of the trimmings. The rarer the family, the rarer the seed:
 

@@ -7,7 +7,7 @@ When a weed plant stands full-grown and flowering, it's ready. Right-click it (o
 
 A ripe plant gives:
 
-- a **Rough Bud** of its strain,
+- **Rough Buds** of its strain: one for Landrace, more for better strains (up to five for Golden God),
 - and its **seed** back, to plant again.
 
 The whole plant comes up with the harvest, just as a real one would, so the ground is left bare. Replant straight away and the garden never sleeps.

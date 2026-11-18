@@ -51,22 +51,22 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty/`, `R` = `src/main/res
 
 **Independent test**: quickstart M2.
 
-- [ ] T024 [P] [US2] Entries: Trimming and Processing in `R/assets/fourtwenty/handbook/en_us/entries/processing/`
-- [ ] T025 [P] [US2] Entries: Researching Colours (with `{spoiler:terpene}` everywhere a terpene is named) in `.../entries/colours/`
-- [ ] T026 [P] [US2] Entries: The Terpinator in `.../entries/terpinator/`
-- [ ] T027 [P] [US2] Entries: Boundless Inspiration in `.../entries/power/`
-- [ ] T028 [P] [US2] Entries: Colony Life (`needs: minecolonies`) in `.../entries/colony/`
-- [ ] T029 [US2] Spoiler guard: spoiler spans and terpene names hidden until discovered (reads TerpeneKnowledge) in `J/client/handbook/PageRenderer.java`
-- [ ] T030 [US2] `needs` hiding for chapters, entries, links and index lines in `J/handbook/BookData.java`
+- [X] T024 [P] [US2] Entries: Trimming and Processing in `R/assets/fourtwenty/handbook/en_us/entries/processing/`
+- [X] T025 [P] [US2] Entries: Researching Colours (with `{spoiler:terpene}` everywhere a terpene is named) in `.../entries/colours/`
+- [X] T026 [P] [US2] Entries: The Terpinator in `.../entries/terpinator/`
+- [X] T027 [P] [US2] Entries: Boundless Inspiration in `.../entries/power/`
+- [X] T028 [P] [US2] Entries: Colony Life (`needs: minecolonies`) in `.../entries/colony/`
+- [X] T029 [US2] Spoiler guard: spoiler spans and terpene names hidden until discovered (reads TerpeneKnowledge) in `J/client/handbook/PageRenderer.java`
+- [X] T030 [US2] `needs` hiding for chapters, entries, links and index lines in `J/handbook/BookData.java`
 - [ ] T031 [US2] Build the scenes in the local world, scan them to `tools/art/handbook_scenes/*.blueprint`, render with `tools/generate_handbook_scenes.py` (port of the isometric renderer) to `R/assets/fourtwenty/textures/gui/handbook/scenes/`
 - [ ] T032 [P] [US2] Game test: with MineColonies absent, no colony entry is reachable in `G/HandbookGameTests.java`
 - [ ] T033 [US2] In game (quickstart M2), commit, report
 
 ## Phase 6: US4 - Find anything fast (P2, with Milestone 2)
 
-- [ ] T034 [P] [US4] JUnit for index building (terms → entry, page) in `T/domain/handbook/IndexTest.java`
-- [ ] T035 [US4] Index and glossary pages generated at layout time in `J/domain/handbook/Contents.java` and shown by `J/client/handbook/HandbookScreen.java`
-- [ ] T036 [US4] Glossary file (~35 terms) in `R/assets/fourtwenty/handbook/en_us/glossary.md`
+- [X] T034 [P] [US4] JUnit for index building (terms → entry, page) in `T/domain/handbook/IndexTest.java`
+- [X] T035 [US4] Index and glossary pages generated at layout time in `J/domain/handbook/Contents.java` and shown by `J/client/handbook/HandbookScreen.java`
+- [X] T036 [US4] Glossary file (~35 terms) in `R/assets/fourtwenty/handbook/en_us/glossary.md`
 - [ ] T037 [US4] In game: ten look-ups under 30 s each (SC-005), report
 
 ## Phase 7: US3 - Inspoweednetics (P2) · Milestone 3

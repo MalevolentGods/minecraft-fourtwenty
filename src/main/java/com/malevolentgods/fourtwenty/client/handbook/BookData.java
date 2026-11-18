@@ -39,8 +39,9 @@ public final class BookData implements ResourceManagerReloadListener {
     /** An entry: id is "chapter/name". */
     public record Entry(String id, String chapter, Markup.Front front, List<Element> elements) {}
 
-    public record Book(List<Chapter> chapters, Map<String, Entry> entries, Map<String, String> glossary, String language) {
-        public static final Book EMPTY = new Book(List.of(), Map.of(), Map.of(), "en_us");
+    /** glossary: term, meaning, entry (empty or a shown entry). */
+    public record Book(List<Chapter> chapters, Map<String, Entry> entries, List<String[]> glossary, String language) {
+        public static final Book EMPTY = new Book(List.of(), Map.of(), List.of(), "en_us");
     }
 
     private volatile Book book = Book.EMPTY;
@@ -85,16 +86,11 @@ public final class BookData implements ResourceManagerReloadListener {
                 }
                 chapters.add(new Chapter(id, str(c, "title"), str(c, "icon"), List.copyOf(ids)));
             }
-            Map<String, String> glossary = new LinkedHashMap<>();
+            List<String[]> glossary = new ArrayList<>();
             readText(manager, lang, "glossary.md").ifPresent(text -> {
-                for (String line : text.split("\n")) {
-                    int colon = line.indexOf(':'), arrow = line.lastIndexOf("-> entry:");
-                    if (colon < 0) continue;
-                    String term = line.substring(0, colon).strip();
-                    String meaning = (arrow > colon ? line.substring(colon + 1, arrow) : line.substring(colon + 1)).strip();
-                    String target = arrow > 0 ? line.substring(arrow + "-> entry:".length()).strip() : "";
-                    if (!target.isEmpty() && !entries.containsKey(target)) continue;   // its entry is hidden (a missing mod)
-                    glossary.put(term, meaning + (target.isEmpty() ? "" : "\u0000" + target));
+                for (String[] t : com.malevolentgods.fourtwenty.domain.handbook.Contents.parseGlossary(text)) {
+                    if (!t[2].isEmpty() && !entries.containsKey(t[2])) continue;   // its entry is hidden (a missing mod)
+                    glossary.add(t);
                 }
             });
             book = new Book(List.copyOf(chapters), entries, glossary, lang);

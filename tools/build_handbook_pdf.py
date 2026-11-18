@@ -320,13 +320,17 @@ class Marker(Flowable):
 
     def draw(self):
         self.canv.bookmarkPage(self.key)
-        self.canv.addOutlineEntry(self.title, self.key, level=self.level, closed=self.level == 0)
+        self.canv.addOutlineEntry(self.title, self.key, level=max(self.level, 0), closed=self.level == 0)
 
 
 class Doc(BaseDocTemplate):
+    pages = {}
+
     def afterFlowable(self, f):
         if isinstance(f, Marker):
-            self.notify('TOCEntry', (f.level, f.title, self.page, f.key))
+            Doc.pages[f.key] = self.page
+            if f.level >= 0:
+                self.notify('TOCEntry', (f.level, f.title, self.page, f.key))
 
 
 # ---- pages
@@ -429,6 +433,7 @@ def build(out):
     toc.levelStyles = [ParagraphStyle('toc0', fontName='Times-Bold', fontSize=12, leading=16, textColor=HEADING, spaceBefore=6),
                        ParagraphStyle('toc1', fontName='Times-Roman', fontSize=10.5, leading=13, textColor=INK, leftIndent=14)]
     story += [Paragraph(LANG['handbook.fourtwenty.contents'], H1), toc, PageBreak()]
+    index_terms = []
     for ch in book['chapters']:
         title = LANG.get(ch['title'], ch['title'])
         key = 'c_' + ch['id']
@@ -443,9 +448,35 @@ def build(out):
             if front.get('needs'):
                 head.append(Paragraph('<i>Needs MineColonies</i>', CAPTION))
             story += [KeepTogether(head)] + elements_to_flow(els) + [PageBreak()]
+            index_terms.extend((t, eid, front['title']) for t in front.get('terms', []))
+    # the back of the book: glossary and index (FR-006)
+    story += [Marker('c_back', 'Back of the Book', 0), Spacer(1, 150), Paragraph('Back of the Book', CHAPTER), PageBreak()]
+    gl = BOOK / 'en_us/glossary.md'
+    if gl.exists():
+        story += [Marker('e_back_glossary', 'Glossary', 1), Paragraph('<a name="e_back_glossary"/>Glossary', H1)]
+        for line in gl.read_text(encoding='utf-8').splitlines():
+            if ':' not in line:
+                continue
+            term, rest = line.split(':', 1)
+            meaning, _, target = rest.partition('-> entry:')
+            link = f'<a href="#{anchor(target.strip())}" color="#2E7A1A"><b>{esc(term.strip())}</b></a>' if target.strip() else f'<b>{esc(term.strip())}</b>'
+            story.append(Paragraph(f'{link}: {esc(meaning.strip())}', ParagraphStyle('g', parent=BODY, spaceAfter=3)))
+        story.append(PageBreak())
+    story += [Marker('e_back_index', 'Index', 1), Paragraph('<a name="e_back_index"/>Index', H1)]
+    letter = None
+    for term, eid, title in sorted(set(index_terms), key=lambda t: (t[0].lower(), t[1])):
+        first = term[0].upper()
+        if first != letter:
+            letter = first
+            story.append(Paragraph(letter, H2))
+        page = Doc.pages.get(anchor(eid), '')
+        story.append(Paragraph(f'<a href="#{anchor(eid)}" color="#3A2E20">{esc(term)}</a> <font color="#8A7A5A">. . . {page}</font>',
+                               ParagraphStyle('ix', parent=BODY, fontSize=9.5, leading=11.5, spaceAfter=0)))
     doc.multiBuild(story)
     print('wrote', out, f'({doc.page} pages)')
 
 
 if __name__ == '__main__':
-    build(Path(sys.argv[1]) if len(sys.argv) > 1 else OUT)
+    target = Path(sys.argv[1]) if len(sys.argv) > 1 else OUT
+    build(target)        # the first pass learns each entry's page, for the index
+    build(target)

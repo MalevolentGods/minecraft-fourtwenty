@@ -13,7 +13,7 @@ Weed is a crop like wheat, with a few more needs, and it takes its time: about t
 
 {item:fourtwenty:rough_bud|A Rough Bud, fresh off the plant}
 
-A ripe plant gives you a **Rough Bud** and its seed back. The plant itself comes up with the harvest, so replant the seed to keep your garden going.
+A ripe plant gives you a **Rough Bud** (better strains give more) and its seed back. The plant itself comes up with the harvest, so replant the seed to keep your garden going.
 
 Rough buds are sticky, leafy and not yet fit to smoke. To find out what to do with them, read [Your First Smoke](entry:getting_started/first_smoke).
 

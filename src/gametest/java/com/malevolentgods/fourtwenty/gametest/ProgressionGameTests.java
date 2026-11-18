@@ -1,7 +1,7 @@
 package com.malevolentgods.fourtwenty.gametest;
 
 import com.malevolentgods.fourtwenty.block.WeedCropBlock;
-import com.malevolentgods.fourtwenty.compat.minecolonies.StarterSeeds;
+import com.malevolentgods.fourtwenty.processing.StarterSeeds;
 import com.malevolentgods.fourtwenty.domain.Strain;
 import com.malevolentgods.fourtwenty.domain.TrimRules;
 import com.malevolentgods.fourtwenty.processing.ProcessingConfig;

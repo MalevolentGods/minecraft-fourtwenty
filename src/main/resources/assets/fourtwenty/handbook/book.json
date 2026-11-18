@@ -5,13 +5,82 @@
       "id": "getting_started",
       "title": "handbook.fourtwenty.chapter.getting_started",
       "icon": "fourtwenty:weed_seeds",
-      "entries": ["welcome", "first_seeds", "first_grow", "first_smoke", "being_high"]
+      "entries": [
+        "welcome",
+        "first_seeds",
+        "first_grow",
+        "first_smoke",
+        "being_high"
+      ]
     },
     {
       "id": "growing",
       "title": "handbook.fourtwenty.chapter.growing",
       "icon": "fourtwenty:rough_bud",
-      "entries": ["planting", "harvest", "strains", "seeds"]
+      "entries": [
+        "planting",
+        "harvest",
+        "strains",
+        "seeds",
+        "grow_ops",
+        "breeding",
+        "pot_pots"
+      ]
+    },
+    {
+      "id": "processing",
+      "title": "handbook.fourtwenty.chapter.processing",
+      "icon": "fourtwenty:trim_tray",
+      "entries": [
+        "trim_and_cure",
+        "machines",
+        "extracts",
+        "vape_pen",
+        "smoking",
+        "edibles"
+      ]
+    },
+    {
+      "id": "colours",
+      "title": "handbook.fourtwenty.chapter.colours",
+      "icon": "fourtwenty:inspiration_infuser",
+      "entries": [
+        "terpenes",
+        "infuser"
+      ]
+    },
+    {
+      "id": "terpinator",
+      "title": "handbook.fourtwenty.chapter.terpinator",
+      "icon": "fourtwenty:terpinator",
+      "entries": [
+        "using"
+      ]
+    },
+    {
+      "id": "power",
+      "title": "handbook.fourtwenty.chapter.power",
+      "icon": "fourtwenty:weed_bong",
+      "entries": [
+        "basics",
+        "hookahs",
+        "wiring",
+        "stashes",
+        "hit_box"
+      ]
+    },
+    {
+      "id": "colony",
+      "title": "handbook.fourtwenty.chapter.colony",
+      "icon": "fourtwenty:weed_joint",
+      "entries": [
+        "dispensary",
+        "bud_barn",
+        "weed_lab",
+        "lifted_builders",
+        "sensi_heights"
+      ],
+      "needs": "minecolonies"
     }
   ]
 }

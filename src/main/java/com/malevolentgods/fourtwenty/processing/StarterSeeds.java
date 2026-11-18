@@ -1,4 +1,4 @@
-package com.malevolentgods.fourtwenty.compat.minecolonies;
+package com.malevolentgods.fourtwenty.processing;
 
 import com.malevolentgods.fourtwenty.domain.Strain;
 import com.malevolentgods.fourtwenty.registry.ModDataComponents;
@@ -10,8 +10,9 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 /**
- * A new player's first weed (specs/012-progression-balance): Landrace seeds once, on their first login with MineColonies, in hand as
- * they place their supply camp. Remembered in the player's persistent data, so it survives death and restarts.
+ * A new player's first weed (specs/012-progression-balance): Landrace seeds once, on their first login. Every player gets them,
+ * with or without MineColonies (the user's call, 2026-11-18); a MineColonies Supply Camp or Supply Ship also carries a few in its
+ * racks. Remembered in the player's persistent data, so it survives death and restarts.
  */
 public final class StarterSeeds {
     public static final String FLAG = "fourtwenty.starterSeeds";
@@ -19,7 +20,7 @@ public final class StarterSeeds {
     private StarterSeeds() {}
 
     public static void loggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) give(player, DispensaryConfig.starterSeeds());
+        if (event.getEntity() instanceof ServerPlayer player) give(player, ProcessingConfig.starterSeeds());
     }
 
     /** Gives {@code count} Landrace seeds unless this player has had theirs; true if it gave them now. */

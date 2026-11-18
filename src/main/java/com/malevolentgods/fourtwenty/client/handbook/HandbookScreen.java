@@ -88,6 +88,9 @@ public class HandbookScreen extends Screen {
             all.add(new ContentsLine(Component.translatable(c.title()).getString(), c.entries().get(0), true));
             for (String id : c.entries()) all.add(new ContentsLine(book.entries().get(id).front().title(), id, false));
         }
+        all.add(new ContentsLine(Component.translatable("handbook.fourtwenty.chapter.back").getString(), GLOSSARY, true));
+        if (!book.glossary().isEmpty()) all.add(new ContentsLine(Component.translatable("handbook.fourtwenty.glossary").getString(), GLOSSARY, false));
+        all.add(new ContentsLine(Component.translatable("handbook.fourtwenty.index").getString(), INDEX, false));
         int perPage = PAGE_H / PageRenderer.LINE - 2;
         for (int i = 0; i < Math.max(1, all.size()); i += perPage) {
             pages.add(new Contents(all.isEmpty() ? List.of() : all.subList(i, Math.min(all.size(), i + perPage))));
@@ -96,16 +99,31 @@ public class HandbookScreen extends Screen {
         for (BookData.Chapter c : book.chapters()) {
             for (String id : c.entries()) {
                 BookData.Entry e = book.entries().get(id);
-                List<Element> els = new ArrayList<>();
-                els.add(new Element.Heading(List.of(new Span(e.front().title(), true, false, null, null, null))));
-                els.addAll(e.elements());
-                entryPage.put(id, pages.size());
-                for (List<Layout.Placed> page : Layout.paginate(els, PAGE_W, PAGE_H, m)) {
-                    pages.add(new EntryPage(id, page, pages.size()));
-                }
+                addEntry(id, e.front().title(), e.elements(), m);
             }
         }
+        // the back of the book: glossary and index (FR-006)
+        if (!book.glossary().isEmpty()) {
+            addEntry(GLOSSARY, Component.translatable("handbook.fourtwenty.glossary").getString(),
+                    com.malevolentgods.fourtwenty.domain.handbook.Contents.glossaryElements(book.glossary()), m);
+        }
+        java.util.Map<String, List<String>> terms = new java.util.LinkedHashMap<>();
+        book.entries().forEach((id, e) -> terms.put(id, e.front().terms()));
+        addEntry(INDEX, Component.translatable("handbook.fourtwenty.index").getString(),
+                com.malevolentgods.fourtwenty.domain.handbook.Contents.indexElements(com.malevolentgods.fourtwenty.domain.handbook.Contents.index(terms)), m);
         if (pages.size() % 2 == 1) pages.add(new Blank());
+    }
+
+    static final String GLOSSARY = "back/glossary", INDEX = "back/index";
+
+    private void addEntry(String id, String title, List<Element> elements, Layout.Measure m) {
+        List<Element> els = new ArrayList<>();
+        els.add(new Element.Heading(List.of(new Span(title, true, false, null, null, null))));
+        els.addAll(elements);
+        entryPage.put(id, pages.size());
+        for (List<Layout.Placed> page : Layout.paginate(els, PAGE_W, PAGE_H, m)) {
+            pages.add(new EntryPage(id, page, pages.size()));
+        }
     }
 
     private int spreads() {
