@@ -83,7 +83,7 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty/`, `R` = `src/main/res
 
 **Independent test**: quickstart M4.
 
-- [ ] T043 [US6] Draft every rank and Stoner Badge requirement list (Scout format, ≥ 80% tracked) in `specs/016-weedcraft-handbook/requirements-draft.md` and **get the user's review and name approvals** (gate: nothing below ships unapproved)
+- [~] T043 [US6] Draft every rank and Stoner Badge requirement list (Scout format, ≥ 80% tracked) in `specs/016-weedcraft-handbook/requirements-draft.md` and **get the user's review and name approvals** (gate: nothing below ships unapproved)
 - [ ] T044 [P] [US6] JUnit: requirement matching (subject filters, counts), rank order and locking, honour, reset, merge in `T/domain/handbook/ScoutingTest.java`
 - [ ] T045 [US6] Pure rules: Requirement, RankLadder, Progress in `J/domain/handbook/`
 - [ ] T046 [US6] Scouting data loader (ranks, badges; `needs` filtering) as a server reload listener in `J/handbook/ScoutingData.java`; files in `R/data/fourtwenty/handbook/{ranks,badges}/`
