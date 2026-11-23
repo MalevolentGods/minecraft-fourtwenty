@@ -18,9 +18,8 @@
     },
     {
       "n": "3",
-      "kind": "tracked",
-      "text": "handbook.fourtwenty.req.badge.lifted_building.3",
-      "deed": "colony_built"
+      "kind": "honour",
+      "text": "handbook.fourtwenty.req.badge.lifted_building.3"
     },
     {
       "n": "4",

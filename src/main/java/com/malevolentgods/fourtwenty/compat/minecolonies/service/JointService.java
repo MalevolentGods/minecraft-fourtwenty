@@ -191,6 +191,7 @@ public final class JointService {
         var data = citizen.getCitizenData();
         if (saved.citizen(data.getColony().getID(), data.getUUID()).revision() != expectedRevision) return false;
         if (!saved.recordConsumption(data.getColony().getID(), data.getUUID(), expectedRevision, ColonyIntegration.rules(data, saved))) return false;
+        com.malevolentgods.fourtwenty.handbook.Deeds.near(level, citizen.blockPosition(), "colony_dose", 1);
         Exposure.dose(level, data);
         Exposure.secondhand(level, citizen);
         BongSessions.grant(level, data, variety);
@@ -214,6 +215,7 @@ public final class JointService {
         ItemStack removed = citizen.getInventoryCitizen().extractItem(slot, 1, false);
         if (removed.isEmpty()) return false;
         if (saved.recordConsumption(data.getColony().getID(), data.getUUID(), expectedRevision, ColonyIntegration.rules(data, saved))) {
+            com.malevolentgods.fourtwenty.handbook.Deeds.near(citizen.level(), citizen.blockPosition(), "colony_dose", 1);
             if (removed.isDamageableItem()) {
                 removed.setDamageValue(removed.getDamageValue() + 1);
                 if (removed.getDamageValue() < removed.getMaxDamage()) {

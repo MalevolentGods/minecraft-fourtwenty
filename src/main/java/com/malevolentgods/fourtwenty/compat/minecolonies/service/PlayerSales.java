@@ -148,6 +148,7 @@ public final class PlayerSales {
                     if (sold.isEmpty()) continue;
                     if (price > 0) pay(player, price);
                     if (!player.getInventory().add(sold)) player.drop(sold, false);
+                    com.malevolentgods.fourtwenty.handbook.Deeds.by(player, "colony_sale", "item", com.malevolentgods.fourtwenty.handbook.Deeds.id(sold.getItem()));
                     tender.swing(InteractionHand.MAIN_HAND);
                     player.displayClientMessage(text("fourtwenty.dispensary.sales.sold", "%s hands you a %s.",
                             tender.getName(), sold.getHoverName()), true);

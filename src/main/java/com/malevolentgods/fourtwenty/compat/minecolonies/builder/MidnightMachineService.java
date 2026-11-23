@@ -62,6 +62,7 @@ public final class MidnightMachineService {
         if (changed || playing && now - last.at() >= RESYNC_TICKS) {
             if (last == null && !lifted) return;   // nothing to say about a Builder who's never been Lifted
             MidnightMachinePayload.send(citizen, new MidnightMachinePayload(citizen.getId(), playing, lifted, pos.track(), pos.ms(), now));
+            if (playing) com.malevolentgods.fourtwenty.handbook.Deeds.near(level, citizen.blockPosition(), "colony_music", 1);
             SENT.put(citizen.getUUID(), new Sent(playing, lifted, pos.track(), now));
         }
     }

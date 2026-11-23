@@ -173,14 +173,14 @@ BADGES = [
         T('3', 'Place hemp glass.', 'place', {'block': F + 'glass_*'}),
         H('4', "Build something you're proud of from hemp, and show someone.")]),
     ('community_sesh', 'Community Sesh', 'minecolonies', 'colony/dispensary', [
-        T('1', 'Hire a Budtender.', 'colony_hire'),
+        H('1', 'Hire a Budtender.'),
         T('2', 'Have a colonist enjoy a dose.', 'colony_dose'),
         T('3', 'Sell a joint to a player.', 'colony_sale'),
         H('4', 'Ask a colonist how they are feeling.')]),
     ('lifted_building', 'Lifted Building', 'minecolonies', 'colony/lifted_builders', [
         T('1', 'Have a Lifted Builder.', 'colony_lifted'),
         T('2', 'Hear the Midnight Machine.', 'colony_music'),
-        T('3', 'Finish a building with a Lifted Builder.', 'colony_built'),
+        H('3', 'Watch a Lifted Builder finish a building.'),
         H('4', 'Dance.')]),
 ]
 # ranks carry no 'needs'; badges' third field is theirs

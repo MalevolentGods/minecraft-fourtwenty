@@ -49,12 +49,17 @@ public final class LiftedService {
     }
 
     /** Called once a second per Builder by the watchdog's sweep. */
+    /** Builders already counted for the Handbook this spell. */
+    private static final java.util.Set<java.util.UUID> ANNOUNCED = new java.util.HashSet<>();
+
     public static void tick(ServerLevel level, IColony colony, EntityCitizen citizen, int elapsed) {
         var data = citizen.getCitizenData();
         if (data == null) return;
         var lifted = Lifted.get(level);
         boolean building = BuilderAccess.building(citizen);
         boolean isLifted = lifted.isLifted(colony.getID(), data.getId());
+        if (isLifted && ANNOUNCED.add(citizen.getUUID())) com.malevolentgods.fourtwenty.handbook.Deeds.near(level, citizen.blockPosition(), "colony_lifted", 1);
+        else if (!isLifted) ANNOUNCED.remove(citizen.getUUID());
 
         if (isLifted && !allowed(citizen)) {
             end(level, colony, citizen, "switch");
