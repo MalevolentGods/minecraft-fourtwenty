@@ -49,6 +49,8 @@ jobs:
         run: python3 tools/download_compile_dependencies.py
       - name: Run Java and Python unit tests
         run: make test
+      - name: Check the Handbook's links, pictures and recipes
+        run: python3 tools/check_handbook.py
       - name: Build release JAR
         if: github.event_name == 'push'
         run: make build
@@ -73,6 +75,10 @@ jobs:
       group: release-${{ github.ref }}
       cancel-in-progress: false
     steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          sparse-checkout: docs/handbook
       - uses: actions/download-artifact@v4
         with:
           name: release-jar
@@ -91,5 +97,7 @@ jobs:
           if [[ "${RELEASE_VERSION%%+*}" == *-* ]]; then
             options+=(--prerelease)
           fi
-          gh release create "$RELEASE_TAG" "$jar" --verify-tag \
+          pdf="docs/handbook/A-Handbook-of-Weedcraft.pdf"
+          test -s "$pdf"
+          gh release create "$RELEASE_TAG" "$jar" "$pdf#A Handbook of Weedcraft, Scouting, and Weed-craft (PDF)" --verify-tag \
             --title "FourTwenty ${RELEASE_VERSION}" --generate-notes "${options[@]}"
