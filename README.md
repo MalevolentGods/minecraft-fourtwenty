@@ -4,6 +4,12 @@ Grow wild cannabis into a farm, craft joints and edibles, build a hookah for sha
 
 This compatibility candidate targets **Minecraft 1.21.1, NeoForge 21.1.218, and Java 21**. Its declared NeoForge range is `[21.1.218,21.2)`; qualification currently targets **21.1.218 specifically**. The [compatibility report](docs/COMPATIBILITY.md) distinguishes automated results from the remaining interactive and multiplayer checks. Full modpack qualification is not yet complete.
 
+## What's new in 1.1.0
+
+- **A Handbook of Weedcraft, Scouting, and Weed-craft:** an in-game guidebook (craft it from a book and a Cured Bud). Recipes, pictures, a glossary and index, and an Inspoweednetics section with six example circuits. A printable PDF is attached to each GitHub release.
+- **Ranks and Stoner Badges:** six ranks and 14 badges, tracked by the game and checked off in the book, plus a wearable **Stoner Badge Sash**.
+- Everyone gets starter seeds on first join; a harvested weed plant no longer stays planted.
+
 ## What's new in 0.29.0
 
 - **Sensi Heights** (with MineColonies): every new hut has its own shape, chimneys are working fireplaces, each hut's level 5 lamps are its own colour, walls and roofs are sealed, and the signature door is on every door from level 3. The re-dressed MineColonies buildings now use Four Twenty's palette.

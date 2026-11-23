@@ -49,9 +49,17 @@ Flying can't kill you, overloads burn out in smoke rather than explode, and fail
 - The album *Midnight Machine* is by **ATLemental** and ships inside the mod.
 - Licensed under **CC BY-NC-SA 4.0**.
 
+### 📖 The Handbook
+- **A Handbook of Weedcraft, Scouting, and Weed-craft:** an in-game guidebook with recipes, pictures, a glossary and an Inspoweednetics section. Craft it from a book and a Cured Bud. A printable PDF is on the [GitHub releases page](https://github.com/MalevolentGods/minecraft-fourtwenty/releases).
+- **Ranks and Stoner Badges:** six ranks and 14 badges, tracked by the game, and a wearable Stoner Badge Sash.
+
 ---
 
 ## Changelog
+
+### 1.1.0
+
+- **The Handbook** with ranks, Stoner Badges, the Sash and a PDF edition; starter seeds for everyone; a harvested plant no longer stays planted; Sensi Heights v121.
 
 ### 0.29.0
 
