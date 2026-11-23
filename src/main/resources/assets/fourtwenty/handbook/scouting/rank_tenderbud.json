@@ -1,0 +1,73 @@
+{
+  "id": "tenderbud",
+  "kind": "rank",
+  "order": 1,
+  "name": "handbook.fourtwenty.rank.tenderbud",
+  "entry": "getting_started/welcome",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "honour",
+      "text": "handbook.fourtwenty.req.rank.tenderbud.1"
+    },
+    {
+      "n": "2a",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.tenderbud.2a",
+      "deed": "obtain",
+      "subject": {
+        "item": "fourtwenty:weed_seeds"
+      }
+    },
+    {
+      "n": "2b",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.tenderbud.2b",
+      "deed": "plant"
+    },
+    {
+      "n": "2c",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.tenderbud.2c",
+      "deed": "harvest",
+      "subject": {
+        "grade": "0"
+      }
+    },
+    {
+      "n": "3a",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.tenderbud.3a",
+      "deed": "trim"
+    },
+    {
+      "n": "3b",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.tenderbud.3b",
+      "deed": "cure"
+    },
+    {
+      "n": "4a",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.tenderbud.4a",
+      "deed": "craft",
+      "subject": {
+        "item": "fourtwenty:weed_joint"
+      }
+    },
+    {
+      "n": "4b",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.tenderbud.4b",
+      "deed": "smoke",
+      "subject": {
+        "kind": "joint"
+      }
+    },
+    {
+      "n": "5",
+      "kind": "honour",
+      "text": "handbook.fourtwenty.req.rank.tenderbud.5"
+    }
+  ]
+}

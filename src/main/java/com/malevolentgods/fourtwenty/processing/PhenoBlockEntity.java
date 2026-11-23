@@ -153,6 +153,7 @@ public class PhenoBlockEntity extends BIBlockEntity implements WorldlyContainer,
         items.get(1).shrink(1);
         ItemStack seed = ModDataComponents.withTraits(ModDataComponents.withStrain(new ItemStack(ModItems.WEED_SEEDS.get()), strain), traits);
         items.set(items.get(PARENTS).isEmpty() ? PARENTS : PARENTS + 1, seed);
+        com.malevolentgods.fourtwenty.handbook.Deeds.near(level, worldPosition, "pheno", 1, "strain", strain.id(), "grade", String.valueOf(strain.grade()));
     }
 
     // Container.

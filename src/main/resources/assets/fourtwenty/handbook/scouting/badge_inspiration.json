@@ -1,0 +1,56 @@
+{
+  "id": "inspiration",
+  "kind": "badge",
+  "name": "handbook.fourtwenty.badge.inspiration",
+  "entry": "power/basics",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.inspiration.1",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:weed_bong"
+      }
+    },
+    {
+      "n": "2",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.inspiration.2",
+      "deed": "power"
+    },
+    {
+      "n": "3",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.inspiration.3",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:stash_jar|fourtwenty:stash_box|fourtwenty:mother_stash|fourtwenty:the_vault"
+      }
+    },
+    {
+      "n": "4",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.inspiration.4",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:hit_box"
+      }
+    },
+    {
+      "n": "5",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.inspiration.5",
+      "deed": "overload"
+    },
+    {
+      "n": "6",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.inspiration.6",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:double_hose"
+      }
+    }
+  ]
+}

@@ -22,6 +22,7 @@ public final class BurnOut {
     private BurnOut() {}
 
     public static void burn(Level level, BlockPos pos) {
+        com.malevolentgods.fourtwenty.handbook.Deeds.near(level, pos, "overload", 1, "block", com.malevolentgods.fourtwenty.handbook.Deeds.id(level.getBlockState(pos).getBlock()));
         level.playSound(null, pos, ModPower.BURN_OUT.get(), SoundSource.BLOCKS, 1, 0.9f + level.random.nextFloat() * 0.2f);
         if (level instanceof ServerLevel server) {
             server.sendParticles(ParticleTypes.LARGE_SMOKE, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 24, 0.3, 0.3, 0.3, 0.02);

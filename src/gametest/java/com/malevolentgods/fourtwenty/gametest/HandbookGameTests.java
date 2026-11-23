@@ -50,6 +50,63 @@ public final class HandbookGameTests {
         h.succeed();
     }
 
+    /** The ranks and badges load: six ranks in order, the badges whose mod is here, every tracked requirement watching for a deed the game fires. */
+    @GameTest(template = "empty")
+    public static void theRanksAndBadgesLoad(GameTestHelper h) {
+        var defs = com.malevolentgods.fourtwenty.handbook.ScoutingData.defs();
+        long ranks = defs.stream().filter(d -> d.rank()).count();
+        h.assertTrue(ranks == 6, "six ranks, got " + ranks);
+        h.assertTrue(defs.stream().filter(d -> !d.rank()).count() >= 12, "the badges");
+        java.util.Set<String> deeds = java.util.Set.of("obtain", "plant", "harvest", "trim", "cure", "extract", "smoke", "high", "pollinate", "pheno",
+                "discover", "infuse", "terpinate", "place", "power", "light", "overload", "circuit", "craft", "measure", "earn",
+                "colony_hire", "colony_dose", "colony_sale", "colony_lifted", "colony_music", "colony_built");
+        java.util.Set<String> keys = new java.util.HashSet<>();
+        for (var d : defs) {
+            for (var r : d.reqs()) {
+                h.assertTrue(keys.add(d.key(r)), "unique key " + d.key(r));
+                h.assertTrue(r.kind() == com.malevolentgods.fourtwenty.domain.handbook.Scouting.Kind.HONOUR || deeds.contains(r.deed()), "known deed " + r.deed());
+            }
+        }
+        h.succeed();
+    }
+
+    /** A deed ticks a requirement in the player's saved data; signing works only for an honour requirement; both survive being read back. */
+    @GameTest(template = "empty")
+    public static void deedsTickAndSurviveInThePlayersData(GameTestHelper h) {
+        var player = h.makeMockServerPlayerInLevel();
+        var deeds = com.malevolentgods.fourtwenty.handbook.Deeds.class;
+        com.malevolentgods.fourtwenty.handbook.Deeds.fire(player, "craft", "item", "fourtwenty:weed_joint");
+        var p = com.malevolentgods.fourtwenty.handbook.Deeds.progress(player);
+        h.assertTrue(p.satisfied("rank:tenderbud/4a"), "crafting a joint ticks 4a");
+        h.assertFalse(p.satisfied("rank:tenderbud/4b"), "but not smoking it");
+        com.malevolentgods.fourtwenty.handbook.Deeds.sign(player, "rank:tenderbud/4a");
+        com.malevolentgods.fourtwenty.handbook.Deeds.sign(player, "rank:tenderbud/5");
+        p = com.malevolentgods.fourtwenty.handbook.Deeds.progress(player);
+        h.assertTrue(p.state("rank:tenderbud/4a") == 1, "a tracked requirement can't be signed");
+        h.assertTrue(p.state("rank:tenderbud/5") == 2, "an honour one can");
+        com.malevolentgods.fourtwenty.handbook.Deeds.fire(player, "harvest", "strain", "landrace", "grade", "0", "block", "minecraft:farmland");
+        h.assertTrue(com.malevolentgods.fourtwenty.handbook.Deeds.progress(player).satisfied("rank:tenderbud/2c"), "a Landrace harvest ticks 2c");
+        h.assertTrue(deeds != null, "");
+        h.succeed();
+    }
+
+    /** Doing everything a rank asks earns it, and the earned badge counts toward later ranks; a reset takes it back. */
+    @GameTest(template = "empty")
+    public static void earningARankAndResettingIt(GameTestHelper h) {
+        var player = h.makeMockServerPlayerInLevel();
+        var defs = com.malevolentgods.fourtwenty.handbook.ScoutingData.defs();
+        var d = defs.stream().filter(x -> x.id().equals("tenderbud")).findFirst().orElseThrow();
+        var p = com.malevolentgods.fourtwenty.handbook.Deeds.progress(player);
+        for (var r : d.reqs()) p.force(defs, d.key(r), 1);
+        com.malevolentgods.fourtwenty.handbook.Deeds.save(player, p);
+        h.assertTrue(com.malevolentgods.fourtwenty.handbook.Deeds.progress(player).earned("rank:tenderbud"), "Tenderbud earned");
+        p = com.malevolentgods.fourtwenty.handbook.Deeds.progress(player);
+        p.reset(defs, "rank:tenderbud");
+        com.malevolentgods.fourtwenty.handbook.Deeds.save(player, p);
+        h.assertFalse(com.malevolentgods.fourtwenty.handbook.Deeds.progress(player).earned("rank:tenderbud"), "and reset");
+        h.succeed();
+    }
+
     private static JsonObject json(String path) {
         return JsonParser.parseString(text(path)).getAsJsonObject();
     }

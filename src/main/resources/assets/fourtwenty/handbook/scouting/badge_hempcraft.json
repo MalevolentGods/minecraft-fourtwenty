@@ -1,0 +1,41 @@
+{
+  "id": "hempcraft",
+  "kind": "badge",
+  "name": "handbook.fourtwenty.badge.hempcraft",
+  "entry": "colours/terpenes",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.hempcraft.1",
+      "deed": "craft",
+      "subject": {
+        "item": "fourtwenty:hemp_*"
+      },
+      "count": 4
+    },
+    {
+      "n": "2",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.hempcraft.2",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:*lamp*"
+      }
+    },
+    {
+      "n": "3",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.hempcraft.3",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:glass_*"
+      }
+    },
+    {
+      "n": "4",
+      "kind": "honour",
+      "text": "handbook.fourtwenty.req.badge.hempcraft.4"
+    }
+  ]
+}

@@ -52,6 +52,7 @@ public final class TerpeneDiscovery {
         if (fresh.isEmpty()) return false;
         ListTag tag = list(player);
         fresh.forEach(key -> tag.add(StringTag.valueOf(key)));
+        com.malevolentgods.fourtwenty.handbook.Deeds.fire(player, "discover", java.util.Map.of(), fresh.size());
         TerpeneNetwork.send(player, fresh, false);
         return true;
     }

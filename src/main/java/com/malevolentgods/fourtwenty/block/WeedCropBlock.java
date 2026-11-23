@@ -116,6 +116,10 @@ public class WeedCropBlock extends CropBlock implements EntityBlock {
             if (extra != null) drops.add(extra);
             ItemStack crossed = Pollination.harvest(state, server, pos, level.getBlockEntity(pos) instanceof WeedCropBlockEntity crop ? crop : null);
             if (crossed != null) popResource(level, pos, crossed);
+            {
+                var strain = state.getValue(STRAIN);
+                com.malevolentgods.fourtwenty.handbook.Deeds.by(player, "harvest", "strain", strain.id(), "grade", String.valueOf(strain.grade()), "block", com.malevolentgods.fourtwenty.handbook.Deeds.id(level.getBlockState(pos.below()).getBlock()));
+            }
             if (!level.removeBlock(pos, false)) return InteractionResult.PASS;
             for (ItemStack stack : drops) popResource(level, pos, stack);
             player.awardStat(Stats.BLOCK_MINED.get(this));

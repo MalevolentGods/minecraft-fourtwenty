@@ -90,6 +90,7 @@ public class GlassBongBlock extends HorizontalDirectionalBlock {
         server.sendParticles(ParticleTypes.BUBBLE, pos.getX() + 0.5, pos.getY() + 0.12, pos.getZ() + 0.5, 8, 0.12, 0.05, 0.12, 0.02);
         server.sendParticles(ParticleTypes.SMOKE, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 6, 0.05, 0.1, 0.05, 0.01);
         SmokeEffects.apply(server, player);
+        com.malevolentgods.fourtwenty.handbook.Deeds.by(player, "smoke", "kind", variety.specialty() ? "specialty_bong" : "bong");
         if (variety.specialty()) {
             BongBuffs.apply(server, player, variety);
             server.sendParticles(ParticleTypes.HAPPY_VILLAGER, player.getX(), player.getY() + 1, player.getZ(), 10, 0.4, 0.5, 0.4, 0);

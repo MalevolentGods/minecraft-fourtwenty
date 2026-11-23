@@ -1,0 +1,58 @@
+{
+  "id": "bud_processing",
+  "kind": "badge",
+  "name": "handbook.fourtwenty.badge.bud_processing",
+  "entry": "processing/trim_and_cure",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.bud_processing.1",
+      "deed": "trim",
+      "count": 10
+    },
+    {
+      "n": "2",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.bud_processing.2",
+      "deed": "cure",
+      "count": 10
+    },
+    {
+      "n": "3",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.bud_processing.3",
+      "deed": "trim",
+      "subject": {
+        "block": "fourtwenty:snip_station|fourtwenty:bud_barber|fourtwenty:trim_reaper"
+      }
+    },
+    {
+      "n": "4",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.bud_processing.4",
+      "deed": "cure",
+      "subject": {
+        "block": "fourtwenty:dry_box|fourtwenty:cure_closet|fourtwenty:the_humidor"
+      }
+    },
+    {
+      "n": "5",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.bud_processing.5",
+      "deed": "craft",
+      "subject": {
+        "item": "fourtwenty:trim_tray"
+      }
+    },
+    {
+      "n": "6",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.bud_processing.6",
+      "deed": "craft",
+      "subject": {
+        "item": "fourtwenty:curing_rack"
+      }
+    }
+  ]
+}

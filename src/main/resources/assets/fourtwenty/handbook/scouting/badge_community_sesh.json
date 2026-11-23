@@ -1,0 +1,32 @@
+{
+  "id": "community_sesh",
+  "kind": "badge",
+  "name": "handbook.fourtwenty.badge.community_sesh",
+  "entry": "colony/dispensary",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.community_sesh.1",
+      "deed": "colony_hire"
+    },
+    {
+      "n": "2",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.community_sesh.2",
+      "deed": "colony_dose"
+    },
+    {
+      "n": "3",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.community_sesh.3",
+      "deed": "colony_sale"
+    },
+    {
+      "n": "4",
+      "kind": "honour",
+      "text": "handbook.fourtwenty.req.badge.community_sesh.4"
+    }
+  ],
+  "needs": "minecolonies"
+}

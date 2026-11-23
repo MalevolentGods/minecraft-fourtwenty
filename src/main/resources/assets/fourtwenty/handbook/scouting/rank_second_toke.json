@@ -1,0 +1,78 @@
+{
+  "id": "second_toke",
+  "kind": "rank",
+  "order": 2,
+  "name": "handbook.fourtwenty.rank.second_toke",
+  "entry": "growing/strains",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.second_toke.1",
+      "deed": "infuse",
+      "subject": {
+        "kind": "catch"
+      }
+    },
+    {
+      "n": "2",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.second_toke.2",
+      "deed": "infuse",
+      "subject": {
+        "kind": "seed"
+      }
+    },
+    {
+      "n": "3",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.second_toke.3",
+      "deed": "harvest",
+      "subject": {
+        "grade": "1"
+      }
+    },
+    {
+      "n": "4",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.second_toke.4",
+      "deed": "light"
+    },
+    {
+      "n": "5",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.second_toke.5",
+      "deed": "power"
+    },
+    {
+      "n": "6",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.second_toke.6",
+      "deed": "terpinate"
+    },
+    {
+      "n": "7",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.second_toke.7",
+      "deed": "earn",
+      "subject": {
+        "id": "ganja_gardening"
+      }
+    },
+    {
+      "n": "8",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.second_toke.8",
+      "deed": "earn",
+      "subject": {
+        "kind": "badge"
+      },
+      "count": 2
+    },
+    {
+      "n": "9",
+      "kind": "honour",
+      "text": "handbook.fourtwenty.req.rank.second_toke.9"
+    }
+  ]
+}

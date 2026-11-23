@@ -1,0 +1,97 @@
+{
+  "id": "first_hit",
+  "kind": "rank",
+  "order": 3,
+  "name": "handbook.fourtwenty.rank.first_hit",
+  "entry": "growing/breeding",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.first_hit.1",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:pheno_chamber"
+      }
+    },
+    {
+      "n": "2",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.first_hit.2",
+      "deed": "pheno",
+      "subject": {
+        "grade": "2"
+      }
+    },
+    {
+      "n": "3",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.first_hit.3",
+      "deed": "harvest",
+      "subject": {
+        "grade": "2"
+      }
+    },
+    {
+      "n": "4",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.first_hit.4",
+      "deed": "trim",
+      "subject": {
+        "block": "fourtwenty:snip_station|fourtwenty:bud_barber|fourtwenty:trim_reaper"
+      }
+    },
+    {
+      "n": "5",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.first_hit.5",
+      "deed": "cure",
+      "subject": {
+        "block": "fourtwenty:dry_box|fourtwenty:cure_closet|fourtwenty:the_humidor"
+      }
+    },
+    {
+      "n": "6",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.first_hit.6",
+      "deed": "extract"
+    },
+    {
+      "n": "7",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.first_hit.7",
+      "deed": "smoke",
+      "subject": {
+        "kind": "bong"
+      }
+    },
+    {
+      "n": "8",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.first_hit.8",
+      "deed": "earn",
+      "subject": {
+        "id": "plant_breeding"
+      }
+    },
+    {
+      "n": "9",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.first_hit.9",
+      "deed": "earn",
+      "subject": {
+        "id": "bud_processing"
+      }
+    },
+    {
+      "n": "10",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.first_hit.10",
+      "deed": "earn",
+      "subject": {
+        "kind": "badge"
+      },
+      "count": 4
+    }
+  ]
+}

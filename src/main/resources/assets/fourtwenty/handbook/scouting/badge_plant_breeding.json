@@ -1,0 +1,55 @@
+{
+  "id": "plant_breeding",
+  "kind": "badge",
+  "name": "handbook.fourtwenty.badge.plant_breeding",
+  "entry": "growing/breeding",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.plant_breeding.1",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:pheno_chamber"
+      }
+    },
+    {
+      "n": "2",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.plant_breeding.2",
+      "deed": "pheno",
+      "subject": {
+        "grade": "2"
+      }
+    },
+    {
+      "n": "3",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.plant_breeding.3",
+      "deed": "craft",
+      "subject": {
+        "item": "fourtwenty:buzz_bot"
+      }
+    },
+    {
+      "n": "4",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.plant_breeding.4",
+      "deed": "pollinate"
+    },
+    {
+      "n": "5",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.plant_breeding.5",
+      "deed": "harvest",
+      "subject": {
+        "grade": "3"
+      }
+    },
+    {
+      "n": "6",
+      "kind": "honour",
+      "text": "handbook.fourtwenty.req.badge.plant_breeding.6"
+    }
+  ]
+}

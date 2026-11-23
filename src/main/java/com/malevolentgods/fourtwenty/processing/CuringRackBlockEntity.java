@@ -37,6 +37,7 @@ public class CuringRackBlockEntity extends BlockEntity {
             if (!bud.is(ModItems.TRIMMED_BUD.get())) continue;
             if (CureRules.cured(++rack.ticks[i], tier)) {
                 rack.buds.set(i, ModDataComponents.bredFrom(new ItemStack(ModItems.WEED_BUD.get()), bud));
+                com.malevolentgods.fourtwenty.handbook.Deeds.near(level, pos, "cure", 1, "block", "fourtwenty:curing_rack");
                 changed = true;
             }
         }

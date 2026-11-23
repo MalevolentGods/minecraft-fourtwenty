@@ -1,0 +1,49 @@
+{
+  "id": "terpination",
+  "kind": "badge",
+  "name": "handbook.fourtwenty.badge.terpination",
+  "entry": "terpinator/using",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.terpination.1",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:terpinator|fourtwenty:terpinator_lab"
+      }
+    },
+    {
+      "n": "2",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.terpination.2",
+      "deed": "terpinate"
+    },
+    {
+      "n": "3",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.terpination.3",
+      "deed": "terpinate",
+      "count": 10
+    },
+    {
+      "n": "4",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.terpination.4",
+      "deed": "power",
+      "subject": {
+        "block": "fourtwenty:terpinator*"
+      }
+    },
+    {
+      "n": "5",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.terpination.5",
+      "deed": "craft",
+      "subject": {
+        "item": "fourtwenty:hemp_*"
+      },
+      "count": 8
+    }
+  ]
+}

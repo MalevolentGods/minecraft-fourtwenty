@@ -1,0 +1,79 @@
+{
+  "id": "high_life",
+  "kind": "rank",
+  "order": 5,
+  "name": "handbook.fourtwenty.rank.high_life",
+  "entry": "growing/grow_ops",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.high_life.1",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:aero_pod"
+      }
+    },
+    {
+      "n": "2",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.high_life.2",
+      "deed": "harvest",
+      "subject": {
+        "block": "fourtwenty:aero_pod"
+      }
+    },
+    {
+      "n": "3",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.high_life.3",
+      "deed": "craft",
+      "subject": {
+        "item": "fourtwenty:buzz_bot"
+      }
+    },
+    {
+      "n": "4",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.high_life.4",
+      "deed": "harvest",
+      "subject": {
+        "grade": "4"
+      }
+    },
+    {
+      "n": "5",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.high_life.5",
+      "deed": "high",
+      "subject": {
+        "grade": "4"
+      }
+    },
+    {
+      "n": "6",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.high_life.6",
+      "deed": "circuit"
+    },
+    {
+      "n": "7",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.high_life.7",
+      "deed": "earn",
+      "subject": {
+        "id": "inspoweednetics"
+      }
+    },
+    {
+      "n": "8",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.high_life.8",
+      "deed": "earn",
+      "subject": {
+        "kind": "badge"
+      },
+      "count": 8
+    }
+  ]
+}

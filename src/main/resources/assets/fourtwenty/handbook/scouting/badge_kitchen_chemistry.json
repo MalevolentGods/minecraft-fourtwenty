@@ -1,0 +1,62 @@
+{
+  "id": "kitchen_chemistry",
+  "kind": "badge",
+  "name": "handbook.fourtwenty.badge.kitchen_chemistry",
+  "entry": "processing/extracts",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.kitchen_chemistry.1",
+      "deed": "extract",
+      "subject": {
+        "item": "fourtwenty:kief"
+      }
+    },
+    {
+      "n": "2",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.kitchen_chemistry.2",
+      "deed": "extract",
+      "subject": {
+        "item": "fourtwenty:hash"
+      }
+    },
+    {
+      "n": "3",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.kitchen_chemistry.3",
+      "deed": "extract",
+      "subject": {
+        "item": "fourtwenty:resin"
+      }
+    },
+    {
+      "n": "4",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.kitchen_chemistry.4",
+      "deed": "extract",
+      "subject": {
+        "item": "fourtwenty:rosin"
+      }
+    },
+    {
+      "n": "5",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.kitchen_chemistry.5",
+      "deed": "extract",
+      "subject": {
+        "item": "fourtwenty:oil"
+      }
+    },
+    {
+      "n": "6",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.kitchen_chemistry.6",
+      "deed": "craft",
+      "subject": {
+        "item": "fourtwenty:vape_pen"
+      }
+    }
+  ]
+}
