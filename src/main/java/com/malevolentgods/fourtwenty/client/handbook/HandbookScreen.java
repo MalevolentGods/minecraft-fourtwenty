@@ -292,6 +292,9 @@ public class HandbookScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         int mx = (int) ((mouseX - left) / scale), my = (int) ((mouseY - top) / scale);
         if (spread == 0) { turn(1); return true; }      // the closed cover opens on a click
+        for (var box : renderer.signBoxes) {
+            if (in(mx, my, box.x(), box.y(), box.w(), box.h())) { ProgressClient.sign(box.key()); return true; }
+        }
         for (Tab t : tabs) {
             if (in(mx, my, t.x(), -TAB_H, t.w(), TAB_H)) { openTab(t.key()); return true; }
         }

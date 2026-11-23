@@ -88,22 +88,22 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty/`, `R` = `src/main/res
 - [X] T045 [US6] Pure rules: Requirement, RankLadder, Progress in `J/domain/handbook/`
 - [X] T046 [US6] Scouting data loader (ranks, badges; `needs` filtering) as a server reload listener in `J/handbook/ScoutingData.java`; files in `R/data/fourtwenty/handbook/{ranks,badges}/`
 - [X] T047 [US6] Progress store in player persisted NBT `fourtwenty_handbook` with the old-world catch-up in `J/handbook/ProgressStore.java`
-- [ ] T048 [US6] `Deeds.fire` and the hooks: craft/obtain (`J/events/`), plant/harvest (`J/block/WeedCropBlock.java`, Pot Pots), trim/cure (`J/processing/`), extract, smoke/high (`J/util/StrainEffects.java`), pollinate (`J/block/Pollination.java`), pheno, discover (`J/terpene/TerpeneDiscovery.java`), infuse, terpinate, place, power, overload, wear, earn, in `J/handbook/Deeds.java`
-- [ ] T049 [P] [US6] JUnit for circuit signatures (hand-made net snapshots) in `T/domain/handbook/CircuitSignaturesTest.java`
-- [ ] T050 [US6] Circuit signatures and the output-change hook in `J/domain/handbook/CircuitSignatures.java` and the Lit Bit block
-- [ ] T051 [P] [US6] Colony deeds (Dispensary, Budtender, Lifted Builders) in `J/compat/minecolonies/handbook/ColonyDeeds.java`
-- [ ] T052 [US6] Payloads (progress, notice, sign) with `hasChannel` guards in `J/handbook/HandbookPayloads.java`; client store in `J/client/handbook/ProgressClient.java`
-- [ ] T053 [US6] Rank pages, badge pages, honour signing, Stoner Badge Sash page, notice toasts and sound in `J/client/handbook/`
-- [ ] T054 [US6] Emblems and patches art in `tools/generate_handbook_art.py`
-- [ ] T055 [US6] Commands reset/tick/show in `J/commands/HandbookCommand.java`; config `handbookAnnounceInChat`, `handbookCatchUp`
-- [ ] T056 [P] [US6] Game tests: deeds tick, counts, honour sign validation, persistence through death and relog, reset in `G/HandbookGameTests.java`; colony deeds in `src/colonytest/.../HandbookColonyGameTests.java`
+- [X] T048 [US6] `Deeds.fire` and the hooks: craft/obtain (`J/events/`), plant/harvest (`J/block/WeedCropBlock.java`, Pot Pots), trim/cure (`J/processing/`), extract, smoke/high (`J/util/StrainEffects.java`), pollinate (`J/block/Pollination.java`), pheno, discover (`J/terpene/TerpeneDiscovery.java`), infuse, terpinate, place, power, overload, wear, earn, in `J/handbook/Deeds.java`
+- [X] T049 [P] [US6] JUnit for circuit signatures (hand-made net snapshots) in `T/domain/handbook/CircuitSignaturesTest.java`
+- [X] T050 [US6] Circuit signatures and the output-change hook in `J/domain/handbook/CircuitSignatures.java` and the Lit Bit block
+- [X] T051 [P] [US6] Colony deeds (Dispensary, Budtender, Lifted Builders) in `J/compat/minecolonies/handbook/ColonyDeeds.java`
+- [X] T052 [US6] Payloads (progress, notice, sign) with `hasChannel` guards in `J/handbook/HandbookPayloads.java`; client store in `J/client/handbook/ProgressClient.java`
+- [X] T053 [US6] Rank pages, badge pages, honour signing, Stoner Badge Sash page, notice toasts and sound in `J/client/handbook/`
+- [X] T054 [US6] Emblems and patches art in `tools/generate_handbook_art.py`
+- [X] T055 [US6] Commands reset/tick/show in `J/commands/HandbookCommand.java`; config `handbookAnnounceInChat`, `handbookCatchUp`
+- [X] T056 [P] [US6] Game tests: deeds tick, counts, honour sign validation, persistence through death and relog, reset in `G/HandbookGameTests.java`; colony deeds in `src/colonytest/.../HandbookColonyGameTests.java`
 - [ ] T057 [US6] In game: fresh character earns Tenderbud by playing (quickstart M4), commit, report
 
 ## Phase 9: US6 - The Stoner Badge Sash · Milestone 5
 
-- [ ] T058 [US6] Sash item (chest slot wearable, no armour) in `J/handbook/SashItem.java`, recipe `R/data/fourtwenty/recipe/stoner_badge_sash.json` (user review), Curios tag `R/data/curios/tags/item/body.json`
-- [ ] T059 [US6] Sash render layer with patches in order (chest slot, then Curios body via reflection) in `J/client/handbook/SashLayer.java`; sash texture from `tools/generate_handbook_art.py`
-- [ ] T060 [US6] Sash payload to trackers in `J/handbook/HandbookPayloads.java`
+- [X] T058 [US6] Sash item (chest slot wearable, no armour) in `J/handbook/SashItem.java`, recipe `R/data/fourtwenty/recipe/stoner_badge_sash.json` (user review), Curios tag `R/data/curios/tags/item/body.json`
+- [X] T059 [US6] Sash render layer with patches in order (chest slot, then Curios body via reflection) in `J/client/handbook/SashLayer.java`; sash texture from `tools/generate_handbook_art.py`
+- [X] T060 [US6] Sash payload to trackers in `J/handbook/HandbookPayloads.java`
 - [ ] T061 [US6] In game: Curios slot and chest slot (standalone run), two players see each other's patches (SC-013), commit, report
 
 ## Phase 10: PDF edition, the Supply Ship and Camp, release · Milestone 6

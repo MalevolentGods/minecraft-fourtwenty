@@ -140,6 +140,10 @@
    "rows": []
   },
   {
+   "type": "scout",
+   "ref": "badge/munchies"
+  },
+  {
    "type": "page"
   },
   {

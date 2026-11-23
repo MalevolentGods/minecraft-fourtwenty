@@ -107,6 +107,16 @@ public final class HandbookGameTests {
         h.succeed();
     }
 
+    /** The Stoner Badge Sash is craftable, and wearable in the chest slot (cosmetic: no armour). */
+    @GameTest(template = "empty")
+    public static void theSashIsCraftableAndWearable(GameTestHelper h) {
+        var recipe = h.getLevel().getRecipeManager().byKey(ResourceLocation.fromNamespaceAndPath("fourtwenty", "stoner_badge_sash"));
+        h.assertTrue(recipe.isPresent(), "no sash recipe");
+        var sash = new ItemStack(ModItems.STONER_BADGE_SASH.get());
+        h.assertTrue(sash.getItem() instanceof net.minecraft.world.item.Equipable e && e.getEquipmentSlot() == net.minecraft.world.entity.EquipmentSlot.CHEST, "worn on the chest");
+        h.succeed();
+    }
+
     private static JsonObject json(String path) {
         return JsonParser.parseString(text(path)).getAsJsonObject();
     }

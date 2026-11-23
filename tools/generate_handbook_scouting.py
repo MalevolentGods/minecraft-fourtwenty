@@ -239,6 +239,97 @@ def write_all():
         head = f"---\ntitle: {name}\nicon: fourtwenty:handbook\nterms: [{name}]\n" + (f"needs: {needs}\n" if needs else '') + "---\n"
         (ENTRIES / f'badge_{bid}.md').write_text(head + f"{{scout:badge/{bid}}}\n", encoding='utf-8')
 
+    # the front matter, in the Scout handbook's manner, and the overview
+    (ENTRIES / 'motto.md').write_text("""---
+title: Motto and Slogan
+icon: fourtwenty:handbook
+terms: [motto, slogan, Don't Panic]
+---
+The Scouts have a motto, *Be Prepared*, and a slogan, *Do a Good Turn Daily*. Weedcrafters have the two best pieces of advice there are.
+
+# The Motto
+**Don't Panic.**
+
+Not when a Wick burns out. Not when the Hookah's empty. Not when the strain you've been breeding for six hours turns out to be Landrace again. Breathe.
+
+# The Slogan
+**Smoke Weed Every Day.**
+
+(Responsibly. With a snack nearby. And with one seed kept back, always.)
+""", encoding='utf-8')
+    (ENTRIES / 'oath.md').write_text("""---
+title: The Weedcrafter's Oath
+icon: fourtwenty:handbook
+terms: [Oath]
+---
+Say it aloud, with a hand on your heart or your Hookah, whichever is nearer:
+
+*On my honour I will do my best*
+*to grow my best,*
+*to share my stash,*
+*to keep my fire lit and my neighbours fed,*
+*and to keep one seed back for tomorrow.*
+
+You don't have to mean it yet. You'll get there.
+""", encoding='utf-8')
+    (ENTRIES / 'law.md').write_text("""---
+title: The Weedcrafter's Law
+icon: fourtwenty:handbook
+terms: [Law]
+---
+A Weedcrafter is:
+
+- **Chill.** Panicking has never once helped a plant.
+- **Generous.** Pass it left, and don't be the one who holds.
+- **Patient.** The plant takes the time it takes.
+- **Curious.** Read the book. Then try the other thing.
+- **Tidy.** Clean your tray. Put your Wicks away.
+- **Helpful.** Leave every workshop a little better than you found it.
+- **Respectful of Elders.** The old strains earned their place on the ladder.
+- **Kind to Creepers (from a distance).** A long distance.
+- **Thrifty with Seeds.** One back, always.
+- **Prepared.** Bring snacks.
+- **Cheerful.** Even when it's smoking.
+- **Lifted.** Lightly, and in good company.
+""", encoding='utf-8')
+    (ENTRIES / 'sash.md').write_text("""---
+title: The Stoner Badge Sash
+icon: fourtwenty:stoner_badge_sash
+terms: [Stoner Badge Sash, sash, patches]
+---
+Every Scout has a sash for the badges they've earned. So do you.
+
+{item:fourtwenty:stoner_badge_sash|Worn across the chest, it shows your badges}
+
+{recipe:fourtwenty:stoner_badge_sash}
+
+Right-click it to put it on, or wear it in the body slot if you play with Curios. It does nothing but look good: no armour, no effects. It carries no badges of its own, so it always shows the badges of whoever's wearing it. Lend it to a friend and it shows theirs. (Earn your own.)
+
+The newest eight show on the sash itself. Every badge you've earned is in colour below, and the rest are waiting.
+
+{scout:sash}
+""", encoding='utf-8')
+    (ENTRIES / 'overview.md').write_text("""---
+title: Your Progress
+icon: fourtwenty:handbook
+terms: [ranks, Stoner Badges, progress]
+---
+Six **ranks**, earned in order from Tenderbud to Golden Eagle, and a pocketful of **Stoner Badges**, earned in any order. The game ticks most requirements off by itself, with a small notice, as you do them. The rest you sign on your honour: click the box.
+
+Turn the page for each rank and badge in full.
+
+{scout:overview}
+""", encoding='utf-8')
+    # the chapter in book.json, after Getting Started
+    book_path = ASSETS / 'handbook/book.json'
+    book = json.loads(book_path.read_text(encoding='utf-8'))
+    book['chapters'] = [c for c in book['chapters'] if c['id'] != 'scouting']
+    chapter = {'id': 'scouting', 'title': 'handbook.fourtwenty.chapter.scouting', 'icon': 'fourtwenty:handbook',
+               'entries': ['motto', 'oath', 'law', 'overview', 'sash'] + [f'rank_{r[0]}' for r in RANKS] + [f'badge_{b[0]}' for b in BADGES]}
+    at = next((i for i, c in enumerate(book['chapters']) if c['id'] == 'getting_started'), -1) + 1
+    book['chapters'].insert(at, chapter)
+    book_path.write_text(json.dumps(book, indent=2) + '\n', encoding='utf-8')
+
     # merge the lang keys, keeping the file's order and adding ours at the end
     cur = json.loads(LANG.read_text(encoding='utf-8'))
     for k in [k for k in cur if k.startswith(('handbook.fourtwenty.req.', 'handbook.fourtwenty.rank.', 'handbook.fourtwenty.badge.'))]:

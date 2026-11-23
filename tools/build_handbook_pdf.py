@@ -402,9 +402,70 @@ def elements_to_flow(els):
             flow.append(Spacer(1, 3))
             flow.append(tbl)
             flow.append(Spacer(1, 6))
+        elif t == 'scout':
+            flow.extend(scout_flow(el['ref']))
         elif t == 'page':
             flow.append(PageBreak())
     return flow
+
+
+class Box(Flowable):
+    """An empty check-off box to tick by hand (FR-032)."""
+
+    def wrap(self, aw, ah):
+        return 10, 10
+
+    def draw(self):
+        self.canv.setStrokeColor(INK)
+        self.canv.setLineWidth(0.8)
+        self.canv.rect(0, 0, 9, 9, stroke=1, fill=0)
+
+
+def scout_flow(ref):
+    """A rank's or badge's requirements as a printable check-off list; the overview as two lists of boxes."""
+    scouting = ASSETS / 'handbook/scouting'
+    if ref == 'sash':
+        from reportlab.platypus import Image as RLImage
+        cells, row = [], []
+        for f in sorted(scouting.glob('badge_*.json')):
+            d = json.loads(f.read_text(encoding='utf-8'))
+            patch = ASSETS / 'textures/gui/handbook/patches' / (d['id'] + '.png')
+            row.append([RLImage(str(patch), 30, 30), Paragraph(esc(LANG[d['name']]), ParagraphStyle('pc', parent=CELL, alignment=TA_CENTER, fontSize=8.5, leading=10))])
+            if len(row) == 4:
+                cells.append(row)
+                row = []
+        if row:
+            cells.append(row + [''] * (4 - len(row)))
+        t = Table(cells, hAlign='CENTER')
+        t.setStyle(TableStyle([('ALIGN', (0, 0), (-1, -1), 'CENTER'), ('VALIGN', (0, 0), (-1, -1), 'TOP'), ('TOPPADDING', (0, 0), (-1, -1), 4)]))
+        return [Spacer(1, 6), t]
+    if ref == 'overview':
+        flow = []
+        for kind, title in (('rank', 'Ranks'), ('badge', 'Stoner Badges')):
+            flow.append(Paragraph(title, H2))
+            rows = []
+            for f in sorted(scouting.glob(f'{kind}_*.json'), key=lambda f: json.loads(f.read_text(encoding='utf-8')).get('order', 0)):
+                d = json.loads(f.read_text(encoding='utf-8'))
+                needs = ' <i>(needs MineColonies)</i>' if d.get('needs') else ''
+                rows.append([Box(), Paragraph(esc(LANG[d['name']]) + needs, CELL)])
+            t = Table(rows, colWidths=[16, None], hAlign='LEFT')
+            t.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ('TOPPADDING', (0, 0), (-1, -1), 1), ('BOTTOMPADDING', (0, 0), (-1, -1), 3)]))
+            flow.append(t)
+        return flow
+    kind, _, did = ref.partition('/')
+    d = json.loads((scouting / f'{kind}_{did}.json').read_text(encoding='utf-8'))
+    rows = []
+    for r in d['requirements']:
+        text = esc(LANG[r['text']])
+        if r.get('count', 1) > 1:
+            text += f" (0/{r['count']})"
+        if r['kind'] == 'honour':
+            text += ' <i>(on my honour)</i>'
+        rows.append([Box(), Paragraph(f"<b>{r['n']}.</b> {text}", BODY)])
+    t = Table(rows, colWidths=[16, None], hAlign='LEFT')
+    t.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ('TOPPADDING', (0, 0), (-1, -1), 2), ('BOTTOMPADDING', (0, 0), (-1, -1), 4)]))
+    sign = Paragraph('<i>Signed on my honour: ____________________   Date: __________</i>', CAPTION)
+    return [Spacer(1, 4), t, Spacer(1, 10), sign]
 
 
 def special_rows(kind):

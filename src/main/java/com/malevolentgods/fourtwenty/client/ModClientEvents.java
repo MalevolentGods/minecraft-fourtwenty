@@ -68,6 +68,10 @@ public class ModClientEvents {
 
     @SubscribeEvent
     public static void layers(net.neoforged.neoforge.client.event.EntityRenderersEvent.AddLayers event) {
+        // The Stoner Badge Sash, on both player models (specs/016-weedcraft-handbook).
+        for (var skin : event.getSkins()) {
+            if (event.getSkin(skin) instanceof net.minecraft.client.renderer.entity.player.PlayerRenderer r) r.addLayer(new com.malevolentgods.fourtwenty.client.handbook.SashLayer(r));
+        }
         // Lifted Builders' green glow, on MineColonies' citizen renderer (spec 013).
         if (net.neoforged.fml.ModList.get().isLoaded("minecolonies")) com.malevolentgods.fourtwenty.compat.minecolonies.client.LiftedClient.addLayers(event);
     }
@@ -80,6 +84,7 @@ public class ModClientEvents {
         PavePenClient.install();
         com.malevolentgods.fourtwenty.handbook.HandbookItem.opener = com.malevolentgods.fourtwenty.client.handbook.HandbookScreen::open;
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.client.handbook.SceneRenderer::register);
+        com.malevolentgods.fourtwenty.client.handbook.ProgressClient.install();
         if (net.neoforged.fml.ModList.get().isLoaded("minecolonies")) {
             event.enqueueWork(com.malevolentgods.fourtwenty.compat.minecolonies.client.DispensaryClient::registerModel);
             com.malevolentgods.fourtwenty.compat.minecolonies.client.LiftedClient.install();

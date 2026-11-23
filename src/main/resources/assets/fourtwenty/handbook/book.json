@@ -14,6 +14,38 @@
       ]
     },
     {
+      "id": "scouting",
+      "title": "handbook.fourtwenty.chapter.scouting",
+      "icon": "fourtwenty:handbook",
+      "entries": [
+        "motto",
+        "oath",
+        "law",
+        "overview",
+        "sash",
+        "rank_tenderbud",
+        "rank_second_toke",
+        "rank_first_hit",
+        "rank_starseed",
+        "rank_high_life",
+        "rank_golden_eagle",
+        "badge_ganja_gardening",
+        "badge_plant_breeding",
+        "badge_bud_processing",
+        "badge_kitchen_chemistry",
+        "badge_munchies",
+        "badge_safe_sesh",
+        "badge_colour_theory",
+        "badge_terpination",
+        "badge_inspiration",
+        "badge_inspoweednetics",
+        "badge_bits_and_bytes",
+        "badge_hempcraft",
+        "badge_community_sesh",
+        "badge_lifted_building"
+      ]
+    },
+    {
       "id": "growing",
       "title": "handbook.fourtwenty.chapter.growing",
       "icon": "fourtwenty:rough_bud",
