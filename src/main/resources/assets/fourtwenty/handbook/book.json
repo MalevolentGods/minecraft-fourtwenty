@@ -70,6 +70,25 @@
       ]
     },
     {
+      "id": "electronics",
+      "title": "handbook.fourtwenty.chapter.electronics",
+      "icon": "fourtwenty:lit_bit",
+      "entries": [
+        "welcome",
+        "theory",
+        "binary",
+        "logic",
+        "parts",
+        "board",
+        "circuit_light",
+        "circuit_inverter",
+        "circuit_lock",
+        "circuit_memory",
+        "circuit_clock",
+        "circuit_adder"
+      ]
+    },
+    {
       "id": "colony",
       "title": "handbook.fourtwenty.chapter.colony",
       "icon": "fourtwenty:weed_joint",
@@ -81,6 +100,14 @@
         "sensi_heights"
       ],
       "needs": "minecolonies"
+    },
+    {
+      "id": "back",
+      "title": "handbook.fourtwenty.chapter.back",
+      "icon": "fourtwenty:inspoweedometer",
+      "entries": [
+        "translation"
+      ]
     }
   ]
 }

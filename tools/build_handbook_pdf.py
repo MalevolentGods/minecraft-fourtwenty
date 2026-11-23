@@ -391,6 +391,8 @@ def elements_to_flow(els):
                     flow.append(Paragraph(esc(el['caption']), ParagraphStyle('ic', parent=CAPTION, alignment=TA_CENTER)))
         elif t in ('table', 'truth'):
             rows = el['rows'] if t == 'table' else truth(el['gate'])
+            if t == 'table' and el.get('special'):
+                rows = special_rows(el['special'])
             if not rows:
                 continue
             data = [[Paragraph(esc(c), CELLB if r == 0 else CELL) for c in row] for r, row in enumerate(rows)]
@@ -403,6 +405,15 @@ def elements_to_flow(els):
         elif t == 'page':
             flow.append(PageBreak())
     return flow
+
+
+def special_rows(kind):
+    """The generated back-of-the-book tables from real_terms.json (FR-015)."""
+    terms = json.loads((BOOK / 'real_terms.json').read_text(encoding='utf-8'))
+    if kind == 'units':
+        return [['In the mod', 'Measures', 'Real unit']] + [[u['symbol'], u['measures'], u['real']] for u in terms['units']]
+    rows = [(item_name('fourtwenty:' + pid), real) for pid, real in terms['parts'].items()]
+    return [['Part', 'Real name']] + [[a, b] for a, b in sorted(rows, key=lambda r: r[0].lower())]
 
 
 def truth(gate):
@@ -450,7 +461,8 @@ def build(out):
             story += [KeepTogether(head)] + elements_to_flow(els) + [PageBreak()]
             index_terms.extend((t, eid, front['title']) for t in front.get('terms', []))
     # the back of the book: glossary and index (FR-006)
-    story += [Marker('c_back', 'Back of the Book', 0), Spacer(1, 150), Paragraph('Back of the Book', CHAPTER), PageBreak()]
+    if not any(c['id'] == 'back' for c in book['chapters']):
+        story += [Marker('c_back', 'Back of the Book', 0), Spacer(1, 150), Paragraph('Back of the Book', CHAPTER), PageBreak()]
     gl = BOOK / 'en_us/glossary.md'
     if gl.exists():
         story += [Marker('e_back_glossary', 'Glossary', 1), Paragraph('<a name="e_back_glossary"/>Glossary', H1)]

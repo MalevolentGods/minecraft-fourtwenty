@@ -73,10 +73,10 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty/`, `R` = `src/main/res
 
 **Independent test**: quickstart M3.
 
-- [ ] T038 [P] [US3] Entries: theory (units beside real units), binary/base 2, Boolean logic with `{truth}` tables, parts by group, in `.../entries/electronics/`
-- [ ] T039 [US3] The six example circuits (light, inverter, AND lock, latch, clock, adder): build each in the local world, scan for its scene, write parts list + steps in `.../entries/electronics/circuits/`
-- [ ] T040 [US3] Translation table page (`{table:parts}` and `{table:units}` from `real_terms.json`) in `J/client/handbook/PageRenderer.java` and the back matter entry
-- [ ] T041 [US3] Check: every electronic part has a real term (fails the build) in `tools/check_handbook.py`
+- [X] T038 [P] [US3] Entries: theory (units beside real units), binary/base 2, Boolean logic with `{truth}` tables, parts by group, in `.../entries/electronics/`
+- [X] T039 [US3] The six example circuits (light, inverter, AND lock, latch, clock, adder): build each in the local world, scan for its scene, write parts list + steps in `.../entries/electronics/circuits/`
+- [X] T040 [US3] Translation table page (`{table:parts}` and `{table:units}` from `real_terms.json`) in `J/client/handbook/PageRenderer.java` and the back matter entry
+- [X] T041 [US3] Check: every electronic part has a real term (fails the build) in `tools/check_handbook.py`
 - [ ] T042 [US3] In game: build all six from the book, each works (SC-004), commit, report
 
 ## Phase 8: US6 - Ranks and Stoner Badges (P2) · Milestone 4

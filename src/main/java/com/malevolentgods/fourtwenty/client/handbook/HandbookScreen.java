@@ -93,7 +93,9 @@ public class HandbookScreen extends Screen {
             all.add(new ContentsLine(Component.translatable(c.title()).getString(), c.entries().get(0), true));
             for (String id : c.entries()) all.add(new ContentsLine(book.entries().get(id).front().title(), id, false));
         }
-        all.add(new ContentsLine(Component.translatable("handbook.fourtwenty.chapter.back").getString(), GLOSSARY, true));
+        if (book.chapters().stream().noneMatch(c -> c.id().equals("back"))) {
+            all.add(new ContentsLine(Component.translatable("handbook.fourtwenty.chapter.back").getString(), GLOSSARY, true));
+        }
         if (!book.glossary().isEmpty()) all.add(new ContentsLine(Component.translatable("handbook.fourtwenty.glossary").getString(), GLOSSARY, false));
         all.add(new ContentsLine(Component.translatable("handbook.fourtwenty.index").getString(), INDEX, false));
         int perPage = PAGE_H / PageRenderer.LINE - 2;
