@@ -17,7 +17,7 @@ public final class Markup {
 
     public record Entry(Front front, List<Element> elements, List<String> errors) {}
 
-    private static final Pattern BLOCK_TAG = Pattern.compile("^\\{(item|recipe|image|truth|table|page)(?::([^}]*))?\\}$");
+    private static final Pattern BLOCK_TAG = Pattern.compile("^\\{(item|recipe|image|truth|table|page|scout)(?::([^}]*))?\\}$");
     private static final Pattern STEP = Pattern.compile("^(\\d+)\\.\\s+(.*)$");
     private static final List<String> GATES = List.of("NOT", "AND", "OR", "NAND", "NOR", "XOR", "XNOR");
     public static final List<String> COLOURS = List.of("lime", "myr", "lav", "pin", "cream", "gold", "red", "gray");
@@ -90,6 +90,7 @@ public final class Markup {
                         out.add(new Element.Truth(arg));
                     }
                     case "page" -> out.add(new Element.PageBreak());
+                    case "scout" -> out.add(new Element.Scouting(arg));
                     case "table" -> {
                         if (!arg.isEmpty()) {
                             if (!arg.equals("parts") && !arg.equals("units")) errors.add("unknown table: " + arg);

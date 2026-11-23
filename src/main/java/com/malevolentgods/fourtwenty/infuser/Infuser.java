@@ -196,6 +196,7 @@ public final class Infuser {
         for (String twin : t.twins()) s.caught.merge(twin, grade, Math::max);
         s.pool = q;
         s.sealed = t.id();
+        com.malevolentgods.fourtwenty.handbook.Deeds.fire(player, "infuse", "kind", "catch");
         put(player, s);
     }
 

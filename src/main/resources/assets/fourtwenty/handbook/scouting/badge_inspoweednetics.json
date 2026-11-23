@@ -1,0 +1,68 @@
+{
+  "id": "inspoweednetics",
+  "kind": "badge",
+  "name": "handbook.fourtwenty.badge.inspoweednetics",
+  "entry": "electronics/welcome",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.inspoweednetics.1",
+      "deed": "measure"
+    },
+    {
+      "n": "2",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.inspoweednetics.2",
+      "deed": "circuit",
+      "subject": {
+        "id": "light"
+      }
+    },
+    {
+      "n": "3",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.inspoweednetics.3",
+      "deed": "circuit",
+      "subject": {
+        "id": "inverter"
+      }
+    },
+    {
+      "n": "4",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.inspoweednetics.4",
+      "deed": "circuit",
+      "subject": {
+        "id": "and_lock"
+      }
+    },
+    {
+      "n": "5",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.inspoweednetics.5",
+      "deed": "circuit",
+      "subject": {
+        "id": "latch"
+      }
+    },
+    {
+      "n": "6",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.inspoweednetics.6",
+      "deed": "circuit",
+      "subject": {
+        "id": "clock"
+      }
+    },
+    {
+      "n": "7",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.inspoweednetics.7",
+      "deed": "circuit",
+      "subject": {
+        "id": "adder"
+      }
+    }
+  ]
+}

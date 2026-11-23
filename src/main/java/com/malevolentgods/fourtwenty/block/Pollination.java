@@ -64,6 +64,7 @@ public final class Pollination {
         var crop = (WeedCropBlockEntity) level.getBlockEntity(to);
         crop.pollinate(new WeedCropBlockEntity.Pollen(strain, Traits.cross(WeedCropBlockEntity.at(level, from), crop.traits(), level.random::nextDouble)));
         level.sendParticles(ParticleTypes.FALLING_NECTAR, to.getX() + 0.5, to.getY() + 0.7, to.getZ() + 0.5, 12, 0.3, 0.2, 0.3, 0);
+        com.malevolentgods.fourtwenty.handbook.Deeds.near(level, to, "pollinate", 1);
         return true;
     }
 

@@ -115,6 +115,7 @@ public final class Infusion {
         for (Item terp : recipe.items()) take(inv, s -> s.is(terp));
         ItemStack seed = ModDataComponents.withStrain(new ItemStack(ModItems.WEED_SEEDS.get()), recipe.strain());
         if (!inv.add(seed)) player.drop(seed, false);
+        com.malevolentgods.fourtwenty.handbook.Deeds.fire(player, "infuse", "kind", "seed");
         player.level().playSound(null, player.blockPosition(), SoundEvents.BREWING_STAND_BREW, SoundSource.PLAYERS, 0.8f, 1.3f);
         player.containerMenu.broadcastChanges();
         return true;

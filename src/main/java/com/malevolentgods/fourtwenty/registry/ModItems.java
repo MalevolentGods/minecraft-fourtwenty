@@ -77,6 +77,8 @@ public class ModItems {
     /** A Handbook of Weedcraft, Scouting, and Weed-craft (specs/016-weedcraft-handbook). */
     public static final DeferredHolder<Item, com.malevolentgods.fourtwenty.handbook.HandbookItem> HANDBOOK =
         ITEMS.register("handbook", () -> new com.malevolentgods.fourtwenty.handbook.HandbookItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, com.malevolentgods.fourtwenty.handbook.SashItem> STONER_BADGE_SASH =
+        ITEMS.register("stoner_badge_sash", () -> new com.malevolentgods.fourtwenty.handbook.SashItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, com.malevolentgods.fourtwenty.item.VapePenItem> VAPE_PEN =
         ITEMS.register("vape_pen", () -> new com.malevolentgods.fourtwenty.item.VapePenItem(new Item.Properties().stacksTo(1)));
 

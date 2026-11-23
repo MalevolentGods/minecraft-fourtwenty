@@ -111,6 +111,7 @@ public class WeedPipeItem extends Item {
             PipeLoad l = load(stack);
             if (l.buds() > 0 || player.getAbilities().instabuild) {
                 StrainEffects.apply(server, player, l.strain(), l.traits());
+                com.malevolentgods.fourtwenty.handbook.Deeds.by(player, "smoke", "kind", "pipe");
                 if (!player.getAbilities().instabuild) {
                     if (l.buds() <= 1) stack.remove(ModDataComponents.PIPE_LOAD.get());
                     else stack.set(ModDataComponents.PIPE_LOAD.get(), new PipeLoad(l.strain(), l.buds() - 1, l.traits()));

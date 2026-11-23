@@ -185,6 +185,7 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
         int count = batch(in);
         in.shrink(count);
         insert(items, INPUTS, strained(output(), count, parent));
+        com.malevolentgods.fourtwenty.handbook.Deeds.near(level, worldPosition, trims() ? "trim" : "cure", count, "block", com.malevolentgods.fourtwenty.handbook.Deeds.id(getBlockState().getBlock()));
         if (trims() && TrimRules.seeded(ProcessingConfig.chances(), ModDataComponents.strain(parent), level.random.nextDouble())) {
             insert(items, INPUTS, strained(ModItems.WEED_SEEDS.get(), 1, parent));
         }

@@ -8,7 +8,7 @@ import json
 import re
 import sys
 
-BLOCK_TAG = re.compile(r'^\{(item|recipe|image|truth|table|page)(?::([^}]*))?\}$')
+BLOCK_TAG = re.compile(r'^\{(item|recipe|image|truth|table|page|scout)(?::([^}]*))?\}$')
 STEP = re.compile(r'^(\d+)\.\s+(.*)$')
 GATES = ['NOT', 'AND', 'OR', 'NAND', 'NOR', 'XOR', 'XNOR']
 COLOURS = ['lime', 'myr', 'lav', 'pin', 'cream', 'gold', 'red', 'gray']
@@ -99,6 +99,8 @@ def parse(text):
                 out.append({'type': 'truth', 'gate': arg})
             elif name == 'page':
                 out.append({'type': 'page'})
+            elif name == 'scout':
+                out.append({'type': 'scout', 'ref': arg})
             elif name == 'table':
                 if arg:
                     if arg not in ('parts', 'units'):

@@ -93,7 +93,9 @@ public class HandbookScreen extends Screen {
             all.add(new ContentsLine(Component.translatable(c.title()).getString(), c.entries().get(0), true));
             for (String id : c.entries()) all.add(new ContentsLine(book.entries().get(id).front().title(), id, false));
         }
-        all.add(new ContentsLine(Component.translatable("handbook.fourtwenty.chapter.back").getString(), GLOSSARY, true));
+        if (book.chapters().stream().noneMatch(c -> c.id().equals("back"))) {
+            all.add(new ContentsLine(Component.translatable("handbook.fourtwenty.chapter.back").getString(), GLOSSARY, true));
+        }
         if (!book.glossary().isEmpty()) all.add(new ContentsLine(Component.translatable("handbook.fourtwenty.glossary").getString(), GLOSSARY, false));
         all.add(new ContentsLine(Component.translatable("handbook.fourtwenty.index").getString(), INDEX, false));
         int perPage = PAGE_H / PageRenderer.LINE - 2;
@@ -290,6 +292,9 @@ public class HandbookScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         int mx = (int) ((mouseX - left) / scale), my = (int) ((mouseY - top) / scale);
         if (spread == 0) { turn(1); return true; }      // the closed cover opens on a click
+        for (var box : renderer.signBoxes) {
+            if (in(mx, my, box.x(), box.y(), box.w(), box.h())) { ProgressClient.sign(box.key()); return true; }
+        }
         for (Tab t : tabs) {
             if (in(mx, my, t.x(), -TAB_H, t.w(), TAB_H)) { openTab(t.key()); return true; }
         }

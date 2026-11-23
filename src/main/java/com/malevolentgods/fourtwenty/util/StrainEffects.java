@@ -94,6 +94,7 @@ public final class StrainEffects {
 
     private static void effects(ServerLevel level, Player player, Strain strain, Traits t) {
         SmokeEvents.smoked(player);
+        com.malevolentgods.fourtwenty.handbook.Deeds.by(player, "high", "strain", strain.id(), "grade", String.valueOf(strain.grade()));
         switch (strain) {
             case LANDRACE -> {
                 give(player, t, MobEffects.REGENERATION, 600, 1);

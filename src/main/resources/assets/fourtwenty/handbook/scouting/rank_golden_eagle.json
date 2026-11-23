@@ -1,0 +1,56 @@
+{
+  "id": "golden_eagle",
+  "kind": "rank",
+  "order": 6,
+  "name": "handbook.fourtwenty.rank.golden_eagle",
+  "entry": "growing/strains",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.golden_eagle.1",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:cosmic_kush_pod"
+      }
+    },
+    {
+      "n": "2",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.golden_eagle.2",
+      "deed": "harvest",
+      "subject": {
+        "grade": "5"
+      }
+    },
+    {
+      "n": "3",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.golden_eagle.3",
+      "deed": "high",
+      "subject": {
+        "grade": "5"
+      }
+    },
+    {
+      "n": "4",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.rank.golden_eagle.4",
+      "deed": "earn",
+      "subject": {
+        "kind": "badge"
+      },
+      "count": 10
+    },
+    {
+      "n": "5",
+      "kind": "honour",
+      "text": "handbook.fourtwenty.req.rank.golden_eagle.5"
+    },
+    {
+      "n": "6",
+      "kind": "honour",
+      "text": "handbook.fourtwenty.req.rank.golden_eagle.6"
+    }
+  ]
+}

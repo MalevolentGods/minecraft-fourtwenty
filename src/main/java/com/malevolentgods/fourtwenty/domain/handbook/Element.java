@@ -15,6 +15,8 @@ public sealed interface Element {
     record Table(List<List<String>> rows, String special) implements Element {}
     record Truth(String gate) implements Element {}
     record PageBreak() implements Element {}
+    /** A rank's or badge's checklist ("rank/tenderbud", "badge/munchies"), ticked live for the reader, or "overview". */
+    record Scouting(String ref) implements Element {}
 
     /** Canonical JSON (keys in a fixed order, defaults left out) that the Python reader also writes, so the two can be compared. */
     static String json(List<Element> elements) {
@@ -50,6 +52,7 @@ public sealed interface Element {
             }
             case Truth t -> "{\"type\":\"truth\",\"gate\":" + str(t.gate()) + "}";
             case PageBreak p -> "{\"type\":\"page\"}";
+            case Scouting s -> "{\"type\":\"scout\",\"ref\":" + str(s.ref()) + "}";
         };
     }
 

@@ -131,6 +131,7 @@ public class RigBlockEntity extends BIBlockEntity implements WorldlyContainer, M
         if (step.bottle()) items.get(BOTTLE).shrink(1);
         if (items.get(slot).isEmpty()) items.set(slot, out);
         else items.get(slot).grow(1);
+        com.malevolentgods.fourtwenty.handbook.Deeds.near(level, worldPosition, "extract", 1, "item", com.malevolentgods.fourtwenty.handbook.Deeds.id(out.getItem()));
     }
 
     // Container.

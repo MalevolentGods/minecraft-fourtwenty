@@ -23,6 +23,7 @@ public final class ProcessingConfig {
     private static final ModConfigSpec.DoubleValue ULTRA = chance("seedChanceUltra", D.ultra());
     private static final ModConfigSpec.DoubleValue GOLDEN = chance("seedChanceGolden", D.golden());
     private static final ModConfigSpec.DoubleValue POLLEN_CHANCE = BUILDER.comment("Chance per harvest that Double Cross parents side by side give their hybrid's seed.").defineInRange("pollenChance", 0.05, 0, 1);
+    private static final ModConfigSpec.BooleanValue HANDBOOK_ANNOUNCE = BUILDER.comment("Tell everyone in chat when a player earns a Handbook rank or Stoner Badge.").define("handbookAnnounceInChat", true);
     private static final ModConfigSpec.IntValue STARTER_SEEDS = BUILDER.comment("Landrace seeds each player gets once, on their first login (0 for none).").defineInRange("starterSeeds", 4, 0, 64);
     private static final ModConfigSpec.IntValue BOT_BUD_MINUTES = BUILDER.comment("How many minutes one Cured Bud runs a Buzz Bot.").defineInRange("botBudMinutes", 60, 1, 1440);
     private static final ModConfigSpec.IntValue BOT_CROSS_MINUTES = BUILDER.comment("How many minutes a Buzz Bot waits after one cross before the next.").defineInRange("botCrossMinutes", 5, 0, 1440);
@@ -209,6 +210,7 @@ public final class ProcessingConfig {
                 PAVE_TICKS_BASE.get(), PAVE_TICKS_HARDNESS.get(), PAVE_MAX_HARDNESS.get(), PAVE.upgradeCost(), PAVE.upgradeTicks(), PAVE.reshapeCost(), PAVE.reshapeTicks()) : PAVE;
     }
 
+    public static boolean handbookAnnounce() { return !SPEC.isLoaded() || HANDBOOK_ANNOUNCE.get(); }
     public static int starterSeeds() { return SPEC.isLoaded() ? STARTER_SEEDS.get() : 4; }
     public static double cropSpeed() { return SPEC.isLoaded() ? CROP_SPEED.get() : GrowRules.CROP_SPEED; }
 

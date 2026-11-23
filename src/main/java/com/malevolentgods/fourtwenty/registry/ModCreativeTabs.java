@@ -58,6 +58,7 @@ public class ModCreativeTabs {
                 output.accept(ModItems.WEED_JOINT.get());
                 output.accept(ModItems.WEED_PIPE.get());
                 output.accept(ModItems.HANDBOOK.get());
+                output.accept(ModItems.STONER_BADGE_SASH.get());
                 output.accept(ModItems.VAPE_PEN.get());
                 output.accept(ModItems.WEED_BONG.get());
                 ModItems.BONGS.values().forEach(bong -> output.accept(bong.get()));

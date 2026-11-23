@@ -1,0 +1,31 @@
+{
+  "id": "lifted_building",
+  "kind": "badge",
+  "name": "handbook.fourtwenty.badge.lifted_building",
+  "entry": "colony/lifted_builders",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.lifted_building.1",
+      "deed": "colony_lifted"
+    },
+    {
+      "n": "2",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.lifted_building.2",
+      "deed": "colony_music"
+    },
+    {
+      "n": "3",
+      "kind": "honour",
+      "text": "handbook.fourtwenty.req.badge.lifted_building.3"
+    },
+    {
+      "n": "4",
+      "kind": "honour",
+      "text": "handbook.fourtwenty.req.badge.lifted_building.4"
+    }
+  ],
+  "needs": "minecolonies"
+}

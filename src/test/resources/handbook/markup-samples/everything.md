@@ -24,5 +24,6 @@ carried on a second line. A [link to the Trim Tray](entry:processing/trim_tray) 
 {/table}
 {truth:AND}
 {table:parts}
+{scout:badge/munchies}
 {page}
 Last words.

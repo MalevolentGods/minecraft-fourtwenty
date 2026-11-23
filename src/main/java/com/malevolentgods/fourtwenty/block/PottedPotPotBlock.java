@@ -81,6 +81,7 @@ public class PottedPotPotBlock extends Block implements BonemealableBlock {
         if (level instanceof ServerLevel server) {
             BlockState crop = ModBlocks.WEED_CROP.get().getStateForAge(MAX_AGE);
             var drops = Block.getDrops(crop, server, pos, null, player, player.getMainHandItem());
+            com.malevolentgods.fourtwenty.handbook.Deeds.by(player, "harvest", "strain", "landrace", "grade", "0", "block", com.malevolentgods.fourtwenty.handbook.Deeds.id(this));
             level.setBlock(pos, emptyPot().defaultBlockState(), Block.UPDATE_ALL);
             for (ItemStack stack : drops) popResource(level, pos, stack);
             player.awardStat(Stats.BLOCK_MINED.get(ModBlocks.WEED_CROP.get()));

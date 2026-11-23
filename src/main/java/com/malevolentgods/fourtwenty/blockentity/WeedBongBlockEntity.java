@@ -275,6 +275,7 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
         burning.shrink(1);
         fuel.shrink(1);
         isLit = true;
+        com.malevolentgods.fourtwenty.handbook.Deeds.by(player, "light", "block", com.malevolentgods.fourtwenty.handbook.Deeds.id(getBlockState().getBlock()));
         chargePaid = true;
         burnTime = 0;
         burnDuration = duration;

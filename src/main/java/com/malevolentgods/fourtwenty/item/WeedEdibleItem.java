@@ -38,6 +38,7 @@ public class WeedEdibleItem extends Item {
                 return stack;
             }
 
+            com.malevolentgods.fourtwenty.handbook.Deeds.by(player, "smoke", "kind", com.malevolentgods.fourtwenty.handbook.Deeds.id(this).replace("fourtwenty:weed_", ""));
             // Spawn consumption particles
             if (level instanceof ServerLevel serverLevel) {
                 double x = player.getX();

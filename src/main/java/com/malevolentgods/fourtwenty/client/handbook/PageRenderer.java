@@ -45,6 +45,9 @@ public final class PageRenderer {
     public record DrawnLine(int x, int y, FormattedCharSequence line) {}
     public final List<Hover> hovers = new ArrayList<>();
     public final List<DrawnLine> lines = new ArrayList<>();
+    /** Open honour requirements drawn this frame: clicking the box signs it. */
+    public record SignBox(int x, int y, int w, int h, String key) {}
+    public final List<SignBox> signBoxes = new ArrayList<>();
 
     public PageRenderer(Font font) {
         this.font = font;
@@ -53,6 +56,7 @@ public final class PageRenderer {
     public void beginFrame() {
         hovers.clear();
         lines.clear();
+        signBoxes.clear();
     }
 
     // ---- text
@@ -95,6 +99,7 @@ public final class PageRenderer {
                 yield h + (im.caption().isEmpty() ? 0 : wrap(caption(im.caption()), width).size() * LINE + 2);
             }
             case Element.Heading h -> headingLines(h, width).size() * LINE;
+            case Element.Scouting s -> scoutHeight(s.ref(), width);
             case Element.Table t -> t.special().isEmpty() ? tableHeight(t.rows(), width) : 0;
             case Element.Truth t -> tableHeight(truth(t.gate()), width);
             default -> LINE;
@@ -175,8 +180,126 @@ public final class PageRenderer {
                 if (t.special().isEmpty()) table(g, t.rows(), x, top, width);
             }
             case Element.Truth t -> table(g, truth(t.gate()), x, top, width);
+            case Element.Scouting s -> scout(g, s.ref(), x, top, width);
             default -> {}
         }
+    }
+
+    // ---- ranks and badges
+
+    private static com.malevolentgods.fourtwenty.domain.handbook.Scouting.Def scoutDef(String ref) {
+        int slash = ref.indexOf('/');
+        if (slash < 0) return null;
+        boolean rank = ref.startsWith("rank/");
+        String id = ref.substring(slash + 1);
+        for (var d : com.malevolentgods.fourtwenty.handbook.ScoutingData.defs()) if (d.rank() == rank && d.id().equals(id)) return d;
+        return null;
+    }
+
+    private Component reqText(com.malevolentgods.fourtwenty.domain.handbook.Scouting.Def d, com.malevolentgods.fourtwenty.domain.handbook.Scouting.Req r, boolean live) {
+        var progress = ProgressClient.get();
+        String key = d.key(r);
+        net.minecraft.network.chat.MutableComponent t = Component.literal(r.n() + ". ").append(Component.translatable(ProgressClient.reqKey(key)));
+        if (r.count() > 1) t.append(Component.literal(" (" + (live ? progress.count(key) : 0) + "/" + r.count() + ")"));
+        if (r.kind() == com.malevolentgods.fourtwenty.domain.handbook.Scouting.Kind.HONOUR && (!live || progress.state(key) == 0)) {
+            t.append(Component.literal(" ").append(Component.translatable("handbook.fourtwenty.sign").withStyle(s -> s.withItalic(true))));
+        }
+        return t;
+    }
+
+    private static final int PATCH = 28, CELL_H = 52, COLS = 4;
+
+    private int scoutHeight(String ref, int width) {
+        if (ref.equals("sash")) {
+            long badges = com.malevolentgods.fourtwenty.handbook.ScoutingData.defs().stream().filter(d -> !d.rank()).count();
+            return (int) ((badges + COLS - 1) / COLS) * CELL_H;
+        }
+        if (ref.equals("overview")) {
+            var defs = com.malevolentgods.fourtwenty.handbook.ScoutingData.defs();
+            int ranks = (int) defs.stream().filter(d -> d.rank()).count();
+            return (ranks + 1 + defs.size() - ranks) * LINE + LINE * 3;
+        }
+        var d = scoutDef(ref);
+        if (d == null) return LINE;
+        int h = LINE + 2;
+        for (var r : d.reqs()) h += Math.max(1, font.split(reqText(d, r, false), width - 13).size()) * LINE + 2;
+        return h;
+    }
+
+    private void scout(GuiGraphics g, String ref, int x, int top, int width) {
+        var progress = ProgressClient.get();
+        if (ref.equals("sash")) {
+            int i = 0, cw = width / COLS;
+            for (var d : com.malevolentgods.fourtwenty.handbook.ScoutingData.defs()) {
+                if (d.rank()) continue;
+                int cx = x + (i % COLS) * cw, cy = top + (i / COLS) * CELL_H;
+                boolean earned = progress.earned(d.earnKey());
+                var tex = ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/handbook/patches/" + d.id() + ".png");
+                if (!earned) g.setColor(0.35f, 0.35f, 0.35f, 0.7f);
+                g.blit(tex, cx + (cw - PATCH) / 2, cy, PATCH, PATCH, 0, 0, 16, 16, 16, 16);
+                g.setColor(1f, 1f, 1f, 1f);
+                int ty = cy + PATCH + 2;
+                for (FormattedCharSequence line : font.split(Component.translatable("handbook.fourtwenty.badge." + d.id()), cw - 2)) {
+                    if (ty > cy + CELL_H - LINE + 2) break;
+                    g.drawString(font, line, cx + (cw - font.width(line)) / 2, ty, earned ? INK : FAINT, false);
+                    ty += LINE;
+                }
+                i++;
+            }
+            return;
+        }
+        if (ref.equals("overview")) {
+            int y = top;
+            var defs = com.malevolentgods.fourtwenty.handbook.ScoutingData.defs();
+            g.drawString(font, Component.translatable("handbook.fourtwenty.overview.ranks").withStyle(s -> s.withBold(true)), x, y, HEADING, false);
+            y += LINE + 2;
+            for (var d : defs) {
+                if (!d.rank()) continue;
+                checkbox(g, x, y, progress.earned(d.earnKey()) ? 1 : 0);
+                g.drawString(font, Component.translatable("handbook.fourtwenty.rank." + d.id()), x + 13, y, INK, false);
+                y += LINE;
+            }
+            y += LINE;
+            g.drawString(font, Component.translatable("handbook.fourtwenty.overview.badges").withStyle(s -> s.withBold(true)), x, y, HEADING, false);
+            y += LINE + 2;
+            for (var d : defs) {
+                if (d.rank()) continue;
+                checkbox(g, x, y, progress.earned(d.earnKey()) ? 1 : 0);
+                long done = d.reqs().stream().filter(r -> progress.satisfied(d.key(r))).count();
+                g.drawString(font, Component.translatable("handbook.fourtwenty.badge." + d.id()).append(Component.literal("  " + done + "/" + d.reqs().size())),
+                        x + 13, y, INK, false);
+                y += LINE;
+            }
+            return;
+        }
+        var d = scoutDef(ref);
+        if (d == null) return;
+        int y = top;
+        long done = d.reqs().stream().filter(r -> progress.satisfied(d.key(r))).count();
+        Component status = progress.earned(d.earnKey()) ? Component.translatable("handbook.fourtwenty.earned") : Component.literal(done + " / " + d.reqs().size());
+        g.drawString(font, status, x, y, progress.earned(d.earnKey()) ? LINK : FAINT, false);
+        y += LINE + 2;
+        for (var r : d.reqs()) {
+            String key = d.key(r);
+            int state = progress.state(key);
+            checkbox(g, x, y, state);
+            if (r.kind() == com.malevolentgods.fourtwenty.domain.handbook.Scouting.Kind.HONOUR && state == 0) signBoxes.add(new SignBox(x - 1, y - 1, 11, 11, key));
+            int ty = y;
+            for (FormattedCharSequence line : font.split(reqText(d, r, true), width - 13)) {
+                g.drawString(font, line, x + 13, ty, state == 0 ? INK : 0xFF5E8A48, false);
+                ty += LINE;
+            }
+            y = Math.max(ty, y + LINE) + 2;
+        }
+    }
+
+    /** A little box: empty, or ticked (done), or ticked in a darker hand (signed on honour). */
+    private void checkbox(GuiGraphics g, int x, int y, int state) {
+        g.renderOutline(x, y, 9, 9, INK);
+        if (state == 0) return;
+        int c = state == 2 ? 0xFF2F5A1A : 0xFF3E9A1A;
+        int[][] px = {{2, 4}, {3, 5}, {4, 6}, {5, 5}, {6, 4}, {7, 3}, {8, 2}, {3, 4}, {4, 5}, {5, 4}, {6, 3}, {7, 2}};
+        for (int[] p : px) g.fill(x + p[0] - 1, y + p[1] - 1, x + p[0], y + p[1], c);
     }
 
     /** A heading is bold, so it wraps (and is measured) as bold. */

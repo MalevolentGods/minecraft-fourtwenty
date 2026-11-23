@@ -89,6 +89,12 @@ def main():
                         rid = res.get('id') or res.get('item')
                         if rid:
                             used_items.add(rid)
+            elif t == 'scout':
+                ref = el['ref']
+                if ref not in ('overview', 'sash'):
+                    kind, _, did = ref.partition('/')
+                    if not (ASSETS / 'handbook/scouting' / f'{kind}_{did}.json').exists():
+                        errors.append(f'{eid}: scouting list {ref} not found')
             elif t == 'image':
                 if not (ASSETS / 'textures/gui/handbook' / (el['path'] + '.png')).exists():
                     errors.append(f'{eid}: image {el["path"]} not found')

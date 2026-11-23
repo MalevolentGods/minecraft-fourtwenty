@@ -1,0 +1,54 @@
+{
+  "id": "bits_and_bytes",
+  "kind": "badge",
+  "name": "handbook.fourtwenty.badge.bits_and_bytes",
+  "entry": "electronics/binary",
+  "requirements": [
+    {
+      "n": "1",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.bits_and_bytes.1",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:lit_bit"
+      }
+    },
+    {
+      "n": "2",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.bits_and_bytes.2",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:weedweeno"
+      }
+    },
+    {
+      "n": "3",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.bits_and_bytes.3",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:stacker_nug"
+      }
+    },
+    {
+      "n": "4",
+      "kind": "tracked",
+      "text": "handbook.fourtwenty.req.badge.bits_and_bytes.4",
+      "deed": "place",
+      "subject": {
+        "block": "fourtwenty:numb_nug"
+      }
+    },
+    {
+      "n": "5",
+      "kind": "honour",
+      "text": "handbook.fourtwenty.req.badge.bits_and_bytes.5"
+    },
+    {
+      "n": "6",
+      "kind": "honour",
+      "text": "handbook.fourtwenty.req.badge.bits_and_bytes.6"
+    }
+  ]
+}

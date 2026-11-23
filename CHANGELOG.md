@@ -2,6 +2,21 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [1.1.0]
+
+### Added
+- **A Handbook of Weedcraft, Scouting, and Weed-craft:** an in-game guidebook with its own screen (no book mod needed). Cover, contents, glossary, index and page tabs (Home, G and I flip to them), recipes, pictures rendered in game, and a back section on Inspoweednetics with a translation table and six example circuits. Craft it from a book and a Cured Bud; one copy sits in the Sensi Heights Supply Ship and Supply Camp.
+- **Ranks and Stoner Badges:** six ranks (Tenderbud, Second Toke, First Hit, Starseed, High Life, Golden Eagle) and 14 Stoner Badges, tracked by the game and checked off in the book, with notices as you go. Most requirements tick by themselves; a few are on your honour, signed in the book. Recognition only, no boosts. Motto: Don't Panic.
+- **The Stoner Badge Sash:** a wearable cosmetic (Curios body slot, else the chest slot) that shows your newest badge patches.
+- **A PDF edition** (printable, with check-off boxes) is attached to each GitHub release.
+- `/fourtwenty handbook reset|tick|show` (op level 2) and the `handbookAnnounceInChat` option.
+
+### Changed
+- Everyone gets starter seeds on first join.
+- Harvesting a weed plant no longer leaves it planted; seeds come from trimming fresh bud.
+- Lit Bit white fixed.
+- **Sensi Heights v121:** no coloured carpets in the bottom two levels of animal huts and farms.
+
 ## [0.29.0]
 
 ### Changed

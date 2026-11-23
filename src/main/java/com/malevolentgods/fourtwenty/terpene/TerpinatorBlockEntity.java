@@ -156,6 +156,7 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
                 ItemStack out = t.items.get(OUT);
                 if (out.isEmpty()) t.items.set(OUT, new ItemStack(item(t.product), VIALS_PER_BUD));
                 else out.grow(VIALS_PER_BUD);
+                com.malevolentgods.fourtwenty.handbook.Deeds.near(level, pos, "terpinate", VIALS_PER_BUD, "item", com.malevolentgods.fourtwenty.handbook.Deeds.id(item(t.product)));
                 t.setChanged();
             }
         } else if (!working && t.running && t.progress != 0) {

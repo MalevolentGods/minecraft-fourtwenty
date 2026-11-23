@@ -108,7 +108,43 @@ public final class BookData implements ResourceManagerReloadListener {
         }
         Markup.Entry parsed = Markup.parse(text.get());
         if (!parsed.errors().isEmpty()) LOG.warn("Handbook entry {}: {}", id, parsed.errors());
-        return new Entry(id, chapter, parsed.front(), parsed.elements());
+        return new Entry(id, chapter, parsed.front(), expandTables(manager, parsed.elements()));
+    }
+
+    /** The generated back-of-the-book tables (specs/016 FR-015): the parts and their real names, and the units. */
+    private static List<Element> expandTables(ResourceManager manager, List<Element> elements) {
+        if (elements.stream().noneMatch(e -> e instanceof Element.Table t && !t.special().isEmpty())) return elements;
+        JsonObject terms = null;
+        try {
+            Optional<Resource> res = manager.getResource(rl("handbook/real_terms.json"));
+            if (res.isPresent()) try (Reader r = res.get().openAsReader()) { terms = JsonParser.parseReader(r).getAsJsonObject(); }
+        } catch (IOException e) {
+            LOG.warn("Couldn't read the real-name table", e);
+        }
+        List<Element> out = new ArrayList<>();
+        for (Element e : elements) {
+            if (!(e instanceof Element.Table t) || t.special().isEmpty() || terms == null) { out.add(e); continue; }
+            List<List<String>> rows = new ArrayList<>();
+            if (t.special().equals("units")) {
+                rows.add(List.of("In the mod", "Measures", "Real unit"));
+                for (JsonElement u : terms.getAsJsonArray("units")) {
+                    JsonObject o = u.getAsJsonObject();
+                    rows.add(List.of(o.get("symbol").getAsString(), o.get("measures").getAsString(), o.get("real").getAsString()));
+                }
+            } else {
+                rows.add(List.of("Part", "Real name"));
+                List<String[]> parts = new ArrayList<>();
+                for (var en : terms.getAsJsonObject("parts").entrySet()) {
+                    String id = en.getKey();
+                    String key = net.minecraft.client.resources.language.I18n.exists("block.fourtwenty." + id) ? "block.fourtwenty." + id : "item.fourtwenty." + id;
+                    parts.add(new String[]{net.minecraft.client.resources.language.I18n.get(key), en.getValue().getAsString()});
+                }
+                parts.sort(java.util.Comparator.comparing(p -> p[0].toLowerCase(java.util.Locale.ROOT)));
+                for (String[] p : parts) rows.add(List.of(p[0], p[1]));
+            }
+            out.add(new Element.Table(rows, ""));
+        }
+        return out;
     }
 
     private static Optional<String> readText(ResourceManager manager, String lang, String path) throws IOException {

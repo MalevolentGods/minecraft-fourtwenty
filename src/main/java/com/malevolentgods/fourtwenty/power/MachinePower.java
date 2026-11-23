@@ -22,6 +22,12 @@ public final class MachinePower {
 
     /** How far a machine with its own buffer gets this tick, paying its {@code cost} if it has to; 0 means it's paused. */
     public static int steps(Level level, BlockPos pos, BINode buffer, double cost, Meter meter) {
+        int steps = stepsOf(level, pos, buffer, cost, meter);
+        if (steps > 0 && level.getGameTime() % 100 == 0) com.malevolentgods.fourtwenty.handbook.Deeds.near(level, pos, "power", 1, "block", com.malevolentgods.fourtwenty.handbook.Deeds.id(level.getBlockState(pos).getBlock()));
+        return steps;
+    }
+
+    private static int stepsOf(Level level, BlockPos pos, BINode buffer, double cost, Meter meter) {
         long due = (long) Math.ceil(meter.owed + cost);
         return switch (MachinePowerRule.state(highNear(level, pos), buffer.stored(), due)) {
             case RUN_FREE -> MachinePowerRule.freeSteps(ProcessingConfig.highSpeedPercent(), level.random.nextInt(100));

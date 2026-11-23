@@ -72,6 +72,7 @@ public class TrimTrayBlock extends HorizontalDirectionalBlock {
         if (TrimRules.seeded(ProcessingConfig.chances(), strain, level.random.nextDouble())) {
             out.add(ModDataComponents.bredFrom(new ItemStack(ModItems.WEED_SEEDS.get()), rough));
         }
+        com.malevolentgods.fourtwenty.handbook.Deeds.near(level, pos, "trim", 1, "block", "fourtwenty:trim_tray");
         level.playSound(null, pos, com.malevolentgods.fourtwenty.registry.ModPower.SNIP.get(), SoundSource.BLOCKS, 0.7f, 0.9f + level.random.nextFloat() * 0.3f);
         return out;
     }
