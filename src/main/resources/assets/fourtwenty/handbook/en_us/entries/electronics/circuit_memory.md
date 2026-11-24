@@ -5,6 +5,8 @@ terms: [Latch Nug, latch, memory]
 ---
 **The goal:** a light you can turn on with one switch and off with another, and that **stays** as you left it. Circuits that remember are the start of every computer.
 
+{image:scenes/circuit_memory|The one-bit memory|wide}
+
 **You'll need:** your [workbench](entry:electronics/board), a **Latch Nug** and two **Toggle Joints** (or Puff Buttons).
 
 1. Place the **Latch Nug** like the AND gate in [Circuit 3](entry:electronics/circuit_lock): power on top and bottom, a switch on each side.

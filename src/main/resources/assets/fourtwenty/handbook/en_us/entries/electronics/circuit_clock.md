@@ -5,6 +5,8 @@ terms: [Ticker, clock, oscillator]
 ---
 **The goal:** a light that blinks by itself, steadily, forever.
 
+{image:scenes/circuit_clock|The blinking clock|wide}
+
 **You'll need:** your [workbench](entry:electronics/board) and a **Ticker**.
 
 1. Place the **Ticker** beside the board.

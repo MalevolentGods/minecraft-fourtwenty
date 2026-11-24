@@ -5,6 +5,8 @@ terms: [half adder, XOR Nug, adder, binary addition]
 ---
 **The goal:** add two one-bit numbers, A and B, and show the answer in binary on two lights. This is a **half adder**: the first step on the road to a calculator.
 
+{image:scenes/circuit_adder|The half adder, two switches in and sum and carry out|wide}
+
 **You'll need:** your [workbench](entry:electronics/board), an **XOR Nug** and an **AND Nug**, and two **Toggle Joints**.
 
 Recall [Counting on Two Fingers](entry:electronics/binary): 1 + 1 = 10 in binary. So the answer needs two lights: the **sum** (the ones place) and the **carry** (the twos place).

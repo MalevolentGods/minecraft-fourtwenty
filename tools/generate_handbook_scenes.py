@@ -254,6 +254,9 @@ RENDERS = SCANS / 'renders'
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
+    for r in sorted(RENDERS.glob('circuit_*.png')):          # the circuits have no scan: only the game's own render
+        Image.open(r).convert('RGBA').save(OUT / r.name, optimize=True)
+        print(r.stem, 'game render')
     for f in sorted(SCANS.glob('handbook_*.blueprint')):
         name = f.stem[len('handbook_'):]
         rendered = RENDERS / f'{name}.png'
