@@ -2,6 +2,12 @@
 
 All notable changes to the FourTwenty mod will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+- **Length trait rescaled:** Length 1 is now plain (x1), then x1.5, x2, x2.5 and x3 for ratings 2 to 5. Landrace and the strains infused from it start at Length 1, so no strain's high is ever shorter than its base time. Seeds already bred with ratings keep their numbers, and so run longer than before.
+- **The Handbook** explains how weed works end to end: "How Weed Works, Start to Finish", "Traits", and "How a High Works" (base lengths per grade, Length, potency, extracts), plus glossary entries.
+
 ## [1.1.0]
 
 ### Added

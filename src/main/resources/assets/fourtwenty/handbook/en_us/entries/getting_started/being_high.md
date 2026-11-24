@@ -12,7 +12,7 @@ Plain Landrace is a good, kind smoke:
 - **Luck** on your side.
 - And a touch of **Hunger**. The munchies are real. Pack a snack.
 
-Other strains do other things, and the rarer ones do remarkable things. You'll meet them in [Strains, Families and Grades](entry:growing/strains).
+How long it lasts, and how strongly, is explained in [How a High Works](entry:processing/highs). Other strains do other things, and the rarer ones do remarkable things. You'll meet them in [Strains, Families and Grades](entry:growing/strains).
 
 # The Scout's Courtesy
 Smoke with friends and pass to the left. Don't smoke where you'd be ashamed to be found. And never, ever leave a Hookah burning unattended.

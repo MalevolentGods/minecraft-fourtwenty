@@ -33,7 +33,11 @@ Strain: a variety of weed, carried by its seeds, buds and joints. -> entry:growi
 Terpene: a vial of essence made from weed that dyes hemp and breeds strains. -> entry:colours/terpenes
 Terpinator: the machine that turns weed into terpenes. -> entry:terpinator/using
 Toke: the second power tier, 42 Kb. -> entry:power/basics
-Traits: a seed's Potency, Yield and Length, each 1 to 5. -> entry:growing/breeding
+Traits: a seed's Potency, Yield and Length, each 1 to 5. -> entry:growing/traits
+Length: the trait that stretches a high, from x1 (rating 1) to x3 (rating 5). -> entry:growing/traits
+Potency: the trait that raises the level of a strain's effects. -> entry:growing/traits
+Yield: the trait that adds rough buds to a harvest. -> entry:growing/traits
+High: the state smoking puts you in; its length and strength are set by strain and traits. -> entry:processing/highs
 Trimmed Bud: a bud snipped at a Trim Tray, ready to cure. -> entry:processing/trim_and_cure
 Twin Wick: a cable that wires every block it touches in parallel. -> entry:power/wiring
 W: the Willard, the mod's unit of power. -> entry:power/basics

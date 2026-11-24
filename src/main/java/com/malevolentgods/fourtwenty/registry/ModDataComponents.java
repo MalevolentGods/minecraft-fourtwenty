@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** Item data components. A stack without a strain is Landrace, and one without traits is rated 2 in all of them. */
+/** Item data components. A stack without a strain is Landrace, and one without traits is plain: Potency 2, Yield 2, Length 1. */
 public final class ModDataComponents {
     private ModDataComponents() {}
 

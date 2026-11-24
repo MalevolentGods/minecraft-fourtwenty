@@ -18,6 +18,13 @@ class TraitsTest {
     }
 
     @Test
+    void lengthStartsAtOneAndGrowsHalfAStep() {
+        double[] want = {1.0, 1.5, 2.0, 2.5, 3.0};
+        for (int l = 1; l <= 5; l++) assertEquals(want[l - 1], new Traits(2, 2, l).lengthFactor(), "length " + l);
+        assertEquals(1, Traits.DEFAULT.length());
+    }
+
+    @Test
     void aChildIsTheAverageWithNoDrift() {
         Traits child = Traits.cross(new Traits(1, 3, 5), new Traits(3, 5, 5), always(0.5));
         assertEquals(new Traits(2, 4, 5), child);
