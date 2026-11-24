@@ -10,6 +10,8 @@ Writes src/main/resources/assets/fourtwenty/models/block/dispensary.json. Run ag
 import json
 from pathlib import Path
 
+from hut_model_check import check, strip_hidden
+
 ROOT = Path(__file__).resolve().parents[1]
 MODEL = ROOT / 'src/main/resources/assets/fourtwenty/models/block/dispensary.json'
 
@@ -69,7 +71,7 @@ def generate():
         translucent.append(glass)
         solid.extend(parts)
     solid.append(box('cross vertical', (7, 24.5, 12), (9, 31, 12.5), 'cross'))
-    solid.append(box('cross horizontal', (4.75, 26.75, 12), (11.25, 28.75, 12.5), 'cross'))
+    solid.append(box('cross horizontal', (4.75, 26.75, 11.9), (11.25, 28.75, 12.6), 'cross'))
 
     # --- On the counter (top at y 16). ------------------------------------------------------------
     # Cash register with a tilted-up screen.
@@ -87,6 +89,10 @@ def generate():
     translucent.append(box('bong mouthpiece', (12.2, 24.5, 4.7), (13.8, 25.5, 6.3), 'tube'))
     solid.append(box('bong stem', (13.5, 18.8, 5.25), (14.5, 19.3, 5.75), 'clay'))
     solid.append(box('bong bowl', (14, 19.3, 4.9), (15, 20.3, 6.1), 'clay'))
+
+    everything = solid + cutout + translucent
+    strip_hidden(everything)
+    check(everything)           # no two faces in one plane: that is z-fighting in the game
 
     model = {
         'credit': 'FourTwenty tools/generate_dispensary_hut_model.py',

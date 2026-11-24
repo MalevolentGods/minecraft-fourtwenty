@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 
 from generate_dispensary_hut_model import box
+from hut_model_check import check, strip_hidden
 
 ROOT = Path(__file__).resolve().parents[1]
 MODEL = ROOT / 'src/main/resources/assets/fourtwenty/models/block/budbarn.json'
@@ -38,7 +39,7 @@ def generate():
     solid.append(box('roof 3', (4, 21, 1), (12, 23, 13), 'roof'))
     solid.append(box('roof 4', (6, 23, 1.5), (10, 25, 12.5), 'roof'))
     solid.append(box('ridge', (7.25, 25, 1.5), (8.75, 26, 12.5), 'beam'))
-    solid.append(box('gable', (4, 19, 12), (12, 22, 13.9), 'wall'))
+    solid.append(box('gable', (4.5, 19, 12), (11.5, 22, 13.9), 'wall', skip=('down',)))
 
     # --- Inside: a drying rack of hanging buds. --------------------------------------------------
     solid.append(box('rack rail', (2.5, 14, 6), (13.5, 15, 7), 'beam'))
@@ -48,11 +49,15 @@ def generate():
     # A hay bale against the back wall.
     solid.append(box('hay bale', (2.5, 0, 9), (7.5, 6, 12), 'hay', faces=HAY))
     # A trim table with buds on it.
-    solid.append(box('table top', (9, 7, 8), (14, 8, 12), 'plank'))
+    solid.append(box('table top', (9, 7, 8), (14, 8, 11.8), 'plank'))
     for i, (x, z) in enumerate(((9.2, 8.2), (12.8, 8.2), (9.2, 11.2), (12.8, 11.2))):
         solid.append(box(f'table leg {i}', (x, 0, z), (x + 0.8, 7, z + 0.6), 'beam'))
     solid.append(box('table buds 1', (9.8, 8, 9), (11.6, 9.2, 10.6), 'bud_block'))
     solid.append(box('table buds 2', (12, 8, 9.8), (13.2, 8.9, 11), 'bud_block'))
+
+    everything = solid + cutout
+    strip_hidden(everything)
+    check(everything)           # no two faces in one plane: that is z-fighting in the game
 
     model = {
         'credit': 'FourTwenty tools/generate_budbarn_hut_model.py',
