@@ -3,8 +3,8 @@
 
     python3 tools/generate_handbook_patches.py
 
-Writes textures/gui/handbook/patches/<badge>.png (16x16 pixel-art patches, one colour and one emblem each), textures/entity/stoner_sash.png
-(the cloth, 16x16) and textures/item/stoner_badge_sash.png. The patches show on the player's sash and, large, in the book.
+Writes textures/entity/stoner_sash.png
+(the cloth, 16x16) and textures/item/stoner_badge_sash.png. The patches (tools/slice_handbook_badges.py) show on the player's sash and, large, in the book.
 """
 from pathlib import Path
 
@@ -56,10 +56,8 @@ def patch(colour, emblem):
 
 
 def main():
-    out = ASSETS / 'gui/handbook/patches'
-    out.mkdir(parents=True, exist_ok=True)
-    for bid, (colour, emblem) in BADGES.items():
-        patch(colour, emblem).save(out / f'{bid}.png')
+    # The patches themselves are the user's embroidered badge pictures, cut by tools/slice_handbook_badges.py (the 16x16 pixel
+    # ones this script used to draw are gone: BADGES and EMBLEMS below are kept only as the badge list and a fallback).
     (ASSETS / 'entity').mkdir(parents=True, exist_ok=True)
     cloth = Image.new('RGBA', (16, 16), (46, 98, 44, 255))
     d = ImageDraw.Draw(cloth)
@@ -75,7 +73,7 @@ def main():
     for (x, y, c) in ((5, 4, (230, 190, 50)), (7, 7, (210, 80, 140)), (9, 10, (50, 110, 200))):
         d.ellipse((x - 1, y - 1, x + 2, y + 2), fill=c + (255,))
     item.save(ASSETS / 'item/stoner_badge_sash.png')
-    print(len(BADGES), 'patches, the cloth and the item')
+    print('the cloth and the item')
 
 
 if __name__ == '__main__':

@@ -236,7 +236,7 @@ public final class PageRenderer {
                 boolean earned = progress.earned(d.earnKey());
                 var tex = ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/handbook/patches/" + d.id() + ".png");
                 if (!earned) g.setColor(0.35f, 0.35f, 0.35f, 0.7f);
-                g.blit(tex, cx + (cw - PATCH) / 2, cy, PATCH, PATCH, 0, 0, 16, 16, 16, 16);
+                g.blit(tex, cx + (cw - PATCH) / 2, cy, PATCH, PATCH, 0, 0, 128, 128, 128, 128);      // the patches are 128x128 pictures
                 g.setColor(1f, 1f, 1f, 1f);
                 int ty = cy + PATCH + 2;
                 for (FormattedCharSequence line : font.split(Component.translatable("handbook.fourtwenty.badge." + d.id()), cw - 2)) {
