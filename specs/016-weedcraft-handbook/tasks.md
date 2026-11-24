@@ -109,11 +109,11 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty/`, `R` = `src/main/res
 ## Phase 10: PDF edition, the Supply Ship and Camp, release · Milestone 6
 
 - [ ] T062 Client dev command `/fourtwenty handbook export` rendering icons to `tools/art/handbook_icons/` in `J/client/handbook/IconExport.java`
-- [ ] T063 PDF builder (cover, DON'T PANIC page, title, contents with links, chapters, recipes from recipe JSON, scenes, check-off pages for ranks and badges, glossary, index, translation table, outline) in `tools/build_handbook_pdf.py` → `docs/handbook/A-Handbook-of-Weedcraft.pdf`
+- [X] T063 PDF builder (cover, DON'T PANIC page, title, contents with links, chapters, recipes from recipe JSON, scenes, check-off pages for ranks and badges, glossary, index, translation table, outline) in `tools/build_handbook_pdf.py` → `docs/handbook/A-Handbook-of-Weedcraft.pdf`
 - [ ] T064 Book/PDF parity check (same entries and wording) in `tools/check_handbook.py`
-- [ ] T065 CI: build the PDF and attach it to the GitHub release in `.github/workflows/ci.yml`
-- [ ] T066 One Handbook in the racks of the Supply Ship and Supply Camp (sensi-heights `tools/build_ship.py`, `tools/build_camp.py`, pack bump), imported with `tools/import_sensi_heights.py`
-- [ ] T067 README and CURSEFORGE.md link to the PDF (and confirm whether CurseForge accepts the file)
+- [X] T065 CI: build the PDF and attach it to the GitHub release in `.github/workflows/ci.yml`
+- [X] T066 One Handbook in the racks of the Supply Ship and Supply Camp (sensi-heights `tools/build_ship.py`, `tools/build_camp.py`, pack bump), imported with `tools/import_sensi_heights.py`
+- [X] T067 README and CURSEFORGE.md link to the PDF (and confirm whether CurseForge accepts the file)
 - [ ] T068 Final: all quickstart sections pass; user reads the book (SC-008); release only on the user's go
 
 ## Dependencies
