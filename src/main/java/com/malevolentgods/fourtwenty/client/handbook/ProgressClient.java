@@ -50,22 +50,24 @@ public final class ProgressClient {
             // a lot at once (a command, or one deed that counts for several): one notice, not a wall of them
             mc.getToasts().addToast(new HandbookToast(heading, Component.translatable("handbook.fourtwenty.notice.ticks", ticks.size()), null));
         } else {
-            for (String key : ticks) mc.getToasts().addToast(new HandbookToast(heading, Component.translatable(reqKey(key)), badgeOf(key)));
+            for (String key : ticks) mc.getToasts().addToast(new HandbookToast(heading, Component.translatable(reqKey(key)), emblemOf(key)));
         }
         for (String key : p.earnedNow()) {
             boolean rank = key.startsWith("rank:");
             String id = key.substring(key.indexOf(':') + 1);
             mc.getToasts().addToast(new HandbookToast(Component.translatable("handbook.fourtwenty.notice." + (rank ? "rank" : "badge")),
-                    Component.translatable("handbook.fourtwenty." + (rank ? "rank" : "badge") + "." + id), rank ? null : id));
+                    Component.translatable("handbook.fourtwenty." + (rank ? "rank" : "badge") + "." + id), PageRenderer.emblem(rank, id)));
             mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 1.0f));
         }
     }
 
     private static final int MAX_TICK_NOTICES = 3;
 
-    /** The badge a requirement key belongs to ("badge:munchies/3" is munchies), or null for a rank's. */
-    private static String badgeOf(String key) {
-        return key.startsWith("badge:") ? key.substring(6, key.indexOf('/')) : null;
+    /** The shield or patch of the rank or badge a requirement key belongs to ("badge:munchies/3" is munchies' patch). */
+    private static net.minecraft.resources.ResourceLocation emblemOf(String key) {
+        boolean rank = key.startsWith("rank:");
+        int colon = key.indexOf(':'), slash = key.indexOf('/');
+        return PageRenderer.emblem(rank, key.substring(colon + 1, slash < 0 ? key.length() : slash));
     }
 
     /** "rank:tenderbud/2a" to the lang key of its wording. */

@@ -456,6 +456,9 @@ def scout_flow(ref):
         return flow
     kind, _, did = ref.partition('/')
     d = json.loads((scouting / f'{kind}_{did}.json').read_text(encoding='utf-8'))
+    from reportlab.platypus import Image as RLImage
+    emblem = ASSETS / 'textures/gui/handbook' / ('ranks' if kind == 'rank' else 'patches') / f'{did}.png'
+    head = [RLImage(str(emblem), 54, 54, hAlign='LEFT'), Spacer(1, 4)] if emblem.exists() else []
     rows = []
     for r in d['requirements']:
         text = esc(LANG[r['text']])
@@ -467,7 +470,7 @@ def scout_flow(ref):
     t = Table(rows, colWidths=[16, None], hAlign='LEFT')
     t.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ('TOPPADDING', (0, 0), (-1, -1), 2), ('BOTTOMPADDING', (0, 0), (-1, -1), 4)]))
     sign = Paragraph('<i>Signed on my honour: ____________________   Date: __________</i>', CAPTION)
-    return [Spacer(1, 4), t, Spacer(1, 10), sign]
+    return [Spacer(1, 4)] + head + [t, Spacer(1, 10), sign]
 
 
 def special_rows(kind):

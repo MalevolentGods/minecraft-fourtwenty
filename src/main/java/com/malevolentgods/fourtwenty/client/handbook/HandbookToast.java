@@ -28,13 +28,13 @@ public final class HandbookToast implements Toast {
     private final List<FormattedCharSequence> lines;
     private final @Nullable ResourceLocation patch;
 
-    /** {@code badge} is the badge id whose patch to show, or null for the Handbook itself. */
-    public HandbookToast(Component title, Component message, @Nullable String badge) {
+    /** {@code emblem} is the rank shield or badge patch to show ({@link PageRenderer#emblem}), or null for the Handbook itself. */
+    public HandbookToast(Component title, Component message, @Nullable ResourceLocation emblem) {
         this.title = title;
         var font = Minecraft.getInstance().font;
         List<FormattedCharSequence> wrapped = font.split(message, WIDTH - TEXT_X - PAD);
         this.lines = wrapped.size() > MAX_LINES ? wrapped.subList(0, MAX_LINES) : wrapped;
-        this.patch = badge == null ? null : ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/handbook/patches/" + badge + ".png");
+        this.patch = emblem;
     }
 
     @Override public int width() { return WIDTH; }

@@ -207,7 +207,12 @@ public final class PageRenderer {
         return t;
     }
 
-    private static final int PATCH = 28, CELL_H = 52, COLS = 4;
+    private static final int PATCH = 28, CELL_H = 52, COLS = 4, EMBLEM = 32;
+
+    /** A rank's shield or a badge's patch: 128x128 pictures in textures/gui/handbook/ranks and patches. */
+    static ResourceLocation emblem(boolean rank, String id) {
+        return ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/handbook/" + (rank ? "ranks/" : "patches/") + id + ".png");
+    }
 
     private int scoutHeight(String ref, int width) {
         if (ref.equals("sash")) {
@@ -221,7 +226,7 @@ public final class PageRenderer {
         }
         var d = scoutDef(ref);
         if (d == null) return LINE;
-        int h = LINE + 2;
+        int h = EMBLEM + 4;
         for (var r : d.reqs()) h += Math.max(1, font.split(reqText(d, r, false), width - 13).size()) * LINE + 2;
         return h;
     }
@@ -276,9 +281,13 @@ public final class PageRenderer {
         if (d == null) return;
         int y = top;
         long done = d.reqs().stream().filter(r -> progress.satisfied(d.key(r))).count();
-        Component status = progress.earned(d.earnKey()) ? Component.translatable("handbook.fourtwenty.earned") : Component.literal(done + " / " + d.reqs().size());
-        g.drawString(font, status, x, y, progress.earned(d.earnKey()) ? LINK : FAINT, false);
-        y += LINE + 2;
+        boolean earned = progress.earned(d.earnKey());
+        if (!earned) g.setColor(0.55f, 0.55f, 0.55f, 0.85f);
+        g.blit(emblem(d.rank(), d.id()), x, y, EMBLEM, EMBLEM, 0, 0, 128, 128, 128, 128);
+        g.setColor(1f, 1f, 1f, 1f);
+        Component status = earned ? Component.translatable("handbook.fourtwenty.earned") : Component.literal(done + " / " + d.reqs().size());
+        g.drawString(font, status, x + EMBLEM + 6, y + (EMBLEM - 8) / 2, earned ? LINK : FAINT, false);
+        y += EMBLEM + 4;
         for (var r : d.reqs()) {
             String key = d.key(r);
             int state = progress.state(key);
