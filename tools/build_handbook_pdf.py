@@ -56,9 +56,11 @@ LANG = json.loads((ASSETS / 'lang/en_us.json').read_text(encoding='utf-8'))
 
 # ---- type
 
-BODY = ParagraphStyle('body', fontName='Times-Roman', fontSize=10.5, leading=14, textColor=INK, spaceAfter=5)
+BODY = ParagraphStyle('body', fontName='Times-Roman', fontSize=10.5, leading=14, textColor=INK, spaceAfter=5,
+                      allowWidows=0, allowOrphans=0)        # never one line alone at a page's foot or head
 H1 = ParagraphStyle('h1', fontName='Times-Bold', fontSize=19, leading=23, textColor=HEADING, spaceAfter=4)
-H2 = ParagraphStyle('h2', fontName='Times-Bold', fontSize=12.5, leading=16, textColor=HEADING, spaceBefore=6, spaceAfter=3)
+H2 = ParagraphStyle('h2', fontName='Times-Bold', fontSize=12.5, leading=16, textColor=HEADING, spaceBefore=6, spaceAfter=3,
+                    keepWithNext=1)
 CHAPTER = ParagraphStyle('chapter', fontName='Times-Bold', fontSize=26, leading=30, textColor=HEADING, alignment=TA_CENTER)
 CAPTION = ParagraphStyle('caption', parent=BODY, fontName='Times-Italic', fontSize=9.5, leading=12, textColor=FAINT)
 LISTS = ParagraphStyle('list', parent=BODY, leftIndent=16, bulletIndent=4, spaceAfter=2)
@@ -519,8 +521,11 @@ def build(out):
             head = [Marker(anchor(eid), front['title'], 1), Paragraph(f'<a name="{anchor(eid)}"/>' + esc(front['title']), H1)]
             if front.get('needs'):
                 head.append(Paragraph('<i>Needs MineColonies</i>', CAPTION))
-            story += [KeepTogether(head)] + elements_to_flow(els) + [PageBreak()]
+            # entries run on, like a textbook's sections: a little space, then the heading kept with its first block
+            flow = elements_to_flow(els)
+            story += [Spacer(1, 16), KeepTogether(head + flow[:1])] + flow[1:]
             index_terms.extend((t, eid, front['title']) for t in front.get('terms', []))
+        story.append(PageBreak())                   # each chapter ends its pages; the next opens on its own title page
     # the back of the book: glossary and index (FR-006)
     if not any(c['id'] == 'back' for c in book['chapters']):
         story += [Marker('c_back', 'Back of the Book', 0), Spacer(1, 150), Paragraph('Back of the Book', CHAPTER), PageBreak()]

@@ -8,7 +8,7 @@ terms: [seeds, wild weed, Landrace, starter seeds]
 A Weedcrafter's first seeds are **Landrace**: plain, honest, everyday weed, the kind that grows wild.
 
 # Wild Weed
-Wild weed grows in the open country: **plains, savannas, meadows and groves**. Look for tall, leafy plants among the grass. Break one and it drops a seed, and an older, taller plant can drop as many as four. A good scout gathers a handful before heading home.
+Wild weed grows in the open country: **plains, savannas, meadows and groves**. Look for tall, leafy plants among the grass. Break one and it drops a seed, and an older, taller plant can drop as many as four. A good Weedcrafter gathers a handful before heading home.
 
 # Starter Seeds
 Every Weedcrafter is given **four Landrace seeds** the first time they join, ready for a first garden.

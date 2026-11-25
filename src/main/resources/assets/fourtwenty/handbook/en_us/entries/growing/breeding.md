@@ -6,7 +6,7 @@ terms: [Pheno Chamber, Cross, hybrid, traits, Potency, Yield, Length, Buzz Bot, 
 New strains are bred, not found. Breeding starts in a **Pheno Chamber** and climbs from there.
 
 # The Pheno Chamber
-Put a seed in each slot. The right two strains make a **Cross**, and the screen tells you which. Any other two give you one of the parents back. It runs on Toke power, or free near a high player.
+Put a seed in each slot. The right two strains make a **Cross**, and the chamber tells you which. Any other two give you one of the parents back. It runs on Toke power, or free near a high Weedcrafter.
 
 # Climate Seeds
 Landrace grown in a **desert, snow, swamp or jungle** sometimes gives a climate-touched seed. Put one in the Pheno Chamber alone and it settles into that biome's own strain.

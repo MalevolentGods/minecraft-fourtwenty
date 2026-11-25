@@ -6,7 +6,7 @@ terms: [Inspoweednetics, electronics]
 **Inspoweednetics** is electronics for people who'd rather be doing something else. It's real electronics, with the names changed to protect the innocent: the parts you'll build here behave like the parts in a real radio, a real computer, a real doorbell. Learn them here and you can read a real circuit diagram.
 
 # What You'll Learn
-1. **A little theory:** voltage, current, resistance and power, and what the mod's strange units really mean.
+1. **A little theory:** voltage, current, resistance and power, and what Weedcraft's strange units really mean.
 2. **Binary:** how a computer counts on two fingers.
 3. **Logic:** the gates that make decisions.
 4. **The parts:** what's in the box.

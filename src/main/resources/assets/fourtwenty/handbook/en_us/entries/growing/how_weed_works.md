@@ -26,7 +26,7 @@ Hang Trimmed Buds on a Curing Rack (or put them in a Dry Box and up). Five minut
 A Cured Bud becomes a joint, goes in a pipe or bong, burns in a Hookah, becomes an edible, or is pressed into [extracts](entry:processing/extracts) (Kief, Hash, Resin, Rosin, Oil), which make a pipe smoke stronger and longer. See [Smoking](entry:processing/smoking), [Edibles](entry:processing/edibles) and the [Vape Pen](entry:processing/vape_pen).
 
 # 7. The High
-Smoking gives you a **high**: your strain's effects, the screen tinted its colour, and a timer. How long, and how strongly, depends on the strain's grade, the seed's traits, and the family. See [How a High Works](entry:processing/highs).
+Smoking gives you a **high**: your strain's effects, the world tinted its colour, and a timer. How long, and how strongly, depends on the strain's grade, the seed's traits, and the family. See [How a High Works](entry:processing/highs).
 
 # 8. Why Being High Matters
 While you are high, machines within 21 blocks of you run for free. A Hookah and its Wicks turn burning bud into Boundless Inspiration for every machine on the line. See [Power](entry:power/basics).

@@ -103,10 +103,21 @@ public class HandbookScreen extends Screen {
             pages.add(new Contents(all.isEmpty() ? List.of() : all.subList(i, Math.min(all.size(), i + perPage))));
         }
         Layout.Measure m = renderer.measure();
+        // a chapter's entries run on one after another, like a textbook's sections; each chapter starts on a fresh page
         for (BookData.Chapter c : book.chapters()) {
+            List<Layout.Section> sections = new ArrayList<>();
             for (String id : c.entries()) {
                 BookData.Entry e = book.entries().get(id);
-                addEntry(id, e.front().title(), e.elements(), m);
+                if (e != null) sections.add(new Layout.Section(id, withHeading(e.front().title(), e.elements())));
+            }
+            if (sections.isEmpty()) continue;
+            Layout.Run run = Layout.run(sections, PAGE_W, PAGE_H, m);
+            int base = pages.size();
+            run.starts().forEach((id, page) -> entryPage.put(id, base + page));
+            String owner = sections.get(0).id();
+            for (int i = 0; i < run.pages().size(); i++) {
+                for (var start : run.starts().entrySet()) if (start.getValue() == i) { owner = start.getKey(); break; }
+                pages.add(new EntryPage(owner, run.pages().get(i), pages.size()));
             }
         }
         // the back of the book: glossary and index (FR-006)
@@ -123,10 +134,15 @@ public class HandbookScreen extends Screen {
 
     static final String GLOSSARY = "back/glossary", INDEX = "back/index";
 
-    private void addEntry(String id, String title, List<Element> elements, Layout.Measure m) {
+    private static List<Element> withHeading(String title, List<Element> elements) {
         List<Element> els = new ArrayList<>();
         els.add(new Element.Heading(List.of(new Span(title, true, false, null, null, null))));
         els.addAll(elements);
+        return els;
+    }
+
+    private void addEntry(String id, String title, List<Element> elements, Layout.Measure m) {
+        List<Element> els = withHeading(title, elements);
         entryPage.put(id, pages.size());
         for (List<Layout.Placed> page : Layout.paginate(els, PAGE_W, PAGE_H, m)) {
             pages.add(new EntryPage(id, page, pages.size()));

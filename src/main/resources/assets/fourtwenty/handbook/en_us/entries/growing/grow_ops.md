@@ -20,7 +20,7 @@ A Grow Op is a plot that grows any farmland crop faster and keeps it watered. Ri
 Use the next tier's plot on the one you have: the crop stays right where it is.
 
 # Power
-From the Grow Tent up, a plot runs on BI through Wicks, or free while a high player is within 21 blocks. Without power the crop simply grows at the normal pace and comes to no harm. Green sparkles show each boost.
+From the Grow Tent up, a plot runs on BI through Wicks, or free while a high Weedcrafter is within 21 blocks. Without power the crop simply grows at the normal pace and comes to no harm. Green sparkles show each boost.
 
 # Big Harvests
 The Aero Pod and Cosmic Kush Pod give half as many again of every bud. Other crops replant themselves there; weed, like a real plant, comes up with the harvest.

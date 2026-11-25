@@ -3,7 +3,7 @@ title: Traits: Potency, Yield and Length
 icon: fourtwenty:weed_seeds
 terms: [traits, Potency, Yield, Length, drift, rating, inheritance, plain seed]
 ---
-Every seed carries three **traits**, each rated **1 to 5**. Hold a seed, bud or joint and its tooltip reads *Potency a, Yield b, Length c*. They belong to the **seed**, not to the strain: two Cherry Pie seeds can be rated quite differently.
+Every seed carries three **traits**, each rated **1 to 5**. Look at a seed, bud or joint and its label reads *Potency a, Yield b, Length c*. They belong to the **seed**, not to the strain: two Cherry Pie seeds can be rated quite differently.
 
 # What Each Does
 

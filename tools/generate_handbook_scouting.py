@@ -175,7 +175,7 @@ BADGES = [
     ('community_sesh', 'Community Sesh', 'minecolonies', 'colony/dispensary', [
         H('1', 'Hire a Budtender.'),
         T('2', 'Have a colonist enjoy a dose.', 'colony_dose'),
-        T('3', 'Sell a joint to a player.', 'colony_sale'),
+        T('3', 'Sell a joint to a customer.', 'colony_sale'),
         H('4', 'Ask a colonist how they are feeling.')]),
     ('lifted_building', 'Lifted Building', 'minecolonies', 'colony/lifted_builders', [
         T('1', 'Have a Lifted Builder.', 'colony_lifted'),
@@ -239,13 +239,13 @@ def write_all():
         head = f"---\ntitle: {name}\nicon: fourtwenty:handbook\nterms: [{name}]\n" + (f"needs: {needs}\n" if needs else '') + "---\n"
         (ENTRIES / f'badge_{bid}.md').write_text(head + f"{{scout:badge/{bid}}}\n", encoding='utf-8')
 
-    # the front matter, in the Scout handbook's manner, and the overview
+    # the front matter (motto, oath, law) and the overview
     (ENTRIES / 'motto.md').write_text("""---
 title: Motto and Slogan
 icon: fourtwenty:handbook
 terms: [motto, slogan, Don't Panic]
 ---
-The Scouts have a motto, *Be Prepared*, and a slogan, *Do a Good Turn Daily*. Weedcrafters have the two best pieces of advice there are.
+Every Weedcrafter carries two pieces of advice, and they are the best two there are.
 
 # The Motto
 **Don't Panic.**
@@ -297,13 +297,13 @@ title: The Stoner Badge Sash
 icon: fourtwenty:stoner_badge_sash
 terms: [Stoner Badge Sash, sash, patches]
 ---
-Every Scout has a sash for the badges they've earned. So do you.
+Every badge you earn deserves somewhere to be seen.
 
 {item:fourtwenty:stoner_badge_sash|Worn across the chest, it shows your badges}
 
 {recipe:fourtwenty:stoner_badge_sash}
 
-Right-click it to put it on, or wear it in the body slot if you play with Curios. It does nothing but look good: no armour, no effects. It carries no badges of its own, so it always shows the badges of whoever's wearing it. Lend it to a friend and it shows theirs. (Earn your own.)
+Right-click it to put it on, or wear it in a body slot if you have one. It does nothing but look good: no armour, no effects. It carries no badges of its own, so it always shows the badges of whoever's wearing it. Lend it to a friend and it shows theirs. (Earn your own.)
 
 The newest eight show on the sash itself. Every badge you've earned is in colour below, and the rest are waiting.
 
@@ -314,7 +314,7 @@ title: Your Progress
 icon: fourtwenty:handbook
 terms: [ranks, Stoner Badges, progress]
 ---
-Six **ranks**, earned in order from Tenderbud to Golden Eagle, and a pocketful of **Stoner Badges**, earned in any order. The game ticks most requirements off by itself, with a small notice, as you do them. The rest you sign on your honour: click the box.
+Six **ranks**, earned in order from Tenderbud to Golden Eagle, and a pocketful of **Stoner Badges**, earned in any order. Most requirements tick themselves off as you do them, with a small notice. The rest you sign on your honour: click the box.
 
 Turn the page for each rank and badge in full.
 

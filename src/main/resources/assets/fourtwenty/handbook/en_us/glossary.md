@@ -1,5 +1,5 @@
 Accord: a terpene's three parts together (family, hue and tone), which names its colour and its strain. -> entry:colours/terpenes
-BI: Boundless Inspiration, the power that runs the mod's machines. -> entry:power/basics
+BI: Boundless Inspiration, the power that runs a Weedcrafter's machines. -> entry:power/basics
 Big Bertha: the Rip-tier Hookah, 1,680 W a burn. -> entry:power/hookahs
 Blaze: the fourth and highest power tier, 4,200 Kb. -> entry:power/basics
 Buzz Bot: a robot bee that pollinates ripe crops for a certain hybrid. -> entry:growing/breeding
@@ -16,9 +16,9 @@ Grow Op: a plot that grows crops faster, from the Closet Grow to the Cosmic Kush
 High: what smoking gives you: the strain's effects and colour for a while. -> entry:getting_started/being_high
 Hit Box: a transformer that steps power from one tier to the next. -> entry:power/hit_box
 Hookah: a shared smoke and a power source. -> entry:power/hookahs
-Ig: the Ignus, the mod's unit of current. -> entry:power/basics
+Ig: the Ignus, Weedcraft's unit of current. -> entry:power/basics
 Inspiration Infuser: where you catch colours and breed strain seeds. -> entry:colours/infuser
-Kb: the Kerberos, the mod's unit of voltage. -> entry:power/basics
+Kb: the Kerberos, Weedcraft's unit of voltage. -> entry:power/basics
 Landrace: everyday weed, grade 0, the kind that grows wild. -> entry:getting_started/first_seeds
 Munchies: the hunger that comes with a high. Pack a snack. -> entry:getting_started/being_high
 Overload: a machine fed from too high a tier stops and smokes. It never breaks. -> entry:power/basics
@@ -27,7 +27,7 @@ Pot Pot: a flowerpot for weed. -> entry:growing/pot_pots
 Puff: the first power tier, 4.2 Kb. -> entry:power/basics
 Rip: the third power tier, 420 Kb. -> entry:power/basics
 Rough Bud: a bud fresh off the plant, not yet trimmed. -> entry:growing/harvest
-Running free: a machine needs no power while a high player is within 21 blocks. -> entry:power/basics
+Running free: a machine needs no power while a high Weedcrafter is within 21 blocks. -> entry:power/basics
 Stash: a battery for BI. -> entry:power/stashes
 Strain: a variety of weed, carried by its seeds, buds and joints. -> entry:growing/strains
 Terpene: a vial of essence made from weed that dyes hemp and breeds strains. -> entry:colours/terpenes
@@ -40,5 +40,5 @@ Yield: the trait that adds rough buds to a harvest. -> entry:growing/traits
 High: the state smoking puts you in; its length and strength are set by strain and traits. -> entry:processing/highs
 Trimmed Bud: a bud snipped at a Trim Tray, ready to cure. -> entry:processing/trim_and_cure
 Twin Wick: a cable that wires every block it touches in parallel. -> entry:power/wiring
-W: the Willard, the mod's unit of power. -> entry:power/basics
+W: the Willard, Weedcraft's unit of power. -> entry:power/basics
 Wick: the wire that carries BI. -> entry:power/wiring

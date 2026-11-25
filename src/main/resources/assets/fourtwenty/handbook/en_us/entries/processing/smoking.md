@@ -17,7 +17,7 @@ A pipe holds up to 16 buds, one per smoke. Hash and stronger extracts smoke stro
 {recipe:fourtwenty:glass_bong}
 Place a bong anywhere; its bowl turns toward you. Right-click it with a Cured Bud in your inventory to take a hit: one bud a hit, with bubbles and smoke, and five seconds between hits.
 
-**Specialty bongs** add a buff that lasts a whole Minecraft day: craft a glass bong with two ingredients.
+**Specialty bongs** add a buff that lasts a whole day: craft a glass bong with two ingredients.
 
 {table}
 | Bong | Add | Buff |
