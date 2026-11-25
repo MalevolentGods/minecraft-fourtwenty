@@ -14,8 +14,9 @@ ROOT = Path(__file__).resolve().parents[1]
 SHEET = ROOT / 'tools/art/handbook_badges.png'
 OUT = ROOT / 'src/main/resources/assets/fourtwenty/textures/gui/handbook/patches'
 SIZE = 128
-SASH_ART = ROOT / 'tools/art/stoner_badge_sash.png'
-SASH_ICON = ROOT / 'src/main/resources/assets/fourtwenty/textures/item/stoner_badge_sash.png'
+ITEM = ROOT / 'src/main/resources/assets/fourtwenty/textures/item'
+ICONS = [(ROOT / 'tools/art/stoner_badge_sash.png', ITEM / 'stoner_badge_sash.png'),     # the user's painted item icons
+         (ROOT / 'tools/art/handbook_icon.png', ITEM / 'handbook.png')]
 
 ORDER = ['ganja_gardening', 'plant_breeding', 'bud_processing', 'kitchen_chemistry', 'munchies',
          'safe_sesh', 'colour_theory', 'terpination', 'inspiration', 'inspoweednetics',
@@ -44,12 +45,12 @@ def circles(sheet):
     return out
 
 
-def sash_icon():
-    """The Stoner Badge Sash's item icon from the user's picture (tools/art/stoner_badge_sash.png): the off-white background flooded
-    away from the edges, cropped, centred on a square and painted at 256x256 like the mod's other painted icons."""
+def painted_icon(art, out):
+    """An item icon from one of the user's pictures: the off-white background flooded away from the edges, cropped, centred on a
+    square and saved at 256x256 like the mod's other painted icons."""
     import numpy as np
     from scipy import ndimage
-    im = Image.open(SASH_ART).convert('RGB')
+    im = Image.open(art).convert('RGB')
     a = np.asarray(im).astype(int)
     background = np.median(a[:8, :8].reshape(-1, 3), axis=0)
     near = np.abs(a - background).sum(axis=2) < 45
@@ -63,12 +64,13 @@ def sash_icon():
     side = int(max(rgba.size) * 1.04)
     square = Image.new('RGBA', (side, side), (0, 0, 0, 0))
     square.alpha_composite(rgba, ((side - rgba.width) // 2, (side - rgba.height) // 2))
-    square.resize((256, 256), Image.LANCZOS).save(SASH_ICON, optimize=True)
-    print('sash icon')
+    square.resize((256, 256), Image.LANCZOS).save(out, optimize=True)
+    print('icon', out.name)
 
 
 def main():
-    sash_icon()
+    for art, out in ICONS:
+        painted_icon(art, out)
     sheet = Image.open(SHEET).convert('RGB')
     OUT.mkdir(parents=True, exist_ok=True)
     big = 4

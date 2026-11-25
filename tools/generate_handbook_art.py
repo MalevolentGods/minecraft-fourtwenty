@@ -157,7 +157,8 @@ def main():
     GUI.mkdir(parents=True, exist_ok=True)
     spread().save(GUI / 'book.png')
     cover().save(GUI / 'cover.png')
-    item().save(ITEM / 'handbook.png')
+    if not (ROOT / 'tools/art/handbook_icon.png').exists():     # the user's painted icon (tools/slice_handbook_badges.py) wins
+        item().save(ITEM / 'handbook.png')
     print('wrote book.png, cover.png, item handbook.png')
 
 
