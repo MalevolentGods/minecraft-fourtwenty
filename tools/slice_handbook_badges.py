@@ -15,8 +15,8 @@ SHEET = ROOT / 'tools/art/handbook_badges.png'
 OUT = ROOT / 'src/main/resources/assets/fourtwenty/textures/gui/handbook/patches'
 SIZE = 128
 ITEM = ROOT / 'src/main/resources/assets/fourtwenty/textures/item'
-ICONS = [(ROOT / 'tools/art/stoner_badge_sash.png', ITEM / 'stoner_badge_sash.png'),     # the user's painted item icons
-         (ROOT / 'tools/art/handbook_icon.png', ITEM / 'handbook.png')]
+ICONS = [(ROOT / 'tools/art/stoner_badge_sash.png', ITEM / 'stoner_badge_sash.png', 0),     # the user's painted item icons
+         (ROOT / 'tools/art/handbook_icon.png', ITEM / 'handbook.png', 30)]                  # (picture, icon, degrees clockwise)
 
 ORDER = ['ganja_gardening', 'plant_breeding', 'bud_processing', 'kitchen_chemistry', 'munchies',
          'safe_sesh', 'colour_theory', 'terpination', 'inspiration', 'inspoweednetics',
@@ -45,7 +45,7 @@ def circles(sheet):
     return out
 
 
-def painted_icon(art, out):
+def painted_icon(art, out, turn=0):
     """An item icon from one of the user's pictures: the off-white background flooded away from the edges, cropped, centred on a
     square and saved at 256x256 like the mod's other painted icons."""
     import numpy as np
@@ -60,6 +60,8 @@ def painted_icon(art, out):
     alpha = Image.fromarray(np.where(outside, 0, 255).astype('uint8')).filter(ImageFilter.GaussianBlur(1.2))
     rgba = im.convert('RGBA')
     rgba.putalpha(alpha)
+    if turn:                                  # degrees clockwise
+        rgba = rgba.rotate(-turn, resample=Image.BICUBIC, expand=True)
     rgba = rgba.crop(rgba.getbbox())
     side = int(max(rgba.size) * 1.04)
     square = Image.new('RGBA', (side, side), (0, 0, 0, 0))
@@ -69,8 +71,8 @@ def painted_icon(art, out):
 
 
 def main():
-    for art, out in ICONS:
-        painted_icon(art, out)
+    for art, out, turn in ICONS:
+        painted_icon(art, out, turn)
     sheet = Image.open(SHEET).convert('RGB')
     OUT.mkdir(parents=True, exist_ok=True)
     big = 4
