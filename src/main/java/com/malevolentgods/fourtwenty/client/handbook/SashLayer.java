@@ -24,8 +24,8 @@ import java.util.Optional;
 
 /**
  * Draws the Stoner Badge Sash on a player who wears it (specs/016-weedcraft-handbook FR-036, FR-038): a green cloth sash from one shoulder
- * to the opposite hip, front and back, with the wearer's most recent badges as patches along its front. It's worn in the chest slot, or
- * in Curios' body slot when Curios is installed (found by reflection, so Curios is never required). The badges are the wearer's own, as the
+ * to the opposite hip, front and back, with the wearer's most recent badges as patches along its front. It's worn in Four Twenty's own
+ * sash slot (SashSlot), or in Curios' body slot when Curios is installed (found by reflection, so Curios is never required). The badges are the wearer's own, as the
  * server last told us (HandbookNetwork.SashPayload), so a lent sash shows its wearer's.
  */
 public final class SashLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
@@ -97,6 +97,7 @@ public final class SashLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
 
     private static boolean wearing(LivingEntity e) {
         if (SASH == null) SASH = ModItems.STONER_BADGE_SASH.get();
+        if (com.malevolentgods.fourtwenty.handbook.SashSlot.CLIENT_WORN.contains(e.getId())) return true;    // our own sash slot
         if (e.getItemBySlot(EquipmentSlot.CHEST).is(SASH)) return true;
         if (!ModList.get().isLoaded("curios")) return false;
         try {

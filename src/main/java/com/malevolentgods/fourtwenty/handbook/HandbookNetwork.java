@@ -93,6 +93,7 @@ public final class HandbookNetwork {
             reg.playToServer(SignPayload.TYPE, SignPayload.CODEC, (p, ctx) -> ctx.enqueueWork(() -> {
                 if (ctx.player() instanceof ServerPlayer sp) Deeds.sign(sp, p.key());
             }));
+            SashSlot.payloads(reg);
         });
     }
 
