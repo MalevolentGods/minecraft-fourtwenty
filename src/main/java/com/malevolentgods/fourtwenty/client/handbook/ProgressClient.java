@@ -3,7 +3,6 @@ package com.malevolentgods.fourtwenty.client.handbook;
 import com.malevolentgods.fourtwenty.domain.handbook.Scouting.Progress;
 import com.malevolentgods.fourtwenty.handbook.HandbookNetwork;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -45,20 +44,28 @@ public final class ProgressClient {
         progress = fresh;
         if (p.full()) return;
         var mc = Minecraft.getInstance();
-        for (String key : p.ticked()) {
-            if (key.startsWith("rank:") && key.contains("/") || key.startsWith("badge:") && key.contains("/")) {
-                mc.getToasts().addToast(new SystemToast(SystemToast.SystemToastId.PERIODIC_NOTIFICATION,
-                        Component.translatable("handbook.fourtwenty.notice.tick", ""), Component.translatable(reqKey(key))));
-            }
+        List<String> ticks = p.ticked().stream().filter(k -> (k.startsWith("rank:") || k.startsWith("badge:")) && k.contains("/")).toList();
+        Component heading = Component.translatable("handbook.fourtwenty.notice.tick");
+        if (ticks.size() > MAX_TICK_NOTICES) {
+            // a lot at once (a command, or one deed that counts for several): one notice, not a wall of them
+            mc.getToasts().addToast(new HandbookToast(heading, Component.translatable("handbook.fourtwenty.notice.ticks", ticks.size()), null));
+        } else {
+            for (String key : ticks) mc.getToasts().addToast(new HandbookToast(heading, Component.translatable(reqKey(key)), badgeOf(key)));
         }
         for (String key : p.earnedNow()) {
             boolean rank = key.startsWith("rank:");
             String id = key.substring(key.indexOf(':') + 1);
-            mc.getToasts().addToast(new SystemToast(SystemToast.SystemToastId.PERIODIC_NOTIFICATION,
-                    Component.translatable("handbook.fourtwenty.notice." + (rank ? "rank" : "badge"), ""),
-                    Component.translatable("handbook.fourtwenty." + (rank ? "rank" : "badge") + "." + id)));
+            mc.getToasts().addToast(new HandbookToast(Component.translatable("handbook.fourtwenty.notice." + (rank ? "rank" : "badge")),
+                    Component.translatable("handbook.fourtwenty." + (rank ? "rank" : "badge") + "." + id), rank ? null : id));
             mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 1.0f));
         }
+    }
+
+    private static final int MAX_TICK_NOTICES = 3;
+
+    /** The badge a requirement key belongs to ("badge:munchies/3" is munchies), or null for a rank's. */
+    private static String badgeOf(String key) {
+        return key.startsWith("badge:") ? key.substring(6, key.indexOf('/')) : null;
     }
 
     /** "rank:tenderbud/2a" to the lang key of its wording. */

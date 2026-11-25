@@ -57,7 +57,8 @@ public final class SashLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
             float t = (i + 0.5f) / MAX_PATCHES;                 // along the sash: shoulder to hip
             float cx = -3.0f + 6.0f * t, cy = 0.8f + 10.2f * t, half = 1.05f;
             VertexConsumer v = buffers.getBuffer(RenderType.entityCutoutNoCull(patchTexture(id)));
-            quad(v, pose, m, light, cx - half, cy - half, cx + half, cy + half, -FRONT - 0.04f, true);
+            // each patch a little prouder than the one before, newest on top: patches overlap, and two in one plane flicker
+            quad(v, pose, m, light, cx - half, cy - half, cx + half, cy + half, -FRONT - 0.05f - 0.06f * i, true);
         }
         pose.popPose();
     }
