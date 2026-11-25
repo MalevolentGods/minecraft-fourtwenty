@@ -8,12 +8,14 @@ The patches show large in the book, on the sash and in the PDF. Reading order of
 """
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageDraw
+from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
 ROOT = Path(__file__).resolve().parents[1]
 SHEET = ROOT / 'tools/art/handbook_badges.png'
 OUT = ROOT / 'src/main/resources/assets/fourtwenty/textures/gui/handbook/patches'
 SIZE = 128
+SASH_ART = ROOT / 'tools/art/stoner_badge_sash.png'
+SASH_ICON = ROOT / 'src/main/resources/assets/fourtwenty/textures/item/stoner_badge_sash.png'
 
 ORDER = ['ganja_gardening', 'plant_breeding', 'bud_processing', 'kitchen_chemistry', 'munchies',
          'safe_sesh', 'colour_theory', 'terpination', 'inspiration', 'inspoweednetics',
@@ -42,7 +44,31 @@ def circles(sheet):
     return out
 
 
+def sash_icon():
+    """The Stoner Badge Sash's item icon from the user's picture (tools/art/stoner_badge_sash.png): the off-white background flooded
+    away from the edges, cropped, centred on a square and painted at 256x256 like the mod's other painted icons."""
+    import numpy as np
+    from scipy import ndimage
+    im = Image.open(SASH_ART).convert('RGB')
+    a = np.asarray(im).astype(int)
+    background = np.median(a[:8, :8].reshape(-1, 3), axis=0)
+    near = np.abs(a - background).sum(axis=2) < 45
+    lab, _ = ndimage.label(near)
+    edge_labels = set(np.unique(np.concatenate([lab[0], lab[-1], lab[:, 0], lab[:, -1]]))) - {0}
+    outside = np.isin(lab, list(edge_labels))
+    alpha = Image.fromarray(np.where(outside, 0, 255).astype('uint8')).filter(ImageFilter.GaussianBlur(1.2))
+    rgba = im.convert('RGBA')
+    rgba.putalpha(alpha)
+    rgba = rgba.crop(rgba.getbbox())
+    side = int(max(rgba.size) * 1.04)
+    square = Image.new('RGBA', (side, side), (0, 0, 0, 0))
+    square.alpha_composite(rgba, ((side - rgba.width) // 2, (side - rgba.height) // 2))
+    square.resize((256, 256), Image.LANCZOS).save(SASH_ICON, optimize=True)
+    print('sash icon')
+
+
 def main():
+    sash_icon()
     sheet = Image.open(SHEET).convert('RGB')
     OUT.mkdir(parents=True, exist_ok=True)
     big = 4

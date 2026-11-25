@@ -64,6 +64,9 @@ def main():
     d.rectangle((0, 0, 15, 1), fill=(214, 178, 84, 255))
     d.rectangle((0, 14, 15, 15), fill=(214, 178, 84, 255))
     cloth.save(ASSETS / 'entity/stoner_sash.png')
+    if (ASSETS / 'item/stoner_badge_sash.png').exists():   # the painted icon from tools/slice_handbook_badges.py wins
+        print('the cloth')
+        return
     item = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
     d = ImageDraw.Draw(item)
     for i in range(13):                          # a green sash across the icon, gold edged
