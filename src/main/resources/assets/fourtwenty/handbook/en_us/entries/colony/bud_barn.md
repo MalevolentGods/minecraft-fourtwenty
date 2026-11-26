@@ -1,6 +1,6 @@
 ---
 title: The Bud Barn
-icon: fourtwenty:rough_bud
+icon: fourtwenty:budbarn
 terms: [Bud Barn, colony trimming]
 needs: minecolonies
 ---
