@@ -108,7 +108,10 @@ def painted_icon(art, out, turn=0):
     side = int(max(rgba.size) * 1.04)
     square = Image.new('RGBA', (side, side), (0, 0, 0, 0))
     square.alpha_composite(rgba, ((side - rgba.width) // 2, (side - rgba.height) // 2))
-    square.resize((256, 256), Image.LANCZOS).save(out, optimize=True)
+    icon = square.resize((256, 256), Image.LANCZOS)
+    # items are drawn with hard edges: every pixel fully solid or fully clear, or a soft rim shows as see-through specks
+    icon.putalpha(icon.getchannel('A').point(lambda v: 255 if v >= 128 else 0))
+    icon.save(out, optimize=True)
     print('icon', out.name)
 
 
