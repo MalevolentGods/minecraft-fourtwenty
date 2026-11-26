@@ -3,7 +3,7 @@ title: Strains, Families and Grades
 icon: fourtwenty:weed_bud
 terms: [strain, family, grade, Golden God, hybrid]
 ---
-Every seed, bud and joint carries its **strain**, and a strain belongs to a **family**. Families climb a ladder of **grades**, from everyday Landrace at the bottom to the legendary Golden God at the top.
+Every seed, bud and joint carries its **strain**, and every strain belongs to a **family**. Families climb a ladder of **grades**, from everyday Landrace at the bottom to the legendary Golden God at the top.
 
 {table}
 | Grade | Family | Buds a harvest |
@@ -20,6 +20,6 @@ Every seed, bud and joint carries its **strain**, and a strain belongs to a **fa
 The first families are bred in the **Inspiration Infuser** from terpene colours, one strain for each colour accord. The **Biome** strains come from Landrace grown in far-off climates (see [Pollination and Breeding](entry:growing/breeding)). Higher grades are **hybrids**: two strains crossed in a **Pheno Chamber**, then crossed again, rung by rung, up to Golden God.
 
 # Higher Means Harder
-Each grade up grows slower, needs a better Grow Op to grow at all, and is stingier with seeds at the trimming tray. A Golden God crop is a thing of beauty and a test of everything you know. When it flowers, it glows.
+Each grade up grows slower, needs a better Grow Op to grow at all, and gives up fewer seeds at the trimming tray. A Golden God crop is the hardest thing in this book to grow, and everyone who has grown one has mentioned it, at length, to everyone they know. When it flowers, it glows.
 
-Smoke a new strain to learn what it does: each has its own high.
+Smoke a new strain to find out what it does. Each one has its own high.

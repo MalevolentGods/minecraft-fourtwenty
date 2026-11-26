@@ -21,7 +21,7 @@ The strain's **grade** sets the base length of the high (the colour tint, the au
 Then the seed's **Length** trait stretches it: x1 at Length 1, up to x3 at Length 5 (see [Traits](entry:growing/traits)). A Length 5 Ultra is high for 18 minutes. A few strains have a length of their own (Purple Haze 5 minutes, Third Eye Tonic 90 seconds).
 
 # How Long Each Effect Lasts
-Each strain's effects have their own lengths, set by the strain: Landrace's Regeneration lasts 30 seconds, its Night Vision 2 minutes. Every one of them is stretched by the same **Length** trait, and by the family's **potency** (below). So the tint and the effects you feel can last different lengths of time. A strain whose only effect is short will look short, however long the tint stays.
+Each strain's effects have their own lengths, set by the strain: Landrace's Regeneration lasts 30 seconds, its Night Vision 2 minutes. Every one of them is stretched by the same **Length** trait, and by the family's **potency** (below). So the tint and the effects you feel can last different lengths of time. A strain whose only effect is short will feel short, however long the tint stays.
 
 # How Strong It Is
 An effect starts at the strain's own level, then gains:
@@ -50,4 +50,4 @@ The boost can never lift an effect above **level IV**. A strain that already sta
 Machines within **21 blocks** of a high Weedcrafter run free, with no power needed. Smoke again while still high and machines count you as high until the later of the two ends. Smoking also inspires colours for the [Inspiration Infuser](entry:colours/infuser).
 
 # Why Is My High Short?
-Check the seed's label. A seed with **Length 1** gets exactly the base time in the table. If you cross better ones you will see it grow. If a strain's effects feel short, it is the strain's own effect length, not a bug: try another strain, or smoke from a better-bred seed.
+Check the seed's label. A seed with **Length 1** gets exactly the base time in the table; cross better ones and you'll watch it grow. If a strain's effects feel short, that's the strain itself: some are brief by nature. Try another, or smoke from a better-bred seed.

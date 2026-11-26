@@ -4,7 +4,7 @@
     python3 tools/build_handbook_pdf.py [out.pdf]        # default docs/handbook/A-Handbook-of-Weedcraft.pdf
 
 Built from the same files as the in-game book (assets/fourtwenty/handbook, read by tools/handbook_markup.py), so the
-two never disagree: the user's cover, DON'T PANIC alone on the inside cover, the title page, a clickable contents
+two never disagree: the user's cover, the motto alone on the inside cover, the title page, a clickable contents
 page, every entry with its pictures and real recipes, and PDF bookmarks. Terpene names stay hidden (FR-032).
 
 Item pictures: tools/art/handbook_icons/<namespace>_<id>.png when exported from the game (research R6), else the item's
@@ -295,7 +295,9 @@ class RecipeBox(Flowable):
                 c.drawRightString(rx + s - 3, ry + 2, str(count))
 
 
-class DontPanic(Flowable):
+class InsideCover(Flowable):
+    """The motto (FR-002b), alone, one word to a line, centred on the page."""
+
     def wrap(self, aw, ah):
         self.aw, self.ah = aw, ah
         return aw, ah - 1
@@ -303,11 +305,13 @@ class DontPanic(Flowable):
     def draw(self):
         c = self.canv
         c.setFillColor(LINKC)
-        for i, word in enumerate(("DON'T", 'PANIC')):
-            size = 66
+        words = LANG['handbook.fourtwenty.motto'].split()
+        size, gap = 66, 6
+        top = self.ah / 2 + (len(words) * (size + gap)) / 2 - size
+        for i, word in enumerate(words):
             c.setFont('Helvetica-Bold', size)
             w = c.stringWidth(word, 'Helvetica-Bold', size)
-            c.drawString((self.aw - w) / 2, self.ah / 2 + 10 - i * (size + 6), word)
+            c.drawString((self.aw - w) / 2, top - i * (size + gap), word)
 
 
 class Marker(Flowable):
@@ -497,7 +501,7 @@ def build(out):
     frame = Frame(54, 54, PAGE_W - 108, PAGE_H - 112, id='f')
     full = Frame(0, 0, PAGE_W, PAGE_H, id='full', leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
     doc.addPageTemplates([PageTemplate('cover', [full], onPage=cover), PageTemplate('paper', [frame], onPage=paper)])
-    story = [NextPageTemplate('paper'), PageBreak(), DontPanic(), PageBreak()]
+    story = [NextPageTemplate('paper'), PageBreak(), InsideCover(), PageBreak()]
     # title page
     story += [Spacer(1, 120),
               Paragraph('A Handbook of', ParagraphStyle('t1', parent=CHAPTER, fontSize=16, leading=20, textColor=INK)),

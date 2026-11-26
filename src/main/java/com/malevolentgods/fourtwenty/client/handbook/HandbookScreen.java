@@ -25,7 +25,7 @@ import java.util.Map;
 
 /**
  * A Handbook of Weedcraft, Scouting, and Weed-craft (specs/016-weedcraft-handbook US1): the closed book with the user's
- * cover art, then two-page spreads: DON'T PANIC alone inside the cover (FR-002b), the title page, contents, every entry
+ * cover art, then two-page spreads: the motto, KEEP ONE BACK, alone inside the cover (FR-002b), the title page, contents, every entry
  * (each starting on a fresh page). Links, contents lines and the back button move about; the bookmark remembers the
  * spread (FR-002, FR-003, FR-005).
  */
@@ -37,8 +37,8 @@ public class HandbookScreen extends Screen {
     private static final int COVER_W = 266, COVER_H = 345, TAB_H = 16, SHEET_W = 1024, SHEET_H = 512, BTN_V = 400;
 
     /** One page of the book. */
-    sealed interface Page permits DontPanic, Title, Contents, EntryPage, Blank {}
-    record DontPanic() implements Page {}
+    sealed interface Page permits InsideCover, Title, Contents, EntryPage, Blank {}
+    record InsideCover() implements Page {}
     record Title() implements Page {}
     record ContentsLine(String text, String entry, boolean chapter) {}
     record Contents(List<ContentsLine> lines) implements Page {}
@@ -84,7 +84,7 @@ public class HandbookScreen extends Screen {
         pages.clear();
         entryPage.clear();
         BookData.Book book = BookData.book();
-        pages.add(new DontPanic());
+        pages.add(new InsideCover());
         pages.add(new Title());
         // contents: chapter lines and their entries, paginated by line count
         List<ContentsLine> all = new ArrayList<>();
@@ -245,12 +245,12 @@ public class HandbookScreen extends Screen {
 
     private void drawPage(GuiGraphics g, Page page, int x, int index) {
         switch (page) {
-            case DontPanic d -> {
-                // the motto, alone, in large friendly letters
-                String[] words = Component.translatable("handbook.fourtwenty.dont_panic").getString().split(" ");
+            case InsideCover d -> {
+                // the motto, alone, one word to a line, as big as the page allows
+                String[] words = Component.translatable("handbook.fourtwenty.motto").getString().split(" ");
                 int widest = 1;
                 for (String w : words) widest = Math.max(widest, font.width(w));
-                float s = Math.min(4.5f, PAGE_W * 0.9f / widest);
+                float s = Math.min(Math.min(4.5f, PAGE_W * 0.9f / widest), PAGE_H * 0.8f / (words.length * 10));
                 float y0 = PAGE_Y + PAGE_H / 2f - words.length * 10 * s / 2;
                 for (int k = 0; k < words.length; k++) {
                     g.pose().pushPose();

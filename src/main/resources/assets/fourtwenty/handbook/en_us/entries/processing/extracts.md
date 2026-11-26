@@ -3,7 +3,7 @@ title: Extracts: Kief to Rosin and Oil
 icon: fourtwenty:rosin_rig
 terms: [Rosin Rig, Kief, Hash, Resin, Rosin, Oil, extracts]
 ---
-The **Rosin Rig** refines Cured Buds into stronger stuff, one step at a time. It runs on Toke power, or free near a high Weedcrafter.
+The **Rosin Rig** refines Cured Buds into smaller, stronger things, one step at a time. It runs on Toke power, or free near a high Weedcrafter.
 
 {table}
 | In | Out |

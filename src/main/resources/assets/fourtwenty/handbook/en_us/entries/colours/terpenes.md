@@ -16,7 +16,7 @@ Terpenes come in four families, each covering a sweep of the rainbow:
 A terpene blends three parts: one sets the family, one the hue, and one the tone, light to dark. Sixty-four hemp colours in all, plus the sixteen common dyes.
 
 # Discovery
-You start not knowing any of them. A terpene you haven't met shows no name, and this book won't spoil it for you. You learn a colour by **catching** it at the [Inspiration Infuser](entry:colours/infuser), or by making or receiving its vial.
+You start out knowing none of them. In Weedcraft, a colour isn't bought or mixed: you smoke, you get inspired, and you go and catch one at the [Inspiration Infuser](entry:colours/infuser). Making or being given a colour's vial teaches it to you too. A terpene you haven't met shows no name, and this book won't spoil it for you.
 
 # Using Them
 Surround a terpene vial with eight hemp blocks in a crafting grid to dye them. Feed terpenes and a Landrace seed to the Infuser to breed a strain.

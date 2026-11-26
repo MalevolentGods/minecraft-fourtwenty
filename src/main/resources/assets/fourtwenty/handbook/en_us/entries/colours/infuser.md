@@ -6,7 +6,7 @@ terms: [Inspiration Infuser, inspired, catching a colour, resin pool, Infuse tab
 Smoking **inspires** colours. The Inspiration Infuser is where you catch them.
 
 # Catching a Colour
-Mix resin into the pool until it matches a colour you're inspired by, then **catch** it. Nothing is timed and nothing can fail, so take your time and enjoy the colours. Once caught, a colour is yours: you can make its terpene in a Terpinator.
+Mix resin into the pool until it matches a colour you're inspired by, then **catch** it. Nothing is timed and nothing can fail, which makes this the most relaxing machine in the book. Once caught, a colour is yours: you can make its terpene in a Terpinator.
 
 # The Infuse Tab
 Here a **Landrace seed** and terpenes become a **strain seed**: the first rung on the ladder of families. Each colour accord has its own strain.

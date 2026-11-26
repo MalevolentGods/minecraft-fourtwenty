@@ -3,6 +3,6 @@ title: High Life
 icon: fourtwenty:handbook
 terms: [High Life]
 ---
-*Nothing more to prove. Prove it anyway.*
+*Your workshop has a sofa now, and somebody is always on it.*
 
 {scout:rank/high_life}

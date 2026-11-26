@@ -98,6 +98,7 @@
       "icon": "fourtwenty:weed_bong",
       "entries": [
         "basics",
+        "history",
         "hookahs",
         "wiring",
         "stashes",
@@ -120,7 +121,13 @@
         "circuit_lock",
         "circuit_memory",
         "circuit_clock",
-        "circuit_adder"
+        "circuit_adder",
+        "ohms_law",
+        "loops",
+        "energy",
+        "long_lines",
+        "charge",
+        "semiconductors"
       ]
     },
     {

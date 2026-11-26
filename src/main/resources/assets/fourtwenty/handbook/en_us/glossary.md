@@ -13,7 +13,7 @@ Family: a group of strains on one grade of the ladder. -> entry:growing/strains
 Golden God: the rarest strain, grade 5. It glows when it flowers. -> entry:growing/strains
 Grade: a family's rung on the ladder, 0 (Landrace) to 5 (Golden). -> entry:growing/strains
 Grow Op: a plot that grows crops faster, from the Closet Grow to the Cosmic Kush Pod. -> entry:growing/grow_ops
-High: what smoking gives you: the strain's effects and colour for a while. -> entry:getting_started/being_high
+High: what smoking gives you: the strain's effects and colour, for a time set by strain and traits. -> entry:processing/highs
 Hit Box: a transformer that steps power from one tier to the next. -> entry:power/hit_box
 Hookah: a shared smoke and a power source. -> entry:power/hookahs
 Ig: the Ignus, Weedcraft's unit of current. -> entry:power/basics
@@ -37,8 +37,13 @@ Traits: a seed's Potency, Yield and Length, each 1 to 5. -> entry:growing/traits
 Length: the trait that stretches a high, from x1 (rating 1) to x3 (rating 5). -> entry:growing/traits
 Potency: the trait that raises the level of a strain's effects. -> entry:growing/traits
 Yield: the trait that adds rough buds to a harvest. -> entry:growing/traits
-High: the state smoking puts you in; its length and strength are set by strain and traits. -> entry:processing/highs
 Trimmed Bud: a bud snipped at a Trim Tray, ready to cure. -> entry:processing/trim_and_cure
 Twin Wick: a cable that wires every block it touches in parallel. -> entry:power/wiring
 W: the Willard, Weedcraft's unit of power. -> entry:power/basics
 Wick: the wire that carries BI. -> entry:power/wiring
+Ga: the Garcia, Weedcraft's unit of capacitance (the real farad). -> entry:electronics/charge
+Ma: the Marley, Weedcraft's unit of inductance (the real henry). -> entry:electronics/charge
+Phu: Weedcraft's unit of resistance, Φ (the real ohm); plural Phus. -> entry:electronics/theory
+Ws: the Willard-second, Weedcraft's unit of energy (the real joule). -> entry:electronics/energy
+Time constant: how long a Kief Cap takes to fill most of the way through a Resinator: Φ × Ga seconds. -> entry:electronics/charge
+Voltage divider: two Resinators in series that split a push between them. -> entry:electronics/loops

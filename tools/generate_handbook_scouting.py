@@ -33,7 +33,7 @@ def H(n, text):
 
 # id, name, tagline, needs, teaches (a book entry), requirements
 RANKS = [
-    ('tenderbud', 'Tenderbud', 'Every great Weedcrafter started with one confused seed.', 'getting_started/welcome', [
+    ('tenderbud', 'Tenderbud', 'Every great Weedcrafter started here, holding a seed, wondering which end goes down.', 'getting_started/welcome', [
         H('1', "Say the Weedcrafter's Oath, out loud if you dare."),
         T('2a', 'Hold a Weed Seed in your hand.', 'obtain', {'item': F + 'weed_seeds'}),
         T('2b', 'Plant a seed.', 'plant'),
@@ -43,7 +43,7 @@ RANKS = [
         T('4a', 'Roll a Weed Joint.', 'craft', {'item': F + 'weed_joint'}),
         T('4b', 'Smoke it.', 'smoke', {'kind': 'joint'}),
         H('5', 'Explain to a friend why you always keep one seed back.')]),
-    ('second_toke', 'Second Toke', 'The first rung off the ground. Mind the ladder.', 'growing/strains', [
+    ('second_toke', 'Second Toke', 'Two smokes in: enough to have opinions, not yet enough to be right about them.', 'growing/strains', [
         T('1', 'Catch a colour at an Inspiration Infuser.', 'infuse', {'kind': 'catch'}),
         T('2', 'Infuse a Landrace seed into a family strain.', 'infuse', {'kind': 'seed'}),
         T('3', 'Grow and harvest a family strain.', 'harvest', {'grade': '1'}),
@@ -73,7 +73,7 @@ RANKS = [
         T('6', 'Earn the Inspiration badge.', 'earn', {'id': 'inspiration'}),
         T('7', 'Have earned six Stoner Badges.', 'earn', {'kind': 'badge'}, 6),
         H('8', 'Teach a new Weedcrafter one thing from this book.')]),
-    ('high_life', 'High Life', 'Nothing more to prove. Prove it anyway.', 'growing/grow_ops', [
+    ('high_life', 'High Life', 'Your workshop has a sofa now, and somebody is always on it.', 'growing/grow_ops', [
         T('1', 'Place an Aero Pod.', 'place', {'block': F + 'aero_pod'}),
         T('2', 'Harvest a crop in an Aero Pod.', 'harvest', {'block': F + 'aero_pod'}),
         T('3', 'Build a Buzz Bot.', 'craft', {'item': F + 'buzz_bot'}),
@@ -243,19 +243,19 @@ def write_all():
     (ENTRIES / 'motto.md').write_text("""---
 title: Motto and Slogan
 icon: fourtwenty:handbook
-terms: [motto, slogan, Don't Panic]
+terms: [motto, slogan, Keep One Back]
 ---
-Every Weedcrafter carries two pieces of advice, and they are the best two there are.
+Every Weedcrafter carries two pieces of advice, and they are the best two there are. The first is printed inside the front cover of this book, so you see it every time you open it.
 
 # The Motto
-**Don't Panic.**
+**Keep One Back.**
 
-Not when a Wick burns out. Not when the Hookah's empty. Not when the strain you've been breeding for six hours turns out to be Landrace again. Breathe.
+One seed in your pocket when you roll the rest. One charcoal for tomorrow's Hookah. One spare Wick for when this one goes up in smoke, which it will. Every disaster in the history of Weedcraft started with somebody using the last one.
 
 # The Slogan
 **Smoke Weed Every Day.**
 
-(Responsibly. With a snack nearby. And with one seed kept back, always.)
+(Responsibly. With a snack nearby. And, see above, with one kept back.)
 """, encoding='utf-8')
     (ENTRIES / 'oath.md').write_text("""---
 title: The Weedcrafter's Oath

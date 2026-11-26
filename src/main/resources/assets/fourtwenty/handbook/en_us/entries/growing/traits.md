@@ -3,7 +3,7 @@ title: Traits: Potency, Yield and Length
 icon: fourtwenty:weed_seeds
 terms: [traits, Potency, Yield, Length, drift, rating, inheritance, plain seed]
 ---
-Every seed carries three **traits**, each rated **1 to 5**. Look at a seed, bud or joint and its label reads *Potency a, Yield b, Length c*. They belong to the **seed**, not to the strain: two Cherry Pie seeds can be rated quite differently.
+Every seed carries three **traits**, each rated **1 to 5**. Look at a seed, bud or joint and its label reads *Potency a, Yield b, Length c*. They belong to the **seed**, not to the strain: two Cherry Pie seeds can be as different as two siblings.
 
 # What Each Does
 
@@ -35,7 +35,7 @@ Each trait is worked out on its own:
 2. Then it **drifts**: 1 in 4 it drops by one, 1 in 4 it rises by one, and half the time it stays put.
 3. It never goes below 1 or above 5.
 
-So a pair of 3s have 1-in-4 children that are 4s, and 1-in-4 that are 2s. The way up is patience: keep the best child of every cross, and cross it with the best of the next.
+So a pair of 3s have 1-in-4 children that are 4s, and 1-in-4 that are 2s. The way up is slow and unglamorous: keep the best child of every cross, and cross it with the best of the next. Plant breeders have always done it this way, and not one of them has ever called it exciting.
 
 # Breeding for Traits
 The Pheno Chamber can also cross two seeds of the **same** strain: the child is that strain again, with mixed traits. That is how you breed Length and Potency without changing strain. The higher the grade of the seed, the better the chamber you need: **Toke** power up to Crosses, a **Pheno Lab** (Rip) for Double Crosses, a **Pheno Cathedral** (Blaze) for Ultras and Golden God. See [Breeding](entry:growing/breeding).

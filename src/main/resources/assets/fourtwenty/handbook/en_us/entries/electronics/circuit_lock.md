@@ -18,4 +18,4 @@ terms: [AND Nug, AND gate]
 
 {truth:AND}
 
-**The real thing:** an **AND gate**: the heart of every combination lock.
+**The real thing:** an **AND gate**: the logic behind anything that needs two keys turned at once, from bank vaults to missile silos.
