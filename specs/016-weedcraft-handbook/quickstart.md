@@ -3,7 +3,7 @@
 Local test server (`C:\Users\Ignus\mc-local-server`), a fresh survival character.
 
 ## M1 The book
-1. Craft the Handbook (book + weed bud). Use it: cover art, then KEEP ONE BACK alone on the next page, then the title page and contents.
+1. Craft the Handbook (book + weed bud). Use it: cover art, then DON'T PANIC alone on the next page, then the title page and contents.
 2. Click Getting Started → Your First Grow; follow a link; press back; close and reopen (bookmark).
 3. Hover an item picture (tooltip); check a recipe picture matches the crafting table.
 4. Follow Getting Started and Growing Weed from four seeds to a smoked joint.
@@ -28,5 +28,5 @@ Local test server (`C:\Users\Ignus\mc-local-server`), a fresh survival character
 2. Earn a badge while a second player watches: the patch appears for both.
 
 ## M6 PDF and release
-1. `python tools/build_handbook_pdf.py` makes `docs/handbook/A-Handbook-of-Weedcraft.pdf`; cover, KEEP ONE BACK, clickable contents and index, check-off pages.
+1. `python tools/build_handbook_pdf.py` makes `docs/handbook/A-Handbook-of-Weedcraft.pdf`; cover, DON'T PANIC, clickable contents and index, check-off pages.
 2. A fresh Supply Ship and Supply Camp each have a Handbook in their racks.

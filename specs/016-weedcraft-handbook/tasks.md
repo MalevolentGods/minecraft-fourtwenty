@@ -114,7 +114,8 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty/`, `R` = `src/main/res
 - [X] T065 CI: build the PDF and attach it to the GitHub release in `.github/workflows/ci.yml`
 - [X] T066 One Handbook in the racks of the Supply Ship and Supply Camp (sensi-heights `tools/build_ship.py`, `tools/build_camp.py`, pack bump), imported with `tools/import_sensi_heights.py`
 - [X] T067 README and CURSEFORGE.md link to the PDF (and confirm whether CurseForge accepts the file)
-- [X] T069 Voice pass, Pargin x Adams (FR-029): every hand-written entry, the Motto (Keep One Back, also on the inside cover, FR-002b), rank taglines; A Short History of Boundless Inspiration; six deeper theory pages (FR-013b); glossary; fourth-wall slips fixed
+- [X] T069 Voice pass, Pargin x Adams (FR-029): every hand-written entry, rank taglines; A Short History of Boundless Inspiration; six deeper theory pages (FR-013b); glossary; fourth-wall slips fixed
+- [X] T070 Chapter title pages (FR-002c): Chapter N, title, subtitle and painting, in `client/handbook/HandbookScreen.java` and `tools/build_handbook_pdf.py`; subtitles in the lang file
 - [ ] T068 Final: all quickstart sections pass; user reads the book (SC-008); release only on the user's go
 
 ## Dependencies

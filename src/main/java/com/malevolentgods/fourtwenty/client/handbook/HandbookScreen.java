@@ -6,6 +6,7 @@ import com.malevolentgods.fourtwenty.domain.handbook.Span;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -37,8 +38,10 @@ public class HandbookScreen extends Screen {
     private static final int COVER_W = 266, COVER_H = 345, TAB_H = 16, SHEET_W = 1024, SHEET_H = 512, BTN_V = 400;
 
     /** One page of the book. */
-    sealed interface Page permits InsideCover, Title, Contents, EntryPage, Blank {}
+    sealed interface Page permits InsideCover, Title, Contents, ChapterPage, EntryPage, Blank {}
     record InsideCover() implements Page {}
+    /** A chapter's own opening page (FR-002c): "Chapter N", its title, its subtitle and its painting; number 0 for the unnumbered back. */
+    record ChapterPage(int number, String title, String subtitle, String opener) implements Page {}
     record Title() implements Page {}
     record ContentsLine(String text, String entry, boolean chapter) {}
     record Contents(List<ContentsLine> lines) implements Page {}
@@ -90,7 +93,7 @@ public class HandbookScreen extends Screen {
         List<ContentsLine> all = new ArrayList<>();
         for (BookData.Chapter c : book.chapters()) {
             if (c.entries().isEmpty()) continue;
-            all.add(new ContentsLine(Component.translatable(c.title()).getString(), c.entries().get(0), true));
+            all.add(new ContentsLine(Component.translatable(c.title()).getString(), CHAPTER + c.id(), true));
             for (String id : c.entries()) all.add(new ContentsLine(book.entries().get(id).front().title(), id, false));
         }
         if (book.chapters().stream().noneMatch(c -> c.id().equals("back"))) {
@@ -103,20 +106,24 @@ public class HandbookScreen extends Screen {
             pages.add(new Contents(all.isEmpty() ? List.of() : all.subList(i, Math.min(all.size(), i + perPage))));
         }
         Layout.Measure m = renderer.measure();
-        // a chapter's entries run on one after another, like a textbook's sections; each chapter starts on a fresh page
+        // a chapter opens on a page of its own (FR-002c), on the left so its first page faces it; its entries then run on one
+        // after another, like a textbook's sections
+        int number = 0;
         for (BookData.Chapter c : book.chapters()) {
             List<Layout.Section> sections = new ArrayList<>();
             for (String id : c.entries()) {
                 BookData.Entry e = book.entries().get(id);
                 if (e == null) continue;
-                List<Element> els = withHeading(e.front().title(), e.elements());
-                if (sections.isEmpty() && c.opener() != null) {        // the chapter opens on its picture and its title
-                    els.add(0, new Element.Image(c.opener(), "", "opener"));
-                    els.add(1, new Element.Heading(List.of(new Span(Component.translatable(c.title()).getString(), true, false, null, null, null))));
-                }
-                sections.add(new Layout.Section(id, els));
+                sections.add(new Layout.Section(id, withHeading(e.front().title(), e.elements())));
             }
             if (sections.isEmpty()) continue;
+            boolean numbered = !c.id().equals("back");
+            if (numbered) number++;
+            if (pages.size() % 2 == 1) pages.add(new Blank());
+            entryPage.put(CHAPTER + c.id(), pages.size());
+            String subtitle = c.title() + ".subtitle";
+            pages.add(new ChapterPage(numbered ? number : 0, Component.translatable(c.title()).getString(),
+                    I18n.exists(subtitle) ? I18n.get(subtitle) : "", c.opener()));
             Layout.Run run = Layout.run(sections, PAGE_W, PAGE_H, m);
             int base = pages.size();
             run.starts().forEach((id, page) -> entryPage.put(id, base + page));
@@ -138,7 +145,7 @@ public class HandbookScreen extends Screen {
         if (pages.size() % 2 == 1) pages.add(new Blank());
     }
 
-    static final String GLOSSARY = "back/glossary", INDEX = "back/index";
+    static final String GLOSSARY = "back/glossary", INDEX = "back/index", CHAPTER = "chapter:";
 
     private static List<Element> withHeading(String title, List<Element> elements) {
         List<Element> els = new ArrayList<>();
@@ -297,6 +304,53 @@ public class HandbookScreen extends Screen {
                     contentsHits.add(new int[]{x, y, PAGE_W, PageRenderer.LINE});
                     contentsTargets.add(line.entry());
                     y += PageRenderer.LINE;
+                }
+            }
+            case ChapterPage cp -> {
+                int y = PAGE_Y + (cp.opener() == null ? 90 : 14);
+                if (cp.number() > 0) {
+                    Component n = Component.translatable("handbook.fourtwenty.chapter_number", cp.number());
+                    g.pose().pushPose();
+                    g.pose().translate(x + PAGE_W / 2f, y, 0);
+                    g.pose().scale(1.25f, 1.25f, 1);
+                    g.drawString(font, n, -font.width(n) / 2, 0, PageRenderer.FAINT, false);
+                    g.pose().popPose();
+                    y += 19;
+                }
+                float s = 2.0f;                                    // the title, big, wrapped if it must be
+                for (FormattedCharSequence line : font.split(Component.literal(cp.title()), (int) (PAGE_W * 0.94f / s))) {
+                    g.pose().pushPose();
+                    g.pose().translate(x + PAGE_W / 2f, y, 0);
+                    g.pose().scale(s, s, 1);
+                    g.drawString(font, line, -font.width(line) / 2, 0, 0xFF2F5A1A, false);
+                    g.pose().popPose();
+                    y += (int) (10 * s);
+                }
+                y += 3;
+                g.fill(x + 50, y, x + PAGE_W - 50, y + 1, PageRenderer.RULE);
+                y += 7;
+                if (!cp.subtitle().isEmpty()) {
+                    // balanced lines: as wide as the text needs, so no lone word is left on the last line
+                    Component sub = Component.literal(cp.subtitle()).withStyle(st -> st.withItalic(true));
+                    int room = PAGE_W - 24, lines = font.split(sub, room).size();
+                    int wrapAt = font.width(sub) / lines;
+                    while (wrapAt < room && font.split(sub, wrapAt).size() > lines) wrapAt += 2;
+                    for (FormattedCharSequence line : font.split(sub, wrapAt)) {
+                        g.drawString(font, line, x + (PAGE_W - font.width(line)) / 2, y, PageRenderer.INK, false);
+                        y += PageRenderer.LINE;
+                    }
+                }
+                int[] wh = cp.opener() == null ? null : renderer.imageSize(cp.opener());
+                if (wh != null) {                                  // the painting fills what's left, in proportion
+                    int top = y + 10, avail = PAGE_Y + PAGE_H - top;
+                    int w = PAGE_W, h = w * wh[1] / Math.max(1, wh[0]);
+                    if (h > avail) {
+                        h = avail;
+                        w = h * wh[0] / Math.max(1, wh[1]);
+                    }
+                    ResourceLocation tex = PageRenderer.image(cp.opener());
+                    Minecraft.getInstance().getTextureManager().getTexture(tex).setFilter(true, false);
+                    g.blit(tex, x + (PAGE_W - w) / 2, top, w, h, 0, 0, wh[0], wh[1], wh[0], wh[1]);
                 }
             }
             case EntryPage e -> {

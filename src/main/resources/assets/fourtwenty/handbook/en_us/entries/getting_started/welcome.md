@@ -7,7 +7,7 @@ This book holds everything generations of Weedcrafters have learned about growin
 
 It starts with one seed and works its way up to a machine that does sums. On the way, you'll breed new strains, catch colours out of thin air, and power a whole workshop by standing next to it while high. That last one is not a figure of speech. Weedcraft is the only trade in the world where showing up high is part of the job description.
 
-Nobody learns all of it at once. Read a page, try the thing on the page, and come back when the thing has stopped smoking. And whatever else you forget, remember the three words inside the front cover.
+Nobody learns all of it at once. Read a page, try the thing on the page, and come back when the thing has stopped smoking. And whatever else you forget, remember the two words inside the front cover.
 
 # How the Work Goes
 Every Weedcrafter who ever lived has followed the same four steps, including the ones who swore they'd found a shortcut:

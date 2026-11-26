@@ -13,6 +13,7 @@ own texture (a block's first texture), else a blank tile. Vanilla textures are r
 """
 import io
 import json
+import math
 import os
 import sys
 import zipfile
@@ -24,6 +25,7 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (BaseDocTemplate, Flowable, Frame, KeepTogether, NextPageTemplate, PageBreak, PageTemplate,
                                 Paragraph, Spacer, Table, TableStyle)
 from reportlab.platypus.tableofcontents import TableOfContents
@@ -295,6 +297,19 @@ class RecipeBox(Flowable):
                 c.drawRightString(rx + s - 3, ry + 2, str(count))
 
 
+def wrapped_lines(text, font, size, width):
+    """How many lines a greedy word wrap at this width takes (as ReportLab's Paragraph wraps)."""
+    lines, line = 1, 0.0
+    space = stringWidth(' ', font, size)
+    for word in text.split():
+        w = stringWidth(word, font, size)
+        if line and line + space + w > width:
+            lines, line = lines + 1, w
+        else:
+            line = line + (space if line else 0) + w
+    return lines
+
+
 class InsideCover(Flowable):
     """The motto (FR-002b), alone, one word to a line, centred on the page."""
 
@@ -515,22 +530,48 @@ def build(out):
                        ParagraphStyle('toc1', fontName='Times-Roman', fontSize=10.5, leading=13, textColor=INK, leftIndent=14)]
     story += [Paragraph(LANG['handbook.fourtwenty.contents'], H1), toc, PageBreak()]
     index_terms = []
+    number = 0
+    label = ParagraphStyle('chapnum', fontName='Times-Roman', fontSize=13, leading=18, textColor=FAINT, alignment=TA_CENTER)
+    subtitle_style = ParagraphStyle('subtitle', fontName='Times-Italic', fontSize=13, leading=17, textColor=INK, alignment=TA_CENTER)
     for ch in book['chapters']:
         title = LANG.get(ch['title'], ch['title'])
+        subtitle = LANG.get(ch['title'] + '.subtitle', '')
         key = 'c_' + ch['id']
+        numbered = ch['id'] != 'back'
+        number += numbered
         opener = ASSETS / 'textures/gui/handbook/scenes' / f"chapter_{ch['id']}.png"
-        if opener.exists():                         # the chapter's painting above its title
+        # the chapter's own opening page (FR-002c): "Chapter N", the title, the subtitle, then the painting, centred on the page
+        text_w = PAGE_W - 108
+        avail = text_w - 12                         # the frame's own padding
+        title_lines = math.ceil(stringWidth(title, 'Times-Bold', 26) / avail)
+        sub_lines = wrapped_lines(subtitle, 'Times-Italic', 13, avail) if subtitle else 0
+        # balanced lines: the narrowest width that still takes no more lines, so no lone word is left on the last one
+        sub_width = avail
+        if subtitle:
+            sub_width = stringWidth(subtitle, 'Times-Italic', 13) / sub_lines
+            while sub_width < avail and wrapped_lines(subtitle, 'Times-Italic', 13, sub_width) > sub_lines:
+                sub_width += 2
+        sub_indent = max(0, (avail - sub_width) / 2 - 1)
+        img = None
+        if opener.exists():
             from reportlab.platypus import Image as RLImage
-            w = PAGE_W - 108
+            w = text_w
             with Image.open(opener) as im:
                 h = w * im.height / im.width
                 if h > 300:                         # a squarer painting: as tall as the wide ones, narrower
                     w, h = 300 * im.width / im.height, 300
-            story += [Marker(key, title, 0), Spacer(1, 40), RLImage(str(opener), w, h), Spacer(1, 24), Paragraph(esc(title), CHAPTER), Spacer(1, 10)]
-        else:
-            story += [Marker(key, title, 0), Spacer(1, 150), Paragraph(esc(title), CHAPTER), Spacer(1, 10)]
+            img = RLImage(str(opener), w, h)
+        block = (18 if numbered else 0) + 30 * title_lines + (8 + 17 * sub_lines if subtitle else 0) + (22 + img.drawHeight if img else 0)
+        story += [Marker(key, title, 0), Spacer(1, max(24, (PAGE_H - 112 - block) / 2 - 12))]
+        if numbered:
+            story.append(Paragraph(esc(LANG['handbook.fourtwenty.chapter_number'].replace('%s', str(number))), label))
+        story.append(Paragraph(esc(title), CHAPTER))
+        if subtitle:
+            story += [Spacer(1, 8), Paragraph(esc(subtitle), ParagraphStyle('sub', parent=subtitle_style, leftIndent=sub_indent, rightIndent=sub_indent))]
         if ch.get('needs'):
-            story.append(Paragraph('<i>Needs MineColonies</i>', ParagraphStyle('needs', parent=CAPTION, alignment=TA_CENTER)))
+            story += [Spacer(1, 4), Paragraph('<i>Needs MineColonies</i>', ParagraphStyle('needs', parent=CAPTION, alignment=TA_CENTER))]
+        if img:
+            story += [Spacer(1, 22), img]
         story.append(PageBreak())
         for e in ch['entries']:
             eid = f"{ch['id']}/{e}"

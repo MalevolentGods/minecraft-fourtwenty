@@ -410,11 +410,13 @@ public final class PageRenderer {
         };
     }
 
-    private static ResourceLocation image(String path) {
+    /** A picture's texture (also drawn by a chapter's opening page, HandbookScreen). */
+    static ResourceLocation image(String path) {
         return ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/handbook/" + path + ".png");
     }
 
-    private int[] imageSize(String path) {
+    /** A picture's size in pixels, or null when it's missing. */
+    int[] imageSize(String path) {
         return imageSizes.computeIfAbsent(path, p -> {
             var res = Minecraft.getInstance().getResourceManager().getResource(image(p));
             if (res.isEmpty()) return null;

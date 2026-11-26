@@ -13,5 +13,5 @@ Wild weed grows in open country: **plains, savannas, meadows and groves**. Look 
 # Starter Seeds
 Every new Weedcrafter starts out with **four Landrace seeds** in their pocket, which is enough for a first garden and not enough for a mistake.
 
-# Keep One Back
+# Keep Some Back
 Later in this book, machines will start asking you for seeds: the Inspiration Infuser takes one, the Pheno Chamber two. Never feed them your last. A Weedcrafter with no seeds is just a person standing in a field. To find out where more come from, read [Seeds and Where They Come From](entry:growing/seeds).
