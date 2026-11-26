@@ -94,9 +94,8 @@ public final class PageRenderer {
             case Element.Item it -> Math.max(20, wrap(caption(it.caption()), width - 22).size() * LINE + 2);
             case Element.Recipe r -> RecipeView.HEIGHT;
             case Element.Image im -> {
-                int[] wh = imageSize(im.path());
-                int w = imageWidth(im.size(), width);
-                int h = wh == null ? 20 : Math.min(220, w * wh[1] / Math.max(1, wh[0]));
+                int[] box = imageBox(im, width);
+                int h = box[1];
                 yield h + (im.caption().isEmpty() ? 0 : wrap(caption(im.caption()), width).size() * LINE + 2);
             }
             case Element.Heading h -> headingLines(h, width).size() * LINE;
@@ -162,8 +161,8 @@ public final class PageRenderer {
             case Element.Recipe r -> RecipeView.draw(g, font, r.id(), x + (width - RecipeView.WIDTH) / 2, top, hovers);
             case Element.Image im -> {
                 int[] wh = imageSize(im.path());
-                int w = imageWidth(im.size(), width);
-                int h = wh == null ? 20 : Math.min(220, w * wh[1] / Math.max(1, wh[0]));
+                int[] box = imageBox(im, width);
+                int w = box[0], h = box[1];
                 int ix = x + (width - w) / 2;
                 if (wh != null) {
                     // smooth filtering: scenes are drawn large (4x) and scaled to the page, so they stay crisp at any book size
@@ -386,6 +385,21 @@ public final class PageRenderer {
     public static ItemStack stack(String id) {
         ResourceLocation rl = ResourceLocation.tryParse(id);
         return rl == null ? ItemStack.EMPTY : new ItemStack(BuiltInRegistries.ITEM.get(rl));
+    }
+
+    /** A picture's drawn width and height: its size's width, kept in proportion, narrowed if it would be too tall (openers are kept
+     *  short enough to share their page with the chapter's title and opening lines). */
+    private int[] imageBox(Element.Image im, int width) {
+        int[] wh = imageSize(im.path());
+        int w = imageWidth(im.size(), width);
+        if (wh == null) return new int[]{w, 20};
+        int max = "opener".equals(im.size()) ? 150 : 220;
+        int h = w * wh[1] / Math.max(1, wh[0]);
+        if (h > max) {
+            w = max * wh[0] / Math.max(1, wh[1]);
+            h = max;
+        }
+        return new int[]{w, h};
     }
 
     private static int imageWidth(String size, int width) {

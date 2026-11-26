@@ -520,6 +520,8 @@ def build(out):
             w = PAGE_W - 108
             with Image.open(opener) as im:
                 h = w * im.height / im.width
+                if h > 300:                         # a squarer painting: as tall as the wide ones, narrower
+                    w, h = 300 * im.width / im.height, 300
             story += [Marker(key, title, 0), Spacer(1, 40), RLImage(str(opener), w, h), Spacer(1, 24), Paragraph(esc(title), CHAPTER), Spacer(1, 10)]
         else:
             story += [Marker(key, title, 0), Spacer(1, 150), Paragraph(esc(title), CHAPTER), Spacer(1, 10)]
