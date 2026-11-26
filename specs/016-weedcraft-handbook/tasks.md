@@ -108,7 +108,7 @@ Paths: `J` = `src/main/java/com/malevolentgods/fourtwenty/`, `R` = `src/main/res
 
 ## Phase 10: PDF edition, the Supply Ship and Camp, release · Milestone 6
 
-- [ ] T062 Client dev command `/fourtwenty handbook export` rendering icons to `tools/art/handbook_icons/` in `J/client/handbook/IconExport.java`
+- [X] T062 Client dev command `/handbook_icons` rendering the book's item pictures (84) to `tools/art/handbook_icons/` in `J/client/handbook/IconExport.java`; the PDF uses them
 - [X] T063 PDF builder (cover, DON'T PANIC page, title, contents with links, chapters, recipes from recipe JSON, scenes, check-off pages for ranks and badges, glossary, index, translation table, outline) in `tools/build_handbook_pdf.py` → `docs/handbook/A-Handbook-of-Weedcraft.pdf`
 - [X] T064 Book/PDF parity check (same entries and wording) in `tools/check_handbook.py`: the PDF builder records a fingerprint of the book's sources (`tools/handbook_sources.py`, `docs/handbook/pdf-sources.json`), CI fails when it differs
 - [X] T065 CI: build the PDF and attach it to the GitHub release in `.github/workflows/ci.yml`
