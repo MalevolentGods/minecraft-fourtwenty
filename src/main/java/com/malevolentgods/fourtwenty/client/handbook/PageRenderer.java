@@ -68,7 +68,8 @@ public final class PageRenderer {
             if (s.bold()) style = style.withBold(true);
             if (s.italic()) style = style.withItalic(true);
             if (s.colour() != null && COLOURS.containsKey(s.colour())) style = style.withColor(TextColor.fromRgb(COLOURS.get(s.colour())));
-            if (s.link() != null) style = style.withColor(TextColor.fromRgb(LINK & 0xFFFFFF)).withUnderlined(true)
+            // a link whose page is hidden (it needs a mod that isn't here) reads as plain text
+            if (s.link() != null && BookData.book().entries().containsKey(s.link())) style = style.withColor(TextColor.fromRgb(LINK & 0xFFFFFF)).withUnderlined(true)
                     .withClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, LINK_PREFIX + s.link()));
             if (s.spoiler() != null && !TerpeneKnowledge.knows(s.spoiler())) style = style.withObfuscated(true);
             out.append(Component.literal(s.text()).withStyle(style));
@@ -169,7 +170,7 @@ public final class PageRenderer {
                     Minecraft.getInstance().getTextureManager().getTexture(image(im.path())).setFilter(true, false);
                     g.blit(image(im.path()), ix, top, w, h, 0, 0, wh[0], wh[1], wh[0], wh[1]);
                 }
-                g.renderOutline(ix - 1, top - 1, w + 2, h + 2, RULE);
+                if (!"opener".equals(im.size())) g.renderOutline(ix - 1, top - 1, w + 2, h + 2, RULE);   // openers have painted edges
                 int ty = top + h + 2;
                 for (FormattedCharSequence line : wrap(caption(im.caption()), width)) {
                     g.drawString(font, line, x + (width - font.width(line)) / 2, ty, FAINT, false);
@@ -389,7 +390,7 @@ public final class PageRenderer {
 
     private static int imageWidth(String size, int width) {
         return switch (size) {
-            case "wide" -> width;
+            case "wide", "opener" -> width;
             case "small" -> width / 2;
             default -> width * 3 / 4;
         };

@@ -226,7 +226,7 @@ def recipe_grid(recipe_id):
         if 'item' in ing:
             return ing['item']
         if 'tag' in ing:
-            return {'minecraft:planks': 'minecraft:oak_planks', 'minecraft:logs': 'minecraft:oak_log'}.get(ing['tag'], 'minecraft:barrier')
+            return {'minecraft:planks': 'minecraft:oak_planks', 'minecraft:logs': 'minecraft:oak_log', 'minecraft:wool': 'minecraft:white_wool'}.get(ing['tag'], 'minecraft:barrier')
         return None
 
     grid = [[None] * 3 for _ in range(3)]
@@ -514,7 +514,15 @@ def build(out):
     for ch in book['chapters']:
         title = LANG.get(ch['title'], ch['title'])
         key = 'c_' + ch['id']
-        story += [Marker(key, title, 0), Spacer(1, 150), Paragraph(esc(title), CHAPTER), Spacer(1, 10)]
+        opener = ASSETS / 'textures/gui/handbook/scenes' / f"chapter_{ch['id']}.png"
+        if opener.exists():                         # the chapter's painting above its title
+            from reportlab.platypus import Image as RLImage
+            w = PAGE_W - 108
+            with Image.open(opener) as im:
+                h = w * im.height / im.width
+            story += [Marker(key, title, 0), Spacer(1, 40), RLImage(str(opener), w, h), Spacer(1, 24), Paragraph(esc(title), CHAPTER), Spacer(1, 10)]
+        else:
+            story += [Marker(key, title, 0), Spacer(1, 150), Paragraph(esc(title), CHAPTER), Spacer(1, 10)]
         if ch.get('needs'):
             story.append(Paragraph('<i>Needs MineColonies</i>', ParagraphStyle('needs', parent=CAPTION, alignment=TA_CENTER)))
         story.append(PageBreak())
@@ -555,6 +563,9 @@ def build(out):
                                ParagraphStyle('ix', parent=BODY, fontSize=9.5, leading=11.5, spaceAfter=0)))
     doc.multiBuild(story)
     print('wrote', out, f'({doc.page} pages)')
+    if out.resolve() == OUT.resolve():             # the committed PDF: note what it was printed from (book/PDF parity)
+        from handbook_sources import record
+        record()
 
 
 if __name__ == '__main__':

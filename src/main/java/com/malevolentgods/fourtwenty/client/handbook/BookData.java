@@ -34,7 +34,8 @@ public final class BookData implements ResourceManagerReloadListener {
     private static final Logger LOG = LogUtils.getLogger();
     public static final BookData INSTANCE = new BookData();
 
-    public record Chapter(String id, String title, String icon, List<String> entries) {}
+    /** {@code opener} is the chapter's opening picture (a scenes/ path), or null when it has none yet. */
+    public record Chapter(String id, String title, String icon, List<String> entries, String opener) {}
 
     /** An entry: id is "chapter/name". */
     public record Entry(String id, String chapter, Markup.Front front, List<Element> elements) {}
@@ -84,7 +85,9 @@ public final class BookData implements ResourceManagerReloadListener {
                     entries.put(entryId, entry);
                     ids.add(entryId);
                 }
-                chapters.add(new Chapter(id, str(c, "title"), str(c, "icon"), List.copyOf(ids)));
+                String opener = "scenes/chapter_" + id;
+                boolean hasOpener = manager.getResource(rl("textures/gui/handbook/" + opener + ".png")).isPresent();
+                chapters.add(new Chapter(id, str(c, "title"), str(c, "icon"), List.copyOf(ids), hasOpener ? opener : null));
             }
             List<String[]> glossary = new ArrayList<>();
             readText(manager, lang, "glossary.md").ifPresent(text -> {

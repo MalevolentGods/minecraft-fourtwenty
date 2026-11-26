@@ -84,6 +84,7 @@ public class ModClientEvents {
         PavePenClient.install();
         com.malevolentgods.fourtwenty.handbook.HandbookItem.opener = com.malevolentgods.fourtwenty.client.handbook.HandbookScreen::open;
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.client.handbook.SceneRenderer::register);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.client.handbook.IconExport::register);
         com.malevolentgods.fourtwenty.client.handbook.ProgressClient.install();
         if (net.neoforged.fml.ModList.get().isLoaded("minecolonies")) {
             event.enqueueWork(com.malevolentgods.fourtwenty.compat.minecolonies.client.DispensaryClient::registerModel);

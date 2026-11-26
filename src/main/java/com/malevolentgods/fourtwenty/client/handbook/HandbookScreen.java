@@ -108,7 +108,13 @@ public class HandbookScreen extends Screen {
             List<Layout.Section> sections = new ArrayList<>();
             for (String id : c.entries()) {
                 BookData.Entry e = book.entries().get(id);
-                if (e != null) sections.add(new Layout.Section(id, withHeading(e.front().title(), e.elements())));
+                if (e == null) continue;
+                List<Element> els = withHeading(e.front().title(), e.elements());
+                if (sections.isEmpty() && c.opener() != null) {        // the chapter opens on its picture and its title
+                    els.add(0, new Element.Image(c.opener(), "", "opener"));
+                    els.add(1, new Element.Heading(List.of(new Span(Component.translatable(c.title()).getString(), true, false, null, null, null))));
+                }
+                sections.add(new Layout.Section(id, els));
             }
             if (sections.isEmpty()) continue;
             Layout.Run run = Layout.run(sections, PAGE_W, PAGE_H, m);
