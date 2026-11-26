@@ -27,7 +27,7 @@ With push and flow pinned down, somebody had to multiply them, and the job went 
 Resistance is measured in **Phus** (one Phu, two Phus), and its symbol is the Greek letter Φ, which Phu also objected to, on the grounds that nobody can agree how to say it.
 
 # Garcia and Marley
-The **Garcia** (capacitance) and the **Marley** (inductance) came much later, named by a second committee after whatever was playing at the time. That committee kept no minutes, and nobody who was there can remember which song.
+The **Garcia** (capacitance) and the **Marley** (inductance) came much later, named by a second committee after whatever was playing at the time. That committee kept no minutes, and nobody who was there can remember which song. In a loudspeaker with two cones, a capacitor sends the high notes to the small cone and a coil sends the low notes to the big one. So Garcia gets the lead guitar and Marley gets the bass, which anyone who has heard either of them will tell you is the right way round.
 
 # So What Is It?
 Nobody knows for sure. Kerberos's theory is that inspiration behaves like water: it runs downhill, and a Weedcrafter who's high is standing at the top of the hill. Phu's theory is that Kerberos is wrong. Either way, BI obeys exactly the same laws as electricity, down to the last decimal place, which is why [Inspoweednetics](entry:electronics/welcome) can teach you both at once.
