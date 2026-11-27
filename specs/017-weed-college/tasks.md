@@ -12,21 +12,21 @@ description: "Tasks for spec 017, the Weed College"
 
 ## Phase 1: Setup
 
-- [ ] T001 Create packages `…/domain/college/` and `…/compat/minecolonies/college/`, and add `CollegeConfig` (unit ticks 1200, bad-batch base 0.1 / floor 0.03 / step per Intelligence, caught-colour factor 0.5, seeds per strain 4 and 2 for multi-strain, every effect strength from contracts/colony-research-api.md) in `…/compat/minecolonies/college/CollegeConfig.java`, registered like `DispensaryConfig`
-- [ ] T002 [P] Add the College's lang keys (hut, job, status lines, board labels, lock reasons, announcements, branch names) to `src/main/resources/assets/fourtwenty/lang/en_us.json`
+- [X] T001 Create packages `…/domain/college/` and `…/compat/minecolonies/college/`, and add `CollegeConfig` (unit ticks 1200, bad-batch base 0.1 / floor 0.03 / step per Intelligence, caught-colour factor 0.5, seeds per strain 4 and 2 for multi-strain, every effect strength from contracts/colony-research-api.md) in `…/compat/minecolonies/college/CollegeConfig.java`, registered like `DispensaryConfig`
+- [X] T002 [P] Add the College's lang keys (hut, job, status lines, board labels, lock reasons, announcements, branch names) to `src/main/resources/assets/fourtwenty/lang/en_us.json`
 
 ## Phase 2: Foundational (blocks every story)
 
-- [ ] T003 [P] `Study`, `Supply`, `Gives` and `Kind` records in `…/domain/college/Study.java`, as in data-model.md
-- [ ] T004 [P] `StudyRules`: units by tier (from `Studies.units`), the tier cap by level, tier 6's extra rule, cost with the caught-colour discount, and the bad-batch roll with Intelligence, in `…/domain/college/StudyRules.java`, with `src/test/java/…/domain/college/StudyRulesTest.java`
-- [ ] T005 `StudyBoard`: lookup, validation (unique ids, parents, no cycles, everything reachable, tier-6 rule), and availability with lock reasons in their order, in `…/domain/college/StudyBoard.java`, with `StudyBoardTest.java`
-- [ ] T006 `ColonyResearch`: queue (add, remove-before-start, head), progress, supplies delivered, the fixed cost, members' colours, done list, and NBT-agnostic copy/merge, in `…/domain/college/ColonyResearch.java`, with `ColonyResearchTest.java`
-- [ ] T007 [P] `ColonyEffects`: an effect enum and `factor(effect, doneStudies)`, where a later study replaces an earlier one in the same line, in `…/domain/college/ColonyEffects.java`, with `ColonyEffectsTest.java`
-- [ ] T008 `tools/generate_college_studies.py`: the 63-study table from data-model.md. It writes `src/main/resources/data/fourtwenty/college/studies/*.json`, the study lang keys, and the Blacksmith and Glassblower crafter recipes (`data/minecolonies/crafterrecipes/…`, `research-id` per contracts), and validates the tree; with `tools/tests/test_college_studies.py`
-- [ ] T009 `CollegeStudies` reload listener (server and client) that loads the study JSON into a `StudyBoard`, disabling only invalid studies, in `…/compat/minecolonies/college/CollegeStudies.java`
-- [ ] T010 `CollegeSavedData`: a per-colony `ColonyResearch`, refusing to overwrite an unreadable save (as `DispensarySavedData` does), in `…/compat/minecolonies/college/CollegeSavedData.java`
-- [ ] T011 `CollegeRegistry` and `CollegeBlock`: hut block, item, block entity, `fourtwenty:weedologist` job, building entry with the worker module (1 worker at levels 1 and 2, 2 from 3, Intelligence and Focus), status and board modules, and the stats module. Hooked into `…/compat/minecolonies/ColonyIntegration.java` so it loads only with MineColonies. Files in `…/compat/minecolonies/college/CollegeRegistry.java` and `CollegeBlock.java`
-- [ ] T012 `CollegeResearch` (the API in contracts/colony-research-api.md) and `CollegeFeatures` (`tie_dye`, `weedscout_uniform`) in `…/compat/minecolonies/college/`
+- [X] T003 [P] `Study`, `Supply`, `Gives` and `Kind` records in `…/domain/college/Study.java`, as in data-model.md
+- [X] T004 [P] `StudyRules`: units by tier (from `Studies.units`), the tier cap by level, tier 6's extra rule, cost with the caught-colour discount, and the bad-batch roll with Intelligence, in `…/domain/college/StudyRules.java`, with `src/test/java/…/domain/college/StudyRulesTest.java`
+- [X] T005 `StudyBoard`: lookup, validation (unique ids, parents, no cycles, everything reachable, tier-6 rule), and availability with lock reasons in their order, in `…/domain/college/StudyBoard.java`, with `StudyBoardTest.java`
+- [X] T006 `ColonyResearch`: queue (add, remove-before-start, head), progress, supplies delivered, the fixed cost, members' colours, done list, and NBT-agnostic copy/merge, in `…/domain/college/ColonyResearch.java`, with `ColonyResearchTest.java`
+- [X] T007 [P] `ColonyEffects`: an effect enum and `factor(effect, doneStudies)`, where a later study replaces an earlier one in the same line, in `…/domain/college/ColonyEffects.java`, with `ColonyEffectsTest.java`
+- [X] T008 `tools/generate_college_studies.py`: the 63-study table from data-model.md. It writes `src/main/resources/data/fourtwenty/college/studies/*.json`, the study lang keys, and the Blacksmith and Glassblower crafter recipes (`data/minecolonies/crafterrecipes/…`, `research-id` per contracts), and validates the tree; with `tools/tests/test_college_studies.py`
+- [X] T009 `CollegeStudies` reload listener (server and client) that loads the study JSON into a `StudyBoard`, disabling only invalid studies, in `…/compat/minecolonies/college/CollegeStudies.java`
+- [X] T010 `CollegeSavedData`: a per-colony `ColonyResearch`, refusing to overwrite an unreadable save (as `DispensarySavedData` does), in `…/compat/minecolonies/college/CollegeSavedData.java`
+- [X] T011 `CollegeRegistry` and `CollegeBlock`: hut block, item, block entity, `fourtwenty:weedologist` job, building entry with the worker module (1 worker at levels 1 and 2, 2 from 3, Intelligence and Focus), status and board modules, and the stats module. Hooked into `…/compat/minecolonies/ColonyIntegration.java` so it loads only with MineColonies. Files in `…/compat/minecolonies/college/CollegeRegistry.java` and `CollegeBlock.java`
+- [X] T012 `CollegeResearch` (the API in contracts/colony-research-api.md) and `CollegeFeatures` (`tie_dye`, `weedscout_uniform`) in `…/compat/minecolonies/college/`
 
 **Checkpoint**: unit tests pass; the hut registers with MineColonies and is absent without it.
 
@@ -35,13 +35,13 @@ description: "Tasks for spec 017, the Weed College"
 **Goal**: build, hire, queue a colour study; the Weedologist works it physically to completion; the University never sees it.
 **Independent test**: quickstart M1.
 
-- [ ] T013 [US1] `CollegeBuilding`: scans every 200 ticks for Grow Op plots, one Think Tank and a desk (lectern); level → tier cap; counters; NBT; keeps the head study's supplies in the hut. In `…/compat/minecolonies/college/CollegeBuilding.java`
-- [ ] T014 [US1] `WeedologistJob` and `WeedologistAI`. The cycle is: request missing supplies (colony requests), fetch, plant on a free plot, harvest ripe plots, Think Tank, desk write-up. Each cycle adds one unit (with the bad-batch roll). It shows WAITING or PAUSED reasons, and two workers share the head study. Files `…/compat/minecolonies/college/WeedologistJob.java` and `WeedologistAI.java`
-- [ ] T015 [US1] Finishing a study: mark it DONE, announce it to the colony's members, call the effect hooks (stubbed until US3), and advance the queue. In `…/compat/minecolonies/college/CollegeBuilding.java` and `CollegeResearch.java`
-- [ ] T016 [P] [US1] Status tab: `CollegeStatusModule` in `…/compat/minecolonies/college/`, `CollegeStatusView` and `CollegeStatusWindow` in `…/compat/minecolonies/client/`, and `src/main/resources/assets/fourtwenty/gui/college_status.xml`
-- [ ] T017 [P] [US1] Command `/fourtwenty college queue|remove|status|finish` (officers; `finish` op-only for tests) in `…/compat/minecolonies/college/CollegeCommands.java`
-- [ ] T018 [P] [US1] Level-1 blueprint from `C:\Users\Ignus\sensi-heights\tools\design_college.py` (a shed with a chalkboard, 2 Closet Grows, Think Tank, desk), with the pack checks and an import into `src/main/resources/blueprints/fourtwenty/sensiheights/`
-- [ ] T019 [US1] Colony game tests in `src/gametest/java/…/college/CollegeStudyGameTest.java`: a study completes with fast unit ticks; University researchers never list or progress it (SC-002); progress and supplies survive worker removal and save/load (SC-005)
+- [X] T013 [US1] `CollegeBuilding`: scans every 200 ticks for Grow Op plots, one Think Tank and a desk (lectern); level → tier cap; counters; NBT; keeps the head study's supplies in the hut. In `…/compat/minecolonies/college/CollegeBuilding.java`
+- [X] T014 [US1] `WeedologistJob` and `WeedologistAI`. The cycle is: request missing supplies (colony requests), fetch, plant on a free plot, harvest ripe plots, Think Tank, desk write-up. Each cycle adds one unit (with the bad-batch roll). It shows WAITING or PAUSED reasons, and two workers share the head study. Files `…/compat/minecolonies/college/WeedologistJob.java` and `WeedologistAI.java`
+- [X] T015 [US1] Finishing a study: mark it DONE, announce it to the colony's members, call the effect hooks (stubbed until US3), and advance the queue. In `…/compat/minecolonies/college/CollegeBuilding.java` and `CollegeResearch.java`
+- [X] T016 [P] [US1] Status tab: `CollegeStatusModule` in `…/compat/minecolonies/college/`, `CollegeStatusView` and `CollegeStatusWindow` in `…/compat/minecolonies/client/`, and `src/main/resources/assets/fourtwenty/gui/college_status.xml`
+- [X] T017 [P] [US1] Command `/fourtwenty college queue|remove|status|finish` (officers; `finish` op-only for tests) in `…/compat/minecolonies/college/CollegeCommands.java`
+- [X] T018 [P] [US1] Level-1 blueprint from `C:\Users\Ignus\sensi-heights\tools\design_college.py` (a shed with a chalkboard, 2 Closet Grows, Think Tank, desk), with the pack checks and an import into `src/main/resources/blueprints/fourtwenty/sensiheights/`
+- [X] T019 [US1] Colony game tests in `src/gametest/java/…/college/CollegeStudyGameTest.java`: a study completes with fast unit ticks; University researchers never list or progress it (SC-002); progress and supplies survive worker removal and save/load (SC-005)
 - [ ] T020 [US1] In game: quickstart M1 on the local server. Report what was seen and commit (M1).
 
 ## Phase 4: User Story 2 (P1), choosing what to study (M2)
@@ -77,8 +77,8 @@ description: "Tasks for spec 017, the Weed College"
 **Goal**: five levels, plots per level, the diorama.
 **Independent test**: quickstart M4.
 
-- [ ] T037 [US4] `design_college.py`, all five levels: a shed with a chalkboard, growing to a quad with a greenhouse. Level N plots are Grow Op tier N; the signature door from level 3; doors saved closed; earth tones. `check_hut_levels.py`, `check_footprints.py` and `audit_tags.py` pass; import into the jar. In `C:\Users\Ignus\sensi-heights\tools\design_college.py`
-- [ ] T038 [P] [US4] The diorama: `tools/generate_weedcollege_hut_model.py` (using `box()` from the Dispensary generator, with `hut_model_check.check()`), the item model parent, and the hut listed in `tools/tests/test_hut_models.py` HUTS
+- [X] T037 [US4] `design_college.py`, all five levels: a shed with a chalkboard, growing to a quad with a greenhouse. Level N plots are Grow Op tier N; the signature door from level 3; doors saved closed; earth tones. `check_hut_levels.py`, `check_footprints.py` and `audit_tags.py` pass; import into the jar. In `C:\Users\Ignus\sensi-heights\tools\design_college.py`
+- [X] T038 [P] [US4] The diorama: `tools/generate_weedcollege_hut_model.py` (using `box()` from the Dispensary generator, with `hut_model_check.check()`), the item model parent, and the hut listed in `tools/tests/test_hut_models.py` HUTS
 - [ ] T039 [US4] Game test: worker count by level, and the tier cap including tier 6's rule. In `src/gametest/java/…/college/CollegeLevelsGameTest.java`
 - [ ] T040 [US4] In game: quickstart M4, plus a showcase row on the local test server. Report and commit (M4).
 
