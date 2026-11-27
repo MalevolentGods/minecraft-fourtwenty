@@ -68,7 +68,7 @@ IN_PROGRESS ──(College gone or below its tier)──▶ paused (progress kep
 - `ColonyEffects.factor(effect)`: product of the finished studies' factors for that effect (1.0 if none).
 - `StudyBoard.available(record, level, features)`: the AVAILABLE set and a lock reason for every other study.
 
-## The board: 63 proposed studies (names for the user's approval)
+## The board: 63 studies (names approved by the user, 2026-11-27)
 
 Tier N needs a level-N College, except tier 6 (level 5, plus all of the branch's tier-5 studies). Supplies are the defaults, tuned in play; all of them live in config and data.
 
@@ -83,7 +83,7 @@ Tier N needs a level-N College, except tier 6 (level 5, plus all of the branch's
 | 3 | 8 accord rows: `pin_*` and `lav_*` | as above | that accord's 4 hemp colours |
 | 4 | **Lean Extraction** | the four tier-1 groups | the colony's Terpinators draw half their BI |
 | 5 | **Full Spectrum** | all 16 accord rows | the colony's Terpinators draw a quarter of their BI |
-| 6 | **Master Blend** *(proposed; replaces the "ultimate terpene", see plan)* | Full Spectrum | the colony's Terpinators need no BI |
+| 6 | **Master Blend** (approved; replaces the "ultimate terpene") | Full Spectrum | the colony's Terpinators need no BI |
 
 **Supplies:**
 - A tier-1 group takes, per colour, the Think Tank's 8 Cured Buds, 4 Weed Seeds and 1 Glass Bottle, with a caught colour's share halved.

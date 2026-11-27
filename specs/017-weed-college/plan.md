@@ -71,14 +71,14 @@ A new MineColonies hut, the Weed College (`fourtwenty:weedcollege`), worked by t
 | II. Existing Machines Keep Their Game | PASS after a design change, plus **one item needing the user** | The spec's "faster colony Terpinators" (FR-023) would change Terpinator gameplay, so the plan makes it **power only**: colony Terpinators draw less BI, which Principle II allows. Engineering's speed effects exclude the Terpinator and the Infuser. **The "ultimate terpene" at the top of Chemistry conflicts with Principle II twice**: it would add a Terpinator output, or make a second source of terpenes. The plan proposes **Master Blend** as the tier-6 capstone instead (colony Terpinators run with no BI), pending the user (see Complexity Tracking). |
 | III. The Power Rule | PASS | Colony modifiers (BI draw, Hookah burn length, Stash size) are factors applied inside the shared `MachinePowerRule` and `BIRules` paths, keyed by "inside a colony that finished study X". They are never per machine. The College's own work draws no BI (research R2). |
 | IV. Failure Is Safe | PASS | Not touched. |
-| V. Approved Names | PASS with a gate | "Weed College", "Weedologist" and the six branch names are approved (brainstorm and buildings plan). The 63 study names are proposals: data and lang only, approved by the user before release (task gate). Hemp-row studies take the existing accord names. |
+| V. Approved Names | PASS with a gate | "Weed College", "Weedologist" and the six branch names are approved (brainstorm and buildings plan). The 63 study names were approved by the user on 2026-11-27. Hemp-row studies take the existing accord names. |
 | VI. Rules Are Pure And Tested | PASS | `domain/college/` (StudyBoard, StudyRules, CollegeRules, ColonyEffects) is pure and JUnit-tested. Timing, bad-batch chance, supply scale and effect strengths are config values. The world behaviour has colony game tests. |
 | VII. Milestones Prove Themselves In Game | PASS | Five milestones below, each tested in game on the local server and committed before the next. |
 | Technical: payloads | PASS | The board's two actions use a NeoForge payload sent only when `hasChannel`. Board data goes down through MineColonies' module view sync. |
 | Technical: art from generators | PASS | The diorama comes from `tools/generate_weedcollege_hut_model.py` (with `hut_model_check`). The board icons reuse item icons; any GUI texture comes from a generator. |
 | Technical: compile-only APIs | PASS | MineColonies' research effect API (`IResearchEffectManager`, research effect data) is already within the pinned jar. |
 
-**Post-design re-check:** unchanged. All PASS except the capstone, which is recorded below for the user's decision.
+**Post-design re-check:** unchanged. All PASS; the capstone was resolved by the user (Master Blend).
 
 ## Milestones
 
@@ -175,5 +175,5 @@ tools/generate_college_studies.py, tools/generate_weedcollege_hut_model.py
 
 | Item | Why it matters | Resolution |
 |---|---|---|
-| Chemistry tier-6 "ultimate terpene" (spec FR-023) | Principle II: the Terpinator's outputs may not change, and it must stay the only source of terpenes. A new terpene breaks one or the other. Principle I: if only the College could make it, a player alone couldn't. | **Open for the user.** Proposed: replace it with **Master Blend**, under which the colony's Terpinators need no BI at all (a power change, allowed). Alternatives: drop the capstone, or amend the constitution (MAJOR version, the user's approval, in its own PR). |
-| "Faster colony Terpinators" (spec FR-023) | Principle II forbids gameplay changes to the Terpinator. | Resolved in the plan as BI draw only (Lean Extraction: half; Full Spectrum: a quarter). The spec's FR-023 wording is updated to match once the user confirms the capstone. |
+| Chemistry tier-6 "ultimate terpene" (spec FR-023) | Principle II: the Terpinator's outputs may not change, and it must stay the only source of terpenes. | **Resolved (user, 2026-11-27):** **Master Blend** instead: the colony's Terpinators need no BI (a power change, allowed). |
+| "Faster colony Terpinators" (spec FR-023) | Principle II forbids gameplay changes to the Terpinator. | Resolved in the plan as BI draw only (Lean Extraction: half; Full Spectrum: a quarter). The spec's FR-023 is updated to match. |
