@@ -5,13 +5,13 @@ terms: [seeds, wild weed, Landrace, starter seeds]
 ---
 {item:fourtwenty:weed_seeds|Weed Seeds. Every grow starts here.}
 
-A Weedcrafter's first seeds are **Landrace**: plain, honest, everyday weed, the kind that grows wild.
+Your first seeds will be **Landrace**: plain, everyday weed, the kind that grows wild. Don't look down on it. Every strain in this book, the Golden God included, started out as a Landrace seed in somebody's pocket.
 
 # Wild Weed
-Wild weed grows in the open country: **plains, savannas, meadows and groves**. Look for tall, leafy plants among the grass. Break one and it drops a seed, and an older, taller plant can drop as many as four. A good scout gathers a handful before heading home.
+Wild weed grows in open country: **plains, savannas, meadows and groves**. Look for tall, leafy plants among the grass. Break one and it drops a seed; an older, taller plant can drop as many as four. Take a handful home.
 
 # Starter Seeds
-Every Weedcrafter is given **four Landrace seeds** the first time they join, ready for a first garden.
+Every new Weedcrafter starts out with **four Landrace seeds** in their pocket, which is enough for a first garden and not enough for a mistake.
 
 # Keep Some Back
-A seed in the pocket is worth two in the bong. However hungry you are for your first smoke, always keep one seed back to plant again. You'll learn how to win more seeds in [Seeds and Where They Come From](entry:growing/seeds).
+Later in this book, machines will start asking you for seeds: the Inspiration Infuser takes one, the Pheno Chamber two. Never feed them your last. A Weedcrafter with no seeds is just a person standing in a field. To find out where more come from, read [Seeds and Where They Come From](entry:growing/seeds).

@@ -3,10 +3,10 @@ title: Boundless Inspiration
 icon: fourtwenty:hemp_wick
 terms: [BI, Boundless Inspiration, tiers, Puff, Toke, Rip, Blaze, running free]
 ---
-**Boundless Inspiration**, BI for short, is the power that runs Four Twenty's machines. It's made by burning weed in a Hookah, stored in Stashes, and carried along Wicks.
+**Boundless Inspiration**, BI for short, is the power that runs a Weedcrafter's machines. You make it by burning weed in a Hookah, keep it in Stashes, and send it down Wicks. Learned Weedcrafters have argued for generations about what BI actually *is*. They were high for the whole argument, which may be why it's still going. Everyone agrees that it works.
 
 # Tiers
-Power comes in four tiers, each ten times the voltage of the last:
+BI comes in four tiers, each pushing ten times harder than the one before:
 
 {table}
 | Tier | Voltage | Hookah | Wick |
@@ -16,10 +16,10 @@ Power comes in four tiers, each ten times the voltage of the last:
 | Blaze | 4,200 Kb | Grand Hookah | Gold Wick |
 {/table}
 
-Every machine has a tier. Feed it from a source of the **same** tier. A higher tier overloads it: it stops and smokes until you remove that source, and never breaks.
+Every machine has a tier, and wants feeding from a source of the **same** tier. A higher tier **overloads** it: it stops and smokes until you take that source away. It never breaks.
 
 # Running Free
-Most machines need no power at all while a **high player is within 21 blocks**. Inspiration really is a kind of power. When nobody's high, they draw BI; with neither, they pause and keep their place.
+Most machines need **no power at all** while a high Weedcrafter is within **21 blocks**. This is why every serious workshop has a sofa. With nobody high nearby, a machine draws BI from its Wicks; with neither, it pauses and keeps its place until one or the other turns up.
 
 # Units
-The meter reads in the mod's own units: Kerberos (Kb) for voltage, Ignus (Ig) for current, Willards (W) for power. The real-world names are at the back of the book.
+The meter reads in Weedcraft's own units: Kerberos (Kb) for voltage, Ignus (Ig) for current, Willards (W) for power. Their real-world names are in the back of the book, for the day you meet an electrician and need to be taken seriously. How the units got their names is in [A Short History of Boundless Inspiration](entry:power/history), and it is not a dignified story.

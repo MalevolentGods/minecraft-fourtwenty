@@ -4,7 +4,7 @@
     python3 tools/build_handbook_pdf.py [out.pdf]        # default docs/handbook/A-Handbook-of-Weedcraft.pdf
 
 Built from the same files as the in-game book (assets/fourtwenty/handbook, read by tools/handbook_markup.py), so the
-two never disagree: the user's cover, DON'T PANIC alone on the inside cover, the title page, a clickable contents
+two never disagree: the user's cover, the motto alone on the inside cover, the title page, a clickable contents
 page, every entry with its pictures and real recipes, and PDF bookmarks. Terpene names stay hidden (FR-032).
 
 Item pictures: tools/art/handbook_icons/<namespace>_<id>.png when exported from the game (research R6), else the item's
@@ -13,6 +13,7 @@ own texture (a block's first texture), else a blank tile. Vanilla textures are r
 """
 import io
 import json
+import math
 import os
 import sys
 import zipfile
@@ -24,6 +25,7 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (BaseDocTemplate, Flowable, Frame, KeepTogether, NextPageTemplate, PageBreak, PageTemplate,
                                 Paragraph, Spacer, Table, TableStyle)
 from reportlab.platypus.tableofcontents import TableOfContents
@@ -56,9 +58,11 @@ LANG = json.loads((ASSETS / 'lang/en_us.json').read_text(encoding='utf-8'))
 
 # ---- type
 
-BODY = ParagraphStyle('body', fontName='Times-Roman', fontSize=10.5, leading=14, textColor=INK, spaceAfter=5)
+BODY = ParagraphStyle('body', fontName='Times-Roman', fontSize=10.5, leading=14, textColor=INK, spaceAfter=5,
+                      allowWidows=0, allowOrphans=0)        # never one line alone at a page's foot or head
 H1 = ParagraphStyle('h1', fontName='Times-Bold', fontSize=19, leading=23, textColor=HEADING, spaceAfter=4)
-H2 = ParagraphStyle('h2', fontName='Times-Bold', fontSize=12.5, leading=16, textColor=HEADING, spaceBefore=6, spaceAfter=3)
+H2 = ParagraphStyle('h2', fontName='Times-Bold', fontSize=12.5, leading=16, textColor=HEADING, spaceBefore=6, spaceAfter=3,
+                    keepWithNext=1)
 CHAPTER = ParagraphStyle('chapter', fontName='Times-Bold', fontSize=26, leading=30, textColor=HEADING, alignment=TA_CENTER)
 CAPTION = ParagraphStyle('caption', parent=BODY, fontName='Times-Italic', fontSize=9.5, leading=12, textColor=FAINT)
 LISTS = ParagraphStyle('list', parent=BODY, leftIndent=16, bulletIndent=4, spaceAfter=2)
@@ -224,7 +228,7 @@ def recipe_grid(recipe_id):
         if 'item' in ing:
             return ing['item']
         if 'tag' in ing:
-            return {'minecraft:planks': 'minecraft:oak_planks', 'minecraft:logs': 'minecraft:oak_log'}.get(ing['tag'], 'minecraft:barrier')
+            return {'minecraft:planks': 'minecraft:oak_planks', 'minecraft:logs': 'minecraft:oak_log', 'minecraft:wool': 'minecraft:white_wool'}.get(ing['tag'], 'minecraft:barrier')
         return None
 
     grid = [[None] * 3 for _ in range(3)]
@@ -293,7 +297,22 @@ class RecipeBox(Flowable):
                 c.drawRightString(rx + s - 3, ry + 2, str(count))
 
 
-class DontPanic(Flowable):
+def wrapped_lines(text, font, size, width):
+    """How many lines a greedy word wrap at this width takes (as ReportLab's Paragraph wraps)."""
+    lines, line = 1, 0.0
+    space = stringWidth(' ', font, size)
+    for word in text.split():
+        w = stringWidth(word, font, size)
+        if line and line + space + w > width:
+            lines, line = lines + 1, w
+        else:
+            line = line + (space if line else 0) + w
+    return lines
+
+
+class InsideCover(Flowable):
+    """The motto (FR-002b), alone, one word to a line, centred on the page."""
+
     def wrap(self, aw, ah):
         self.aw, self.ah = aw, ah
         return aw, ah - 1
@@ -301,11 +320,13 @@ class DontPanic(Flowable):
     def draw(self):
         c = self.canv
         c.setFillColor(LINKC)
-        for i, word in enumerate(("DON'T", 'PANIC')):
-            size = 66
+        words = LANG['handbook.fourtwenty.motto'].split()
+        size, gap = 66, 6
+        top = self.ah / 2 + (len(words) * (size + gap)) / 2 - size
+        for i, word in enumerate(words):
             c.setFont('Helvetica-Bold', size)
             w = c.stringWidth(word, 'Helvetica-Bold', size)
-            c.drawString((self.aw - w) / 2, self.ah / 2 + 10 - i * (size + 6), word)
+            c.drawString((self.aw - w) / 2, top - i * (size + gap), word)
 
 
 class Marker(Flowable):
@@ -454,6 +475,9 @@ def scout_flow(ref):
         return flow
     kind, _, did = ref.partition('/')
     d = json.loads((scouting / f'{kind}_{did}.json').read_text(encoding='utf-8'))
+    from reportlab.platypus import Image as RLImage
+    emblem = ASSETS / 'textures/gui/handbook' / ('ranks' if kind == 'rank' else 'patches') / f'{did}.png'
+    head = [RLImage(str(emblem), 54, 54, hAlign='LEFT'), Spacer(1, 4)] if emblem.exists() else []
     rows = []
     for r in d['requirements']:
         text = esc(LANG[r['text']])
@@ -465,7 +489,7 @@ def scout_flow(ref):
     t = Table(rows, colWidths=[16, None], hAlign='LEFT')
     t.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ('TOPPADDING', (0, 0), (-1, -1), 2), ('BOTTOMPADDING', (0, 0), (-1, -1), 4)]))
     sign = Paragraph('<i>Signed on my honour: ____________________   Date: __________</i>', CAPTION)
-    return [Spacer(1, 4), t, Spacer(1, 10), sign]
+    return [Spacer(1, 4)] + head + [t, Spacer(1, 10), sign]
 
 
 def special_rows(kind):
@@ -492,7 +516,7 @@ def build(out):
     frame = Frame(54, 54, PAGE_W - 108, PAGE_H - 112, id='f')
     full = Frame(0, 0, PAGE_W, PAGE_H, id='full', leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
     doc.addPageTemplates([PageTemplate('cover', [full], onPage=cover), PageTemplate('paper', [frame], onPage=paper)])
-    story = [NextPageTemplate('paper'), PageBreak(), DontPanic(), PageBreak()]
+    story = [NextPageTemplate('paper'), PageBreak(), InsideCover(), PageBreak()]
     # title page
     story += [Spacer(1, 120),
               Paragraph('A Handbook of', ParagraphStyle('t1', parent=CHAPTER, fontSize=16, leading=20, textColor=INK)),
@@ -506,12 +530,48 @@ def build(out):
                        ParagraphStyle('toc1', fontName='Times-Roman', fontSize=10.5, leading=13, textColor=INK, leftIndent=14)]
     story += [Paragraph(LANG['handbook.fourtwenty.contents'], H1), toc, PageBreak()]
     index_terms = []
+    number = 0
+    label = ParagraphStyle('chapnum', fontName='Times-Roman', fontSize=13, leading=18, textColor=FAINT, alignment=TA_CENTER)
+    subtitle_style = ParagraphStyle('subtitle', fontName='Times-Italic', fontSize=13, leading=17, textColor=INK, alignment=TA_CENTER)
     for ch in book['chapters']:
         title = LANG.get(ch['title'], ch['title'])
+        subtitle = LANG.get(ch['title'] + '.subtitle', '')
         key = 'c_' + ch['id']
-        story += [Marker(key, title, 0), Spacer(1, 150), Paragraph(esc(title), CHAPTER), Spacer(1, 10)]
+        numbered = ch['id'] != 'back'
+        number += numbered
+        opener = ASSETS / 'textures/gui/handbook/scenes' / f"chapter_{ch['id']}.png"
+        # the chapter's own opening page (FR-002c): "Chapter N", the title, the subtitle, then the painting, centred on the page
+        text_w = PAGE_W - 108
+        avail = text_w - 12                         # the frame's own padding
+        title_lines = math.ceil(stringWidth(title, 'Times-Bold', 26) / avail)
+        sub_lines = wrapped_lines(subtitle, 'Times-Italic', 13, avail) if subtitle else 0
+        # balanced lines: the narrowest width that still takes no more lines, so no lone word is left on the last one
+        sub_width = avail
+        if subtitle:
+            sub_width = stringWidth(subtitle, 'Times-Italic', 13) / sub_lines
+            while sub_width < avail and wrapped_lines(subtitle, 'Times-Italic', 13, sub_width) > sub_lines:
+                sub_width += 2
+        sub_indent = max(0, (avail - sub_width) / 2 - 1)
+        img = None
+        if opener.exists():
+            from reportlab.platypus import Image as RLImage
+            w = text_w
+            with Image.open(opener) as im:
+                h = w * im.height / im.width
+                if h > 300:                         # a squarer painting: as tall as the wide ones, narrower
+                    w, h = 300 * im.width / im.height, 300
+            img = RLImage(str(opener), w, h)
+        block = (18 if numbered else 0) + 30 * title_lines + (8 + 17 * sub_lines if subtitle else 0) + (22 + img.drawHeight if img else 0)
+        story += [Marker(key, title, 0), Spacer(1, max(24, (PAGE_H - 112 - block) / 2 - 12))]
+        if numbered:
+            story.append(Paragraph(esc(LANG['handbook.fourtwenty.chapter_number'].replace('%s', str(number))), label))
+        story.append(Paragraph(esc(title), CHAPTER))
+        if subtitle:
+            story += [Spacer(1, 8), Paragraph(esc(subtitle), ParagraphStyle('sub', parent=subtitle_style, leftIndent=sub_indent, rightIndent=sub_indent))]
         if ch.get('needs'):
-            story.append(Paragraph('<i>Needs MineColonies</i>', ParagraphStyle('needs', parent=CAPTION, alignment=TA_CENTER)))
+            story += [Spacer(1, 4), Paragraph('<i>Needs MineColonies</i>', ParagraphStyle('needs', parent=CAPTION, alignment=TA_CENTER))]
+        if img:
+            story += [Spacer(1, 22), img]
         story.append(PageBreak())
         for e in ch['entries']:
             eid = f"{ch['id']}/{e}"
@@ -519,8 +579,11 @@ def build(out):
             head = [Marker(anchor(eid), front['title'], 1), Paragraph(f'<a name="{anchor(eid)}"/>' + esc(front['title']), H1)]
             if front.get('needs'):
                 head.append(Paragraph('<i>Needs MineColonies</i>', CAPTION))
-            story += [KeepTogether(head)] + elements_to_flow(els) + [PageBreak()]
+            # entries run on, like a textbook's sections: a little space, then the heading kept with its first block
+            flow = elements_to_flow(els)
+            story += [Spacer(1, 16), KeepTogether(head + flow[:1])] + flow[1:]
             index_terms.extend((t, eid, front['title']) for t in front.get('terms', []))
+        story.append(PageBreak())                   # each chapter ends its pages; the next opens on its own title page
     # the back of the book: glossary and index (FR-006)
     if not any(c['id'] == 'back' for c in book['chapters']):
         story += [Marker('c_back', 'Back of the Book', 0), Spacer(1, 150), Paragraph('Back of the Book', CHAPTER), PageBreak()]
@@ -547,6 +610,9 @@ def build(out):
                                ParagraphStyle('ix', parent=BODY, fontSize=9.5, leading=11.5, spaceAfter=0)))
     doc.multiBuild(story)
     print('wrote', out, f'({doc.page} pages)')
+    if out.resolve() == OUT.resolve():             # the committed PDF: note what it was printed from (book/PDF parity)
+        from handbook_sources import record
+        record()
 
 
 if __name__ == '__main__':

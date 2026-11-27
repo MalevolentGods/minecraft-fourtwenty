@@ -33,7 +33,7 @@ def H(n, text):
 
 # id, name, tagline, needs, teaches (a book entry), requirements
 RANKS = [
-    ('tenderbud', 'Tenderbud', 'Every great Weedcrafter started with one confused seed.', 'getting_started/welcome', [
+    ('tenderbud', 'Tenderbud', 'Every great Weedcrafter started here, holding a seed, wondering which end goes down.', 'getting_started/welcome', [
         H('1', "Say the Weedcrafter's Oath, out loud if you dare."),
         T('2a', 'Hold a Weed Seed in your hand.', 'obtain', {'item': F + 'weed_seeds'}),
         T('2b', 'Plant a seed.', 'plant'),
@@ -43,7 +43,7 @@ RANKS = [
         T('4a', 'Roll a Weed Joint.', 'craft', {'item': F + 'weed_joint'}),
         T('4b', 'Smoke it.', 'smoke', {'kind': 'joint'}),
         H('5', 'Explain to a friend why you always keep one seed back.')]),
-    ('second_toke', 'Second Toke', 'The first rung off the ground. Mind the ladder.', 'growing/strains', [
+    ('second_toke', 'Second Toke', 'Two smokes in: enough to have opinions, not yet enough to be right about them.', 'growing/strains', [
         T('1', 'Catch a colour at an Inspiration Infuser.', 'infuse', {'kind': 'catch'}),
         T('2', 'Infuse a Landrace seed into a family strain.', 'infuse', {'kind': 'seed'}),
         T('3', 'Grow and harvest a family strain.', 'harvest', {'grade': '1'}),
@@ -73,7 +73,7 @@ RANKS = [
         T('6', 'Earn the Inspiration badge.', 'earn', {'id': 'inspiration'}),
         T('7', 'Have earned six Stoner Badges.', 'earn', {'kind': 'badge'}, 6),
         H('8', 'Teach a new Weedcrafter one thing from this book.')]),
-    ('high_life', 'High Life', 'Nothing more to prove. Prove it anyway.', 'growing/grow_ops', [
+    ('high_life', 'High Life', 'Your workshop has a sofa now, and somebody is always on it.', 'growing/grow_ops', [
         T('1', 'Place an Aero Pod.', 'place', {'block': F + 'aero_pod'}),
         T('2', 'Harvest a crop in an Aero Pod.', 'harvest', {'block': F + 'aero_pod'}),
         T('3', 'Build a Buzz Bot.', 'craft', {'item': F + 'buzz_bot'}),
@@ -175,7 +175,7 @@ BADGES = [
     ('community_sesh', 'Community Sesh', 'minecolonies', 'colony/dispensary', [
         H('1', 'Hire a Budtender.'),
         T('2', 'Have a colonist enjoy a dose.', 'colony_dose'),
-        T('3', 'Sell a joint to a player.', 'colony_sale'),
+        T('3', 'Sell a joint to a customer.', 'colony_sale'),
         H('4', 'Ask a colonist how they are feeling.')]),
     ('lifted_building', 'Lifted Building', 'minecolonies', 'colony/lifted_builders', [
         T('1', 'Have a Lifted Builder.', 'colony_lifted'),
@@ -239,13 +239,13 @@ def write_all():
         head = f"---\ntitle: {name}\nicon: fourtwenty:handbook\nterms: [{name}]\n" + (f"needs: {needs}\n" if needs else '') + "---\n"
         (ENTRIES / f'badge_{bid}.md').write_text(head + f"{{scout:badge/{bid}}}\n", encoding='utf-8')
 
-    # the front matter, in the Scout handbook's manner, and the overview
+    # the front matter (motto, oath, law) and the overview
     (ENTRIES / 'motto.md').write_text("""---
 title: Motto and Slogan
 icon: fourtwenty:handbook
 terms: [motto, slogan, Don't Panic]
 ---
-The Scouts have a motto, *Be Prepared*, and a slogan, *Do a Good Turn Daily*. Weedcrafters have the two best pieces of advice there are.
+Every Weedcrafter carries two pieces of advice, and they are the best two there are. The first is printed inside the front cover of this book, so you see it every time you open it.
 
 # The Motto
 **Don't Panic.**
@@ -297,13 +297,13 @@ title: The Stoner Badge Sash
 icon: fourtwenty:stoner_badge_sash
 terms: [Stoner Badge Sash, sash, patches]
 ---
-Every Scout has a sash for the badges they've earned. So do you.
+Every badge you earn deserves somewhere to be seen.
 
 {item:fourtwenty:stoner_badge_sash|Worn across the chest, it shows your badges}
 
 {recipe:fourtwenty:stoner_badge_sash}
 
-Right-click it to put it on, or wear it in the body slot if you play with Curios. It does nothing but look good: no armour, no effects. It carries no badges of its own, so it always shows the badges of whoever's wearing it. Lend it to a friend and it shows theirs. (Earn your own.)
+Right-click it to put it on. It has a place of its own, just above your off-hand in your inventory, so it goes over your armour, not instead of it: click that place with the sash to put it on, or with an empty hand to take it off. It drops where you fall, like armour. It does nothing but look good: no armour, no effects. It carries no badges of its own, so it always shows the badges of whoever's wearing it. Lend it to a friend and it shows theirs. (Earn your own.)
 
 The newest eight show on the sash itself. Every badge you've earned is in colour below, and the rest are waiting.
 
@@ -314,7 +314,7 @@ title: Your Progress
 icon: fourtwenty:handbook
 terms: [ranks, Stoner Badges, progress]
 ---
-Six **ranks**, earned in order from Tenderbud to Golden Eagle, and a pocketful of **Stoner Badges**, earned in any order. The game ticks most requirements off by itself, with a small notice, as you do them. The rest you sign on your honour: click the box.
+Six **ranks**, earned in order from Tenderbud to Golden Eagle, and a pocketful of **Stoner Badges**, earned in any order. Most requirements tick themselves off as you do them, with a small notice. The rest you sign on your honour: click the box.
 
 Turn the page for each rank and badge in full.
 

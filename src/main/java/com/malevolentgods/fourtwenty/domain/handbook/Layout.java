@@ -1,12 +1,18 @@
 package com.malevolentgods.fourtwenty.domain.handbook;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Lays an entry's elements onto Handbook pages (specs/016-weedcraft-handbook). Pure: sizes come from a {@link Measure}
  * (the game's font in play, fixed numbers in tests). Paragraphs split between lines, lists and steps between items;
- * everything else moves whole to the next page. A heading never sits alone at the foot of a page.
+ * everything else moves whole to the next page. A heading never sits alone at the foot of a page, and a paragraph never
+ * leaves a single line alone at the foot of one page or the top of the next (no orphans, no widows).
+ *
+ * A chapter's entries run on, as a textbook's sections do: the next entry starts on the same page, under its heading, when there's room
+ * for the heading and a few lines; see {@link #run}.
  */
 public final class Layout {
     private Layout() {}
@@ -37,13 +43,45 @@ public final class Layout {
         }
     }
 
+    /** One entry of a chapter: its id and its elements (heading first). */
+    public record Section(String id, List<Element> elements) {}
+
+    /** A chapter laid out: its pages, and the page (from 0) each entry starts on, the one its heading is on. */
+    public record Run(List<List<Placed>> pages, Map<String, Integer> starts) {}
+
+    /** Lays a chapter's entries one after another, each starting below the last with a line's extra space. */
+    public static Run run(List<Section> sections, int width, int pageHeight, Measure m) {
+        Cursor c = new Cursor();
+        Map<String, Integer> starts = new LinkedHashMap<>();
+        for (Section s : sections) {
+            if (!c.page.isEmpty()) c.y += m.lineHeight();
+            boolean first = true;
+            for (Element e : s.elements()) {
+                place(c, e, width, pageHeight, m);
+                if (first) {
+                    starts.put(s.id(), c.pages.size());
+                    first = false;
+                }
+            }
+            if (first) starts.put(s.id(), c.pages.size());
+        }
+        if (!c.page.isEmpty() || c.pages.isEmpty()) c.pages.add(c.page);
+        return new Run(c.pages, starts);
+    }
+
     public static List<List<Placed>> paginate(List<Element> elements, int width, int pageHeight, Measure m) {
         Cursor c = new Cursor();
+        for (Element e : elements) place(c, e, width, pageHeight, m);
+        if (!c.page.isEmpty() || c.pages.isEmpty()) c.pages.add(c.page);
+        return c.pages;
+    }
+
+    private static void place(Cursor c, Element e, int width, int pageHeight, Measure m) {
         int line = m.lineHeight(), gap = Math.max(1, line / 2);
-        for (Element e : elements) {
+        {
             if (e instanceof Element.PageBreak) {
                 if (!c.page.isEmpty()) c.newPage();
-                continue;
+                return;
             }
             if (!c.page.isEmpty()) c.y += gap;
             switch (e) {
@@ -51,8 +89,11 @@ public final class Layout {
                     int total = m.lines(p.spans(), width), from = 0;
                     while (from < total) {
                         int room = (pageHeight - c.y) / line;
-                        if (room <= 0) { c.newPage(); continue; }
+                        // no orphan: one line alone at the foot of a page goes over with the rest
+                        if (room <= 0 || room == 1 && total - from > 1 && !c.page.isEmpty()) { c.newPage(); continue; }
                         int to = Math.min(total, from + room);
+                        // no widow: never leave a single line to start the next page; take one more line over instead
+                        if (total - to == 1 && to - from >= 3) to--;
                         c.page.add(new Placed(p, from, to, c.y, (to - from) * line));
                         c.y += (to - from) * line;
                         from = to;
@@ -70,8 +111,6 @@ public final class Layout {
                 }
             }
         }
-        if (!c.page.isEmpty() || c.pages.isEmpty()) c.pages.add(c.page);
-        return c.pages;
     }
 
     private static void items(Cursor c, Element e, List<List<Span>> items, int width, int pageHeight, Measure m) {

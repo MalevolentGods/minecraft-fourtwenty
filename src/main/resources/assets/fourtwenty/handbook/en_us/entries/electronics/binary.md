@@ -24,7 +24,7 @@ Write a 1 where you want that place counted, and add them up. So 1011 is 8 + 0 +
 {/table}
 
 # Eight Bits
-A byte, eight bits, counts from 0 (00000000) to **255** (11111111). The mod's **Eighth Ribbon** carries a byte in nine wires: eight for the bits, and a ninth, the **carry**, for when the answer runs past 255.
+A byte, eight bits, counts from 0 (00000000) to **255** (11111111). The **Eighth Ribbon** carries a byte in nine wires: eight for the bits, and a ninth, the **carry**, for when the answer runs past 255.
 
 # Adding
 Binary adds just like you learned at school, except you carry whenever you reach **2**, not 10. 1 + 1 = 10 (that's two: a one and a zero). The last circuit in this section adds two bits for you.

@@ -3,7 +3,7 @@ title: Motto and Slogan
 icon: fourtwenty:handbook
 terms: [motto, slogan, Don't Panic]
 ---
-The Scouts have a motto, *Be Prepared*, and a slogan, *Do a Good Turn Daily*. Weedcrafters have the two best pieces of advice there are.
+Every Weedcrafter carries two pieces of advice, and they are the best two there are. The first is printed inside the front cover of this book, so you see it every time you open it.
 
 # The Motto
 **Don't Panic.**

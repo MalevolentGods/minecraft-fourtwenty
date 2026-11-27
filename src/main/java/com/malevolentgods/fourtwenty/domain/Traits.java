@@ -8,14 +8,18 @@ import net.minecraft.network.codec.StreamCodec;
 
 import java.util.function.DoubleSupplier;
 
-/** What a seed passes on, each rated 1 to 5. A 2 is plain weed: it adds nothing and takes nothing away. */
+/**
+ * What a seed passes on, each rated 1 to 5. Potency and Yield 2 are plain weed (they add nothing and take nothing away); for Length,
+ * 1 is plain: a high of its normal length. Traits belong to the seed, not the strain: every seed bred from Landrace starts plain, and
+ * only crossing moves them.
+ */
 public record Traits(int potency, int yield, int length) {
     public static final int MIN = 1, MAX = 5;
-    public static final Traits DEFAULT = new Traits(2, 2, 2);
+    public static final Traits DEFAULT = new Traits(2, 2, 1);
 
     private static final int[] POTENCY_BONUS = {-1, 0, 1, 1, 2};
     private static final int[] YIELD_BONUS = {-1, 0, 1, 2, 3};
-    private static final double[] LENGTH_FACTOR = {0.5, 1, 1.5, 2, 3};
+    private static final double[] LENGTH_FACTOR = {1, 1.5, 2, 2.5, 3};
 
     private static final Codec<Integer> RATING = Codec.intRange(MIN, MAX);
     public static final Codec<Traits> CODEC = RecordCodecBuilder.create(i -> i.group(

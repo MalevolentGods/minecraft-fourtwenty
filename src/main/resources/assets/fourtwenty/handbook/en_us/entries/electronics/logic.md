@@ -35,4 +35,4 @@ On when the inputs **differ**: one on, one off, but not both.
 {truth:XNOR}
 
 # Why Bother?
-Out of just these, you can build anything a computer does. NAND alone is enough to build the lot, if you have the patience. We won't ask for that much patience.
+Out of just these, you can build anything a computer does. NAND alone is enough to build the lot, if you have a few thousand of them and nothing planned for the next year. We won't ask that of you.

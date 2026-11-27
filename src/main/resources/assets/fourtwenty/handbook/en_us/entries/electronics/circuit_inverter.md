@@ -5,6 +5,8 @@ terms: [NOT Nug, inverter]
 ---
 **The goal:** a light that's on while a switch is **off**, and off while it's on. A **NOT** gate flips its input.
 
+{image:scenes/circuit_inverter|The inverter on its board|wide}
+
 **You'll need:** your [workbench](entry:electronics/board), a **NOT Nug** and a **Toggle Joint**.
 
 1. Place the **NOT Nug** beside the board with its front facing away from the switch: input at its back, output in front.

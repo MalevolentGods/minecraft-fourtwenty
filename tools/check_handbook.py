@@ -4,7 +4,8 @@
     python3 tools/check_handbook.py [--strict]
 
 Fails on: an entry listed in book.json that doesn't exist; a parse error; a link to an entry that doesn't exist; an
-item, recipe or image that doesn't exist; a glossary line pointing nowhere. With --strict (release builds) it also fails
+item, recipe or image that doesn't exist; a glossary line pointing nowhere; a committed PDF printed from older sources than the
+book's (run tools/build_handbook_pdf.py). With --strict (release builds) it also fails
 when an obtainable Four Twenty item appears on no page, or an electronic part has no real-world name.
 """
 import json
@@ -15,6 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 from handbook_markup import parse  # noqa: E402
+from handbook_sources import fingerprint, recorded  # noqa: E402
 
 ASSETS = ROOT / 'src/main/resources/assets/fourtwenty'
 DATA = ROOT / 'src/main/resources/data'
@@ -41,6 +43,7 @@ def main():
     book = json.loads((BOOK / 'book.json').read_text(encoding='utf-8'))
     known = items_known()
     entries = {}
+    needs = {}            # entry -> the mod it needs (its own, or its chapter's), or None
     for ch in book['chapters']:
         for e in ch['entries']:
             eid = f"{ch['id']}/{e}"
@@ -52,6 +55,7 @@ def main():
             for err in errs:
                 errors.append(f'{eid}: {err}')
             entries[eid] = (front, els)
+            needs[eid] = front.get('needs') or ch.get('needs')
     used_items = set()
 
     def item_ok(eid, iid, what):
@@ -76,6 +80,9 @@ def main():
                 for link in spans_links(spans):
                     if link not in entries:
                         errors.append(f'{eid}: link to missing entry {link}')
+                    elif needs[link] and needs[link] != needs[eid]:
+                        # without that mod the target is hidden, so a page every reader sees must not lead to it (T032)
+                        errors.append(f"{eid}: links to {link}, which needs {needs[link]}, from a page that does not")
             if t == 'item':
                 item_ok(eid, el['id'], 'item')
             elif t == 'recipe':
@@ -109,6 +116,9 @@ def main():
     uncovered = sorted(i for i in known if i not in used_items and not i.split(':')[1].startswith(('potted_', 'wild_', 'weed_crop')))
     msg = f'{len(uncovered)} Four Twenty items appear on no page yet'
     (errors if strict and uncovered else warnings).append(msg + (': ' + ', '.join(uncovered[:20]) + ' …' if uncovered else ''))
+    # book/PDF parity: the PDF in docs/handbook must be printed from exactly these sources
+    if recorded() != fingerprint():
+        errors.append('docs/handbook/A-Handbook-of-Weedcraft.pdf is out of date with the book: run python3 tools/build_handbook_pdf.py and commit it')
     for w in warnings:
         print('note:', w)
     for e in errors:

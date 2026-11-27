@@ -3,7 +3,7 @@ title: The Parts Box
 icon: fourtwenty:resinator
 terms: [Nug, Resinator, Kief Cap, Spliff Coil, One-Hitter, Toggle Joint, Ticker, Sativa FET, Rolling Tray, Eighth Ribbon, Weedweeno, Lit Bit, Twister, Hemp Thread]
 ---
-Every part has a **real-world twin**: its real name is shown quietly under its name in its tooltip, and in the table at the back of this book.
+Every part has a **real-world twin**: its real name is shown quietly under its name on its label, and in the table at the back of this book.
 
 # Wires
 - **Wicks** carry power. **Hemp Thread** carries signals: a thin wire for logic, joining any part pin it touches.

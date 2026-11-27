@@ -68,7 +68,8 @@ public final class PageRenderer {
             if (s.bold()) style = style.withBold(true);
             if (s.italic()) style = style.withItalic(true);
             if (s.colour() != null && COLOURS.containsKey(s.colour())) style = style.withColor(TextColor.fromRgb(COLOURS.get(s.colour())));
-            if (s.link() != null) style = style.withColor(TextColor.fromRgb(LINK & 0xFFFFFF)).withUnderlined(true)
+            // a link whose page is hidden (it needs a mod that isn't here) reads as plain text
+            if (s.link() != null && BookData.book().entries().containsKey(s.link())) style = style.withColor(TextColor.fromRgb(LINK & 0xFFFFFF)).withUnderlined(true)
                     .withClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, LINK_PREFIX + s.link()));
             if (s.spoiler() != null && !TerpeneKnowledge.knows(s.spoiler())) style = style.withObfuscated(true);
             out.append(Component.literal(s.text()).withStyle(style));
@@ -93,9 +94,8 @@ public final class PageRenderer {
             case Element.Item it -> Math.max(20, wrap(caption(it.caption()), width - 22).size() * LINE + 2);
             case Element.Recipe r -> RecipeView.HEIGHT;
             case Element.Image im -> {
-                int[] wh = imageSize(im.path());
-                int w = imageWidth(im.size(), width);
-                int h = wh == null ? 20 : Math.min(220, w * wh[1] / Math.max(1, wh[0]));
+                int[] box = imageBox(im, width);
+                int h = box[1];
                 yield h + (im.caption().isEmpty() ? 0 : wrap(caption(im.caption()), width).size() * LINE + 2);
             }
             case Element.Heading h -> headingLines(h, width).size() * LINE;
@@ -161,15 +161,15 @@ public final class PageRenderer {
             case Element.Recipe r -> RecipeView.draw(g, font, r.id(), x + (width - RecipeView.WIDTH) / 2, top, hovers);
             case Element.Image im -> {
                 int[] wh = imageSize(im.path());
-                int w = imageWidth(im.size(), width);
-                int h = wh == null ? 20 : Math.min(220, w * wh[1] / Math.max(1, wh[0]));
+                int[] box = imageBox(im, width);
+                int w = box[0], h = box[1];
                 int ix = x + (width - w) / 2;
                 if (wh != null) {
                     // smooth filtering: scenes are drawn large (4x) and scaled to the page, so they stay crisp at any book size
                     Minecraft.getInstance().getTextureManager().getTexture(image(im.path())).setFilter(true, false);
                     g.blit(image(im.path()), ix, top, w, h, 0, 0, wh[0], wh[1], wh[0], wh[1]);
                 }
-                g.renderOutline(ix - 1, top - 1, w + 2, h + 2, RULE);
+                if (!"opener".equals(im.size())) g.renderOutline(ix - 1, top - 1, w + 2, h + 2, RULE);   // openers have painted edges
                 int ty = top + h + 2;
                 for (FormattedCharSequence line : wrap(caption(im.caption()), width)) {
                     g.drawString(font, line, x + (width - font.width(line)) / 2, ty, FAINT, false);
@@ -207,7 +207,12 @@ public final class PageRenderer {
         return t;
     }
 
-    private static final int PATCH = 28, CELL_H = 52, COLS = 4;
+    private static final int PATCH = 28, CELL_H = 52, COLS = 4, EMBLEM = 32;
+
+    /** A rank's shield or a badge's patch: 128x128 pictures in textures/gui/handbook/ranks and patches. */
+    static ResourceLocation emblem(boolean rank, String id) {
+        return ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/handbook/" + (rank ? "ranks/" : "patches/") + id + ".png");
+    }
 
     private int scoutHeight(String ref, int width) {
         if (ref.equals("sash")) {
@@ -221,7 +226,7 @@ public final class PageRenderer {
         }
         var d = scoutDef(ref);
         if (d == null) return LINE;
-        int h = LINE + 2;
+        int h = EMBLEM + 4;
         for (var r : d.reqs()) h += Math.max(1, font.split(reqText(d, r, false), width - 13).size()) * LINE + 2;
         return h;
     }
@@ -236,7 +241,7 @@ public final class PageRenderer {
                 boolean earned = progress.earned(d.earnKey());
                 var tex = ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/handbook/patches/" + d.id() + ".png");
                 if (!earned) g.setColor(0.35f, 0.35f, 0.35f, 0.7f);
-                g.blit(tex, cx + (cw - PATCH) / 2, cy, PATCH, PATCH, 0, 0, 16, 16, 16, 16);
+                g.blit(tex, cx + (cw - PATCH) / 2, cy, PATCH, PATCH, 0, 0, 128, 128, 128, 128);      // the patches are 128x128 pictures
                 g.setColor(1f, 1f, 1f, 1f);
                 int ty = cy + PATCH + 2;
                 for (FormattedCharSequence line : font.split(Component.translatable("handbook.fourtwenty.badge." + d.id()), cw - 2)) {
@@ -276,9 +281,13 @@ public final class PageRenderer {
         if (d == null) return;
         int y = top;
         long done = d.reqs().stream().filter(r -> progress.satisfied(d.key(r))).count();
-        Component status = progress.earned(d.earnKey()) ? Component.translatable("handbook.fourtwenty.earned") : Component.literal(done + " / " + d.reqs().size());
-        g.drawString(font, status, x, y, progress.earned(d.earnKey()) ? LINK : FAINT, false);
-        y += LINE + 2;
+        boolean earned = progress.earned(d.earnKey());
+        if (!earned) g.setColor(0.55f, 0.55f, 0.55f, 0.85f);
+        g.blit(emblem(d.rank(), d.id()), x, y, EMBLEM, EMBLEM, 0, 0, 128, 128, 128, 128);
+        g.setColor(1f, 1f, 1f, 1f);
+        Component status = earned ? Component.translatable("handbook.fourtwenty.earned") : Component.literal(done + " / " + d.reqs().size());
+        g.drawString(font, status, x + EMBLEM + 6, y + (EMBLEM - 8) / 2, earned ? LINK : FAINT, false);
+        y += EMBLEM + 4;
         for (var r : d.reqs()) {
             String key = d.key(r);
             int state = progress.state(key);
@@ -378,19 +387,36 @@ public final class PageRenderer {
         return rl == null ? ItemStack.EMPTY : new ItemStack(BuiltInRegistries.ITEM.get(rl));
     }
 
+    /** A picture's drawn width and height: its size's width, kept in proportion, narrowed if it would be too tall (openers are kept
+     *  short enough to share their page with the chapter's title and opening lines). */
+    private int[] imageBox(Element.Image im, int width) {
+        int[] wh = imageSize(im.path());
+        int w = imageWidth(im.size(), width);
+        if (wh == null) return new int[]{w, 20};
+        int max = "opener".equals(im.size()) ? 150 : 220;
+        int h = w * wh[1] / Math.max(1, wh[0]);
+        if (h > max) {
+            w = max * wh[0] / Math.max(1, wh[1]);
+            h = max;
+        }
+        return new int[]{w, h};
+    }
+
     private static int imageWidth(String size, int width) {
         return switch (size) {
-            case "wide" -> width;
+            case "wide", "opener" -> width;
             case "small" -> width / 2;
             default -> width * 3 / 4;
         };
     }
 
-    private static ResourceLocation image(String path) {
+    /** A picture's texture (also drawn by a chapter's opening page, HandbookScreen). */
+    static ResourceLocation image(String path) {
         return ResourceLocation.fromNamespaceAndPath("fourtwenty", "textures/gui/handbook/" + path + ".png");
     }
 
-    private int[] imageSize(String path) {
+    /** A picture's size in pixels, or null when it's missing. */
+    int[] imageSize(String path) {
         return imageSizes.computeIfAbsent(path, p -> {
             var res = Minecraft.getInstance().getResourceManager().getResource(image(p));
             if (res.isEmpty()) return null;

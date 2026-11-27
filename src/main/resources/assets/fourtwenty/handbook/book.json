@@ -50,10 +50,12 @@
       "title": "handbook.fourtwenty.chapter.growing",
       "icon": "fourtwenty:rough_bud",
       "entries": [
+        "how_weed_works",
         "planting",
         "harvest",
         "strains",
         "seeds",
+        "traits",
         "grow_ops",
         "breeding",
         "pot_pots"
@@ -69,6 +71,7 @@
         "extracts",
         "vape_pen",
         "smoking",
+        "highs",
         "edibles"
       ]
     },
@@ -95,6 +98,7 @@
       "icon": "fourtwenty:weed_bong",
       "entries": [
         "basics",
+        "history",
         "hookahs",
         "wiring",
         "stashes",
@@ -117,7 +121,13 @@
         "circuit_lock",
         "circuit_memory",
         "circuit_clock",
-        "circuit_adder"
+        "circuit_adder",
+        "ohms_law",
+        "loops",
+        "energy",
+        "long_lines",
+        "charge",
+        "semiconductors"
       ]
     },
     {

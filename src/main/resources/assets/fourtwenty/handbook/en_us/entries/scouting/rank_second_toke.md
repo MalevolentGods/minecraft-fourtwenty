@@ -3,6 +3,6 @@ title: Second Toke
 icon: fourtwenty:handbook
 terms: [Second Toke]
 ---
-*The first rung off the ground. Mind the ladder.*
+*Two smokes in: enough to have opinions, not yet enough to be right about them.*
 
 {scout:rank/second_toke}

@@ -16,7 +16,7 @@ The **Dispensary** is your colony's shop. Craft the hut and place it with the Bu
 {/table}
 
 # The Budtender
-The Budtender crafts joints, cookies, pipes and brownies from what's in the warehouse (keep buds and paper stocked), always keeps a few buds back for the bong and hookah, and serves anyone in the shop. Players buy with emeralds: hold one and right-click the Budtender.
+The Budtender crafts joints, cookies, pipes and brownies from what's in the warehouse (keep buds and paper stocked), always keeps a few buds back for the bong and hookah, and serves anyone in the shop. Customers buy with emeralds: hold one and right-click the Budtender.
 
 # Colonists' Habits
 Adults with a finished home can pick up a habit, but only after they've tried weed once: a dose, secondhand smoke within 4 blocks, or sitting by a lit hookah. A satisfied colonist gets an extra heart and a little happiness; one left wanting too long gets a little grumpy. Specialty bongs inside the shop give smokers from level 5 homes a day-long boost to their work skills.

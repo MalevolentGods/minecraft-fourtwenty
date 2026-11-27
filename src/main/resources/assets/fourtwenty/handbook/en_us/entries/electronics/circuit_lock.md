@@ -5,6 +5,8 @@ terms: [AND Nug, AND gate]
 ---
 **The goal:** a "lock" that opens only when you flip **both** switches. An **AND** gate is on only when both its inputs are.
 
+{image:scenes/circuit_lock|The two-switch lock|wide}
+
 **You'll need:** your [workbench](entry:electronics/board), an **AND Nug** and two **Toggle Joints**.
 
 1. Place the **AND Nug** with its front facing away from the board. Its inputs are its **left** and **right** faces.
@@ -16,4 +18,4 @@ terms: [AND Nug, AND gate]
 
 {truth:AND}
 
-**The real thing:** an **AND gate**: the heart of every combination lock.
+**The real thing:** an **AND gate**: the logic behind anything that needs two keys turned at once, from bank vaults to missile silos.

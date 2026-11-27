@@ -15,9 +15,9 @@ Powered machines trim and cure faster, a whole batch at a time, and each tier is
 {image:scenes/machines|A Hookah runs a Snip Station and a Dry Box: red Wick out, black Wick back, hoppers on top|wide}
 
 # Feeding Them
-Put buds in the left of the screen and take the results from the right. Better still, feed them with **hoppers** from the top or sides and empty them with a hopper underneath, or join them up with Transport Tubes. A trimmer's seeds come out with its buds.
+Put buds in on the left and take the results from the right. Better still, feed them with **hoppers** from the top or sides and empty them with a hopper underneath, or join them up with Transport Tubes, and you never touch a bud again until it's ready to smoke. A trimmer's seeds come out with its buds.
 
 # Power
 Run Wicks from a Hookah or Stash of the **same tier**, or stand nearby while high and the machine runs for free. With neither, it pauses and keeps its place.
 
-A source from a higher tier **overloads** a machine: it stops and smokes until you take that source away. It never breaks. To run a lower-tier machine from a big source, step the power down with a [Hit Box](entry:power/hit_box).
+A source of a higher tier **overloads** a machine: it stops work and stands there smoking, like it's on its break, until you take that source away. Nothing gets damaged. To run a lower-tier machine from a big source, step the power down with a [Hit Box](entry:power/hit_box).

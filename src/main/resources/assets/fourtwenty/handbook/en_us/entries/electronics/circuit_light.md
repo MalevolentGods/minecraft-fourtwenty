@@ -5,6 +5,8 @@ terms: [Toggle Joint, switch]
 ---
 **The goal:** a light with a switch. Flip it and the light comes on. It's the first circuit anyone builds, and still the most useful.
 
+{image:scenes/circuit_light|The switched light, built and running|wide}
+
 **You'll need:** your [workbench](entry:electronics/board), a **Toggle Joint**, a **Lit Bit** and a few Wicks.
 
 1. On the board, stop the red rail one block short of its end.
