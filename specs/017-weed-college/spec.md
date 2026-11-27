@@ -20,6 +20,9 @@ Two facts shape it:
 
 - Q: What does a colony-researched colour give the players? → A: Only the colony's own workers can use it (the Weed Lab's Terpinators, the Tie Dye Shack). Players still catch their own colours at the Inspiration Infuser; the College never teaches a player.
 - Q: What are the Engineering and Armory branches for? → A: Engineering is the colony's power and machines (Weed Lab machine speed, Hookah and Stash efficiency, Grow Op upkeep). Armory is gear: the Weedscout uniform and the **Kush Suit** power armour (Hotbox Helm, Puff Plate with its Puff Pack jetpack, Couchlock Greaves, Moon Boots) with the **Blazer** laser, as in the weed-tech brainstorm (2026-10-30). Each piece of gear is its own later feature; its studies wait, locked, until it ships.
+- Q: No colony worker uses colours yet (the Weed Lab's Terpinators are ordinary player-run machines; the Tie Dye Shack doesn't exist), so what does a finished colour study do while 017 is the only part built? → A: Keep FR-021 as is: colour studies are built in 017 and pay off when the Tie Dye Shack (spec 018) uses them; 017 and 018 ship together in one release.
+- Q: How are the College's five levels built? → A: All five by design script now; the user may replace any level with a hand build before release, the scripted one being a placeholder until then.
+- Q: What does a finished Botany strain study give the colony? → A: Its harvest goes to the warehouse as a batch of that strain's seeds, which the colony's farmers can plant and anyone can take like any warehouse item; yield studies make the colony's weed farms give more buds.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -71,7 +74,7 @@ Once the colours of the common dyes are known, the colony moves up: tier 2 and 3
 
 1. **Given** a finished hemp-row study, **When** it is written up, **Then** the colony knows all four colours of that row.
 2. **Given** a colour that a member of the colony has already caught at the Infuser, **When** the colony studies it, **Then** that study costs less (fewer supplies and less time) than the same study for an uncaught colour.
-3. **Given** a finished Botany study, **When** it is written up, **Then** its strain or yield effect applies to the colony's own growing as the study says.
+3. **Given** a finished Botany strain study, **When** it is written up, **Then** a batch of that strain's seeds is in the warehouse; **Given** a finished yield study, **Then** the colony's weed farms give more buds.
 
 ---
 
@@ -110,6 +113,7 @@ The Handbook's Colony Life chapter gains a page on the Weed College, in the book
 - **The College is demolished or downgraded**: progress on the board is kept with the colony; a study above the new level's tier pauses, with the reason shown, until the College is back at that level.
 - **Supplies never arrive**: the study waits, shows what it is waiting for, and nothing is lost or failed.
 - **The colony is unloaded** (no player nearby): research pauses, like the University's, and resumes when the colony is loaded again.
+- **A player expects to learn a colour the colony researched**: they don't; the board and the Handbook page say colony colours are for the colony's workers, and the Infuser is how a Weedcrafter learns one.
 - **A colour the colony studies is later caught at the Infuser, or the other way round**: knowing a colour twice changes nothing and costs nothing extra.
 - **A study belongs to a feature that doesn't exist yet** (Textiles needs the Tie Dye Shack, Glassworks the Glassblower's bongs): it is shown locked, naming what it waits for, until that feature ships.
 - **Several Colleges in one colony**: they share the colony's one board and progress (see FR-008).
@@ -147,14 +151,14 @@ The Handbook's Colony Life chapter gains a page on the Weed College, in the book
 - **FR-015**: The College's level MUST cap the tier a study can be: a level N College can start studies of tier N and below.
 - **FR-016**: Tier 6, the top of the tree, MUST need a level 5 College and every tier-5 study in its branch.
 - **FR-017**: The plots in a level N College MUST be of Grow Op tier N: Closet Grow, Grow Tent, Hydro Bed, Aero Pod, Cosmic Kush Pod.
-- **FR-018**: Each of the five levels MUST have a blueprint in the Sensi Heights style (earth tones, the user's signature door from level 3 up, doors saved closed), passing the pack's footprint, required-block and door checks; level 5 MAY be replaced by a showpiece the user builds by hand.
+- **FR-018**: Each of the five levels MUST have a blueprint in the Sensi Heights style (earth tones, the user's signature door from level 3 up, doors saved closed), passing the pack's footprint, required-block and door checks; all five are scripted, and any level MAY be replaced before release by a showpiece the user builds by hand.
 
 **What the research gives**
 
 - **FR-019**: The tree MUST research colours as rows, not one colour at a time: tier 1 the sixteen common colours in a few groups, tiers 2 and 3 the sixteen hemp-colour rows, each row unlocking its four colours.
 - **FR-020**: A colony MUST be able to research a colour that no player has caught; doing so MUST be slower and costlier than catching it at the Infuser, and a colour already caught by a member of the colony MUST make its study cheaper.
 - **FR-021**: A colour the colony has researched MUST be usable by the colony's own workers only: the Weed Lab's Terpinators may make its terpene and the Tie Dye Shack may dye with it. Researching it MUST NOT teach any player the colour; players still catch their own at the Inspiration Infuser.
-- **FR-022**: Botany studies MUST give colony-wide growing effects: biome strains without travelling, hybrid crosses for the colony's farmers, and better yields for the colony's weed farms.
+- **FR-022**: A finished Botany strain study (a biome strain or a hybrid) MUST deliver the study crop's seeds of that strain to the warehouse, a batch the colony's farmers can plant and anyone can take like any warehouse item; Botany yield studies MUST make the colony's weed farms give more buds.
 - **FR-023**: Chemistry studies MUST give colony-wide terpene effects: faster colony Terpinators, and an ultimate terpene at tier 6.
 - **FR-024**: Glassworks studies MUST unlock bong tiers for the colony (the Budtender stocks them); Textiles studies MUST unlock tie-dye patterns for the Tie Dye Shack (spec 018). Until those features ship, their studies MUST show locked, naming what they wait for.
 - **FR-025**: Engineering studies MUST give colony-wide power and machine effects: faster Weed Lab machines, more efficient Hookahs and Stashes, and cheaper Grow Op upkeep. Armory studies MUST cover gear: the Weedscout uniform, and the Kush Suit power armour (Hotbox Helm, Puff Plate with the Puff Pack, Couchlock Greaves, Moon Boots) with the Blazer laser; a finished Armory study lets the colony make that piece (its crafters can build it and the warehouse can supply it). Each piece is its own later feature, so its Armory study MUST show locked, naming what it waits for, until that piece ships.
@@ -162,6 +166,7 @@ The Handbook's Colony Life chapter gains a page on the Weed College, in the book
 
 **Everything else**
 
+- **FR-026b**: This feature MUST ship in the same release as the Tie Dye Shack (spec 018), the first colony worker to use the colours the College researches; the board MUST say what a colour study is for (the Tie Dye Shack's dyes) so a finished one never reads as doing nothing.
 - **FR-027**: The Handbook's Colony Life chapter MUST gain a Weed College page in the book's voice (needs MineColonies), with the index and glossary updated, and the PDF rebuilt.
 - **FR-028**: Nothing in this feature may depend on any mod beyond Four Twenty and MineColonies (and MineColonies' own requirements); Four Twenty MUST still load and play without MineColonies, with the Think Tank working as today.
 - **FR-029**: All player-facing text MUST be in the language files and follow the Handbook's voice rules where it is prose.
@@ -194,7 +199,7 @@ The Handbook's Colony Life chapter gains a page on the Weed College, in the book
 - **The Think Tank stays the player's research machine**: its tier-1 colour studies are unchanged, and a player can still study colours themselves without a colony.
 - **Who "the colony's members" are** for a cheaper study (FR-020): the colony's owner and officers, by MineColonies' own permissions.
 - **Bad batch chance** stays the Think Tank's, about one unit in ten, in config.
-- **Blueprints are made by a design script** in the Sensi Heights repo like the other huts, unless the user builds level 5 (or the whole College) by hand as a showpiece; the hut ships as drafted and is play-tested in normal play.
+- **Blueprints are made by a design script** in the Sensi Heights repo like the other huts, all five levels (clarified 2026-11-27); the user may swap any level for a hand build before release; the hut ships as drafted and is play-tested in normal play.
 - **Study list**: the exact 50 to 60 studies, their supplies and effects are drawn up in planning, inside the shape above, and reviewed by the user before they're built.
 - **Tie Dye Shack (spec 018), the Glassblower's bongs, the Weedscout uniform, the Kush Suit and the Blazer** are separate work; this spec only gives them their studies, locked until they exist.
 - **Players without MineColonies still get the gear**: as decided 2026-10-30 ("research runs on its own block, independent of MineColonies"), the Kush Suit and the Blazer also get a player route through the Think Tank, specified with the gear itself; the College's Armory is the colony's route.
