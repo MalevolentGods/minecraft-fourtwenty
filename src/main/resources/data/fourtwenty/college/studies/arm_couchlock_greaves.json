@@ -1,0 +1,38 @@
+{
+  "branch": "armory",
+  "tier": 4,
+  "parents": [
+    "fourtwenty:arm_moon_boots"
+  ],
+  "kind": "unlock",
+  "supplies": [
+    {
+      "item": "fourtwenty:natural_hemp",
+      "count": 8
+    },
+    {
+      "item": "fourtwenty:stash_jar",
+      "count": 2
+    },
+    {
+      "item": "fourtwenty:hash",
+      "count": 4
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 64
+    }
+  ],
+  "gives": {
+    "research_effect": "fourtwenty:effects/arm_couchlock_greaves",
+    "unlocks": "fourtwenty:couchlock_greaves",
+    "crafter": "blacksmith",
+    "recipe": {
+      "fourtwenty:natural_hemp": 4,
+      "fourtwenty:stash_jar": 1,
+      "fourtwenty:hash": 2
+    }
+  },
+  "icon": "fourtwenty:couchlock_greaves",
+  "needs": null
+}

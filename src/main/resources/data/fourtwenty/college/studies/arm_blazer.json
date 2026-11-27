@@ -1,0 +1,38 @@
+{
+  "branch": "armory",
+  "tier": 6,
+  "parents": [
+    "fourtwenty:arm_puff_plate"
+  ],
+  "kind": "unlock",
+  "supplies": [
+    {
+      "item": "fourtwenty:oil",
+      "count": 2
+    },
+    {
+      "item": "fourtwenty:glass_wick",
+      "count": 6
+    },
+    {
+      "item": "fourtwenty:stash_box",
+      "count": 2
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 96
+    }
+  ],
+  "gives": {
+    "research_effect": "fourtwenty:effects/arm_blazer",
+    "unlocks": "fourtwenty:blazer",
+    "crafter": "blacksmith",
+    "recipe": {
+      "fourtwenty:oil": 1,
+      "fourtwenty:glass_wick": 3,
+      "fourtwenty:stash_box": 1
+    }
+  },
+  "icon": "fourtwenty:blazer",
+  "needs": null
+}

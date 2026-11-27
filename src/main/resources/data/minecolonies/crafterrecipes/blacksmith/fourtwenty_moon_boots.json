@@ -1,0 +1,24 @@
+{
+  "type": "recipe",
+  "crafter": "blacksmith_crafting",
+  "inputs": [
+    {
+      "id": "fourtwenty:natural_hemp",
+      "count": 2
+    },
+    {
+      "id": "fourtwenty:stash_jar"
+    },
+    {
+      "id": "fourtwenty:kief",
+      "count": 2
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 3,
+  "research-id": "fourtwenty:effects/arm_moon_boots",
+  "result": {
+    "id": "fourtwenty:moon_boots"
+  },
+  "show-tooltip": true
+}

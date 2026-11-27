@@ -1,0 +1,28 @@
+{
+  "branch": "engineering",
+  "tier": 3,
+  "parents": [
+    "fourtwenty:eng_long_burn"
+  ],
+  "kind": "effect",
+  "supplies": [
+    {
+      "item": "fourtwenty:resinator",
+      "count": 8
+    },
+    {
+      "item": "fourtwenty:glass_wick",
+      "count": 8
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 32
+    }
+  ],
+  "gives": {
+    "effect": "grow_op_bi",
+    "strength": 0.5
+  },
+  "icon": "fourtwenty:grow_tent",
+  "needs": null
+}

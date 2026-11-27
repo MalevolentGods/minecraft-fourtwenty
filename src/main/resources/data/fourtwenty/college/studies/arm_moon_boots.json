@@ -1,0 +1,38 @@
+{
+  "branch": "armory",
+  "tier": 3,
+  "parents": [
+    "fourtwenty:arm_hotbox_helm"
+  ],
+  "kind": "unlock",
+  "supplies": [
+    {
+      "item": "fourtwenty:natural_hemp",
+      "count": 4
+    },
+    {
+      "item": "fourtwenty:stash_jar",
+      "count": 2
+    },
+    {
+      "item": "fourtwenty:kief",
+      "count": 4
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 48
+    }
+  ],
+  "gives": {
+    "research_effect": "fourtwenty:effects/arm_moon_boots",
+    "unlocks": "fourtwenty:moon_boots",
+    "crafter": "blacksmith",
+    "recipe": {
+      "fourtwenty:natural_hemp": 2,
+      "fourtwenty:stash_jar": 1,
+      "fourtwenty:kief": 2
+    }
+  },
+  "icon": "fourtwenty:moon_boots",
+  "needs": null
+}

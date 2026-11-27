@@ -1,0 +1,33 @@
+{
+  "branch": "chemistry",
+  "tier": 3,
+  "parents": [
+    "fourtwenty:chem_greens_blues"
+  ],
+  "kind": "colours",
+  "supplies": [
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 16
+    },
+    {
+      "item": "fourtwenty:resin",
+      "count": 4
+    },
+    {
+      "item": "minecraft:glass_bottle",
+      "count": 4
+    }
+  ],
+  "gives": {
+    "colours": [
+      "pin_myr_lim",
+      "pin_myr_pin",
+      "pin_myr_lav",
+      "pin_myr_myr"
+    ],
+    "accord": "pin_myr"
+  },
+  "icon": "fourtwenty:terpene_pin_myr",
+  "needs": null
+}

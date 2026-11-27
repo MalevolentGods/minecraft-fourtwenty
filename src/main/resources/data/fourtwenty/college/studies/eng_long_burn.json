@@ -1,0 +1,28 @@
+{
+  "branch": "engineering",
+  "tier": 2,
+  "parents": [
+    "fourtwenty:eng_bench_habits"
+  ],
+  "kind": "effect",
+  "supplies": [
+    {
+      "item": "minecraft:charcoal",
+      "count": 32
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 16
+    },
+    {
+      "item": "fourtwenty:hemp_wick",
+      "count": 8
+    }
+  ],
+  "gives": {
+    "effect": "hookah_burn",
+    "strength": 1.25
+  },
+  "icon": "fourtwenty:weed_bong",
+  "needs": null
+}

@@ -1,0 +1,29 @@
+{
+  "branch": "glassworks",
+  "tier": 6,
+  "parents": [
+    "fourtwenty:gla_sage_bong"
+  ],
+  "kind": "unlock",
+  "supplies": [
+    {
+      "item": "minecraft:glass",
+      "count": 48
+    },
+    {
+      "item": "minecraft:phantom_membrane",
+      "count": 4
+    },
+    {
+      "item": "minecraft:feather",
+      "count": 8
+    }
+  ],
+  "gives": {
+    "research_effect": "fourtwenty:effects/gla_phantom_bong",
+    "unlocks": "fourtwenty:phantom_bong",
+    "crafter": "glassblower"
+  },
+  "icon": "fourtwenty:phantom_bong",
+  "needs": null
+}

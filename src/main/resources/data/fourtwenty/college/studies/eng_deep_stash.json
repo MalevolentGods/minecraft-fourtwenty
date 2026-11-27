@@ -1,0 +1,28 @@
+{
+  "branch": "engineering",
+  "tier": 3,
+  "parents": [
+    "fourtwenty:eng_long_burn"
+  ],
+  "kind": "effect",
+  "supplies": [
+    {
+      "item": "fourtwenty:resinator",
+      "count": 8
+    },
+    {
+      "item": "fourtwenty:stash_jar",
+      "count": 2
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 32
+    }
+  ],
+  "gives": {
+    "effect": "stash_capacity",
+    "strength": 1.5
+  },
+  "icon": "fourtwenty:stash_jar",
+  "needs": null
+}

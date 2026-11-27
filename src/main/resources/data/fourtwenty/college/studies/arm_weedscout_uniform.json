@@ -1,0 +1,24 @@
+{
+  "branch": "armory",
+  "tier": 1,
+  "parents": [],
+  "kind": "unlock",
+  "supplies": [
+    {
+      "item": "minecraft:green_wool",
+      "count": 8
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 16
+    }
+  ],
+  "gives": {
+    "research_effect": "fourtwenty:effects/arm_weedscout_uniform",
+    "unlocks": "fourtwenty:weedscout_uniform",
+    "crafter": "blacksmith",
+    "recipe": {}
+  },
+  "icon": "minecraft:green_wool",
+  "needs": "weedscout_uniform"
+}

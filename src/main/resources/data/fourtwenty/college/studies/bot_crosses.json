@@ -1,0 +1,37 @@
+{
+  "branch": "botany",
+  "tier": 3,
+  "parents": [
+    "fourtwenty:bot_soil_science"
+  ],
+  "kind": "strains",
+  "supplies": [
+    {
+      "item": "fourtwenty:weed_seeds",
+      "count": 16
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 32
+    },
+    {
+      "item": "minecraft:bone_meal",
+      "count": 8
+    }
+  ],
+  "gives": {
+    "strains": [
+      "tropical_thunder",
+      "razzle_dazzle",
+      "alarm_clock_assassin",
+      "couch_fort",
+      "moss_boss",
+      "deep_thoughts",
+      "lucid_lagoon",
+      "rocket_lime"
+    ],
+    "seeds_each": 2
+  },
+  "icon": "fourtwenty:weed_seeds",
+  "needs": null
+}

@@ -1,0 +1,32 @@
+{
+  "branch": "botany",
+  "tier": 5,
+  "parents": [
+    "fourtwenty:bot_double_crosses"
+  ],
+  "kind": "strains",
+  "supplies": [
+    {
+      "item": "fourtwenty:weed_seeds",
+      "count": 6
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 64
+    },
+    {
+      "item": "minecraft:bone_meal",
+      "count": 32
+    }
+  ],
+  "gives": {
+    "strains": [
+      "cosmic_couch",
+      "storm_shepherd",
+      "the_elder_bud"
+    ],
+    "seeds_each": 2
+  },
+  "icon": "fourtwenty:weed_seeds",
+  "needs": null
+}

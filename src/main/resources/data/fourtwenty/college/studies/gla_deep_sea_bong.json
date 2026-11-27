@@ -1,0 +1,29 @@
+{
+  "branch": "glassworks",
+  "tier": 3,
+  "parents": [
+    "fourtwenty:gla_owl_bong"
+  ],
+  "kind": "unlock",
+  "supplies": [
+    {
+      "item": "minecraft:glass",
+      "count": 24
+    },
+    {
+      "item": "minecraft:prismarine_crystals",
+      "count": 4
+    },
+    {
+      "item": "minecraft:nautilus_shell",
+      "count": 1
+    }
+  ],
+  "gives": {
+    "research_effect": "fourtwenty:effects/gla_deep_sea_bong",
+    "unlocks": "fourtwenty:deep_sea_bong",
+    "crafter": "glassblower"
+  },
+  "icon": "fourtwenty:deep_sea_bong",
+  "needs": null
+}

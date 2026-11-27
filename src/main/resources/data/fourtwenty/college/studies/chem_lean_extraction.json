@@ -1,0 +1,31 @@
+{
+  "branch": "chemistry",
+  "tier": 4,
+  "parents": [
+    "fourtwenty:chem_neutrals",
+    "fourtwenty:chem_warms",
+    "fourtwenty:chem_greens_blues",
+    "fourtwenty:chem_purples"
+  ],
+  "kind": "effect",
+  "supplies": [
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 32
+    },
+    {
+      "item": "minecraft:glass_bottle",
+      "count": 8
+    },
+    {
+      "item": "fourtwenty:rosin",
+      "count": 2
+    }
+  ],
+  "gives": {
+    "effect": "terpinator_bi",
+    "strength": 0.5
+  },
+  "icon": "fourtwenty:terpinator",
+  "needs": null
+}

@@ -1,0 +1,38 @@
+{
+  "branch": "armory",
+  "tier": 5,
+  "parents": [
+    "fourtwenty:arm_couchlock_greaves"
+  ],
+  "kind": "unlock",
+  "supplies": [
+    {
+      "item": "fourtwenty:natural_hemp",
+      "count": 8
+    },
+    {
+      "item": "fourtwenty:rosin",
+      "count": 6
+    },
+    {
+      "item": "fourtwenty:stash_box",
+      "count": 2
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 80
+    }
+  ],
+  "gives": {
+    "research_effect": "fourtwenty:effects/arm_puff_plate",
+    "unlocks": "fourtwenty:puff_plate",
+    "crafter": "blacksmith",
+    "recipe": {
+      "fourtwenty:natural_hemp": 4,
+      "fourtwenty:rosin": 3,
+      "fourtwenty:stash_box": 1
+    }
+  },
+  "icon": "fourtwenty:puff_plate",
+  "needs": null
+}

@@ -1,0 +1,29 @@
+{
+  "branch": "glassworks",
+  "tier": 5,
+  "parents": [
+    "fourtwenty:gla_forge_bong"
+  ],
+  "kind": "unlock",
+  "supplies": [
+    {
+      "item": "minecraft:glass",
+      "count": 40
+    },
+    {
+      "item": "minecraft:amethyst_shard",
+      "count": 8
+    },
+    {
+      "item": "minecraft:book",
+      "count": 4
+    }
+  ],
+  "gives": {
+    "research_effect": "fourtwenty:effects/gla_sage_bong",
+    "unlocks": "fourtwenty:sage_bong",
+    "crafter": "glassblower"
+  },
+  "icon": "fourtwenty:sage_bong",
+  "needs": null
+}

@@ -1,0 +1,29 @@
+{
+  "branch": "glassworks",
+  "tier": 2,
+  "parents": [
+    "fourtwenty:gla_glassblowing"
+  ],
+  "kind": "unlock",
+  "supplies": [
+    {
+      "item": "minecraft:glass",
+      "count": 16
+    },
+    {
+      "item": "minecraft:golden_carrot",
+      "count": 4
+    },
+    {
+      "item": "minecraft:spyglass",
+      "count": 1
+    }
+  ],
+  "gives": {
+    "research_effect": "fourtwenty:effects/gla_owl_bong",
+    "unlocks": "fourtwenty:owl_bong",
+    "crafter": "glassblower"
+  },
+  "icon": "fourtwenty:owl_bong",
+  "needs": null
+}

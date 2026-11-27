@@ -1,0 +1,43 @@
+{
+  "branch": "chemistry",
+  "tier": 5,
+  "parents": [
+    "fourtwenty:chem_accord_myr_myr",
+    "fourtwenty:chem_accord_myr_lim",
+    "fourtwenty:chem_accord_myr_pin",
+    "fourtwenty:chem_accord_myr_lav",
+    "fourtwenty:chem_accord_lim_myr",
+    "fourtwenty:chem_accord_lim_lim",
+    "fourtwenty:chem_accord_lim_pin",
+    "fourtwenty:chem_accord_lim_lav",
+    "fourtwenty:chem_accord_pin_myr",
+    "fourtwenty:chem_accord_pin_lim",
+    "fourtwenty:chem_accord_pin_pin",
+    "fourtwenty:chem_accord_pin_lav",
+    "fourtwenty:chem_accord_lav_myr",
+    "fourtwenty:chem_accord_lav_lim",
+    "fourtwenty:chem_accord_lav_pin",
+    "fourtwenty:chem_accord_lav_lav"
+  ],
+  "kind": "effect",
+  "supplies": [
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 48
+    },
+    {
+      "item": "minecraft:glass_bottle",
+      "count": 12
+    },
+    {
+      "item": "fourtwenty:rosin",
+      "count": 4
+    }
+  ],
+  "gives": {
+    "effect": "terpinator_bi",
+    "strength": 0.25
+  },
+  "icon": "fourtwenty:terpinator",
+  "needs": null
+}

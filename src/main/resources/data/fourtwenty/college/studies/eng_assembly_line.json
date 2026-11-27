@@ -1,0 +1,28 @@
+{
+  "branch": "engineering",
+  "tier": 5,
+  "parents": [
+    "fourtwenty:eng_pressure_work"
+  ],
+  "kind": "effect",
+  "supplies": [
+    {
+      "item": "fourtwenty:glass_wick",
+      "count": 32
+    },
+    {
+      "item": "fourtwenty:rosin",
+      "count": 8
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 64
+    }
+  ],
+  "gives": {
+    "effect": "trim_cure_speed",
+    "strength": 1.5
+  },
+  "icon": "fourtwenty:bud_barber",
+  "needs": null
+}
