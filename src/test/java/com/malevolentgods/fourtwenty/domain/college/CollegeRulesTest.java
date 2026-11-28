@@ -67,7 +67,7 @@ class CollegeRulesTest {
     }
 
     @Test
-    void theQueueKeepsProgressAndRefusesToRemoveAStartedHead() {
+    void theQueueKeepsProgressAndRefusesToRemoveAHeadUnderWay() {
         var r = new ColonyResearch();
         assertTrue(r.enqueue("a"));
         assertTrue(r.enqueue("b"));
@@ -75,8 +75,19 @@ class CollegeRulesTest {
         assertTrue(r.remove("b"));
         assertTrue(r.enqueue("b"));
         r.start(List.of(new Study.Supply("fourtwenty:weed_bud", 8, null, false)));
-        assertFalse(r.remove("a"));
-        r.deliver(0, 5);
+        assertFalse(r.underWay());
+        assertTrue(r.remove("a"), "a head with a fixed cost but nothing in it can come off");
+        assertFalse(r.started(), "and its cost goes with it");
+        assertTrue(r.enqueue("a"));
+        assertEquals("b", r.head());
+        assertTrue(r.remove("b"));
+        assertTrue(r.enqueue("b"));
+        assertEquals("a", r.head());
+        r.start(List.of(new Study.Supply("fourtwenty:weed_bud", 8, null, false)));
+        r.deliver(0, 1);
+        assertTrue(r.underWay());
+        assertFalse(r.remove("a"), "once supplies are in, the head stays");
+        r.deliver(0, 4);
         assertEquals(3, r.missing().getFirst().count());
         r.deliver(0, 50);
         assertTrue(r.missing().isEmpty());

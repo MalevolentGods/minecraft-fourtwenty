@@ -43,7 +43,7 @@ public final class ColonyResearch {
 
     public int unitsWorked() { return unitsWorked; }
 
-    /** Whether the head has begun: it has a fixed cost, so removing it is refused. */
+    /** Whether the head has begun: its cost is fixed (it can still be removed until {@link #underWay()}). */
     public boolean started() { return cost != null; }
 
     /** Adds a study to the end of the queue; false if it's already queued or done. Availability is the board's to check. */
@@ -53,12 +53,28 @@ public final class ColonyResearch {
         return true;
     }
 
-    /** Removes a queued study; the head only before it has started. Returns whether it was removed. */
+    /**
+     * Removes a queued study. The head comes off only while it's untouched: no units done and nothing delivered, even if its cost has
+     * been fixed (contracts/board-actions.md), so a study queued by mistake can be taken back. Returns whether it was removed.
+     */
     public boolean remove(String study) {
         int at = queue.indexOf(study);
-        if (at < 0 || (at == 0 && started())) return false;
+        if (at < 0 || (at == 0 && underWay())) return false;
         queue.remove(at);
+        if (at == 0) {
+            cost = null;
+            delivered.clear();
+        }
         return true;
+    }
+
+    /** Whether the head has had work or supplies put into it, so it can no longer be taken off the queue. */
+    public boolean underWay() {
+        String head = head();
+        if (head == null) return false;
+        if (progress(head) > 0) return true;
+        for (int d : delivered) if (d > 0) return true;
+        return false;
     }
 
     /** Starts the head: fixes its cost (after the caught-colour discount) with nothing delivered yet. */

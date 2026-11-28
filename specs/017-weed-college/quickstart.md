@@ -20,7 +20,7 @@
 
 1. Open the Board tab. You should see six branches, a tier grid with lines from parents, and the tier-1 studies available. Higher tiers show "Needs a College of level N" and child studies name their parent.
 2. Queue three studies. They run in order. Remove the third, and it is back to available.
-3. Try removing the head after it has started: refused, with the reason given.
+3. Queue a study and take it straight off again before anything is delivered: it comes off, and its supply requests go. Once the Weedologist has carried supplies in, try removing the head: refused, with the reason given.
 4. Have a non-officer player try to queue: refused.
 
 ## M3: the tree and its effects

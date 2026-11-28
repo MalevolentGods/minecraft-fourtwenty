@@ -35,8 +35,15 @@ public final class CollegeResearch {
         return CollegeSavedData.get((ServerLevel) colony.getWorld()).colony(colony.getID());
     }
 
+    /** Saves the colony's research and refreshes every one of its Colleges' Board and Status tabs (each re-sends only if it changed). */
     public static void changed(IColony colony) {
         CollegeSavedData.get((ServerLevel) colony.getWorld()).setDirty();
+        for (var b : colony.getServerBuildingManager().getBuildings().values()) {
+            if (b instanceof CollegeBuilding college) {
+                college.getModule(CollegeRegistry.BOARD).refresh();
+                college.getModule(CollegeRegistry.STATUS).refresh();
+            }
+        }
     }
 
     /** The highest level among the colony's Weed Colleges (0 if it has none built). */
@@ -103,7 +110,16 @@ public final class CollegeResearch {
     public static String remove(IColony colony, String study) {
         ColonyResearch r = record(colony);
         if (!r.queue().contains(study)) return "college.fourtwenty.refused.not_queued";
+        boolean headStarted = study.equals(r.head()) && r.started();
         if (!r.remove(study)) return "college.fourtwenty.refused.started";
+        if (headStarted) {
+            // its supplies were asked for; nothing has come yet, so the asks are dropped (the next study makes its own)
+            for (var b : colony.getServerBuildingManager().getBuildings().values()) {
+                if (b instanceof CollegeBuilding college) {
+                    for (var citizen : college.getAllAssignedCitizen()) college.cancelAllRequestsOfCitizenOrBuilding(citizen);
+                }
+            }
+        }
         changed(colony);
         return null;
     }
@@ -139,8 +155,23 @@ public final class CollegeResearch {
         if (s != null) CollegeEffects.finished(colony, s);
     }
 
+    /**
+     * Tells the colony a study is done, as MineColonies announces a University study. An accord study is named for each player as they may
+     * see it (research R10): by its accord to those who've discovered it, as an undiscovered accord to the rest.
+     */
     private static void announce(IColony colony, String id) {
-        MessageUtils.format(Component.translatable("college.fourtwenty.finished", Component.translatable(nameKey(id)))).sendTo(colony).forAllPlayers();
+        Study s = CollegeStudies.board().get(id);
+        String accord = s == null ? null : s.accord();
+        if (accord == null) {
+            MessageUtils.format(Component.translatable("college.fourtwenty.finished", Component.translatable(nameKey(id)))).sendTo(colony).forAllPlayers();
+            return;
+        }
+        for (var player : colony.getMessagePlayerEntities()) {
+            Component name = com.malevolentgods.fourtwenty.terpene.TerpeneDiscovery.known(player).contains(accord)
+                    ? Component.translatable("college.fourtwenty.board.accord", Component.translatable("item.fourtwenty.terpene_" + accord))
+                    : Component.translatable("college.fourtwenty.board.accord_unknown");
+            MessageUtils.format(Component.translatable("college.fourtwenty.finished", name)).sendTo(player);
+        }
     }
 
     public static String nameKey(String id) {

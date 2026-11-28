@@ -49,12 +49,12 @@ description: "Tasks for spec 017, the Weed College"
 **Goal**: the board, with tree, locks, reasons, details and queue.
 **Independent test**: quickstart M2.
 
-- [ ] T021 [US2] `CollegeNetwork`: the `fourtwenty:college_board` payload (QUEUE/REMOVE), sent only with `hasChannel`; the server checks `MANAGE_HUTS`, the building and the rules (contracts/board-actions.md). In `…/compat/minecolonies/college/CollegeNetwork.java`
-- [ ] T022 [US2] `CollegeBoardModule.serializeToView`: level, queue, head (units, missing supplies, working), and per-study state, lock and cost, sent only when changed. In `…/compat/minecolonies/college/CollegeBoardModule.java`
-- [ ] T023 [US2] `CollegeBoardView` and `CollegeBoardWindow` with `college_board.xml`: branch buttons, tier grid, details pane (supplies, length, effect, lock reason, "for the Tie Dye Shack" on colour studies per FR-026b), queue with remove. In `…/compat/minecolonies/client/` and `src/main/resources/assets/fourtwenty/gui/`
-- [ ] T024 [US2] `StudyTreePane`: study buttons in tier columns with lines from parents, in `…/compat/minecolonies/client/StudyTreePane.java`
-- [ ] T025 [US2] Colour privacy (R10): names and swatches only for viewers who discovered them, in `CollegeBoardWindow` and `StudyTreePane`
-- [ ] T026 [US2] Game test: queue/remove rules and the permission check, in `src/gametest/java/…/college/CollegeBoardGameTest.java`
+- [X] T021 [US2] `CollegeNetwork`: the `fourtwenty:college_board` payload (QUEUE/REMOVE), sent only with `hasChannel`; the server checks `MANAGE_HUTS`, the building and the rules (contracts/board-actions.md). In `…/compat/minecolonies/college/CollegeNetwork.java`
+- [X] T022 [US2] `CollegeBoardModule.serializeToView`: level, queue, head (units, missing supplies, working), and per-study state, lock and cost, sent only when changed. In `…/compat/minecolonies/college/CollegeBoardModule.java`
+- [X] T023 [US2] `CollegeBoardView` and `CollegeBoardWindow` with `college_board.xml`: branch buttons, tier grid, details pane (supplies, length, effect, lock reason, "for the Tie Dye Shack" on colour studies per FR-026b), queue with remove. In `…/compat/minecolonies/client/` and `src/main/resources/assets/fourtwenty/gui/`
+- [X] T024 [US2] `StudyTreePane`: study buttons in tier columns with lines from parents, in `…/compat/minecolonies/client/StudyTreePane.java`
+- [X] T025 [US2] Colour privacy (R10): names and swatches only for viewers who discovered them, in `CollegeBoardWindow` and `StudyTreePane`
+- [X] T026 [US2] Game test: queue/remove rules and the permission check, in `src/colonytest/java/…/colonytest/CollegeGameTests.java` (`theBoardChecksWhoAndWhat`: it needs a real colony, so it sits with the other College colony tests)
 - [ ] T027 [US2] In game: quickstart M2. Report and commit (M2).
 
 ## Phase 5: User Story 3 (P2), the whole tree and its effects (M3)

@@ -34,6 +34,7 @@ public final class ColonyIntegration {
         container.registerConfig(ModConfig.Type.SERVER, com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeConfig.SPEC, "fourtwenty-college-server.toml");
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeStudies::register);
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeCommands::register);
+        com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeNetwork.register(bus);
         com.malevolentgods.fourtwenty.util.SmokeEvents.smokedListener =
                 com.malevolentgods.fourtwenty.compat.minecolonies.service.Exposure::secondhand;
         com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.burningListener =
@@ -102,8 +103,11 @@ public final class ColonyIntegration {
                 for (var building : colony.getServerBuildingManager().getBuildings().values()) {
                     if (building instanceof DispensaryBuilding hut) hut.getModule(DispensaryRegistry.STATUS).refresh();
                     else if (building instanceof com.malevolentgods.fourtwenty.compat.minecolonies.building.BudBarnBuilding barn) barn.getModule(BudBarnRegistry.STATUS).refresh();
-                    else if (building instanceof com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeBuilding college)
+                    else if (building instanceof com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeBuilding college) {
                         college.getModule(com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeRegistry.STATUS).refresh();
+                        // the level, the members' colours and the features can change without the research changing
+                        college.getModule(com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeRegistry.BOARD).refresh();
+                    }
                 }
             }
         }

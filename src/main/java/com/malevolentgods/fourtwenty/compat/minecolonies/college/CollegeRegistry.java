@@ -39,6 +39,7 @@ public final class CollegeRegistry {
             .setJobViewProducer(() -> DefaultJobView::new).createJobEntry());
     // Assigned by the building registry callback, before any building or view can be created (see DispensaryRegistry).
     public static BuildingEntry.ModuleProducer<WorkerBuildingModule, WorkerBuildingModuleView> WORK;
+    public static BuildingEntry.ModuleProducer<CollegeBoardModule, com.malevolentgods.fourtwenty.compat.minecolonies.client.CollegeBoardView> BOARD;
     public static BuildingEntry.ModuleProducer<CollegeStatusModule, com.malevolentgods.fourtwenty.compat.minecolonies.client.CollegeStatusView> STATUS;
     public static final DeferredHolder<BuildingEntry, BuildingEntry> BUILDING = BUILDINGS.register(CollegeBlock.NAME, CollegeRegistry::createBuildingEntry);
 
@@ -46,12 +47,14 @@ public final class CollegeRegistry {
         WORK = new BuildingEntry.ModuleProducer<>("fourtwenty:weedologist_work",
                 () -> new WorkerBuildingModule(JOB.get(), Skill.Intelligence, Skill.Focus, false, building -> StudyRules.workers(building.getBuildingLevel())),
                 () -> WorkerBuildingModuleView::new);
+        BOARD = new BuildingEntry.ModuleProducer<>("fourtwenty:weedcollege_board", CollegeBoardModule::new,
+                () -> com.malevolentgods.fourtwenty.compat.minecolonies.client.CollegeBoardView::new);
         STATUS = new BuildingEntry.ModuleProducer<>("fourtwenty:weedcollege_status", CollegeStatusModule::new,
                 () -> com.malevolentgods.fourtwenty.compat.minecolonies.client.CollegeStatusView::new);
         return new BuildingEntry.Builder()
                 .setRegistryName(ResourceLocation.parse(BUILDING_ID)).setBuildingBlock(HUT.get())
                 .setBuildingProducer(CollegeBuilding::new).setBuildingViewProducer(() -> EmptyView::new)
-                .addBuildingModuleProducer(WORK).addBuildingModuleProducer(STATUS)
+                .addBuildingModuleProducer(WORK).addBuildingModuleProducer(BOARD).addBuildingModuleProducer(STATUS)
                 .addBuildingModuleProducer(BuildingModules.STATS_MODULE).createBuildingEntry();
     }
 

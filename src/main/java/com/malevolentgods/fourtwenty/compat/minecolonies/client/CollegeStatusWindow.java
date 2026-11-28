@@ -23,7 +23,7 @@ public final class CollegeStatusWindow extends AbstractModuleWindow<CollegeStatu
         set("worker", s.workers().isEmpty() ? Component.translatable("college.fourtwenty.status.no_worker")
                 : Component.translatable("college.fourtwenty.status.workers", s.workers()));
         set("study", s.study().isEmpty() ? Component.translatable("college.fourtwenty.status.no_study")
-                : Component.translatable("college.fourtwenty.status.study", Component.translatable(name(s.study()))));
+                : Component.translatable("college.fourtwenty.status.study", name(s.study())));
         set("progress", s.study().isEmpty() ? Component.empty()
                 : s.minutesLeft() >= 0 ? Component.translatable("college.fourtwenty.status.progress_eta", s.units(), s.total(), s.minutesLeft())
                 : Component.translatable("college.fourtwenty.status.progress", s.units(), s.total()));
@@ -40,15 +40,19 @@ public final class CollegeStatusWindow extends AbstractModuleWindow<CollegeStatu
     }
 
     /** A lock's argument as the player should read it: a study's name, or the raw value (a level, a feature). */
-    private static Component argument(String reason, String arg) {
+    private Component argument(String reason, String arg) {
         if (arg.isEmpty()) return Component.empty();
-        if (reason.endsWith(".parent")) return Component.translatable(name(arg));
+        if (reason.endsWith(".parent")) return name(arg);
         if (reason.endsWith(".feature")) return Component.translatable("college.fourtwenty.feature." + arg);
         if (reason.endsWith(".branch")) return Component.translatable("college.fourtwenty.branch." + arg);
         return Component.literal(arg);
     }
 
-    private static String name(String id) { return "college.fourtwenty.study." + id.substring(id.indexOf(':') + 1); }
+    /** A study's name as this player may see it: the Board tab's naming, which keeps undiscovered accords unnamed (research R10). */
+    private Component name(String id) {
+        CollegeBoardView board = moduleView.getBuildingView().getModuleViewByType(CollegeBoardView.class);
+        return board == null ? Component.translatable(CollegeClient.nameKey(id)) : CollegeClient.name(board.board, id);
+    }
 
     private void set(String id, Component text) { findPaneOfTypeByID(id, Text.class).setText(text); }
 }

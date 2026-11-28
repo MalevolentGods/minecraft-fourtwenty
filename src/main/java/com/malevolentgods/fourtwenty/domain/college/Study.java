@@ -56,4 +56,18 @@ public record Study(String id, Branch branch, int tier, List<String> parents, Ki
 
     /** The study's length in work units, the University's: 72 at tier 1, doubling each tier. */
     public int units() { return StudyRules.units(tier); }
+
+    /** The accord this study teaches ("myr_lim"), or null when it isn't an accord study. */
+    public String accord() { return accordOf(kind, icon); }
+
+    /**
+     * The accord a colour study teaches, read from its icon (the accord's terpene, "fourtwenty:terpene_myr_lim"), or null. An accord
+     * study is named for a player only once they've discovered the accord (research R10).
+     */
+    public static String accordOf(Kind kind, String icon) {
+        String prefix = "fourtwenty:terpene_";
+        if (kind != Kind.COLOURS || icon == null || !icon.startsWith(prefix)) return null;
+        String code = icon.substring(prefix.length());
+        return code.startsWith("mc_") ? null : code;
+    }
 }

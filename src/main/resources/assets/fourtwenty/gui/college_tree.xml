@@ -1,0 +1,8 @@
+<window size="400 244">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_wide.png" size="400 244"/>
+    <text id="title" size="230 12" pos="20 11" color="black"/>
+    <zoomdragview id="tree" size="232 206" pos="20 26"/>
+    <scrollgroup id="details" size="122 184" pos="258 26"/>
+    <button id="act" size="118 17" pos="258 214" textcolor="black" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
+    <button id="cancel" size="14 15" pos="364 9" source="minecolonies:textures/gui/button_x.png" color="black"/>
+</window>
