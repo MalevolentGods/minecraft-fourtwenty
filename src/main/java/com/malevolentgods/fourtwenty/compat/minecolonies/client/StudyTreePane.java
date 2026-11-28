@@ -37,7 +37,7 @@ final class StudyTreePane {
     /** Rebuilds {@code tree} with {@code branch}'s studies, keeping where the player had scrolled and zoomed. */
     static void build(ZoomDragView tree, CollegeBoardModule.Board board, Study.Branch branch, String selected) {
         double scrollX = tree.getScrollX(), scrollY = tree.getScrollY(), scale = tree.getScale();
-        for (Pane child : new ArrayList<>(tree.getChildren())) tree.removeChild(child);
+        clear(tree);
 
         // columns by tier
         TreeMap<Integer, List<CollegeBoardModule.Entry>> columns = new TreeMap<>();
@@ -144,6 +144,18 @@ final class StudyTreePane {
         tree.setScaleRaw(scale);
         tree.setScrollX(scrollX);
         tree.setScrollY(scrollY);
+    }
+
+    /**
+     * Removes every child of {@code view}, and their tooltips with them: BlockUI parents a tooltip to the window, not to its pane, so
+     * one left behind by a removed button stays on screen if it was showing.
+     */
+    static void clear(com.ldtteam.blockui.views.View view) {
+        for (Pane child : new ArrayList<>(view.getChildren())) {
+            Pane tip = child.getHoverPane();
+            if (tip != null && tip.getParent() != null) tip.getParent().removeChild(tip);
+            view.removeChild(child);
+        }
     }
 
     /** Flat coloured rectangles: the tree's lines, frames and rules. Draws nothing it is not told to; never takes a click. */

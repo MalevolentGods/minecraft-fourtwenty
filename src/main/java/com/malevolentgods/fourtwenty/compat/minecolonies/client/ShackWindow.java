@@ -182,7 +182,7 @@ public final class ShackWindow extends AbstractModuleWindow<ShackView> {
         @Override public void drawSelf(com.ldtteam.blockui.BOGuiGraphics target, double mx, double my) { target.renderItem(stack, x, y); }
     }
 
-    private static void clear(View view) { for (Pane p : new ArrayList<>(view.getChildren())) view.removeChild(p); }
+    private static void clear(View view) { StudyTreePane.clear(view); }
 
     private void set(String id, Component text) { findPaneOfTypeByID(id, Text.class).setText(text); }
 }

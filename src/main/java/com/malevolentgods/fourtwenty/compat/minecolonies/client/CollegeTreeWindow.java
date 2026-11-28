@@ -96,7 +96,7 @@ public final class CollegeTreeWindow extends AbstractWindowSkeleton {
         ScrollingGroup group = findPaneOfTypeByID("details", ScrollingGroup.class);
         View box = group.getContainer();
         double scroll = group.getScrollY();
-        for (Pane child : new ArrayList<>(box.getChildren())) box.removeChild(child);
+        StudyTreePane.clear(box);
         Button act = findPaneOfTypeByID("act", Button.class);
         int y = 0;
         if (e == null) {
