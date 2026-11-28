@@ -1,0 +1,24 @@
+{
+  "type": "recipe",
+  "crafter": "blacksmith_crafting",
+  "inputs": [
+    {
+      "id": "fourtwenty:natural_hemp",
+      "count": 4
+    },
+    {
+      "id": "fourtwenty:rosin",
+      "count": 3
+    },
+    {
+      "id": "fourtwenty:stash_box"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 3,
+  "research-id": "fourtwenty:effects/arm_puff_plate",
+  "result": {
+    "id": "fourtwenty:puff_plate"
+  },
+  "show-tooltip": true
+}

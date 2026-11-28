@@ -100,7 +100,8 @@ public class PhenoBlockEntity extends BIBlockEntity implements WorldlyContainer,
 
     private int grade() { return settling() != null ? settling().strain().grade() : Crosses.grade(first(), second()); }
 
-    private int ticks() { return ProcessingConfig.crossTicks(grade()); }
+    /** Its work time, faster in a colony that has studied it (Pressure Work; specs/017-weed-college research R7). */
+    private int ticks() { return com.malevolentgods.fourtwenty.power.ColonyFactor.ticks(level, worldPosition, com.malevolentgods.fourtwenty.domain.college.ColonyEffects.Effect.PRESS_SPEED, ProcessingConfig.crossTicks(grade())); }
 
     private boolean strongEnough() { return Crosses.chamber(grade()).ordinal() <= block.tier().ordinal(); }
 

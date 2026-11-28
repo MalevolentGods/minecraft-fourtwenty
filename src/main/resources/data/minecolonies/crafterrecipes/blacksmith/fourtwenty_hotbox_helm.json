@@ -1,0 +1,20 @@
+{
+  "type": "recipe",
+  "crafter": "blacksmith_crafting",
+  "inputs": [
+    {
+      "id": "fourtwenty:natural_hemp",
+      "count": 4
+    },
+    {
+      "id": "fourtwenty:stash_jar"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 3,
+  "research-id": "fourtwenty:effects/arm_hotbox_helm",
+  "result": {
+    "id": "fourtwenty:hotbox_helm"
+  },
+  "show-tooltip": true
+}

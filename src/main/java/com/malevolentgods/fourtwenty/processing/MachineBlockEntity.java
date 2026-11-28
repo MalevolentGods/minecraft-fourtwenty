@@ -88,13 +88,17 @@ public class MachineBlockEntity extends BIBlockEntity implements WorldlyContaine
     /** For tests: 1 while overloaded. */
     public int createDataForTest() { return data.get(DATA_OVERLOADED); }
 
+    /** For tests: the work time of one job here, as its screen shows it. */
+    public int workTicksForTest() { return data.get(DATA_TOTAL); }
+
     private boolean trims() { return block.job() == MachineBlock.Job.TRIM; }
 
     private CureRules.Tier cure() { return ProcessingConfig.cure(block.index()); }
 
     private TrimRules.Tier trim() { return ProcessingConfig.trim(block.index()); }
 
-    private int ticks() { return trims() ? trim().ticks() : cure().ticks(); }
+    /** Its work time, faster in a colony that has studied it (Bench Habits, Assembly Line; specs/017-weed-college research R7). */
+    private int ticks() { return com.malevolentgods.fourtwenty.power.ColonyFactor.ticks(level, worldPosition, com.malevolentgods.fourtwenty.domain.college.ColonyEffects.Effect.TRIM_CURE_SPEED, trims() ? trim().ticks() : cure().ticks()); }
 
     private double cost() { return trims() ? trim().cost() : cure().cost(); }
 

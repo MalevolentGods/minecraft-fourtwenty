@@ -1,0 +1,31 @@
+{
+  "branch": "botany",
+  "tier": 2,
+  "parents": [
+    "fourtwenty:bot_soil_science"
+  ],
+  "kind": "strains",
+  "supplies": [
+    {
+      "item": "fourtwenty:weed_seeds",
+      "count": 8,
+      "strain": "landrace"
+    },
+    {
+      "item": "minecraft:snow_block",
+      "count": 4
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 8
+    }
+  ],
+  "gives": {
+    "strains": [
+      "snowblind"
+    ],
+    "seeds_each": 4
+  },
+  "icon": "fourtwenty:weed_seeds",
+  "needs": null
+}

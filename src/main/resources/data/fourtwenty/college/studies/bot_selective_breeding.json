@@ -1,0 +1,24 @@
+{
+  "branch": "botany",
+  "tier": 3,
+  "parents": [
+    "fourtwenty:bot_soil_science"
+  ],
+  "kind": "effect",
+  "supplies": [
+    {
+      "item": "minecraft:bone_meal",
+      "count": 32
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 32
+    }
+  ],
+  "gives": {
+    "effect": "farm_bonus_bud",
+    "strength": 0.5
+  },
+  "icon": "minecraft:bone_meal",
+  "needs": null
+}

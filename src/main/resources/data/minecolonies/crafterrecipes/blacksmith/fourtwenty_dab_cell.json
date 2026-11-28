@@ -1,0 +1,23 @@
+{
+  "type": "recipe",
+  "crafter": "blacksmith_crafting",
+  "inputs": [
+    {
+      "id": "fourtwenty:hemp_wick"
+    },
+    {
+      "id": "fourtwenty:resin",
+      "count": 3
+    },
+    {
+      "id": "fourtwenty:stash_jar"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 3,
+  "research-id": "fourtwenty:effects/arm_dab_cell",
+  "result": {
+    "id": "fourtwenty:dab_cell"
+  },
+  "show-tooltip": true
+}

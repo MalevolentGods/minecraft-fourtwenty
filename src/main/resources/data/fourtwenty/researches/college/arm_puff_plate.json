@@ -1,0 +1,13 @@
+{
+  "branch": "fourtwenty:college",
+  "name": "college.fourtwenty.effect.arm_puff_plate",
+  "effects": [
+    {
+      "id": "fourtwenty:effects/arm_puff_plate",
+      "level": 1
+    }
+  ],
+  "hidden": true,
+  "icon": "fourtwenty:puff_plate",
+  "researchLevel": 1
+}

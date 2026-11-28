@@ -1,0 +1,28 @@
+{
+  "branch": "engineering",
+  "tier": 6,
+  "parents": [
+    "fourtwenty:eng_assembly_line"
+  ],
+  "kind": "effect",
+  "supplies": [
+    {
+      "item": "fourtwenty:glass_wick",
+      "count": 64
+    },
+    {
+      "item": "fourtwenty:oil",
+      "count": 8
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 64
+    }
+  ],
+  "gives": {
+    "effect": "hookah_burn",
+    "strength": 2.0
+  },
+  "icon": "fourtwenty:big_bertha",
+  "needs": null
+}

@@ -4,6 +4,17 @@ All notable changes to the FourTwenty mod will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **The Weed College** (with MineColonies; ships with the Tie Dye Shack): a hut whose Weedologist works through 63 studies of its own in six branches, separate from the University's research. Queue them on the hut's Studies tab (owner and officers), with a draggable tree per branch showing what each gives, costs and is waiting for. The Weedologist fetches the supplies, grows and harvests at the College's plots, works the Think Tank and writes up at the desk.
+  - **Chemistry:** colours for the colony's dyers, and Terpinators on half, a quarter, then no BI (never faster).
+  - **Botany:** new strains' seeds straight into the warehouse, and an extra bud on the colony farmers' weed harvests.
+  - **Engineering:** faster trimmers, curers, Rosin Rigs and Pheno Chambers, longer Hookah burns, bigger Stashes, cheaper Grow Ops, for machines inside the colony.
+  - **Glassworks** and **Armory:** the Glassblower learns the bongs; the Blacksmith learns the Dab Cell, the Kush Suit and the Blazer.
+  - **Textiles:** patterns for the Tie Dye Shack.
+  - Five levels in the Sensi Heights style (v122), up to two Weedologists, and a hut block with a greenhouse on its roof.
+  - Researching a colour never teaches a player; a colour the owner or an officer has caught makes its study cheaper. Undiscovered accords stay unnamed on the board.
+  - A Handbook page in the colony chapter.
+
 ### Changed
 - **Length trait rescaled:** Length 1 is now plain (x1), then x1.5, x2, x2.5 and x3 for ratings 2 to 5. Landrace and the strains infused from it start at Length 1, so no strain's high is ever shorter than its base time. Seeds already bred with ratings keep their numbers, and so run longer than before.
 - **The Handbook** explains how weed works end to end: "How Weed Works, Start to Finish", "Traits", and "How a High Works" (base lengths per grade, Length, potency, extracts), plus glossary entries.

@@ -1,0 +1,13 @@
+{
+  "branch": "fourtwenty:college",
+  "name": "college.fourtwenty.effect.arm_moon_boots",
+  "effects": [
+    {
+      "id": "fourtwenty:effects/arm_moon_boots",
+      "level": 1
+    }
+  ],
+  "hidden": true,
+  "icon": "fourtwenty:moon_boots",
+  "researchLevel": 1
+}

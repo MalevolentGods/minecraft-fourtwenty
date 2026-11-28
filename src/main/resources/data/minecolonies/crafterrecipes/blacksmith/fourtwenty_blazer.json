@@ -1,0 +1,23 @@
+{
+  "type": "recipe",
+  "crafter": "blacksmith_crafting",
+  "inputs": [
+    {
+      "id": "fourtwenty:oil"
+    },
+    {
+      "id": "fourtwenty:glass_wick",
+      "count": 3
+    },
+    {
+      "id": "fourtwenty:stash_box"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 3,
+  "research-id": "fourtwenty:effects/arm_blazer",
+  "result": {
+    "id": "fourtwenty:blazer"
+  },
+  "show-tooltip": true
+}

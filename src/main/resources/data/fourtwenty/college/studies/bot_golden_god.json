@@ -1,0 +1,42 @@
+{
+  "branch": "botany",
+  "tier": 6,
+  "parents": [
+    "fourtwenty:bot_ultras",
+    "fourtwenty:bot_master_grower"
+  ],
+  "kind": "strains",
+  "supplies": [
+    {
+      "item": "fourtwenty:weed_seeds",
+      "count": 1,
+      "strain": "cosmic_couch"
+    },
+    {
+      "item": "fourtwenty:weed_seeds",
+      "count": 1,
+      "strain": "storm_shepherd"
+    },
+    {
+      "item": "fourtwenty:weed_seeds",
+      "count": 1,
+      "strain": "the_elder_bud"
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 64
+    },
+    {
+      "item": "minecraft:gold_block",
+      "count": 2
+    }
+  ],
+  "gives": {
+    "strains": [
+      "golden_god"
+    ],
+    "seeds_each": 2
+  },
+  "icon": "fourtwenty:weed_seeds",
+  "needs": null
+}

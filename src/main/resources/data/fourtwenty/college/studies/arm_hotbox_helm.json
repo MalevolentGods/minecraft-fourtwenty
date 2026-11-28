@@ -1,0 +1,33 @@
+{
+  "branch": "armory",
+  "tier": 2,
+  "parents": [
+    "fourtwenty:arm_dab_cell"
+  ],
+  "kind": "unlock",
+  "supplies": [
+    {
+      "item": "fourtwenty:natural_hemp",
+      "count": 8
+    },
+    {
+      "item": "fourtwenty:stash_jar",
+      "count": 2
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 32
+    }
+  ],
+  "gives": {
+    "research_effect": "fourtwenty:effects/arm_hotbox_helm",
+    "unlocks": "fourtwenty:hotbox_helm",
+    "crafter": "blacksmith",
+    "recipe": {
+      "fourtwenty:natural_hemp": 4,
+      "fourtwenty:stash_jar": 1
+    }
+  },
+  "icon": "fourtwenty:hotbox_helm",
+  "needs": null
+}

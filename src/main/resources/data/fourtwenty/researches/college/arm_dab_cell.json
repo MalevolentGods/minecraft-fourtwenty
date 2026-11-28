@@ -1,0 +1,13 @@
+{
+  "branch": "fourtwenty:college",
+  "name": "college.fourtwenty.effect.arm_dab_cell",
+  "effects": [
+    {
+      "id": "fourtwenty:effects/arm_dab_cell",
+      "level": 1
+    }
+  ],
+  "hidden": true,
+  "icon": "fourtwenty:dab_cell",
+  "researchLevel": 1
+}

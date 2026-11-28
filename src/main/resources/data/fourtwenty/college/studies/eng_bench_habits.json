@@ -1,0 +1,22 @@
+{
+  "branch": "engineering",
+  "tier": 1,
+  "parents": [],
+  "kind": "effect",
+  "supplies": [
+    {
+      "item": "fourtwenty:hemp_wick",
+      "count": 8
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 16
+    }
+  ],
+  "gives": {
+    "effect": "trim_cure_speed",
+    "strength": 1.25
+  },
+  "icon": "fourtwenty:snip_station",
+  "needs": null
+}

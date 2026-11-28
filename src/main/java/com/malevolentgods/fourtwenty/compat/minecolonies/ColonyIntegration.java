@@ -29,6 +29,20 @@ public final class ColonyIntegration {
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.builder.LiftedFlight::join);
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.service.PlayerSales::interact);
         NeoForge.EVENT_BUS.addListener(DispensaryCommands::register);
+        // The Weed College (specs/017-weed-college)
+        com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeRegistry.register(bus);
+        container.registerConfig(ModConfig.Type.SERVER, com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeConfig.SPEC, "fourtwenty-college-server.toml");
+        NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeStudies::register);
+        NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeCommands::register);
+        com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeNetwork.register(bus);
+        com.malevolentgods.fourtwenty.registry.FarmYieldModifier.bonusChance =
+                com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeEffects::farmBonusChance;
+        com.malevolentgods.fourtwenty.power.ColonyFactor.lookup = com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeResearch::factor;
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.server.ServerStoppedEvent event) ->
+                com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeResearch.forgetEffects());
+        com.malevolentgods.fourtwenty.infuser.Infuser.caughtListener =
+                com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeResearch::memberColours;
+        NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeResearch::login);
         com.malevolentgods.fourtwenty.util.SmokeEvents.smokedListener =
                 com.malevolentgods.fourtwenty.compat.minecolonies.service.Exposure::secondhand;
         com.malevolentgods.fourtwenty.blockentity.WeedBongBlockEntity.burningListener =
@@ -38,6 +52,7 @@ public final class ColonyIntegration {
                         com.minecolonies.api.eventbus.events.colony.ColonyDeletedModEvent.class, deleted -> {
                             if (deleted.getColony().getWorld() instanceof ServerLevel level) {
                                 DispensarySavedData.get(level).removeColony(deleted.getColony().getID());
+                                com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeSavedData.get(level).removeColony(deleted.getColony().getID());
                             }
                         })));
         bus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) -> event.enqueueWork(() -> {
@@ -45,6 +60,7 @@ public final class ColonyIntegration {
             var voices = com.minecolonies.api.sounds.ModSoundEvents.CITIZEN_SOUND_EVENTS;
             voices.putIfAbsent("budtender", java.util.Map.copyOf(java.util.Objects.requireNonNull(voices.get("unemployed"))));
             voices.putIfAbsent("trimdaddy", java.util.Map.copyOf(java.util.Objects.requireNonNull(voices.get("unemployed"))));
+            voices.putIfAbsent("weedologist", java.util.Map.copyOf(java.util.Objects.requireNonNull(voices.get("unemployed"))));
         }));
         // Builders pay a craftable substitute for froglights and the architect's cutter; see BuilderCostSubstitutions.
         bus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) -> event.enqueueWork(() -> {
@@ -82,6 +98,8 @@ public final class ColonyIntegration {
         var data = DispensarySavedData.get(level);
         data.advance();
         for (var colony : IColonyManager.getInstance().getColonies(level)) {
+            // before MineColonies' own colony tick checks crafter recipes against them (research R6)
+            com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeEffects.keepApplied(colony);
             for (var citizen : colony.getCitizenManager().getCitizens()) {
                 data.updateAffinity(colony.getID(), citizen.getUUID(),
                         affinity -> com.malevolentgods.fourtwenty.compat.minecolonies.domain.AffinityRules.tick(affinity, data.time()));
@@ -95,6 +113,11 @@ public final class ColonyIntegration {
                 for (var building : colony.getServerBuildingManager().getBuildings().values()) {
                     if (building instanceof DispensaryBuilding hut) hut.getModule(DispensaryRegistry.STATUS).refresh();
                     else if (building instanceof com.malevolentgods.fourtwenty.compat.minecolonies.building.BudBarnBuilding barn) barn.getModule(BudBarnRegistry.STATUS).refresh();
+                    else if (building instanceof com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeBuilding college) {
+                        college.getModule(com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeRegistry.STATUS).refresh();
+                        // the level, the members' colours and the features can change without the research changing
+                        college.getModule(com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeRegistry.BOARD).refresh();
+                    }
                 }
             }
         }

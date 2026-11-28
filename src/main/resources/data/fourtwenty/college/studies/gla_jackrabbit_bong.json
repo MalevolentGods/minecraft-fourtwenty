@@ -1,0 +1,29 @@
+{
+  "branch": "glassworks",
+  "tier": 2,
+  "parents": [
+    "fourtwenty:gla_glassblowing"
+  ],
+  "kind": "unlock",
+  "supplies": [
+    {
+      "item": "minecraft:glass",
+      "count": 16
+    },
+    {
+      "item": "minecraft:rabbit_foot",
+      "count": 2
+    },
+    {
+      "item": "minecraft:sugar",
+      "count": 4
+    }
+  ],
+  "gives": {
+    "research_effect": "fourtwenty:effects/gla_jackrabbit_bong",
+    "unlocks": "fourtwenty:jackrabbit_bong",
+    "crafter": "glassblower"
+  },
+  "icon": "fourtwenty:jackrabbit_bong",
+  "needs": null
+}

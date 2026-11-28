@@ -1,0 +1,19 @@
+<window size="190 244">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <text size="160 14" pos="15 12" textalign="MIDDLE" color="black" label="$(college.fourtwenty.board.title)"/>
+    <text id="level" size="160 12" pos="15 28" textalign="MIDDLE" color="#49352b"/>
+    <button id="branch_botany" size="129 17" pos="30 42" textcolor="black" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
+    <button id="branch_chemistry" size="129 17" pos="30 61" textcolor="black" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
+    <button id="branch_engineering" size="129 17" pos="30 80" textcolor="black" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
+    <button id="branch_glassworks" size="129 17" pos="30 99" textcolor="black" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
+    <button id="branch_textiles" size="129 17" pos="30 118" textcolor="black" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
+    <button id="branch_armory" size="129 17" pos="30 137" textcolor="black" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
+    <text size="160 12" pos="15 160" color="black" label="$(college.fourtwenty.board.queue)"/>
+    <text id="empty" size="160 24" pos="15 174" color="#49352b" wrap="true" label="$(college.fourtwenty.board.queue_empty)"/>
+    <list id="queue" size="164 58" pos="15 174">
+        <view size="154 14">
+            <text id="name" size="138 12" pos="0 2" color="black"/>
+            <button id="remove" size="10 10" pos="140 1" source="minecolonies:textures/gui/button_x.png"/>
+        </view>
+    </list>
+</window>

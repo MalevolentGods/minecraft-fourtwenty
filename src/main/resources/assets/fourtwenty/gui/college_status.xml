@@ -1,0 +1,10 @@
+<window size="190 244">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <text size="160 14" pos="15 12" textalign="MIDDLE" color="black" label="$(college.fourtwenty.status.title)"/>
+    <text id="level" size="160 12" pos="15 32" color="black"/>
+    <text id="worker" size="160 26" pos="15 46" color="black" wrap="true"/>
+    <text id="study" size="160 26" pos="15 74" color="black" wrap="true"/>
+    <text id="progress" size="160 12" pos="15 102" color="black"/>
+    <text id="state" size="160 90" pos="15 118" color="#49352b" wrap="true"/>
+    <text id="made" size="160 26" pos="15 210" color="black" wrap="true"/>
+</window>

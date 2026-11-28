@@ -1,0 +1,13 @@
+{
+  "branch": "fourtwenty:college",
+  "name": "college.fourtwenty.effect.arm_blazer",
+  "effects": [
+    {
+      "id": "fourtwenty:effects/arm_blazer",
+      "level": 1
+    }
+  ],
+  "hidden": true,
+  "icon": "fourtwenty:blazer",
+  "researchLevel": 1
+}

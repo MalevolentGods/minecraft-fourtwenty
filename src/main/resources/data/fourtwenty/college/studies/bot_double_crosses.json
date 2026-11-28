@@ -1,0 +1,39 @@
+{
+  "branch": "botany",
+  "tier": 4,
+  "parents": [
+    "fourtwenty:bot_crosses",
+    "fourtwenty:bot_dust_devil",
+    "fourtwenty:bot_snowblind",
+    "fourtwenty:bot_bog_butter",
+    "fourtwenty:bot_canopy_creeper"
+  ],
+  "kind": "strains",
+  "supplies": [
+    {
+      "item": "fourtwenty:weed_seeds",
+      "count": 12
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 48
+    },
+    {
+      "item": "minecraft:bone_meal",
+      "count": 16
+    }
+  ],
+  "gives": {
+    "strains": [
+      "hurricane_haze",
+      "sledgehammer_serenade",
+      "caffeine_comet",
+      "old_growth",
+      "oracle_of_snacks",
+      "polar_vortex"
+    ],
+    "seeds_each": 2
+  },
+  "icon": "fourtwenty:weed_seeds",
+  "needs": null
+}

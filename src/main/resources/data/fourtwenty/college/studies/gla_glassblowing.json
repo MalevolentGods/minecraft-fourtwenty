@@ -1,0 +1,27 @@
+{
+  "branch": "glassworks",
+  "tier": 1,
+  "parents": [],
+  "kind": "unlock",
+  "supplies": [
+    {
+      "item": "minecraft:glass",
+      "count": 8
+    },
+    {
+      "item": "minecraft:glass",
+      "count": 16
+    },
+    {
+      "item": "minecraft:water_bucket",
+      "count": 1
+    }
+  ],
+  "gives": {
+    "research_effect": "fourtwenty:effects/gla_glassblowing",
+    "unlocks": "fourtwenty:glass_bong",
+    "crafter": "glassblower"
+  },
+  "icon": "fourtwenty:glass_bong",
+  "needs": null
+}

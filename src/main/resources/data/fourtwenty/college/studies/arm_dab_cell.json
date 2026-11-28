@@ -1,0 +1,36 @@
+{
+  "branch": "armory",
+  "tier": 1,
+  "parents": [],
+  "kind": "unlock",
+  "supplies": [
+    {
+      "item": "fourtwenty:hemp_wick",
+      "count": 2
+    },
+    {
+      "item": "fourtwenty:resin",
+      "count": 6
+    },
+    {
+      "item": "fourtwenty:stash_jar",
+      "count": 2
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 16
+    }
+  ],
+  "gives": {
+    "research_effect": "fourtwenty:effects/arm_dab_cell",
+    "unlocks": "fourtwenty:dab_cell",
+    "crafter": "blacksmith",
+    "recipe": {
+      "fourtwenty:hemp_wick": 1,
+      "fourtwenty:resin": 3,
+      "fourtwenty:stash_jar": 1
+    }
+  },
+  "icon": "fourtwenty:dab_cell",
+  "needs": null
+}

@@ -1,0 +1,29 @@
+{
+  "branch": "glassworks",
+  "tier": 4,
+  "parents": [
+    "fourtwenty:gla_deep_sea_bong"
+  ],
+  "kind": "unlock",
+  "supplies": [
+    {
+      "item": "minecraft:glass",
+      "count": 32
+    },
+    {
+      "item": "minecraft:blaze_rod",
+      "count": 2
+    },
+    {
+      "item": "minecraft:magma_cream",
+      "count": 4
+    }
+  ],
+  "gives": {
+    "research_effect": "fourtwenty:effects/gla_forge_bong",
+    "unlocks": "fourtwenty:forge_bong",
+    "crafter": "glassblower"
+  },
+  "icon": "fourtwenty:forge_bong",
+  "needs": null
+}

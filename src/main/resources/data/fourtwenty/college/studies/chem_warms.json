@@ -1,0 +1,32 @@
+{
+  "branch": "chemistry",
+  "tier": 1,
+  "parents": [],
+  "kind": "colours",
+  "supplies": [
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 8,
+      "per_colour": true
+    },
+    {
+      "item": "fourtwenty:weed_seeds",
+      "count": 4,
+      "per_colour": true
+    },
+    {
+      "item": "minecraft:glass_bottle",
+      "count": 1,
+      "per_colour": true
+    }
+  ],
+  "gives": {
+    "colours": [
+      "mc_red",
+      "mc_orange",
+      "mc_yellow"
+    ]
+  },
+  "icon": "minecraft:red_dye",
+  "needs": null
+}

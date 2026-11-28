@@ -1,0 +1,28 @@
+{
+  "branch": "engineering",
+  "tier": 4,
+  "parents": [
+    "fourtwenty:eng_bench_habits"
+  ],
+  "kind": "effect",
+  "supplies": [
+    {
+      "item": "fourtwenty:glass_wick",
+      "count": 16
+    },
+    {
+      "item": "fourtwenty:rosin",
+      "count": 4
+    },
+    {
+      "item": "fourtwenty:weed_bud",
+      "count": 48
+    }
+  ],
+  "gives": {
+    "effect": "press_speed",
+    "strength": 1.25
+  },
+  "icon": "fourtwenty:rosin_rig",
+  "needs": null
+}

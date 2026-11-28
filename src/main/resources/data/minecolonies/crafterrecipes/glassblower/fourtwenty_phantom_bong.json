@@ -1,0 +1,22 @@
+{
+  "type": "recipe",
+  "crafter": "glassblower_crafting",
+  "inputs": [
+    {
+      "id": "fourtwenty:glass_bong"
+    },
+    {
+      "id": "minecraft:phantom_membrane"
+    },
+    {
+      "id": "minecraft:feather"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 1,
+  "research-id": "fourtwenty:effects/gla_phantom_bong",
+  "result": {
+    "id": "fourtwenty:phantom_bong"
+  },
+  "show-tooltip": true
+}
