@@ -2670,5 +2670,20 @@
   "college.fourtwenty.board.accord": "The %s Accord",
   "college.fourtwenty.board.accord_unknown": "An Undiscovered Accord",
   "college.fourtwenty.refused.permission": "You need permission to manage this colony's huts to change the College's queue.",
-  "college.fourtwenty.refused.no_college": "There's no Weed College there any more."
+  "college.fourtwenty.refused.no_college": "There's no Weed College there any more.",
+  "college.fourtwenty.effect.gla_glassblowing": "Weed College: Glassblowing",
+  "college.fourtwenty.effect.gla_jackrabbit_bong": "Weed College: Jackrabbit Bong",
+  "college.fourtwenty.effect.gla_owl_bong": "Weed College: Owl Bong",
+  "college.fourtwenty.effect.gla_deep_sea_bong": "Weed College: Deep Sea Bong",
+  "college.fourtwenty.effect.gla_forge_bong": "Weed College: Forge Bong",
+  "college.fourtwenty.effect.gla_sage_bong": "Weed College: Sage Bong",
+  "college.fourtwenty.effect.gla_phantom_bong": "Weed College: Phantom Bong",
+  "college.fourtwenty.effect.arm_dab_cell": "Weed College: Dab Cell",
+  "college.fourtwenty.effect.arm_weedscout_uniform": "Weed College: Weedscout Uniform",
+  "college.fourtwenty.effect.arm_hotbox_helm": "Weed College: Hotbox Helm",
+  "college.fourtwenty.effect.arm_moon_boots": "Weed College: Moon Boots",
+  "college.fourtwenty.effect.arm_couchlock_greaves": "Weed College: Couchlock Greaves",
+  "college.fourtwenty.effect.arm_puff_plate": "Weed College: Puff Plate",
+  "college.fourtwenty.effect.arm_blazer": "Weed College: The Blazer",
+  "college.fourtwenty.research_branch": "The Weed College"
 }

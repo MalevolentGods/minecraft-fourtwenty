@@ -1,0 +1,13 @@
+{
+  "branch": "fourtwenty:college",
+  "name": "college.fourtwenty.effect.gla_phantom_bong",
+  "effects": [
+    {
+      "id": "fourtwenty:effects/gla_phantom_bong",
+      "level": 1
+    }
+  ],
+  "hidden": true,
+  "icon": "fourtwenty:phantom_bong",
+  "researchLevel": 1
+}

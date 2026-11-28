@@ -53,7 +53,8 @@ public class GrowOpBlockEntity extends BIBlockEntity implements MenuProvider {
         BlockState crop = level.getBlockState(above);
         boolean hasCrop = GrowOpBlock.isCrop(crop);
         BIRules.Tier tier = block.tier();
-        running = hasCrop && !overloaded && (tier == null || MachinePower.steps(level, worldPosition, buffer, tier.machine(), meter) > 0);
+        running = hasCrop && !overloaded && (tier == null || MachinePower.steps(level, worldPosition, buffer,
+                com.malevolentgods.fourtwenty.power.ColonyFactor.cost(level, worldPosition, com.malevolentgods.fourtwenty.domain.college.ColonyEffects.Effect.GROW_OP_BI, tier.machine()), meter) > 0);
         lit(running && tier != null);
         plotState = !hasCrop ? STATE_NO_CROP : tier == null ? STATE_NATURAL : !running ? STATE_WAITING : MachinePower.highNear(level, worldPosition) ? STATE_FREE : STATE_PAID;
         if (running && level instanceof ServerLevel server) {

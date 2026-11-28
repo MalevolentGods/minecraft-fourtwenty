@@ -7,6 +7,8 @@ Writes:
 - src/main/resources/data/fourtwenty/college/studies/<id>.json (one per study)
 - the study and branch lang keys, merged into lang/en_us.json (the file's order kept, ours added at the end)
 - the crafter recipes the Armory and Glassworks studies unlock (data/minecolonies/crafterrecipes/<crafter>/fourtwenty_*.json),
+- the MineColonies research effects those recipes name (data/fourtwenty/researches/effects/<study>.json): MineColonies only honours a
+  recipe's research-id when its research tree knows the effect, so each unlock study's effect is defined there (research R6),
   gated by the MineColonies research effect each study applies (research R6)
 
 Validates the tree as it writes and exits non-zero on: an unknown parent, a parent of a higher tier, a cycle, an unknown item,
@@ -20,6 +22,9 @@ ROOT = Path(__file__).resolve().parent.parent
 RES = ROOT / 'src/main/resources'
 OUT = RES / 'data/fourtwenty/college/studies'
 CRAFTERS = RES / 'data/minecolonies/crafterrecipes'
+EFFECTS = RES / 'data/fourtwenty/researches/effects'
+RESEARCHES = RES / 'data/fourtwenty/researches/college'
+BRANCH = RES / 'data/fourtwenty/researches/college.json'
 LANG = RES / 'assets/fourtwenty/lang/en_us.json'
 NS = 'fourtwenty:'
 
@@ -227,6 +232,27 @@ def write():
         (OUT / f'{path}.json').write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
         lang[f'college.fourtwenty.study.{path}'] = st['name']
         lang[f'college.fourtwenty.study.{path}.desc'] = st['desc']
+    # the research effects the unlock studies apply (research R6), defined for every unlock study, the waiting ones too
+    EFFECTS.mkdir(parents=True, exist_ok=True)
+    RESEARCHES.mkdir(parents=True, exist_ok=True)
+    for old in list(EFFECTS.glob('*.json')) + list(RESEARCHES.glob('*.json')):
+        old.unlink()
+    (BRANCH).write_text(json.dumps({'base-time': 0.0, 'branch-name': 'college.fourtwenty.research_branch', 'branch-type': 'unlockables',
+                                    'hidden': True, 'sortOrder': 300}, indent=2) + '\n', encoding='utf-8')
+    lang['college.fourtwenty.research_branch'] = 'The Weed College'
+    for st in STUDIES:
+        effect = st['gives'].get('research_effect')
+        if not effect:
+            continue
+        path = effect.split(':')[1].split('/')[-1]
+        definition = {'effect': True, 'name': f'college.fourtwenty.effect.{path}'}
+        (EFFECTS / f'{path}.json').write_text(json.dumps(definition, indent=2) + '\n', encoding='utf-8')
+        lang[f'college.fourtwenty.effect.{path}'] = f"Weed College: {st['name']}"
+        # MineColonies knows an effect id only if some research grants it, so each has a research in a hidden branch that nothing
+        # starts (no autostart, no University window). The College applies the effect itself; the research also names the recipe's lock.
+        research = {'branch': NS + 'college', 'name': f'college.fourtwenty.effect.{path}', 'effects': [{'id': effect, 'level': 1}],
+                    'hidden': True, 'icon': st['icon'], 'researchLevel': 1}
+        (RESEARCHES / f'{path}.json').write_text(json.dumps(research, indent=2) + '\n', encoding='utf-8')
     # crafter recipes the unlock studies gate (research R6); the weedscout uniform waits for its item
     for crafter in ('blacksmith', 'glassblower'):
         for old in (CRAFTERS / crafter).glob('fourtwenty_*.json') if (CRAFTERS / crafter).exists() else []:

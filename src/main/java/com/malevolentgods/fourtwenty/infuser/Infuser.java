@@ -51,7 +51,14 @@ public final class Infuser {
     public static void put(ServerPlayer player, InfuserState s) {
         persisted(player).put(KEY, s.save());
         if (player.connection.hasChannel(Sync.TYPE)) PacketDistributor.sendToPlayer(player, new Sync(s.save()));
+        caughtListener.accept(player, s.caught.keySet());
     }
+
+    /**
+     * Told the player's caught colours whenever their Infuser state is saved (a catch, a Think Tank study, any visit). The MineColonies
+     * integration uses it to keep a colony's members' colours current (specs/017-weed-college research R9); nothing otherwise.
+     */
+    public static volatile java.util.function.BiConsumer<ServerPlayer, java.util.Set<String>> caughtListener = (player, caught) -> {};
 
     /** A Think Tank study's reward: the colour counts as caught, the plainer of the two grades. */
     public static void research(ServerPlayer player, String id) {

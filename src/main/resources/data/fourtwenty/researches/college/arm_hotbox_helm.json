@@ -1,0 +1,13 @@
+{
+  "branch": "fourtwenty:college",
+  "name": "college.fourtwenty.effect.arm_hotbox_helm",
+  "effects": [
+    {
+      "id": "fourtwenty:effects/arm_hotbox_helm",
+      "level": 1
+    }
+  ],
+  "hidden": true,
+  "icon": "fourtwenty:hotbox_helm",
+  "researchLevel": 1
+}

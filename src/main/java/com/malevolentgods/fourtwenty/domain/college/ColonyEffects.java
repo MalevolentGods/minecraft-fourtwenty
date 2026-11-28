@@ -56,4 +56,22 @@ public final class ColonyEffects {
     public static double factor(Effect effect, Collection<Study> done) {
         return values(done).get(effect);
     }
+
+    // ---- how the shared machine rules use a factor (research R7)
+
+    /** A work time at {@code speed} times the normal pace: shorter for a faster colony, never under one tick. */
+    public static int scaledTicks(int base, double speed) {
+        if (speed <= 0 || speed == 1) return base;
+        return Math.max(1, (int) Math.round(base / speed));
+    }
+
+    /** A BI cost multiplied by the colony's factor: 0.5 halves it, 0 makes it free. Never negative. */
+    public static double scaledCost(double base, double factor) {
+        return Math.max(0, base * factor);
+    }
+
+    /** A length (a burn, a capacity) multiplied by the colony's factor; never less than the base, since no study shrinks one. */
+    public static long scaledLength(long base, double factor) {
+        return factor <= 1 ? base : Math.round(base * factor);
+    }
 }

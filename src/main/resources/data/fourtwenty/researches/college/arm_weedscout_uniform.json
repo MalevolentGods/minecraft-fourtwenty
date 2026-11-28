@@ -1,0 +1,13 @@
+{
+  "branch": "fourtwenty:college",
+  "name": "college.fourtwenty.effect.arm_weedscout_uniform",
+  "effects": [
+    {
+      "id": "fourtwenty:effects/arm_weedscout_uniform",
+      "level": 1
+    }
+  ],
+  "hidden": true,
+  "icon": "minecraft:green_wool",
+  "researchLevel": 1
+}

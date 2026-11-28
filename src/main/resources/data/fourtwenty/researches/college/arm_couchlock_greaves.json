@@ -1,0 +1,13 @@
+{
+  "branch": "fourtwenty:college",
+  "name": "college.fourtwenty.effect.arm_couchlock_greaves",
+  "effects": [
+    {
+      "id": "fourtwenty:effects/arm_couchlock_greaves",
+      "level": 1
+    }
+  ],
+  "hidden": true,
+  "icon": "fourtwenty:couchlock_greaves",
+  "researchLevel": 1
+}

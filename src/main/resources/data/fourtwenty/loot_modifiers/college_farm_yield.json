@@ -1,0 +1,9 @@
+{
+  "type": "fourtwenty:college_farm_yield",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "fourtwenty:blocks/weed_crop"
+    }
+  ]
+}

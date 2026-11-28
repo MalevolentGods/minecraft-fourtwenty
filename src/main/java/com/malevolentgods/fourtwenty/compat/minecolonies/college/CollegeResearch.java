@@ -38,6 +38,7 @@ public final class CollegeResearch {
     /** Saves the colony's research and refreshes every one of its Colleges' Board and Status tabs (each re-sends only if it changed). */
     public static void changed(IColony colony) {
         CollegeSavedData.get((ServerLevel) colony.getWorld()).setDirty();
+        VALUES.remove(key(colony));
         for (var b : colony.getServerBuildingManager().getBuildings().values()) {
             if (b instanceof CollegeBuilding college) {
                 college.getModule(CollegeRegistry.BOARD).refresh();
@@ -78,10 +79,22 @@ public final class CollegeResearch {
         return colony != null && record(colony).isDone(study);
     }
 
+    /**
+     * What the colony's finished studies do to {@code effect} at {@code pos} (research R7): the machines' one lookup, so it's cached per
+     * colony and dropped whenever the colony's research changes or the study data reloads.
+     */
     public static double factor(Level level, BlockPos pos, ColonyEffects.Effect effect) {
         IColony colony = colonyAt(level, pos);
-        return colony == null ? effect.neutral : ColonyEffects.factor(effect, doneStudies(colony));
+        if (colony == null) return effect.neutral;
+        return VALUES.computeIfAbsent(key(colony), k -> ColonyEffects.values(doneStudies(colony))).get(effect);
     }
+
+    private static final java.util.Map<String, java.util.Map<ColonyEffects.Effect, Double>> VALUES = new java.util.concurrent.ConcurrentHashMap<>();
+
+    private static String key(IColony colony) { return colony.getDimension().location() + "#" + colony.getID(); }
+
+    /** Forgets every colony's cached effects (the study data reloaded, or the server stopped). */
+    public static void forgetEffects() { VALUES.clear(); }
 
     public static Collection<Study> doneStudies(IColony colony) {
         StudyBoard board = CollegeStudies.board();
@@ -91,6 +104,29 @@ public final class CollegeResearch {
             if (s != null) out.add(s);
         }
         return out;
+    }
+
+    // ---- members' colours (research R9)
+
+    /**
+     * Adds a player's caught colours to the members' colours of every colony they manage (owner, officer, or any rank MineColonies makes a
+     * colony manager), where a colour study's share for each costs less. Called at login and whenever their caught colours are saved;
+     * a study's cost is fixed when it starts, so this only changes studies not yet started.
+     */
+    public static void memberColours(net.minecraft.server.level.ServerPlayer player, java.util.Set<String> caught) {
+        if (caught.isEmpty()) return;
+        for (IColony colony : IColonyManager.getInstance().getAllColonies()) {
+            if (!(colony.getWorld() instanceof ServerLevel)) continue;
+            var rank = colony.getPermissions().getRank(player);
+            if (rank == null || !rank.isColonyManager()) continue;
+            if (record(colony).learnColours(caught)) changed(colony);
+        }
+    }
+
+    public static void login(net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player) {
+            memberColours(player, com.malevolentgods.fourtwenty.infuser.Infuser.get(player).caught.keySet());
+        }
     }
 
     // ---- operations

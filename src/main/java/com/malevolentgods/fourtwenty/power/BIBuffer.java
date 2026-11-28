@@ -8,7 +8,7 @@ public class BIBuffer implements BINode {
     public static final int WS_PER_OLD_BI = 6;
     private static final int OVERLOAD_TICKS = 60;
     private final BIRules.Tier tier;
-    private final long capacity;
+    private long capacity;
     private final boolean in, out;
     private final Runnable changed;
     private final double demand;
@@ -70,6 +70,15 @@ public class BIBuffer implements BINode {
     /** What a block saved under {@code key}, or under {@code oldKey} in BI from before Willards. */
     public static long loadWs(net.minecraft.nbt.CompoundTag tag, String key, String oldKey) {
         return tag.contains(key) ? tag.getLong(key) : tag.getLong(oldKey) * WS_PER_OLD_BI;
+    }
+
+    /**
+     * Changes how much it holds (a Stash in a colony with Deep Stash; specs/017-weed-college research R7). What it holds is trimmed to fit
+     * if it shrinks.
+     */
+    public void setCapacity(long value) {
+        capacity = Math.max(0, value);
+        if (stored > capacity) stored = capacity;
     }
 
     /** On load: what was saved, trimmed to fit. */

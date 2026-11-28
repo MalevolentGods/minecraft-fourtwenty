@@ -145,7 +145,9 @@ public class TerpinatorBlockEntity extends BlockEntity implements Container, Men
         }
         boolean working = status(t.running, t.product, t.items.get(BUDS), t.items.get(OUT)) == null;
         int steps = working ? com.malevolentgods.fourtwenty.power.MachinePower.steps(level, pos, t.buffer,
-                com.malevolentgods.fourtwenty.processing.ProcessingConfig.terpinatorCost(), t.meter) : 0;
+                // its BI only, never its speed, follows the colony's Chemistry studies (constitution Principle II, research R7)
+                com.malevolentgods.fourtwenty.power.ColonyFactor.cost(level, pos, com.malevolentgods.fourtwenty.domain.college.ColonyEffects.Effect.TERPINATOR_BI,
+                        com.malevolentgods.fourtwenty.processing.ProcessingConfig.terpinatorCost()), t.meter) : 0;
         t.paused = working && steps == 0;
         if (working && !t.paused) {
             t.progress += steps;

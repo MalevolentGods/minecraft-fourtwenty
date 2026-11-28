@@ -272,6 +272,8 @@ public class WeedBongBlockEntity extends BlockEntity implements Container, MenuP
         var fuel = getItem(FUEL_SLOT);
         var burning = getItem(WEED_SLOT);
         int duration = com.malevolentgods.fourtwenty.domain.Extracts.burnTicks(id(burning), ModDataComponents.strain(burning));
+        // a colony that has studied Long Burn or Boundless Grid gets more out of each bud (specs/017-weed-college research R7)
+        duration = (int) Math.min(Integer.MAX_VALUE, com.malevolentgods.fourtwenty.power.ColonyFactor.length(level, worldPosition, com.malevolentgods.fourtwenty.domain.college.ColonyEffects.Effect.HOOKAH_BURN, duration));
         burning.shrink(1);
         fuel.shrink(1);
         isLit = true;

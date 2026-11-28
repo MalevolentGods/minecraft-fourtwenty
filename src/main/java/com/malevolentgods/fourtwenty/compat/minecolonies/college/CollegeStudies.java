@@ -53,6 +53,7 @@ public final class CollegeStudies extends SimpleJsonResourceReloadListener {
             candidate = new StudyBoard(studies);
         }
         board = candidate;
+        CollegeResearch.forgetEffects();
         LogUtils.getLogger().info("Weed College: {} studies loaded", board.size());
     }
 

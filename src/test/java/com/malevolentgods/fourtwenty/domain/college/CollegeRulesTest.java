@@ -147,4 +147,19 @@ class CollegeRulesTest {
         assertEquals(1.5, ColonyEffects.factor(ColonyEffects.Effect.TRIM_CURE_SPEED, List.of(line, bench)));
         assertEquals(0.0, ColonyEffects.factor(ColonyEffects.Effect.FARM_BONUS_BUD, List.of(bench)));
     }
+
+    @Test
+    void factorsScaleWorkTimesCostsAndLengths() {
+        assertEquals(40, ColonyEffects.scaledTicks(40, 1.0));
+        assertEquals(32, ColonyEffects.scaledTicks(40, 1.25), "a quarter faster");
+        assertEquals(27, ColonyEffects.scaledTicks(40, 1.5));
+        assertEquals(1, ColonyEffects.scaledTicks(1, 1.5), "never under a tick");
+        assertEquals(40, ColonyEffects.scaledTicks(40, 0), "a broken factor changes nothing");
+        assertEquals(52.5, ColonyEffects.scaledCost(105, 0.5));
+        assertEquals(0.0, ColonyEffects.scaledCost(105, 0), "Master Blend: no BI at all");
+        assertEquals(105.0, ColonyEffects.scaledCost(105, 1));
+        assertEquals(1250, ColonyEffects.scaledLength(1000, 1.25));
+        assertEquals(2000, ColonyEffects.scaledLength(1000, 2.0));
+        assertEquals(1000, ColonyEffects.scaledLength(1000, 0.5), "no study shrinks a burn or a Stash");
+    }
 }

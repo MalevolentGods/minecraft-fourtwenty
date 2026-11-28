@@ -50,7 +50,7 @@ public class RigBlockEntity extends BIBlockEntity implements WorldlyContainer, M
         @Override public int get(int index) {
             return switch (index) {
                 case DATA_PROGRESS -> progress;
-                case DATA_TOTAL -> step().map(Extracts.Step::ticks).orElse(0);
+                case DATA_TOTAL -> step().map(RigBlockEntity.this::ticks).orElse(0);
                 case DATA_PAUSED -> paused ? 1 : 0;
                 case DATA_STORED -> (int) buffer.stored();
                 case DATA_CAPACITY -> (int) buffer.capacity();
@@ -119,8 +119,11 @@ public class RigBlockEntity extends BIBlockEntity implements WorldlyContainer, M
         if (paused) return;
         progress += steps;
         setChanged();
-        if (progress >= step.get().ticks()) finish(step.get());
+        if (progress >= ticks(step.get())) finish(step.get());
     }
+
+    /** A step's work time, faster in a colony that has studied it (Pressure Work; specs/017-weed-college research R7). */
+    private int ticks(Extracts.Step step) { return com.malevolentgods.fourtwenty.power.ColonyFactor.ticks(level, worldPosition, com.malevolentgods.fourtwenty.domain.college.ColonyEffects.Effect.PRESS_SPEED, step.ticks()); }
 
     private void finish(Extracts.Step step) {
         progress = 0;

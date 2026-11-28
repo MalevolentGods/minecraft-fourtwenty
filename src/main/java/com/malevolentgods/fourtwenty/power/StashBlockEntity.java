@@ -16,19 +16,31 @@ public class StashBlockEntity extends BIBlockEntity implements net.minecraft.wor
 
     private final BIRules.Tier tier;
     private final BIBuffer buffer;
+    private final long baseCapacity;
+    private boolean sized;
     private final net.minecraft.world.inventory.ContainerData data;
 
     public StashBlockEntity(BlockPos pos, BlockState state) {
         super(ModPower.STASH_ENTITY.get(), pos, state);
         StashBlock block = (StashBlock) state.getBlock();
         tier = block.tier();
-        buffer = new BIBuffer(tier, block.capacity(), true, true, this::setChanged);
+        baseCapacity = block.capacity();
+        buffer = new BIBuffer(tier, baseCapacity, true, true, this::setChanged);
         data = BIBlockEntity.data(buffer, () -> level == null ? 0 : level.getGameTime(), tier::ordinal, BIBlockEntity.KIND_STASH, 0, () -> 0);
     }
 
     public BINode node() { return buffer; }
 
     @Override public void serverTick() {
+        // a colony that has studied Deep Stash gets bigger Stashes (specs/017-weed-college research R7); checked now and then
+        if (!sized || level.getGameTime() % 100 == 0) {
+            long capacity = ColonyFactor.length(level, worldPosition, com.malevolentgods.fourtwenty.domain.college.ColonyEffects.Effect.STASH_CAPACITY, baseCapacity);
+            if (capacity != buffer.capacity()) {
+                buffer.setCapacity(capacity);
+                setChanged();
+            }
+            sized = true;
+        }
         boolean overloaded = overloadTick(buffer);
         lit(buffer.stored() > 0 && !overloaded);
         Circuits.tick(level, buffer, worldPosition);
@@ -43,10 +55,13 @@ public class StashBlockEntity extends BIBlockEntity implements net.minecraft.wor
     @Override protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putLong("ws", buffer.stored());
+        tag.putLong("cap", buffer.capacity());
     }
 
     @Override protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        // the level isn't known yet on load: keep a colony-enlarged capacity until the first tick sizes it again, so nothing is trimmed
+        if (tag.contains("cap")) buffer.setCapacity(Math.max(baseCapacity, tag.getLong("cap")));
         buffer.set(com.malevolentgods.fourtwenty.power.BIBuffer.loadWs(tag, "ws", "bi"));
     }
 }

@@ -62,14 +62,14 @@ description: "Tasks for spec 017, the Weed College"
 **Goal**: all 63 studies, and their effects colony-wide.
 **Independent test**: quickstart M3.
 
-- [ ] T028 [US3] Spike (R6): apply a MineColonies unlock research effect from code, and check that a crafter recipe gated by it unlocks; if it doesn't work, use the fallback of a finished hidden research. Record the result in research.md
-- [ ] T029 [US3] `CollegeEffects`: unlock effects for Armory and Glassworks on finish and on colony load, in `…/compat/minecolonies/college/CollegeEffects.java`
-- [ ] T030 [P] [US3] Botany seed batches delivered at write-up (strain component, plain traits) to the hut for pickup, in `…/compat/minecolonies/college/CollegeBuilding.java`
-- [ ] T031 [P] [US3] Farm yield: a loot modifier on the weed crop that adds buds when a colony citizen with Soil Science, Selective Breeding or Master Grower harvests, in `…/compat/minecolonies/college/FarmYieldModifier.java` and `src/main/resources/data/fourtwenty/loot_modifiers/`
-- [ ] T032 [US3] Colony factors in the shared rules (R7): `MachinePowerRule` (Terpinator BI, Grow Op BI), `BIRules` burn length, Stash capacity, and trimmer/curer/Rosin Rig/Pheno speed, through one `ColonyEffects` lookup cached per colony. Never Terpinator or Infuser speed. In the existing `…/domain/MachinePowerRule.java`, `…/domain/BIRules.java` and the processing speed paths, with tests
-- [ ] T033 [US3] Members' colours (R9): update on login and on learning a colour, for the owner and officers; the caught-colour discount fixed at start. In `…/compat/minecolonies/college/CollegeResearch.java` and a hook in `…/terpene/TerpeneDiscovery.java`
-- [ ] T034 [US3] Feature locks: Textiles studies (needs `tie_dye`) and the Weedscout Uniform (needs `weedscout_uniform`) show `Waiting for …`
-- [ ] T035 [US3] Game tests, one per branch effect: seeds arrive; yield bonus; a trimmer is faster inside the colony; Terpinator BI is halved with its speed unchanged; a Blacksmith recipe is unlocked. In `src/gametest/java/…/college/CollegeEffectsGameTest.java`
+- [X] T028 [US3] Spike (R6): apply a MineColonies unlock research effect from code, and check that a crafter recipe gated by it unlocks; if it doesn't work, use the fallback of a finished hidden research. Record the result in research.md
+- [X] T029 [US3] `CollegeEffects`: unlock effects for Armory and Glassworks on finish and on colony load, in `…/compat/minecolonies/college/CollegeEffects.java`
+- [X] T030 [P] [US3] Botany seed batches delivered at write-up (strain component, plain traits) to the hut for pickup, in `…/compat/minecolonies/college/CollegeBuilding.java` (done as FR-022 and the clarification say: straight into the warehouse closest to a College; into a College with a pickup request if it is full; dropped at the College only as a last resort)
+- [X] T031 [P] [US3] Farm yield: a loot modifier on the weed crop that adds buds when a colony citizen with Soil Science, Selective Breeding or Master Grower harvests, in `…/compat/minecolonies/college/FarmYieldModifier.java` and `src/main/resources/data/fourtwenty/loot_modifiers/` (the modifier lives in core, `registry/FarmYieldModifier.java`, with its chance hook set by the MineColonies side, so its data loads without MineColonies)
+- [X] T032 [US3] Colony factors in the shared rules (R7): `MachinePowerRule` (Terpinator BI, Grow Op BI), `BIRules` burn length, Stash capacity, and trimmer/curer/Rosin Rig/Pheno speed, through one `ColonyEffects` lookup cached per colony. Never Terpinator or Infuser speed. In the existing `…/domain/MachinePowerRule.java`, `…/domain/BIRules.java` and the processing speed paths, with tests
+- [X] T033 [US3] Members' colours (R9): update on login and on learning a colour, for the owner and officers; the caught-colour discount fixed at start. In `…/compat/minecolonies/college/CollegeResearch.java` and a hook in `…/terpene/TerpeneDiscovery.java` (caught colours come from the Infuser, `Infuser.caughtListener`, not TerpeneDiscovery: FR-020 is about catching at the Infuser)
+- [X] T034 [US3] Feature locks: Textiles studies (needs `tie_dye`) and the Weedscout Uniform (needs `weedscout_uniform`) show `Waiting for …`
+- [X] T035 [US3] Game tests, one per branch effect: seeds arrive; yield bonus; a trimmer is faster inside the colony; Terpinator BI is halved with its speed unchanged; a Blacksmith recipe is unlocked. In `src/gametest/java/…/college/CollegeEffectsGameTest.java`
 - [ ] T036 [US3] In game: quickstart M3. Report and commit (M3).
 
 ## Phase 6: User Story 4 (P2), a College that grows (M4)
@@ -79,17 +79,17 @@ description: "Tasks for spec 017, the Weed College"
 
 - [X] T037 [US4] `design_college.py`, all five levels: a shed with a chalkboard, growing to a quad with a greenhouse. Level N plots are Grow Op tier N; the signature door from level 3; doors saved closed; earth tones. `check_hut_levels.py`, `check_footprints.py` and `audit_tags.py` pass; import into the jar. In `C:\Users\Ignus\sensi-heights\tools\design_college.py`
 - [X] T038 [P] [US4] The diorama: `tools/generate_weedcollege_hut_model.py` (using `box()` from the Dispensary generator, with `hut_model_check.check()`), the item model parent, and the hut listed in `tools/tests/test_hut_models.py` HUTS
-- [ ] T039 [US4] Game test: worker count by level, and the tier cap including tier 6's rule. In `src/gametest/java/…/college/CollegeLevelsGameTest.java`
+- [X] T039 [US4] Game test: worker count by level, and the tier cap including tier 6's rule. In `src/gametest/java/…/college/CollegeLevelsGameTest.java`
 - [ ] T040 [US4] In game: quickstart M4, plus a showcase row on the local test server. Report and commit (M4).
 
 ## Phase 7: User Story 5 (P3), reading about it (M5)
 
-- [ ] T041 [US5] Handbook page `src/main/resources/assets/fourtwenty/handbook/en_us/entries/colony/weed_college.md` (voice rules, `needs: minecolonies`); `book.json`, glossary, index terms; `python tools/build_handbook_pdf.py`; `python tools/check_handbook.py` passes
+- [X] T041 [US5] Handbook page `src/main/resources/assets/fourtwenty/handbook/en_us/entries/colony/weed_college.md` (voice rules, `needs: minecolonies`); `book.json`, glossary, index terms; `python tools/build_handbook_pdf.py`; `python tools/check_handbook.py` passes (no glossary entry: the glossary has no colony entries and sits outside the colony chapter; the page's terms feed the index)
 - [ ] T042 [US5] In game: quickstart M5, including no-MineColonies startup in the compat runs (SC-007). Report and commit (M5).
 
 ## Phase 8: Polish
 
-- [ ] T043 [P] CHANGELOG and README notes (the release waits for spec 018, FR-026b); update `claude-misc/four-twenty/BUILDINGS-PLAN.md` Phase 6 status
+- [X] T043 [P] CHANGELOG and README notes (the release waits for spec 018, FR-026b); update `claude-misc/four-twenty/BUILDINGS-PLAN.md` Phase 6 status (CHANGELOG and BUILDINGS-PLAN done; the README gets its "What's new" section with the release number, at release)
 - [ ] T044 Full quickstart pass, then open the PR (no release, no tag)
 
 ## Dependencies
