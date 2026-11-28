@@ -1,0 +1,9 @@
+{
+  "sources": [
+    {
+      "type": "directory",
+      "source": "block/tie_dye",
+      "prefix": "block/tie_dye/"
+    }
+  ]
+}

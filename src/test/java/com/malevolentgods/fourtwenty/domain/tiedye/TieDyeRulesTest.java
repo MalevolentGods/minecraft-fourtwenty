@@ -68,4 +68,38 @@ class TieDyeRulesTest {
         assertNull(q.head(), "done and gone");
         assertEquals(12, q.totalMade());
     }
+
+    private static SquareFit.Fit fitAt(java.util.Set<String> cells, int u, int v) {
+        return SquareFit.fit((du, dv) -> cells.contains((u + du) + "," + (v + dv)));
+    }
+
+    private static java.util.Set<String> square(int u0, int v0, int n) {
+        var out = new java.util.HashSet<String>();
+        for (int a = 0; a < n; a++) for (int b = 0; b < n; b++) out.add((u0 + a) + "," + (v0 + b));
+        return out;
+    }
+
+    @Test
+    void anIsolatedSquareSharesOnePattern() {
+        var three = square(10, 20, 3);
+        assertEquals(new SquareFit.Fit(3, 0, 0), fitAt(three, 10, 20));
+        assertEquals(new SquareFit.Fit(3, 2, 1), fitAt(three, 12, 21));
+        var five = square(0, 0, 5);
+        assertEquals(new SquareFit.Fit(5, 4, 4), fitAt(five, 4, 4));
+        assertEquals(SquareFit.Fit.ONE, fitAt(java.util.Set.of("0,0"), 0, 0), "a lone block is 1x1");
+    }
+
+    @Test
+    void anythingButAnIsolatedSquareIsOneByOne() {
+        var row = new java.util.HashSet<>(java.util.Set.of("0,0", "1,0", "2,0"));
+        assertEquals(SquareFit.Fit.ONE, fitAt(row, 1, 0), "a row isn't a square");
+        var bumped = square(0, 0, 3);
+        bumped.add("3,1");
+        assertEquals(SquareFit.Fit.ONE, fitAt(bumped, 1, 1), "a square with a block of the look touching its side isn't");
+        var six = square(0, 0, 6);
+        assertEquals(SquareFit.Fit.ONE, fitAt(six, 2, 2), "6x6 is past the biggest square");
+        var corner = square(0, 0, 2);
+        corner.add("2,2");
+        assertEquals(new SquareFit.Fit(2, 1, 1), fitAt(corner, 1, 1), "a block touching only a corner doesn't spoil it");
+    }
 }

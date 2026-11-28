@@ -3,8 +3,12 @@
 them. Every pixel belongs to exactly one slot; the masks are white-ish fabric with soft shading, tinted in game by the colourway's colour
 for that slot (tint index = slot), so 8 patterns cover all 16 colourways. Slot edges are dithered so they read as dye bleeding.
 
+Patterns are drawn at 32 px per block, for squares of 1 to 5 blocks (specs/018-tie-dye-shack R11): one image per pattern, resampled
+to 32N px for an N x N square. A pattern with art in tools/tie_dye_art/<pattern>.png (exactly four flat colours: red, green, blue,
+yellow; see the prompts in the spec's research) is cut from that image; the others are drawn from the fields below.
+
 Writes, under src/main/resources:
-- assets/fourtwenty/textures/block/tie_dye/<pattern>_<slot>.png (16x16)
+- assets/fourtwenty/textures/block/tie_dye/<pattern>_<n>_<slot>.png (32n x 32n, n = 1-5)
 - the tie-dyed hemp block: blockstate (pattern 0-7), a model per pattern (4 cutout layers), the item model (overrides on
   fourtwenty:pattern), the loot table (copying the look from the block entity), the name
 - a preview sheet of every pattern in every colourway: build/tie_dye_preview.png
@@ -23,7 +27,10 @@ ASSETS = RES / 'assets/fourtwenty'
 TEX = ASSETS / 'textures/block/tie_dye'
 PATTERNS = ['crumple', 'stripes', 'bullseye', 'spiral', 'sunburst', 'shibori', 'heart', 'mandala']
 SLOTS = 4
-SIZE = 16
+SIZE = 32          # px per block
+SQUARES = range(1, 6)
+ART = ROOT / 'tools/tie_dye_art'
+KEYS = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0)]
 
 
 def noise(x, y, seed):
@@ -106,8 +113,27 @@ def slots(pattern, size=SIZE, seed=1):
     return grid, shade
 
 
+def from_art(pattern, size):
+    """Slots and shade from an image of four flat key colours: each pixel to its nearest key, its brightness as the fabric's shade."""
+    img = Image.open(ART / f'{pattern}.png').convert('RGB').resize((size, size), Image.LANCZOS)
+    px = img.load()
+    grid, shade = [], []
+    for y in range(size):
+        row, srow = [], []
+        for x in range(size):
+            c = px[x, y]
+            k = min(range(SLOTS), key=lambda i: sum((a - b) ** 2 for a, b in zip(c, KEYS[i])))
+            key = KEYS[k]
+            lit = sum(c) / max(1, sum(key))
+            row.append(k)
+            srow.append(max(0.7, min(1.0, 0.82 + 0.18 * lit)))
+        grid.append(row)
+        shade.append(srow)
+    return grid, shade
+
+
 def masks(pattern, size=SIZE):
-    grid, shade = slots(pattern, size)
+    grid, shade = from_art(pattern, size) if (ART / f'{pattern}.png').exists() else slots(pattern, size)
     out = []
     for k in range(SLOTS):
         img = Image.new('RGBA', (size, size), (0, 0, 0, 0))
@@ -141,7 +167,7 @@ def cube_model(textures):
 def hemp():
     for i, p in enumerate(PATTERNS):
         write_json(ASSETS / f'models/block/tie_dyed_hemp_{p}.json',
-                   cube_model([f'fourtwenty:block/tie_dye/{p}_{k}' for k in range(SLOTS)]))
+                   cube_model([f'fourtwenty:block/tie_dye/{p}_1_{k}' for k in range(SLOTS)]))
     write_json(ASSETS / 'blockstates/tie_dyed_hemp.json',
                {'variants': {f'pattern={i}': {'model': f'fourtwenty:block/tie_dyed_hemp_{p}'} for i, p in enumerate(PATTERNS)}})
     write_json(ASSETS / 'models/item/tie_dyed_hemp.json', {
@@ -167,7 +193,7 @@ def preview():
     """Every pattern (rows) in every colourway (columns), at 4x, for looking at."""
     data = json.loads((RES / 'data/fourtwenty/tie_dye/colourways.json').read_text(encoding='utf-8'))['colourways']
     pal = palette()
-    scale, gap = 4, 4
+    scale, gap = 2, 4
     w = len(data) * (SIZE * scale + gap) + gap
     h = len(PATTERNS) * (SIZE * scale + gap) + gap
     sheet = Image.new('RGB', (w, h), (40, 34, 30))
@@ -203,12 +229,18 @@ def palette():
 
 def main():
     TEX.mkdir(parents=True, exist_ok=True)
+    for old in TEX.glob('*.png'):
+        old.unlink()
     for p in PATTERNS:
-        for k, img in enumerate(masks(p)):
-            img.save(TEX / f'{p}_{k}.png')
+        for n in SQUARES:
+            for k, img in enumerate(masks(p, SIZE * n)):
+                img.save(TEX / f'{p}_{n}_{k}.png')
+    # every size in the block atlas, though only the 1x1 is named by a model (the square sizes are picked in code)
+    write_json(ASSETS.parent / 'minecraft/atlases/blocks.json',
+               {'sources': [{'type': 'directory', 'source': 'block/tie_dye', 'prefix': 'block/tie_dye/'}]})
     hemp()
     lang({'block.fourtwenty.tie_dyed_hemp': 'Tie-Dyed Hemp'})
-    print(f'wrote {len(PATTERNS) * SLOTS} masks and the tie-dyed hemp block; preview at {preview().relative_to(ROOT)}')
+    print(f'wrote {len(PATTERNS) * SLOTS * len(SQUARES)} masks and the tie-dyed hemp block; preview at {preview().relative_to(ROOT)}')
 
 
 if __name__ == '__main__':

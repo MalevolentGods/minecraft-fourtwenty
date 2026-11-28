@@ -39,6 +39,17 @@ public final class TieDyeColours {
         }, ModTieDye.items().toArray(net.minecraft.world.level.ItemLike[]::new));
     }
 
+    /** Tie-dyed hemp spreads its pattern over squares of blocks (research R11): its baked models are wrapped to draw by fit. */
+    @SubscribeEvent
+    public static void models(net.neoforged.neoforge.client.event.ModelEvent.ModifyBakingResult event) {
+        TieDyeModel.clearCache();
+        for (var state : ModTieDye.HEMP.get().getStateDefinition().getPossibleStates()) {
+            var location = net.minecraft.client.renderer.block.BlockModelShaper.stateToModelLocation(state);
+            var model = event.getModels().get(location);
+            if (model != null) event.getModels().put(location, new TieDyeModel(model));
+        }
+    }
+
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {

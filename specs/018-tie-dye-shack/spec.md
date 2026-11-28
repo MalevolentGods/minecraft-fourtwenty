@@ -24,6 +24,7 @@ Four facts shape it:
 - Q: How do players get tie-dye? → A: They order in the Shack's own window (pattern, colourway, item kind, count), and the finished items are delivered to the warehouse.
 - Q: How much ships in this release? → A: All five kinds: hemp blocks, rugs, couches, beds and colonist shirts.
 - Q: How does a colonist end up wearing a tie-dyed shirt? → A: A player hands it to them (right-click with the shirt); giving another swaps it, and a player can take it back.
+- Q: Can a pattern spread across several blocks? → A: Yes, auto-fit squares: a square of 2×2 to 5×5 blocks of the same look, flat in one wall, floor or ceiling, with nothing matching touching it there, shows one big pattern across it; any other shape shows the 1×1 pattern. Patterns are drawn at 32 pixels per block (user, 2026-11-28).
 - Q: Tie-dye can't be colony-only (constitution Principle I); what's the player's route? → A: A **Dye Vat**: the player puts in a plain item and one terpene vial for each colour of a colourway and picks any of the 8 patterns. Pattern and colourway names in data-model.md approved as written (user, 2026-11-28).
 
 ## User Scenarios & Testing *(mandatory)*
@@ -133,6 +134,7 @@ The Handbook's colony chapter gains a Tie Dye Shack page: how to order, what eac
 **The dyed things**
 
 - **FR-013**: Tie-dyed hemp blocks, rugs, couches and beds MUST exist in every pattern and colourway, carry their look as data (not a separate registered block per combination), and keep it when mined, moved and placed again.
+- **FR-013c**: A flat square of 2×2 up to 5×5 tie-dyed hemp blocks or rugs of one look (in a wall, floor or ceiling, with nothing of that look touching it in that plane) MUST show one pattern spread across the whole square; any other arrangement shows each block's 1×1 pattern. Patterns are drawn at 32 pixels per block.
 - **FR-014**: Tie-dyed rugs MUST join with matching neighbours (same pattern and colours) the way plain rugs do.
 - **FR-015**: Tie-dyed couches and beds MUST work exactly like their plain versions and show their pattern.
 - **FR-016**: A player MUST be able to give a colonist a tie-dyed shirt by right-clicking them with it; the colonist wears it, drawn over their usual look in its pattern and colourway, through saves and reloads. Giving another shirt swaps it (the old one comes back to the player), and a player can take a shirt back. Only the colony's members can dress its colonists.

@@ -2,11 +2,11 @@
   "parent": "minecraft:block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "s0": "fourtwenty:block/tie_dye/heart_0",
-    "s1": "fourtwenty:block/tie_dye/heart_1",
-    "s2": "fourtwenty:block/tie_dye/heart_2",
-    "s3": "fourtwenty:block/tie_dye/heart_3",
-    "particle": "fourtwenty:block/tie_dye/heart_0"
+    "s0": "fourtwenty:block/tie_dye/heart_1_0",
+    "s1": "fourtwenty:block/tie_dye/heart_1_1",
+    "s2": "fourtwenty:block/tie_dye/heart_1_2",
+    "s3": "fourtwenty:block/tie_dye/heart_1_3",
+    "particle": "fourtwenty:block/tie_dye/heart_1_0"
   },
   "elements": [
     {

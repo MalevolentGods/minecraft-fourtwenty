@@ -46,5 +46,17 @@ public final class TieDyeBlocks {
         }
 
         @Override public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) { return new TieDyeBlockEntity(pos, state); }
+
+        @Override public void setPlacedBy(@Nonnull net.minecraft.world.level.Level level, @Nonnull BlockPos pos, @Nonnull BlockState state,
+                                          net.minecraft.world.entity.LivingEntity placer, @Nonnull ItemStack stack) {
+            super.setPlacedBy(level, pos, state, placer, stack);
+            TieDyeFits.refresh(level, pos);
+        }
+
+        @Override protected void onRemove(@Nonnull BlockState state, @Nonnull net.minecraft.world.level.Level level, @Nonnull BlockPos pos,
+                                          @Nonnull BlockState next, boolean moved) {
+            super.onRemove(state, level, pos, next, moved);
+            if (!state.is(next.getBlock())) TieDyeFits.refresh(level, pos);
+        }
     }
 }

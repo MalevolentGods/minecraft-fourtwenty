@@ -19,6 +19,10 @@ import javax.annotation.Nonnull;
  */
 public class TieDyeBlockEntity extends BlockEntity {
     private String colourway = "ashtray";
+    /** Its square in each plane (research R11): n, i, j for planes 0, 1, 2 (see {@link TieDyeFits}). */
+    private int[] fits = {1, 0, 0, 1, 0, 0, 1, 0, 0};
+    /** The fits for the custom model, client side. */
+    public static final net.neoforged.neoforge.client.model.data.ModelProperty<int[]> FITS = new net.neoforged.neoforge.client.model.data.ModelProperty<>();
 
     public TieDyeBlockEntity(BlockPos pos, BlockState state) { super(ModTieDye.ENTITY.get(), pos, state); }
 
@@ -29,6 +33,21 @@ public class TieDyeBlockEntity extends BlockEntity {
         colourway = id;
         setChanged();
         if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        TieDyeFits.refresh(level, worldPosition);
+    }
+
+    public int[] fits() { return fits.clone(); }
+
+    /** Set by {@link TieDyeFits}; sent to clients when it changes. */
+    public void setFits(int[] next) {
+        if (java.util.Arrays.equals(fits, next)) return;
+        fits = next.clone();
+        setChanged();
+        if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
+    @Override public @Nonnull net.neoforged.neoforge.client.model.data.ModelData getModelData() {
+        return net.neoforged.neoforge.client.model.data.ModelData.of(FITS, fits.clone());
     }
 
     public TieDye look() { return new TieDye(getBlockState().getValue(TieDyeBlocks.PATTERN), colourway); }
@@ -47,19 +66,29 @@ public class TieDyeBlockEntity extends BlockEntity {
     @Override protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putString("colourway", colourway);
+        tag.putIntArray("fits", fits);
     }
 
     @Override protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         String before = colourway;
+        int[] beforeFits = fits;
         if (tag.contains("colourway")) colourway = tag.getString("colourway");
-        // on a client the colour comes from here, so re-mesh when it arrives or changes
-        if (level != null && level.isClientSide() && !before.equals(colourway)) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 8);
+        if (tag.contains("fits")) {
+            int[] f = tag.getIntArray("fits");
+            if (f.length == fits.length) fits = f;
+        }
+        // on a client the colour and the squares come from here, so re-mesh when they arrive or change
+        if (level != null && level.isClientSide() && (!before.equals(colourway) || !java.util.Arrays.equals(beforeFits, fits))) {
+            requestModelDataUpdate();
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 8);
+        }
     }
 
     @Override public @Nonnull CompoundTag getUpdateTag(@Nonnull HolderLookup.Provider registries) {
         CompoundTag tag = super.getUpdateTag(registries);
         tag.putString("colourway", colourway);
+        tag.putIntArray("fits", fits);
         return tag;
     }
 

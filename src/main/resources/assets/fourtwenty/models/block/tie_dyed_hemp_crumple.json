@@ -2,11 +2,11 @@
   "parent": "minecraft:block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "s0": "fourtwenty:block/tie_dye/crumple_0",
-    "s1": "fourtwenty:block/tie_dye/crumple_1",
-    "s2": "fourtwenty:block/tie_dye/crumple_2",
-    "s3": "fourtwenty:block/tie_dye/crumple_3",
-    "particle": "fourtwenty:block/tie_dye/crumple_0"
+    "s0": "fourtwenty:block/tie_dye/crumple_1_0",
+    "s1": "fourtwenty:block/tie_dye/crumple_1_1",
+    "s2": "fourtwenty:block/tie_dye/crumple_1_2",
+    "s3": "fourtwenty:block/tie_dye/crumple_1_3",
+    "particle": "fourtwenty:block/tie_dye/crumple_1_0"
   },
   "elements": [
     {

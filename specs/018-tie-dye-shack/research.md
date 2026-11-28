@@ -90,3 +90,13 @@ Decisions for spec 018. Each has the decision, why, and what else was weighed. F
   - Five levels by `C:\Users\Ignus\sensi-heights\tools\design_tie_dye_shack.py`: a dye shed growing to a bright yard of drying lines, with vats and racks per level. Signature door from level 3; doors saved closed; MineColonies hut name `tiedyeshack`.
   - The hut block is a diorama: a small shed with tie-dye hanging out front (`tools/generate_tiedyeshack_hut_model.py`, `hut_model_check`).
 - **Rationale**: as the College (017 R11, R12).
+
+## R11. Patterns across squares of blocks (FR-013c)
+
+- **Decision**:
+  - **Fitting:** for each of the three planes through a placed block (wall facing x, wall facing z, floor), the block finds the flat connected area of blocks with its look. If that area is exactly an N×N square with N from 2 to 5, the block stores its cell (i, j) and N for that plane in its block entity; otherwise N = 1. When a tie-dyed block is placed, removed or recoloured, every block of its look within 5 in those planes is refitted (a flood fill capped at 26 blocks). The pure rule is `domain/tiedye/SquareFit`.
+  - **Drawing:** each pattern is drawn by the generator at 32 px per block for every size, 32N px square for N = 1 to 5, as four slot masks. A custom baked model reads the fits through the block entity's model data. On each face it uses the plane's N-sized sprite and the cell's slice of its UVs (u from the world's x or z, v from the top of the square), so the slices meet across blocks.
+  - **Items** show the 1×1 pattern.
+  - Rugs fit on the floor plane. Couches and beds stay 1×1.
+- **Rationale**: the user's choice (A). One big image per pattern resamples to every size, so an image-generated pattern drops straight in.
+- **Alternatives**: a size chosen in the order, repeating on the world grid (B); squares and patterns wouldn't line up.

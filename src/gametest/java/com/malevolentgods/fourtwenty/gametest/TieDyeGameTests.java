@@ -44,4 +44,32 @@ public final class TieDyeGameTests {
         h.assertTrue("terrapin".equals(saved.getString("colourway")), "and saves it");
         h.succeed();
     }
+
+    /** FR-013c: a 3x3 floor of one look fits as one square; break a block and the rest go back to 1x1. */
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void aSquareOfHempSharesOnePattern(GameTestHelper h) {
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        var look = new TieDye(3, "campfire");
+        for (int x = 1; x <= 3; x++) {
+            for (int z = 1; z <= 3; z++) {
+                BlockPos floor = new BlockPos(x, 1, z);
+                h.setBlock(floor, Blocks.STONE);
+                var abs = h.absolutePos(floor);
+                ItemStack stack = ModTieDye.stack(ModTieDye.HEMP_ITEM.get(), look, 1);
+                player.setItemInHand(InteractionHand.MAIN_HAND, stack);
+                stack.useOn(new UseOnContext(player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(abs).add(0, 0.5, 0), Direction.UP, abs, false)));
+            }
+        }
+        for (int x = 1; x <= 3; x++) {
+            for (int z = 1; z <= 3; z++) {
+                var be = (TieDyeBlockEntity) h.getLevel().getBlockEntity(h.absolutePos(new BlockPos(x, 2, z)));
+                int[] f = be.fits();
+                h.assertTrue(f[6] == 3 && f[7] == x - 1 && f[8] == z - 1, "floor cell (" + x + "," + z + ") fits the 3x3: " + java.util.Arrays.toString(f));
+            }
+        }
+        h.getLevel().destroyBlock(h.absolutePos(new BlockPos(2, 2, 2)), false);
+        var corner = (TieDyeBlockEntity) h.getLevel().getBlockEntity(h.absolutePos(new BlockPos(1, 2, 1)));
+        h.assertTrue(corner.fits()[6] == 1, "with the middle gone, it's 1x1 again: " + java.util.Arrays.toString(corner.fits()));
+        h.succeed();
+    }
 }
