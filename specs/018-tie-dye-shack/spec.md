@@ -23,6 +23,7 @@ Four facts shape it:
 - Q: How many colours in one tie-dye? → A: Curated **colourways**: about 16 ready-made palettes of 2 to 4 colours each, offered for any pattern; a colourway is offered only once the colony has researched every colour in it.
 - Q: How do players get tie-dye? → A: They order in the Shack's own window (pattern, colourway, item kind, count), and the finished items are delivered to the warehouse.
 - Q: How much ships in this release? → A: All five kinds: hemp blocks, rugs, couches, beds and colonist shirts.
+- Q: How does a colonist end up wearing a tie-dyed shirt? → A: A player hands it to them (right-click with the shirt); giving another swaps it, and a player can take it back.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -71,7 +72,7 @@ As the colony finishes more Textiles studies, the Shack offers more patterns, an
 1. **Given** all 8 Textiles studies done, **When** the dye window is opened, **Then** all 8 patterns are offered.
 2. **Given** tie-dyed rugs of the same pattern and colours side by side, **When** placed, **Then** they join into one larger rug as plain rugs do.
 3. **Given** a tie-dyed couch or bed, **When** placed and used, **Then** it works like its plain version and shows the pattern.
-4. **Given** a tie-dyed shirt given to a colonist, **When** the colonist is seen, **Then** they wear it, and it shows its pattern and colours.
+4. **Given** a tie-dyed shirt, **When** a player right-clicks a colonist with it, **Then** the colonist wears it in its pattern and colourway, and giving another shirt swaps it, returning the first.
 
 ---
 
@@ -133,7 +134,7 @@ The Handbook's colony chapter gains a Tie Dye Shack page: how to order, what eac
 - **FR-013**: Tie-dyed hemp blocks, rugs, couches and beds MUST exist in every pattern and colourway, carry their look as data (not a separate registered block per combination), and keep it when mined, moved and placed again.
 - **FR-014**: Tie-dyed rugs MUST join with matching neighbours (same pattern and colours) the way plain rugs do.
 - **FR-015**: Tie-dyed couches and beds MUST work exactly like their plain versions and show their pattern.
-- **FR-016**: Colonists MUST be able to wear a tie-dyed shirt, drawn over their usual look, in its pattern and colours.
+- **FR-016**: A player MUST be able to give a colonist a tie-dyed shirt by right-clicking them with it; the colonist wears it, drawn over their usual look in its pattern and colourway, through saves and reloads. Giving another shirt swaps it (the old one comes back to the player), and a player can take a shirt back. Only the colony's members can dress its colonists.
 - **FR-017**: All five kinds (hemp blocks, rugs, couches, beds and colonist shirts) MUST ship in this release, built in that order.
 
 **Building, docs and safety**
