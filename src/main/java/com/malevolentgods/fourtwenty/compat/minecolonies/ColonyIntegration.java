@@ -65,6 +65,8 @@ public final class ColonyIntegration {
             voices.putIfAbsent("budtender", java.util.Map.copyOf(java.util.Objects.requireNonNull(voices.get("unemployed"))));
             voices.putIfAbsent("trimdaddy", java.util.Map.copyOf(java.util.Objects.requireNonNull(voices.get("unemployed"))));
             voices.putIfAbsent("weedologist", java.util.Map.copyOf(java.util.Objects.requireNonNull(voices.get("unemployed"))));
+            // the Tie Dyer sounds like MineColonies' own Dyer (without a voice entry her AI throws every tick)
+            voices.putIfAbsent("tie_dyer", java.util.Map.copyOf(java.util.Objects.requireNonNull(voices.getOrDefault("dyer", voices.get("unemployed")))));
         }));
         // Builders pay a craftable substitute for froglights and the architect's cutter; see BuilderCostSubstitutions.
         bus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) -> event.enqueueWork(() -> {
