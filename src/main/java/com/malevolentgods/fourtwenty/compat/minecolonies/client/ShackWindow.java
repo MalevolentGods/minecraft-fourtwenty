@@ -4,7 +4,6 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
-import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.View;
@@ -12,7 +11,6 @@ import com.malevolentgods.fourtwenty.compat.minecolonies.tiedye.ShackBuilding;
 import com.malevolentgods.fourtwenty.compat.minecolonies.tiedye.ShackModule;
 import com.malevolentgods.fourtwenty.compat.minecolonies.tiedye.TieDyeNetwork;
 import com.malevolentgods.fourtwenty.domain.tiedye.TieDyeRules;
-import com.malevolentgods.fourtwenty.terpene.TerpeneKnowledge;
 import com.malevolentgods.fourtwenty.tiedye.ModTieDye;
 import com.malevolentgods.fourtwenty.tiedye.TieDye;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
@@ -30,7 +28,7 @@ import java.util.Locale;
 /**
  * The Tie Dye Shack's Orders tab (specs/018-tie-dye-shack US1, US2; contracts/orders.md): what the Shack is doing, the 8 patterns and
  * 16 colourways as tie-dyed swatches (the ones the colony can't make yet greyed), the kind and count, an Order button and the queue.
- * Colourway names follow the colour rule (research R6): named only when the viewer has caught every colour in it.
+ * Colourways are named; colours never are (research R6).
  */
 public final class ShackWindow extends AbstractModuleWindow<ShackView> {
     private static final int[] COUNTS = {1, 4, 8, 16, 32, 64, 128, 256};
@@ -152,10 +150,10 @@ public final class ShackWindow extends AbstractModuleWindow<ShackView> {
         button.setPosition(x, y);
         button.setImage(ResourceLocation.parse(FRAME));
         into.addChild(button);
-        ItemIcon icon = new ItemIcon();
+        // drawn by hand: an ItemIcon brings the item's own tooltip, which piles up on top of the swatch's
+        Swatch icon = new Swatch(ModTieDye.stack(ModTieDye.HEMP_ITEM.get(), look, 1));
         icon.setSize(16, 16);
         icon.setPosition(x + 1, y + 1);
-        icon.setItem(ModTieDye.stack(ModTieDye.HEMP_ITEM.get(), look, 1));
         icon.setEnabled(false);
         into.addChild(icon);
         if (greyed || chosen) {
@@ -172,12 +170,16 @@ public final class ShackWindow extends AbstractModuleWindow<ShackView> {
 
     static Component patternName(int pattern) { return Component.translatable("tiedye.fourtwenty.pattern." + pattern); }
 
-    /** A colourway's name, or "An Undiscovered Colourway" until the viewer has caught every colour in it (research R6). */
-    static Component colourwayName(ShackModule.ColourwayView c) {
-        for (String code : c.colours()) {
-            if (!TerpeneKnowledge.knows(code)) return Component.translatable("tiedye.fourtwenty.colourway_unknown");
-        }
-        return Component.translatable("tiedye.fourtwenty.colourway." + c.id());
+    /** A colourway's name. It names a palette, never a colour, so it's shown to everyone (research R6, revised 2026-11-28). */
+    static Component colourwayName(ShackModule.ColourwayView c) { return Component.translatable("tiedye.fourtwenty.colourway." + c.id()); }
+
+    /** An item drawn as a picture only: no tooltip of its own. */
+    static final class Swatch extends Pane {
+        private final net.minecraft.world.item.ItemStack stack;
+
+        Swatch(net.minecraft.world.item.ItemStack stack) { this.stack = stack; }
+
+        @Override public void drawSelf(com.ldtteam.blockui.BOGuiGraphics target, double mx, double my) { target.renderItem(stack, x, y); }
     }
 
     private static void clear(View view) { for (Pane p : new ArrayList<>(view.getChildren())) view.removeChild(p); }

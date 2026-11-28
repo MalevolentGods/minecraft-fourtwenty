@@ -8,11 +8,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** The Tie Dye Shack's hut block. Its blueprints are Sensi Heights' {@code craftsmanship/tiedyeshack1-5}. */
+/** The Tie Dye Shack's hut block. Its blueprints are Sensi Heights' {@code craftsmanship/luxury/tiedyeshack1-5}. */
 public final class ShackBlock extends AbstractBlockHut<ShackBlock> {
     /** The College's Textiles studies wait for a block with this id (CollegeFeatures "tie_dye"). */
     public static final String NAME = "tiedyeshack";
-    public static final String PATH = "craftsmanship/tiedyeshack";
+    public static final String PATH = "craftsmanship/luxury/tiedyeshack";
 
     @Override public String getHutName() { return NAME; }
     @Override public ResourceLocation getRegistryName() { return ResourceLocation.fromNamespaceAndPath("fourtwenty", getHutName()); }

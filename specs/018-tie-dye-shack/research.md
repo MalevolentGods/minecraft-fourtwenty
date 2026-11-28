@@ -54,8 +54,8 @@ Decisions for spec 018. Each has the decision, why, and what else was weighed. F
 
 ## R6. Colour privacy
 
-- **Decision**: colourway swatches use the same rule as the College's board. A colour the viewer hasn't caught (`TerpeneKnowledge`) shows as a grey "?" swatch. A colourway's name is shown only if the viewer knows all its colours; otherwise it's "An Undiscovered Colourway". Dyed items' names and tooltips name the pattern and colourway the same way. Nothing the Shack does calls `TerpeneDiscovery` or the Infuser.
-- **Rationale**: FR-007 and 017 FR-021.
+- **Decision (revised with the user, 2026-11-28)**: colours are never named by the Shack, its window or a dyed item, and nothing calls `TerpeneDiscovery` or the Infuser. **Colourway names are shown to everyone**: "Ashtray" or "Terrapin" names a palette, not a colour, so it teaches nothing, and hiding it ("An Undiscovered Colourway") only made the window confusing in game. Swatches show their colours (a dyed block shows them anyway).
+- **Rationale**: FR-007 and 017 FR-021 protect colour names; colourway names aren't colour names.
 
 ## R7. Shirts
 
