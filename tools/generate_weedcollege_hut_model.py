@@ -47,14 +47,22 @@ def generate():
                    'faces': {'north': {'uv': [0, 0, 16, 16], 'texture': '#plant'}, 'south': {'uv': [0, 0, 16, 16], 'texture': '#plant'}}})
     cutout.append({'name': 'weed plant z', 'from': [8, 18, 6.75], 'to': [8, 25, 10.75], 'shade': False,
                    'faces': {'east': {'uv': [0, 0, 16, 16], 'texture': '#plant'}, 'west': {'uv': [0, 0, 16, 16], 'texture': '#plant'}}})
-    cutout.append(box('greenhouse glass', (2, 16, 4), (14, 25, 13), 'glass', skip=('down',)))
-    cutout.append(box('roof glass', (3.5, 25, 4.5), (12.5, 27, 12.5), 'glass', skip=('down',)))
-    cutout.append(box('ridge glass', (5.5, 27, 5), (10.5, 28.5, 12), 'glass', skip=('down',)))
+    # Tinted glass (translucent), so the greenhouse reads as glass and not as empty air (the user, 2026-11-27): walls up to a
+    # timber frame, then a stepped glass roof that the ridge beam rests on.
+    translucent = []
+    translucent.append(box('greenhouse glass', (2, 16, 4), (14, 23, 13), 'glass', skip=('down', 'up')))
     for i, (x, z) in enumerate(((1.7, 3.7), (13.6, 3.7), (1.7, 12.6), (13.6, 12.6))):
-        solid.append(box(f'greenhouse post {i}', (x, 16, z), (x + 0.7, 25.3, z + 0.7), 'beam'))
-    solid.append(box('ridge beam', (7.6, 28.5, 4.8), (8.4, 29.2, 12.2), 'beam'))
+        solid.append(box(f'greenhouse post {i}', (x, 16, z), (x + 0.7, 23, z + 0.7), 'beam'))
+    solid.append(box('frame front', (1.7, 23, 3.7), (14.3, 23.7, 4.4), 'beam'))
+    solid.append(box('frame back', (1.7, 23, 12.6), (14.3, 23.7, 13.3), 'beam'))
+    solid.append(box('frame left', (1.7, 23, 4.4), (2.4, 23.7, 12.6), 'beam'))
+    solid.append(box('frame right', (13.6, 23, 4.4), (14.3, 23.7, 12.6), 'beam'))
+    translucent.append(box('roof glass 1', (2.4, 23.7, 4.4), (13.6, 24.7, 12.6), 'glass', skip=('down',)))
+    translucent.append(box('roof glass 2', (4, 24.7, 4.6), (12, 25.7, 12.4), 'glass', skip=('down',)))
+    translucent.append(box('roof glass 3', (5.6, 25.7, 4.8), (10.4, 26.7, 12.2), 'glass', skip=('down',)))
+    solid.append(box('ridge beam', (7.4, 26.7, 4.3), (8.6, 27.4, 12.7), 'beam'))
 
-    everything = solid + cutout
+    everything = solid + cutout + translucent
     strip_hidden(everything)
     check(everything)           # no two faces in one plane: that is z-fighting in the game
 
@@ -87,14 +95,18 @@ def generate():
             },
             'cutout': {
                 'render_type': 'minecraft:cutout',
-                'textures': {'bud': 'fourtwenty:item/weed_bud', 'plant': 'fourtwenty:block/weed_crop_stage2',
-                             'glass': 'minecraft:block/glass'},
+                'textures': {'bud': 'fourtwenty:item/weed_bud', 'plant': 'fourtwenty:block/weed_crop_stage2'},
                 'elements': cutout,
+            },
+            'translucent': {
+                'render_type': 'minecraft:translucent',
+                'textures': {'glass': 'minecraft:block/light_blue_stained_glass'},
+                'elements': translucent,
             },
         },
     }
     MODEL.write_text(json.dumps(model, indent=2) + '\n')
-    print(f'wrote {MODEL.relative_to(ROOT)}: {len(solid)} solid, {len(cutout)} cutout elements')
+    print(f'wrote {MODEL.relative_to(ROOT)}: {len(solid)} solid, {len(cutout)} cutout, {len(translucent)} translucent elements')
 
 
 if __name__ == '__main__':
