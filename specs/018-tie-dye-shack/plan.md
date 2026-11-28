@@ -11,7 +11,7 @@ A new MineColonies hut, the Tie Dye Shack (`fourtwenty:tiedyeshack`), worked by 
 - **Patterns** come from the College's 8 Textiles studies; **colourways** (16 curated palettes) are orderable once the colony has researched all their colours.
 - **The look as data:** one block per kind (hemp, rug, couch, a bed per wood). The pattern is in the block state; the colourway is in a block entity and item component. It is drawn as 4 tinted slot masks per pattern (research R1).
 - **Shirts:** handed to colonists, drawn by a render layer.
-- **A player route** (the Dye Vat, research R9), pending the user.
+- **A player route:** the Dye Vat (research R9, approved).
 
 Ships with the Weed College (017) in one release.
 
@@ -55,11 +55,11 @@ Ships with the Weed College (017) in one release.
 
 | Principle | Status | How |
 |---|---|---|
-| I. MineColonies Stays Optional | **Needs the user** | The look, blocks and items are core. But the spec makes the Shack the only way to tie-dye, which Principle I forbids ("colonists MUST NOT be the only way"). The plan proposes the **Dye Vat** (R9): a player dyes with terpene vials of their own caught colours, all 8 patterns open. Alternative: the user grants an exception. |
+| I. MineColonies Stays Optional | PASS | The look, blocks and items are core. The player's own route is the **Dye Vat** (R9, approved 2026-11-28): terpene vials of their own caught colours, all 8 patterns. |
 | II. Existing Machines Keep Their Game | PASS | The Terpinator and Infuser are untouched; the Dye Vat only consumes vials. |
 | III. The Power Rule | PASS | The Shack draws no BI. A Dye Vat, if powered, would use `MachinePower`; proposed unpowered. |
 | IV. Failure Is Safe | PASS | Not touched. |
-| V. Approved Names | **Gate** | "Tie Dye Shack" and "Tie Dyer" are from the plan. Pattern and colourway names in data-model.md need the user's approval before shipping. |
+| V. Approved Names | PASS | "Tie Dye Shack", "Tie Dyer"; pattern and colourway names approved 2026-11-28; "Dye Vat" approved with R9. |
 | VI. Rules Are Pure And Tested | PASS | `domain/tiedye/` with JUnit; costs and batch sizes in config. |
 | VII. Milestones In Game | PASS | Five milestones (quickstart.md). |
 | Technical: art from generators | PASS | Patterns, shirt masks, diorama and tab icon from `tools/generate_*.py`. |
@@ -101,7 +101,7 @@ C:\Users\Ignus\sensi-heights\tools\design_tie_dye_shack.py
 2. **M2, rugs, couches, beds**: their masks and models; rug joining by look.
 3. **M3, shirts**: item, give/swap/take, saved data, payload, render layer (citizens and the Lifted body).
 4. **M4, all patterns, levels and the hut**: the 8 patterns finished and approved; the levels; the diorama; a showcase row.
-5. **M5, the player route and the book**: the Dye Vat (if approved), the Handbook pages, the no-MineColonies check, CHANGELOG.
+5. **M5, the player route and the book**: the Dye Vat, the Handbook pages, the no-MineColonies check, CHANGELOG.
 
 ## Complexity Tracking
 

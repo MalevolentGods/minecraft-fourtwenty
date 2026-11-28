@@ -75,7 +75,7 @@ Decisions for spec 018. Each has the decision, why, and what else was weighed. F
 
 ## R9. The player's route (Principle I)
 
-- **Decision (needs the user)**: a **Dye Vat**, a plain Four Twenty block that needs no MineColonies.
+- **Decision (approved by the user, 2026-11-28)**: a **Dye Vat**, a plain Four Twenty block that needs no MineColonies.
   - The player puts in a plain item and **one terpene vial for each colour** of a colourway, then picks a pattern.
   - Since vials come from the Terpinator, and the Terpinator makes only colours the player has caught, this is the player's own-colours route.
   - All 8 patterns are open at the Dye Vat; the colony's patterns come from the College.

@@ -24,6 +24,7 @@ Four facts shape it:
 - Q: How do players get tie-dye? → A: They order in the Shack's own window (pattern, colourway, item kind, count), and the finished items are delivered to the warehouse.
 - Q: How much ships in this release? → A: All five kinds: hemp blocks, rugs, couches, beds and colonist shirts.
 - Q: How does a colonist end up wearing a tie-dyed shirt? → A: A player hands it to them (right-click with the shirt); giving another swaps it, and a player can take it back.
+- Q: Tie-dye can't be colony-only (constitution Principle I); what's the player's route? → A: A **Dye Vat**: the player puts in a plain item and one terpene vial for each colour of a colourway and picks any of the 8 patterns. Pattern and colourway names in data-model.md approved as written (user, 2026-11-28).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -141,6 +142,7 @@ The Handbook's colony chapter gains a Tie Dye Shack page: how to order, what eac
 
 - **FR-018**: Five Sensi Heights levels MUST be made by the sensi-heights designer with the usual checks (doors saved closed, signature door from level 3, MineColonies hut names), imported into the jar.
 - **FR-019**: The Handbook's colony chapter MUST gain a Tie Dye Shack page in the Handbook's voice, and the College page's Textiles line MUST name the patterns.
+- **FR-019b**: A player MUST be able to tie-dye alone at a **Dye Vat** (needs no MineColonies): a plain item of any kind plus one terpene vial for each colour of a colourway, in any of the 8 patterns. It only consumes vials; the Terpinator and the Infuser are unchanged.
 - **FR-020**: Four Twenty MUST still load and play without MineColonies; a dyed item in a world without MineColonies MUST still load and keep its look.
 - **FR-021**: The Shack MUST ship in the same release as the Weed College (017 FR-026b), and no release happens without the user's go.
 
