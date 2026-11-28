@@ -115,6 +115,10 @@ public final class CollegeResearch {
      */
     public static void memberColours(net.minecraft.server.level.ServerPlayer player, java.util.Set<String> caught) {
         if (caught.isEmpty()) return;
+        // the Infuser keeps a caught Minecraft colour by its dye name ("white"); studies name it by its terpene code ("mc_white")
+        Set<String> codes = new java.util.LinkedHashSet<>();
+        for (String key : caught) codes.add(net.minecraft.world.item.DyeColor.byName(key, null) != null ? "mc_" + key : key);
+        caught = codes;
         for (IColony colony : IColonyManager.getInstance().getAllColonies()) {
             if (!(colony.getWorld() instanceof ServerLevel)) continue;
             var rank = colony.getPermissions().getRank(player);

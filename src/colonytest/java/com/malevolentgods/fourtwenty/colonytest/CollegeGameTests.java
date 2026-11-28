@@ -308,7 +308,7 @@ public final class CollegeGameTests {
                     new com.mojang.authlib.GameProfile(java.util.UUID.nameUUIDFromBytes("college-stranger".getBytes()), "[CollegeStranger]"));
             CollegeResearch.memberColours(stranger, java.util.Set.of("mc_red"));
             h.assertTrue(cost.getAsInt() == 24, "a stranger's red doesn't count");
-            CollegeResearch.memberColours(owner, java.util.Set.of("mc_red"));
+            CollegeResearch.memberColours(owner, java.util.Set.of("red"));   // as the Infuser keeps it
             h.assertTrue(cost.getAsInt() == 20, "the owner's red halves red's share: 4 + 8 + 8, got " + cost.getAsInt());
             h.succeed();
         } finally {
