@@ -42,7 +42,7 @@ description: "Tasks for spec 017, the Weed College"
 - [X] T017 [P] [US1] Command `/fourtwenty college queue|remove|status|finish` (officers; `finish` op-only for tests) in `…/compat/minecolonies/college/CollegeCommands.java`
 - [X] T018 [P] [US1] Level-1 blueprint from `C:\Users\Ignus\sensi-heights\tools\design_college.py` (a shed with a chalkboard, 2 Closet Grows, Think Tank, desk), with the pack checks and an import into `src/main/resources/blueprints/fourtwenty/sensiheights/`
 - [X] T019 [US1] Colony game tests in `src/gametest/java/…/college/CollegeStudyGameTest.java`: a study completes with fast unit ticks; University researchers never list or progress it (SC-002); progress and supplies survive worker removal and save/load (SC-005)
-- [ ] T020 [US1] In game: quickstart M1 on the local server. Report what was seen and commit (M1).
+- [X] T020 [US1] In game: quickstart M1 on the local server. Report what was seen and commit (M1).
 
 ## Phase 4: User Story 2 (P1), choosing what to study (M2)
 
@@ -55,7 +55,7 @@ description: "Tasks for spec 017, the Weed College"
 - [X] T024 [US2] `StudyTreePane`: study buttons in tier columns with lines from parents, in `…/compat/minecolonies/client/StudyTreePane.java`
 - [X] T025 [US2] Colour privacy (R10): names and swatches only for viewers who discovered them, in `CollegeBoardWindow` and `StudyTreePane`
 - [X] T026 [US2] Game test: queue/remove rules and the permission check, in `src/colonytest/java/…/colonytest/CollegeGameTests.java` (`theBoardChecksWhoAndWhat`: it needs a real colony, so it sits with the other College colony tests)
-- [ ] T027 [US2] In game: quickstart M2. Report and commit (M2).
+- [X] T027 [US2] In game: quickstart M2. Report and commit (M2).
 
 ## Phase 5: User Story 3 (P2), the whole tree and its effects (M3)
 
@@ -70,7 +70,7 @@ description: "Tasks for spec 017, the Weed College"
 - [X] T033 [US3] Members' colours (R9): update on login and on learning a colour, for the owner and officers; the caught-colour discount fixed at start. In `…/compat/minecolonies/college/CollegeResearch.java` and a hook in `…/terpene/TerpeneDiscovery.java` (caught colours come from the Infuser, `Infuser.caughtListener`, not TerpeneDiscovery: FR-020 is about catching at the Infuser)
 - [X] T034 [US3] Feature locks: Textiles studies (needs `tie_dye`) and the Weedscout Uniform (needs `weedscout_uniform`) show `Waiting for …`
 - [X] T035 [US3] Game tests, one per branch effect: seeds arrive; yield bonus; a trimmer is faster inside the colony; Terpinator BI is halved with its speed unchanged; a Blacksmith recipe is unlocked. In `src/gametest/java/…/college/CollegeEffectsGameTest.java`
-- [ ] T036 [US3] In game: quickstart M3. Report and commit (M3).
+- [X] T036 [US3] In game: quickstart M3. Report and commit (M3).
 
 ## Phase 6: User Story 4 (P2), a College that grows (M4)
 
@@ -80,17 +80,17 @@ description: "Tasks for spec 017, the Weed College"
 - [X] T037 [US4] `design_college.py`, all five levels: a shed with a chalkboard, growing to a quad with a greenhouse. Level N plots are Grow Op tier N; the signature door from level 3; doors saved closed; earth tones. `check_hut_levels.py`, `check_footprints.py` and `audit_tags.py` pass; import into the jar. In `C:\Users\Ignus\sensi-heights\tools\design_college.py`
 - [X] T038 [P] [US4] The diorama: `tools/generate_weedcollege_hut_model.py` (using `box()` from the Dispensary generator, with `hut_model_check.check()`), the item model parent, and the hut listed in `tools/tests/test_hut_models.py` HUTS
 - [X] T039 [US4] Game test: worker count by level, and the tier cap including tier 6's rule. In `src/gametest/java/…/college/CollegeLevelsGameTest.java`
-- [ ] T040 [US4] In game: quickstart M4, plus a showcase row on the local test server. Report and commit (M4).
+- [X] T040 [US4] In game: quickstart M4, plus a showcase row on the local test server. Report and commit (M4).
 
 ## Phase 7: User Story 5 (P3), reading about it (M5)
 
 - [X] T041 [US5] Handbook page `src/main/resources/assets/fourtwenty/handbook/en_us/entries/colony/weed_college.md` (voice rules, `needs: minecolonies`); `book.json`, glossary, index terms; `python tools/build_handbook_pdf.py`; `python tools/check_handbook.py` passes (no glossary entry: the glossary has no colony entries and sits outside the colony chapter; the page's terms feed the index)
-- [ ] T042 [US5] In game: quickstart M5, including no-MineColonies startup in the compat runs (SC-007). Report and commit (M5).
+- [X] T042 [US5] In game: quickstart M5, including no-MineColonies startup in the compat runs (SC-007). Report and commit (M5).
 
 ## Phase 8: Polish
 
 - [X] T043 [P] CHANGELOG and README notes (the release waits for spec 018, FR-026b); update `claude-misc/four-twenty/BUILDINGS-PLAN.md` Phase 6 status (CHANGELOG and BUILDINGS-PLAN done; the README gets its "What's new" section with the release number, at release)
-- [ ] T044 Full quickstart pass, then open the PR (no release, no tag)
+- [X] T044 Full quickstart pass, then open the PR (no release, no tag)
 
 ## Dependencies
 
