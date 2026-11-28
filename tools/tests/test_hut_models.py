@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from hut_model_check import fights
 
 MODELS = Path(__file__).resolve().parents[2] / 'src/main/resources/assets/fourtwenty/models/block'
-HUTS = ('dispensary', 'budbarn', 'weedcollege')          # add every new hut block here (see the generate_<hut>_hut_model.py scripts)
+HUTS = ('dispensary', 'budbarn', 'weedcollege', 'tiedyeshack')          # add every new hut block here (see the generate_<hut>_hut_model.py scripts)
 
 
 class HutModelTest(unittest.TestCase):

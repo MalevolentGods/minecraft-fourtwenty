@@ -15,7 +15,8 @@
   ],
   "gives": {
     "effect": null,
-    "strength": 0
+    "strength": 0,
+    "pattern": 0
   },
   "icon": "minecraft:white_wool",
   "needs": "tie_dye"

@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "pattern=0": {
+      "model": "fourtwenty:block/tie_dyed_hemp_crumple"
+    },
+    "pattern=1": {
+      "model": "fourtwenty:block/tie_dyed_hemp_stripes"
+    },
+    "pattern=2": {
+      "model": "fourtwenty:block/tie_dyed_hemp_bullseye"
+    },
+    "pattern=3": {
+      "model": "fourtwenty:block/tie_dyed_hemp_spiral"
+    },
+    "pattern=4": {
+      "model": "fourtwenty:block/tie_dyed_hemp_sunburst"
+    },
+    "pattern=5": {
+      "model": "fourtwenty:block/tie_dyed_hemp_shibori"
+    },
+    "pattern=6": {
+      "model": "fourtwenty:block/tie_dyed_hemp_heart"
+    },
+    "pattern=7": {
+      "model": "fourtwenty:block/tie_dyed_hemp_mandala"
+    }
+  }
+}

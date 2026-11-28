@@ -1,0 +1,47 @@
+{
+  "parent": "fourtwenty:block/tie_dyed_hemp_crumple",
+  "overrides": [
+    {
+      "predicate": {
+        "fourtwenty:pattern": 0.125
+      },
+      "model": "fourtwenty:block/tie_dyed_hemp_stripes"
+    },
+    {
+      "predicate": {
+        "fourtwenty:pattern": 0.25
+      },
+      "model": "fourtwenty:block/tie_dyed_hemp_bullseye"
+    },
+    {
+      "predicate": {
+        "fourtwenty:pattern": 0.375
+      },
+      "model": "fourtwenty:block/tie_dyed_hemp_spiral"
+    },
+    {
+      "predicate": {
+        "fourtwenty:pattern": 0.5
+      },
+      "model": "fourtwenty:block/tie_dyed_hemp_sunburst"
+    },
+    {
+      "predicate": {
+        "fourtwenty:pattern": 0.625
+      },
+      "model": "fourtwenty:block/tie_dyed_hemp_shibori"
+    },
+    {
+      "predicate": {
+        "fourtwenty:pattern": 0.75
+      },
+      "model": "fourtwenty:block/tie_dyed_hemp_heart"
+    },
+    {
+      "predicate": {
+        "fourtwenty:pattern": 0.875
+      },
+      "model": "fourtwenty:block/tie_dyed_hemp_mandala"
+    }
+  ]
+}

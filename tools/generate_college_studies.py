@@ -149,11 +149,13 @@ for sid, name, tier, parents, bong, extra in BONGS:
         {'research_effect': NS + 'effects/' + sid, 'unlocks': NS + bong, 'crafter': 'glassblower'}, NS + bong,
         f'Your Glassblower learns to make the {name.replace("Glassblowing", "Glass Bong")}.')
 
-# ---- Textiles (8): tie-dye patterns, named by spec 018; waiting for the Tie Dye Shack
-for i, tier in enumerate([1, 2, 2, 3, 3, 4, 5, 6], 1):
-    parents = [] if i == 1 else ['tex_pattern_1'] if tier < 6 else ['tex_pattern_7']
-    add(f'tex_pattern_{i}', f'Pattern {i}', 'textiles', tier, parents, 'effect', [s('minecraft:white_wool', 8 * tier), s(BUD, 8 * tier)],
-        {'effect': None, 'strength': 0}, 'minecraft:white_wool', 'A tie-dye pattern for the Tie Dye Shack.', needs='tie_dye')
+# ---- Textiles (8): the Tie Dye Shack's patterns (spec 018 data-model.md; names approved 2026-11-28), in pattern order
+PATTERNS = [('crumple', 'Crumple', 1), ('stripes', 'Stripes', 2), ('bullseye', 'Bullseye', 2), ('spiral', 'Spiral', 3),
+            ('sunburst', 'Sunburst', 3), ('shibori', 'Shibori', 4), ('heart', 'Heart', 5), ('mandala', 'Mandala', 6)]
+for i, (key, name, tier) in enumerate(PATTERNS):
+    parents = [] if i == 0 else ['tex_crumple'] if tier < 6 else ['tex_heart']
+    add(f'tex_{key}', name, 'textiles', tier, parents, 'effect', [s('minecraft:white_wool', 8 * tier), s(BUD, 8 * tier)],
+        {'effect': None, 'strength': 0, 'pattern': i}, 'minecraft:white_wool', f'Your Tie Dye Shack learns the {name} pattern.', needs='tie_dye')
 
 # ---- Armory (7): gear at the Blacksmith
 GEAR = [('arm_dab_cell', 'Dab Cell', 1, [], 'dab_cell', {'fourtwenty:hemp_wick': 1, 'fourtwenty:resin': 3, 'fourtwenty:stash_jar': 1}, None),

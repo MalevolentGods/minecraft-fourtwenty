@@ -24,6 +24,11 @@ public final class ModDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Strain>> STRAIN = COMPONENTS.register("strain",
             () -> DataComponentType.<Strain>builder().persistent(Strain.CODEC).networkSynchronized(Strain.STREAM_CODEC).build());
 
+    /** A tie-dye look: a pattern in a colourway (specs/018-tie-dye-shack). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<com.malevolentgods.fourtwenty.tiedye.TieDye>> TIE_DYE = COMPONENTS.register("tie_dye",
+            () -> DataComponentType.<com.malevolentgods.fourtwenty.tiedye.TieDye>builder().persistent(com.malevolentgods.fourtwenty.tiedye.TieDye.CODEC)
+                    .networkSynchronized(com.malevolentgods.fourtwenty.tiedye.TieDye.STREAM_CODEC).build());
+
     /** The traits of seeds, buds and joints. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Traits>> TRAITS = COMPONENTS.register("traits",
             () -> DataComponentType.<Traits>builder().persistent(Traits.CODEC).networkSynchronized(Traits.STREAM_CODEC).build());

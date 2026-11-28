@@ -49,6 +49,7 @@ public class FourTwenty {
         com.malevolentgods.fourtwenty.registry.ModDataComponents.COMPONENTS.register(bus);
         com.malevolentgods.fourtwenty.registry.ModStrainData.LOOT_FUNCTIONS.register(bus);
         com.malevolentgods.fourtwenty.registry.FarmYieldModifier.register(bus);
+        com.malevolentgods.fourtwenty.tiedye.ModTieDye.register(bus);
         com.malevolentgods.fourtwenty.paving.PenUpgradeRecipe.init();
         com.malevolentgods.fourtwenty.registry.ModStrainData.RECIPE_SERIALIZERS.register(bus);
         com.malevolentgods.fourtwenty.paving.PaveNetwork.register(bus);

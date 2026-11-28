@@ -7,26 +7,26 @@ Paths: `…` = `src/main/java/com/malevolentgods/fourtwenty`; `mc…` = `…/com
 
 ## Phase 1: Setup
 
-- [ ] T001 Generate the Textiles studies with their pattern names, ids (`tex_crumple` … `tex_mandala`) and `gives: {pattern: N}` in `tools/generate_college_studies.py`; regenerate data and lang
-- [ ] T002 [P] Colourways data `src/main/resources/data/fourtwenty/tie_dye/colourways.json` (16, from data-model.md) and lang names `tiedye.fourtwenty.colourway.<id>`, `tiedye.fourtwenty.pattern.<n>`
+- [X] T001 Generate the Textiles studies with their pattern names, ids (`tex_crumple` … `tex_mandala`) and `gives: {pattern: N}` in `tools/generate_college_studies.py`; regenerate data and lang
+- [X] T002 [P] Colourways data `src/main/resources/data/fourtwenty/tie_dye/colourways.json` (16, from data-model.md) and lang names `tiedye.fourtwenty.colourway.<id>`, `tiedye.fourtwenty.pattern.<n>`
 
 ## Phase 2: Foundational (blocks the stories)
 
-- [ ] T003 [P] Pure rules in `…/domain/tiedye/`: `Colourway` (slot k → colour), `TieDyeRules` (orderable colourways for a known-colour set, batch size by level, supplies per batch), `OrderQueue` (add, cancel rule, head, progress), with JUnit in `src/test/java/…/domain/tiedye/TieDyeRulesTest.java`
-- [ ] T004 The `fourtwenty:tie_dye` item component (codec, stream codec) in `…/registry/ModDataComponents.java`; `…/tiedye/Colourways.java` loader (data reload, client copy built from the same file in the jar so items render offline)
-- [ ] T005 The R1 spike: `…/tiedye/TieDyeBlockEntity.java` (colourway, update tag, re-mesh on change) and a block colour handler that reads it; prove one block renders 4 tinted slots; record the result in research.md R1
-- [ ] T006 `tools/generate_tie_dye.py`: 4 slot masks per pattern for a block face (dithered edges), the 8 patterns; models with 4 cutout layers and tint indices 0-3
+- [X] T003 [P] Pure rules in `…/domain/tiedye/`: `Colourway` (slot k → colour), `TieDyeRules` (orderable colourways for a known-colour set, batch size by level, supplies per batch), `OrderQueue` (add, cancel rule, head, progress), with JUnit in `src/test/java/…/domain/tiedye/TieDyeRulesTest.java`
+- [X] T004 The `fourtwenty:tie_dye` item component (codec, stream codec) in `…/registry/ModDataComponents.java`; `…/tiedye/Colourways.java` loader (data reload, client copy built from the same file in the jar so items render offline)
+- [X] T005 The R1 spike: `…/tiedye/TieDyeBlockEntity.java` (colourway, update tag, re-mesh on change) and a block colour handler that reads it; prove one block renders 4 tinted slots; record the result in research.md R1 (built; the visual proof is the M1 in-game check, T015)
+- [X] T006 `tools/generate_tie_dye.py`: 4 slot masks per pattern for a block face (dithered edges), the 8 patterns; models with 4 cutout layers and tint indices 0-3
 
 ## Phase 3: US1 + US2, a colony's first tie-dye and only its colours (M1)
 
-- [ ] T007 [US1] `tie_dyed_hemp` block (pattern state, block entity, drops with the component, item model by pattern, item colour handler) in `…/tiedye/`
-- [ ] T008 [US1] `mc…/TieDyeRegistry.java`: hut block `tiedyeshack`, building, job `tie_dyer`, modules (work, orders, status); `CollegeFeatures` turns Textiles on
-- [ ] T009 [US1] `mc…/TieDyeSavedData.java` (orders per colony; shirts later) and `mc…/TieDyeOrders.java` (add, cancel, checks per contracts/orders.md)
-- [ ] T010 [US1] `mc…/TieDyeNetwork.java`: `fourtwenty:tie_dye_order` (ADD, CANCEL) with server checks
-- [ ] T011 [US1] `mc…/ShackBuilding.java` (scans vats = water cauldrons, racks = Curing Racks; required items; activity) and `mc…/TieDyerAI.java` (request supplies, dip at a vat, hang at a rack, deliver to the warehouse, fallback hut + pickup)
-- [ ] T012 [US1] Orders module + view + window (`mc…/client/OrdersWindow.java`, `gui/tiedye_orders.xml`): pattern buttons, colourway swatches, kind, count, queue with cancel; status module and tab
-- [ ] T013 [US2] Colour privacy in the window, item names and tooltips: uncaught colours as "?", colourway names only when all are caught (research R6)
-- [ ] T014 [US1] Colony game tests `src/colonytest/java/…/TieDyeGameTests.java`: order permission and checks; a batch fetched, dyed and delivered; save round trip; core game test: hemp keeps its look through place, mine, re-place
+- [X] T007 [US1] `tie_dyed_hemp` block (pattern state, block entity, drops with the component, item model by pattern, item colour handler) in `…/tiedye/`
+- [X] T008 [US1] `mc…/TieDyeRegistry.java`: hut block `tiedyeshack`, building, job `tie_dyer`, modules (work, orders, status); `CollegeFeatures` turns Textiles on
+- [X] T009 [US1] `mc…/TieDyeSavedData.java` (orders per colony; shirts later) and `mc…/TieDyeOrders.java` (add, cancel, checks per contracts/orders.md)
+- [X] T010 [US1] `mc…/TieDyeNetwork.java`: `fourtwenty:tie_dye_order` (ADD, CANCEL) with server checks
+- [X] T011 [US1] `mc…/ShackBuilding.java` (scans vats = water cauldrons, racks = Curing Racks; required items; activity) and `mc…/TieDyerAI.java` (request supplies, dip at a vat, hang at a rack, deliver to the warehouse, fallback hut + pickup)
+- [X] T012 [US1] Orders module + view + window (`mc…/client/OrdersWindow.java`, `gui/tiedye_orders.xml`): pattern buttons, colourway swatches, kind, count, queue with cancel; status module and tab
+- [X] T013 [US2] Colour privacy in the window, item names and tooltips: uncaught colours as "?", colourway names only when all are caught (research R6)
+- [X] T014 [US1] Colony game tests `src/colonytest/java/…/TieDyeGameTests.java`: order permission and checks; a batch fetched, dyed and delivered; save round trip; core game test: hemp keeps its look through place, mine, re-place
 - [ ] T015 [US1] In game: quickstart M1. Report and commit (M1)
 
 ## Phase 4: US3, rugs, couches and beds (M2)
@@ -47,8 +47,8 @@ Paths: `…` = `src/main/java/com/malevolentgods/fourtwenty`; `mc…` = `…/com
 ## Phase 6: US4, all patterns, levels and the hut (M4)
 
 - [ ] T025 [US4] All 8 patterns finished in every mask set; a showcase row on the local test server
-- [ ] T026 [P] [US4] `tools/generate_tiedyeshack_hut_model.py` (diorama, `hut_model_check`), item model, tab icon; listed in `tools/tests/test_hut_models.py`
-- [ ] T027 [P] [US4] `C:\Users\Ignus\sensi-heights\tools\design_tie_dye_shack.py`: five levels (vats and racks per data-model.md, signature door from level 3, doors closed), checks pass, import into the jar
+- [X] T026 [P] [US4] `tools/generate_tiedyeshack_hut_model.py` (diorama, `hut_model_check`), item model, tab icon; listed in `tools/tests/test_hut_models.py`
+- [X] T027 [P] [US4] `C:\Users\Ignus\sensi-heights\tools\design_tie_dye_shack.py`: five levels (vats and racks per data-model.md, signature door from level 3, doors closed), checks pass, import into the jar
 - [ ] T028 [US4] Colony game test: Tie Dyers and batch size by level
 - [ ] T029 [US4] In game: quickstart M4. Report and commit (M4)
 

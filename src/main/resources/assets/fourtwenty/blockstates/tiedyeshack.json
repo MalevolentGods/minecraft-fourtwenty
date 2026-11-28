@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "fourtwenty:block/tiedyeshack",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "fourtwenty:block/tiedyeshack",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "fourtwenty:block/tiedyeshack",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "fourtwenty:block/tiedyeshack",
+      "y": 270
+    }
+  }
+}

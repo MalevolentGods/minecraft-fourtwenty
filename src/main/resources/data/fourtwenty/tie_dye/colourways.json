@@ -1,0 +1,134 @@
+{
+  "colourways": [
+    {
+      "id": "ashtray",
+      "colours": [
+        "mc_black",
+        "mc_gray",
+        "mc_white"
+      ]
+    },
+    {
+      "id": "campfire",
+      "colours": [
+        "mc_red",
+        "mc_orange",
+        "mc_yellow"
+      ]
+    },
+    {
+      "id": "lagoon",
+      "colours": [
+        "mc_blue",
+        "mc_cyan",
+        "mc_light_blue"
+      ]
+    },
+    {
+      "id": "grape_soda",
+      "colours": [
+        "mc_purple",
+        "mc_magenta",
+        "mc_pink"
+      ]
+    },
+    {
+      "id": "roots",
+      "colours": [
+        "mc_red",
+        "mc_yellow",
+        "mc_green"
+      ]
+    },
+    {
+      "id": "sunset_strip",
+      "colours": [
+        "mc_orange",
+        "mc_magenta",
+        "mc_purple"
+      ]
+    },
+    {
+      "id": "earth_mother",
+      "colours": [
+        "mc_brown",
+        "mc_green",
+        "mc_lime"
+      ]
+    },
+    {
+      "id": "cotton_candy",
+      "colours": [
+        "mc_pink",
+        "mc_light_blue",
+        "mc_white"
+      ]
+    },
+    {
+      "id": "terrapin",
+      "colours": [
+        "pin_lav_lim",
+        "pin_lav_pin",
+        "lav_pin_pin"
+      ]
+    },
+    {
+      "id": "begonia",
+      "colours": [
+        "lim_pin_pin",
+        "lav_lim_lim",
+        "lim_lav_lim"
+      ]
+    },
+    {
+      "id": "grandpas_couch",
+      "colours": [
+        "lim_lim_lav",
+        "myr_myr_lav",
+        "pin_myr_lav"
+      ]
+    },
+    {
+      "id": "deep_space",
+      "colours": [
+        "lav_myr_myr",
+        "lav_lav_myr",
+        "lav_lav_lim",
+        "lav_pin_lim"
+      ]
+    },
+    {
+      "id": "forest_floor",
+      "colours": [
+        "pin_pin_pin",
+        "pin_pin_myr",
+        "lim_myr_myr"
+      ]
+    },
+    {
+      "id": "sherbet",
+      "colours": [
+        "pin_lim_lim",
+        "lim_lav_lim",
+        "lav_myr_lim"
+      ]
+    },
+    {
+      "id": "last_light",
+      "colours": [
+        "lim_lav_myr",
+        "lim_pin_lav",
+        "lav_myr_pin",
+        "myr_lav_myr"
+      ]
+    },
+    {
+      "id": "smoke_and_mirrors",
+      "colours": [
+        "myr_pin_pin",
+        "myr_lav_pin",
+        "myr_pin_lim"
+      ]
+    }
+  ]
+}

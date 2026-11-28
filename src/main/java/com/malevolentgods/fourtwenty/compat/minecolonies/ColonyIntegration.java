@@ -35,6 +35,9 @@ public final class ColonyIntegration {
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeStudies::register);
         NeoForge.EVENT_BUS.addListener(com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeCommands::register);
         com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeNetwork.register(bus);
+        // The Tie Dye Shack (specs/018-tie-dye-shack)
+        com.malevolentgods.fourtwenty.compat.minecolonies.tiedye.TieDyeRegistry.register(bus);
+        container.registerConfig(ModConfig.Type.SERVER, com.malevolentgods.fourtwenty.compat.minecolonies.tiedye.TieDyeConfig.SPEC, "fourtwenty-tiedye-server.toml");
         com.malevolentgods.fourtwenty.registry.FarmYieldModifier.bonusChance =
                 com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeEffects::farmBonusChance;
         com.malevolentgods.fourtwenty.power.ColonyFactor.lookup = com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeResearch::factor;
@@ -53,6 +56,7 @@ public final class ColonyIntegration {
                             if (deleted.getColony().getWorld() instanceof ServerLevel level) {
                                 DispensarySavedData.get(level).removeColony(deleted.getColony().getID());
                                 com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeSavedData.get(level).removeColony(deleted.getColony().getID());
+                                com.malevolentgods.fourtwenty.compat.minecolonies.tiedye.TieDyeSavedData.get(level).removeColony(deleted.getColony().getID());
                             }
                         })));
         bus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) -> event.enqueueWork(() -> {
@@ -118,6 +122,8 @@ public final class ColonyIntegration {
                         // the level, the members' colours and the features can change without the research changing
                         college.getModule(com.malevolentgods.fourtwenty.compat.minecolonies.college.CollegeRegistry.BOARD).refresh();
                     }
+                    else if (building instanceof com.malevolentgods.fourtwenty.compat.minecolonies.tiedye.ShackBuilding shack)
+                        shack.getModule(com.malevolentgods.fourtwenty.compat.minecolonies.tiedye.TieDyeRegistry.ORDERS).refresh();
                 }
             }
         }

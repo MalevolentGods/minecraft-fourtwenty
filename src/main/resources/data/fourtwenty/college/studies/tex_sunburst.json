@@ -1,23 +1,24 @@
 {
   "branch": "textiles",
-  "tier": 2,
+  "tier": 3,
   "parents": [
-    "fourtwenty:tex_pattern_1"
+    "fourtwenty:tex_crumple"
   ],
   "kind": "effect",
   "supplies": [
     {
       "item": "minecraft:white_wool",
-      "count": 16
+      "count": 24
     },
     {
       "item": "fourtwenty:weed_bud",
-      "count": 16
+      "count": 24
     }
   ],
   "gives": {
     "effect": null,
-    "strength": 0
+    "strength": 0,
+    "pattern": 4
   },
   "icon": "minecraft:white_wool",
   "needs": "tie_dye"

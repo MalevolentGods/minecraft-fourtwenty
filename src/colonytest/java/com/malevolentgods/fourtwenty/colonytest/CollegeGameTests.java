@@ -146,9 +146,8 @@ public final class CollegeGameTests {
                     "an accord says it needs level 2: " + accord);
             h.assertTrue(!board.entry(warms).cost().isEmpty() && board.entry(warms).cost().equals(CollegeResearch.record(colony).cost()),
                     "the head shows its fixed cost");
-            var pattern = board.entry("fourtwenty:tex_pattern_1");
-            h.assertTrue(pattern.state() == StudyBoard.State.LOCKED && pattern.lock() == StudyBoard.Lock.FEATURE && "tie_dye".equals(pattern.lockArg()),
-                    "Textiles waits for the Tie Dye Shack: " + pattern);
+            var pattern = board.entry("fourtwenty:tex_crumple");
+            h.assertTrue(pattern.state() == StudyBoard.State.AVAILABLE, "with the Tie Dye Shack in the game, Textiles is open: " + pattern);
             var uniform = board.entry("fourtwenty:arm_weedscout_uniform");
             h.assertTrue(uniform.lock() == StudyBoard.Lock.FEATURE && "weedscout_uniform".equals(uniform.lockArg()), "and the uniform for itself: " + uniform);
             var buffer = new net.minecraft.network.RegistryFriendlyByteBuf(io.netty.buffer.Unpooled.buffer(), h.getLevel().registryAccess());

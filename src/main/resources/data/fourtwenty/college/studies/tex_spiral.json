@@ -2,7 +2,7 @@
   "branch": "textiles",
   "tier": 3,
   "parents": [
-    "fourtwenty:tex_pattern_1"
+    "fourtwenty:tex_crumple"
   ],
   "kind": "effect",
   "supplies": [
@@ -17,7 +17,8 @@
   ],
   "gives": {
     "effect": null,
-    "strength": 0
+    "strength": 0,
+    "pattern": 3
   },
   "icon": "minecraft:white_wool",
   "needs": "tie_dye"

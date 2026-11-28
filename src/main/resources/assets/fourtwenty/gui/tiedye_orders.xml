@@ -1,0 +1,22 @@
+<window size="190 244">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <text size="160 12" pos="15 10" textalign="MIDDLE" color="black" label="$(tiedye.fourtwenty.orders.title)"/>
+    <text id="status" size="160 20" pos="15 23" color="#49352b" wrap="true"/>
+    <text id="patternLabel" size="160 10" pos="15 44" color="black"/>
+    <view id="patterns" size="164 20" pos="13 54"/>
+    <text id="colourwayLabel" size="160 10" pos="15 77" color="black"/>
+    <view id="colourways" size="164 40" pos="13 87"/>
+    <button id="kind" size="71 17" pos="15 131" textcolor="black" source="minecolonies:textures/gui/builderhut/builder_button_medium_small.png"/>
+    <button id="less" size="17 17" pos="92 131" textcolor="black" label="-" source="minecolonies:textures/gui/builderhut/builder_button_medium_small.png"/>
+    <text id="count" size="24 17" pos="110 131" textalign="MIDDLE" color="black"/>
+    <button id="more" size="17 17" pos="135 131" textcolor="black" label="+" source="minecolonies:textures/gui/builderhut/builder_button_medium_small.png"/>
+    <button id="order" size="129 17" pos="30 151" textcolor="black" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
+    <text size="160 10" pos="15 172" color="black" label="$(tiedye.fourtwenty.orders.queue)"/>
+    <text id="empty" size="160 20" pos="15 184" color="#49352b" wrap="true" label="$(tiedye.fourtwenty.orders.queue_empty)"/>
+    <list id="queue" size="164 46" pos="15 184">
+        <view size="154 13">
+            <text id="line" size="138 12" pos="0 1" color="black"/>
+            <button id="cancel" size="10 10" pos="140 1" source="minecolonies:textures/gui/button_x.png"/>
+        </view>
+    </list>
+</window>
